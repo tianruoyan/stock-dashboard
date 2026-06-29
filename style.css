@@ -1,71 +1,204 @@
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
 body {
-  margin: 0;
-  font-family: PingFang SC, sans-serif;
+  font-family: -apple-system, "PingFang SC", "Noto Sans SC", sans-serif;
   background: #0B0F14;
   color: #E6EDF3;
+  line-height: 1.5;
 }
 
-/* 顶栏 */
+/* ===== 顶栏 ===== */
 .topbar {
-  position: sticky;
-  top: 0;
-  display: flex;
-  justify-content: space-between;
-  padding: 10px 14px;
-  background: #0B0F14;
-  border-bottom: 1px solid #263241;
-  font-size: 14px;
-}
-
-/* panel */
-.panel {
-  padding: 14px;
+  position: sticky; top: 0; z-index: 10;
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 12px 18px;
+  background: #0D1320;
   border-bottom: 1px solid #1F2A37;
+  font-size: 13px;
 }
+.topbar .left  { font-weight: 600; color: #58A6FF; }
+.topbar .right { color: #8B949E; }
 
+/* ===== 面板 ===== */
+.panel {
+  padding: 18px;
+  border-bottom: 1px solid #1A2332;
+}
 .panel h2 {
-  font-size: 15px;
-  margin-bottom: 10px;
+  font-size: 15px; font-weight: 600;
+  margin-bottom: 14px;
+  color: #C9D1D9;
+  letter-spacing: 0.5px;
+}
+.panel h3 {
+  font-size: 13px; font-weight: 600;
+  margin-bottom: 8px; margin-top: 14px;
+  color: #8B949E;
 }
 
-/* grid */
+.subsection {
+  margin-bottom: 12px;
+}
+
+/* ===== 网格 ===== */
 .grid {
-  display: flex;
-  flex-wrap: wrap;
+  display: flex; flex-wrap: wrap;
   gap: 10px;
 }
 
-/* card */
+/* ===== 卡片 ===== */
 .card {
   width: 240px;
-  padding: 10px;
+  padding: 12px;
   background: #111826;
-  border: 1px solid #263241;
+  border: 1px solid #1F2A37;
   border-radius: 8px;
+  font-size: 13px;
+  transition: border-color .2s;
+}
+.card:hover { border-color: #30363D; }
+
+.card.hot       { border-left: 3px solid #FF3B30; }
+.card.strong    { border-left: 3px solid #00C853; }
+.card.sentiment { border-left: 3px solid #6E7681; opacity: 0.8; }
+
+.card-head { display: flex; align-items: center; gap: 6px; margin-bottom: 6px; }
+.card-body { font-size: 12px; color: #C9D1D9; margin-bottom: 4px; }
+.card-body.muted { color: #8B949E; font-size: 12px; }
+.card-leaders { margin-top: 6px; font-size: 12px; }
+
+.time { margin-left: auto; font-size: 11px; color: #6E7681; }
+
+/* ===== 徽章 ===== */
+.badge {
+  font-size: 10px; font-weight: 600;
+  padding: 1px 6px; border-radius: 4px;
+  text-transform: uppercase;
+}
+.badge.signal  { background: rgba(255,59,48,.15); color: #FF3B30; }
+.badge.old     { background: rgba(110,118,129,.15); color: #6E7681; }
+.badge.action-buy  { background: rgba(0,200,83,.15); color: #00C853; }
+.badge.action-sell { background: rgba(255,59,48,.15); color: #FF3B30; }
+.badge.action-hold { background: rgba(88,166,255,.15); color: #58A6FF; }
+
+/* ===== 策略卡片 ===== */
+.strategy-card { width: 260px; }
+.strategy-card.action-buy  { border-left: 3px solid #00C853; }
+.strategy-card.action-sell { border-left: 3px solid #FF3B30; }
+.strategy-card.action-hold { border-left: 3px solid #58A6FF; }
+
+/* ===== 领涨股 ===== */
+.leader {
+  display: inline-block;
+  margin-right: 8px;
+  padding: 2px 8px;
+  background: rgba(88,166,255,.08);
+  border-radius: 4px;
+  font-size: 12px;
+}
+.pct.up   { color: #00C853; }
+.pct.down { color: #FF3B30; }
+
+/* ===== 趋势表格 ===== */
+.trend-table {
+  width: 100%; max-width: 600px;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+.trend-table th {
+  text-align: left;
+  padding: 6px 10px;
+  color: #8B949E;
+  font-weight: 500;
+  border-bottom: 1px solid #1F2A37;
+}
+.trend-table td {
+  padding: 8px 10px;
+  border-bottom: 1px solid #161D2A;
+}
+.trend-table tr:hover td { background: #131C29; }
+
+/* ===== 涨跌柱 ===== */
+.bar {
+  width: 100%; height: 6px;
+  background: #1F2A37;
+  border-radius: 3px;
+  overflow: hidden;
+}
+.bar-fill { height: 100%; border-radius: 3px; transition: width .5s ease; }
+.bar-fill.up   { background: #00C853; }
+.bar-fill.down { background: #FF3B30; }
+
+/* ===== 颜色 ===== */
+.up   { color: #00C853; }
+.down { color: #FF3B30; }
+.muted { color: #8B949E; }
+
+/* ===== 市场宽度 ===== */
+.breadth {
+  margin-top: 10px;
+  padding: 8px 12px;
+  background: #111826;
+  border: 1px solid #1F2A37;
+  border-radius: 6px;
   font-size: 13px;
 }
 
-/* hot */
-.hot {
-  border-left: 3px solid #FF3B30;
+/* ===== 指数行 ===== */
+.index-row {
+  display: flex; flex-wrap: wrap; gap: 12px;
 }
-
-/* strong */
-.strong {
-  border-left: 3px solid #00C853;
-}
-
-/* sentiment */
-.sentiment {
-  border-left: 3px solid #94A3B8;
-  opacity: 0.85;
-}
-
-/* pre block */
-pre {
+.index-item {
+  padding: 6px 12px;
   background: #111826;
-  padding: 10px;
-  border-radius: 8px;
-  overflow: auto;
-  border: 1px solid #263241;
+  border: 1px solid #1F2A37;
+  border-radius: 6px;
+  font-size: 13px;
+}
+
+/* ===== 标签 ===== */
+.tag-row { margin-top: 8px; font-size: 12px; color: #8B949E; }
+.tag {
+  display: inline-block;
+  margin: 2px 4px 2px 0;
+  padding: 2px 8px;
+  background: rgba(88,166,255,.1);
+  border: 1px solid rgba(88,166,255,.2);
+  border-radius: 10px;
+  font-size: 11px;
+  color: #58A6FF;
+}
+
+/* ===== 新闻列表 ===== */
+.news-list {
+  list-style: none;
+  font-size: 13px;
+}
+.news-list li {
+  padding: 8px 12px;
+  border-left: 2px solid #1F2A37;
+  margin-bottom: 6px;
+  background: #0F1620;
+  border-radius: 0 6px 6px 0;
+}
+.news-list.risk li { border-left-color: #FF3B30; }
+.news-list li .tag { margin-right: 6px; vertical-align: middle; }
+
+/* ===== 主线列表 ===== */
+.theme-list { display: flex; flex-direction: column; gap: 6px; }
+.theme-item {
+  padding: 8px 12px;
+  background: #0F1620;
+  border: 1px solid #1A2332;
+  border-radius: 6px;
+  font-size: 13px;
+}
+.strong-theme { border-left: 3px solid #00C853; }
+
+/* ===== 空状态 ===== */
+.empty {
+  padding: 24px;
+  text-align: center;
+  color: #6E7681;
+  font-size: 13px;
 }
