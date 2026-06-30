@@ -123,42 +123,39 @@ function renderAlerts(data) {
    盘中全景
 ========================= */
 function renderIntraday(data) {
-  const el = document.getElementById("intraday");
-  const trends = data.main_trends || [];
-
-  let html = "";
-
-  // 板块趋势表
-  if (trends.length) {
-    html += '<table class="trend-table"><thead><tr><th>板块</th><th>涨跌幅</th><th>强度</th></tr></thead><tbody>';
-    html += trends.map(t => {
-      const pct = t.change_pct || 0;
-      const cls = pct >= 0 ? "up" : "down";
-      const barW = Math.min(Math.abs(pct) * 10, 100);
-      return `<tr>
-        <td>${t.sector}</td>
-        <td class="${cls}">${pct > 0 ? '+' : ''}${pct}%</td>
-        <td><div class="bar ${cls}"><div class="bar-fill ${cls}" style="width:${barW}%"></div></div></td>
-      </tr>`;
-    }).join("");
-    html += '</tbody></table>';
-  }
-
-  // 市场宽度
-  if (data.market_breadth) {
-    html += `<div class="breadth">市场宽度：<span class="up">上涨 ${data.market_breadth.up || 0}</span> / <span class="down">下跌 ${data.market_breadth.down || 0}</span></div>`;
-  }
-
-  // 指数
+  // 指数行
+  const idxEl = document.getElementById("intraday-indices");
   if (data.indices) {
-    html += '<div class="index-row">';
-    html += Object.entries(data.indices).map(([name, v]) =>
-      `<span class="index-item">${name} <span class="${v >= 0 ? 'up' : 'down'}">${v > 0 ? '+' : ''}${v}%</span></span>`
-    ).join("");
-    html += '</div>';
+    idxEl.innerHTML = Object.entries(data.indices).map(([k, v]) => {
+      const cls = v >= 0 ? 'up' : 'down';
+      return `<span class="index-item"><b>${k}</b> <span class="${cls}">${v > 0 ? '+' : ''}${v}%</span></span>`;
+    }).join("");
   }
 
-  el.innerHTML = html || '<div class="empty">暂无盘中数据</div>';
+  // 概念涨跌榜
+  renderSectorList("concept-top", data.concept_top5, "up");
+  renderSectorList("concept-bot", data.concept_bottom5, "down");
+  renderSectorList("industry-top", data.industry_top5, "up");
+  renderSectorList("industry-bot", data.industry_bottom5, "down");
+}
+
+function renderSectorList(elId, sectors, dir) {
+  const el = document.getElementById(elId);
+  if (!sectors || !sectors.length) {
+    el.innerHTML = '<div class="empty-sm">--</div>';
+    return;
+  }
+  const cls = dir === 'up' ? 'up' : 'down';
+  el.innerHTML = sectors.map((s, i) => {
+    const pct = s.change_pct || 0;
+    const barW = Math.min(Math.abs(pct) * 5, 100);
+    return `<div class="sector-row">
+      <span class="rank">${i + 1}</span>
+      <span class="sector-name">${s.name || s.sector}</span>
+      <span class="sector-pct ${cls}">${pct > 0 ? '+' : ''}${pct}%</span>
+      <div class="bar"><div class="bar-fill ${cls}" style="width:${barW}%"></div></div>
+    </div>`;
+  }).join("");
 }
 
 /* =========================
