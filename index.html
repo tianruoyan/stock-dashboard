@@ -29,6 +29,7 @@
   <a href="#section-postmarket">🌙 盘后</a>
   <a href="#section-evening">🌃 舆情</a>
   <a href="#section-topics">🔍 专题</a>
+  <a href="#section-settings" class="nav-settings">⚙️ 配置</a>
 </nav>
 
 <main>
@@ -95,6 +96,72 @@
     <div id="topics" class="grid"></div>
   </section>
 
+  <!-- 配置面板 -->
+  <section class="panel" id="section-settings" style="display:none">
+    <h2>⚙️ 参数配置</h2>
+    <p class="muted" style="font-size:12px;margin-bottom:12px">修改后点「保存配置」，配置写入本地文件。Codex 下次运行自动读取。</p>
+
+    <div class="settings-tabs">
+      <button class="stab active" onclick="switchSettingsTab('stocks')">📋 股票池</button>
+      <button class="stab" onclick="switchSettingsTab('alerts')">⚡ 异动阈值</button>
+      <button class="stab" onclick="switchSettingsTab('topics-s')">🔍 专题管理</button>
+    </div>
+
+    <!-- 股票池 -->
+    <div id="stab-stocks" class="settings-content">
+      <div class="subsection">
+        <h3>小登池（科技/题材，异动阈值低）</h3>
+        <div id="cfg-small-deng" class="stock-editor"></div>
+        <button class="btn-sm" onclick="addStockRow('small_deng')">+ 添加股票</button>
+      </div>
+      <div class="subsection">
+        <h3>老登池（权重/周期，异动阈值高）</h3>
+        <div id="cfg-old-deng" class="stock-editor"></div>
+        <button class="btn-sm" onclick="addStockRow('old_deng')">+ 添加股票</button>
+      </div>
+      <div class="subsection">
+        <h3>观察池（仅观察，不触发异动）</h3>
+        <div id="cfg-watch" class="stock-editor"></div>
+        <button class="btn-sm" onclick="addStockRow('watch_only')">+ 添加股票</button>
+      </div>
+    </div>
+
+    <!-- 异动阈值 -->
+    <div id="stab-alerts" class="settings-content" style="display:none">
+      <div class="subsection">
+        <h3>小登异动</h3>
+        <div class="cfg-row"><label>均涨阈值 (%)</label><input id="cfg-sd-avg" type="number" step="0.1"></div>
+        <div class="cfg-row"><label>方向占比</label><input id="cfg-sd-dir" type="number" step="0.05" min="0" max="1"></div>
+        <div class="cfg-row"><label>成交放大倍数</label><input id="cfg-sd-vol" type="number" step="0.5"></div>
+        <div class="cfg-row"><label>检测窗口 (分钟)</label><input id="cfg-sd-win" type="number" step="1"></div>
+        <div class="cfg-row"><label>涨停/跌停触发数</label><input id="cfg-sd-limit" type="number" step="1"></div>
+      </div>
+      <div class="subsection">
+        <h3>老登异动</h3>
+        <div class="cfg-row"><label>均涨阈值 (%)</label><input id="cfg-od-avg" type="number" step="0.1"></div>
+        <div class="cfg-row"><label>成交放大倍数</label><input id="cfg-od-vol" type="number" step="0.5"></div>
+        <div class="cfg-row"><label>检测窗口 (分钟)</label><input id="cfg-od-win" type="number" step="1"></div>
+        <div class="cfg-row"><label>共振最少板块数</label><input id="cfg-od-res" type="number" step="1"></div>
+      </div>
+      <div class="subsection">
+        <h3>独立放量提醒</h3>
+        <div class="cfg-row"><label>成交放大倍数</label><input id="cfg-vw-vol" type="number" step="0.5"></div>
+        <div class="cfg-row"><label>方向占比</label><input id="cfg-vw-dir" type="number" step="0.05" min="0" max="1"></div>
+      </div>
+    </div>
+
+    <!-- 专题管理 -->
+    <div id="stab-topics-s" class="settings-content" style="display:none">
+      <div id="cfg-topics" class="topic-editor"></div>
+      <button class="btn-sm" onclick="addTopicRow()">+ 添加专题</button>
+    </div>
+
+    <div style="margin-top:16px;display:flex;gap:8px">
+      <button class="btn-primary" onclick="saveSettings()">💾 保存配置</button>
+      <span id="cfg-status" class="muted" style="font-size:12px;align-self:center"></span>
+    </div>
+  </section>
+
 </main>
 
 <footer class="footer">
@@ -103,5 +170,6 @@
 </footer>
 
 <script src="app.js?v=m7"></script>
+<script src="settings.js?v=1"></script>
 </body>
 </html>
