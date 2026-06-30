@@ -424,10 +424,76 @@ function renderPremarket(data) {
 ========================= */
 function renderPostmarket(data) {
   const el = document.getElementById("postmarket");
-
   let html = "";
 
-  // 指数
+  // === Codex 格式: hotspots + review ===
+  if (data.hotspots || data.review) {
+    // 一句话总结
+    if (data.review?.one_sentence) {
+      html += `<div class="subsection"><h3>📋 收盘总结</h3><div class="breadth">${data.review.one_sentence}</div></div>`;
+    }
+
+    // 涨跌统计
+    if (data.index) {
+      html += '<div class="subsection"><h3>📊 涨跌统计</h3><div class="index-row">';
+      const idx = data.index;
+      const stats = [
+        { k: '涨停', v: idx['涨停'] },
+        { k: '跌停', v: idx['跌停'] },
+        { k: '炸板', v: idx['炸板'] },
+        { k: '5%-8%', v: idx['涨幅5%至不足8%'] },
+        { k: '8%以上', v: idx['涨幅8%以上'] },
+      ].filter(x => x.v !== undefined);
+      html += stats.map(s => `<span class="index-item"><b>${s.k}</b> <span class="up">${s.v}</span></span>`).join('');
+      html += '</div></div>';
+    }
+
+    // 涨停行业分布
+    if (data.review?.limit_pool_industries) {
+      html += '<div class="subsection"><h3>🏭 涨停行业分布</h3><div class="index-row">';
+      html += data.review.limit_pool_industries.slice(0,6).map(i =>
+        `<span class="index-item">${i.industry} <b>${i.limit_up_count}</b>家</span>`
+      ).join('');
+      html += '</div></div>';
+    }
+
+    // 主线研判
+    if (data.hotspots) {
+      html += '<div class="subsection"><h3>🔥 主线研判</h3>';
+      html += data.hotspots.map(h => {
+        const cls = (h.status||'').includes('强') ? 'strong-theme' : '';
+        const reps = (h.representatives||[]).slice(0,6).join('、');
+        return `<div class="theme-item ${cls}">
+          <b>${h.name}</b> <span class="muted">— ${h.status}</span>
+          <br><span style="font-size:12px">${h.count_summary||''}</span>
+          ${reps ? `<br><span style="font-size:11px;color:#8B949E">代表：${reps}</span>` : ''}
+          ${h.continuity ? `<br><span style="font-size:11px">${h.continuity}</span>` : ''}
+          ${h.risk ? `<br><span style="font-size:10px;color:#FF6B6B">⚠ ${h.risk}</span>` : ''}
+        </div>`;
+      }).join('');
+      html += '</div>';
+    }
+
+    // 次日观察
+    if (data.next_day_watch) {
+      html += '<div class="subsection"><h3>🔮 次日观察</h3><ul class="news-list">';
+      html += data.next_day_watch.map(w => `<li>${w}</li>`).join('');
+      html += '</ul></div>';
+    }
+
+    // 风险
+    const risks = data.risk || data.risks;
+    if (risks) {
+      html += '<div class="subsection"><h3>⚠️ 风险</h3><ul class="news-list risk">';
+      html += risks.map(r => `<li>${typeof r === "string" ? r : r.text}</li>`).join('');
+      html += '</ul></div>';
+    }
+
+    el.innerHTML = html;
+    return;
+  }
+
+  // === 旧格式兼容 ===
   if (data.index) {
     html += '<div class="subsection"><h3>📈 收盘指数</h3><div class="index-row">';
     html += Object.entries(data.index).map(([name, v]) => {
@@ -436,28 +502,19 @@ function renderPostmarket(data) {
     }).join("");
     html += '</div></div>';
   }
-
-  // 强主线
   if (data.strong_themes) {
     html += '<div class="subsection"><h3>🔥 强主线</h3><div class="theme-list">';
-    html += data.strong_themes.map(t => {
-      const s = typeof t === "string" ? { name: t, reason: "" } : t;
-      return `<div class="theme-item strong-theme"><b>${s.name}</b>${s.reason ? `<span class="muted"> — ${s.reason}</span>` : ""}</div>`;
-    }).join("");
+    html += data.strong_themes.map(t => `<div class="theme-item strong-theme"><b>${t.name}</b>${t.reason?`<span class="muted"> — ${t.reason}</span>`:''}</div>`).join('');
     html += '</div></div>';
   }
-
-  // 观察线
   if (data.watch_themes) {
     html += '<div class="subsection"><h3>👀 观察线</h3><div class="theme-list">';
-    html += data.watch_themes.map(t => `<div class="theme-item">${typeof t === "string" ? t : t.name}</div>`).join("");
+    html += data.watch_themes.map(t => `<div class="theme-item">${typeof t==="string"?t:t.name}</div>`).join('');
     html += '</div></div>';
   }
-
-  // 风险提示
   if (data.risks) {
     html += '<div class="subsection"><h3>⚠️ 风险提示</h3><ul class="news-list risk">';
-    html += data.risks.map(r => `<li>${typeof r === "string" ? r : r.text || r.desc}</li>`).join("");
+    html += data.risks.map(r => `<li>${typeof r==="string"?r:r.text||r.desc}</li>`).join('');
     html += '</ul></div>';
   }
 
@@ -495,10 +552,11 @@ function renderTopics(data) {
   if (!topics.length) { el.innerHTML = '<div class="empty">暂无专题跟踪</div>'; return; }
 
   el.innerHTML = topics.map(t => {
-    const statusCls = t.status === "强化" ? "strong" :
-                      t.status === "弱化" ? "sentiment" : "";
-    const statusBadge = t.status === "强化" ? "🔥" :
-                        t.status === "弱化" ? "🔻" : "➖";
+    const statusText = String(t.status || "");
+    const statusCls = statusText.includes("强化") || statusText.includes("强主线") ? "strong" :
+                      statusText.includes("弱化") || statusText.includes("退潮") ? "sentiment" : "";
+    const statusBadge = statusCls === "strong" ? "🔥" :
+                        statusCls === "sentiment" ? "🔻" : "➖";
     return `<div class="card ${statusCls}">
       <div class="card-head"><b>${t.name}</b></div>
       <div class="card-body">${statusBadge} ${t.status}${t.action ? ` · ${t.action}` : ""}</div>
