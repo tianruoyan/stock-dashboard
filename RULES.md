@@ -122,16 +122,21 @@ title: 分析模型说明书
 
 ### Codex ↔ Cola 同步协议（唯一真相源）
 
-**Codex 职责（写）：**
-1. 产出 JSON 时先写临时文件（如 `data/premarket.tmp`），写完后 `mv` 覆盖正式文件，确保原子写入
-2. 所有本轮 JSON 写完后，在仓库根目录创建 `.push-now` 空文件作为推送信号
-3. **Codex 不执行 git push**，推送全权由 Cola 负责
+**Codex 职责（写 + 可选推）：**
+1. 产出 JSON 时先写临时文件，写完后 `mv` 覆盖正式文件
+2. 所有本轮 JSON 写完后，创建 `.push-now` 信号文件
+3. 尝试 git push（静默，失败不报错）：成功最好，不成功 Cola 会补推
 
-**Cola 职责（推）：**
+**Cola 职责（推 + 兜底）：**
 1. 每 2 分钟扫描一次仓库
-2. 若发现 `.push-now` 存在：立即 `git add data/ && git commit && git push`（重试 3 次），成功后删除 `.push-now`
-3. 若 `.push-now` 不存在但有其他变更：正常推送（兜底）
-4. 盘前 9:16 / 9:26 额外定点推送（不等 2 分钟周期）
+2. 若发现 `.push-now`：立即 push（重试 3 次），成功后删信号
+3. 若 `.push-now` 不存在但有变更：照样 push（兜底）
+4. 盘前 9:16/9:26 定点推送
+
+**双保险设计：**
+- Codex push 成功 → .push-now 还在，Cola 下次扫描时发现已是最新，跳过
+- Codex push 失败 → .push-now 触发 Cola 重试推送
+- Cola 掉线 → Codex 自己的 push 仍有机会成功
 
 **同步时序：**
 ```
