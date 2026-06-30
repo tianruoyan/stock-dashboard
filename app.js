@@ -52,6 +52,7 @@ function render(file, data) {
 const ALERT_KEY = "stock_alerts_history";
 const MAX_ALERTS = 10;
 const ALERT_TTL = 6 * 60 * 60 * 1000; // 6小时过期
+const FUTURE_ALERT_TOLERANCE = 60 * 1000; // 行情源/浏览器轻微时间差容忍1分钟
 
 function loadAlertHistory() {
   try {
@@ -62,7 +63,10 @@ function loadAlertHistory() {
 
 function saveAlertHistory(alerts) {
   const now = Date.now();
-  const valid = alerts.filter(a => now - (a._received || 0) < ALERT_TTL);
+  const valid = alerts.filter(a =>
+    now - (a._received || 0) < ALERT_TTL &&
+    (!a._eventTime || a._eventTime <= now + FUTURE_ALERT_TOLERANCE)
+  );
   const latest = sortAlertsByEventTime(valid).slice(0, MAX_ALERTS);
   localStorage.setItem(ALERT_KEY, JSON.stringify(latest));
   return latest;
