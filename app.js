@@ -47,24 +47,72 @@ function render(file, data) {
 }
 
 /* =========================
-   盘中异动
+   盘中异动（保留最近10条）
 ========================= */
+const ALERT_KEY = "stock_alerts_history";
+const MAX_ALERTS = 10;
+const ALERT_TTL = 6 * 60 * 60 * 1000; // 6小时过期
+
+function loadAlertHistory() {
+  try {
+    const raw = localStorage.getItem(ALERT_KEY);
+    return raw ? JSON.parse(raw) : [];
+  } catch (e) { return []; }
+}
+
+function saveAlertHistory(alerts) {
+  const now = Date.now();
+  const valid = alerts.filter(a => now - (a._received || 0) < ALERT_TTL);
+  const latest = valid.slice(0, MAX_ALERTS);
+  localStorage.setItem(ALERT_KEY, JSON.stringify(latest));
+  return latest;
+}
+
+function mergeAlerts(history, incoming) {
+  const now = Date.now();
+  const merged = [...history];
+  const ids = new Set(history.map(a => a.id));
+  for (const a of incoming) {
+    if (!ids.has(a.id)) {
+      a._received = now;
+      merged.unshift(a);
+      ids.add(a.id);
+    }
+  }
+  return merged;
+}
+
 function renderAlerts(data) {
   const el = document.getElementById("alerts");
-  const alerts = data.alerts || [];
-  if (!alerts.length) { el.innerHTML = '<div class="empty">暂无盘中异动</div>'; return; }
+  const history = loadAlertHistory();
+  const incoming = data.alerts || [];
+  const merged = mergeAlerts(history, incoming);
+  const saved = saveAlertHistory(merged);
+  const now = Date.now();
 
-  el.innerHTML = alerts.map(a => {
+  if (!saved.length) { el.innerHTML = '<div class="empty">暂无盘中异动</div>'; return; }
+
+  el.innerHTML = saved.map((a, i) => {
+    const age = now - (a._received || now);
+    const ageMin = Math.floor(age / 60000);
+    const isOld = ageMin > 30;
+    const isStale = ageMin > 60;
+
     const cls = a.is_old_economy ? "card sentiment" :
                 a.signal_type?.includes("交易") ? "card hot" : "card";
+    const fadeCls = isStale ? " faded" : isOld ? " dim" : "";
+    const ageLabel = ageMin < 1 ? "刚刚" : ageMin < 60 ? `${ageMin}分钟前` : `${Math.floor(ageMin / 60)}小时前`;
+
     const badge = a.is_old_economy ? '<span class="badge old">老登</span>' :
-                  a.signal_type?.includes("交易") ? '<span class="badge signal">交易信号</span>' : '';
+                  a.signal_type?.includes("交易") ? '<span class="badge signal">交易信号</span>' :
+                  a.signal_type?.includes("放量") ? '<span class="badge volume">放量</span>' :
+                  a.signal_type?.includes("风险") ? '<span class="badge risk">风险</span>' : '';
     const leaders = (a.leaders || []).slice(0, 3).map(l =>
       `<span class="leader">${l.name} <span class="pct ${l.change_pct >= 0 ? 'up' : 'down'}">${l.change_pct > 0 ? '+' : ''}${l.change_pct}%</span></span>`
     ).join(" ");
 
-    return `<div class="${cls}">
-      <div class="card-head">${badge}<b>${a.sector}</b><span class="time">${a.time}</span></div>
+    return `<div class="${cls}${fadeCls}">
+      <div class="card-head">${badge}<b>${a.sector}</b><span class="time">${a.time} · ${ageLabel}</span></div>
       <div class="card-body">${a.type} · ${a.reason || ""}</div>
       ${leaders ? `<div class="card-leaders">${leaders}</div>` : ""}
     </div>`;
