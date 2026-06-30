@@ -46,6 +46,36 @@ function render(file, data) {
   if (file.includes("topics"))   renderTopics(data);
 }
 
+function formatUpdateTime(timestamp) {
+  if (!timestamp) return "";
+  const date = new Date(timestamp);
+  if (Number.isNaN(date.getTime())) return String(timestamp);
+  return date.toLocaleString("zh-CN", {
+    timeZone: "Asia/Shanghai",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+    hour12: false
+  }).replace(/\//g, "-");
+}
+
+function updatePanelMeta(targetId, timestamp) {
+  const target = document.getElementById(targetId);
+  const panel = target?.closest(".panel");
+  if (!panel) return;
+  let meta = panel.querySelector(".update-meta");
+  if (!meta) {
+    meta = document.createElement("div");
+    meta.className = "update-meta";
+    const heading = panel.querySelector("h2");
+    heading?.insertAdjacentElement("afterend", meta);
+  }
+  const text = formatUpdateTime(timestamp);
+  meta.innerHTML = text ? `<span class="updated-dot"></span>已更新 · ${text}` : "";
+}
+
 /* =========================
    盘中异动（保留最近10条）
 ========================= */
@@ -114,6 +144,7 @@ function alertEventTime(alert, baseTimestamp, fallbackMs) {
 }
 
 function renderAlerts(data) {
+  updatePanelMeta("alerts", data.timestamp);
   const el = document.getElementById("alerts");
   const now = Date.now();
   localStorage.removeItem(ALERT_KEY);
@@ -156,6 +187,7 @@ function renderAlerts(data) {
    盘中全景（双格式兼容）
 ========================= */
 function renderIntraday(data) {
+  updatePanelMeta("intraday-indices", data.timestamp);
   // 指数行
   const idxEl = document.getElementById("intraday-indices");
   if (data.indices) {
@@ -291,6 +323,7 @@ function renderMappingChain(items) {
    盘前简报
 ========================= */
 function renderPremarket(data) {
+  updatePanelMeta("premarket", data.timestamp);
   const el = document.getElementById("premarket");
   let html = "";
 
@@ -423,6 +456,7 @@ function renderPremarket(data) {
    盘后复盘
 ========================= */
 function renderPostmarket(data) {
+  updatePanelMeta("postmarket", data.timestamp);
   const el = document.getElementById("postmarket");
   let html = "";
 
@@ -525,6 +559,7 @@ function renderPostmarket(data) {
    晚间舆情
 ========================= */
 function renderEvening(data) {
+  updatePanelMeta("evening", data.timestamp);
   const el = document.getElementById("evening");
 
   let html = "";
@@ -547,6 +582,7 @@ function renderEvening(data) {
    专题跟踪
 ========================= */
 function renderTopics(data) {
+  updatePanelMeta("topics", data.timestamp);
   const el = document.getElementById("topics");
   const topics = data.topics || [];
   if (!topics.length) { el.innerHTML = '<div class="empty">暂无专题跟踪</div>'; return; }
@@ -557,8 +593,10 @@ function renderTopics(data) {
                       statusText.includes("弱化") || statusText.includes("退潮") ? "sentiment" : "";
     const statusBadge = statusCls === "strong" ? "🔥" :
                         statusCls === "sentiment" ? "🔻" : "➖";
+    const updatedAt = formatUpdateTime(t.updated_at || t.timestamp || data.timestamp);
     return `<div class="card ${statusCls}">
       <div class="card-head"><b>${t.name}</b></div>
+      ${updatedAt ? `<div class="card-updated"><span class="updated-dot"></span>已更新 · ${updatedAt}</div>` : ""}
       <div class="card-body">${statusBadge} ${t.status}${t.action ? ` · ${t.action}` : ""}</div>
       ${t.note ? `<div class="card-body muted">${t.note}</div>` : ""}
     </div>`;
