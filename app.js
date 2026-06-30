@@ -139,6 +139,11 @@ function renderIntraday(data) {
   }
 
   // Cola 格式: 概念/行业涨跌榜
+  // 先恢复四栏网格
+  document.querySelectorAll('#intraday-indices + .sector-grid').forEach(el => el.style.display = '');
+  const analysisEl = document.getElementById('intraday-analysis');
+  if (analysisEl) analysisEl.style.display = 'none';
+
   if (data.concept_top5 || data.industry_top5) {
     renderSectorList("concept-top", data.concept_top5, "up");
     renderSectorList("concept-bot", data.concept_bottom5, "down");
@@ -195,18 +200,17 @@ function renderCodexIntraday(data) {
     html += '</div>';
   }
 
-  // 清空四个排行榜区域，用分析内容替换
-  ["concept-top","concept-bot","industry-top","industry-bot"].forEach(id => document.getElementById(id).innerHTML = '');
-  
-  // 把分析内容塞到 concept-top 位置（占据整个板块面板）
-  const container = document.getElementById("concept-top");
-  if (container) container.innerHTML = html;
-
-  // 清空其他三栏
-  ["concept-bot","industry-top","industry-bot"].forEach(id => {
-    const el = document.getElementById(id);
-    if (el) el.parentElement.style.display = 'none';
-  });
+  // 隐藏四栏网格，显示全宽分析
+  document.querySelectorAll('#intraday-indices + .sector-grid').forEach(el => el.style.display = 'none');
+  let analysisEl = document.getElementById('intraday-analysis');
+  if (!analysisEl) {
+    analysisEl = document.createElement('div');
+    analysisEl.id = 'intraday-analysis';
+    const indicesEl = document.getElementById('intraday-indices');
+    indicesEl.parentNode.insertBefore(analysisEl, indicesEl.nextSibling);
+  }
+  analysisEl.innerHTML = html;
+  analysisEl.style.display = 'block';
 }
 
 function renderSectorList(elId, sectors, dir) {
