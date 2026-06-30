@@ -63,30 +63,57 @@ function loadAlertHistory() {
 function saveAlertHistory(alerts) {
   const now = Date.now();
   const valid = alerts.filter(a => now - (a._received || 0) < ALERT_TTL);
-  const latest = valid.slice(0, MAX_ALERTS);
+  const latest = sortAlertsByEventTime(valid).slice(0, MAX_ALERTS);
   localStorage.setItem(ALERT_KEY, JSON.stringify(latest));
   return latest;
 }
 
-function mergeAlerts(history, incoming) {
+function mergeAlerts(history, incoming, baseTimestamp) {
   const now = Date.now();
-  const merged = [...history];
+  const merged = history.map(a => normalizeAlertTime(a, baseTimestamp, now));
   const ids = new Set(history.map(a => a.id));
   for (const a of incoming) {
     if (!ids.has(a.id)) {
-      a._received = now;
-      merged.unshift(a);
+      merged.push(normalizeAlertTime({ ...a, _received: now }, baseTimestamp, now));
       ids.add(a.id);
+    } else {
+      const index = merged.findIndex(item => item.id === a.id);
+      if (index >= 0) {
+        merged[index] = normalizeAlertTime({ ...merged[index], ...a }, baseTimestamp, now);
+      }
     }
   }
-  return merged;
+  return sortAlertsByEventTime(merged);
+}
+
+function normalizeAlertTime(alert, baseTimestamp, fallbackMs) {
+  if (!alert._received) alert._received = fallbackMs;
+  alert._eventTime = alertEventTime(alert, baseTimestamp, fallbackMs);
+  return alert;
+}
+
+function sortAlertsByEventTime(alerts) {
+  return alerts.slice().sort((a, b) =>
+    (b._eventTime || 0) - (a._eventTime || 0) ||
+    (b._received || 0) - (a._received || 0)
+  );
+}
+
+function alertEventTime(alert, baseTimestamp, fallbackMs) {
+  const idDate = String(alert.id || "").match(/^(\d{4})(\d{2})(\d{2})/);
+  const base = idDate
+    ? `${idDate[1]}-${idDate[2]}-${idDate[3]}`
+    : (baseTimestamp ? String(baseTimestamp).slice(0, 10) : new Date(fallbackMs).toISOString().slice(0, 10));
+  const time = /^\d{2}:\d{2}:\d{2}$/.test(alert.time || "") ? alert.time : "00:00:00";
+  const parsed = Date.parse(`${base}T${time}+08:00`);
+  return Number.isNaN(parsed) ? fallbackMs : parsed;
 }
 
 function renderAlerts(data) {
   const el = document.getElementById("alerts");
   const history = loadAlertHistory();
   const incoming = data.alerts || [];
-  const merged = mergeAlerts(history, incoming);
+  const merged = mergeAlerts(history, incoming, data.timestamp);
   const saved = saveAlertHistory(merged);
   const now = Date.now();
 
