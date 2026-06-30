@@ -140,7 +140,7 @@ function renderIntraday(data) {
 
   // Cola 格式: 概念/行业涨跌榜
   // 先恢复四栏网格
-  document.querySelectorAll('#intraday-indices + .sector-grid').forEach(el => el.style.display = '');
+  document.querySelectorAll('.sector-grid').forEach(el => el.style.display = '');
   const analysisEl = document.getElementById('intraday-analysis');
   if (analysisEl) analysisEl.style.display = 'none';
 
@@ -201,7 +201,7 @@ function renderCodexIntraday(data) {
   }
 
   // 隐藏四栏网格，显示全宽分析
-  document.querySelectorAll('#intraday-indices + .sector-grid').forEach(el => el.style.display = 'none');
+  document.querySelectorAll('.sector-grid').forEach(el => el.style.display = 'none');
   let analysisEl = document.getElementById('intraday-analysis');
   if (!analysisEl) {
     analysisEl = document.createElement('div');
