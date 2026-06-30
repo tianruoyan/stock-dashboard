@@ -291,125 +291,66 @@ body {
 
 /* ===== 移动端响应式 ===== */
 @media (max-width: 768px) {
-  body {
-    overflow-x: hidden;
-    word-break: break-word;
-  }
+  /* 全局: 防溢出 + 统一字号 */
+  body { overflow-x: hidden; }
+  *, *::before, *::after { word-break: break-word; overflow-wrap: break-word; }
+
+  /* 统一基础字号 */
+  body { font-size: 12px; }
+  .panel h2 { font-size: 13px; margin-bottom: 8px; }
+  .panel h3 { font-size: 12px; margin-top: 10px; }
 
   .topbar {
-    flex-wrap: wrap;
-    gap: 6px;
-    font-size: 12px;
-    padding: 10px 12px;
+    flex-wrap: wrap; gap: 4px;
+    font-size: 11px; padding: 8px 10px;
   }
-  .topbar .left a { display: block; margin-top: 2px; }
+  .topbar .left a { display: block; margin-top: 1px; font-size: 10px; }
 
-  .panel {
-    padding: 12px;
-  }
-  .panel h2 {
-    font-size: 14px;
-    margin-bottom: 10px;
-  }
+  .panel { padding: 10px; }
 
-  /* 板块排行: 2列→上下排列 */
-  .sector-grid {
-    grid-template-columns: 1fr;
-    gap: 10px;
-  }
-  .sector-col h3 {
-    font-size: 12px;
-  }
+  /* 板块排行: 2列→1列 */
+  .sector-grid { grid-template-columns: 1fr; gap: 8px; }
+  .sector-col h3 { font-size: 11px; }
+  .sector-row { font-size: 12px; gap: 4px; }
+  .sector-row .rank { width: 14px; font-size: 10px; }
+  .sector-row .sector-name { min-width: 0; flex: 1; font-size: 12px; }
+  .sector-row .sector-pct { width: auto; min-width: 42px; font-size: 11px; }
+  .sector-row .bar { width: 30px; height: 3px; }
 
-  /* 盘前三栏: 堆叠 */
-  .line-grid {
-    grid-template-columns: 1fr;
-    gap: 10px;
-  }
+  /* 盘前三栏 */
+  .line-grid { grid-template-columns: 1fr; gap: 8px; }
 
   /* 卡片全宽 */
-  .card {
-    width: 100%;
-  }
-  .strategy-card {
-    width: 100%;
-  }
+  .card, .strategy-card { width: 100% !important; padding: 8px; font-size: 11px; }
+  .card-head { font-size: 11px; flex-wrap: wrap; }
+  .card-body { font-size: 10px; }
+  .card-leaders { font-size: 10px; }
+  .leader { font-size: 10px; padding: 1px 5px; margin-right: 4px; }
+  .badge { font-size: 9px; padding: 1px 4px; }
+  .time { font-size: 10px; }
 
-  /* 文本块防溢出 */
-  .news-list li,
-  .theme-item,
-  .breadth,
-  pre {
-    word-break: break-word;
-    overflow-wrap: break-word;
-    white-space: normal;
-    max-width: 100%;
-  }
+  /* 网格间距 */
+  .grid { gap: 6px; }
 
-  /* 指数行: 紧凑排列 */
-  .index-row {
-    gap: 6px;
-    flex-wrap: wrap;
-  }
-  .index-item {
-    padding: 4px 8px;
-    font-size: 12px;
-  }
+  /* 指数行 */
+  .index-row { gap: 4px; }
+  .index-item { padding: 3px 6px; font-size: 11px; }
 
-  /* 表格横滚 */
-  .trend-table {
-    font-size: 12px;
-  }
-  .trend-table th,
-  .trend-table td {
-    padding: 4px 6px;
-  }
+  /* 文本块 */
+  .news-list li { font-size: 11px; padding: 5px 8px; }
+  .theme-item { font-size: 11px; padding: 6px 8px; }
+  .breadth { font-size: 11px; padding: 6px 8px; }
+  .tag { font-size: 10px; padding: 1px 6px; }
+  .tag-row { font-size: 10px; }
 
-  /* 异动卡片 */
-  .grid {
-    gap: 8px;
-  }
-  .card {
-    padding: 10px;
-    font-size: 12px;
-  }
-  .card-head {
-    font-size: 12px;
-  }
-  .card-body {
-    font-size: 11px;
-  }
+  /* 策略卡片 */
+  .strategy-card .card-body { font-size: 10px; }
+  .strategy-card .badge { font-size: 9px; }
 
-  /* 页面底部 */
-  .footer {
-    padding: 16px 12px;
-    font-size: 11px;
-  }
+  /* 页脚 */
+  .footer { padding: 12px 10px; font-size: 10px; }
 
-  /* 柱状图缩窄 */
-  .sector-row .bar {
-    width: 40px;
-  }
-  .sector-row .sector-name {
-    font-size: 12px;
-  }
-  .sector-row .sector-pct {
-    font-size: 11px;
-    width: 48px;
-  }
-}
-
-@media (max-width: 400px) {
-  .topbar {
-    font-size: 11px;
-  }
-  .panel h2 {
-    font-size: 13px;
-  }
-  .card {
-    font-size: 11px;
-  }
-  .sector-row {
-    font-size: 11px;
-  }
+  /* 柱状图 */
+  .bar { height: 3px; }
+  .bar-fill { height: 100%; }
 }
