@@ -120,7 +120,7 @@ function renderAlerts(data) {
 }
 
 /* =========================
-   盘中全景
+   盘中全景（双格式兼容）
 ========================= */
 function renderIntraday(data) {
   // 指数行
@@ -132,11 +132,81 @@ function renderIntraday(data) {
     }).join("");
   }
 
-  // 概念涨跌榜
-  renderSectorList("concept-top", data.concept_top5, "up");
-  renderSectorList("concept-bot", data.concept_bottom5, "down");
-  renderSectorList("industry-top", data.industry_top5, "up");
-  renderSectorList("industry-bot", data.industry_bottom5, "down");
+  // Codex 格式: 深度分析（main_trends 含 status/evidence）
+  if (data.main_trends && data.main_trends.length && data.main_trends[0].status) {
+    renderCodexIntraday(data);
+    return;
+  }
+
+  // Cola 格式: 概念/行业涨跌榜
+  if (data.concept_top5 || data.industry_top5) {
+    renderSectorList("concept-top", data.concept_top5, "up");
+    renderSectorList("concept-bot", data.concept_bottom5, "down");
+    renderSectorList("industry-top", data.industry_top5, "up");
+    renderSectorList("industry-bot", data.industry_bottom5, "down");
+    return;
+  }
+
+  // 老格式兼容
+  if (data.main_trends && data.main_trends.length) {
+    renderSectorList("concept-top", data.main_trends, "up");
+    ["concept-bot","industry-top","industry-bot"].forEach(id => document.getElementById(id).innerHTML = '<div class="empty-sm">--</div>');
+  }
+}
+
+function renderCodexIntraday(data) {
+  let html = '';
+
+  // 涨停情绪
+  if (data.sentiment || data.limit_up_count) {
+    const s = data.sentiment || {};
+    const lu = s.limit_up_count || data.limit_up_count || 0;
+    const ld = s.limit_down_count || data.limit_down_count || 0;
+    html += `<div class="subsection"><h3>⚡ 涨停情绪</h3><div class="breadth">涨停 <b>${lu}</b> / 跌停 <b>${ld}</b> · 差值 <span class="up">+${lu-ld}</span> · ${s.limit_ratio||''}${s.interpretation ? `<br><span class="muted">${s.interpretation}</span>` : ''}</div></div>`;
+  }
+
+  // 主线分析
+  if (data.main_trends) {
+    html += '<div class="subsection"><h3>🔥 主线研判</h3>';
+    html += data.main_trends.map(t => {
+      const cls = (t.status||'').includes('强') ? 'strong-theme' : '';
+      return `<div class="theme-item ${cls}"><b>${t.name}</b> <span class="muted">— ${t.status}</span><br><span style="font-size:12px">${t.evidence||''}</span></div>`;
+    }).join('');
+    html += '</div>';
+  }
+
+  // 操作建议
+  if (data.actions) {
+    html += '<div class="subsection"><h3>💡 午后建议</h3><ul class="news-list">';
+    html += data.actions.map(a => `<li>${a}</li>`).join('');
+    html += '</ul></div>';
+  }
+
+  // 专项观察
+  if (data.special_watch) {
+    html += '<div class="subsection"><h3>🔍 专项观察</h3>';
+    const groups = Object.entries(data.special_watch);
+    for (const [key, stocks] of groups) {
+      if (!Array.isArray(stocks) || !stocks.length) continue;
+      const label = { semiconductor_five: '半导体五只', electronic_cloth_glassfiber: '电子布/玻纤链' }[key] || key;
+      html += `<h4 style="font-size:12px;color:#8B949E;margin:8px 0 4px">${label}</h4>`;
+      html += stocks.map(s => `<div class="theme-item" style="font-size:12px;padding:6px 10px;margin-bottom:3px"><b>${s.name}</b> <span class="${(s.pct||0)>=0?'up':'down'}">${(s.pct||0)>0?'+':''}${s.pct}%</span> · ${s.status}${s.risk?` <span class="muted" style="font-size:10px">⚠ ${s.risk}</span>`:''}</div>`).join('');
+    }
+    html += '</div>';
+  }
+
+  // 清空四个排行榜区域，用分析内容替换
+  ["concept-top","concept-bot","industry-top","industry-bot"].forEach(id => document.getElementById(id).innerHTML = '');
+  
+  // 把分析内容塞到 concept-top 位置（占据整个板块面板）
+  const container = document.getElementById("concept-top");
+  if (container) container.innerHTML = html;
+
+  // 清空其他三栏
+  ["concept-bot","industry-top","industry-bot"].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.parentElement.style.display = 'none';
+  });
 }
 
 function renderSectorList(elId, sectors, dir) {
