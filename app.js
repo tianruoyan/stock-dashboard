@@ -2,6 +2,7 @@ const FILES = [
   "data/alert.json",
   "data/intraday.json",
   "data/premarket.json",
+  "data/midday.json",
   "data/postmarket.json",
   "data/evening-sentiment.json",
   "data/topics.json"
@@ -41,6 +42,7 @@ function render(file, data) {
   if (file.includes("alert"))    renderAlerts(data);
   if (file.includes("intraday")) renderIntraday(data);
   if (file.includes("premarket")) renderPremarket(data);
+  if (file.includes("midday"))   renderMidday(data);
   if (file.includes("postmarket")) renderPostmarket(data);
   if (file.includes("evening"))  renderEvening(data);
   if (file.includes("topics"))   renderTopics(data);
@@ -453,7 +455,58 @@ function renderPremarket(data) {
 }
 
 /* =========================
-   盘后复盘
+   午盘盘前（11:30午间产出）
+========================= */
+function renderMidday(data) {
+  updatePanelMeta("midday", data.timestamp);
+  const el = document.getElementById("midday");
+  let html = "";
+
+  // 上午数据快照
+  if (data.morning_snapshot) {
+    html += '<div class="subsection"><h3>📈 上午快照</h3><div class="breadth">';
+    html += data.morning_snapshot;
+    html += '</div></div>';
+  }
+
+  // 上午复盘
+  if (data.morning_review) {
+    html += '<div class="subsection"><h3>📋 上午复盘</h3>';
+    const mr = data.morning_review;
+    if (mr.one_sentence) html += `<div class="breadth">${mr.one_sentence}</div>`;
+    if (mr.main_trends) {
+      html += mr.main_trends.map(t =>
+        `<div class="theme-item ${(t.status||'').includes('强')?'strong-theme':''}"><b>${t.name}</b> <span class="muted">— ${t.status}</span>${t.evidence?`<br><span style="font-size:12px">${t.evidence}</span>`:''}</div>`
+      ).join('');
+    }
+    html += '</div>';
+  }
+
+  // 下午信号
+  if (data.afternoon_watch) {
+    html += '<div class="subsection"><h3>🔮 下午信号</h3><ul class="news-list">';
+    html += data.afternoon_watch.map(w => `<li>${w}</li>`).join('');
+    html += '</ul></div>';
+  }
+
+  // 风险提示
+  const risks = data.risk || data.risks;
+  if (risks) {
+    html += '<div class="subsection"><h3>⚠️ 下午风险</h3><ul class="news-list risk">';
+    html += risks.map(r => `<li>${typeof r==="string"?r:r.text}</li>`).join('');
+    html += '</ul></div>';
+  }
+
+  // 旧格式兼容（纯文本）
+  if (!html && data.content) {
+    html = `<pre style="white-space:pre-wrap;font-size:13px">${data.content}</pre>`;
+  }
+
+  el.innerHTML = html || '<div class="empty">午间休市后更新</div>';
+}
+
+/* =========================
+   午盘盘后
 ========================= */
 function renderPostmarket(data) {
   updatePanelMeta("postmarket", data.timestamp);
