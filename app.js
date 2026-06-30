@@ -115,16 +115,18 @@ function alertEventTime(alert, baseTimestamp, fallbackMs) {
 
 function renderAlerts(data) {
   const el = document.getElementById("alerts");
-  const history = loadAlertHistory();
-  const incoming = data.alerts || [];
-  const merged = mergeAlerts(history, incoming, data.timestamp);
-  const saved = saveAlertHistory(merged);
   const now = Date.now();
+  localStorage.removeItem(ALERT_KEY);
+  const saved = sortAlertsByEventTime(
+    (data.alerts || [])
+      .map(a => normalizeAlertTime({ ...a, _received: alertEventTime(a, data.timestamp, now) }, data.timestamp, now))
+      .filter(a => !a._eventTime || a._eventTime <= now + FUTURE_ALERT_TOLERANCE)
+  ).slice(0, MAX_ALERTS);
 
   if (!saved.length) { el.innerHTML = '<div class="empty">暂无盘中异动</div>'; return; }
 
   el.innerHTML = saved.map((a, i) => {
-    const age = now - (a._received || now);
+    const age = now - (a._eventTime || a._received || now);
     const ageMin = Math.floor(age / 60000);
     const isOld = ageMin > 30;
     const isStale = ageMin > 60;
