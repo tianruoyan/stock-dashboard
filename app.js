@@ -158,6 +158,15 @@ function renderSectorList(elId, sectors, dir) {
   }).join("");
 }
 
+function formatPct(value) {
+  if (typeof value !== "number") return "--";
+  return `${value > 0 ? "+" : ""}${value}%`;
+}
+
+function pctClass(value) {
+  return typeof value === "number" && value < 0 ? "down" : "up";
+}
+
 /* =========================
    盘前简报
 ========================= */
@@ -207,14 +216,41 @@ function renderPremarket(data) {
 
   // === 旧格式兼容: 美股隔夜 + 要闻 + 策略卡片 ===
   if (data.us_overnight) {
-    html += '<div class="subsection"><h3>🇺🇸 美股隔夜</h3>';
+    html += '<div class="subsection"><h3>🇺🇸 隔夜外部环境</h3>';
     if (data.us_overnight.indices) {
       html += '<div class="index-row">' + Object.entries(data.us_overnight.indices).map(([name, v]) =>
-        `<span class="index-item">${name} <span class="${v >= 0 ? 'up' : 'down'}">${v > 0 ? '+' : ''}${v}%</span></span>`
+        `<span class="index-item">${name} <span class="${pctClass(v)}">${formatPct(v)}</span></span>`
       ).join("") + '</div>';
+    }
+    if (data.us_overnight.tech_stocks) {
+      html += '<div class="tag-row">重点科技股：' + data.us_overnight.tech_stocks.map(s => `<span class="tag">${typeof s === "string" ? s : `${s.name || s.symbol || ""}${s.change_pct !== undefined ? ` ${formatPct(s.change_pct)}` : ""}`}</span>`).join(" ") + '</div>';
+    }
+    if (data.us_overnight.japan_korea) {
+      html += '<div class="tag-row">日韩早盘：' + data.us_overnight.japan_korea.map(s => `<span class="tag">${typeof s === "string" ? s : `${s.name || s.market || ""}${s.change_pct !== undefined ? ` ${formatPct(s.change_pct)}` : ""}`}</span>`).join(" ") + '</div>';
     }
     if (data.us_overnight.hot_sectors) {
       html += '<div class="tag-row">热点：' + data.us_overnight.hot_sectors.map(s => `<span class="tag">${s}</span>`).join(" ") + '</div>';
+    }
+    if (data.us_overnight.weak_sectors) {
+      html += '<div class="tag-row">弱势：' + data.us_overnight.weak_sectors.map(s => `<span class="tag">${s}</span>`).join(" ") + '</div>';
+    }
+    html += '</div>';
+  }
+  if (data.hk_auction) {
+    html += '<div class="subsection"><h3>🇭🇰 港股竞价</h3>';
+    if (data.hk_auction.indices) {
+      html += '<div class="index-row">' + Object.entries(data.hk_auction.indices).map(([name, v]) =>
+        `<span class="index-item">${name} <span class="${pctClass(v)}">${formatPct(v)}</span></span>`
+      ).join("") + '</div>';
+    }
+    if (data.hk_auction.sectors) {
+      html += '<div class="tag-row">板块：' + data.hk_auction.sectors.map(s => `<span class="tag">${typeof s === "string" ? s : `${s.name || s.sector || ""}${s.strength ? `：${s.strength}` : ""}`}</span>`).join(" ") + '</div>';
+    }
+    if (data.hk_auction.stocks) {
+      html += '<div class="tag-row">代表股：' + data.hk_auction.stocks.map(s => `<span class="tag">${typeof s === "string" ? s : `${s.name || s.symbol || ""}${s.change_pct !== undefined ? ` ${formatPct(s.change_pct)}` : ""}`}</span>`).join(" ") + '</div>';
+    }
+    if (data.hk_auction.sentiment) {
+      html += `<div class="theme-item">${data.hk_auction.sentiment}</div>`;
     }
     html += '</div>';
   }
