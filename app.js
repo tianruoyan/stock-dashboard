@@ -163,10 +163,49 @@ function renderSectorList(elId, sectors, dir) {
 ========================= */
 function renderPremarket(data) {
   const el = document.getElementById("premarket");
-
   let html = "";
 
-  // 美股隔夜
+  // === Codex 格式: 集合竞价 + 情绪判断 ===
+  if (data.market_context || data.strong_lines || data.watch_lines) {
+    // 竞价情绪
+    if (data.market_context) {
+      const ctx = data.market_context;
+      const mood = (ctx.limit_diff || 0) >= 0 ? 'up' : 'down';
+      html += '<div class="subsection"><h3>⚡ 集合竞价情绪</h3>';
+      html += `<div class="breadth">涨停 <b>${ctx.limit_up_count||0}</b> / 跌停 <b>${ctx.limit_down_count||0}</b> · 差值 <span class="${mood}">${ctx.limit_diff||0}</span> · 涨停:跌停 <b>${ctx.limit_ratio||'-'}</b>${ctx.denominator ? `<span class="muted"> (${ctx.denominator})</span>` : ''}</div>`;
+      html += '</div>';
+    }
+
+    // 总结
+    if (data.strategy && typeof data.strategy === 'string') {
+      html += `<div class="subsection"><h3>📋 盘前研判</h3><div class="theme-item">${data.strategy}</div></div>`;
+    }
+    if (data.summary) {
+      html += `<div class="subsection"><h3>💡 操作思路</h3><div class="theme-item">${data.summary}</div></div>`;
+    }
+
+    // 强主线/观察线/风险线 三栏
+    if (data.strong_lines || data.watch_lines || data.risk_lines) {
+      html += '<div class="subsection"><div class="line-grid">';
+      if (data.strong_lines) {
+        html += '<div><h3>🔥 强主线</h3><ul class="news-list strong">' + data.strong_lines.map(l => `<li>${l}</li>`).join("") + '</ul></div>';
+      }
+      if (data.watch_lines) {
+        html += '<div><h3>👀 观察线</h3><ul class="news-list">' + data.watch_lines.map(l => `<li>${l}</li>`).join("") + '</ul></div>';
+      }
+      if (data.risk_lines) {
+        html += '<div><h3>⚠️ 风险线</h3><ul class="news-list risk">' + data.risk_lines.map(l => `<li>${l}</li>`).join("") + '</ul></div>';
+      }
+      html += '</div></div>';
+    }
+
+    // 来源
+    if (data.sources) {
+      html += '<div class="subsection"><span class="muted" style="font-size:11px">数据源：' + data.sources.map(s => s.url ? `<a href="${s.url}" target="_blank" style="color:#58A6FF">${s.name}</a>` : s.name).join(" · ") + '</span></div>';
+    }
+  }
+
+  // === 旧格式兼容: 美股隔夜 + 要闻 + 策略卡片 ===
   if (data.us_overnight) {
     html += '<div class="subsection"><h3>🇺🇸 美股隔夜</h3>';
     if (data.us_overnight.indices) {
@@ -179,25 +218,16 @@ function renderPremarket(data) {
     }
     html += '</div>';
   }
-
-  // 盘前资讯
   if (data.overnight_news) {
     html += '<div class="subsection"><h3>📰 隔夜要闻</h3><ul class="news-list">';
     html += data.overnight_news.map(n => `<li>${typeof n === "string" ? n : n.text || n.title}</li>`).join("");
     html += '</ul></div>';
   }
-
-  // 策略建议
-  if (data.strategy) {
+  if (data.strategy && Array.isArray(data.strategy)) {
     html += '<div class="subsection"><h3>🎯 今日策略</h3><div class="grid">';
     html += data.strategy.map(s => {
-      const actionCls = (s.action || "").includes("加") ? "action-buy" :
-                        (s.action || "").includes("减") ? "action-sell" : "action-hold";
-      return `<div class="card strategy-card ${actionCls}">
-        <div class="card-head"><span class="badge ${actionCls}">${s.action}</span></div>
-        <div class="card-body">${(s.logic || []).map(l => `· ${l}`).join("<br>")}</div>
-        ${s.target ? `<div class="card-body muted">关注：${s.target}</div>` : ""}
-      </div>`;
+      const actionCls = (s.action || "").includes("加") ? "action-buy" : (s.action || "").includes("减") ? "action-sell" : "action-hold";
+      return `<div class="card strategy-card ${actionCls}"><div class="card-head"><span class="badge ${actionCls}">${s.action}</span></div><div class="card-body">${(s.logic||[]).map(l=>'· '+l).join("<br>")}</div>${s.target?`<div class="card-body muted">关注：${s.target}</div>`:""}</div>`;
     }).join("");
     html += '</div></div>';
   }
