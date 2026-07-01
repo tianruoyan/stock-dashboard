@@ -78,6 +78,15 @@ function updatePanelMeta(targetId, timestamp) {
   meta.innerHTML = text ? `<span class="updated-dot"></span>已更新 · ${text}` : "";
 }
 
+function escapeHtml(value) {
+  return String(value ?? "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
 /* =========================
    盘中异动（保留最近10条）
 ========================= */
@@ -709,19 +718,64 @@ function renderEvening(data) {
   const el = document.getElementById("evening");
 
   let html = "";
+  const news = data.news || [];
+  const summary = data.sentiment_summary || {};
+  const counts = summary.counts || {};
 
-  if (data.news) {
-    html += '<ul class="news-list">';
-    html += data.news.map(n => {
-      const text = typeof n === "string" ? n : n.text || n.title;
-      const source = n.source ? `<span class="muted">— ${n.source}</span>` : "";
-      const tag = n.tag ? `<span class="tag">${n.tag}</span>` : "";
-      return `<li>${tag}${text}${source}</li>`;
+  if (summary.headline || summary.overall) {
+    html += `<div class="sentiment-brief">
+      <div class="sentiment-title">
+        <span class="badge sentiment-overall">${escapeHtml(summary.overall || "待判断")}</span>
+        <b>${escapeHtml(summary.headline || "晚间舆情待研判")}</b>
+      </div>
+      <div class="sentiment-counts">
+        <span class="sentiment-pill positive">正面 ${counts["正面"] || 0}</span>
+        <span class="sentiment-pill negative">负面 ${counts["负面"] || 0}</span>
+        <span class="sentiment-pill neutral">中性 ${counts["中性"] || 0}</span>
+      </div>
+    </div>`;
+  }
+
+  const groups = [
+    ["正面", "偏正面", "positive"],
+    ["负面", "偏负面", "negative"],
+    ["中性", "中性 / 待验证", "neutral"]
+  ];
+
+  if (news.length) {
+    html += '<div class="sentiment-grid">';
+    html += groups.map(([key, title, cls]) => {
+      const items = news.filter(n => (typeof n === "string" ? "中性" : n.sentiment || "中性") === key);
+      return `<div class="sentiment-col ${cls}">
+        <h3>${title}</h3>
+        ${items.length ? items.map(renderEveningItem).join("") : '<div class="empty-sm">暂无</div>'}
+      </div>`;
     }).join("");
-    html += '</ul>';
+    html += '</div>';
   }
 
   el.innerHTML = html || '<div class="empty">晚间舆情待更新</div>';
+}
+
+function renderEveningItem(item) {
+  if (typeof item === "string") {
+    return `<div class="sentiment-item neutral"><div class="sentiment-text">${escapeHtml(item)}</div></div>`;
+  }
+  const sentiment = item.sentiment || "中性";
+  const cls = sentiment === "正面" ? "positive" : sentiment === "负面" ? "negative" : "neutral";
+  const title = item.stock ? `${item.stock} · ${item.tag || "公告"}` : (item.tag || "舆情");
+  const source = item.source ? `<span class="muted">${escapeHtml(item.source)}</span>` : "";
+  const takeaway = item.takeaway || item.impact || "";
+  const verify = item.verify_next_day ? `<div class="sentiment-verify">验证：${escapeHtml(item.verify_next_day)}</div>` : "";
+  return `<div class="sentiment-item ${cls}">
+    <div class="sentiment-item-head">
+      <span class="tag">${escapeHtml(title)}</span>
+      ${source}
+    </div>
+    <div class="sentiment-text">${escapeHtml(item.text || item.title || "")}</div>
+    ${takeaway ? `<div class="sentiment-takeaway">${escapeHtml(takeaway)}</div>` : ""}
+    ${verify}
+  </div>`;
 }
 
 /* =========================
