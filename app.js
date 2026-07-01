@@ -201,6 +201,16 @@ function renderIntraday(data) {
 
   // Codex 格式: 深度分析（main_trends 含 status 或 themes 存在）
   if (data.main_trends && data.main_trends.length && (typeof data.main_trends[0] === 'object' ? data.main_trends[0].status : true)) {
+    // 同时显示板块排行（如果有）
+    if (data.concept_top5 || data.industry_top5) {
+      document.querySelectorAll('.sector-grid').forEach(el => el.style.display = '');
+      const analysisEl = document.getElementById('intraday-analysis');
+      if (analysisEl) analysisEl.style.display = 'none';
+      renderSectorList("concept-top", data.concept_top5, "up");
+      renderSectorList("concept-bot", data.concept_bottom5, "down");
+      renderSectorList("industry-top", data.industry_top5, "up");
+      renderSectorList("industry-bot", data.industry_bottom5, "down");
+    }
     renderCodexIntraday(data);
     return;
   }
@@ -295,7 +305,10 @@ function renderCodexIntraday(data) {
   }
 
   // 隐藏四栏网格，显示全宽分析
-  document.querySelectorAll('.sector-grid').forEach(el => el.style.display = 'none');
+  const hasSectorData = data.concept_top5 || data.industry_top5;
+  if (!hasSectorData) {
+    document.querySelectorAll('.sector-grid').forEach(el => el.style.display = 'none');
+  }
   let analysisEl = document.getElementById('intraday-analysis');
   if (!analysisEl) {
     analysisEl = document.createElement('div');
