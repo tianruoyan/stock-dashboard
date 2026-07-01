@@ -581,6 +581,19 @@ function renderPostmarket(data) {
       html += `<div class="subsection"><h3>📋 收盘总结</h3><div class="breadth">${data.review.one_sentence}</div></div>`;
     }
 
+    // 收盘竞价/尾盘补丁
+    if (data.closing_auction_patch) {
+      const cap = data.closing_auction_patch;
+      html += '<div class="subsection closing-auction"><h3>⏱️ 收盘竞价补丁</h3>';
+      if (cap.summary) html += `<div class="breadth">${escapeHtml(cap.summary)}</div>`;
+      if (cap.signals?.length) {
+        html += '<ul class="news-list">' + cap.signals.map(s => `<li>${escapeHtml(typeof s === "string" ? s : `${s.name || s.signal || "尾盘信号"}：${s.detail || s.text || s.impact || ""}`)}</li>`).join('') + '</ul>';
+      }
+      if (cap.impact) html += `<div class="evidence-line"><b>影响：</b>${escapeHtml(cap.impact)}</div>`;
+      if (cap.watch_next_day?.length) html += `<div class="evidence-line"><b>次日验证：</b>${formatEvidenceList(cap.watch_next_day)}</div>`;
+      html += '</div>';
+    }
+
     // 涨跌统计（新格式：index.market_breadth；旧格式：index 顶层）
     if (data.index) {
       const mb = data.index.market_breadth || {};
@@ -625,6 +638,13 @@ function renderPostmarket(data) {
       html += '</div></div>';
     }
 
+    // 收盘总评证据
+    if (data.review?.evidence?.length) {
+      html += '<div class="subsection"><h3>🧾 总评证据</h3><div class="evidence-list">';
+      html += data.review.evidence.map(e => `<div class="evidence-line">${escapeHtml(typeof e === "string" ? e : `${e.label || e.name || "证据"}：${e.detail || e.text || e.value || ""}`)}</div>`).join('');
+      html += '</div></div>';
+    }
+
     // 主线研判
     if (data.hotspots) {
       html += '<div class="subsection"><h3>🔥 主线研判</h3>';
@@ -643,10 +663,12 @@ function renderPostmarket(data) {
             (reps ? `<span style="font-size:11px;color:#8B949E">代表：${reps}</span>` : '') +
             (h.continuity ? `<br><span style="font-size:11px">${h.continuity}</span>` : '');
         }
-        const riskNote = h.risk ? `<br><span style="font-size:10px;color:#FF6B6B">⚠ ${h.risk}</span>` : '';
+        const evidence = h.evidence ? `<div class="evidence-line"><b>证据：</b>${formatEvidenceList(h.evidence)}</div>` : '';
+        const riskNote = h.risk ? `<br><span style="font-size:10px;color:#FF6B6B">⚠ ${escapeHtml(h.risk)}</span>` : '';
         return `<div class="theme-item ${cls}">
-          <b>${h.name}</b> <span class="muted">— ${h.status}</span>
+          <b>${escapeHtml(h.name)}</b> <span class="muted">— ${escapeHtml(h.status || '')}</span>
           ${detail ? `<br>${detail}` : ''}
+          ${evidence}
           ${riskNote}
         </div>`;
       }).join('');
@@ -719,6 +741,7 @@ function renderEvening(data) {
 
   let html = "";
   const news = data.news || [];
+  const p0Alerts = data.p0_alerts || [];
   const summary = data.sentiment_summary || {};
   const counts = summary.counts || {};
 
@@ -741,6 +764,12 @@ function renderEvening(data) {
     ["负面", "偏负面", "negative"],
     ["中性", "中性 / 待验证", "neutral"]
   ];
+
+  if (p0Alerts.length) {
+    html += '<div class="p0-alerts"><h3>🚨 晚间 P0</h3>';
+    html += p0Alerts.map(renderP0Alert).join('');
+    html += '</div>';
+  }
 
   if (news.length) {
     html += '<div class="sentiment-grid">';
@@ -766,7 +795,8 @@ function renderEveningItem(item) {
   const title = item.stock ? `${item.stock} · ${item.tag || "公告"}` : (item.tag || "舆情");
   const source = item.source ? `<span class="muted">${escapeHtml(item.source)}</span>` : "";
   const takeaway = item.takeaway || item.impact || "";
-  const verify = item.verify_next_day ? `<div class="sentiment-verify">验证：${escapeHtml(item.verify_next_day)}</div>` : "";
+  const evidence = item.evidence ? `<div class="sentiment-verify">证据：${formatEvidenceList(item.evidence)}</div>` : "";
+  const verify = item.verify_next_day ? `<div class="sentiment-verify">验证：${formatEvidenceList(item.verify_next_day)}</div>` : "";
   return `<div class="sentiment-item ${cls}">
     <div class="sentiment-item-head">
       <span class="tag">${escapeHtml(title)}</span>
@@ -774,8 +804,37 @@ function renderEveningItem(item) {
     </div>
     <div class="sentiment-text">${escapeHtml(item.text || item.title || "")}</div>
     ${takeaway ? `<div class="sentiment-takeaway">${escapeHtml(takeaway)}</div>` : ""}
+    ${evidence}
     ${verify}
   </div>`;
+}
+
+function renderP0Alert(item) {
+  const severity = item.severity || "P0";
+  const title = item.title || item.text || "晚间 P0";
+  const why = item.why_p0 || item.impact || "";
+  const evidence = item.evidence ? `<div class="sentiment-verify">证据：${formatEvidenceList(item.evidence)}</div>` : "";
+  const watch = item.watch_next_day ? `<div class="sentiment-verify">次日观察：${formatEvidenceList(item.watch_next_day)}</div>` : "";
+  return `<div class="sentiment-item p0">
+    <div class="sentiment-item-head">
+      <span class="tag">${escapeHtml(severity)}</span>
+      ${item.source ? `<span class="muted">${escapeHtml(item.source)}</span>` : ""}
+    </div>
+    <div class="sentiment-text"><b>${escapeHtml(title)}</b></div>
+    ${why ? `<div class="sentiment-takeaway">${escapeHtml(why)}</div>` : ""}
+    ${evidence}
+    ${watch}
+  </div>`;
+}
+
+function formatEvidenceList(value) {
+  if (Array.isArray(value)) {
+    return value.map(v => escapeHtml(typeof v === "string" ? v : `${v.label || v.name || v.title || "证据"}：${v.detail || v.text || v.value || v.source || ""}`)).join('；');
+  }
+  if (value && typeof value === "object") {
+    return escapeHtml(`${value.label || value.name || value.title || "证据"}：${value.detail || value.text || value.value || value.source || ""}`);
+  }
+  return escapeHtml(value || "");
 }
 
 /* =========================
