@@ -199,8 +199,8 @@ function renderIntraday(data) {
     }).join("");
   }
 
-  // Codex 格式: 深度分析（main_trends 含 status/evidence）
-  if (data.main_trends && data.main_trends.length && data.main_trends[0].status) {
+  // Codex 格式: 深度分析（main_trends 含 status 或 themes 存在）
+  if (data.main_trends && data.main_trends.length && (typeof data.main_trends[0] === 'object' ? data.main_trends[0].status : true)) {
     renderCodexIntraday(data);
     return;
   }
@@ -237,14 +237,41 @@ function renderCodexIntraday(data) {
     html += `<div class="subsection"><h3>⚡ 涨停情绪</h3><div class="breadth">涨停 <b>${lu}</b> / 跌停 <b>${ld}</b> · 差值 <span class="up">+${lu-ld}</span> · ${s.limit_ratio||''}${s.interpretation ? `<br><span class="muted">${s.interpretation}</span>` : ''}</div></div>`;
   }
 
-  // 主线分析
+  // 主线分析（兼容字符串和对象数组两种格式）
   if (data.main_trends) {
     html += '<div class="subsection"><h3>🔥 主线研判</h3>';
-    html += data.main_trends.map(t => {
-      const cls = (t.status||'').includes('强') ? 'strong-theme' : '';
-      return `<div class="theme-item ${cls}"><b>${t.name}</b> <span class="muted">— ${t.status}</span><br><span style="font-size:12px">${t.evidence||''}</span></div>`;
+    if (typeof data.main_trends === 'string') {
+      html += `<div class="breadth">${data.main_trends}</div>`;
+    } else {
+      html += data.main_trends.map(t => {
+        const cls = (t.status||'').includes('强') ? 'strong-theme' : '';
+        return `<div class="theme-item ${cls}"><b>${t.name}</b> <span class="muted">— ${t.status}</span><br><span style="font-size:12px">${t.evidence||''}</span></div>`;
+      }).join('');
+    }
+    html += '</div>';
+  }
+
+  // 板块分类（Codex themes 新格式）
+  if (data.themes && data.themes.length) {
+    html += '<div class="subsection"><h3>📊 板块分类</h3>';
+    html += data.themes.map(t => {
+      const cls = (t.status||'').includes('强') ? 'strong-theme' : (t.status||'').includes('弱') ? 'sentiment' : '';
+      const icon = (t.status||'').includes('强') ? '✅' : (t.status||'').includes('弱') ? '🔻' : '➖';
+      return `<div class="theme-item ${cls}"><b>${icon} ${t.name}</b> <span class="muted">— ${t.status}</span><br><span style="font-size:12px">${t.evidence||''}</span></div>`;
     }).join('');
     html += '</div>';
+  }
+
+  // 情绪详情
+  if (data.sentiment && typeof data.sentiment === 'object' && Object.keys(data.sentiment).length > 0) {
+    html += '<div class="subsection"><h3>📈 盘面情绪</h3><ul class="news-list">';
+    for (const [k, v] of Object.entries(data.sentiment)) {
+      if (typeof v === 'string' && v) {
+        const label = { market: '大盘', silan_micro: '士兰微', nanda_opto: '南大光电' }[k] || k;
+        html += `<li><b>${label}</b>：${v}</li>`;
+      }
+    }
+    html += '</ul></div>';
   }
 
   // 操作建议
