@@ -562,24 +562,33 @@ function renderPostmarket(data) {
 
   // === Codex 格式: hotspots + review ===
   if (data.hotspots || data.review) {
+    // 摘要
+    if (data.index?.summary) {
+      html += `<div class="subsection"><h3>📋 收盘摘要</h3><div class="breadth">${data.index.summary}</div></div>`;
+    }
+
     // 一句话总结
     if (data.review?.one_sentence) {
       html += `<div class="subsection"><h3>📋 收盘总结</h3><div class="breadth">${data.review.one_sentence}</div></div>`;
     }
 
-    // 涨跌统计
+    // 涨跌统计（新格式：index.market_breadth；旧格式：index 顶层）
     if (data.index) {
-      html += '<div class="subsection"><h3>📊 涨跌统计</h3><div class="index-row">';
-      const idx = data.index;
+      const mb = data.index.market_breadth || {};
       const stats = [
-        { k: '涨停', v: idx['涨停'] },
-        { k: '跌停', v: idx['跌停'] },
-        { k: '炸板', v: idx['炸板'] },
-        { k: '5%-8%', v: idx['涨幅5%至不足8%'] },
-        { k: '8%以上', v: idx['涨幅8%以上'] },
-      ].filter(x => x.v !== undefined);
-      html += stats.map(s => `<span class="index-item"><b>${s.k}</b> <span class="up">${s.v}</span></span>`).join('');
-      html += '</div></div>';
+        { k: '涨停', v: mb.limit_up ?? data.index['涨停'] },
+        { k: '跌停', v: mb.limit_down ?? data.index['跌停'] },
+        { k: '炸板', v: mb.broken_board ?? data.index['炸板'] },
+        { k: '5%-8%', v: mb.up5_8 ?? data.index['涨幅5%至不足8%'] },
+        { k: '8%+', v: mb.up8 ?? data.index['涨幅8%以上'] },
+        { k: '跌5%+', v: mb.down5 },
+        { k: '涨跌比', v: mb.limit_up_down_ratio ? mb.limit_up_down_ratio.toFixed(1) : null },
+      ].filter(x => x.v !== undefined && x.v !== null);
+      if (stats.length) {
+        html += '<div class="subsection"><h3>📊 涨跌统计</h3><div class="index-row">';
+        html += stats.map(s => `<span class="index-item"><b>${s.k}</b> <span class="up">${s.v}</span></span>`).join('');
+        html += '</div></div>';
+      }
     }
 
     // 涨停行业分布
@@ -606,6 +615,16 @@ function renderPostmarket(data) {
         </div>`;
       }).join('');
       html += '</div>';
+    }
+
+    // 强弱股分布（Codex groups 新字段）
+    if (data.groups) {
+      const g = data.groups;
+      html += '<div class="subsection"><h3>📊 强弱分布</h3><div class="index-row" style="flex-wrap:wrap;gap:4px">';
+      if (g.up_8_plus_count) html += `<span class="index-item">8%+ <b class="up">${g.up_8_plus_count}</b>家</span>`;
+      if (g.up_5_to_8_count) html += `<span class="index-item">5%-8% <b class="up">${g.up_5_to_8_count}</b>家</span>`;
+      if (g.down_5_plus_count) html += `<span class="index-item">跌5%+ <b class="down">${g.down_5_plus_count}</b>家</span>`;
+      html += '</div></div>';
     }
 
     // 次日观察
