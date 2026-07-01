@@ -171,11 +171,16 @@ function renderAlerts(data) {
 
     const badge = a.is_old_economy ? '<span class="badge old">老登</span>' :
                   a.signal_type?.includes("交易") ? '<span class="badge signal">交易信号</span>' :
+                  a.signal_type?.includes("观察") ? '<span class="badge watch">观察</span>' :
                   a.signal_type?.includes("放量") ? '<span class="badge volume">放量</span>' :
                   a.signal_type?.includes("风险") ? '<span class="badge risk">风险</span>' : '';
-    const leaders = (a.leaders || []).slice(0, 3).map(l =>
-      `<span class="leader">${l.name} <span class="pct ${l.change_pct >= 0 ? 'up' : 'down'}">${l.change_pct > 0 ? '+' : ''}${l.change_pct}%</span></span>`
-    ).join(" ");
+    const leaders = (a.leaders || []).slice(0, 3).map(l => {
+      const move = Number(l.change_pct);
+      const moveText = Number.isFinite(move)
+        ? `<span class="pct ${move >= 0 ? 'up' : 'down'}">3m ${move > 0 ? '+' : ''}${move.toFixed(2)}%</span>`
+        : '<span class="pct muted">3m --</span>';
+      return `<span class="leader" title="触发窗口的3分钟涨跌幅，不是实时股价">${l.name} ${moveText}</span>`;
+    }).join(" ");
 
     return `<div class="${cls}${fadeCls}">
       <div class="card-head">${badge}<b>${a.sector}</b><span class="time">${a.time} · ${ageLabel}</span></div>
