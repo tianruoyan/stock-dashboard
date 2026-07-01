@@ -591,7 +591,23 @@ function renderPostmarket(data) {
       }
     }
 
-    // 涨停行业分布
+    // 强/弱线分布（新格式：strong_lines/weak_lines 字符串数组；旧格式：limit_pool_industries 对象数组）
+    if (data.review?.strong_lines || data.review?.weak_lines) {
+      html += '<div class="subsection"><h3>📈 强弱线分布</h3>';
+      if (data.review.strong_lines?.length) {
+        html += '<div style="margin-bottom:8px"><b class="up">✅ 强线</b><br>';
+        html += data.review.strong_lines.map(l => `<span style="font-size:11px;margin-right:10px">• ${l}</span>`).join('');
+        html += '</div>';
+      }
+      if (data.review.weak_lines?.length) {
+        html += '<div><b class="down">🔻 弱线</b><br>';
+        html += data.review.weak_lines.map(l => `<span style="font-size:11px;margin-right:10px">• ${l}</span>`).join('');
+        html += '</div>';
+      }
+      html += '</div>';
+    }
+
+    // 涨停行业分布（旧格式兼容）
     if (data.review?.limit_pool_industries) {
       html += '<div class="subsection"><h3>🏭 涨停行业分布</h3><div class="index-row">';
       html += data.review.limit_pool_industries.slice(0,6).map(i =>
@@ -604,14 +620,25 @@ function renderPostmarket(data) {
     if (data.hotspots) {
       html += '<div class="subsection"><h3>🔥 主线研判</h3>';
       html += data.hotspots.map(h => {
-        const cls = (h.status||'').includes('强') ? 'strong-theme' : '';
-        const reps = (h.representatives||[]).slice(0,6).join('、');
+        const cls = (h.status||'').includes('强') ? 'strong-theme' : (h.status||'').includes('潮') ? 'sentiment' : '';
+        // 新格式：stocks数组（含name/pct）；旧格式：representatives/continuity
+        let detail = '';
+        if (h.stocks && h.stocks.length) {
+          detail = h.stocks.slice(0,8).map(s => {
+            const pctCls = s.pct >= 0 ? 'up' : 'down';
+            return `<span style="font-size:11px;margin-right:8px">${s.name} <span class="${pctCls}">${s.pct>0?'+':''}${s.pct}%</span></span>`;
+          }).join('');
+        } else {
+          const reps = (h.representatives||[]).slice(0,6).join('、');
+          detail = (h.count_summary ? `<span style="font-size:12px">${h.count_summary}</span><br>` : '') +
+            (reps ? `<span style="font-size:11px;color:#8B949E">代表：${reps}</span>` : '') +
+            (h.continuity ? `<br><span style="font-size:11px">${h.continuity}</span>` : '');
+        }
+        const riskNote = h.risk ? `<br><span style="font-size:10px;color:#FF6B6B">⚠ ${h.risk}</span>` : '';
         return `<div class="theme-item ${cls}">
           <b>${h.name}</b> <span class="muted">— ${h.status}</span>
-          <br><span style="font-size:12px">${h.count_summary||''}</span>
-          ${reps ? `<br><span style="font-size:11px;color:#8B949E">代表：${reps}</span>` : ''}
-          ${h.continuity ? `<br><span style="font-size:11px">${h.continuity}</span>` : ''}
-          ${h.risk ? `<br><span style="font-size:10px;color:#FF6B6B">⚠ ${h.risk}</span>` : ''}
+          ${detail ? `<br>${detail}` : ''}
+          ${riskNote}
         </div>`;
       }).join('');
       html += '</div>';
