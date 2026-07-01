@@ -239,12 +239,14 @@ function renderIntraday(data) {
 function renderCodexIntraday(data) {
   let html = '';
 
-  // 涨停情绪
-  if (data.sentiment || data.limit_up_count) {
+  // 涨停情绪（只有有实际数据才显示）
+  if (data.limit_up_count != null || (data.sentiment && (data.sentiment.limit_up_count || data.sentiment.limit_ratio))) {
     const s = data.sentiment || {};
     const lu = s.limit_up_count || data.limit_up_count || 0;
     const ld = s.limit_down_count || data.limit_down_count || 0;
-    html += `<div class="subsection"><h3>⚡ 涨停情绪</h3><div class="breadth">涨停 <b>${lu}</b> / 跌停 <b>${ld}</b> · 差值 <span class="up">+${lu-ld}</span> · ${s.limit_ratio||''}${s.interpretation ? `<br><span class="muted">${s.interpretation}</span>` : ''}</div></div>`;
+    if (lu > 0 || ld > 0) {
+      html += `<div class="subsection"><h3>⚡ 涨停情绪</h3><div class="breadth">涨停 <b>${lu}</b> / 跌停 <b>${ld}</b> · 差值 <span class="up">+${lu-ld}</span>${s.limit_ratio ? ' · '+s.limit_ratio : ''}${s.interpretation ? `<br><span class="muted">${s.interpretation}</span>` : ''}</div></div>`;
+    }
   }
 
   // 主线分析（兼容字符串和对象数组两种格式）
