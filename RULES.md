@@ -83,9 +83,52 @@ title: 分析模型说明书
 - 次日重点观察方向 + 失效条件
 
 **必填字段补丁（NEW 2026-07-02）:**
-- `closing_auction_patch`: 收盘复盘必须补 14:55-15:00 收盘竞价/尾盘异动校验，至少包含 `summary`、`signals`、`impact`、`watch_next_day`。用于修正只看 15:00 静态收盘价导致的尾盘资金方向误判。
-- `hotspots[].evidence`: 每条主线/观察线/风险线必须写入 evidence 字段，格式为可验证证据，至少包含涨跌幅、涨停/跌停数量、代表股或成交额变化之一。没有 evidence 的热点不得升级为强主线。
-- `review.evidence`: 收盘总评必须保留关键证据数组，用来支撑 one_sentence、strong_lines、weak_lines。
+
+**closing_auction_patch（收盘竞价补丁）** — 必须包含结构化量化字段，不只是定性总结：
+```json
+{
+  "summary": "一句话总结尾盘方向",
+  "snapshot_1456": {
+    "timestamp": "14:56:00+08:00",
+    "indices": { "上证指数": {"price": 4110.12, "pct": 0.38}, "科创50": {"price": 2160.50, "pct": -2.10} }
+  },
+  "snapshot_1500": {
+    "timestamp": "15:00:00+08:00",
+    "indices": { "上证指数": {"price": 4112.45, "pct": 0.44}, "科创50": {"price": 2153.04, "pct": -2.48} }
+  },
+  "deviation": {
+    "description": "14:56→15:00各指数偏离描述",
+    "details": { "上证指数": {"price_delta": 2.33, "pct_delta": 0.06}, "科创50": {"price_delta": -7.46, "pct_delta": -0.38} }
+  },
+  "tail_20min": {
+    "volume_ratio": 0.18,
+    "direction": "net_sell",
+    "note": "尾盘放量下跌，科创50最后4分钟加速走弱"
+  },
+  "auction_reversal_stocks": [
+    { "name": "某某股", "code": "sh600xxx", "price_1456": 10.50, "price_1500": 10.20, "pct_1456": 3.5, "pct_1500": -1.2, "deviation_pct": -4.7 }
+  ],
+  "signals": ["定性尾盘信号"],
+  "impact": "对次日策略的影响",
+  "watch_next_day": ["次日需核验的竞价信号"]
+}
+```
+**数据来源:** 14:56 和 15:00 的指数快照从 qt.gtimg.cn 实时抓取（curl），auction_reversal_stocks 通过对比两个时间点的个股涨跌幅排序变化检测。
+
+**hotspots[].evidence** — 每条主线/观察线/风险线的 evidence 必须是**结构化对象数组**，不是纯文本：
+```json
+{
+  "type": "representative_stock | breadth | volume | source_citation | price_action | limit_status",
+  "metric": "pct | amount_yi | limit_up_count | limit_down_count | volume_ratio | price | direction",
+  "value": 10.07,
+  "source": "sina_realtime | sina_sorting | web_search | announcement",
+  "timestamp": "2026-07-01T15:00:00+08:00",
+  "detail": "傲农生物 +10.07% 成交1.95亿"
+}
+```
+每条 evidence 至少有 type、metric、value、source。没有 structured evidence 的热点不得升级为强主线。
+
+**review.evidence** — 收盘总评的关键证据同样必须结构化，格式同上。
 
 **主线判断优先级 (必须遵守):** 全市场涨停池→行业涨跌→板块指数→资金流向→观察池验证。禁止只看观察池定义主线。
 
@@ -131,12 +174,15 @@ title: 分析模型说明书
 - 排除例行公告，只保留实质影响事件
 
 **晚间 P0 补丁（NEW 2026-07-02）:**
-- `p0_alerts`: 晚间 20:00-21:00 必须单独产出 P0 事件数组，覆盖会直接影响次日竞价的重大海外行情、监管/政策、上市公司公告、产业价格和突发事件。
+- `p0_alerts`: **每天必跑**，不是"有就写、没有就跳过"。即使当日无明确 P0 事件，也必须产出空数组 `[]` 并附 note 说明无 P0 事件——确保字段始终存在，前端不报错。
+- 晚间 20:00-21:00 必须单独产出 P0 事件数组，覆盖会直接影响次日竞价的重大海外行情、监管/政策、上市公司公告、产业价格和突发事件。
 - P0 判定标准：可能改变次日 9:25 竞价方向、触发核心观察池批量高开/低开、改变仓位风控优先级，或要求盘前 8:30 再核验。
-- 每条 P0 必须包含 `title`、`severity`、`why_p0`、`evidence`、`watch_next_day`。`evidence` 必须写明来源或可核验事实，禁止只写结论。
+- 每条 P0 必须包含 `title`、`severity`（必须为 "P0"）、`why_p0`、`evidence`（结构化，同 hotspots evidence 格式）、`watch_next_day`。`evidence` 必须写明来源或可核验事实，禁止只写结论。
 - 前端按 P0 优先展示；即使普通 news 很多，P0 仍置顶。
 
-**更新频率:** 晚间 20:00-21:00
+**更新频率:** 每个交易日 20:00-21:00 定时触发（cron），不得依赖手动"补跑"。周末和节假日跳过。
+- Cola cron: `0 20 * * 1-5` → 调用 Codex 产出 evening-sentiment.json → git push
+- 如 cron 失败，次日 8:30 前手动补跑。
 
 ---
 
