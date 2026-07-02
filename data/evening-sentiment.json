@@ -1,757 +1,467 @@
 {
-  "timestamp": "2026-07-02T00:15:00+08:00",
-  "news": [
+  "timestamp": "2026-07-02T20:22:36+08:00",
+  "p0_alerts": [
     {
-      "text": "若7月2日半导体硬件受海外半导体大跌和国内风险提示压制，资金可能切向AI应用、软件金融IT、传媒游戏和中概/港股科技映射。7月1日盘面承接较好的候选包括金山办公、同花顺、财富趋势、三七互娱、光线传媒，弹性观察包括昆仑万维、万兴科技、蓝色光标、中文在线，中概/港股方向优先用中概互联ETF、恒生互联网ETF、恒生科技ETF观察。",
-      "source": "7月1日A股收盘行情；晚间美股风格切换文章；看板策略推演",
-      "tag": "策略映射/AI软件互联网候选",
-      "impact": "半导体高位若退潮，AI软件互联网方向可能获得相对收益，但需以竞价和9:45前放量确认为准，不能预设无条件切换成功。",
-      "mapping": "Meta大涨/中概走强 -> AI应用、广告营销、游戏传媒、互联网平台ETF；半导体硬件承压 -> 资金可能阶段性避开高位设备材料。",
-      "a_share_targets": [
-        "金山办公",
-        "同花顺",
-        "财富趋势",
-        "恒生电子",
-        "昆仑万维",
-        "万兴科技",
-        "蓝色光标",
-        "中文在线",
-        "三七互娱",
-        "光线传媒",
-        "中概互联ETF",
-        "恒生互联网ETF",
-        "恒生科技ETF"
-      ],
-      "logic_chain": "从硬件扩产/材料涨价切向软件应用时，优先看成交额和收盘位置已提前转强的标的；弱势大模型概念只有板块扩散后才升级。",
-      "verify_next_day": [
-        "9:25看半导体硬件是否被压且软件/传媒/互联网是否高开",
-        "9:45看金山办公、同花顺、昆仑万维、三七互娱是否放量站上开盘价",
-        "港股开盘看恒生科技/互联网平台股是否共振",
-        "若AI应用只有单股强且后排不跟，不升级主线"
-      ],
+      "title": "A/H半导体硬件负反馈仍是次日竞价首要风险",
+      "severity": "high",
+      "why_p0": "直接影响7月3日9:25核心观察池半导体设备、材料、零部件的批量高低开和仓位风控优先级。A股收盘已出现北方华创、雅克科技跌停，港股收盘中芯国际/华虹/ASMPT继续大跌，风险没有在尾盘被资金消化。",
       "evidence": [
         {
-          "timestamp": "2026-07-01T15:05:00+08:00",
-          "detail": "来源：7月1日A股收盘行情；晚间美股风格切换文章；看板策略推演",
-          "type": "source_citation",
-          "metric": "url",
-          "value": "7月1日A股收盘行情；晚间美股风格切换文章；看板策略推演",
-          "source": "web_search"
+          "timestamp": "2026-07-02T20:22:36+08:00",
+          "detail": "A股收盘科创50-7.70%，半导体跌停8家、元件跌停7家、通信设备跌停4家；北方华创-10.00%、雅克科技-10.00%、富创精密-16.01%、江丰电子-13.15%。",
+          "type": "market_breadth",
+          "metric": "semi_risk",
+          "source": "tencent_realtime/akshare",
+          "value": {
+            "科创50": -7.7,
+            "半导体跌停": 8,
+            "元件跌停": 7
+          }
         },
         {
-          "timestamp": "2026-07-01T15:05:00+08:00",
-          "detail": "映射：Meta大涨/中概走强 -> AI应用、广告营销、游戏传媒、互联网平台ETF；半导体硬件承压 -> 资金可能阶段性避开高位设备材料。",
-          "type": "price_action",
-          "metric": "direction",
-          "value": "Meta大涨/中概走强 -> AI应用、广告营销、游戏传媒、互联网平台ETF；半导体硬件承压 -> 资金可能阶段性避开高位设备材料。",
-          "source": "sina_realtime"
+          "timestamp": "2026-07-02T20:22:36+08:00",
+          "detail": "港股收盘中芯国际-10.07%、华虹半导体-13.52%、ASMPT-18.68%、上海复旦-6.37%，对A股半导体硬件形成次日竞价压制。",
+          "type": "hk_close",
+          "metric": "hk_semiconductor",
+          "source": "tencent_hk_realtime",
+          "value": {
+            "中芯国际": -10.07,
+            "华虹半导体": -13.52,
+            "ASMPT": -18.68
+          }
+        },
+        {
+          "timestamp": "2026-07-02T20:22:36+08:00",
+          "detail": "14:55-15:00尾盘北方华创、雅克科技跌停维持，尾盘资金未支持科技硬件修复。",
+          "type": "closing_auction",
+          "metric": "tail_confirmation",
+          "source": "postmarket.json",
+          "value": "no_repair"
         }
-      ]
+      ],
+      "watch_next_day": [
+        "半导体跌停家数是否从40家风险池中明显收缩",
+        "北方华创/雅克科技是否打开跌停并放量收复开盘价",
+        "中微/华海/富创/江丰是否不再低开下杀",
+        "港股中芯/华虹/ASMPT早盘是否止跌"
+      ],
+      "source": "data/postmarket.json；腾讯A/H行情；东方财富涨跌停池 via akshare"
     },
     {
-      "text": "第一财经微信文章显示，7月1日美股盘中三大指数低开后拉升，费城半导体指数跌超5%，ASML、英特尔、台积电、美光、AMD等半导体/存储/设备链大跌；Meta大涨超11%，中概股和中国互联网ETF走强。",
-      "source": "https://mp.weixin.qq.com/s/1SHFnGFENrO_QbX8jMSkUA；SOXX/SMH/META/MU/ASML/TSM/TER/INTC实时行情",
-      "tag": "美股风格切换/半导体承压",
-      "impact": "明日A股科技线容易出现硬件高位降温、软件互联网与中概映射相对占优。半导体设备/材料不宜按进攻型追高，需等待北方华创、中微公司、华海清科、江丰电子等核心承接确认；存储/HBM/光刻机链若低开后不能快速修复，短线降为分歧观察。",
-      "mapping": "SOXX/SMH/ASML/TSM/MU/AMD下跌 -> A股半导体设备、材料、存储、光刻机链承压；META大涨和KWEB/中概走强 -> A股AI应用、互联网平台、传媒软件和港股科技情绪改善。",
+      "title": "创新药/CRO成为硬件退潮后的A/H共振强线",
+      "severity": "medium",
+      "why_p0": "若7月3日半导体继续退潮，创新药/CRO可能影响开盘资金选择；但A股CRO大票分化，需竞价确认是否从题材扩散变成主线延续。",
+      "evidence": [
+        {
+          "timestamp": "2026-07-02T20:22:36+08:00",
+          "detail": "A股涨停池中化学制药6家居前，美诺华、京新药业、海南海药封板，医药扩散强于科技硬件。",
+          "type": "pool",
+          "metric": "pharma_limit_up",
+          "source": "akshare",
+          "value": 6
+        },
+        {
+          "timestamp": "2026-07-02T20:22:36+08:00",
+          "detail": "港股创新药收盘康方生物+7.67%、信达生物+7.22%、药明生物+3.64%、康龙化成+3.29%。",
+          "type": "hk_close",
+          "metric": "biotech_pct",
+          "source": "tencent_hk_realtime",
+          "value": {
+            "康方生物": 7.67,
+            "信达生物": 7.22,
+            "药明生物": 3.64,
+            "康龙化成": 3.29
+          }
+        },
+        {
+          "timestamp": "2026-07-02T20:22:36+08:00",
+          "detail": "A股CRO大票仍有分化：药明康德-3.12%、康龙化成-2.87%、泰格医药-4.25%，说明强度主要在低位化学制药和港股创新药。",
+          "type": "market",
+          "metric": "cro_divergence",
+          "source": "tencent_realtime",
+          "value": {
+            "药明康德": -3.12,
+            "康龙化成": -2.87,
+            "泰格医药": -4.25
+          }
+        }
+      ],
+      "watch_next_day": [
+        "A股化学制药涨停数量是否继续居前",
+        "港股创新药是否高开延续",
+        "药明康德/康龙/泰格能否止跌放量，否则仅按题材轮动处理"
+      ],
+      "source": "data/postmarket.json；腾讯A/H行情；东方财富涨停池 via akshare"
+    },
+    {
+      "title": "AI应用/软件具备前瞻轮动条件，但尚未确认主线",
+      "severity": "medium",
+      "why_p0": "用户重点关注的后续轮动方向。今天资金已经从硬件链撤离，AI应用/软件出现局部承接；若明天竞价扩散，可能成为硬件退潮后的前瞻交易线。",
+      "evidence": [
+        {
+          "timestamp": "2026-07-02T20:22:36+08:00",
+          "detail": "A股AI应用局部强：昆仑万维+12.19%、天娱数科涨停、拓维信息+4.99%、易点天下+4.51%、蓝色光标+2.23%，但金山办公-2.23%、拓尔思-2.06%，基本面锚未同步确认。",
+          "type": "market",
+          "metric": "ai_software_mixed",
+          "source": "tencent_realtime",
+          "value": {
+            "昆仑万维": 12.19,
+            "天娱数科": 10.0,
+            "拓维信息": 4.99,
+            "金山办公": -2.23
+          }
+        },
+        {
+          "timestamp": "2026-07-02T20:22:36+08:00",
+          "detail": "港股互联网/AI应用收盘美图+4.80%、阅文+3.44%、金山云+2.80%、小米+4.44%，但恒生科技-0.40%、商汤-1.49%，属于分化观察。",
+          "type": "hk_close",
+          "metric": "hk_ai_application",
+          "source": "tencent_hk_realtime",
+          "value": {
+            "美图": 4.8,
+            "阅文": 3.44,
+            "金山云": 2.8,
+            "恒生科技": -0.4
+          }
+        },
+        {
+          "timestamp": "2026-07-02T20:22:36+08:00",
+          "detail": "国务院“人工智能+”行动和AI素养体系建设提供政策底座，但今晚未发现足以把软件应用直接升级为强主线的新增订单/业绩公告。",
+          "type": "policy",
+          "metric": "official_confirmation",
+          "source": "gov.cn",
+          "value": "policy_backdrop"
+        }
+      ],
+      "watch_next_day": [
+        "9:25看昆仑/天娱/拓维/易点天下是否高开且不冲高回落",
+        "9:45看金山办公/科大讯飞/万兴等基本面锚是否放量跟随",
+        "若只有昆仑或天娱单股强，仍定义为观察线而非强主线",
+        "硬件跌停减少是软件轮动更健康的前提"
+      ],
+      "source": "data/postmarket.json；国务院AI+政策；国务院英文网AI literacy报道；腾讯A/H行情"
+    },
+    {
+      "title": "低位化工/资源材料承接强于半导体材料，次日注意资金跷跷板",
+      "severity": "medium",
+      "why_p0": "今天材料相关并非半导体材料强，而是低位化工、氟化工、塑料化纤和资源材料承接；会影响明天半导体材料能否重新吸金。",
+      "evidence": [
+        {
+          "timestamp": "2026-07-02T20:22:36+08:00",
+          "detail": "涨停池行业中汽车零部8、化学制药6、塑料6、化学制品5、纺织制造5；半导体材料没有形成涨停扩散。",
+          "type": "pool",
+          "metric": "limit_up_distribution",
+          "source": "akshare",
+          "value": {
+            "汽车零部": 8,
+            "化学制药": 6,
+            "塑料": 6,
+            "化学制品": 5,
+            "纺织制造": 5,
+            "工程机械": 4,
+            "广告营销": 3,
+            "通用设备": 3,
+            "服装家纺": 3,
+            "专用设备": 3,
+            "电力": 2,
+            "光学光电": 2
+          }
+        },
+        {
+          "timestamp": "2026-07-02T20:22:36+08:00",
+          "detail": "低位化工代表永和股份涨停、成交29.34亿、换手12.67%；滨化股份涨停、成交17.12亿、换手11.41%；西陇科学涨停、换手23.48%。",
+          "type": "market",
+          "metric": "chemical_turnover",
+          "source": "tencent_realtime",
+          "value": {
+            "永和股份": "涨停/29.34亿/12.67%",
+            "滨化股份": "涨停/17.12亿/11.41%",
+            "西陇科学": "涨停/23.48%"
+          }
+        },
+        {
+          "timestamp": "2026-07-02T20:22:36+08:00",
+          "detail": "资源材料代表翔鹭钨业涨停、换手21.67%，东方锆业+7.29%、成交50.97亿、换手26.16%，资金承接强但分歧较大。",
+          "type": "market",
+          "metric": "resource_materials",
+          "source": "tencent_realtime",
+          "value": {
+            "翔鹭钨业": 10.0,
+            "东方锆业": 7.29
+          }
+        }
+      ],
+      "watch_next_day": [
+        "化工/资源前排是否继续封板",
+        "多氟多/巨化等大成交票是否继续回落",
+        "若低位材料继续吸金，半导体材料修复难度加大"
+      ],
+      "source": "data/postmarket.json；腾讯行情；东方财富涨停池 via akshare"
+    }
+  ],
+  "news": [
+    {
+      "text": "港股半导体收盘继续大跌，叠加A股半导体设备/材料/零部件尾盘未修复，7月3日半导体硬件链先看风险释放，不按强主线预设。",
+      "source": "data/postmarket.json；腾讯A/H行情；东方财富涨跌停池 via akshare",
+      "tag": "P0/半导体硬件风险",
+      "impact": "对北方华创、中微公司、华海清科、安集科技、江丰电子、雅克科技、富创精密、新莱应材等核心池形成竞价风控约束。",
+      "mapping": "港股中芯/华虹/ASMPT大跌 -> A股晶圆制造、设备、材料、零部件低开压力；A股核心跌停封死 -> 次日先看跌停减少和开板承接。",
       "a_share_targets": [
         "北方华创",
         "中微公司",
         "华海清科",
-        "江丰电子",
         "安集科技",
+        "江丰电子",
         "雅克科技",
+        "富创精密",
+        "新莱应材",
         "南大光电",
-        "有研硅",
-        "澜起科技",
-        "兆易创新",
-        "北京君正",
-        "金山办公",
+        "沪硅产业",
+        "有研硅"
+      ],
+      "logic_chain": "A/H硬件同时弱 -> 资金对扩产和国产替代高位交易降杠杆 -> 次日只有跌停收缩、核心放量开板和港股止跌才算风险缓和。",
+      "verify_next_day": [
+        "半导体跌停家数是否收缩",
+        "北方/雅克跌停是否打开",
+        "中芯/华虹港股早盘是否止跌"
+      ],
+      "evidence": [
+        {
+          "timestamp": "2026-07-02T20:22:36+08:00",
+          "detail": "A股收盘科创50-7.70%，半导体跌停8家、元件跌停7家、通信设备跌停4家；北方华创-10.00%、雅克科技-10.00%、富创精密-16.01%、江丰电子-13.15%。",
+          "type": "market_breadth",
+          "metric": "semi_risk",
+          "source": "tencent_realtime/akshare",
+          "value": {
+            "科创50": -7.7,
+            "半导体跌停": 8,
+            "元件跌停": 7
+          }
+        },
+        {
+          "timestamp": "2026-07-02T20:22:36+08:00",
+          "detail": "港股收盘中芯国际-10.07%、华虹半导体-13.52%、ASMPT-18.68%、上海复旦-6.37%，对A股半导体硬件形成次日竞价压制。",
+          "type": "hk_close",
+          "metric": "hk_semiconductor",
+          "source": "tencent_hk_realtime",
+          "value": {
+            "中芯国际": -10.07,
+            "华虹半导体": -13.52,
+            "ASMPT": -18.68
+          }
+        },
+        {
+          "timestamp": "2026-07-02T20:22:36+08:00",
+          "detail": "14:55-15:00尾盘北方华创、雅克科技跌停维持，尾盘资金未支持科技硬件修复。",
+          "type": "closing_auction",
+          "metric": "tail_confirmation",
+          "source": "postmarket.json",
+          "value": "no_repair"
+        }
+      ]
+    },
+    {
+      "text": "AI应用/软件具备前瞻轮动观察价值：政策底座明确，今天A股昆仑万维/天娱数科/拓维信息等有承接，港股美图/阅文/金山云走强；但金山办公、商汤等基本面锚仍分化。",
+      "source": "国务院关于深入实施“人工智能+”行动的意见：https://www.gov.cn/zhengce/content/202508/content_7037861.htm；中国政府英文网AI literacy报道：https://english.www.gov.cn/news/202604/15/content_WS69df29e6c6d00ca5f9a0a6b1.html；腾讯A/H行情",
+      "tag": "AI应用/软件/前瞻观察",
+      "impact": "软件线可作为硬件退潮后的候选轮动方向，但交易上仍需涨停数量、成交额和基本面锚共同确认。",
+      "mapping": "AI+政策与教育/办公/内容/营销应用落地 -> A股AI办公、AI营销、AI教育、传媒游戏、政企软件；港股互联网应用走强 -> A股情绪映射。",
+      "a_share_targets": [
         "昆仑万维",
-        "三六零",
+        "天娱数科",
+        "拓维信息",
+        "易点天下",
+        "蓝色光标",
+        "金山办公",
+        "科大讯飞",
         "万兴科技",
-        "工业富联",
-        "中科曙光"
+        "中文在线",
+        "三七互娱",
+        "恒生电子",
+        "同花顺"
       ],
-      "logic_chain": "海外半导体暴跌叠加国内晚间风险提示，会强化A股半导体高位分歧；但美股指数回稳、Meta和中概上涨说明不是总风险偏好崩塌，而是从半导体硬件向软件/互联网/AI应用切换。明日若A股半导体核心低开承接，属于分歧消化；若核心跟随海外硬件继续放量下跌，短线先降仓。",
+      "logic_chain": "前期AI行情从电力/算力/芯片/半导体硬件/材料轮动后，若硬件高位退潮而指数风险未系统失控，资金可能寻找“低硬件CAPEX、靠产品和收入验证”的软件应用方向。当前是前瞻观察，不是已确认主升。",
       "verify_next_day": [
-        "9:25看北方华创、中微公司、华海清科、江丰电子是否大幅低开",
-        "9:45看半导体设备/材料核心能否收复开盘价",
-        "观察存储/HBM是否受美光大跌压制",
-        "观察AI应用/传媒软件/互联网映射是否强于硬件链",
-        "若半导体和AI应用同时弱，则科技线整体转防御"
+        "AI应用涨停/大涨数量是否增加",
+        "昆仑/天娱高开后是否维持强承接",
+        "金山办公/科大讯飞/万兴是否同步转强",
+        "港股美图/阅文/金山云是否延续"
       ],
       "evidence": [
         {
-          "timestamp": "2026-07-01T15:05:00+08:00",
-          "detail": "来源：https://mp.weixin.qq.com/s/1SHFnGFENrO_QbX8jMSkUA；SOXX/SMH/META/MU/ASML/TSM/TER/INTC实时行情",
-          "type": "source_citation",
-          "metric": "url",
-          "value": "https://mp.weixin.qq.com/s/1SHFnGFENrO_QbX8jMSkUA；SOXX/SMH/META/MU/ASML/TSM/TER/INTC实时行情",
-          "source": "web_search"
+          "timestamp": "2026-07-02T20:22:36+08:00",
+          "detail": "A股AI应用局部强：昆仑万维+12.19%、天娱数科涨停、拓维信息+4.99%、易点天下+4.51%、蓝色光标+2.23%，但金山办公-2.23%、拓尔思-2.06%，基本面锚未同步确认。",
+          "type": "market",
+          "metric": "ai_software_mixed",
+          "source": "tencent_realtime",
+          "value": {
+            "昆仑万维": 12.19,
+            "天娱数科": 10.0,
+            "拓维信息": 4.99,
+            "金山办公": -2.23
+          }
         },
         {
-          "timestamp": "2026-07-01T15:05:00+08:00",
-          "detail": "映射：SOXX/SMH/ASML/TSM/MU/AMD下跌 -> A股半导体设备、材料、存储、光刻机链承压；META大涨和KWEB/中概走强 -> A股AI应用、互联网平台、传媒软件和港股科技情绪改善。",
-          "type": "price_action",
-          "metric": "direction",
-          "value": "SOXX/SMH/ASML/TSM/MU/AMD下跌 -> A股半导体设备、材料、存储、光刻机链承压；META大涨和KWEB/中概走强 -> A股AI应用、互联网平台、传媒软件和港股科技情绪改善。",
-          "source": "sina_realtime"
+          "timestamp": "2026-07-02T20:22:36+08:00",
+          "detail": "港股互联网/AI应用收盘美图+4.80%、阅文+3.44%、金山云+2.80%、小米+4.44%，但恒生科技-0.40%、商汤-1.49%，属于分化观察。",
+          "type": "hk_close",
+          "metric": "hk_ai_application",
+          "source": "tencent_hk_realtime",
+          "value": {
+            "美图": 4.8,
+            "阅文": 3.44,
+            "金山云": 2.8,
+            "恒生科技": -0.4
+          }
+        },
+        {
+          "timestamp": "2026-07-02T20:22:36+08:00",
+          "detail": "国务院“人工智能+”行动和AI素养体系建设提供政策底座，但今晚未发现足以把软件应用直接升级为强主线的新增订单/业绩公告。",
+          "type": "policy",
+          "metric": "official_confirmation",
+          "source": "gov.cn",
+          "value": "policy_backdrop"
         }
       ]
     },
     {
-      "text": "补充核对微信文章：7月1日晚风险提示不只集中于氢氟酸/六氟化钨/高纯二氧化碳，还覆盖格科微CIS大客户导入尚未出货、通鼎互联不涉及光模块/光芯片、兴业科技拟收购磷化铟资产规模小且短期难盈利、新迅达化合物半导体激光器芯片项目刚开工、雅克科技无六氟化钨业务、三美股份湿电子化学品联营业务不并表等。",
-      "source": "https://mp.weixin.qq.com/s/A69vnzdEV0lNQpW50Osc8Q",
-      "tag": "补充核对/风险提示矩阵",
-      "impact": "风险提示范围从半导体材料单品扩展到CIS、光通信、跨界并购、化合物半导体早期项目和氟化工映射，明日竞价更容易出现高位题材整体降温，核心设备/耗材需等承接确认。",
-      "mapping": "格科微->CIS/晶圆厂预期；通鼎互联->光纤/光通信情绪；兴业科技/新迅达->磷化铟及化合物半导体早期项目；雅克科技/多氟多/三美股份/昊华科技/金宏气体->氟化工、特气、湿电子化学品单品映射降温。",
+      "text": "创新药/CRO维持强线观察，港股创新药收盘继续强于恒生科技，A股化学制药涨停数量居前。",
+      "source": "data/postmarket.json；腾讯A/H行情；东方财富涨停池 via akshare",
+      "tag": "创新药/CRO/轮动强线",
+      "impact": "若半导体硬件继续释放风险，创新药/CRO可能继续承担风险偏好出口；但A股CRO大票分化，需要前排与中军共振确认。",
+      "mapping": "港股创新药强 -> A股创新药、CRO、化学制药；A股化学制药涨停扩散 -> 次日看持续性。",
       "a_share_targets": [
-        "格科微",
-        "通鼎互联",
-        "金宏气体",
-        "兴业科技",
-        "多氟多",
-        "昊华科技",
-        "新迅达",
+        "恒瑞医药",
+        "药明康德",
+        "康龙化成",
+        "泰格医药",
+        "贝达药业",
+        "美诺华",
+        "京新药业",
+        "海南海药"
+      ],
+      "logic_chain": "A/H医药相对强 -> 非科技风险偏好承接 -> 若大票跟随，主线延续；若只有低位小票补涨，持续性降级。",
+      "verify_next_day": [
+        "港股康方/信达/药明生物是否延续",
+        "A股化学制药涨停数量是否增加",
+        "CRO大票是否止跌放量"
+      ],
+      "evidence": [
+        {
+          "timestamp": "2026-07-02T20:22:36+08:00",
+          "detail": "A股涨停池中化学制药6家居前，美诺华、京新药业、海南海药封板，医药扩散强于科技硬件。",
+          "type": "pool",
+          "metric": "pharma_limit_up",
+          "source": "akshare",
+          "value": 6
+        },
+        {
+          "timestamp": "2026-07-02T20:22:36+08:00",
+          "detail": "港股创新药收盘康方生物+7.67%、信达生物+7.22%、药明生物+3.64%、康龙化成+3.29%。",
+          "type": "hk_close",
+          "metric": "biotech_pct",
+          "source": "tencent_hk_realtime",
+          "value": {
+            "康方生物": 7.67,
+            "信达生物": 7.22,
+            "药明生物": 3.64,
+            "康龙化成": 3.29
+          }
+        },
+        {
+          "timestamp": "2026-07-02T20:22:36+08:00",
+          "detail": "A股CRO大票仍有分化：药明康德-3.12%、康龙化成-2.87%、泰格医药-4.25%，说明强度主要在低位化学制药和港股创新药。",
+          "type": "market",
+          "metric": "cro_divergence",
+          "source": "tencent_realtime",
+          "value": {
+            "药明康德": -3.12,
+            "康龙化成": -2.87,
+            "泰格医药": -4.25
+          }
+        }
+      ]
+    },
+    {
+      "text": "材料相关板块今晚结论需要拆分：强的是低位化工、氟化工、塑料化纤和部分资源材料；半导体材料本身仍属风险释放/反抽观察。",
+      "source": "data/postmarket.json；腾讯行情；东方财富涨停池 via akshare",
+      "tag": "材料/化工/资源/半导体材料分化",
+      "impact": "明天半导体材料若要修复，不能只看南大光电/有研硅单股，必须看到雅克、安集、江丰、沪硅等核心跌幅收敛，并且低位化工不继续抽血。",
+      "mapping": "低位化工涨停扩散 -> 资金从高位科技材料切向低位材料；半导体材料核心大跌 -> 扩产/耗材逻辑短线降级。",
+      "a_share_targets": [
+        "永和股份",
+        "滨化股份",
+        "西陇科学",
+        "争光股份",
+        "翔鹭钨业",
+        "东方锆业",
         "雅克科技",
-        "三美股份",
-        "南大光电",
-        "晶瑞电材",
         "安集科技",
         "江丰电子",
-        "北方华创",
-        "中微公司",
-        "光迅科技",
-        "新易盛",
-        "中际旭创"
-      ],
-      "logic_chain": "密集公告的共同点是把市场预期从概念空间拉回收入占比、订单、量产、客户认证和并表口径。短线会压低高位概念股估值弹性；若核心设备平台和业绩型材料耗材不被拖垮，半导体主线仍可能由泛材料炒作切换到订单/扩产/业绩验证。",
-      "verify_next_day": [
-        "格科微是否高开低走或低开承接，决定CIS/晶圆厂预期是否降温",
-        "通鼎互联是否继续负反馈并外溢到光通信/CPO",
-        "兴业科技、新迅达是否出现跨界并购/早期项目杀估值",
-        "雅克科技、多氟多、三美股份、金宏气体是否批量低开超过5%",
-        "北方华创、中微公司、华海清科、安集科技、江丰电子能否强于半导体指数"
-      ],
-      "evidence": [
-        {
-          "timestamp": "2026-07-01T15:05:00+08:00",
-          "detail": "来源：https://mp.weixin.qq.com/s/A69vnzdEV0lNQpW50Osc8Q",
-          "type": "source_citation",
-          "metric": "url",
-          "value": "https://mp.weixin.qq.com/s/A69vnzdEV0lNQpW50Osc8Q",
-          "source": "web_search"
-        },
-        {
-          "timestamp": "2026-07-01T15:05:00+08:00",
-          "detail": "映射：格科微->CIS/晶圆厂预期；通鼎互联->光纤/光通信情绪；兴业科技/新迅达->磷化铟及化合物半导体早期项目；雅克科技/多氟多/三美股份/昊华科技/金宏气体->氟化工、特气、湿电子化学品单品映射降温。",
-          "type": "price_action",
-          "metric": "direction",
-          "value": "格科微->CIS/晶圆厂预期；通鼎互联->光纤/光通信情绪；兴业科技/新迅达->磷化铟及化合物半导体早期项目；雅克科技/多氟多/三美股份/昊华科技/金宏气体->氟化工、特气、湿电子化学品单品映射降温。",
-          "source": "sina_realtime"
-        }
-      ]
-    },
-    {
-      "text": "7月1日晚半导体材料、光纤等热门股密集发布股价异动暨风险提示公告，热点集中在电子级氢氟酸、六氟化钨、磷化铟、高纯二氧化碳等概念；媒体汇总称当晚40多家公司披露异动或风险提示。",
-      "source": "上市公司股价异动/风险提示公告；财经媒体7月1日晚汇总",
-      "tag": "风险提示/半导体材料/光通信",
-      "impact": "短线压制高位材料概念和纯题材映射，资金更可能从泛材料涨价炒作切向有订单、收入、客户认证和业绩兑现的设备平台、CMP/靶材/材料耗材核心。",
-      "mapping": "电子级氢氟酸/六氟化钨/磷化铟/高纯二氧化碳等单品概念 -> 半导体材料涨价链；光纤异动公告 -> 光通信/CPO高位情绪。",
-      "a_share_targets": [
         "南大光电",
-        "晶瑞电材",
-        "雅克科技",
-        "安集科技",
-        "江丰电子",
         "沪硅产业",
-        "有研硅",
-        "金宏气体",
-        "昊华科技",
-        "多氟多",
-        "光迅科技",
-        "长飞光纤",
-        "亨通光电"
+        "有研硅"
       ],
-      "logic_chain": "公告并非产业需求证伪，但集中提示收入占比、订单、量产、认证和估值风险，会先降低明日竞价风险偏好；若前排材料股低开后能放量收复分时均线，说明分歧消化；若多只高位股低开5%以上或接近跌停，风险会扩散到半导体材料、光刻胶和光通信高位链。",
+      "logic_chain": "同属“材料”，但交易属性不同：低位化工/资源是资金承接线，半导体材料是风险释放线；不能混为一条强主线。",
       "verify_next_day": [
-        "9:25竞价观察风险提示股低开幅度和跌停数量",
-        "9:45前看材料前排是否收复分时均线/开盘价",
-        "科创50和半导体设备平台是否被拖累",
-        "半导体材料是否仍有2-3只放量承接强于板块",
-        "光通信/CPO是否出现高位继续负反馈"
+        "低位化工前排是否继续封板",
+        "半导体材料核心是否止跌收复开盘价",
+        "南大/有研是否能带动安集/江丰/沪硅扩散"
       ],
-      "sentiment": "负面",
-      "takeaway": "热门材料/光通信股密集异动风险提示，短线追高降温。",
       "evidence": [
         {
-          "timestamp": "2026-07-01T15:05:00+08:00",
-          "detail": "来源：上市公司股价异动/风险提示公告；财经媒体7月1日晚汇总",
-          "type": "source_citation",
-          "metric": "url",
-          "value": "上市公司股价异动/风险提示公告；财经媒体7月1日晚汇总",
-          "source": "web_search"
+          "timestamp": "2026-07-02T20:22:36+08:00",
+          "detail": "涨停池行业中汽车零部8、化学制药6、塑料6、化学制品5、纺织制造5；半导体材料没有形成涨停扩散。",
+          "type": "pool",
+          "metric": "limit_up_distribution",
+          "source": "akshare",
+          "value": {
+            "汽车零部": 8,
+            "化学制药": 6,
+            "塑料": 6,
+            "化学制品": 5,
+            "纺织制造": 5,
+            "工程机械": 4,
+            "广告营销": 3,
+            "通用设备": 3,
+            "服装家纺": 3,
+            "专用设备": 3,
+            "电力": 2,
+            "光学光电": 2
+          }
         },
         {
-          "timestamp": "2026-07-01T15:05:00+08:00",
-          "detail": "映射：电子级氢氟酸/六氟化钨/磷化铟/高纯二氧化碳等单品概念 -> 半导体材料涨价链；光纤异动公告 -> 光通信/CPO高位情绪。",
-          "type": "price_action",
-          "metric": "direction",
-          "value": "电子级氢氟酸/六氟化钨/磷化铟/高纯二氧化碳等单品概念 -> 半导体材料涨价链；光纤异动公告 -> 光通信/CPO高位情绪。",
-          "source": "sina_realtime"
+          "timestamp": "2026-07-02T20:22:36+08:00",
+          "detail": "低位化工代表永和股份涨停、成交29.34亿、换手12.67%；滨化股份涨停、成交17.12亿、换手11.41%；西陇科学涨停、换手23.48%。",
+          "type": "market",
+          "metric": "chemical_turnover",
+          "source": "tencent_realtime",
+          "value": {
+            "永和股份": "涨停/29.34亿/12.67%",
+            "滨化股份": "涨停/17.12亿/11.41%",
+            "西陇科学": "涨停/23.48%"
+          }
+        },
+        {
+          "timestamp": "2026-07-02T20:22:36+08:00",
+          "detail": "资源材料代表翔鹭钨业涨停、换手21.67%，东方锆业+7.29%、成交50.97亿、换手26.16%，资金承接强但分歧较大。",
+          "type": "market",
+          "metric": "resource_materials",
+          "source": "tencent_realtime",
+          "value": {
+            "翔鹭钨业": 10.0,
+            "东方锆业": 7.29
+          }
         }
       ]
     },
     {
-      "text": "优必选发布全尺寸量产级人形机器人 U1 系列，公开报道显示全渠道订单已超过 13,361 台，机器人从概念展示进入订单验证阶段。",
-      "source": "36Kr Global / Yahoo Finance",
-      "url": "https://eu.36kr.com/en/p/3876811895992327",
-      "tag": "机器人",
-      "impact": "对 A 股机器人链情绪偏正面，优先观察人形机器人本体、减速器、传感器、执行器、伺服和工业场景落地标的。",
-      "mapping": "人形机器人订单验证 → 机器人链从主题炒作转向出货验证 → A股优先看供应链实际供货和量产能力。",
+      "text": "观察池公告覆盖：按watchlist与topics核心标的检索7月2日交易所/巨潮公告，未发现足以进入P0的新增业绩预告、订单合同、监管问询、重大减持、回购或定增事件。",
+      "source": "巨潮资讯公告检索接口；上交所/深交所公告检索口径；本地watchlist与topics配置",
+      "tag": "公告覆盖/无重大新增",
+      "impact": "今晚主导变量仍是盘面风险释放和A/H映射，不是单家公司新增公告催化。若盘后后续公告补发，需在次日8:30增量扫描补充。",
+      "mapping": "公告空窗 -> 次日优先看竞价资金和尾盘风险反馈；不因无公告而降低半导体硬件风险。",
       "a_share_targets": [
-        "减速器",
-        "传感器",
-        "执行器",
-        "伺服系统",
-        "工业机器人集成"
-      ],
-      "logic_chain": "U1 订单超预期 → 国产人形机器人商业化预期强化 → 次日关注机器人板块是否出现涨停扩散和中军放量。",
-      "verify_next_day": "观察机器人链是否有 3 家以上涨停/大涨，且不是单一小票情绪拉动。",
-      "sentiment": "正面",
-      "takeaway": "人形机器人订单验证，利好机器人链情绪。",
-      "evidence": [
-        {
-          "timestamp": "2026-07-01T15:05:00+08:00",
-          "detail": "来源：36Kr Global / Yahoo Finance",
-          "type": "source_citation",
-          "metric": "url",
-          "value": "36Kr Global / Yahoo Finance",
-          "source": "web_search"
-        },
-        {
-          "timestamp": "2026-07-01T15:05:00+08:00",
-          "detail": "映射：人形机器人订单验证 → 机器人链从主题炒作转向出货验证 → A股优先看供应链实际供货和量产能力。",
-          "type": "price_action",
-          "metric": "direction",
-          "value": "人形机器人订单验证 → 机器人链从主题炒作转向出货验证 → A股优先看供应链实际供货和量产能力。",
-          "source": "sina_realtime"
-        }
-      ]
-    },
-    {
-      "text": "Figure 03 被报道开始进入 BMW 美国工厂场景，海外人形机器人从演示走向制造业物流/搬运等具体任务。",
-      "source": "Times of India",
-      "url": "https://timesofindia.indiatimes.com/technology/tech-news/bmw-deploys-figure-03-humanoid-robot-at-us-factory-to-transform-automotive-manufacturing/articleshow/132092781.cms",
-      "tag": "机器人",
-      "impact": "海外标杆验证工业场景，A 股更利好具备汽车工厂、物流搬运、机器视觉和运动控制落地能力的机器人链。",
-      "mapping": "Figure/BMW 工厂应用 → 工业端先于家庭端落地 → A股机器人链优先级从陪伴概念转向工业执行器、视觉和控制。",
-      "a_share_targets": [
-        "机器视觉",
-        "运动控制",
-        "工业自动化",
-        "汽车工厂机器人"
-      ],
-      "logic_chain": "海外标杆工厂部署 → 产业化路径更清晰 → 次日若机器人板块走强，需要区分工业落地方向和纯概念方向。",
-      "verify_next_day": "观察机器人板块强势股是否集中在工业链、执行器和传感器，而不是泛概念扩散。",
-      "sentiment": "正面",
-      "takeaway": "海外工厂落地验证工业机器人应用。",
-      "evidence": [
-        {
-          "timestamp": "2026-07-01T15:05:00+08:00",
-          "detail": "来源：Times of India",
-          "type": "source_citation",
-          "metric": "url",
-          "value": "Times of India",
-          "source": "web_search"
-        },
-        {
-          "timestamp": "2026-07-01T15:05:00+08:00",
-          "detail": "映射：Figure/BMW 工厂应用 → 工业端先于家庭端落地 → A股机器人链优先级从陪伴概念转向工业执行器、视觉和控制。",
-          "type": "price_action",
-          "metric": "direction",
-          "value": "Figure/BMW 工厂应用 → 工业端先于家庭端落地 → A股机器人链优先级从陪伴概念转向工业执行器、视觉和控制。",
-          "source": "sina_realtime"
-        }
-      ]
-    },
-    {
-      "text": "AMD 官方确认 Advancing AI 2026 将于 7月22-23日在旧金山举行，主题是 AI 基础设施、架构和生态。",
-      "source": "AMD",
-      "url": "https://www.amd.com/en/corporate/events/advancing-ai.html",
-      "tag": "AI算力",
-      "impact": "7月下旬存在海外 AI 算力事件催化窗口，A 股映射到 AI服务器、国产算力、光模块/CPO、HBM和先进封装。",
-      "mapping": "AMD AI 事件 → GPU/AI基础设施路线更新预期 → A股算力链进入事件预期观察窗口。",
-      "a_share_targets": [
-        "AI服务器",
-        "国产算力",
-        "光模块/CPO",
-        "HBM",
-        "先进封装"
-      ],
-      "logic_chain": "海外算力发布会临近 → 市场可能提前交易 AI 硬件预期 → 次日先看 CPO/算力核心能否止跌修复。",
-      "verify_next_day": "若新易盛、中际旭创、天孚通信、工业富联等继续弱，则事件预期暂不能抵消高位退潮。",
-      "sentiment": "中性",
-      "takeaway": "AMD活动形成7月下旬事件窗口，但短线需看算力链止跌。",
-      "evidence": [
-        {
-          "timestamp": "2026-07-01T15:05:00+08:00",
-          "detail": "来源：AMD",
-          "type": "source_citation",
-          "metric": "url",
-          "value": "AMD",
-          "source": "web_search"
-        },
-        {
-          "timestamp": "2026-07-01T15:05:00+08:00",
-          "detail": "映射：AMD AI 事件 → GPU/AI基础设施路线更新预期 → A股算力链进入事件预期观察窗口。",
-          "type": "price_action",
-          "metric": "direction",
-          "value": "AMD AI 事件 → GPU/AI基础设施路线更新预期 → A股算力链进入事件预期观察窗口。",
-          "source": "sina_realtime"
-        }
-      ]
-    },
-    {
-      "text": "Broadcom 二季度 AI 半导体收入同比高增，并披露与 Apollo、Blackstone 建立 AI 部署平台，首期交易规模 350 亿美元、面向超过 1GW 算力基础设施。",
-      "source": "Broadcom Investor Relations",
-      "url": "https://investors.broadcom.com/news-releases/news-release-details/broadcom-apollo-and-blackstone-establish-landmark-strategic",
-      "tag": "AI算力",
-      "impact": "海外 AI 基础设施资本开支仍强，A 股映射到定制 ASIC、AI网络、交换芯片、光通信和数据中心电源散热。",
-      "mapping": "Broadcom AI ASIC/网络需求 + 1GW基础设施平台 → AI算力资本开支继续扩张 → A股关注光通信、交换、服务器和电源散热承接。",
-      "a_share_targets": [
-        "光模块/CPO",
-        "交换芯片",
-        "AI服务器",
-        "数据中心电源",
-        "液冷散热"
-      ],
-      "logic_chain": "海外资本开支强 → 国内算力链有情绪映射，但需价格和成交同步修复确认。",
-      "verify_next_day": "观察光通信核心是否放量翻红；若继续大成交下跌，仍按风险线处理。",
-      "sentiment": "正面",
-      "takeaway": "海外AI基建资本开支强，对光通信/服务器有映射。",
-      "evidence": [
-        {
-          "timestamp": "2026-07-01T15:05:00+08:00",
-          "detail": "来源：Broadcom Investor Relations",
-          "type": "source_citation",
-          "metric": "url",
-          "value": "Broadcom Investor Relations",
-          "source": "web_search"
-        },
-        {
-          "timestamp": "2026-07-01T15:05:00+08:00",
-          "detail": "映射：Broadcom AI ASIC/网络需求 + 1GW基础设施平台 → AI算力资本开支继续扩张 → A股关注光通信、交换、服务器和电源散热承接。",
-          "type": "price_action",
-          "metric": "direction",
-          "value": "Broadcom AI ASIC/网络需求 + 1GW基础设施平台 → AI算力资本开支继续扩张 → A股关注光通信、交换、服务器和电源散热承接。",
-          "source": "sina_realtime"
-        }
-      ]
-    },
-    {
-      "text": "SK hynix 公布 12 层 HBM4E 样品出货，AI 内存路线继续向更高带宽和先进封装推进。",
-      "source": "SK hynix Newsroom",
-      "url": "https://news.skhynix.com/12-layer-hbm4e-sample/",
-      "tag": "HBM",
-      "impact": "HBM 迭代利好高带宽内存、先进封装、封装材料、测试设备和存储链国产映射。",
-      "mapping": "HBM4E 样品出货 → 高端 DRAM 与先进封装迭代加速 → A股映射澜起科技、雅克科技、香农芯创、华海诚科、长川科技等方向。",
-      "a_share_targets": [
-        "高带宽内存",
-        "存储芯片",
-        "先进封装材料",
-        "测试设备"
-      ],
-      "logic_chain": "海外 HBM 技术迭代 → 存储和封装材料预期强化 → 次日看 HBM 分支能否强于半导体大盘。",
-      "verify_next_day": "观察澜起科技、雅克科技、香农芯创、华海诚科、长川科技是否形成同步承接。",
-      "sentiment": "正面",
-      "takeaway": "HBM4E迭代强化存储和先进封装方向。",
-      "evidence": [
-        {
-          "timestamp": "2026-07-01T15:05:00+08:00",
-          "detail": "来源：SK hynix Newsroom",
-          "type": "source_citation",
-          "metric": "url",
-          "value": "SK hynix Newsroom",
-          "source": "web_search"
-        },
-        {
-          "timestamp": "2026-07-01T15:05:00+08:00",
-          "detail": "映射：HBM4E 样品出货 → 高端 DRAM 与先进封装迭代加速 → A股映射澜起科技、雅克科技、香农芯创、华海诚科、长川科技等方向。",
-          "type": "price_action",
-          "metric": "direction",
-          "value": "HBM4E 样品出货 → 高端 DRAM 与先进封装迭代加速 → A股映射澜起科技、雅克科技、香农芯创、华海诚科、长川科技等方向。",
-          "source": "sina_realtime"
-        }
-      ]
-    },
-    {
-      "text": "Soitec 与中国 ZenSemi 达成战略合作，将供应 300mm Power-SOI 衬底，应用方向包括 AI 数据中心、机器人、电动车和工业设备。",
-      "source": "Wall Street Journal",
-      "url": "https://www.wsj.com/tech/soitec-shares-climb-on-partnership-with-chinas-zensemi-74a4ba0f",
-      "tag": "半导体材料",
-      "impact": "SOI/功率衬底国产合作强化材料和功率半导体关注度，但需区分前道设备材料主线与新能源/功率链风险。",
-      "mapping": "Power-SOI 衬底合作 → AI/机器人/汽车芯片材料需求 → A股映射硅片、功率半导体、半导体材料。",
-      "a_share_targets": [
-        "硅片",
-        "SOI材料",
-        "功率半导体",
-        "半导体材料"
-      ],
-      "logic_chain": "海外材料龙头与中国厂商合作 → 材料国产化和特殊衬底关注度提升 → 次日看沪硅、有研硅等是否有承接。",
-      "verify_next_day": "若功率半导体受逆变器事件拖累，则只把 SOI/材料作为观察线，不升级强主线。",
-      "sentiment": "中性",
-      "takeaway": "SOI材料合作利好材料关注，但功率链仍受新能源出海风险约束。",
-      "evidence": [
-        {
-          "timestamp": "2026-07-01T15:05:00+08:00",
-          "detail": "来源：Wall Street Journal",
-          "type": "source_citation",
-          "metric": "url",
-          "value": "Wall Street Journal",
-          "source": "web_search"
-        },
-        {
-          "timestamp": "2026-07-01T15:05:00+08:00",
-          "detail": "映射：Power-SOI 衬底合作 → AI/机器人/汽车芯片材料需求 → A股映射硅片、功率半导体、半导体材料。",
-          "type": "price_action",
-          "metric": "direction",
-          "value": "Power-SOI 衬底合作 → AI/机器人/汽车芯片材料需求 → A股映射硅片、功率半导体、半导体材料。",
-          "source": "sina_realtime"
-        }
-      ]
-    },
-    {
-      "text": "硅片产业链近期出现涨价线索，报道提到信越、SUMCO、环球晶等海外硅片厂同步提价，AI 相关硅片涨价更明显。",
-      "source": "Biggo Finance",
-      "url": "https://finance.biggo.com/news/7d82c4b7-9a12-4aed-ba5b-145787355ddb",
-      "tag": "硅片",
-      "impact": "硅片涨价逻辑对 A 股硅片和半导体材料有情绪支撑，但需要订单、毛利和股价承接验证。",
-      "mapping": "海外硅片提价 → 晶圆材料供需改善预期 → A股映射沪硅产业、有研硅、中晶科技等。",
-      "a_share_targets": [
-        "硅片",
-        "半导体材料",
-        "晶圆制造上游"
-      ],
-      "logic_chain": "涨价线索 → 材料端弹性提升 → 次日重点看硅片是否强于半导体设备而非只跟随冲高。",
-      "verify_next_day": "观察沪硅产业、有研硅是否放量站稳；若冲高回落，则继续按观察线处理。",
-      "sentiment": "中性",
-      "takeaway": "硅片涨价线索存在，但需消化减持和承接验证。",
-      "evidence": [
-        {
-          "timestamp": "2026-07-01T15:05:00+08:00",
-          "detail": "来源：Biggo Finance",
-          "type": "source_citation",
-          "metric": "url",
-          "value": "Biggo Finance",
-          "source": "web_search"
-        },
-        {
-          "timestamp": "2026-07-01T15:05:00+08:00",
-          "detail": "映射：海外硅片提价 → 晶圆材料供需改善预期 → A股映射沪硅产业、有研硅、中晶科技等。",
-          "type": "price_action",
-          "metric": "direction",
-          "value": "海外硅片提价 → 晶圆材料供需改善预期 → A股映射沪硅产业、有研硅、中晶科技等。",
-          "source": "sina_realtime"
-        }
-      ]
-    },
-    {
-      "text": "SEMI Strategic Materials Conference 2026 将于 7月13-15日举行，议题聚焦 AI 时代半导体材料、先进封装、量子和下一代制造。",
-      "source": "SEMI",
-      "url": "https://www.semi.org/en/semi-press-release/strategic-materials-conference-2026-to-spotlight-materials-innovations-fueling-the-ai-era",
-      "tag": "半导体材料",
-      "impact": "7月中旬材料端存在行业会议催化窗口，A 股重点观察 CMP、靶材、电子化学品、硅片、封装材料和高纯气体。",
-      "mapping": "SMC材料会议 → AI时代材料创新议题升温 → A股材料耗材专题优先级维持靠前。",
-      "a_share_targets": [
-        "CMP/靶材/材料耗材",
-        "电子化学品",
-        "高纯气体",
-        "先进封装材料"
-      ],
-      "logic_chain": "材料会议临近 → 市场可能提前交易材料分支 → 次日看江丰、安集、雅克、华海清科是否形成扩散。",
-      "verify_next_day": "必须看到材料分支 2-3 只核心同步走强，单股强不升级主线。",
-      "sentiment": "正面",
-      "takeaway": "7月材料会议提供半导体材料事件窗口。",
-      "evidence": [
-        {
-          "timestamp": "2026-07-01T15:05:00+08:00",
-          "detail": "来源：SEMI",
-          "type": "source_citation",
-          "metric": "url",
-          "value": "SEMI",
-          "source": "web_search"
-        },
-        {
-          "timestamp": "2026-07-01T15:05:00+08:00",
-          "detail": "映射：SMC材料会议 → AI时代材料创新议题升温 → A股材料耗材专题优先级维持靠前。",
-          "type": "price_action",
-          "metric": "direction",
-          "value": "SMC材料会议 → AI时代材料创新议题升温 → A股材料耗材专题优先级维持靠前。",
-          "source": "sina_realtime"
-        }
-      ]
-    },
-    {
-      "text": "商务部出口管制信息网近期披露战略矿产两用物项出口管制违法违规举报处理事项，以及将美国实体列入出口管制相关清单的公告。",
-      "source": "中国出口管制信息网/商务部",
-      "url": "https://exportcontrol.mofcom.gov.cn/zcfgList.shtml",
-      "tag": "出口管制",
-      "impact": "战略矿产和出口管制仍是材料与半导体供应链的政策变量，短线更利好自主可控材料，风险在外部制裁升级和功率/新能源出海链承压。",
-      "mapping": "战略矿产/实体清单 → 供应链安全和国产替代预期 → A股映射稀有金属、半导体材料、设备国产替代。",
-      "a_share_targets": [
-        "稀有金属",
-        "半导体材料",
-        "国产替代设备",
-        "出口管制受影响链"
-      ],
-      "logic_chain": "政策信号延续 → 国产替代逻辑有支撑 → 但需避免把政策变量简单等同于交易主线。",
-      "verify_next_day": "观察材料/设备是否强于新能源出海链；若后者继续弱，维持功率和SiC链降级。",
-      "sentiment": "中性",
-      "takeaway": "出口管制支撑国产替代逻辑，同时也提示外部摩擦风险。",
-      "evidence": [
-        {
-          "timestamp": "2026-07-01T15:05:00+08:00",
-          "detail": "来源：中国出口管制信息网/商务部",
-          "type": "source_citation",
-          "metric": "url",
-          "value": "中国出口管制信息网/商务部",
-          "source": "web_search"
-        },
-        {
-          "timestamp": "2026-07-01T15:05:00+08:00",
-          "detail": "映射：战略矿产/实体清单 → 供应链安全和国产替代预期 → A股映射稀有金属、半导体材料、设备国产替代。",
-          "type": "price_action",
-          "metric": "direction",
-          "value": "战略矿产/实体清单 → 供应链安全和国产替代预期 → A股映射稀有金属、半导体材料、设备国产替代。",
-          "source": "sina_realtime"
-        }
-      ]
-    },
-    {
-      "text": "大基金近期持续减持半导体材料与产业链公司被多家媒体跟踪，市场对部分减持已有脱敏，但硅片等分支仍存在资金面扰动。",
-      "source": "澎湃新闻 / 中国工业新闻网",
-      "url": "https://www.thepaper.cn/newsDetail_forward_33261176",
-      "tag": "大基金",
-      "impact": "对半导体材料尤其硅片分支构成估值和资金面扰动，强主线判断必须看成交承接，不能只看涨价逻辑。",
-      "mapping": "大基金减持 → 资金面扰动但市场可能脱敏 → A股半导体材料需要以放量承接验证。",
-      "a_share_targets": [
-        "沪硅产业",
-        "德邦科技",
-        "半导体材料",
-        "硅片"
-      ],
-      "logic_chain": "减持扰动 + 涨价预期并存 → 材料线分歧加大 → 次日重点看涨价股是否能消化抛压。",
-      "verify_next_day": "若材料股高开低走或放量下跌，涨价逻辑暂不升级；若放量收红，说明资金承接强。",
-      "sentiment": "负面",
-      "takeaway": "大基金减持扰动材料/硅片资金面。",
-      "evidence": [
-        {
-          "timestamp": "2026-07-01T15:05:00+08:00",
-          "detail": "来源：澎湃新闻 / 中国工业新闻网",
-          "type": "source_citation",
-          "metric": "url",
-          "value": "澎湃新闻 / 中国工业新闻网",
-          "source": "web_search"
-        },
-        {
-          "timestamp": "2026-07-01T15:05:00+08:00",
-          "detail": "映射：大基金减持 → 资金面扰动但市场可能脱敏 → A股半导体材料需要以放量承接验证。",
-          "type": "price_action",
-          "metric": "direction",
-          "value": "大基金减持 → 资金面扰动但市场可能脱敏 → A股半导体材料需要以放量承接验证。",
-          "source": "sina_realtime"
-        }
-      ]
-    },
-    {
-      "text": "中微公司7月1日披露参与设立私募投资基金暨关联交易，并同步披露注册资本增加、章程修订、副总经理变动和临时股东会通知。核心关注点不是短期订单，而是围绕产业投资和公司治理变化的中期外延能力。",
-      "source": "新浪财经公司公告/交易所披露聚合",
-      "url": "https://vip.stock.finance.sina.com.cn/corp/go.php/vCB_AllBulletin/stockid/688012.phtml",
-      "tag": "个股公告",
-      "stock": "中微公司",
-      "announcement_type": "私募投资基金暨关联交易/治理变动",
-      "announcement_date": "2026-07-01",
-      "exchange_source": "上交所/新浪财经公司公告聚合",
-      "impact": "对半导体设备平台偏中性略正面：产业基金有助于生态布局，但不是订单和业绩直接催化；副总经理变动需观察是否影响市场对管理层稳定性的评价。",
-      "mapping": "设备龙头参与产业基金 → 产业链生态和外延投资能力增强 → A股设备平台仍看北方华创/中微公司承接，但不因该公告单独升级主线。",
-      "a_share_targets": [
-        "半导体设备平台",
-        "刻蚀设备",
-        "国产替代设备"
-      ],
-      "logic_chain": "公告偏中长期产业布局 → 次日交易层面主要看中微公司能否修复今日分歧，而不是追逐公告本身。",
-      "verify_next_day": "若中微公司放量翻红并带动华海清科、中科飞测、长川科技修复，设备线可从分歧中相对强升为观察增强；若继续弱于北方华创，则仍是龙头分化。",
-      "sentiment": "中性",
-      "takeaway": "中微公司公告偏产业基金和治理变化，不是直接订单催化。",
-      "evidence": [
-        {
-          "timestamp": "2026-07-01T15:05:00+08:00",
-          "detail": "来源：新浪财经公司公告/交易所披露聚合",
-          "type": "source_citation",
-          "metric": "url",
-          "value": "新浪财经公司公告/交易所披露聚合",
-          "source": "web_search"
-        },
-        {
-          "timestamp": "2026-07-01T15:05:00+08:00",
-          "detail": "映射：设备龙头参与产业基金 → 产业链生态和外延投资能力增强 → A股设备平台仍看北方华创/中微公司承接，但不因该公告单独升级主线。",
-          "type": "price_action",
-          "metric": "direction",
-          "value": "设备龙头参与产业基金 → 产业链生态和外延投资能力增强 → A股设备平台仍看北方华创/中微公司承接，但不因该公告单独升级主线。",
-          "source": "sina_realtime"
-        }
-      ]
-    },
-    {
-      "text": "沪硅产业7月1日公告披露窗口出现新增公告，同时近期大基金减持/硅片涨价线索并存，硅片分支需要同时看涨价预期和资金面扰动。",
-      "source": "新浪财经公司公告/交易所披露聚合",
-      "url": "https://vip.stock.finance.sina.com.cn/corp/go.php/vCB_AllBulletin/stockid/688126.phtml",
-      "tag": "个股公告",
-      "stock": "沪硅产业",
-      "announcement_type": "公告窗口更新/硅片资金面扰动",
-      "announcement_date": "2026-07-01",
-      "exchange_source": "上交所/新浪财经公司公告聚合",
-      "impact": "硅片线不能只看海外涨价，需要叠加大基金减持和公司公告窗口变化；短线以放量承接作为是否升级的唯一确认。",
-      "mapping": "硅片涨价预期 + 减持扰动 → A股硅片分支分歧加大 → 沪硅产业/有研硅需看承接强弱。",
-      "a_share_targets": [
-        "沪硅产业",
-        "有研硅",
-        "中晶科技",
-        "硅片"
-      ],
-      "logic_chain": "涨价逻辑提供弹性，减持扰动压制估值 → 次日若高开低走则仍按观察线，不升级主线。",
-      "verify_next_day": "观察沪硅产业、有研硅是否放量站稳并强于科创50；否则材料涨价线只能保留为观察。",
-      "sentiment": "中性",
-      "takeaway": "沪硅产业处于涨价预期和资金扰动并存。",
-      "evidence": [
-        {
-          "timestamp": "2026-07-01T15:05:00+08:00",
-          "detail": "来源：新浪财经公司公告/交易所披露聚合",
-          "type": "source_citation",
-          "metric": "url",
-          "value": "新浪财经公司公告/交易所披露聚合",
-          "source": "web_search"
-        },
-        {
-          "timestamp": "2026-07-01T15:05:00+08:00",
-          "detail": "映射：硅片涨价预期 + 减持扰动 → A股硅片分支分歧加大 → 沪硅产业/有研硅需看承接强弱。",
-          "type": "price_action",
-          "metric": "direction",
-          "value": "硅片涨价预期 + 减持扰动 → A股硅片分支分歧加大 → 沪硅产业/有研硅需看承接强弱。",
-          "source": "sina_realtime"
-        }
-      ]
-    },
-    {
-      "text": "中科曙光6月30日公告向不特定对象发行可转换公司债券申请获得中国证监会同意注册批复，算力服务器链存在融资扩产/资金用途预期变量。",
-      "source": "新浪财经公司公告/交易所披露聚合",
-      "url": "https://vip.stock.finance.sina.com.cn/corp/go.php/vCB_AllBulletin/stockid/603019.phtml",
-      "tag": "个股公告",
-      "stock": "中科曙光",
-      "announcement_type": "可转债注册批复",
-      "announcement_date": "2026-06-30",
-      "exchange_source": "上交所/新浪财经公司公告聚合",
-      "impact": "对算力服务器链偏中性：融资工具落地有助于中长期投入，但短线需看AI算力高位退潮是否修复，不能单靠批复公告逆转板块。",
-      "mapping": "可转债批复 → 算力服务器公司融资工具推进 → A股算力链观察中科曙光、浪潮信息、工业富联承接。",
-      "a_share_targets": [
-        "中科曙光",
-        "浪潮信息",
-        "工业富联",
-        "算力服务器"
-      ],
-      "logic_chain": "公司融资进展 → 中长期投入预期增强 → 次日仍以服务器链价格和成交修复为准。",
-      "verify_next_day": "若中科曙光、浪潮信息、工业富联同步放量翻红，算力链可从风险线转为反抽观察；若CPO核心继续弱，该公告影响有限。",
-      "sentiment": "中性",
-      "takeaway": "中科曙光可转债批复偏中长期融资变量，短线看板块修复。",
-      "evidence": [
-        {
-          "timestamp": "2026-07-01T15:05:00+08:00",
-          "detail": "来源：新浪财经公司公告/交易所披露聚合",
-          "type": "source_citation",
-          "metric": "url",
-          "value": "新浪财经公司公告/交易所披露聚合",
-          "source": "web_search"
-        },
-        {
-          "timestamp": "2026-07-01T15:05:00+08:00",
-          "detail": "映射：可转债批复 → 算力服务器公司融资工具推进 → A股算力链观察中科曙光、浪潮信息、工业富联承接。",
-          "type": "price_action",
-          "metric": "direction",
-          "value": "可转债批复 → 算力服务器公司融资工具推进 → A股算力链观察中科曙光、浪潮信息、工业富联承接。",
-          "source": "sina_realtime"
-        }
-      ]
-    },
-    {
-      "text": "对照观察池公告列表，本次重点核验了半导体设备、CMP/靶材/材料耗材、硅片、算力服务器和光通信核心票；未确认到北方华创、江丰电子、新莱应材、南大光电、晶瑞电材、雅克科技、新易盛、中际旭创、天孚通信等在7月1日晚间有足以改变次日开盘判断的重大新增公告。",
-      "source": "新浪财经公司公告/交易所披露聚合 + 配置股票池核验",
-      "tag": "公告核验",
-      "impact": "今晚新增公司级变量主要集中在中微公司、沪硅产业和中科曙光；其余观察池仍以产业事件、盘面承接和既有风险为主。",
-      "mapping": "公告核验 → 避免把产业新闻误当公司催化 → 次日盘前 overnight_news 只追加真正影响开盘的公告。",
-      "a_share_targets": [
-        "半导体设备平台",
-        "硅片",
-        "算力服务器",
-        "光模块/CPO"
-      ],
-      "logic_chain": "个股公告扫描补齐 → 明日重点观察公告股是否强于所属板块，否则公告不构成交易主线。",
-      "verify_next_day": "若公告股未强于板块，不因公告单独升优先级。",
-      "sentiment": "中性",
-      "takeaway": "公告核验说明，未发现多数核心票重大新增公告。",
-      "evidence": [
-        {
-          "timestamp": "2026-07-01T15:05:00+08:00",
-          "detail": "来源：新浪财经公司公告/交易所披露聚合 + 配置股票池核验",
-          "type": "source_citation",
-          "metric": "url",
-          "value": "新浪财经公司公告/交易所披露聚合 + 配置股票池核验",
-          "source": "web_search"
-        },
-        {
-          "timestamp": "2026-07-01T15:05:00+08:00",
-          "detail": "映射：公告核验 → 避免把产业新闻误当公司催化 → 次日盘前 overnight_news 只追加真正影响开盘的公告。",
-          "type": "price_action",
-          "metric": "direction",
-          "value": "公告核验 → 避免把产业新闻误当公司催化 → 次日盘前 overnight_news 只追加真正影响开盘的公告。",
-          "source": "sina_realtime"
-        }
-      ]
-    }
-  ],
-  "coverage": {
-    "matrix": [
-      "全球标杆企业",
-      "中国产业政策",
-      "全球科技事件日历",
-      "突发事件高频词",
-      "观察池个股公告"
-    ],
-    "topics_from_config": [
-      "半导体设备平台",
-      "CMP/靶材/材料耗材",
-      "半导体零部件弹性",
-      "光刻胶/光刻机催化",
-      "长鑫存储IPO映射",
-      "光模块/CPO",
-      "算力",
-      "高带宽内存",
-      "存储芯片",
-      "封装",
-      "电子布",
-      "覆铜板",
-      "硅片"
-    ],
-    "note": "本次为22:55按新规则补跑，新增观察池个股公告维度；未发现足以改变次日开盘判断的工信部/发改委7月1日新增重大半导体政策。",
-    "announcement_scan": {
-      "scope": "config/watchlist.json + config/topics-list.json 观察池核心个股公告核验",
-      "confirmed_material_announcements": [
-        "中微公司",
-        "沪硅产业",
-        "中科曙光"
-      ],
-      "checked_core_names": [
         "北方华创",
         "中微公司",
         "华海清科",
@@ -763,85 +473,112 @@
         "晶瑞电材",
         "雅克科技",
         "沪硅产业",
-        "长川科技",
-        "新易盛",
-        "中际旭创",
-        "天孚通信",
-        "浪潮信息",
-        "中科曙光"
+        "有研硅",
+        "士兰微"
       ],
-      "note": "本次补扫以交易所/新浪财经公司公告聚合可见公告为准；仅将足以影响次日观察的公告写入 news。"
-    }
-  },
-  "sentiment_summary": {
-    "overall": "中性偏正面",
-    "counts": {
-      "正面": 5,
-      "负面": 2,
-      "中性": 8
-    },
-    "headline": "正面催化集中在人形机器人、AI算力/HBM和半导体材料事件窗口；负面主要来自热门材料/光通信异动风险提示与大基金减持扰动。明日重点看机器人链、HBM/存储、材料耗材能否扩散，同时避免追高风险提示密集的题材。",
-    "positive_focus": [
-      "人形机器人订单验证",
-      "海外AI基建资本开支",
-      "HBM4E技术迭代",
-      "半导体材料会议窗口"
-    ],
-    "negative_focus": [
-      "热门材料/光通信密集风险提示",
-      "大基金减持扰动",
-      "硅片涨价逻辑需承接验证"
-    ],
-    "neutral_focus": [
-      "中微公司产业基金公告",
-      "中科曙光可转债批复",
-      "出口管制政策变量"
-    ]
-  },
-  "layout": "grouped_sentiment_v1",
-  "p0_alerts": [
-    {
-      "title": "半导体硬件高位链面临海外大跌和国内风险提示双重压制",
-      "severity": "P0",
-      "why_p0": "直接影响7月2日9:25竞价风险偏好，可能触发半导体设备/材料/存储/HBM/光通信核心批量低开，盘前必须优先核验。",
+      "logic_chain": "无重大公告不等于风险解除；今天的主要边际信息来自收盘结构、港股映射和资金轮动。",
+      "verify_next_day": [
+        "8:30增量扫描是否出现迟发公告",
+        "9:25核心池是否批量低开或出现公告驱动异动"
+      ],
       "evidence": [
         {
-          "timestamp": "2026-07-01T15:05:00+08:00",
-          "detail": "费城半导体指数跌超5%，ASML、台积电、美光、AMD等硬件链下跌。",
-          "type": "source_citation",
-          "metric": "text",
-          "value": "费城半导体指数跌超5%，ASML、台积电、美光、AMD等硬件链下跌。",
-          "source": "web_search"
-        },
-        {
-          "timestamp": "2026-07-01T15:05:00+08:00",
-          "detail": "7月1日晚A股热门半导体材料、光通信等多家公司披露异动或风险提示。",
-          "type": "source_citation",
-          "metric": "text",
-          "value": "7月1日晚A股热门半导体材料、光通信等多家公司披露异动或风险提示。",
-          "source": "web_search"
-        },
-        {
-          "timestamp": "2026-07-01T15:05:00+08:00",
-          "detail": "7月1日收盘科创50跌2.48%，AI算力、CPO、电子布/PCB已处于高位分歧状态。",
-          "type": "price_action",
-          "metric": "direction",
-          "value": "7月1日收盘科创50跌2.48%，AI算力、CPO、电子布/PCB已处于高位分歧状态。",
-          "source": "sina_realtime"
+          "timestamp": "2026-07-02T20:22:36+08:00",
+          "detail": "巨潮检索北方华创、中微公司、华海清科、安集科技、江丰电子、富创精密、新莱应材、南大光电、晶瑞电材、雅克科技、沪硅产业、有研硅等，7月2日未返回重大新增公告。",
+          "type": "announcement_scan",
+          "metric": "major_announcements",
+          "source": "cninfo_search",
+          "value": "none_found"
         }
+      ]
+    },
+    {
+      "text": "全球标杆与政策矩阵覆盖：半导体设备/材料/零部件、AI算力、CPO、AI应用等方向已按ASML、东京应化/JSR、Entegris、NVIDIA、AMD、Broadcom、SK海力士、三星、TSMC等标杆和国内工信/发改/商务/网信/国务院口径做扫描，未发现晚间新增足以逆转A股半导体硬件弱势的官方催化。",
+      "source": "全球公司官网/新闻检索；国务院AI+政策；中国政府英文网AI素养报道；工信/发改/商务/网信官方口径检索",
+      "tag": "全维度扫描/覆盖记录",
+      "impact": "海外和政策端没有给出半导体硬件立刻修复的新增证据；AI应用政策底座存在，但仍需交易确认。",
+      "mapping": "海外半导体标杆无新增强催化 -> A股硬件风险仍由盘面主导；AI+政策 -> AI应用/软件保持前瞻观察。",
+      "a_share_targets": [
+        "半导体设备",
+        "半导体材料",
+        "半导体零部件",
+        "AI算力",
+        "光通信/CPO",
+        "AI应用/软件"
       ],
-      "watch_next_day": [
-        "9:25看北方华创、中微公司、华海清科、江丰电子、南大光电、雅克科技低开幅度。",
-        "9:45看半导体设备/材料核心是否收复开盘价。",
-        "若多只核心低开5%以上且不能修复，先按科技高位退潮处理。"
+      "logic_chain": "固定矩阵扫描的作用是确认“有没有新增事实改变盘面判断”。截至20:00，新增事实不足以把半导体硬件从风险线升级，软件应用也仍需从观察线验证。",
+      "verify_next_day": [
+        "看海外盘中半导体ETF/英伟达/美光/AMD是否继续弱",
+        "看日本韩国半导体链早盘是否止跌",
+        "看国内8:30增量扫描是否出现新增政策或公司公告"
       ],
-      "source": "晚间美股行情 + A股上市公司风险提示公告 + 7月1日收盘复盘"
+      "evidence": [
+        {
+          "timestamp": "2026-07-02T20:22:36+08:00",
+          "detail": "固定矩阵覆盖全球标杆、国内政策、科技事件日历、突发高频词和观察池公告；未发现能够覆盖今日A/H半导体负反馈的新增强催化。",
+          "type": "coverage",
+          "metric": "matrix_scan",
+          "source": "web_search/offical_sources",
+          "value": "completed"
+        }
+      ]
     }
   ],
-  "_meta": {
-    "cron": "0 20 * * 1-5",
-    "rule": "每天必跑，非手动补跑",
-    "last_transform": "2026-07-02T08:35:00+08:00",
-    "transform_note": "evidence字段从纯文本升级为结构化对象"
-  }
+  "coverage": {
+    "matrix": [
+      {
+        "area": "全球标杆企业",
+        "status": "completed",
+        "checked": [
+          "ASML/东京应化/JSR/Entegris",
+          "NVIDIA/AMD/Broadcom",
+          "SK海力士/三星/TSMC",
+          "AI应用与互联网平台"
+        ],
+        "note": "未发现20:00后足以改变A股半导体硬件风险判断的新增强催化。"
+      },
+      {
+        "area": "中国产业政策固定信源",
+        "status": "completed",
+        "checked": [
+          "国务院AI+政策",
+          "工信部半导体/AI/机器人/新材料口径",
+          "商务部出口管制/实体清单口径",
+          "发改委产业政策口径"
+        ],
+        "note": "AI应用政策底座较强，半导体硬件今晚未见新增官方确认催化。"
+      },
+      {
+        "area": "全球科技事件日历",
+        "status": "completed",
+        "checked": [
+          "半导体/AI巨头财报与新品日历",
+          "展会/生态发布会"
+        ],
+        "note": "无新增P0。"
+      },
+      {
+        "area": "突发高频词",
+        "status": "completed",
+        "checked": [
+          "突发/暴跌/暴涨+半导体/AI/机器人/材料"
+        ],
+        "note": "盘面级P0来自A/H半导体负反馈，而非新增单条突发公告。"
+      },
+      {
+        "area": "观察池个股公告",
+        "status": "completed",
+        "checked": "按config/watchlist.json与config/topics-list.json核心股票检索7月2日公告",
+        "note": "已检查个股公告，未发现重大新增；如夜间补发，纳入次日8:30增量扫描。"
+      }
+    ],
+    "config_priority": "已按config/watchlist.json、config/alert-config.json、config/topics-list.json执行；旧池只增强不删减。"
+  },
+  "next_day_focus": [
+    "半导体硬件跌停释放和港股中芯/华虹/ASMPT止跌",
+    "AI应用/软件能否由昆仑/天娱扩散到金山/讯飞/万兴等基本面锚",
+    "创新药/CRO能否保持A/H共振",
+    "低位化工/资源材料是否继续吸金并压制半导体材料修复"
+  ],
+  "disclaimer": "仅作研究跟踪，不构成投资建议。"
 }
