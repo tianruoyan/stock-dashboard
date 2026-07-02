@@ -5,7 +5,8 @@ const FILES = [
   "data/midday.json",
   "data/postmarket.json",
   "data/evening-sentiment.json",
-  "data/topics.json"
+  "data/topics.json",
+  "data/requirements.json"
 ];
 
 let cache = {};
@@ -46,6 +47,7 @@ function render(file, data) {
   if (file.includes("postmarket")) renderPostmarket(data);
   if (file.includes("evening"))  renderEvening(data);
   if (file.includes("topics"))   renderTopics(data);
+  if (file.includes("requirements")) renderRequirements(data);
 }
 
 function formatUpdateTime(timestamp) {
@@ -860,6 +862,40 @@ function renderTopics(data) {
       ${t.note ? `<div class="card-body muted">${t.note}</div>` : ""}
     </div>`;
   }).join("");
+}
+
+/* =========================
+   需求板块
+========================= */
+function renderRequirements(data) {
+  updatePanelMeta("requirements", data.timestamp);
+  const el = document.getElementById("requirements");
+  const items = data.requirements || [];
+  if (!items.length) {
+    el.innerHTML = '<div class="empty">暂无需求</div>';
+    return;
+  }
+
+  const summary = data.summary ? `<div class="breadth">${escapeHtml(data.summary)}</div>` : "";
+  const cards = items.map(item => {
+    const priorityCls = item.priority === "P0" ? "p0" : item.priority === "P1" ? "p1" : "p2";
+    const scope = (item.scope || []).map(v => `<span class="tag">${escapeHtml(v)}</span>`).join("");
+    const acceptance = (item.acceptance || []).map(v => `<li>${escapeHtml(v)}</li>`).join("");
+    const links = (item.links || []).map(v => `<span class="muted">${escapeHtml(v)}</span>`).join(" · ");
+    return `<div class="requirement-card ${priorityCls}">
+      <div class="requirement-head">
+        <span class="badge ${priorityCls === "p0" ? "risk" : "watch"}">${escapeHtml(item.priority || "P2")}</span>
+        <b>${escapeHtml(item.title || item.id || "未命名需求")}</b>
+        <span class="requirement-status">${escapeHtml(item.status || "待处理")}</span>
+      </div>
+      <div class="card-body muted">${escapeHtml(item.id || "")} · ${escapeHtml(item.owner || "")}</div>
+      ${scope ? `<div class="tag-row">${scope}</div>` : ""}
+      ${acceptance ? `<ul class="requirement-list">${acceptance}</ul>` : ""}
+      ${links ? `<div class="requirement-links">${links}</div>` : ""}
+    </div>`;
+  }).join("");
+
+  el.innerHTML = summary + `<div class="requirements-grid">${cards}</div>`;
 }
 
 /* =========================
