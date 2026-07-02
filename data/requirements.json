@@ -1,0 +1,94 @@
+{
+  "timestamp": "2026-07-02T09:35:00+08:00",
+  "summary": "模型平台需求池：记录新增模块、字段规范、运行约束和验收状态。",
+  "requirements": [
+    {
+      "id": "REQ-PORTFOLIO-STYLE-ENGINE",
+      "title": "Portfolio Style Engine（组合风格引擎）",
+      "status": "已实现",
+      "priority": "P0",
+      "owner": "Codex",
+      "scope": [
+        "仓位控制",
+        "组合结构调整",
+        "进攻/防御/清仓风险切换"
+      ],
+      "acceptance": [
+        "新增独立 portfolio_engine.py，不修改原选股模块",
+        "支持 money_signal / leader_signal / breadth_signal 三信号输入",
+        "输出 style_state、position_ratio、structure、action",
+        "支持 allocate_portfolio 和 15分钟 rebalance_portfolio",
+        "写死 leader weak 去 Alpha、money+breadth weak 降仓、ETF跌超3%强制降杠杆"
+      ],
+      "links": [
+        "portfolio_engine.py",
+        "tests/test_portfolio_engine.py"
+      ]
+    },
+    {
+      "id": "REQ-POSTMARKET-EVIDENCE",
+      "title": "盘后复盘 evidence 与收盘竞价补丁",
+      "status": "已实现",
+      "priority": "P0",
+      "owner": "Codex",
+      "scope": [
+        "postmarket.json",
+        "closing_auction_patch",
+        "hotspots[].evidence"
+      ],
+      "acceptance": [
+        "收盘复盘必须补 14:55-15:00 尾盘/收盘竞价校验",
+        "review 必须有 evidence[]",
+        "hotspots 每条必须有 evidence[]",
+        "没有 evidence 的热点不得升级强主线"
+      ],
+      "links": [
+        "data/postmarket.json",
+        "RULES.md"
+      ]
+    },
+    {
+      "id": "REQ-EVENING-P0",
+      "title": "晚间舆情 P0 置顶",
+      "status": "已实现",
+      "priority": "P0",
+      "owner": "Codex",
+      "scope": [
+        "evening-sentiment.json",
+        "p0_alerts",
+        "次日竞价风险"
+      ],
+      "acceptance": [
+        "p0_alerts[] 必须存在",
+        "每条 P0 必须包含 title、severity、why_p0、evidence、watch_next_day、source",
+        "普通 news 尽量补 evidence"
+      ],
+      "links": [
+        "data/evening-sentiment.json",
+        "RULES.md"
+      ]
+    },
+    {
+      "id": "REQ-STYLE-ROTATION-RADAR",
+      "title": "老登风格切换雷达",
+      "status": "已实现",
+      "priority": "P1",
+      "owner": "Codex",
+      "scope": [
+        "券商",
+        "保险",
+        "畜牧",
+        "白酒"
+      ],
+      "acceptance": [
+        "老登池新增金融/消费防御代表股",
+        "科技线大跌时同步观察风格切换",
+        "若金融或消费防御接力，盘中明确提示风格切换风险"
+      ],
+      "links": [
+        "config/watchlist.json",
+        "RULES.md"
+      ]
+    }
+  ]
+}
