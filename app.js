@@ -281,7 +281,7 @@ function renderCodexIntraday(data) {
     } else {
       html += data.main_trends.map(t => {
         const cls = (t.status||'').includes('强') ? 'strong-theme' : '';
-        return `<div class="theme-item ${cls}"><b>${t.name}</b> <span class="muted">— ${t.status}</span><br><span style="font-size:12px">${t.evidence||''}</span></div>`;
+        return `<div class="theme-item ${cls}"><b>${t.name}</b> <span class="muted">— ${t.status}</span><br><span style="font-size:12px">${formatEvidenceList(t.evidence)}</span></div>`;
       }).join('');
     }
     html += '</div>';
@@ -559,7 +559,7 @@ function renderMidday(data) {
     if (mr.one_sentence) html += `<div class="breadth">${mr.one_sentence}</div>`;
     if (mr.main_trends) {
       html += mr.main_trends.map(t =>
-        `<div class="theme-item ${(t.status||'').includes('强')?'strong-theme':''}"><b>${t.name}</b> <span class="muted">— ${t.status}</span>${t.evidence?`<br><span style="font-size:12px">${t.evidence}</span>`:''}</div>`
+        `<div class="theme-item ${(t.status||'').includes('强')?'strong-theme':''}"><b>${t.name}</b> <span class="muted">— ${t.status}</span>${t.evidence?`<br><span style="font-size:12px">${typeof t.evidence==='string'?t.evidence:formatEvidenceList(t.evidence)}</span>`:''}</div>`
       ).join('');
     }
     html += '</div>';
