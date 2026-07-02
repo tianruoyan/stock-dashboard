@@ -209,10 +209,18 @@ function renderIntraday(data) {
   // 指数行
   const idxEl = document.getElementById("intraday-indices");
   if (data.indices) {
-    idxEl.innerHTML = Object.entries(data.indices).map(([k, v]) => {
-      const cls = v >= 0 ? 'up' : 'down';
-      return `<span class="index-item"><b>${k}</b> <span class="${cls}">${v > 0 ? '+' : ''}${v}%</span></span>`;
-    }).join("");
+    if (Array.isArray(data.indices)) {
+      idxEl.innerHTML = data.indices.map(i => {
+        const v = i.change_pct || i.pct || 0;
+        const cls = v >= 0 ? 'up' : 'down';
+        return `<span class="index-item"><b>${i.name}</b> <span class="${cls}">${v > 0 ? '+' : ''}${v.toFixed(2)}%</span></span>`;
+      }).join("");
+    } else {
+      idxEl.innerHTML = Object.entries(data.indices).map(([k, v]) => {
+        const cls = v >= 0 ? 'up' : 'down';
+        return `<span class="index-item"><b>${k}</b> <span class="${cls}">${v > 0 ? '+' : ''}${v}%</span></span>`;
+      }).join("");
+    }
   }
 
   // Codex 格式: 深度分析（main_trends 含 status 或 themes 存在）
@@ -283,6 +291,9 @@ function renderCodexIntraday(data) {
   if (data.themes && data.themes.length) {
     html += '<div class="subsection"><h3>📊 板块分类</h3>';
     html += data.themes.map(t => {
+      if (typeof t === 'string') {
+        return `<div class="theme-item">➖ <b>${t}</b></div>`;
+      }
       const cls = (t.status||'').includes('强') ? 'strong-theme' : (t.status||'').includes('弱') ? 'sentiment' : '';
       const icon = (t.status||'').includes('强') ? '✅' : (t.status||'').includes('弱') ? '🔻' : '➖';
       return `<div class="theme-item ${cls}"><b>${icon} ${t.name}</b> <span class="muted">— ${t.status}</span><br><span style="font-size:12px">${t.evidence||''}</span></div>`;
@@ -523,7 +534,21 @@ function renderMidday(data) {
   // 上午数据快照
   if (data.morning_snapshot) {
     html += '<div class="subsection"><h3>📈 上午快照</h3><div class="breadth">';
-    html += data.morning_snapshot;
+    if (typeof data.morning_snapshot === 'string') {
+      html += data.morning_snapshot;
+    } else {
+      const ms = data.morning_snapshot;
+      if (ms.indices) {
+        html += ms.indices.map(i => {
+          const p = parseFloat(i.pct) || 0;
+          const cls = p >= 0 ? 'up' : 'down';
+          return `<span style="margin-right:12px"><b>${i.name}</b> <span class="${cls}">${p > 0 ? '+' : ''}${p.toFixed(2)}%</span></span>`;
+        }).join('');
+      }
+      if (ms.breadth) {
+        html += `<br><span style="font-size:12px">涨停${ms.breadth.limit_up||'?'}家 跌停${ms.breadth.limit_down||'?'}家</span>`;
+      }
+    }
     html += '</div></div>';
   }
 
