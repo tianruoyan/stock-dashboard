@@ -357,12 +357,14 @@ function renderSectorList(elId, sectors, dir) {
   }
   const cls = dir === 'up' ? 'up' : 'down';
   el.innerHTML = sectors.map((s, i) => {
-    const pct = s.change_pct || 0;
-    const barW = Math.min(Math.abs(pct) * 5, 100);
+    const pct = s.change_pct !== undefined ? s.change_pct : (s.pct !== undefined ? s.pct : null);
+    const detail = s.detail || '';
+    const barW = pct != null ? Math.min(Math.abs(pct) * 5, 100) : 0;
+    const pctStr = pct != null ? `${pct > 0 ? '+' : ''}${pct}%` : '';
     return `<div class="sector-row">
       <span class="rank">${i + 1}</span>
-      <span class="sector-name">${s.name || s.sector}</span>
-      <span class="sector-pct ${cls}">${pct > 0 ? '+' : ''}${pct}%</span>
+      <span class="sector-name">${s.name || s.sector}${detail ? ` <span class="muted" style="font-size:10px">${detail}</span>` : ''}</span>
+      <span class="sector-pct ${cls}">${pctStr}</span>
       <div class="bar"><div class="bar-fill ${cls}" style="width:${barW}%"></div></div>
     </div>`;
   }).join("");
@@ -375,6 +377,18 @@ function formatPct(value) {
 
 function pctClass(value) {
   return typeof value === "number" && value < 0 ? "down" : "up";
+}
+
+function renderIndexRow(indices) {
+  if (Array.isArray(indices)) {
+    return indices.map(i => {
+      const v = i.change_pct !== undefined ? i.change_pct : i.pct;
+      return `<span class="index-item">${i.name} <span class="${pctClass(v)}">${formatPct(v)}</span></span>`;
+    }).join("");
+  }
+  return Object.entries(indices).map(([name, v]) =>
+    `<span class="index-item">${name} <span class="${pctClass(v)}">${formatPct(v)}</span></span>`
+  ).join("");
 }
 
 function renderMappingChain(items) {
@@ -458,9 +472,7 @@ function renderPremarket(data) {
       html += `<div class="theme-item">${data.us_overnight.conclusion}</div>`;
     }
     if (data.us_overnight.indices) {
-      html += '<div class="index-row">' + Object.entries(data.us_overnight.indices).map(([name, v]) =>
-        `<span class="index-item">${name} <span class="${pctClass(v)}">${formatPct(v)}</span></span>`
-      ).join("") + '</div>';
+      html += '<div class="index-row">' + renderIndexRow(data.us_overnight.indices) + '</div>';
     }
     if (data.us_overnight.reason) {
       html += `<div class="theme-item">${data.us_overnight.reason}</div>`;
@@ -488,9 +500,7 @@ function renderPremarket(data) {
   if (data.hk_auction) {
     html += '<div class="subsection"><h3>🇭🇰 港股竞价</h3>';
     if (data.hk_auction.indices) {
-      html += '<div class="index-row">' + Object.entries(data.hk_auction.indices).map(([name, v]) =>
-        `<span class="index-item">${name} <span class="${pctClass(v)}">${formatPct(v)}</span></span>`
-      ).join("") + '</div>';
+      html += '<div class="index-row">' + renderIndexRow(data.hk_auction.indices) + '</div>';
     }
     if (data.hk_auction.sectors) {
       html += '<div class="tag-row">板块：' + data.hk_auction.sectors.map(s => `<span class="tag">${typeof s === "string" ? s : `${s.name || s.sector || ""}${s.strength ? `：${s.strength}` : ""}`}</span>`).join(" ") + '</div>';
