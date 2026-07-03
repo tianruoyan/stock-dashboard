@@ -497,7 +497,12 @@ function renderPremarket(data) {
       html += '<div class="tag-row">重点科技股：' + data.us_overnight.tech_stocks.map(s => `<span class="tag">${typeof s === "string" ? s : `${s.name || s.symbol || ""}${s.change_pct !== undefined ? ` ${formatPct(s.change_pct)}` : ""}`}</span>`).join(" ") + '</div>';
     }
     if (data.us_overnight.japan_korea) {
-      html += '<div class="tag-row">日韩早盘：' + data.us_overnight.japan_korea.map(s => `<span class="tag">${typeof s === "string" ? s : `${s.name || s.market || ""}${s.change_pct !== undefined ? ` ${formatPct(s.change_pct)}` : ""}`}</span>`).join(" ") + '</div>';
+      const jk = data.us_overnight.japan_korea;
+      if (Array.isArray(jk)) {
+        html += '<div class="tag-row">日韩早盘：' + jk.map(s => `<span class="tag">${typeof s === "string" ? s : `${s.name || s.market || ""}${s.change_pct !== undefined ? ` ${formatPct(s.change_pct)}` : ""}`}</span>`).join(" ") + '</div>';
+      } else {
+        html += '<div class="tag-row">日韩早盘：' + Object.entries(jk).map(([k, v]) => `<span class="tag">${k}: ${typeof v === 'number' ? v.toFixed(2) : v}</span>`).join(" ") + '</div>';
+      }
     }
     if (data.us_overnight.hot_sectors) {
       html += '<div class="tag-row">热点：' + data.us_overnight.hot_sectors.map(s => `<span class="tag">${s}</span>`).join(" ") + '</div>';
@@ -749,7 +754,11 @@ function renderPostmarket(data) {
     const risks = data.risk || data.risks;
     if (risks) {
       html += '<div class="subsection"><h3>⚠️ 风险</h3><ul class="news-list risk">';
-      html += risks.map(r => `<li>${typeof r === "string" ? r : r.text}</li>`).join('');
+      if (Array.isArray(risks)) {
+        html += risks.map(r => `<li>${typeof r === "string" ? r : r.text}</li>`).join('');
+      } else {
+        html += `<li>${risks}</li>`;
+      }
       html += '</ul></div>';
     }
 
