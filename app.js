@@ -297,7 +297,7 @@ function renderCodexIntraday(data) {
     } else {
       html += data.main_trends.map(t => {
         const cls = (t.status||'').includes('强') ? 'strong-theme' : '';
-        return `<div class="theme-item ${cls}"><b>${t.name}</b> <span class="muted">— ${t.status}</span><br><span style="font-size:12px">${formatEvidenceList(t.evidence)}</span></div>`;
+        return `<div class="theme-item ${cls}"><b>${escapeHtml(t.name)}</b> <span class="muted">— ${escapeHtml(t.status || "")}</span><br><span style="font-size:12px">${formatEvidenceList(t.evidence)}</span></div>`;
       }).join('');
     }
     html += '</div>';
@@ -312,7 +312,7 @@ function renderCodexIntraday(data) {
       }
       const cls = (t.status||'').includes('强') ? 'strong-theme' : (t.status||'').includes('弱') ? 'sentiment' : '';
       const icon = (t.status||'').includes('强') ? '✅' : (t.status||'').includes('弱') ? '🔻' : '➖';
-      return `<div class="theme-item ${cls}"><b>${icon} ${t.name}</b> <span class="muted">— ${t.status}</span><br><span style="font-size:12px">${t.evidence||''}</span></div>`;
+      return `<div class="theme-item ${cls}"><b>${icon} ${escapeHtml(t.name)}</b> <span class="muted">— ${escapeHtml(t.status || "")}</span><br><span style="font-size:12px">${formatEvidenceList(t.evidence)}</span></div>`;
     }).join('');
     html += '</div>';
   }
@@ -893,10 +893,7 @@ function formatEvidenceList(value) {
   if (Array.isArray(value)) {
     return value.map(v => {
       if (typeof v === "string") {
-        if (v.length > 300 && (v.includes("[{") || v.includes("{'"))) {
-          return escapeHtml(v.substring(0, 150) + "\u2026");
-        }
-        return escapeHtml(v);
+        return formatEvidenceString(v);
       }
       return escapeHtml(`${v.label || v.name || v.title || "\u8bc1\u636e"}\uff1a${v.detail || v.text || v.value || v.source || ""}`);
     }).join('<br>');
@@ -905,6 +902,47 @@ function formatEvidenceList(value) {
     return escapeHtml(`${value.label || value.name || value.title || "证据"}：${value.detail || value.text || value.value || value.source || ""}`);
   }
   return escapeHtml(value || "");
+}
+
+function formatEvidenceString(text) {
+  const raw = String(text || "");
+  if (raw.includes("近5日涨停池对照") && raw.includes("[{")) {
+    const prefix = raw.split("[{")[0].replace(/[:：]\s*$/, "");
+    const rows = parseLimitHistory(raw);
+    if (rows.length) {
+      return `<div>${escapeHtml(prefix)}</div><div class="history-table">${rows.map(row => {
+        const industries = Object.entries(row.top_industries || {})
+          .slice(0, 4)
+          .map(([name, count]) => `${name}${count}`)
+          .join(" / ");
+        return `<div class="history-row"><span>${formatCompactDate(row.date)}</span><b>${row.limit_up_count || "--"}家</b><span>${escapeHtml(industries)}</span></div>`;
+      }).join("")}</div>`;
+    }
+  }
+  if (raw.length > 260 && (raw.includes("[{") || raw.includes("{'"))) {
+    return escapeHtml(raw.substring(0, 160) + "...");
+  }
+  return escapeHtml(raw);
+}
+
+function parseLimitHistory(text) {
+  try {
+    const start = text.indexOf("[{");
+    if (start < 0) return [];
+    const jsonish = text.slice(start)
+      .replace(/'/g, '"')
+      .replace(/([{,]\s*)([A-Za-z_][A-Za-z0-9_]*)\s*:/g, '$1"$2":');
+    const parsed = JSON.parse(jsonish);
+    return Array.isArray(parsed) ? parsed : [];
+  } catch (e) {
+    return [];
+  }
+}
+
+function formatCompactDate(value) {
+  const s = String(value || "");
+  if (/^\d{8}$/.test(s)) return `${s.slice(4, 6)}-${s.slice(6, 8)}`;
+  return escapeHtml(s);
 }
 
 /* =========================
