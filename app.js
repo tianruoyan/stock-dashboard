@@ -11,6 +11,12 @@ const FILES = [
 
 let cache = {};
 
+// Debug: show errors on page
+window.onerror = function(msg, url, line) {
+  const status = document.getElementById('status');
+  if (status) status.textContent = '🔴 JS ERROR: ' + msg + ' line ' + line;
+};
+
 init();
 setInterval(updateAll, 30000);
 setInterval(updateTime, 1000);
@@ -21,6 +27,7 @@ function init() { updateAll(); }
    主更新
 ========================= */
 async function updateAll() {
+  const debug = [];
   for (const file of FILES) {
     try {
       const res = await fetch(file + "?t=" + Date.now());
@@ -28,12 +35,21 @@ async function updateAll() {
       if (!cache[file] || cache[file].timestamp !== data.timestamp) {
         cache[file] = data;
         render(file, data);
+        debug.push('✅ ' + file.split('/').pop());
+      } else {
+        debug.push('⏭ ' + file.split('/').pop());
       }
     } catch (e) {
       console.error("load failed:", file);
+      debug.push('❌ ' + file.split('/').pop() + ': ' + e.message);
     }
   }
   document.getElementById("lastUpdate").innerText = new Date().toLocaleTimeString();
+  // Debug: write status to premarket section so it's visible
+  const pm = document.getElementById("premarket");
+  if (pm && (!pm.innerText || pm.innerText.length < 10)) {
+    pm.innerText = 'DEBUG: ' + debug.join(' | ');
+  }
 }
 
 /* =========================
