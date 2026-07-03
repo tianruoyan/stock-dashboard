@@ -891,7 +891,15 @@ function renderP0Alert(item) {
 
 function formatEvidenceList(value) {
   if (Array.isArray(value)) {
-    return value.map(v => escapeHtml(typeof v === "string" ? v : `${v.label || v.name || v.title || "证据"}：${v.detail || v.text || v.value || v.source || ""}`)).join('；');
+    return value.map(v => {
+      if (typeof v === "string") {
+        if (v.length > 300 && (v.includes("[{") || v.includes("{'"))) {
+          return escapeHtml(v.substring(0, 150) + "\u2026");
+        }
+        return escapeHtml(v);
+      }
+      return escapeHtml(`${v.label || v.name || v.title || "\u8bc1\u636e"}\uff1a${v.detail || v.text || v.value || v.source || ""}`);
+    }).join('<br>');
   }
   if (value && typeof value === "object") {
     return escapeHtml(`${value.label || value.name || value.title || "证据"}：${value.detail || value.text || value.value || value.source || ""}`);
