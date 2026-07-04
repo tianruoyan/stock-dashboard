@@ -1,12 +1,32 @@
 # 同花顺自选股同步到观察池
 
-## 推荐设置
+## 推荐方式：桌面同花顺直连
 
-1. 在同花顺里把自选股导出为文本或 CSV。
-2. 保存到：
+现在默认读取桌面版同花顺的登录 Cookie，并通过同花顺“我的自选”接口拉取手机端同步后的自选股。
+
+前提：
+
+1. Mac 已安装并登录「同花顺」桌面版。
+2. 手机端同花顺和 Mac 桌面端使用同一个账号。
+3. 桌面端能看到手机同步过来的自选股。
+
+手动同步一次：
+
+```bash
+cd /Users/sweet_orange/stock-dashboard
+python3 scripts/import_ths_watchlist.py --mode ths
+```
+
+脚本只会追加或补全 `config/watchlist.json` 里的 `watch_only`，不会删除已有观察池股票。同步成功后会 `touch .push-now`，由现有推送守护负责发布。
+
+## 备用方式：iCloud 文本
+
+如果同花顺登录态失效，仍可用文本文件导入。
+
+在 iPhone 的「文件」App 里打开 iCloud Drive，保存到：
 
 ```text
-/Users/sweet_orange/Documents/同花顺自选股.txt
+/Users/sweet_orange/Library/Mobile Documents/com~apple~CloudDocs/同花顺自选股.txt
 ```
 
 3. 文件每行支持以下格式：
@@ -21,14 +41,12 @@
 
 只写代码或只写股票名也可以，脚本会尽量自动补全。
 
-## 手动同步一次
+手动同步文本：
 
 ```bash
 cd /Users/sweet_orange/stock-dashboard
-python3 scripts/import_ths_watchlist.py --source /Users/sweet_orange/Documents/同花顺自选股.txt
+python3 scripts/import_ths_watchlist.py --mode file --source "/Users/sweet_orange/Library/Mobile Documents/com~apple~CloudDocs/同花顺自选股.txt"
 ```
-
-脚本只会追加或补全 `config/watchlist.json` 里的 `watch_only`，不会删除已有观察池股票。
 
 ## 开机自动同步
 
@@ -38,7 +56,35 @@ launchctl unload ~/Library/LaunchAgents/com.stock-dashboard.ths-watchlist.plist 
 launchctl load ~/Library/LaunchAgents/com.stock-dashboard.ths-watchlist.plist
 ```
 
-默认每 30 分钟同步一次，开机后自动跑一次。同步成功后会 `touch .push-now`，由现有推送守护负责发布。
+默认每 30 分钟同步一次，开机后自动跑一次。后台任务使用 `--mode auto`：优先读桌面同花顺，失败后回退到 iCloud 文本。
+
+## macOS 权限
+
+如果日志里出现：
+
+```text
+Operation not permitted: .../Mobile Documents/com~apple~CloudDocs/同花顺自选股.txt
+```
+
+说明 macOS 阻止后台任务读取 iCloud Drive。处理方式：
+
+1. 打开「系统设置」
+2. 进入「隐私与安全性」
+3. 打开「完全磁盘访问权限」
+4. 给下面任意一个加入并打开权限：
+   - `/usr/bin/python3`
+   - 或「终端」
+   - 或 Codex 所在应用
+5. 重新加载任务：
+
+```bash
+launchctl unload ~/Library/LaunchAgents/com.stock-dashboard.ths-watchlist.plist 2>/dev/null || true
+launchctl load ~/Library/LaunchAgents/com.stock-dashboard.ths-watchlist.plist
+```
+
+手动运行脚本通常不受这个限制，所以可以先用手动同步确认文件格式没问题。
+
+如果桌面同花顺直连失败，优先确认桌面同花顺是否仍处于登录状态。
 
 ## 改同步频率
 
