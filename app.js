@@ -917,8 +917,9 @@ function renderEvening(data) {
   let html = "";
   const news = data.news || [];
   const p0Alerts = data.p0_alerts || [];
+  const filteredNews = news.filter(item => !isCoveredByP0(item, p0Alerts));
   const summary = data.sentiment_summary || {};
-  const counts = summary.counts || {};
+  const counts = sentimentCounts(filteredNews, summary.counts || {});
 
   if (summary.headline || summary.overall) {
     html += `<div class="sentiment-brief">
@@ -946,10 +947,10 @@ function renderEvening(data) {
     html += '</div>';
   }
 
-  if (news.length) {
+  if (filteredNews.length) {
     html += '<div class="sentiment-grid">';
     html += groups.map(([key, title, cls]) => {
-      const items = news.filter(n => (typeof n === "string" ? "中性" : n.sentiment || "中性") === key);
+      const items = filteredNews.filter(n => (typeof n === "string" ? "中性" : n.sentiment || "中性") === key);
       return `<div class="sentiment-col ${cls}">
         <h3>${title}</h3>
         ${items.length ? items.map(renderEveningItem).join("") : '<div class="empty-sm">暂无</div>'}
@@ -959,6 +960,70 @@ function renderEvening(data) {
   }
 
   el.innerHTML = html || '<div class="empty">晚间舆情待更新</div>';
+}
+
+function sentimentCounts(news, fallback) {
+  if (!news.length && fallback) return fallback;
+  return news.reduce((acc, item) => {
+    const key = typeof item === "string" ? "中性" : item.sentiment || "中性";
+    acc[key] = (acc[key] || 0) + 1;
+    return acc;
+  }, { "正面": 0, "负面": 0, "中性": 0 });
+}
+
+function isCoveredByP0(newsItem, p0Alerts) {
+  if (!p0Alerts.length) return false;
+  const fields = eveningDedupeFields(newsItem).filter(v => normalizeEveningText(v).length >= 2);
+  if (!fields.length) return false;
+  return p0Alerts.some(alert => {
+    const haystack = normalizeEveningText(eveningDedupeFields(alert).join(" "));
+    return fields.some(field => {
+      const needle = normalizeEveningText(field);
+      if (!needle) return false;
+      return haystack.includes(needle) ||
+        (needle.length >= 10 && haystack.includes(needle.slice(0, 10))) ||
+        (needle.length >= 16 && haystack.includes(needle.slice(0, 16))) ||
+        hasEveningTextOverlap(needle, haystack);
+    });
+  });
+}
+
+function hasEveningTextOverlap(needle, haystack) {
+  if (needle.length < 12) return haystack.includes(needle);
+  const grams = new Set();
+  for (let i = 0; i <= needle.length - 4; i += 2) {
+    const gram = needle.slice(i, i + 4);
+    if (!/^\d+$/.test(gram)) grams.add(gram);
+  }
+  if (!grams.size) return false;
+  let hits = 0;
+  grams.forEach(gram => {
+    if (haystack.includes(gram)) hits += 1;
+  });
+  return hits >= 3 || hits / grams.size >= 0.35;
+}
+
+function eveningDedupeFields(item) {
+  if (typeof item === "string") return [item];
+  const evidence = Array.isArray(item.evidence)
+    ? item.evidence.map(e => typeof e === "string" ? e : e.detail || e.text || e.source || "").join(" ")
+    : "";
+  return [
+    item.title,
+    item.text,
+    item.stock,
+    item.tag,
+    item.why_p0,
+    item.impact,
+    item.mapping,
+    evidence
+  ].filter(Boolean);
+}
+
+function normalizeEveningText(value) {
+  return String(value || "")
+    .replace(/[^\u4e00-\u9fa5A-Za-z0-9]/g, "")
+    .toLowerCase();
 }
 
 function renderEveningItem(item) {
