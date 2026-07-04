@@ -282,6 +282,7 @@ function renderWatchPool(key, title, desc, stocks, signals) {
   const risks = hits.filter(s => s.signal.level === "risk").slice(0, displayLimit);
   const pressure = hits.filter(s => s.signal.level === "pressure").slice(0, displayLimit);
   const watch = hits.filter(s => s.signal.level === "watch").slice(0, displayLimit);
+  const idle = hits.filter(s => s.signal.level === "idle").slice(0, displayLimit);
   const action = risks.length ? "个股控风险" : pressure.length ? "方向承压" : triggered.length ? "优先盯" : watch.length ? "等确认" : "观察";
   return `<div class="watch-pool-card ${risks.length ? "risk" : pressure.length ? "pressure" : triggered.length ? "hot" : ""}">
     <div class="watch-pool-head"><b>${escapeHtml(title)}</b><span>${stocks.length} 只 · ${escapeHtml(desc)}</span></div>
@@ -290,6 +291,7 @@ function renderWatchPool(key, title, desc, stocks, signals) {
     ${renderWatchLine("个股风险", risks)}
     ${renderWatchLine("方向承压", pressure)}
     ${renderWatchLine("待验证", watch)}
+    ${key === "watch_only" ? renderWatchLine("暂无直接信号", idle) : ""}
   </div>`;
 }
 
@@ -322,7 +324,7 @@ function renderWatchStockName(stock) {
 
 function stockSignal(stock, signals, pool) {
   const name = stock.name || "";
-  const tags = stock.tags || [];
+  const tags = signalTags(stock.tags || []);
   const hardRiskPattern = /跌停|接近跌停|减持|监管|问询|立案|处罚|澄清|业绩雷|暴跌|放量大跌|放量下跌|破位|跌破|降级|风险核心|负反馈核心/;
   const pressurePattern = /风险|弱|退潮|回落|下跌|压制|分歧|补跌/;
   const hardStrongPattern = /涨停|封板|急拉|大涨|放量上涨|放量走强|强势|领涨|突破|加速/;
@@ -347,6 +349,11 @@ function stockSignal(stock, signals, pool) {
   }
   if (directSegments.length || tagMatched.length) return { level: "watch", reason: directSegments.length ? "个股被提及" : matchedTagReason(tags, tagText, "标签命中") };
   return { level: "idle", reason: "暂无信号" };
+}
+
+function signalTags(tags) {
+  const management = /^(观察池|个人跟踪|观察仓|小登池|中登池|老登池|风格切换|科技题材|A股)$/;
+  return (tags || []).filter(tag => tag && !management.test(tag));
 }
 
 function shortReason(segments, fallback) {
