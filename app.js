@@ -283,10 +283,8 @@ function renderWatchPool(key, title, desc, stocks, signals) {
   const pressure = hits.filter(s => s.signal.level === "pressure").slice(0, displayLimit);
   const watch = hits.filter(s => s.signal.level === "watch").slice(0, displayLimit);
   const idle = hits.filter(s => s.signal.level === "idle").slice(0, displayLimit);
-  const action = risks.length ? "个股控风险" : triggered.length ? "已触发" : pressure.length ? "方向承压" : watch.length ? "等确认" : "观察";
   return `<div class="watch-pool-card ${risks.length ? "risk" : triggered.length ? "hot" : pressure.length ? "pressure" : ""}">
     <div class="watch-pool-head"><b>${escapeHtml(title)}</b><span>${stocks.length} 只 · ${escapeHtml(desc)}</span></div>
-    <div class="watch-action">${escapeHtml(action)}</div>
     ${renderWatchLine("触发股", triggered)}
     ${renderWatchLine("个股风险", risks)}
     ${renderWatchLine("方向承压", pressure)}
