@@ -6,7 +6,8 @@ const FILES = [
   "data/postmarket.json",
   "data/evening-sentiment.json",
   "data/topics.json",
-  "data/requirements.json"
+  "data/requirements.json",
+  "data/source-health.json"
 ];
 
 let cache = {};
@@ -64,6 +65,7 @@ function render(file, data) {
   if (file.includes("evening"))  renderEvening(data);
   if (file.includes("topics"))   renderTopics(data);
   if (file.includes("requirements")) renderRequirements(data);
+  if (file.includes("source-health")) renderSourceHealth(data);
 }
 
 function formatUpdateTime(timestamp) {
@@ -1213,6 +1215,38 @@ function renderRequirements(data) {
   }).join("");
 
   el.innerHTML = summary + `<div class="requirements-grid">${cards}</div>`;
+}
+
+/* =========================
+   数据源健康
+========================= */
+function renderSourceHealth(data) {
+  updatePanelMeta("source-health", data.timestamp);
+  const el = document.getElementById("source-health");
+  if (!el) return;
+  const sources = data.sources || [];
+  const rules = data.rules || [];
+  const sourceCards = sources.map(source => {
+    const status = source.status || "unknown";
+    const cls = status === "ok" ? "ok" : status === "degraded" ? "warn" : "bad";
+    const label = status === "ok" ? "正常" : status === "degraded" ? "降级" : "异常";
+    const cadence = source.cadence ? `<div class="source-meta">频率：${escapeHtml(source.cadence)}</div>` : "";
+    const note = source.note ? `<div class="source-note">${escapeHtml(source.note)}</div>` : "";
+    return `<div class="source-card ${cls}">
+      <div class="source-head">
+        <b>${escapeHtml(source.name || source.id || "未命名数据源")}</b>
+        <span class="source-status">${label}</span>
+      </div>
+      <div class="source-meta">${escapeHtml(source.role || "")}</div>
+      ${cadence}
+      ${note}
+    </div>`;
+  }).join("");
+  const ruleList = rules.length ? `<div class="subsection"><h3>执行原则</h3>${renderBulletList(rules, "news-list")}</div>` : "";
+  el.innerHTML = `
+    <div class="source-grid">${sourceCards || '<div class="empty">数据源状态待更新</div>'}</div>
+    ${ruleList}
+  `;
 }
 
 /* =========================
