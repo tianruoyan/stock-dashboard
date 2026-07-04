@@ -237,42 +237,36 @@ function renderIntraday(data) {
         return `<span class="index-item"><b>${k}</b> <span class="${cls}">${v > 0 ? '+' : ''}${v}%</span></span>`;
       }).join("");
     }
+  } else {
+    idxEl.innerHTML = '<span class="empty-sm">指数数据待更新</span>';
   }
+
+  const sectorLists = buildIntradaySectorLists(data);
+  document.querySelectorAll('.sector-grid').forEach(el => el.style.display = '');
+  renderSectorList("concept-top", sectorLists.conceptTop, "up");
+  renderSectorList("concept-bot", sectorLists.conceptBottom, "down");
+  renderSectorList("industry-top", sectorLists.industryTop, "up");
+  renderSectorList("industry-bot", sectorLists.industryBottom, "down");
+  data._hasSectorDisplay = sectorLists.hasAny;
 
   // Codex 格式: 深度分析（main_trends 含 status 或 themes 存在）
   if (data.main_trends && data.main_trends.length && (typeof data.main_trends[0] === 'object' ? data.main_trends[0].status : true)) {
-    // 同时显示板块排行（如果有）
-    if (data.concept_top5 || data.industry_top5) {
-      document.querySelectorAll('.sector-grid').forEach(el => el.style.display = '');
-      const analysisEl = document.getElementById('intraday-analysis');
-      if (analysisEl) analysisEl.style.display = 'none';
-      renderSectorList("concept-top", data.concept_top5, "up");
-      renderSectorList("concept-bot", data.concept_bottom5, "down");
-      renderSectorList("industry-top", data.industry_top5, "up");
-      renderSectorList("industry-bot", data.industry_bottom5, "down");
-    }
     renderCodexIntraday(data);
     return;
   }
 
   // Cola 格式: 概念/行业涨跌榜
   // 先恢复四栏网格
-  document.querySelectorAll('.sector-grid').forEach(el => el.style.display = '');
   const analysisEl = document.getElementById('intraday-analysis');
   if (analysisEl) analysisEl.style.display = 'none';
 
   if (data.concept_top5 || data.industry_top5) {
-    renderSectorList("concept-top", data.concept_top5, "up");
-    renderSectorList("concept-bot", data.concept_bottom5, "down");
-    renderSectorList("industry-top", data.industry_top5, "up");
-    renderSectorList("industry-bot", data.industry_bottom5, "down");
     return;
   }
 
   // 老格式兼容
   if (data.main_trends && data.main_trends.length) {
     renderSectorList("concept-top", data.main_trends, "up");
-    ["concept-bot","industry-top","industry-bot"].forEach(id => document.getElementById(id).innerHTML = '<div class="empty-sm">--</div>');
   }
 }
 
@@ -296,8 +290,11 @@ function renderCodexIntraday(data) {
       html += `<div class="breadth">${data.main_trends}</div>`;
     } else {
       html += data.main_trends.map(t => {
-        const cls = (t.status||'').includes('强') ? 'strong-theme' : '';
-        return `<div class="theme-item ${cls}"><b>${escapeHtml(t.name)}</b> <span class="muted">— ${escapeHtml(t.status || "")}</span><br><span style="font-size:12px">${formatEvidenceList(t.evidence)}</span></div>`;
+        const name = trendName(t);
+        const status = trendStatus(t);
+        const cls = status.includes('强') ? 'strong-theme' : '';
+        const evidence = t.evidence ? `<br><span style="font-size:12px">${formatEvidenceList(t.evidence)}</span>` : "";
+        return `<div class="theme-item ${cls}"><b>${escapeHtml(name)}</b>${status ? ` <span class="muted">— ${escapeHtml(status)}</span>` : ""}${evidence}</div>`;
       }).join('');
     }
     html += '</div>';
@@ -310,9 +307,11 @@ function renderCodexIntraday(data) {
       if (typeof t === 'string') {
         return `<div class="theme-item">➖ <b>${t}</b></div>`;
       }
-      const cls = (t.status||'').includes('强') ? 'strong-theme' : (t.status||'').includes('弱') ? 'sentiment' : '';
-      const icon = (t.status||'').includes('强') ? '✅' : (t.status||'').includes('弱') ? '🔻' : '➖';
-      return `<div class="theme-item ${cls}"><b>${icon} ${escapeHtml(t.name)}</b> <span class="muted">— ${escapeHtml(t.status || "")}</span><br><span style="font-size:12px">${formatEvidenceList(t.evidence)}</span></div>`;
+      const status = trendStatus(t);
+      const cls = status.includes('强') ? 'strong-theme' : status.includes('弱') || status.includes('风险') ? 'sentiment' : '';
+      const icon = status.includes('强') ? '✅' : status.includes('弱') || status.includes('风险') ? '🔻' : '➖';
+      const evidence = t.evidence ? `<br><span style="font-size:12px">${formatEvidenceList(t.evidence)}</span>` : "";
+      return `<div class="theme-item ${cls}"><b>${icon} ${escapeHtml(trendName(t))}</b>${status ? ` <span class="muted">— ${escapeHtml(status)}</span>` : ""}${evidence}</div>`;
     }).join('');
     html += '</div>';
   }
@@ -321,10 +320,9 @@ function renderCodexIntraday(data) {
   if (data.sentiment && typeof data.sentiment === 'object' && Object.keys(data.sentiment).length > 0) {
     html += '<div class="subsection"><h3>📈 盘面情绪</h3><ul class="news-list">';
     for (const [k, v] of Object.entries(data.sentiment)) {
-      if (typeof v === 'string' && v) {
-        const label = { market: '大盘', silan_micro: '士兰微', nanda_opto: '南大光电' }[k] || k;
-        html += `<li><b>${label}</b>：${v}</li>`;
-      }
+      if (v === null || v === undefined || v === "") continue;
+      const label = intradaySentimentLabel(k);
+      html += `<li><b>${label}</b>：${escapeHtml(formatDisplayValue(v))}</li>`;
     }
     html += '</ul></div>';
   }
@@ -344,16 +342,20 @@ function renderCodexIntraday(data) {
       if (!Array.isArray(stocks) || !stocks.length) continue;
       const label = { semiconductor_five: '半导体五只', electronic_cloth_glassfiber: '电子布/玻纤链' }[key] || key;
       html += `<h4 style="font-size:12px;color:#8B949E;margin:8px 0 4px">${label}</h4>`;
-      html += stocks.map(s => `<div class="theme-item" style="font-size:12px;padding:6px 10px;margin-bottom:3px"><b>${s.name}</b> <span class="${(s.pct||0)>=0?'up':'down'}">${(s.pct||0)>0?'+':''}${s.pct}%</span> · ${s.status}${s.risk?` <span class="muted" style="font-size:10px">⚠ ${s.risk}</span>`:''}</div>`).join('');
+      html += stocks.map(s => {
+        if (typeof s === "string") {
+          return `<div class="theme-item" style="font-size:12px;padding:6px 10px;margin-bottom:3px"><b>${escapeHtml(s)}</b></div>`;
+        }
+        const pct = s.pct ?? s.change_pct;
+        const pctHtml = pct !== undefined ? ` <span class="${pct >= 0 ? 'up' : 'down'}">${pct > 0 ? '+' : ''}${pct}%</span>` : "";
+        const status = s.status ? ` · ${escapeHtml(s.status)}` : "";
+        const risk = s.risk ? ` <span class="muted" style="font-size:10px">⚠ ${escapeHtml(s.risk)}</span>` : "";
+        return `<div class="theme-item" style="font-size:12px;padding:6px 10px;margin-bottom:3px"><b>${escapeHtml(s.name || s.symbol || "未命名")}</b>${pctHtml}${status}${risk}</div>`;
+      }).join('');
     }
     html += '</div>';
   }
 
-  // 隐藏四栏网格，显示全宽分析
-  const hasSectorData = data.concept_top5 || data.industry_top5;
-  if (!hasSectorData) {
-    document.querySelectorAll('.sector-grid').forEach(el => el.style.display = 'none');
-  }
   let analysisEl = document.getElementById('intraday-analysis');
   if (!analysisEl) {
     analysisEl = document.createElement('div');
@@ -368,30 +370,116 @@ function renderCodexIntraday(data) {
 function renderSectorList(elId, sectors, dir) {
   const el = document.getElementById(elId);
   if (!sectors || !sectors.length) {
-    el.innerHTML = '<div class="empty-sm">--</div>';
+    el.innerHTML = '<div class="empty-sm">数据待接入</div>';
     return;
   }
   const cls = dir === 'up' ? 'up' : 'down';
   el.innerHTML = sectors.map((s, i) => {
+    if (typeof s === "string") s = { name: s };
     const pct = s.change_pct !== undefined ? s.change_pct : (s.pct !== undefined ? s.pct : null);
-    const detail = s.detail || '';
+    const detail = s.detail || s.status || "";
     const barW = pct != null ? Math.min(Math.abs(pct) * 5, 100) : 0;
     const pctStr = pct != null ? `${pct > 0 ? '+' : ''}${pct}%` : '';
     return `<div class="sector-row">
       <span class="rank">${i + 1}</span>
-      <span class="sector-name">${s.name || s.sector}${detail ? ` <span class="muted" style="font-size:10px">${detail}</span>` : ''}</span>
+      <span class="sector-name">${escapeHtml(s.name || s.sector || "未命名板块")}${detail ? ` <span class="muted" style="font-size:10px">${escapeHtml(detail)}</span>` : ''}</span>
       <span class="sector-pct ${cls}">${pctStr}</span>
       <div class="bar"><div class="bar-fill ${cls}" style="width:${barW}%"></div></div>
     </div>`;
   }).join("");
 }
 
+function buildIntradaySectorLists(data) {
+  const conceptTop = data.concept_top5 || data.concept_top || data.conceptTop || [];
+  const conceptBottom = data.concept_bottom5 || data.concept_bottom || data.conceptBottom || [];
+  const industryTop = data.industry_top5 || data.industry_top || data.industryTop || [];
+  const industryBottom = data.industry_bottom5 || data.industry_bottom || data.industryBottom || [];
+  const source = Array.isArray(data.themes) && data.themes.length ? data.themes : (Array.isArray(data.main_trends) ? data.main_trends : []);
+  const inferredTop = source
+    .filter(t => typeof t === "object" && /强|强化|资金|观察/.test(trendStatus(t)) && !/风险|弱|退潮/.test(trendStatus(t)))
+    .map(t => ({ name: trendName(t), status: trendStatus(t), detail: trendStatus(t) }))
+    .slice(0, 5);
+  const inferredBottom = source
+    .filter(t => typeof t === "object" && /风险|弱|退潮|回落/.test(trendStatus(t)))
+    .map(t => ({ name: trendName(t), status: trendStatus(t), detail: trendStatus(t) }))
+    .slice(0, 5);
+  return {
+    conceptTop: conceptTop.length ? conceptTop : inferredTop,
+    conceptBottom: conceptBottom.length ? conceptBottom : inferredBottom,
+    industryTop,
+    industryBottom,
+    hasAny: !!(conceptTop.length || conceptBottom.length || industryTop.length || industryBottom.length || inferredTop.length || inferredBottom.length)
+  };
+}
+
+function trendName(item) {
+  if (typeof item === "string") return item;
+  return item?.name || item?.sector || item?.theme || item?.title || "未命名主线";
+}
+
+function trendStatus(item) {
+  if (!item || typeof item === "string") return "";
+  return item.status || item.state || item.judgement || item.action || "";
+}
+
+function intradaySentimentLabel(key) {
+  return {
+    market: "大盘",
+    limit_up_count: "涨停数",
+    limit_down_count: "跌停数",
+    limit_diff: "涨跌停差值",
+    broken_limit_count: "炸板数",
+    limit_ratio: "涨跌停比",
+    judgement: "情绪判断",
+    interpretation: "解读",
+    silan_micro: "士兰微",
+    nanda_opto: "南大光电"
+  }[key] || key.replace(/_/g, " ");
+}
+
+function externalLabel(key) {
+  return {
+    nikkei225_change_pct: "日经225",
+    kospi_change_pct: "韩国KOSPI",
+    samsung_change_pct: "三星电子",
+    sk_hynix_change_pct: "SK海力士",
+    judgement: "判断",
+    indices: "指数",
+    hot_sectors: "强势方向",
+    weak_sectors: "弱势方向",
+    conclusion: "结论",
+    reason: "原因"
+  }[key] || key.replace(/_/g, " ");
+}
+
+function formatDisplayValue(value) {
+  if (Array.isArray(value)) return value.map(formatDisplayValue).join("、");
+  if (value && typeof value === "object") {
+    return Object.entries(value)
+      .map(([k, v]) => `${externalLabel(k)}：${formatDisplayValue(v)}`)
+      .join("；");
+  }
+  if (typeof value === "number") return `${value > 0 ? "+" : ""}${value.toFixed(2).replace(/\.00$/, "")}`;
+  return String(value ?? "");
+}
+
+function formatMarketTag(item) {
+  if (typeof item === "string") return item;
+  if (!item || typeof item !== "object") return "";
+  const name = item.name || item.symbol || item.market || item.sector || item.source_asset || "";
+  const pct = item.change_pct !== undefined ? ` ${formatPct(item.change_pct)}` : "";
+  const status = item.status || item.strength || item.note || item.impact || "";
+  return `${name}${pct}${status ? `：${status}` : ""}`;
+}
+
 function formatPct(value) {
+  if (typeof value === "string") return value;
   if (typeof value !== "number") return "--";
   return `${value > 0 ? "+" : ""}${value}%`;
 }
 
 function pctClass(value) {
+  if (typeof value === "string") return value.trim().startsWith("-") ? "down" : "up";
   return typeof value === "number" && value < 0 ? "down" : "up";
 }
 
@@ -399,24 +487,26 @@ function renderIndexRow(indices) {
   if (Array.isArray(indices)) {
     return indices.map(i => {
       const v = i.change_pct !== undefined ? i.change_pct : i.pct;
-      return `<span class="index-item">${i.name} <span class="${pctClass(v)}">${formatPct(v)}</span></span>`;
+      const note = i.note ? ` <span class="muted">${escapeHtml(i.note)}</span>` : "";
+      return `<span class="index-item">${escapeHtml(i.name || i.market || "指数")} <span class="${pctClass(v)}">${formatPct(v)}</span>${note}</span>`;
     }).join("");
   }
-  return Object.entries(indices).map(([name, v]) =>
-    `<span class="index-item">${name} <span class="${pctClass(v)}">${formatPct(v)}</span></span>`
-  ).join("");
+  return Object.entries(indices).map(([name, v]) => {
+    const value = typeof v === "object" && v !== null ? (v.change_pct ?? v.pct ?? v.value) : v;
+    return `<span class="index-item">${escapeHtml(externalLabel(name))} <span class="${pctClass(value)}">${formatPct(value)}</span></span>`;
+  }).join("");
 }
 
 function renderMappingChain(items) {
   if (!items || !items.length) return "";
   return '<ul class="news-list mapping-chain">' + items.map(item => {
-    if (typeof item === "string") return `<li>${item}</li>`;
+    if (typeof item === "string") return `<li>${escapeHtml(item)}</li>`;
     const source = item.source_asset || item.source || item.name || "映射标的";
     const pct = item.change_pct !== undefined ? ` ${formatPct(item.change_pct)}` : "";
-    const reason = item.reason ? `：${item.reason}` : "";
+    const reason = item.reason ? `：${escapeHtml(item.reason)}` : "";
     const target = item.a_share_mapping || item.target || item.mapping || "";
     const logic = item.mapping_logic || item.logic || "";
-    return `<li><b>${source}${pct}</b>${reason}${target ? `<br><span class="muted">→ ${target}</span>` : ""}${logic ? `<br><span class="muted">逻辑：${logic}</span>` : ""}</li>`;
+    return `<li><b>${escapeHtml(source)}${escapeHtml(pct)}</b>${reason}${target ? `<br><span class="muted">→ ${escapeHtml(target)}</span>` : ""}${logic ? `<br><span class="muted">逻辑：${escapeHtml(logic)}</span>` : ""}</li>`;
   }).join("") + '</ul>';
 }
 
@@ -444,10 +534,10 @@ function renderPremarket(data) {
         html += `<div class="theme-item"><b>${data.market_context.open_style || "待判断"}</b>${data.market_context.sentiment_judgement ? `：${data.market_context.sentiment_judgement}` : ""}</div>`;
       }
       if (data.market_context.benefit_themes) {
-        html += '<div class="tag-row">受益：' + data.market_context.benefit_themes.map(s => `<span class="tag">${s}</span>`).join(" ") + '</div>';
+        html += '<div class="tag-row">受益：' + data.market_context.benefit_themes.map(s => `<span class="tag">${escapeHtml(s)}</span>`).join(" ") + '</div>';
       }
       if (data.market_context.risk_points) {
-        html += '<div class="tag-row">风险：' + data.market_context.risk_points.map(s => `<span class="tag">${s}</span>`).join(" ") + '</div>';
+        html += '<div class="tag-row">风险：' + data.market_context.risk_points.map(s => `<span class="tag">${escapeHtml(s)}</span>`).join(" ") + '</div>';
       }
       html += '</div>';
     }
@@ -494,21 +584,21 @@ function renderPremarket(data) {
       html += `<div class="theme-item">${data.us_overnight.reason}</div>`;
     }
     if (data.us_overnight.tech_stocks) {
-      html += '<div class="tag-row">重点科技股：' + data.us_overnight.tech_stocks.map(s => `<span class="tag">${typeof s === "string" ? s : `${s.name || s.symbol || ""}${s.change_pct !== undefined ? ` ${formatPct(s.change_pct)}` : ""}`}</span>`).join(" ") + '</div>';
+      html += '<div class="tag-row">重点科技股：' + data.us_overnight.tech_stocks.map(s => `<span class="tag">${escapeHtml(formatMarketTag(s))}</span>`).join(" ") + '</div>';
     }
     if (data.us_overnight.japan_korea) {
       const jk = data.us_overnight.japan_korea;
       if (Array.isArray(jk)) {
-        html += '<div class="tag-row">日韩早盘：' + jk.map(s => `<span class="tag">${typeof s === "string" ? s : `${s.name || s.market || ""}${s.change_pct !== undefined ? ` ${formatPct(s.change_pct)}` : ""}`}</span>`).join(" ") + '</div>';
+        html += '<div class="tag-row">日韩早盘：' + jk.map(s => `<span class="tag">${escapeHtml(formatMarketTag(s))}</span>`).join(" ") + '</div>';
       } else {
-        html += '<div class="tag-row">日韩早盘：' + Object.entries(jk).map(([k, v]) => `<span class="tag">${k}: ${typeof v === 'number' ? v.toFixed(2) : v}</span>`).join(" ") + '</div>';
+        html += '<div class="tag-row">日韩早盘：' + Object.entries(jk).map(([k, v]) => `<span class="tag">${escapeHtml(externalLabel(k))}：${escapeHtml(formatDisplayValue(v))}</span>`).join(" ") + '</div>';
       }
     }
     if (data.us_overnight.hot_sectors) {
-      html += '<div class="tag-row">热点：' + data.us_overnight.hot_sectors.map(s => `<span class="tag">${s}</span>`).join(" ") + '</div>';
+      html += '<div class="tag-row">热点：' + data.us_overnight.hot_sectors.map(s => `<span class="tag">${escapeHtml(s)}</span>`).join(" ") + '</div>';
     }
     if (data.us_overnight.weak_sectors) {
-      html += '<div class="tag-row">弱势：' + data.us_overnight.weak_sectors.map(s => `<span class="tag">${s}</span>`).join(" ") + '</div>';
+      html += '<div class="tag-row">弱势：' + data.us_overnight.weak_sectors.map(s => `<span class="tag">${escapeHtml(s)}</span>`).join(" ") + '</div>';
     }
     if (data.us_overnight.impact_to_a_share) {
       html += `<div class="theme-item">A股影响：${data.us_overnight.impact_to_a_share}</div>`;
@@ -524,10 +614,10 @@ function renderPremarket(data) {
       html += '<div class="index-row">' + renderIndexRow(data.hk_auction.indices) + '</div>';
     }
     if (data.hk_auction.sectors) {
-      html += '<div class="tag-row">板块：' + data.hk_auction.sectors.map(s => `<span class="tag">${typeof s === "string" ? s : `${s.name || s.sector || ""}${s.strength ? `：${s.strength}` : ""}`}</span>`).join(" ") + '</div>';
+      html += '<div class="tag-row">板块：' + data.hk_auction.sectors.map(s => `<span class="tag">${escapeHtml(formatMarketTag(s))}</span>`).join(" ") + '</div>';
     }
     if (data.hk_auction.stocks) {
-      html += '<div class="tag-row">代表股：' + data.hk_auction.stocks.map(s => `<span class="tag">${typeof s === "string" ? s : `${s.name || s.symbol || ""}${s.change_pct !== undefined ? ` ${formatPct(s.change_pct)}` : ""}`}</span>`).join(" ") + '</div>';
+      html += '<div class="tag-row">代表股：' + data.hk_auction.stocks.map(s => `<span class="tag">${escapeHtml(formatMarketTag(s))}</span>`).join(" ") + '</div>';
     }
     if (data.hk_auction.sentiment) {
       html += `<div class="theme-item">${data.hk_auction.sentiment}</div>`;
@@ -712,8 +802,15 @@ function renderPostmarket(data) {
         let detail = '';
         if (h.stocks && h.stocks.length) {
           detail = h.stocks.slice(0,8).map(s => {
-            const pctCls = s.pct >= 0 ? 'up' : 'down';
-            return `<span style="font-size:11px;margin-right:8px">${s.name} <span class="${pctCls}">${s.pct>0?'+':''}${s.pct}%</span></span>`;
+            if (typeof s === "string") {
+              return `<span style="font-size:11px;margin-right:8px">${escapeHtml(s)}</span>`;
+            }
+            const pct = s.pct ?? s.change_pct;
+            if (pct === undefined) {
+              return `<span style="font-size:11px;margin-right:8px">${escapeHtml(s.name || s.symbol || "未命名")}</span>`;
+            }
+            const pctCls = pct >= 0 ? 'up' : 'down';
+            return `<span style="font-size:11px;margin-right:8px">${escapeHtml(s.name || s.symbol || "未命名")} <span class="${pctCls}">${pct > 0 ? '+' : ''}${pct}%</span></span>`;
           }).join('');
         } else {
           const reps = (h.representatives||[]).slice(0,6).join('、');
@@ -976,6 +1073,7 @@ function renderTopics(data) {
 function renderRequirements(data) {
   updatePanelMeta("requirements", data.timestamp);
   const el = document.getElementById("requirements");
+  if (!el) return;
   const items = data.requirements || [];
   if (!items.length) {
     el.innerHTML = '<div class="empty">暂无需求</div>';
