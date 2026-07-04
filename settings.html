@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>参数配置</title>
+  <link rel="stylesheet" href="style.css?v=m23" />
+  <style>
+    .doc-wrap {
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 18px 14px 40px;
+    }
+    .doc-top {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+    .doc-back {
+      color: #58A6FF;
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 600;
+    }
+    .settings-page {
+      background: #0F1620;
+      border: 1px solid #1A2332;
+      border-radius: 8px;
+      padding: 16px;
+    }
+  </style>
+</head>
+<body>
+  <main class="doc-wrap">
+    <div class="doc-top">
+      <a class="doc-back" href="index.html">← 返回看板</a>
+      <h1 style="margin:0;font-size:18px">参数配置</h1>
+    </div>
+
+    <section class="settings-page" id="section-settings">
+      <p class="muted" style="font-size:12px;margin:0 0 12px">修改后点「保存配置」，配置写入本地文件。Codex 下次运行自动读取。</p>
+
+      <div class="settings-tabs">
+        <button class="stab active" onclick="switchSettingsTab('stocks')">📋 股票池</button>
+        <button class="stab" onclick="switchSettingsTab('alerts')">⚡ 异动阈值</button>
+        <button class="stab" onclick="switchSettingsTab('topics-s')">🔍 专题管理</button>
+      </div>
+
+      <div id="stab-stocks" class="settings-content">
+        <div class="subsection">
+          <h3>小登池（科技/题材，异动阈值低）</h3>
+          <div id="cfg-small-deng" class="stock-editor"></div>
+          <button class="btn-sm" onclick="addStockRow('small_deng')">+ 添加股票</button>
+        </div>
+        <div class="subsection">
+          <h3>老登池（权重/周期，异动阈值高）</h3>
+          <div id="cfg-old-deng" class="stock-editor"></div>
+          <button class="btn-sm" onclick="addStockRow('old_deng')">+ 添加股票</button>
+        </div>
+        <div class="subsection">
+          <h3>观察池（仅观察，不触发异动）</h3>
+          <div id="cfg-watch" class="stock-editor"></div>
+          <button class="btn-sm" onclick="addStockRow('watch_only')">+ 添加股票</button>
+        </div>
+      </div>
+
+      <div id="stab-alerts" class="settings-content" style="display:none">
+        <div class="subsection">
+          <h3>小登异动</h3>
+          <div class="cfg-row"><label>均涨阈值 (%)</label><input id="cfg-sd-avg" type="number" step="0.1"></div>
+          <div class="cfg-row"><label>方向占比</label><input id="cfg-sd-dir" type="number" step="0.05" min="0" max="1"></div>
+          <div class="cfg-row"><label>成交放大倍数</label><input id="cfg-sd-vol" type="number" step="0.5"></div>
+          <div class="cfg-row"><label>检测窗口 (分钟)</label><input id="cfg-sd-win" type="number" step="1"></div>
+          <div class="cfg-row"><label>涨停/跌停触发数</label><input id="cfg-sd-limit" type="number" step="1"></div>
+        </div>
+        <div class="subsection">
+          <h3>老登异动</h3>
+          <div class="cfg-row"><label>均涨阈值 (%)</label><input id="cfg-od-avg" type="number" step="0.1"></div>
+          <div class="cfg-row"><label>成交放大倍数</label><input id="cfg-od-vol" type="number" step="0.5"></div>
+          <div class="cfg-row"><label>检测窗口 (分钟)</label><input id="cfg-od-win" type="number" step="1"></div>
+          <div class="cfg-row"><label>共振最少板块数</label><input id="cfg-od-res" type="number" step="1"></div>
+        </div>
+        <div class="subsection">
+          <h3>独立放量提醒</h3>
+          <div class="cfg-row"><label>成交放大倍数</label><input id="cfg-vw-vol" type="number" step="0.5"></div>
+          <div class="cfg-row"><label>方向占比</label><input id="cfg-vw-dir" type="number" step="0.05" min="0" max="1"></div>
+        </div>
+      </div>
+
+      <div id="stab-topics-s" class="settings-content" style="display:none">
+        <div id="cfg-topics" class="topic-editor"></div>
+        <button class="btn-sm" onclick="addTopicRow()">+ 添加专题</button>
+      </div>
+
+      <div style="margin-top:16px;display:flex;gap:8px">
+        <button class="btn-primary" onclick="saveSettings()">💾 保存配置</button>
+        <span id="cfg-status" class="muted" style="font-size:12px;align-self:center"></span>
+      </div>
+    </section>
+  </main>
+
+  <script src="settings.js?v=3"></script>
+</body>
+</html>

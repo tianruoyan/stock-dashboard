@@ -52,9 +52,10 @@ function renderSettingsForms() {
 }
 
 function setVal(id, val) { const el = document.getElementById(id); if (el) el.value = val; }
+function cfgPoolId(pool) { return pool.replace(/_/g, '-'); }
 
 function renderStockEditor(pool, stocks) {
-  const el = document.getElementById('cfg-' + pool);
+  const el = document.getElementById('cfg-' + cfgPoolId(pool));
   if (!el) return;
   el.innerHTML = stocks.map((s, i) =>
     '<div class="stock-row">' +
@@ -107,7 +108,7 @@ function removeTopic(idx) {
 
 function collectSettingsFromForms() {
   ['small_deng','old_deng','watch_only'].forEach(pool => {
-    const rows = document.querySelectorAll('#cfg-' + pool + ' .stock-row');
+    const rows = document.querySelectorAll('#cfg-' + cfgPoolId(pool) + ' .stock-row');
     const stocks = [];
     rows.forEach(row => {
       const code = row.querySelector('.sr-code')?.value?.trim();
@@ -199,7 +200,8 @@ function switchSettingsTab(tab) {
 }
 
 let settingsLoaded = false;
-document.querySelector('a[href="#section-settings"]')?.addEventListener('click', function() {
-  if (!settingsLoaded) { settingsLoaded = true; loadSettings(); }
-  document.getElementById('section-settings').style.display = 'block';
-});
+const settingsSection = document.getElementById('section-settings');
+if (settingsSection) {
+  settingsLoaded = true;
+  loadSettings();
+}
