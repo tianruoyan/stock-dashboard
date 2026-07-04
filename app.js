@@ -277,7 +277,7 @@ function renderWatchlistDecision() {
 
 function renderWatchPool(key, title, desc, stocks, signals) {
   const hits = stocks.map(s => ({ ...s, signal: stockSignal(s, signals, key) }));
-  const displayLimit = key === "watch_only" ? 8 : 5;
+  const displayLimit = key === "watch_only" ? Number.POSITIVE_INFINITY : 5;
   const triggered = hits.filter(s => s.signal.level === "trigger").slice(0, displayLimit);
   const risks = hits.filter(s => s.signal.level === "risk").slice(0, displayLimit);
   const pressure = hits.filter(s => s.signal.level === "pressure").slice(0, displayLimit);
@@ -295,13 +295,29 @@ function renderWatchPool(key, title, desc, stocks, signals) {
 
 function renderWatchLine(label, rows) {
   if (!rows.length) return `<div class="watch-line"><span>${label}</span><b>暂无</b></div>`;
-  return `<div class="watch-line"><span>${label}</span><b>${rows.map(renderWatchStock).join(" / ")}</b></div>`;
+  return `<div class="watch-line"><span>${label}</span><b>${renderGroupedWatchStocks(rows)}</b></div>`;
+}
+
+function renderGroupedWatchStocks(rows) {
+  const groups = new Map();
+  rows.forEach(stock => {
+    const reason = stock.signal?.reason || "未标注";
+    if (!groups.has(reason)) groups.set(reason, []);
+    groups.get(reason).push(stock);
+  });
+  return Array.from(groups.entries()).map(([reason, stocks]) =>
+    `<span class="watch-reason-group"><em>${escapeHtml(reason)}</em>${stocks.map(renderWatchStockName).join(" / ")}</span>`
+  ).join("");
 }
 
 function renderWatchStock(stock) {
   const name = escapeHtml(stock.name || stock.code);
   const reason = stock.signal?.reason ? `<em>${escapeHtml(stock.signal.reason)}</em>` : "";
   return `<span class="watch-stock">${name}${reason}</span>`;
+}
+
+function renderWatchStockName(stock) {
+  return `<span class="watch-stock-name">${escapeHtml(stock.name || stock.code)}</span>`;
 }
 
 function stockSignal(stock, signals, pool) {
