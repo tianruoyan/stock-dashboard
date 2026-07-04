@@ -6,6 +6,9 @@ const FILES = [
   "data/postmarket.json",
   "data/evening-sentiment.json",
   "data/topics.json",
+  "data/signal-review.json",
+  "config/watchlist.json",
+  "config/alert-config.json",
   "data/requirements.json",
   "data/source-health.json"
 ];
@@ -32,14 +35,20 @@ async function updateAll() {
     try {
       const res = await fetch(file + "?t=" + Date.now());
       const data = await res.json();
-      if (!cache[file] || cache[file].timestamp !== data.timestamp) {
+      if (!cache[file] || !data.timestamp || cache[file].timestamp !== data.timestamp) {
         cache[file] = data;
         render(file, data);
       }
     } catch (e) {
-      console.error("load failed:", file);
+      if (file.includes("signal-review")) {
+        cache[file] = null;
+        renderSignalReview(null);
+      } else {
+        console.error("load failed:", file);
+      }
     }
   }
+  renderGlobalDecisionModules();
   document.getElementById("lastUpdate").innerText = new Date().toLocaleTimeString();
 }
 
@@ -47,15 +56,18 @@ async function updateAll() {
    渲染路由
 ========================= */
 function render(file, data) {
-  if (file.includes("alert"))    renderAlerts(data);
-  if (file.includes("intraday")) renderIntraday(data);
-  if (file.includes("premarket")) renderPremarket(data);
-  if (file.includes("midday"))   renderMidday(data);
-  if (file.includes("postmarket")) renderPostmarket(data);
-  if (file.includes("evening"))  renderEvening(data);
-  if (file.includes("topics"))   renderTopics(data);
-  if (file.includes("requirements")) renderRequirements(data);
-  if (file.includes("source-health")) renderSourceHealth(data);
+  if (file === "data/alert.json") renderAlerts(data);
+  else if (file === "data/intraday.json") renderIntraday(data);
+  else if (file === "data/premarket.json") renderPremarket(data);
+  else if (file === "data/midday.json") renderMidday(data);
+  else if (file === "data/postmarket.json") renderPostmarket(data);
+  else if (file === "data/evening-sentiment.json") renderEvening(data);
+  else if (file === "data/topics.json") renderTopics(data);
+  else if (file === "data/signal-review.json") renderSignalReview(data);
+  else if (file === "config/watchlist.json") renderWatchlistDecision();
+  else if (file === "config/alert-config.json") renderPortfolioRisk();
+  else if (file === "data/requirements.json") renderRequirements(data);
+  else if (file === "data/source-health.json") renderSourceHealth(data);
 }
 
 function formatUpdateTime(timestamp) {
@@ -95,6 +107,221 @@ function escapeHtml(value) {
     .replace(/>/g, "&gt;")
     .replace(/"/g, "&quot;")
     .replace(/'/g, "&#39;");
+}
+
+function cached(path) {
+  return cache[path] || null;
+}
+
+function renderGlobalDecisionModules() {
+  renderDashboardControl();
+  renderWatchlistDecision();
+  renderPortfolioRisk();
+}
+
+function renderDashboardControl() {
+  const el = document.getElementById("dashboard-control");
+  if (!el) return;
+  const intraday = cached("data/intraday.json") || {};
+  const postmarket = cached("data/postmarket.json") || {};
+  const evening = cached("data/evening-sentiment.json") || {};
+  const alert = cached("data/alert.json") || {};
+  const riskConfig = cached("config/alert-config.json") || {};
+  const themes = getIntradayThemes(intraday);
+  const strong = themes.filter(t => /强|主线|资金/.test(trendStatus(t)) && !/风险|弱|退潮/.test(trendStatus(t)));
+  const risks = themes.filter(t => /风险|弱|退潮|回落|分歧/.test([trendStatus(t), t.risk, t.continuity].join(" ")));
+  const p0 = evening.p0_alerts || [];
+  const alertStocks = (alert.alerts || []).flatMap(a => (a.leaders || []).map(l => l.name)).filter(Boolean);
+  const mustWatch = uniqueList([
+    ...alertStocks,
+    ...extractStocks(strong[0]),
+    ...extractStocks(risks[0]),
+    ...(p0[0]?.watch_next_day || []).slice(0, 1)
+  ]).slice(0, 5);
+  const style = inferMarketStyle(intraday, postmarket, evening);
+  const position = inferPositionRange(style, riskConfig);
+  const latest = latestTimestamp([intraday, postmarket, evening, alert]);
+  const priority = strong.slice(0, 3).map(trendName);
+  const avoid = risks.slice(0, 3).map(trendName);
+
+  el.innerHTML = `<div class="control-hero ${style.cls}">
+    <div>
+      <div class="control-eyebrow">当前风格</div>
+      <div class="control-title">${escapeHtml(style.title)}</div>
+      <div class="control-sub">${escapeHtml(style.reason)}</div>
+    </div>
+    <div class="control-position">
+      <span>建议仓位</span>
+      <b>${escapeHtml(position.range)}</b>
+      <em>${escapeHtml(position.note)}</em>
+    </div>
+  </div>
+  <div class="decision-strip control-strip">
+    <div class="decision-card primary"><span class="decision-label">优先方向</span><b>${escapeHtml(priority[0] || "等待确认")}</b><span>${escapeHtml(priority.slice(1).join(" / ") || "没有共振前不抢")}</span></div>
+    <div class="decision-card risk"><span class="decision-label">回避方向</span><b>${escapeHtml(avoid[0] || "暂无明确")}</b><span>${escapeHtml(avoid.slice(1).join(" / ") || "看弱线是否扩散")}</span></div>
+    <div class="decision-card action"><span class="decision-label">必盯个股</span><b>${escapeHtml(mustWatch[0] || "暂无")}</b><span>${escapeHtml(mustWatch.slice(1).join(" / ") || "等待异动触发")}</span></div>
+    <div class="decision-card neutral"><span class="decision-label">有效时间</span><b>${escapeHtml(latest ? formatUpdateTime(latest) : "待更新")}</b><span>${escapeHtml(dataFreshness(latest))}</span></div>
+  </div>`;
+}
+
+function inferMarketStyle(intraday, postmarket, evening) {
+  const text = [
+    intraday.sentiment?.judgement,
+    ...(getIntradayThemes(intraday).map(t => [trendStatus(t), t.risk, t.continuity].join(" "))),
+    postmarket.review?.summary,
+    postmarket.closing_auction_patch?.impact,
+    ...(evening.p0_alerts || []).map(p => [p.title, p.why_p0].join(" "))
+  ].filter(Boolean).join(" ");
+  if (/风险|弱|退潮|压制|不支持|负反馈|下线|减持|分歧/.test(text)) {
+    return { title: "分化偏防御", cls: "warn", reason: "风险词和尾盘/舆情压力占优，优先控制回撤。" };
+  }
+  if (/强主线|进攻|扩散|共振|修复/.test(text)) {
+    return { title: "进攻观察", cls: "good", reason: "主线仍有扩散迹象，但需继续看前排承接。" };
+  }
+  return { title: "等待确认", cls: "neutral", reason: "缺少足够强的方向证据，降低操作频率。" };
+}
+
+function inferPositionRange(style, cfg) {
+  const risk = cfg.july_portfolio_risk || {};
+  const alphaLimit = risk.position_limits?.["Alpha总仓位上限"] || "22%";
+  if (style.cls === "warn") return { range: "20%-40%", note: `去Alpha，Alpha上限参考${alphaLimit}` };
+  if (style.cls === "good") return { range: "50%-70%", note: `保留弹性，但Alpha不超过${alphaLimit}` };
+  return { range: "30%-50%", note: "只保留龙头/中军观察仓" };
+}
+
+function latestTimestamp(items) {
+  return items.map(d => d?.timestamp).filter(Boolean).sort((a, b) => Date.parse(b) - Date.parse(a))[0] || "";
+}
+
+function dataFreshness(timestamp) {
+  if (!timestamp) return "暂无有效数据";
+  const ms = Date.now() - Date.parse(timestamp);
+  if (Number.isNaN(ms)) return "时间格式待确认";
+  if (ms < 10 * 60 * 1000) return "实时有效";
+  if (ms < 90 * 60 * 1000) return "盘中可用";
+  return "注意是否为上一阶段数据";
+}
+
+function uniqueList(items) {
+  return Array.from(new Set((items || []).filter(Boolean).map(v => String(v).trim()).filter(Boolean)));
+}
+
+function extractStocks(item) {
+  if (!item || typeof item === "string") return [];
+  return (item.stocks || item.leaders || item.representatives || [])
+    .map(s => typeof s === "string" ? s : s.name || s.symbol)
+    .filter(Boolean);
+}
+
+function renderWatchlistDecision() {
+  const el = document.getElementById("watchlist-decision");
+  if (!el) return;
+  const wl = cached("config/watchlist.json");
+  if (!wl) {
+    el.innerHTML = '<div class="empty">观察池配置待接入</div>';
+    return;
+  }
+  const signals = collectSignalText();
+  const pools = [
+    ["small_deng", "小登池", "科技/题材"],
+    ["old_deng", "老登池", "权重/风格切换"],
+    ["watch_only", "观察池", "只观察"]
+  ];
+  el.innerHTML = `<div class="watchlist-grid">${pools.map(([key, title, desc]) => renderWatchPool(key, title, desc, wl[key]?.stocks || [], signals)).join("")}</div>`;
+}
+
+function renderWatchPool(key, title, desc, stocks, signals) {
+  const hits = stocks.map(s => ({ ...s, signal: stockSignal(s, signals, key) }));
+  const triggered = hits.filter(s => s.signal.level === "trigger").slice(0, 5);
+  const risks = hits.filter(s => s.signal.level === "risk").slice(0, 5);
+  const watch = hits.filter(s => s.signal.level === "watch").slice(0, 5);
+  const action = risks.length ? "降级/控风险" : triggered.length ? "优先盯" : watch.length ? "等确认" : "观察";
+  return `<div class="watch-pool-card ${risks.length ? "risk" : triggered.length ? "hot" : ""}">
+    <div class="watch-pool-head"><b>${escapeHtml(title)}</b><span>${stocks.length} 只 · ${escapeHtml(desc)}</span></div>
+    <div class="watch-action">${escapeHtml(action)}</div>
+    ${renderWatchLine("触发股", triggered)}
+    ${renderWatchLine("风险股", risks)}
+    ${renderWatchLine("待验证", watch)}
+  </div>`;
+}
+
+function renderWatchLine(label, rows) {
+  if (!rows.length) return `<div class="watch-line"><span>${label}</span><b>暂无</b></div>`;
+  return `<div class="watch-line"><span>${label}</span><b>${rows.map(s => escapeHtml(s.name || s.code)).join(" / ")}</b></div>`;
+}
+
+function stockSignal(stock, signals, pool) {
+  const name = stock.name || "";
+  const tags = (stock.tags || []).join(" ");
+  const hay = `${name} ${tags}`;
+  const matched = signals.filter(s => s.text.includes(name) || (tags && tags.split(/\s|,|，/).some(t => t && s.text.includes(t))));
+  const text = matched.map(s => s.text).join(" ");
+  if (/风险|弱|退潮|回落|下跌|压制|减持|跌停|降级/.test(text)) return { level: "risk" };
+  if (/交易|强|主线|强化|涨停|放量|修复|承接/.test(text)) return { level: pool === "watch_only" ? "watch" : "trigger" };
+  if (matched.length) return { level: "watch" };
+  return { level: "idle" };
+}
+
+function collectSignalText() {
+  const sources = [
+    ...(cached("data/alert.json")?.alerts || []),
+    ...(cached("data/intraday.json")?.main_trends || []),
+    ...(cached("data/intraday.json")?.themes || []),
+    ...(cached("data/postmarket.json")?.hotspots || []),
+    ...(cached("data/evening-sentiment.json")?.p0_alerts || []),
+    ...(cached("data/topics.json")?.topics || [])
+  ];
+  return sources.map(item => ({ text: JSON.stringify(item, null, 0) }));
+}
+
+function renderPortfolioRisk() {
+  const el = document.getElementById("portfolio-risk");
+  if (!el) return;
+  const cfg = cached("config/alert-config.json");
+  if (!cfg?.july_portfolio_risk) {
+    el.innerHTML = '<div class="empty">仓位风控配置待接入</div>';
+    return;
+  }
+  const risk = cfg.july_portfolio_risk;
+  const style = inferMarketStyle(cached("data/intraday.json") || {}, cached("data/postmarket.json") || {}, cached("data/evening-sentiment.json") || {});
+  const pos = inferPositionRange(style, cfg);
+  const techRisk = /半导体材料|科技|AI应用|光刻胶/.test(JSON.stringify([cached("data/intraday.json"), cached("data/postmarket.json"), cached("data/evening-sentiment.json")])) && style.cls === "warn";
+  const alphaState = techRisk ? "暂停/去Alpha" : "允许但受限";
+  const limits = risk.position_limits || {};
+  const etf = risk.sector_drawdown || {};
+  const stop = risk.stop_loss || {};
+  el.innerHTML = `<div class="decision-strip risk-decision">
+    <div class="decision-card ${style.cls}"><span class="decision-label">风险状态</span><b>${escapeHtml(style.title)}</b><span>${escapeHtml(style.reason)}</span></div>
+    <div class="decision-card action"><span class="decision-label">建议总仓</span><b>${escapeHtml(pos.range)}</b><span>${escapeHtml(pos.note)}</span></div>
+    <div class="decision-card risk"><span class="decision-label">Alpha</span><b>${escapeHtml(alphaState)}</b><span>上限 ${escapeHtml(limits["Alpha总仓位上限"] || "待配置")}</span></div>
+    <div class="decision-card neutral"><span class="decision-label">强制降仓</span><b>ETF回撤规则</b><span>${escapeHtml(Object.entries(etf).slice(0, 2).map(([k, v]) => `${k}:${v}`).join("；") || "待配置")}</span></div>
+  </div>
+  <div class="risk-rule-row">
+    <span>单票上限：${escapeHtml(Object.entries(limits).slice(0, 3).map(([k, v]) => `${k}${v}`).join(" / ") || "待配置")}</span>
+    <span>止损：${escapeHtml(Object.entries(stop).slice(0, 2).map(([k, v]) => `${k}${v}`).join(" / ") || "待配置")}</span>
+  </div>`;
+}
+
+function renderSignalReview(data) {
+  const el = document.getElementById("signal-review");
+  if (!el) return;
+  const rows = data?.signals || data?.reviews || [];
+  if (!data || !rows.length) {
+    el.innerHTML = `<div class="decision-strip signal-review-empty">
+      <div class="decision-card neutral"><span class="decision-label">复盘状态</span><b>待接入</b><span>data/signal-review.json 不存在或暂无记录</span></div>
+      <div class="decision-card action"><span class="decision-label">后续格式</span><b>昨日判断 → 今日验证</b><span>支持 命中 / 失效 / 待验证 和失效原因</span></div>
+    </div>`;
+    return;
+  }
+  el.innerHTML = `<div class="signal-review-list">${rows.slice(0, 6).map(r => {
+    const status = r.status || r.result || "待验证";
+    const cls = /命中|有效/.test(status) ? "good" : /失效|错误/.test(status) ? "risk" : "neutral";
+    return `<div class="signal-review-item ${cls}">
+      <b>${escapeHtml(r.title || r.signal || r.yesterday || "信号复盘")}</b>
+      <span>${escapeHtml(status)}</span>
+      <p>${escapeHtml(r.today || r.verify || r.reason || r.note || "等待验证")}</p>
+    </div>`;
+  }).join("")}</div>`;
 }
 
 /* =========================
@@ -481,7 +708,15 @@ function renderSectorList(elId, sectors, dir) {
     return;
   }
   const cls = dir === 'up' ? 'up' : 'down';
-  el.innerHTML = sectors.map((s, i) => {
+  const rows = sectors.map((s, i) => renderSectorRow(s, i, cls));
+  if (rows.length <= 3) {
+    el.innerHTML = rows.join("");
+    return;
+  }
+  el.innerHTML = rows.slice(0, 3).join("") + `<details class="compact-details"><summary>展开完整榜单（${rows.length}）</summary>${rows.slice(3).join("")}</details>`;
+}
+
+function renderSectorRow(s, i, cls) {
     if (typeof s === "string") s = { name: s };
     const pct = s.change_pct !== undefined ? s.change_pct : (s.pct !== undefined ? s.pct : null);
     const detail = s.detail || s.status || "";
@@ -493,7 +728,6 @@ function renderSectorList(elId, sectors, dir) {
       <span class="sector-pct ${cls}">${pctStr}</span>
       <div class="bar"><div class="bar-fill ${cls}" style="width:${barW}%"></div></div>
     </div>`;
-  }).join("");
 }
 
 function buildIntradaySectorLists(data) {
@@ -1225,9 +1459,11 @@ function renderEvening(data) {
     html += '<div class="sentiment-grid">';
     html += groups.map(([key, title, cls]) => {
       const items = filteredNews.filter(n => (typeof n === "string" ? "中性" : n.sentiment || "中性") === key);
+      const first = items.slice(0, 1).map(renderEveningItem).join("");
+      const rest = items.slice(1).map(renderEveningItem).join("");
       return `<div class="sentiment-col ${cls}">
         <h3>${title}</h3>
-        ${items.length ? items.map(renderEveningItem).join("") : '<div class="empty-sm">暂无</div>'}
+        ${items.length ? first + (rest ? `<details class="compact-details"><summary>展开更多 ${items.length - 1} 条</summary>${rest}</details>` : "") : '<div class="empty-sm">暂无</div>'}
       </div>`;
     }).join("");
     html += '</div>';
@@ -1458,13 +1694,19 @@ function renderTopics(data) {
   const topics = data.topics || [];
   if (!topics.length) { el.innerHTML = '<div class="empty">暂无专题跟踪</div>'; return; }
 
-  el.innerHTML = renderTopicsDecision(topics) + '<div class="grid">' + topics.map(t => {
+  const visible = pickVisibleTopics(topics);
+  const hidden = topics.filter(t => !visible.includes(t));
+  el.innerHTML = renderTopicsDecision(topics) + '<div class="grid">' + visible.map(t => renderTopicCard(t, data.timestamp)).join("") + '</div>' +
+    (hidden.length ? `<details class="compact-details topics-all"><summary>展开全部专题（${topics.length}）</summary><div class="grid">${hidden.map(t => renderTopicCard(t, data.timestamp)).join("")}</div></details>` : "");
+}
+
+function renderTopicCard(t, fallbackTimestamp) {
     const statusText = String(t.status || "");
     const statusCls = statusText.includes("强化") || statusText.includes("强主线") ? "strong" :
                       statusText.includes("弱化") || statusText.includes("退潮") || statusText.includes("风险") ? "sentiment" : "";
     const statusBadge = statusCls === "strong" ? "🔥" :
                         statusCls === "sentiment" ? "🔻" : "➖";
-    const updatedAt = formatUpdateTime(t.updated_at || t.timestamp || data.timestamp);
+    const updatedAt = formatUpdateTime(t.updated_at || t.timestamp || fallbackTimestamp);
     return `<div class="card ${statusCls}">
       <div class="card-head"><b>${t.name}</b></div>
       ${updatedAt ? `<div class="card-updated"><span class="updated-dot"></span>已更新 · ${updatedAt}</div>` : ""}
@@ -1472,7 +1714,19 @@ function renderTopics(data) {
       ${t.action ? `<div class="card-body">${escapeHtml(truncateText(t.action, 92))}</div>` : ""}
       ${t.note ? `<details class="alert-detail"><summary>更新依据</summary><div>${escapeHtml(t.note)}</div></details>` : ""}
     </div>`;
-  }).join("") + '</div>';
+}
+
+function pickVisibleTopics(topics) {
+  const focus = topics.find(t => /强化|强|观察|博弈/.test([t.status, t.action].join(" ")) && !/风险|弱|降级|回避/.test([t.status, t.action, t.note].join(" "))) || topics[0];
+  const risk = topics.find(t => /风险|弱|降级|回避/.test([t.status, t.action, t.note].join(" ")));
+  const pending = topics.find(t => t !== focus && t !== risk && /观察|待|验证/.test([t.status, t.action, t.note].join(" ")));
+  const seen = new Set();
+  return [focus, risk, pending].filter(Boolean).filter(t => {
+    const key = t.name || JSON.stringify(t);
+    if (seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
 }
 
 function renderTopicsDecision(topics) {
