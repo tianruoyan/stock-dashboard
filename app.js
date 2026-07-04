@@ -1193,6 +1193,7 @@ function renderEvening(data) {
   const filteredNews = news.filter(item => !isCoveredByP0(item, p0Alerts));
   const summary = data.sentiment_summary || {};
   const counts = sentimentCounts(filteredNews, summary.counts || {});
+  html += renderEveningDecision(data, filteredNews, p0Alerts, counts);
 
   if (summary.headline || summary.overall) {
     html += `<div class="sentiment-brief">
@@ -1308,7 +1309,7 @@ function renderEveningItem(item) {
   const title = item.stock ? `${item.stock} · ${item.tag || "公告"}` : (item.tag || "舆情");
   const source = item.source ? `<span class="muted">${escapeHtml(item.source)}</span>` : "";
   const takeaway = item.takeaway || item.impact || "";
-  const evidence = item.evidence ? `<div class="sentiment-verify">证据：${formatEvidenceList(item.evidence)}</div>` : "";
+  const evidence = item.evidence ? renderEvidenceDetails(item.evidence) : "";
   const verify = item.verify_next_day ? `<div class="sentiment-verify">验证：${formatEvidenceList(item.verify_next_day)}</div>` : "";
   return `<div class="sentiment-item ${cls}">
     <div class="sentiment-item-head">
@@ -1326,7 +1327,7 @@ function renderP0Alert(item) {
   const severity = item.severity || "P0";
   const title = item.title || item.text || "晚间 P0";
   const why = item.why_p0 || item.impact || "";
-  const evidence = item.evidence ? `<div class="sentiment-verify">证据：${formatEvidenceList(item.evidence)}</div>` : "";
+  const evidence = item.evidence ? renderEvidenceDetails(item.evidence) : "";
   const watch = item.watch_next_day ? `<div class="sentiment-verify">次日观察：${formatEvidenceList(item.watch_next_day)}</div>` : "";
   return `<div class="sentiment-item p0">
     <div class="sentiment-item-head">
@@ -1337,6 +1338,39 @@ function renderP0Alert(item) {
     ${why ? `<div class="sentiment-takeaway">${escapeHtml(why)}</div>` : ""}
     ${evidence}
     ${watch}
+  </div>`;
+}
+
+function renderEveningDecision(data, news, p0Alerts, counts) {
+  const topP0 = p0Alerts[0];
+  const riskP0 = p0Alerts.find(item => /风险|压制|下线|减持|弱|监管/.test([item.title, item.why_p0].join(" "))) || topP0;
+  const positive = counts["正面"] || 0;
+  const negative = counts["负面"] || 0;
+  const neutral = counts["中性"] || 0;
+  const overall = data.sentiment_summary?.overall || (p0Alerts.length ? "P0优先" : positive > negative ? "偏正面" : negative > positive ? "偏负面" : "中性");
+  const watch = topP0?.watch_next_day || news.find(n => Array.isArray(n.verify_next_day))?.verify_next_day || [];
+  const tone = /负|风险|P0|警惕/.test(overall) || p0Alerts.length ? "warn" : /正/.test(overall) ? "good" : "neutral";
+  return `<div class="decision-strip evening-decision">
+    <div class="decision-card ${tone}">
+      <span class="decision-label">晚间级别</span>
+      <b>${escapeHtml(overall)}</b>
+      <span>P0 ${p0Alerts.length} / 正${positive} 负${negative} 中${neutral}</span>
+    </div>
+    <div class="decision-card primary">
+      <span class="decision-label">最大变量</span>
+      <b>${escapeHtml(truncateText(topP0?.title || "暂无P0", 24))}</b>
+      <span>${escapeHtml(truncateText(topP0?.why_p0 || "等待晚间新增舆情", 62))}</span>
+    </div>
+    <div class="decision-card risk">
+      <span class="decision-label">竞价风险</span>
+      <b>${escapeHtml(truncateText(riskP0?.title || "暂无明确风险", 24))}</b>
+      <span>${escapeHtml(truncateText(riskP0?.why_p0 || "看核心观察池是否批量高低开", 62))}</span>
+    </div>
+    <div class="decision-card action">
+      <span class="decision-label">次日观察</span>
+      <b>${escapeHtml(watch.length ? `看${Math.min(watch.length, 3)}个信号` : "等待验证")}</b>
+      <span>${escapeHtml(truncateText(watch.slice(0, 2).join("；") || "看9:25竞价、核心池高低开和风格切换", 62))}</span>
+    </div>
   </div>`;
 }
 
@@ -1424,20 +1458,52 @@ function renderTopics(data) {
   const topics = data.topics || [];
   if (!topics.length) { el.innerHTML = '<div class="empty">暂无专题跟踪</div>'; return; }
 
-  el.innerHTML = topics.map(t => {
+  el.innerHTML = renderTopicsDecision(topics) + '<div class="grid">' + topics.map(t => {
     const statusText = String(t.status || "");
     const statusCls = statusText.includes("强化") || statusText.includes("强主线") ? "strong" :
-                      statusText.includes("弱化") || statusText.includes("退潮") ? "sentiment" : "";
+                      statusText.includes("弱化") || statusText.includes("退潮") || statusText.includes("风险") ? "sentiment" : "";
     const statusBadge = statusCls === "strong" ? "🔥" :
                         statusCls === "sentiment" ? "🔻" : "➖";
     const updatedAt = formatUpdateTime(t.updated_at || t.timestamp || data.timestamp);
     return `<div class="card ${statusCls}">
       <div class="card-head"><b>${t.name}</b></div>
       ${updatedAt ? `<div class="card-updated"><span class="updated-dot"></span>已更新 · ${updatedAt}</div>` : ""}
-      <div class="card-body">${statusBadge} ${t.status}${t.action ? ` · ${t.action}` : ""}</div>
-      ${t.note ? `<div class="card-body muted">${t.note}</div>` : ""}
+      <div class="card-body">${statusBadge} ${escapeHtml(t.status || "观察")}</div>
+      ${t.action ? `<div class="card-body">${escapeHtml(truncateText(t.action, 92))}</div>` : ""}
+      ${t.note ? `<details class="alert-detail"><summary>更新依据</summary><div>${escapeHtml(t.note)}</div></details>` : ""}
     </div>`;
-  }).join("");
+  }).join("") + '</div>';
+}
+
+function renderTopicsDecision(topics) {
+  const riskTopics = topics.filter(t => /风险|弱|降级|回避/.test([t.status, t.action, t.note].join(" ")));
+  const activeTopics = topics.filter(t => /强化|强|观察|博弈/.test([t.status, t.action].join(" ")) && !riskTopics.includes(t));
+  const focus = activeTopics[0] || topics[0];
+  const risk = riskTopics[0];
+  const updatedCount = topics.length;
+  const watchText = focus?.action || "等待专题更新";
+  return `<div class="decision-strip topics-decision">
+    <div class="decision-card primary">
+      <span class="decision-label">专题焦点</span>
+      <b>${escapeHtml(focus?.name || "暂无")}</b>
+      <span>${escapeHtml(focus?.status || "观察")}</span>
+    </div>
+    <div class="decision-card action">
+      <span class="decision-label">下一步验证</span>
+      <b>${escapeHtml(truncateText(focus?.action || "等待盘面确认", 24))}</b>
+      <span>${escapeHtml(truncateText(watchText, 62))}</span>
+    </div>
+    <div class="decision-card risk">
+      <span class="decision-label">风险专题</span>
+      <b>${escapeHtml(risk?.name || "暂无明确风险")}</b>
+      <span>${escapeHtml(truncateText(risk?.action || risk?.note || "继续观察是否扩散", 62))}</span>
+    </div>
+    <div class="decision-card neutral">
+      <span class="decision-label">覆盖</span>
+      <b>${updatedCount} 个专题</b>
+      <span>${escapeHtml(topics.slice(0, 3).map(t => t.name).join(" / "))}</span>
+    </div>
+  </div>`;
 }
 
 /* =========================
