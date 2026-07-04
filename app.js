@@ -128,8 +128,8 @@ function renderDashboardControl() {
   const alert = cached("data/alert.json") || {};
   const riskConfig = cached("config/alert-config.json") || {};
   const themes = getIntradayThemes(intraday);
-  const strong = themes.filter(t => /强|主线|资金/.test(trendStatus(t)) && !/风险|弱|退潮/.test(trendStatus(t)));
-  const risks = themes.filter(t => /风险|弱|退潮|回落|分歧/.test([trendStatus(t), t.risk, t.continuity].join(" ")));
+  const strong = themes.filter(isPriorityTheme);
+  const risks = themes.filter(t => isAvoidTheme(t) && !strong.some(s => trendName(s) === trendName(t)));
   const p0 = evening.p0_alerts || [];
   const alertStocks = (alert.alerts || []).flatMap(a => (a.leaders || []).map(l => l.name)).filter(Boolean);
   const mustWatch = uniqueList([
@@ -211,6 +211,18 @@ function extractStocks(item) {
   return (item.stocks || item.leaders || item.representatives || [])
     .map(s => typeof s === "string" ? s : s.name || s.symbol)
     .filter(Boolean);
+}
+
+function isPriorityTheme(item) {
+  const status = trendStatus(item);
+  return /强|强化|主线|资金/.test(status) && !/风险|弱|退潮|回避|降级/.test(status);
+}
+
+function isAvoidTheme(item) {
+  const status = trendStatus(item);
+  const fullText = [status, item?.risk, item?.continuity, item?.note].join(" ");
+  if (/风险|弱|退潮|回避|降级/.test(status)) return true;
+  return !isPriorityTheme(item) && /风险|弱|退潮|回落|分歧|压制|补跌/.test(fullText);
 }
 
 function renderWatchlistDecision() {
@@ -528,8 +540,8 @@ function renderIntradayDecision(data) {
   const el = document.getElementById("intraday-decision");
   if (!el) return;
   const themes = getIntradayThemes(data);
-  const strong = themes.filter(t => /强|强化|主线|资金/.test(trendStatus(t)) && !/风险|弱|退潮/.test(trendStatus(t)));
-  const risks = themes.filter(t => /风险|弱|退潮|回落|分歧/.test([trendStatus(t), t.risk, t.continuity].join(" ")));
+  const strong = themes.filter(isPriorityTheme);
+  const risks = themes.filter(t => isAvoidTheme(t) && !strong.some(s => trendName(s) === trendName(t)));
   const primary = strong[0] || themes[0];
   const primaryName = primary ? trendName(primary) : "等待主线确认";
   const primaryStatus = primary ? trendStatus(primary) || "观察" : "暂无";
