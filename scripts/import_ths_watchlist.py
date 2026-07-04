@@ -36,6 +36,32 @@ THS_USER_AGENT = (
     "followPhoneSystemTheme/0 userid/000000000 getHXAPPAccessibilityMode/0 "
     "hxNewFont/1 isVip/0 getHXAPPFontSetting/normal getHXAPPAdaptOldSetting/0 okhttp/3.14.9"
 )
+PROFILE_TAGS = {
+    "sz300536": ["待标注方向"],
+    "sh688777": ["工业自动化"],
+    "sz300418": ["AI应用"],
+    "sz002261": ["华为算力"],
+    "sh688111": ["AI办公"],
+    "sh688549": ["半导体材料"],
+    "sz300346": ["光刻胶"],
+    "sh603078": ["湿电子化学品"],
+    "sz002409": ["半导体材料"],
+    "sh688019": ["CMP抛光液"],
+    "sh688120": ["CMP设备"],
+    "sz002371": ["半导体设备"],
+    "sh688012": ["半导体设备"],
+    "sh688432": ["硅材料"],
+    "sh688126": ["硅片材料"],
+    "sh688795": ["国产GPU"],
+    "sh603986": ["存储/MCU"],
+    "sh688008": ["存储/HBM"],
+    "sh588170": ["半导体ETF"],
+    "sh515230": ["软件ETF"],
+    "sh515120": ["创新药ETF"],
+    "sz159530": ["机器人ETF"],
+    "hk2513": ["AI应用"],
+    "hk9880": ["机器人"],
+}
 
 
 def normalize_code(raw):
@@ -122,7 +148,7 @@ def lookup_stock(query):
     return {
         "code": code,
         "name": row.get("Name") or q,
-        "tags": ["同花顺自选", "观察池"],
+        "tags": [*PROFILE_TAGS.get(code, []), "同花顺自选", "观察池"],
         "source": "同花顺自选导入",
     }
 
@@ -247,16 +273,21 @@ def save_json(path, data):
 
 def enrich(item):
     if item.get("code") and item.get("name"):
+        code = normalize_code(item["code"])
         return {
-            "code": normalize_code(item["code"]),
+            "code": code,
             "name": item["name"],
-            "tags": ["同花顺自选", "观察池"],
+            "tags": [*PROFILE_TAGS.get(code, []), "同花顺自选", "观察池"],
             "source": "同花顺自选导入",
         }
-    return lookup_stock(item.get("code") or item.get("name")) or {
-        "code": normalize_code(item.get("code")),
+    looked_up = lookup_stock(item.get("code") or item.get("name"))
+    if looked_up:
+        return looked_up
+    code = normalize_code(item.get("code"))
+    return {
+        "code": code,
         "name": item.get("name") or item.get("code"),
-        "tags": ["同花顺自选", "观察池"],
+        "tags": [*PROFILE_TAGS.get(code, []), "同花顺自选", "观察池"],
         "source": "同花顺自选导入",
     }
 
@@ -291,6 +322,7 @@ def merge_watchlist(watchlist, imported):
                 existing["name"] = name
                 updated += 1
             tags = list(dict.fromkeys([*(existing.get("tags") or []), "同花顺自选", "观察池"]))
+            tags = list(dict.fromkeys([*PROFILE_TAGS.get(code, []), *tags]))
             if tags != existing.get("tags"):
                 existing["tags"] = tags
                 updated += 1

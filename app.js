@@ -327,12 +327,13 @@ function renderWatchStock(stock) {
 }
 
 function renderWatchStockName(stock) {
-  return `<span class="watch-stock-name">${escapeHtml(stock.name || stock.code)}</span>`;
+  const label = stockProfileLabel(stock);
+  return `<span class="watch-stock-name">${escapeHtml(stock.name || stock.code)}${label ? `<small>${escapeHtml(label)}</small>` : ""}</span>`;
 }
 
 function stockSignal(stock, signals, pool) {
   const name = stock.name || "";
-  const tags = signalTags(stock.tags || []);
+  const tags = signalTags([...(stock.tags || []), ...inferredStockTags(stock)]);
   const hardRiskPattern = /跌停|接近跌停|减持|监管|问询|立案|处罚|澄清|业绩雷|暴跌|放量大跌|放量下跌|破位|跌破|降级|风险核心|负反馈核心/;
   const pressurePattern = /风险|弱|退潮|回落|下跌|压制|分歧|补跌/;
   const hardStrongPattern = /涨停|封板|急拉|大涨|放量上涨|放量走强|强势|领涨|突破|加速/;
@@ -360,8 +361,82 @@ function stockSignal(stock, signals, pool) {
 }
 
 function signalTags(tags) {
-  const management = /^(观察池|个人跟踪|观察仓|小登池|中登池|老登池|风格切换|科技题材|A股)$/;
+  const management = /^(观察池|个人跟踪|观察仓|小登池|中登池|老登池|风格切换|科技题材|A股|同花顺自选|设置页新增|同花顺自选导入)$/;
   return (tags || []).filter(tag => tag && !management.test(tag));
+}
+
+function stockProfileLabel(stock) {
+  const tags = signalTags([...(stock.tags || []), ...inferredStockTags(stock)]);
+  const preferred = tags.find(tag =>
+    /半导体|设备|材料|光刻胶|机器人|自动化|AI|算力|软件|ETF|创新药|GPU|存储|硅|电子布|金融/.test(tag)
+  ) || tags[0] || "";
+  return preferred;
+}
+
+function inferredStockTags(stock) {
+  const code = normalizeStockCodeForMatch(stock.code);
+  const name = String(stock.name || "").replace(/^XD/, "");
+  const map = {
+    sz300536: ["待标注方向"],
+    sh688777: ["工业自动化"],
+    sz300418: ["AI应用"],
+    sz002261: ["华为算力"],
+    sh688111: ["AI办公"],
+    sh688549: ["半导体材料"],
+    sz300346: ["光刻胶"],
+    sh603078: ["湿电子化学品"],
+    sz002409: ["半导体材料"],
+    sh688019: ["CMP抛光液"],
+    sh688120: ["CMP设备"],
+    sz002371: ["半导体设备"],
+    sh688012: ["半导体设备"],
+    sh688432: ["硅材料"],
+    sh688126: ["硅片材料"],
+    sh688795: ["国产GPU"],
+    sh603986: ["存储/MCU"],
+    sh688008: ["存储/HBM"],
+    sh588170: ["半导体ETF"],
+    sh515230: ["软件ETF"],
+    sh515120: ["创新药ETF"],
+    sz159530: ["机器人ETF"],
+    hk2513: ["AI应用"],
+    hk9880: ["机器人"]
+  };
+  const nameMap = {
+    农尚环境: ["待标注方向"],
+    中控技术: ["工业自动化"],
+    昆仑万维: ["AI应用"],
+    拓维信息: ["华为算力"],
+    金山办公: ["AI办公"],
+    中巨芯: ["半导体材料"],
+    南大光电: ["光刻胶"],
+    江化微: ["湿电子化学品"],
+    雅克科技: ["半导体材料"],
+    安集科技: ["CMP抛光液"],
+    华海清科: ["CMP设备"],
+    北方华创: ["半导体设备"],
+    中微公司: ["半导体设备"],
+    有研硅: ["硅材料"],
+    沪硅产业: ["硅片材料"],
+    摩尔线程: ["国产GPU"],
+    兆易创新: ["存储/MCU"],
+    澜起科技: ["存储/HBM"],
+    智谱: ["AI应用"],
+    优必选: ["机器人"]
+  };
+  return map[code] || Object.entries(nameMap).find(([key]) => name.includes(key))?.[1] || [];
+}
+
+function normalizeStockCodeForMatch(code) {
+  const raw = String(code || "").toLowerCase();
+  if (/^hk\d+/.test(raw)) return raw;
+  if (/^(sh|sz|bj)\d{6}$/.test(raw)) return raw;
+  const digits = raw.replace(/\D/g, "");
+  if (digits.length !== 6) return raw;
+  if (/^[56]/.test(digits)) return `sh${digits}`;
+  if (/^[013]/.test(digits)) return `sz${digits}`;
+  if (/^[489]/.test(digits)) return `bj${digits}`;
+  return raw;
 }
 
 function shortReason(segments, fallback) {
