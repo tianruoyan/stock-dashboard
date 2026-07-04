@@ -492,6 +492,24 @@ function formatIndexClose(value) {
   return typeof value === "number" ? value.toFixed(2) : escapeHtml(value);
 }
 
+function splitPremarketText(text) {
+  if (Array.isArray(text)) return text.flatMap(splitPremarketText);
+  const raw = String(text || "").trim();
+  if (!raw) return [];
+  return raw
+    .replace(/；/g, "。\n")
+    .replace(/; /g, "。\n")
+    .split(/\n|(?<=。)/)
+    .map(s => s.trim().replace(/。$/, ""))
+    .filter(Boolean);
+}
+
+function renderBulletList(items, className = "news-list") {
+  const list = (items || []).map(item => String(item || "").trim()).filter(Boolean);
+  if (!list.length) return "";
+  return `<ul class="${className}">${list.map(item => `<li>${escapeHtml(item)}</li>`).join("")}</ul>`;
+}
+
 function renderMappingChain(items) {
   if (!items || !items.length) return "";
   return '<ul class="news-list mapping-chain">' + items.map(item => {
@@ -526,7 +544,10 @@ function renderPremarket(data) {
     if (data.market_context.open_style || data.market_context.sentiment_judgement || data.market_context.benefit_themes || data.market_context.risk_points) {
       html += '<div class="subsection"><h3>🧭 开盘情绪预判</h3>';
       if (data.market_context.open_style || data.market_context.sentiment_judgement) {
-        html += `<div class="theme-item"><b>${data.market_context.open_style || "待判断"}</b>${data.market_context.sentiment_judgement ? `：${data.market_context.sentiment_judgement}` : ""}</div>`;
+        html += `<div class="theme-item premarket-lead"><b>${escapeHtml(data.market_context.open_style || "待判断")}</b></div>`;
+        if (data.market_context.sentiment_judgement) {
+          html += renderBulletList(splitPremarketText(data.market_context.sentiment_judgement), "premarket-points");
+        }
       }
       if (data.market_context.benefit_themes) {
         html += '<div class="tag-row">受益：' + data.market_context.benefit_themes.map(s => `<span class="tag">${escapeHtml(s)}</span>`).join(" ") + '</div>';
@@ -539,23 +560,23 @@ function renderPremarket(data) {
 
     // 总结
     if (data.strategy && typeof data.strategy === 'string') {
-      html += `<div class="subsection"><h3>📋 盘前研判</h3><div class="theme-item">${data.strategy}</div></div>`;
+      html += `<div class="subsection"><h3>📋 盘前研判</h3>${renderBulletList(splitPremarketText(data.strategy), "premarket-points")}</div>`;
     }
     if (data.summary) {
-      html += `<div class="subsection"><h3>💡 操作思路</h3><div class="theme-item">${data.summary}</div></div>`;
+      html += `<div class="subsection"><h3>💡 操作思路</h3>${renderBulletList(splitPremarketText(data.summary), "premarket-points")}</div>`;
     }
 
     // 强主线/观察线/风险线 三栏
     if (data.strong_lines || data.watch_lines || data.risk_lines) {
       html += '<div class="subsection"><div class="line-grid">';
       if (data.strong_lines) {
-        html += '<div><h3>🔥 强主线</h3><ul class="news-list strong">' + data.strong_lines.map(l => `<li>${l}</li>`).join("") + '</ul></div>';
+        html += '<div><h3>🔥 强主线</h3>' + renderBulletList(data.strong_lines, "news-list strong") + '</div>';
       }
       if (data.watch_lines) {
-        html += '<div><h3>👀 观察线</h3><ul class="news-list">' + data.watch_lines.map(l => `<li>${l}</li>`).join("") + '</ul></div>';
+        html += '<div><h3>👀 观察线</h3>' + renderBulletList(data.watch_lines, "news-list") + '</div>';
       }
       if (data.risk_lines) {
-        html += '<div><h3>⚠️ 风险线</h3><ul class="news-list risk">' + data.risk_lines.map(l => `<li>${l}</li>`).join("") + '</ul></div>';
+        html += '<div><h3>⚠️ 风险线</h3>' + renderBulletList(data.risk_lines, "news-list risk") + '</div>';
       }
       html += '</div></div>';
     }
@@ -570,13 +591,13 @@ function renderPremarket(data) {
   if (data.us_overnight) {
     html += '<div class="subsection"><h3>🇺🇸 隔夜外部环境</h3>';
     if (data.us_overnight.conclusion) {
-      html += `<div class="theme-item">${data.us_overnight.conclusion}</div>`;
+      html += renderBulletList(splitPremarketText(data.us_overnight.conclusion), "premarket-points");
     }
     if (data.us_overnight.indices) {
       html += '<div class="index-row">' + renderIndexRow(data.us_overnight.indices) + '</div>';
     }
     if (data.us_overnight.reason) {
-      html += `<div class="theme-item">${data.us_overnight.reason}</div>`;
+      html += renderBulletList(splitPremarketText(data.us_overnight.reason), "premarket-points compact");
     }
     if (data.us_overnight.tech_stocks) {
       html += '<div class="tag-row">重点科技股：' + data.us_overnight.tech_stocks.map(s => `<span class="tag">${escapeHtml(formatMarketTag(s))}</span>`).join(" ") + '</div>';
@@ -596,7 +617,7 @@ function renderPremarket(data) {
       html += '<div class="tag-row">弱势：' + data.us_overnight.weak_sectors.map(s => `<span class="tag">${escapeHtml(s)}</span>`).join(" ") + '</div>';
     }
     if (data.us_overnight.impact_to_a_share) {
-      html += `<div class="theme-item">A股影响：${data.us_overnight.impact_to_a_share}</div>`;
+      html += `<h3>A股影响</h3>${renderBulletList(splitPremarketText(data.us_overnight.impact_to_a_share), "premarket-points")}`;
     }
     if (data.us_overnight.mapping_chain) {
       html += '<h3>科技映射链</h3>' + renderMappingChain(data.us_overnight.mapping_chain);
@@ -615,7 +636,7 @@ function renderPremarket(data) {
       html += '<div class="tag-row">代表股：' + data.hk_auction.stocks.map(s => `<span class="tag">${escapeHtml(formatMarketTag(s))}</span>`).join(" ") + '</div>';
     }
     if (data.hk_auction.sentiment) {
-      html += `<div class="theme-item">${data.hk_auction.sentiment}</div>`;
+      html += renderBulletList(splitPremarketText(data.hk_auction.sentiment), "premarket-points");
     }
     if (data.hk_auction.mapping_chain) {
       html += '<h3>港股映射</h3>' + renderMappingChain(data.hk_auction.mapping_chain);
@@ -623,9 +644,9 @@ function renderPremarket(data) {
     html += '</div>';
   }
   if (data.overnight_news) {
-    html += '<div class="subsection"><h3>📰 隔夜要闻</h3><ul class="news-list">';
-    html += data.overnight_news.map(n => `<li>${typeof n === "string" ? n : n.text || n.title}</li>`).join("");
-    html += '</ul></div>';
+    html += '<div class="subsection"><h3>📰 隔夜要闻</h3>';
+    html += renderBulletList(data.overnight_news.map(n => typeof n === "string" ? n : n.text || n.title || ""), "news-list");
+    html += '</div>';
   }
   if (data.strategy && Array.isArray(data.strategy)) {
     html += '<div class="subsection"><h3>🎯 今日策略</h3><div class="grid">';
