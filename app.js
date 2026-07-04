@@ -967,6 +967,7 @@ function renderPostmarket(data) {
   updatePanelMeta("postmarket", data.timestamp);
   const el = document.getElementById("postmarket");
   let html = "";
+  html += renderPostmarketDecision(data);
 
   // === Codex 格式: hotspots + review ===
   if (data.hotspots || data.review) {
@@ -1069,7 +1070,7 @@ function renderPostmarket(data) {
             (reps ? `<span style="font-size:11px;color:#8B949E">代表：${reps}</span>` : '') +
             (h.continuity ? `<br><span style="font-size:11px">${h.continuity}</span>` : '');
         }
-        const evidence = h.evidence ? `<div class="evidence-line"><b>证据：</b>${formatEvidenceList(h.evidence)}</div>` : '';
+        const evidence = h.evidence ? renderEvidenceDetails(h.evidence) : '';
         const riskNote = h.risk ? `<br><span style="font-size:10px;color:#FF6B6B">⚠ ${escapeHtml(h.risk)}</span>` : '';
         return `<div class="theme-item ${cls}">
           <b>${escapeHtml(h.name)}</b> <span class="muted">— ${escapeHtml(h.status || '')}</span>
@@ -1140,6 +1141,43 @@ function renderPostmarket(data) {
   }
 
   el.innerHTML = html || '<div class="empty">盘后数据待更新</div>';
+}
+
+function renderPostmarketDecision(data) {
+  const hotspots = Array.isArray(data.hotspots) ? data.hotspots : [];
+  const strong = hotspots.find(h => /强/.test(h.status || "")) || hotspots[0];
+  const riskLine = hotspots.find(h => /风险|弱|退潮/.test([h.status, h.risk, h.continuity].join(" ")));
+  const patch = data.closing_auction_patch || {};
+  const watch = data.next_day_watch || patch.watch_next_day || [];
+  const reviewText = data.review?.summary || data.review?.one_sentence || data.index?.summary || "";
+  const mb = data.index?.market_breadth || {};
+  const limitUp = mb.limit_up ?? data.index?.["涨停"];
+  const limitDown = mb.limit_down ?? data.index?.["跌停"];
+  const broken = mb.broken_board ?? data.index?.["炸板"];
+  const tone = /负反馈|不支持|风险|分歧/.test([patch.summary, patch.impact, reviewText].join(" ")) ? "warn" : /强|支持|扩散/.test([patch.summary, patch.impact, reviewText].join(" ")) ? "good" : "neutral";
+
+  return `<div class="decision-strip postmarket-decision">
+    <div class="decision-card primary">
+      <span class="decision-label">次日主线</span>
+      <b>${escapeHtml(strong ? trendName(strong) : "等待主线确认")}</b>
+      <span>${escapeHtml(strong?.status || reviewText || "暂无")}</span>
+    </div>
+    <div class="decision-card ${tone}">
+      <span class="decision-label">尾盘验证</span>
+      <b>${escapeHtml(patch.impact ? "已校验" : "待校验")}</b>
+      <span>${escapeHtml(truncateText(patch.summary || patch.impact || reviewText, 62))}</span>
+    </div>
+    <div class="decision-card risk">
+      <span class="decision-label">最大风险</span>
+      <b>${escapeHtml(riskLine ? trendName(riskLine) : "暂无明确风险线")}</b>
+      <span>${escapeHtml(truncateText(riskLine?.risk || "看炸板/跌停是否继续扩大", 62))}</span>
+    </div>
+    <div class="decision-card action">
+      <span class="decision-label">明日动作</span>
+      <b>${escapeHtml(watch.length ? `看${Math.min(watch.length, 3)}个条件` : "等待确认")}</b>
+      <span>${escapeHtml(truncateText(watch.slice(0, 2).join("；") || `涨停${limitUp || "-"} / 跌停${limitDown || "-"} / 炸板${broken || "-"}`, 62))}</span>
+    </div>
+  </div>`;
 }
 
 /* =========================
