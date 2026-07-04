@@ -132,12 +132,12 @@ function renderDashboardControl() {
   const risks = themes.filter(t => isAvoidTheme(t) && !strong.some(s => trendName(s) === trendName(t)));
   const p0 = evening.p0_alerts || [];
   const alertStocks = (alert.alerts || []).flatMap(a => (a.leaders || []).map(l => l.name)).filter(Boolean);
-  const mustWatch = uniqueList([
-    ...alertStocks,
+  const attackWatch = uniqueList([
     ...extractStocks(strong[0]),
-    ...extractStocks(risks[0]),
-    ...(p0[0]?.watch_next_day || []).slice(0, 1)
+    ...alertStocks
   ]).slice(0, 5);
+  const riskWatch = uniqueList(risks.flatMap(extractStocks)).filter(s => !attackWatch.includes(s)).slice(0, 5);
+  const eventWatch = uniqueList(p0.map(p => p.title || p.text || p.event)).slice(0, 5);
   const style = inferMarketStyle(intraday, postmarket, evening);
   const position = inferPositionRange(style, riskConfig);
   const latest = latestTimestamp([intraday, postmarket, evening, alert]);
@@ -149,6 +149,7 @@ function renderDashboardControl() {
       <div class="control-eyebrow">当前风格</div>
       <div class="control-title">${escapeHtml(style.title)}</div>
       <div class="control-sub">${escapeHtml(style.reason)}</div>
+      <div class="control-meta">有效时间：${escapeHtml(latest ? formatUpdateTime(latest) : "待更新")} · ${escapeHtml(dataFreshness(latest))}</div>
     </div>
     <div class="control-position">
       <span>建议仓位</span>
@@ -159,8 +160,9 @@ function renderDashboardControl() {
   <div class="decision-strip control-strip">
     <div class="decision-card primary"><span class="decision-label">优先方向</span><b>${escapeHtml(priority[0] || "等待确认")}</b><span>${escapeHtml(priority.slice(1).join(" / ") || "没有共振前不抢")}</span></div>
     <div class="decision-card risk"><span class="decision-label">回避方向</span><b>${escapeHtml(avoid[0] || "暂无明确")}</b><span>${escapeHtml(avoid.slice(1).join(" / ") || "看弱线是否扩散")}</span></div>
-    <div class="decision-card action"><span class="decision-label">必盯个股</span><b>${escapeHtml(mustWatch[0] || "暂无")}</b><span>${escapeHtml(mustWatch.slice(1).join(" / ") || "等待异动触发")}</span></div>
-    <div class="decision-card neutral"><span class="decision-label">有效时间</span><b>${escapeHtml(latest ? formatUpdateTime(latest) : "待更新")}</b><span>${escapeHtml(dataFreshness(latest))}</span></div>
+    <div class="decision-card primary"><span class="decision-label">进攻盯</span><b>${escapeHtml(attackWatch[0] || "暂无")}</b><span>${escapeHtml(attackWatch.slice(1).join(" / ") || "看前排封单和扩散")}</span></div>
+    <div class="decision-card risk"><span class="decision-label">风险盯</span><b>${escapeHtml(riskWatch[0] || "暂无")}</b><span>${escapeHtml(riskWatch.slice(1).join(" / ") || "看是否继续负反馈")}</span></div>
+    <div class="decision-card action"><span class="decision-label">事件盯</span><b>${escapeHtml(truncateText(eventWatch[0] || "暂无", 18))}</b><span>${escapeHtml(truncateText(eventWatch.slice(1).join(" / ") || "看P0公告/舆情映射", 42))}</span></div>
   </div>`;
 }
 
