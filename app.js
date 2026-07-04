@@ -225,18 +225,7 @@ function renderIntraday(data) {
   // 指数行
   const idxEl = document.getElementById("intraday-indices");
   if (data.indices) {
-    if (Array.isArray(data.indices)) {
-      idxEl.innerHTML = data.indices.map(i => {
-        const v = i.change_pct || i.pct || 0;
-        const cls = v >= 0 ? 'up' : 'down';
-        return `<span class="index-item"><b>${i.name}</b> <span class="${cls}">${v > 0 ? '+' : ''}${v.toFixed(2)}%</span></span>`;
-      }).join("");
-    } else {
-      idxEl.innerHTML = Object.entries(data.indices).map(([k, v]) => {
-        const cls = v >= 0 ? 'up' : 'down';
-        return `<span class="index-item"><b>${k}</b> <span class="${cls}">${v > 0 ? '+' : ''}${v}%</span></span>`;
-      }).join("");
-    }
+    idxEl.innerHTML = renderIndexRow(data.indices);
   } else {
     idxEl.innerHTML = '<span class="empty-sm">指数数据待更新</span>';
   }
@@ -488,13 +477,19 @@ function renderIndexRow(indices) {
     return indices.map(i => {
       const v = i.change_pct !== undefined ? i.change_pct : i.pct;
       const note = i.note ? ` <span class="muted">${escapeHtml(i.note)}</span>` : "";
-      return `<span class="index-item">${escapeHtml(i.name || i.market || "指数")} <span class="${pctClass(v)}">${formatPct(v)}</span>${note}</span>`;
+      const close = i.close !== undefined ? ` <span class="muted">${formatIndexClose(i.close)}</span>` : "";
+      return `<span class="index-item">${escapeHtml(i.name || i.market || "指数")}${close} <span class="${pctClass(v)}">${formatPct(v)}</span>${note}</span>`;
     }).join("");
   }
   return Object.entries(indices).map(([name, v]) => {
     const value = typeof v === "object" && v !== null ? (v.change_pct ?? v.pct ?? v.value) : v;
-    return `<span class="index-item">${escapeHtml(externalLabel(name))} <span class="${pctClass(value)}">${formatPct(value)}</span></span>`;
+    const close = typeof v === "object" && v !== null && v.close !== undefined ? ` <span class="muted">${formatIndexClose(v.close)}</span>` : "";
+    return `<span class="index-item">${escapeHtml(externalLabel(name))}${close} <span class="${pctClass(value)}">${formatPct(value)}</span></span>`;
   }).join("");
+}
+
+function formatIndexClose(value) {
+  return typeof value === "number" ? value.toFixed(2) : escapeHtml(value);
 }
 
 function renderMappingChain(items) {
