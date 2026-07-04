@@ -277,10 +277,11 @@ function renderWatchlistDecision() {
 
 function renderWatchPool(key, title, desc, stocks, signals) {
   const hits = stocks.map(s => ({ ...s, signal: stockSignal(s, signals, key) }));
-  const triggered = hits.filter(s => s.signal.level === "trigger").slice(0, 5);
-  const risks = hits.filter(s => s.signal.level === "risk").slice(0, 5);
-  const pressure = hits.filter(s => s.signal.level === "pressure").slice(0, 5);
-  const watch = hits.filter(s => s.signal.level === "watch").slice(0, 5);
+  const displayLimit = key === "watch_only" ? 8 : 5;
+  const triggered = hits.filter(s => s.signal.level === "trigger").slice(0, displayLimit);
+  const risks = hits.filter(s => s.signal.level === "risk").slice(0, displayLimit);
+  const pressure = hits.filter(s => s.signal.level === "pressure").slice(0, displayLimit);
+  const watch = hits.filter(s => s.signal.level === "watch").slice(0, displayLimit);
   const action = risks.length ? "个股控风险" : pressure.length ? "方向承压" : triggered.length ? "优先盯" : watch.length ? "等确认" : "观察";
   return `<div class="watch-pool-card ${risks.length ? "risk" : pressure.length ? "pressure" : triggered.length ? "hot" : ""}">
     <div class="watch-pool-head"><b>${escapeHtml(title)}</b><span>${stocks.length} 只 · ${escapeHtml(desc)}</span></div>
@@ -316,10 +317,10 @@ function stockSignal(stock, signals, pool) {
   const tagMatched = signals.filter(s => tags.some(t => t && s.text.includes(t)));
   const tagText = tagMatched.map(s => s.text).join(" ");
   const directRisk = directSegments.some(part => hardRiskPattern.test(part) || hasLargeDrop(part, 7));
-  const directPressure = directSegments.some(part => pressurePattern.test(part) || hasAnyDrop(part));
+  const directPressure = directSegments.some(part => !isConditionalSignal(part) && (pressurePattern.test(part) || hasAnyDrop(part)));
   const directTrigger = directSegments.some(part => !isConditionalSignal(part) && (hardStrongPattern.test(part) || hasLargeGain(part, 5)));
   if (directRisk) return { level: "risk", reason: shortReason(directSegments, "硬风险") };
-  if (directPressure) return { level: "pressure", reason: shortReason(directSegments, "个股承压") };
+  if (directPressure) return { level: "pressure", reason: pressureReason(directSegments) };
   if (directTrigger) return { level: pool === "watch_only" ? "watch" : "trigger", reason: shortReason(directSegments, "强信号") };
   if (pressurePattern.test(tagText)) return { level: "pressure", reason: matchedTagReason(tags, tagText, "方向承压") };
   if (watchPattern.test(tagText) || directSegments.some(part => hasAnyGain(part))) {
@@ -331,9 +332,22 @@ function stockSignal(stock, signals, pool) {
 
 function shortReason(segments, fallback) {
   const hit = (segments || []).find(Boolean) || "";
-  const cleaned = hit.replace(/[{}"\\[\\]]/g, "").replace(/\s+/g, "");
+  const cleaned = hit
+    .replace(/^[a-zA-Z0-9_]+[:：]/, "")
+    .replace(/[{}"\\[\\]]/g, "")
+    .replace(/\s+/g, "");
   if (!cleaned) return fallback;
   return truncateText(cleaned, 16);
+}
+
+function pressureReason(segments) {
+  const text = (segments || []).join(" ");
+  const drop = text.match(/-\d+(?:\.\d+)?%/);
+  if (drop) return `${drop[0]}承压`;
+  if (/回落/.test(text)) return "回落承压";
+  if (/补跌/.test(text)) return "补跌承压";
+  if (/压制/.test(text)) return "受压制";
+  return "个股承压";
 }
 
 function matchedTagReason(tags, text, fallback) {
