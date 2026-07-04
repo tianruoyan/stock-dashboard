@@ -28,7 +28,6 @@ function init() { updateAll(); }
    主更新
 ========================= */
 async function updateAll() {
-  const debug = [];
   for (const file of FILES) {
     try {
       const res = await fetch(file + "?t=" + Date.now());
@@ -36,21 +35,12 @@ async function updateAll() {
       if (!cache[file] || cache[file].timestamp !== data.timestamp) {
         cache[file] = data;
         render(file, data);
-        debug.push('✅ ' + file.split('/').pop());
-      } else {
-        debug.push('⏭ ' + file.split('/').pop());
       }
     } catch (e) {
       console.error("load failed:", file);
-      debug.push('❌ ' + file.split('/').pop() + ': ' + e.message);
     }
   }
   document.getElementById("lastUpdate").innerText = new Date().toLocaleTimeString();
-  // Debug: write status to premarket section so it's visible
-  const pm = document.getElementById("premarket");
-  if (pm && (!pm.innerText || pm.innerText.length < 10)) {
-    pm.innerText = 'DEBUG: ' + debug.join(' | ');
-  }
 }
 
 /* =========================
@@ -185,6 +175,8 @@ function renderAlerts(data) {
       .filter(a => !a._eventTime || a._eventTime <= now + FUTURE_ALERT_TOLERANCE)
   ).slice(0, MAX_ALERTS);
 
+  renderAlertsSummary(saved, data.timestamp);
+
   if (!saved.length) { el.innerHTML = '<div class="empty">暂无盘中异动</div>'; return; }
 
   el.innerHTML = saved.map((a, i) => {
@@ -210,13 +202,56 @@ function renderAlerts(data) {
         : '<span class="pct muted">3m --</span>';
       return `<span class="leader" title="触发窗口的3分钟涨跌幅，不是实时股价">${l.name} ${moveText}</span>`;
     }).join(" ");
+    const reason = String(a.reason || "");
+    const shortReason = truncateText(reason, 58);
+    const reasonDetail = reason.length > shortReason.length
+      ? `<details class="alert-detail"><summary>触发说明</summary><div>${escapeHtml(reason)}</div></details>`
+      : "";
+    const factors = (a.leaders || []).slice(0, 3)
+      .flatMap(l => Array.isArray(l.factors) ? l.factors.slice(0, 2).map(f => `${l.name}：${f}`) : [])
+      .slice(0, 4);
+    const factorHtml = factors.length ? `<div class="alert-factors">${factors.map(f => `<span>${escapeHtml(f)}</span>`).join("")}</div>` : "";
 
     return `<div class="${cls}${fadeCls}">
       <div class="card-head">${badge}<b>${a.sector}</b><span class="time">${a.time} · ${ageLabel}</span></div>
-      <div class="card-body">${a.type} · ${a.reason || ""}</div>
+      <div class="card-body"><b>${escapeHtml(a.type || "异动")}</b>${shortReason ? ` · ${escapeHtml(shortReason)}` : ""}</div>
       ${leaders ? `<div class="card-leaders">${leaders}</div>` : ""}
+      ${factorHtml}
+      ${reasonDetail}
     </div>`;
   }).join("");
+}
+
+function renderAlertsSummary(alerts, timestamp) {
+  const el = document.getElementById("alerts-summary");
+  if (!el) return;
+  if (!alerts.length) {
+    el.innerHTML = '<div class="alert-summary-empty">暂无新异动，等待触发</div>';
+    return;
+  }
+  const latest = alerts[0];
+  const riskCount = alerts.filter(a => /风险|跌|回落|弱/.test([a.signal_type, a.type, a.reason].join(" "))).length;
+  const tradeCount = alerts.filter(a => /交易|急拉|强化|买/.test([a.signal_type, a.type, a.reason].join(" "))).length;
+  const volumeCount = alerts.filter(a => /放量|成交/.test([a.signal_type, a.type, a.reason].join(" "))).length;
+  const leaders = Array.from(new Set(alerts.flatMap(a => (a.leaders || []).map(l => l.name)).filter(Boolean))).slice(0, 4);
+  const tone = riskCount >= tradeCount ? "risk" : "hot";
+  const timeText = formatUpdateTime(timestamp);
+  el.innerHTML = `
+    <div class="alert-focus ${tone}">
+      <span class="decision-label">最新</span>
+      <b>${escapeHtml(latest.sector || "盘中异动")}</b>
+      <span>${escapeHtml(latest.type || latest.signal_type || "等待分类")} · ${escapeHtml(latest.time || timeText || "")}</span>
+    </div>
+    <div class="alert-metrics">
+      <span class="metric risk">风险 ${riskCount}</span>
+      <span class="metric hot">交易 ${tradeCount}</span>
+      <span class="metric volume">放量 ${volumeCount}</span>
+    </div>
+    <div class="alert-leaderline">
+      <span class="decision-label">核心股</span>
+      <b>${leaders.length ? leaders.map(escapeHtml).join(" / ") : "暂无"}</b>
+    </div>
+  `;
 }
 
 /* =========================
