@@ -680,6 +680,7 @@ function renderPremarket(data) {
   const el = document.getElementById("premarket");
   let html = "";
   const concisePremarket = typeof data.strategy === "string";
+  html += renderPremarketDecision(data);
 
   // === Codex 格式: 集合竞价 + 情绪判断 ===
   if (data.market_context || data.strong_lines || data.watch_lines) {
@@ -808,6 +809,51 @@ function renderPremarket(data) {
   }
 
   el.innerHTML = html || '<div class="empty">盘前数据待更新</div>';
+}
+
+function renderPremarketDecision(data) {
+  const ctx = data.market_context || {};
+  const style = ctx.open_style || inferPremarketStyle(data) || "等待竞价确认";
+  const riskPoints = ctx.risk_points || data.risk_lines || [];
+  const watchLines = ctx.benefit_themes || data.watch_lines || data.strong_lines || [];
+  const strongLines = data.strong_lines || [];
+  const verify = ctx.sentiment_judgement || data.summary || "";
+  const tone = /防御|风险|压制|弱|分化/.test(style + " " + verify) ? "warn" : /进攻|提振|强/.test(style + " " + verify) ? "good" : "neutral";
+  const primary = watchLines.find(line => !/暂无/.test(String(line))) || strongLines.find(line => !/暂无/.test(String(line))) || "等待9:25竞价确认";
+  const risk = riskPoints[0] || "暂无明确风险点";
+  const news = Array.isArray(data.overnight_news) ? data.overnight_news[0] : null;
+  const newsText = news ? (news.text || news.title || "") : "";
+
+  return `<div class="decision-strip premarket-decision">
+    <div class="decision-card ${tone}">
+      <span class="decision-label">开盘风格</span>
+      <b>${escapeHtml(style)}</b>
+      <span>${escapeHtml(truncateText(data.summary || verify, 62))}</span>
+    </div>
+    <div class="decision-card primary">
+      <span class="decision-label">优先方向</span>
+      <b>${escapeHtml(truncateText(primary, 24))}</b>
+      <span>${escapeHtml(watchLines.slice(1, 4).join(" / ") || "等集合竞价扩散")}</span>
+    </div>
+    <div class="decision-card risk">
+      <span class="decision-label">最大风险</span>
+      <b>${escapeHtml(truncateText(risk, 24))}</b>
+      <span>${escapeHtml(truncateText(riskPoints.slice(1, 3).join("；") || risk, 62))}</span>
+    </div>
+    <div class="decision-card action">
+      <span class="decision-label">验证条件</span>
+      <b>${escapeHtml(ctx.limit_up_count == null ? "等9:25数据" : "看竞价强弱")}</b>
+      <span>${escapeHtml(truncateText(newsText || verify || "看涨跌停、低开收敛和承接扩散", 62))}</span>
+    </div>
+  </div>`;
+}
+
+function inferPremarketStyle(data) {
+  const text = [data.summary, data.us_overnight?.conclusion, data.hk_auction?.sentiment].filter(Boolean).join(" ");
+  if (/防御|压制|承压|风险/.test(text)) return "分化偏防御";
+  if (/提振|共振|强/.test(text)) return "偏进攻";
+  if (/中性|分化/.test(text)) return "分化中性";
+  return "";
 }
 
 /* =========================
