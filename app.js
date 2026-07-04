@@ -132,11 +132,13 @@ function renderDashboardControl() {
   const risks = themes.filter(t => isAvoidTheme(t) && !strong.some(s => trendName(s) === trendName(t)));
   const p0 = evening.p0_alerts || [];
   const alertStocks = (alert.alerts || []).flatMap(a => (a.leaders || []).map(l => l.name)).filter(Boolean);
+  const attackCandidate = buildPersonalWatchTargets(strong[0], alertStocks);
   const attackWatch = uniqueList([
-    ...extractStocks(strong[0]),
-    ...alertStocks
+    ...attackCandidate.stocks,
+    ...(attackCandidate.source === "个人池" ? alertStocks : [])
   ]).slice(0, 5);
-  const riskWatch = uniqueList(risks.flatMap(extractStocks)).filter(s => !attackWatch.includes(s)).slice(0, 5);
+  const riskCandidate = buildPersonalWatchTargets(risks[0], []);
+  const riskWatch = uniqueList(riskCandidate.stocks).filter(s => !attackWatch.includes(s)).slice(0, 5);
   const eventWatch = uniqueList(p0.map(p => p.title || p.text || p.event)).slice(0, 5);
   const style = inferMarketStyle(intraday, postmarket, evening);
   const position = inferPositionRange(style, riskConfig);
@@ -160,8 +162,8 @@ function renderDashboardControl() {
   <div class="decision-strip control-strip">
     <div class="decision-card primary"><span class="decision-label">优先方向</span><b>${escapeHtml(priority[0] || "等待确认")}</b><span>${escapeHtml(priority.slice(1).join(" / ") || "没有共振前不抢")}</span></div>
     <div class="decision-card risk"><span class="decision-label">回避方向</span><b>${escapeHtml(avoid[0] || "暂无明确")}</b><span>${escapeHtml(avoid.slice(1).join(" / ") || "看弱线是否扩散")}</span></div>
-    <div class="decision-card primary"><span class="decision-label">进攻盯</span><b>${escapeHtml(attackWatch[0] || "暂无")}</b><span>${escapeHtml(attackWatch.slice(1).join(" / ") || "看前排封单和扩散")}</span></div>
-    <div class="decision-card risk"><span class="decision-label">风险盯</span><b>${escapeHtml(riskWatch[0] || "暂无")}</b><span>${escapeHtml(riskWatch.slice(1).join(" / ") || "看是否继续负反馈")}</span></div>
+    <div class="decision-card primary"><span class="decision-label">进攻盯 · ${escapeHtml(attackCandidate.source)}</span><b>${escapeHtml(attackWatch[0] || "暂无")}</b><span>${escapeHtml(attackWatch.slice(1).join(" / ") || attackCandidate.note)}</span></div>
+    <div class="decision-card risk"><span class="decision-label">风险盯 · ${escapeHtml(riskCandidate.source)}</span><b>${escapeHtml(riskWatch[0] || "暂无")}</b><span>${escapeHtml(riskWatch.slice(1).join(" / ") || riskCandidate.note)}</span></div>
     <div class="decision-card action"><span class="decision-label">事件盯</span><b>${escapeHtml(truncateText(eventWatch[0] || "暂无", 18))}</b><span>${escapeHtml(truncateText(eventWatch.slice(1).join(" / ") || "看P0公告/舆情映射", 42))}</span></div>
   </div>`;
 }
@@ -213,6 +215,35 @@ function extractStocks(item) {
   return (item.stocks || item.leaders || item.representatives || [])
     .map(s => typeof s === "string" ? s : s.name || s.symbol)
     .filter(Boolean);
+}
+
+function allWatchlistStocks() {
+  const wl = cached("config/watchlist.json") || {};
+  return ["small_deng", "old_deng", "watch_only"].flatMap(key =>
+    (wl[key]?.stocks || []).map(stock => ({ ...stock, pool: key }))
+  );
+}
+
+function buildPersonalWatchTargets(theme, alertStocks = []) {
+  if (!theme) return { stocks: [], source: "待确认", note: "等待强主线出现" };
+  const themeName = trendName(theme);
+  const themeStocks = extractStocks(theme);
+  const keywords = uniqueList([
+    themeName,
+    ...themeName.split(/[\\/、,，\s-]+/),
+    ...themeStocks
+  ]).filter(k => k.length >= 2);
+  const poolHits = allWatchlistStocks().filter(stock => {
+    const tags = stock.tags || [];
+    const hay = [stock.name, stock.code, stock.source, ...tags].filter(Boolean).join(" ");
+    return keywords.some(k => hay.includes(k)) || themeStocks.includes(stock.name);
+  });
+  const personal = uniqueList(poolHits.map(s => s.name)).slice(0, 5);
+  if (personal.length) {
+    return { stocks: personal, source: "个人池", note: `匹配${themeName}` };
+  }
+  const market = uniqueList([...themeStocks, ...alertStocks]).slice(0, 5);
+  return { stocks: market, source: "市场样本", note: "未命中个人池，只作强线样本观察" };
 }
 
 function isPriorityTheme(item) {
