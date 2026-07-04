@@ -197,9 +197,88 @@ function collectSettingsFromForms() {
   });
 }
 
+function normalizeCode(code) {
+  const raw = String(code || '').trim();
+  if (!raw) return '';
+  if (/^(sh|sz|bj)/i.test(raw)) return raw.toLowerCase();
+  if (/^6\d{5}$/.test(raw)) return 'sh' + raw;
+  if (/^[03]\d{5}$/.test(raw)) return 'sz' + raw;
+  if (/^[489]\d{5}$/.test(raw)) return 'bj' + raw;
+  return raw;
+}
+
+function defaultPoolTags(pool) {
+  return {
+    small_deng: ['小登池', '科技题材'],
+    old_deng: ['中登池', '风格切换'],
+    watch_only: ['观察池', '个人跟踪']
+  }[pool] || ['观察'];
+}
+
+function buildLocalStockIndex() {
+  const byCode = new Map();
+  const byName = new Map();
+  STOCK_POOLS.forEach(pool => {
+    (settingsData.watchlist[pool]?.stocks || []).forEach(stock => {
+      const code = normalizeCode(stock.code);
+      const name = stock.name || '';
+      const enriched = { ...stock, code, pool };
+      if (code) byCode.set(code, enriched);
+      if (name) byName.set(name, enriched);
+    });
+  });
+  return { byCode, byName };
+}
+
+async function lookupStockOnline(query) {
+  if (!query || !CONFIG_HOST) return null;
+  try {
+    const res = await fetch(CONFIG_HOST + '/_stock-lookup?q=' + encodeURIComponent(query));
+    if (!res.ok) return null;
+    const data = await res.json();
+    return data && (data.code || data.name) ? data : null;
+  } catch (e) {
+    return null;
+  }
+}
+
+async function enrichWatchlistBeforeSave() {
+  const index = buildLocalStockIndex();
+  let changed = 0;
+  for (const pool of STOCK_POOLS) {
+    const stocks = settingsData.watchlist[pool]?.stocks || [];
+    for (const stock of stocks) {
+      stock.code = normalizeCode(stock.code);
+      const local = (stock.code && index.byCode.get(stock.code)) || (stock.name && index.byName.get(stock.name));
+      if (local) {
+        if (!stock.code && local.code) { stock.code = local.code; changed++; }
+        if (!stock.name && local.name) { stock.name = local.name; changed++; }
+        if ((!stock.tags || !stock.tags.length) && local.tags?.length) { stock.tags = [...local.tags]; changed++; }
+      }
+      if ((!stock.code || !stock.name) && (stock.name || stock.code)) {
+        const found = await lookupStockOnline(stock.name || stock.code);
+        if (found) {
+          if (!stock.code && found.code) { stock.code = normalizeCode(found.code); changed++; }
+          if (!stock.name && found.name) { stock.name = found.name; changed++; }
+          if ((!stock.tags || !stock.tags.length) && found.tags?.length) { stock.tags = [...found.tags]; changed++; }
+        }
+      }
+      if (!stock.tags || !stock.tags.length) {
+        stock.tags = defaultPoolTags(pool);
+        changed++;
+      }
+    }
+  }
+  if (changed) renderSettingsForms();
+  return changed;
+}
+
 async function saveSettings() {
-  document.getElementById('cfg-status').textContent = '保存中...';
+  document.getElementById('cfg-status').textContent = '补全中...';
   collectSettingsFromForms();
+  const enrichedCount = await enrichWatchlistBeforeSave();
+  collectSettingsFromForms();
+  document.getElementById('cfg-status').textContent = enrichedCount ? `已补全 ${enrichedCount} 项，保存中...` : '保存中...';
   localStorage.setItem('cola-settings', JSON.stringify(settingsData));
 
   try {
