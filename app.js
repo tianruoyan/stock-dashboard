@@ -224,6 +224,7 @@ function renderAlerts(data) {
 ========================= */
 function renderIntraday(data) {
   updatePanelMeta("intraday-indices", data.timestamp);
+  renderIntradayDecision(data);
   // 指数行
   const idxEl = document.getElementById("intraday-indices");
   if (data.indices) {
@@ -261,6 +262,82 @@ function renderIntraday(data) {
   }
 }
 
+function renderIntradayDecision(data) {
+  const el = document.getElementById("intraday-decision");
+  if (!el) return;
+  const themes = getIntradayThemes(data);
+  const strong = themes.filter(t => /强|强化|主线|资金/.test(trendStatus(t)) && !/风险|弱|退潮/.test(trendStatus(t)));
+  const risks = themes.filter(t => /风险|弱|退潮|回落|分歧/.test([trendStatus(t), t.risk, t.continuity].join(" ")));
+  const primary = strong[0] || themes[0];
+  const primaryName = primary ? trendName(primary) : "等待主线确认";
+  const primaryStatus = primary ? trendStatus(primary) || "观察" : "暂无";
+  const riskNames = risks.slice(0, 2).map(t => trendName(t)).join(" / ") || "暂无明确风险线";
+  const sentiment = intradayMood(data);
+  const action = intradayActionText(data, strong, risks, sentiment);
+
+  el.innerHTML = `
+    <div class="decision-card primary">
+      <span class="decision-label">主线</span>
+      <b>${escapeHtml(primaryName)}</b>
+      <span>${escapeHtml(primaryStatus)}</span>
+    </div>
+    <div class="decision-card ${sentiment.cls}">
+      <span class="decision-label">情绪</span>
+      <b>${escapeHtml(sentiment.title)}</b>
+      <span>${escapeHtml(sentiment.detail)}</span>
+    </div>
+    <div class="decision-card risk">
+      <span class="decision-label">风险</span>
+      <b>${escapeHtml(riskNames)}</b>
+      <span>${escapeHtml(risks[0]?.risk || "看是否扩散")}</span>
+    </div>
+    <div class="decision-card action">
+      <span class="decision-label">动作</span>
+      <b>${escapeHtml(action.title)}</b>
+      <span>${escapeHtml(action.detail)}</span>
+    </div>
+  `;
+}
+
+function getIntradayThemes(data) {
+  const source = Array.isArray(data.main_trends) && data.main_trends.length
+    ? data.main_trends
+    : (Array.isArray(data.themes) ? data.themes : []);
+  return source.filter(Boolean);
+}
+
+function intradayMood(data) {
+  const s = data.sentiment || {};
+  const up = Number(s.limit_up_count ?? data.limit_up_count ?? 0);
+  const down = Number(s.limit_down_count ?? data.limit_down_count ?? 0);
+  const broken = Number(s.broken_limit_count ?? data.broken_limit_count ?? 0);
+  const judgement = s.judgement || s.interpretation || "";
+  if (judgement) {
+    const cls = /风险|弱|分歧|退潮|回落/.test(judgement) ? "warn" : /强|修复|进攻/.test(judgement) ? "good" : "neutral";
+    return { title: judgement, detail: up || down ? `涨停${up} / 跌停${down} / 炸板${broken || "-"}` : "等待量化确认", cls };
+  }
+  if (down >= 15 || broken >= 40) return { title: "分歧偏强", detail: `涨停${up} / 跌停${down} / 炸板${broken}`, cls: "warn" };
+  if (up >= 80 && down <= 10) return { title: "进攻占优", detail: `涨停${up} / 跌停${down}`, cls: "good" };
+  return { title: "中性观察", detail: up || down ? `涨停${up} / 跌停${down}` : "情绪数据待更新", cls: "neutral" };
+}
+
+function intradayActionText(data, strong, risks, sentiment) {
+  const actions = Array.isArray(data.actions) ? data.actions.filter(Boolean) : [];
+  if (actions.length) {
+    return {
+      title: `看${Math.min(actions.length, 3)}个验证信号`,
+      detail: truncateText(actions.slice(0, 2).join("；"), 58)
+    };
+  }
+  if (sentiment.cls === "warn" || risks.length >= 2) {
+    return { title: "先控风险", detail: "只看前排承接，弱线不做反抽" };
+  }
+  if (strong.length) {
+    return { title: "跟随主线", detail: "优先前排确认，后排只做观察" };
+  }
+  return { title: "等待确认", detail: "没有共振前降低操作频率" };
+}
+
 function renderCodexIntraday(data) {
   let html = '';
 
@@ -284,8 +361,10 @@ function renderCodexIntraday(data) {
         const name = trendName(t);
         const status = trendStatus(t);
         const cls = status.includes('强') ? 'strong-theme' : '';
-        const evidence = t.evidence ? `<br><span style="font-size:12px">${formatEvidenceList(t.evidence)}</span>` : "";
-        return `<div class="theme-item ${cls}"><b>${escapeHtml(name)}</b>${status ? ` <span class="muted">— ${escapeHtml(status)}</span>` : ""}${evidence}</div>`;
+        const evidence = t.evidence ? renderEvidenceDetails(t.evidence) : "";
+        const continuity = t.continuity ? `<div class="theme-line">${escapeHtml(truncateText(t.continuity, 90))}</div>` : "";
+        const risk = t.risk ? `<div class="theme-line risk-text">风险：${escapeHtml(truncateText(t.risk, 90))}</div>` : "";
+        return `<div class="theme-item ${cls}"><b>${escapeHtml(name)}</b>${status ? ` <span class="muted">— ${escapeHtml(status)}</span>` : ""}${continuity}${risk}${evidence}</div>`;
       }).join('');
     }
     html += '</div>';
@@ -301,8 +380,10 @@ function renderCodexIntraday(data) {
       const status = trendStatus(t);
       const cls = status.includes('强') ? 'strong-theme' : status.includes('弱') || status.includes('风险') ? 'sentiment' : '';
       const icon = status.includes('强') ? '✅' : status.includes('弱') || status.includes('风险') ? '🔻' : '➖';
-      const evidence = t.evidence ? `<br><span style="font-size:12px">${formatEvidenceList(t.evidence)}</span>` : "";
-      return `<div class="theme-item ${cls}"><b>${icon} ${escapeHtml(trendName(t))}</b>${status ? ` <span class="muted">— ${escapeHtml(status)}</span>` : ""}${evidence}</div>`;
+      const evidence = t.evidence ? renderEvidenceDetails(t.evidence) : "";
+      const continuity = t.continuity ? `<div class="theme-line">${escapeHtml(truncateText(t.continuity, 90))}</div>` : "";
+      const risk = t.risk ? `<div class="theme-line risk-text">风险：${escapeHtml(truncateText(t.risk, 90))}</div>` : "";
+      return `<div class="theme-item ${cls}"><b>${icon} ${escapeHtml(trendName(t))}</b>${status ? ` <span class="muted">— ${escapeHtml(status)}</span>` : ""}${continuity}${risk}${evidence}</div>`;
     }).join('');
     html += '</div>';
   }
@@ -1099,6 +1180,25 @@ function renderP0Alert(item) {
     ${evidence}
     ${watch}
   </div>`;
+}
+
+function renderEvidenceDetails(value) {
+  const count = Array.isArray(value) ? value.length : 1;
+  const summary = Array.isArray(value) && value.length
+    ? summarizeEvidence(value[0])
+    : summarizeEvidence(value);
+  return `<details class="evidence-details">
+    <summary>证据 ${count} 条${summary ? ` · ${escapeHtml(summary)}` : ""}</summary>
+    <div class="evidence-line">${formatEvidenceList(value)}</div>
+  </details>`;
+}
+
+function summarizeEvidence(value) {
+  if (!value) return "";
+  if (typeof value === "object") return truncateText(value.detail || value.text || value.value || value.source || "", 42);
+  const raw = String(value);
+  if (raw.includes("近5日涨停池对照")) return "近5日涨停池对照";
+  return truncateText(raw, 42);
 }
 
 function formatEvidenceList(value) {
