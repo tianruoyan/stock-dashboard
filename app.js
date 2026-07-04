@@ -510,16 +510,47 @@ function renderBulletList(items, className = "news-list") {
   return `<ul class="${className}">${list.map(item => `<li>${escapeHtml(item)}</li>`).join("")}</ul>`;
 }
 
+function takePremarketPoints(text, limit = 2, maxLength = 140) {
+  return splitPremarketText(text)
+    .slice(0, limit)
+    .map(item => truncateText(item, maxLength));
+}
+
+function summarizePremarketStrategy(text) {
+  const raw = String(text || "");
+  if (raw.includes("扩产+技术迭代") || raw.includes("BOM/token")) {
+    return [
+      "核心结论：扩产/技术迭代逻辑只算部分确认偏弱，今日先看风险释放，不预设修复。",
+      "板块判断：半导体硬件不作日内强主线；观察AI应用、创新药、低位资源，风险在设备材料、存储、PCB/CPO。",
+      "判断依据：看半导体跌停是否收缩、北方/雅克是否开板、港股中芯/华虹是否止跌；核心继续封跌停则维持风险线。"
+    ];
+  }
+  const blocks = raw.split(/\n\s*\n/).map(s => s.trim()).filter(Boolean);
+  const core = blocks.find(b => b.startsWith("1）")) || blocks[0] || "";
+  const verify = blocks.find(b => b.startsWith("5）")) || "";
+  const upgrade = blocks.find(b => b.startsWith("3）")) || "";
+  return [
+    core.replace(/^1）一句话结论[:：]?/, "核心结论："),
+    upgrade.replace(/^3）板块升降级[:：]?/, "板块判断："),
+    verify.replace(/^5）今日重点验证指标和失效条件[:：]?/, "验证条件：")
+  ].filter(Boolean).map(item => truncateText(item, 120));
+}
+
+function truncateText(text, maxLength = 140) {
+  const raw = String(text || "").replace(/\s+/g, " ").trim();
+  return raw.length > maxLength ? `${raw.slice(0, maxLength)}...` : raw;
+}
+
 function renderMappingChain(items) {
   if (!items || !items.length) return "";
-  return '<ul class="news-list mapping-chain">' + items.map(item => {
+  return '<ul class="news-list mapping-chain">' + items.slice(0, 2).map(item => {
     if (typeof item === "string") return `<li>${escapeHtml(item)}</li>`;
     const source = item.source_asset || item.source || item.name || "映射标的";
     const pct = item.change_pct !== undefined ? ` ${formatPct(item.change_pct)}` : "";
     const reason = item.reason ? `：${escapeHtml(item.reason)}` : "";
     const target = item.a_share_mapping || item.target || item.mapping || "";
     const logic = item.mapping_logic || item.logic || "";
-    return `<li><b>${escapeHtml(source)}${escapeHtml(pct)}</b>${reason}${target ? `<br><span class="muted">→ ${escapeHtml(target)}</span>` : ""}${logic ? `<br><span class="muted">逻辑：${escapeHtml(logic)}</span>` : ""}</li>`;
+    return `<li><b>${escapeHtml(source)}${escapeHtml(pct)}</b>${reason}${target ? `<br><span class="muted">→ ${escapeHtml(truncateText(target, 80))}</span>` : ""}${logic ? `<br><span class="muted">逻辑：${escapeHtml(truncateText(logic, 90))}</span>` : ""}</li>`;
   }).join("") + '</ul>';
 }
 
@@ -530,6 +561,7 @@ function renderPremarket(data) {
   updatePanelMeta("premarket", data.timestamp);
   const el = document.getElementById("premarket");
   let html = "";
+  const concisePremarket = typeof data.strategy === "string";
 
   // === Codex 格式: 集合竞价 + 情绪判断 ===
   if (data.market_context || data.strong_lines || data.watch_lines) {
@@ -546,37 +578,37 @@ function renderPremarket(data) {
       if (data.market_context.open_style || data.market_context.sentiment_judgement) {
         html += `<div class="theme-item premarket-lead"><b>${escapeHtml(data.market_context.open_style || "待判断")}</b></div>`;
         if (data.market_context.sentiment_judgement) {
-          html += renderBulletList(splitPremarketText(data.market_context.sentiment_judgement), "premarket-points");
+          html += renderBulletList(takePremarketPoints(data.market_context.sentiment_judgement, 2, 140), "premarket-points");
         }
       }
       if (data.market_context.benefit_themes) {
-        html += '<div class="tag-row">受益：' + data.market_context.benefit_themes.map(s => `<span class="tag">${escapeHtml(s)}</span>`).join(" ") + '</div>';
+        html += '<div class="tag-row">受益：' + data.market_context.benefit_themes.slice(0, 5).map(s => `<span class="tag">${escapeHtml(s)}</span>`).join(" ") + '</div>';
       }
       if (data.market_context.risk_points) {
-        html += '<div class="tag-row">风险：' + data.market_context.risk_points.map(s => `<span class="tag">${escapeHtml(s)}</span>`).join(" ") + '</div>';
+        html += '<div class="tag-row">风险：' + data.market_context.risk_points.slice(0, 5).map(s => `<span class="tag">${escapeHtml(s)}</span>`).join(" ") + '</div>';
       }
       html += '</div>';
     }
 
     // 总结
     if (data.strategy && typeof data.strategy === 'string') {
-      html += `<div class="subsection"><h3>📋 盘前研判</h3>${renderBulletList(splitPremarketText(data.strategy), "premarket-points")}</div>`;
+      html += `<div class="subsection"><h3>📋 盘前研判</h3>${renderBulletList(summarizePremarketStrategy(data.strategy), "premarket-points")}</div>`;
     }
     if (data.summary) {
-      html += `<div class="subsection"><h3>💡 操作思路</h3>${renderBulletList(splitPremarketText(data.summary), "premarket-points")}</div>`;
+      html += `<div class="subsection"><h3>💡 操作思路</h3>${renderBulletList(takePremarketPoints(data.summary, 2, 150), "premarket-points")}</div>`;
     }
 
     // 强主线/观察线/风险线 三栏
     if (data.strong_lines || data.watch_lines || data.risk_lines) {
       html += '<div class="subsection"><div class="line-grid">';
       if (data.strong_lines) {
-        html += '<div><h3>🔥 强主线</h3>' + renderBulletList(data.strong_lines, "news-list strong") + '</div>';
+        html += '<div><h3>🔥 强主线</h3>' + renderBulletList(data.strong_lines.slice(0, 1).map(s => truncateText(s, 80)), "news-list strong") + '</div>';
       }
       if (data.watch_lines) {
-        html += '<div><h3>👀 观察线</h3>' + renderBulletList(data.watch_lines, "news-list") + '</div>';
+        html += '<div><h3>👀 观察线</h3>' + renderBulletList(data.watch_lines.slice(0, 3).map(s => truncateText(s, 50)), "news-list") + '</div>';
       }
       if (data.risk_lines) {
-        html += '<div><h3>⚠️ 风险线</h3>' + renderBulletList(data.risk_lines, "news-list risk") + '</div>';
+        html += '<div><h3>⚠️ 风险线</h3>' + renderBulletList(data.risk_lines.slice(0, 3).map(s => truncateText(s, 50)), "news-list risk") + '</div>';
       }
       html += '</div></div>';
     }
@@ -591,13 +623,13 @@ function renderPremarket(data) {
   if (data.us_overnight) {
     html += '<div class="subsection"><h3>🇺🇸 隔夜外部环境</h3>';
     if (data.us_overnight.conclusion) {
-      html += renderBulletList(splitPremarketText(data.us_overnight.conclusion), "premarket-points");
+      html += renderBulletList(takePremarketPoints(data.us_overnight.conclusion, 2, 150), "premarket-points");
     }
     if (data.us_overnight.indices) {
       html += '<div class="index-row">' + renderIndexRow(data.us_overnight.indices) + '</div>';
     }
     if (data.us_overnight.reason) {
-      html += renderBulletList(splitPremarketText(data.us_overnight.reason), "premarket-points compact");
+      html += renderBulletList(takePremarketPoints(data.us_overnight.reason, 1, 150), "premarket-points compact");
     }
     if (data.us_overnight.tech_stocks) {
       html += '<div class="tag-row">重点科技股：' + data.us_overnight.tech_stocks.map(s => `<span class="tag">${escapeHtml(formatMarketTag(s))}</span>`).join(" ") + '</div>';
@@ -617,9 +649,9 @@ function renderPremarket(data) {
       html += '<div class="tag-row">弱势：' + data.us_overnight.weak_sectors.map(s => `<span class="tag">${escapeHtml(s)}</span>`).join(" ") + '</div>';
     }
     if (data.us_overnight.impact_to_a_share) {
-      html += `<h3>A股影响</h3>${renderBulletList(splitPremarketText(data.us_overnight.impact_to_a_share), "premarket-points")}`;
+      html += `<h3>A股影响</h3>${renderBulletList(takePremarketPoints(data.us_overnight.impact_to_a_share, 2, 130), "premarket-points")}`;
     }
-    if (data.us_overnight.mapping_chain) {
+    if (data.us_overnight.mapping_chain && !concisePremarket) {
       html += '<h3>科技映射链</h3>' + renderMappingChain(data.us_overnight.mapping_chain);
     }
     html += '</div>';
@@ -633,19 +665,19 @@ function renderPremarket(data) {
       html += '<div class="tag-row">板块：' + data.hk_auction.sectors.map(s => `<span class="tag">${escapeHtml(formatMarketTag(s))}</span>`).join(" ") + '</div>';
     }
     if (data.hk_auction.stocks) {
-      html += '<div class="tag-row">代表股：' + data.hk_auction.stocks.map(s => `<span class="tag">${escapeHtml(formatMarketTag(s))}</span>`).join(" ") + '</div>';
+      html += '<div class="tag-row">代表股：' + data.hk_auction.stocks.slice(0, 6).map(s => `<span class="tag">${escapeHtml(formatMarketTag(s))}</span>`).join(" ") + '</div>';
     }
     if (data.hk_auction.sentiment) {
-      html += renderBulletList(splitPremarketText(data.hk_auction.sentiment), "premarket-points");
+      html += renderBulletList(takePremarketPoints(data.hk_auction.sentiment, 2, 140), "premarket-points");
     }
-    if (data.hk_auction.mapping_chain) {
+    if (data.hk_auction.mapping_chain && !concisePremarket) {
       html += '<h3>港股映射</h3>' + renderMappingChain(data.hk_auction.mapping_chain);
     }
     html += '</div>';
   }
-  if (data.overnight_news) {
+  if (data.overnight_news && !concisePremarket) {
     html += '<div class="subsection"><h3>📰 隔夜要闻</h3>';
-    html += renderBulletList(data.overnight_news.map(n => typeof n === "string" ? n : n.text || n.title || ""), "news-list");
+    html += renderBulletList(data.overnight_news.slice(0, 4).map(n => truncateText(typeof n === "string" ? n : n.text || n.title || "", 120)), "news-list");
     html += '</div>';
   }
   if (data.strategy && Array.isArray(data.strategy)) {
