@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>参数配置</title>
-  <link rel="stylesheet" href="style.css?v=m23" />
+  <link rel="stylesheet" href="style.css?v=m31-settings-pools" />
   <style>
     .doc-wrap {
       max-width: 980px;
@@ -49,19 +49,25 @@
 
       <div id="stab-stocks" class="settings-content">
         <div class="subsection">
-          <h3>小登池（科技/题材，异动阈值低）</h3>
+          <h3>小登池（科技/题材风格雷达）<span id="count-small-deng" class="pool-count"></span></h3>
           <div id="cfg-small-deng" class="stock-editor"></div>
+          <textarea id="bulk-small-deng" class="bulk-stock-input" placeholder="批量加入：股票名/代码均可，逗号、空格、换行分隔"></textarea>
           <button class="btn-sm" onclick="addStockRow('small_deng')">+ 添加股票</button>
+          <button class="btn-sm" onclick="addBulkStocks('small_deng')">批量加入</button>
         </div>
         <div class="subsection">
-          <h3>老登池（权重/周期，异动阈值高）</h3>
+          <h3>中登池（权重/周期/风格切换雷达）<span id="count-old-deng" class="pool-count"></span></h3>
           <div id="cfg-old-deng" class="stock-editor"></div>
+          <textarea id="bulk-old-deng" class="bulk-stock-input" placeholder="批量加入：股票名/代码均可，逗号、空格、换行分隔"></textarea>
           <button class="btn-sm" onclick="addStockRow('old_deng')">+ 添加股票</button>
+          <button class="btn-sm" onclick="addBulkStocks('old_deng')">批量加入</button>
         </div>
         <div class="subsection">
-          <h3>观察池（仅观察，不触发异动）</h3>
+          <h3>观察池（个人跟踪，不混入风格池）<span id="count-watch" class="pool-count"></span></h3>
           <div id="cfg-watch" class="stock-editor"></div>
+          <textarea id="bulk-watch" class="bulk-stock-input" placeholder="批量加入：股票名/代码均可，逗号、空格、换行分隔"></textarea>
           <button class="btn-sm" onclick="addStockRow('watch_only')">+ 添加股票</button>
+          <button class="btn-sm" onclick="addBulkStocks('watch_only')">批量加入</button>
         </div>
       </div>
 
@@ -100,6 +106,6 @@
     </section>
   </main>
 
-  <script src="settings.js?v=3"></script>
+  <script src="settings.js?v=m31-settings-pools"></script>
 </body>
 </html>

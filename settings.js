@@ -3,6 +3,7 @@
 ========================= */
 let settingsData = { watchlist: {}, alerts: {}, topics: [] };
 const CONFIG_HOST = window.location.hostname === '127.0.0.1' ? 'http://127.0.0.1:8877' : '';
+const STOCK_POOLS = ['small_deng', 'old_deng', 'watch_only'];
 
 async function loadSettings() {
   try {
@@ -52,11 +53,19 @@ function renderSettingsForms() {
 }
 
 function setVal(id, val) { const el = document.getElementById(id); if (el) el.value = val; }
-function cfgPoolId(pool) { return pool.replace(/_/g, '-'); }
+function cfgPoolId(pool) {
+  return {
+    small_deng: 'small-deng',
+    old_deng: 'old-deng',
+    watch_only: 'watch'
+  }[pool] || pool.replace(/_/g, '-');
+}
 
 function renderStockEditor(pool, stocks) {
   const el = document.getElementById('cfg-' + cfgPoolId(pool));
   if (!el) return;
+  const countEl = document.getElementById('count-' + cfgPoolId(pool));
+  if (countEl) countEl.textContent = ` ${stocks.length} 只`;
   el.innerHTML = stocks.map((s, i) =>
     '<div class="stock-row">' +
     '<input class="sr-code" value="' + (s.code||'') + '" placeholder="代码">' +
@@ -71,6 +80,36 @@ function addStockRow(pool) {
   if (!settingsData.watchlist[pool]) settingsData.watchlist[pool] = { stocks: [] };
   settingsData.watchlist[pool].stocks.push({ code: '', name: '', tags: [] });
   renderStockEditor(pool, settingsData.watchlist[pool].stocks);
+}
+
+function addBulkStocks(pool) {
+  if (!settingsData.watchlist[pool]) settingsData.watchlist[pool] = { stocks: [] };
+  const input = document.getElementById('bulk-' + cfgPoolId(pool));
+  const raw = input?.value || '';
+  const items = parseBulkStocks(raw);
+  if (!items.length) return;
+  const stocks = settingsData.watchlist[pool].stocks;
+  const existing = new Set(stocks.map(s => s.name || s.code).filter(Boolean));
+  items.forEach(item => {
+    const key = item.name || item.code;
+    if (!key || existing.has(key)) return;
+    existing.add(key);
+    stocks.push({ code: item.code || '', name: item.name || item.code || '', tags: [] });
+  });
+  if (input) input.value = '';
+  renderStockEditor(pool, stocks);
+}
+
+function parseBulkStocks(raw) {
+  const normalized = String(raw || '').replace(/[，、；;]/g, '\n');
+  return normalized.split(/\n+/).flatMap(line => {
+    const parts = line.trim().split(/\s+/).filter(Boolean);
+    if (!parts.length) return [];
+    if (parts.length >= 2 && /^(sh|sz|bj)?\d{5,6}$/i.test(parts[0])) {
+      return [{ code: parts[0], name: parts.slice(1).join('') }];
+    }
+    return parts.map(token => /^(sh|sz|bj)?\d{5,6}$/i.test(token) ? { code: token, name: '' } : { code: '', name: token });
+  });
 }
 
 function removeStock(pool, idx) {
@@ -107,14 +146,18 @@ function removeTopic(idx) {
 }
 
 function collectSettingsFromForms() {
-  ['small_deng','old_deng','watch_only'].forEach(pool => {
+  STOCK_POOLS.forEach(pool => {
     const rows = document.querySelectorAll('#cfg-' + cfgPoolId(pool) + ' .stock-row');
     const stocks = [];
+    const original = settingsData.watchlist[pool]?.stocks || [];
     rows.forEach(row => {
       const code = row.querySelector('.sr-code')?.value?.trim();
       const name = row.querySelector('.sr-name')?.value?.trim();
       const tags = (row.querySelector('.sr-tags')?.value || '').split(',').map(t => t.trim()).filter(Boolean);
-      if (code || name) stocks.push({ code, name, tags });
+      if (code || name) {
+        const previous = original.find(s => (name && s.name === name) || (code && s.code === code)) || {};
+        stocks.push({ ...previous, code, name, tags });
+      }
     });
     if (!settingsData.watchlist[pool]) settingsData.watchlist[pool] = {};
     settingsData.watchlist[pool].stocks = stocks;
@@ -176,7 +219,7 @@ async function saveSettings() {
   } catch (e) {}
 
   const wlOut = {};
-  ['small_deng','old_deng','watch_only'].forEach(k => { if (settingsData.watchlist[k]) wlOut[k] = settingsData.watchlist[k]; });
+  STOCK_POOLS.forEach(k => { if (settingsData.watchlist[k]) wlOut[k] = settingsData.watchlist[k]; });
   const cfgJson = JSON.stringify({
     'config/watchlist.json': wlOut,
     'config/alert-config.json': settingsData.alerts,
