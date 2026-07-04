@@ -302,7 +302,8 @@ function stockSignal(stock, signals, pool) {
   const tags = stock.tags || [];
   const hardRiskPattern = /跌停|接近跌停|减持|监管|问询|立案|处罚|澄清|业绩雷|暴跌|放量大跌|放量下跌|破位|跌破|降级|风险核心|负反馈核心/;
   const pressurePattern = /风险|弱|退潮|回落|下跌|压制|分歧|补跌/;
-  const strongPattern = /交易|强|主线|强化|涨停|放量|修复|承接/;
+  const hardStrongPattern = /涨停|封板|急拉|大涨|放量上涨|放量走强|强势|领涨|突破|加速/;
+  const watchPattern = /交易|强|主线|强化|修复|承接|高开|扩散/;
   const directSegments = signals
     .flatMap(s => s.text.split(/[。；;，,\n]/))
     .filter(part => name && part.includes(name));
@@ -310,11 +311,12 @@ function stockSignal(stock, signals, pool) {
   const tagText = tagMatched.map(s => s.text).join(" ");
   const directRisk = directSegments.some(part => hardRiskPattern.test(part) || hasLargeDrop(part, 7));
   const directPressure = directSegments.some(part => pressurePattern.test(part) || hasAnyDrop(part));
-  const directStrong = directSegments.some(part => strongPattern.test(part) || /\+\d+(\.\d+)?%/.test(part));
+  const directTrigger = directSegments.some(part => !isConditionalSignal(part) && (hardStrongPattern.test(part) || hasLargeGain(part, 5)));
   if (directRisk) return { level: "risk" };
-  if (directStrong) return { level: pool === "watch_only" ? "watch" : "trigger" };
+  if (directPressure) return { level: "pressure" };
+  if (directTrigger) return { level: pool === "watch_only" ? "watch" : "trigger" };
   if (directPressure || pressurePattern.test(tagText)) return { level: "pressure" };
-  if (strongPattern.test(tagText)) return { level: "watch" };
+  if (watchPattern.test(tagText) || directSegments.some(part => hasAnyGain(part))) return { level: "watch" };
   if (directSegments.length || tagMatched.length) return { level: "watch" };
   return { level: "idle" };
 }
@@ -329,6 +331,22 @@ function hasLargeDrop(text, threshold) {
     if (Number(match[1]) >= threshold) return true;
   }
   return false;
+}
+
+function hasAnyGain(text) {
+  return /\+\d+(\.\d+)?%/.test(String(text || ""));
+}
+
+function hasLargeGain(text, threshold) {
+  const matches = String(text || "").matchAll(/\+(\d+(?:\.\d+)?)%/g);
+  for (const match of matches) {
+    if (Number(match[1]) >= threshold) return true;
+  }
+  return false;
+}
+
+function isConditionalSignal(text) {
+  return /若|如果|是否|能否|等待|观察|看|需|需要|验证|不能|未|不构成|不升级/.test(String(text || ""));
 }
 
 function collectSignalText() {
