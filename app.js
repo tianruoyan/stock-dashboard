@@ -279,13 +279,15 @@ function renderWatchPool(key, title, desc, stocks, signals) {
   const hits = stocks.map(s => ({ ...s, signal: stockSignal(s, signals, key) }));
   const triggered = hits.filter(s => s.signal.level === "trigger").slice(0, 5);
   const risks = hits.filter(s => s.signal.level === "risk").slice(0, 5);
+  const pressure = hits.filter(s => s.signal.level === "pressure").slice(0, 5);
   const watch = hits.filter(s => s.signal.level === "watch").slice(0, 5);
-  const action = risks.length ? "降级/控风险" : triggered.length ? "优先盯" : watch.length ? "等确认" : "观察";
-  return `<div class="watch-pool-card ${risks.length ? "risk" : triggered.length ? "hot" : ""}">
+  const action = risks.length ? "个股控风险" : pressure.length ? "方向承压" : triggered.length ? "优先盯" : watch.length ? "等确认" : "观察";
+  return `<div class="watch-pool-card ${risks.length ? "risk" : pressure.length ? "pressure" : triggered.length ? "hot" : ""}">
     <div class="watch-pool-head"><b>${escapeHtml(title)}</b><span>${stocks.length} 只 · ${escapeHtml(desc)}</span></div>
     <div class="watch-action">${escapeHtml(action)}</div>
     ${renderWatchLine("触发股", triggered)}
-    ${renderWatchLine("风险股", risks)}
+    ${renderWatchLine("个股风险", risks)}
+    ${renderWatchLine("方向承压", pressure)}
     ${renderWatchLine("待验证", watch)}
   </div>`;
 }
@@ -297,13 +299,21 @@ function renderWatchLine(label, rows) {
 
 function stockSignal(stock, signals, pool) {
   const name = stock.name || "";
-  const tags = (stock.tags || []).join(" ");
-  const hay = `${name} ${tags}`;
-  const matched = signals.filter(s => s.text.includes(name) || (tags && tags.split(/\s|,|，/).some(t => t && s.text.includes(t))));
-  const text = matched.map(s => s.text).join(" ");
-  if (/风险|弱|退潮|回落|下跌|压制|减持|跌停|降级/.test(text)) return { level: "risk" };
-  if (/交易|强|主线|强化|涨停|放量|修复|承接/.test(text)) return { level: pool === "watch_only" ? "watch" : "trigger" };
-  if (matched.length) return { level: "watch" };
+  const tags = stock.tags || [];
+  const riskPattern = /风险|弱|退潮|回落|下跌|压制|减持|跌停|降级/;
+  const strongPattern = /交易|强|主线|强化|涨停|放量|修复|承接/;
+  const directSegments = signals
+    .flatMap(s => s.text.split(/[。；;，,\n]/))
+    .filter(part => name && part.includes(name));
+  const tagMatched = signals.filter(s => tags.some(t => t && s.text.includes(t)));
+  const tagText = tagMatched.map(s => s.text).join(" ");
+  const directRisk = directSegments.some(part => riskPattern.test(part) || /-\d+(\.\d+)?%/.test(part));
+  const directStrong = directSegments.some(part => strongPattern.test(part) || /\+\d+(\.\d+)?%/.test(part));
+  if (directRisk) return { level: "risk" };
+  if (directStrong) return { level: pool === "watch_only" ? "watch" : "trigger" };
+  if (riskPattern.test(tagText)) return { level: "pressure" };
+  if (strongPattern.test(tagText)) return { level: "watch" };
+  if (directSegments.length || tagMatched.length) return { level: "watch" };
   return { level: "idle" };
 }
 
