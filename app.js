@@ -35,7 +35,9 @@ async function updateAll() {
     try {
       const res = await fetch(file + "?t=" + Date.now());
       const data = await res.json();
-      if (!cache[file] || !data.timestamp || cache[file].timestamp !== data.timestamp) {
+      const dataKey = JSON.stringify(data);
+      if (!cache[file] || cache[file]._cacheKey !== dataKey) {
+        Object.defineProperty(data, "_cacheKey", { value: dataKey, enumerable: false });
         cache[file] = data;
         render(file, data);
       }
@@ -268,9 +270,7 @@ function renderWatchlistDecision() {
   }
   const signals = collectSignalText();
   const pools = [
-    ["small_deng", "小登池", "科技/题材"],
-    ["old_deng", "老登池", "权重/风格切换"],
-    ["watch_only", "观察池", "只观察"]
+    ["watch_only", "观察池", "个人跟踪"]
   ];
   el.innerHTML = `<div class="watchlist-grid">${pools.map(([key, title, desc]) => renderWatchPool(key, title, desc, wl[key]?.stocks || [], signals)).join("")}</div>`;
 }
@@ -294,7 +294,13 @@ function renderWatchPool(key, title, desc, stocks, signals) {
 
 function renderWatchLine(label, rows) {
   if (!rows.length) return `<div class="watch-line"><span>${label}</span><b>暂无</b></div>`;
-  return `<div class="watch-line"><span>${label}</span><b>${rows.map(s => escapeHtml(s.name || s.code)).join(" / ")}</b></div>`;
+  return `<div class="watch-line"><span>${label}</span><b>${rows.map(renderWatchStock).join(" / ")}</b></div>`;
+}
+
+function renderWatchStock(stock) {
+  const name = escapeHtml(stock.name || stock.code);
+  const reason = stock.signal?.reason ? `<em>${escapeHtml(stock.signal.reason)}</em>` : "";
+  return `<span class="watch-stock">${name}${reason}</span>`;
 }
 
 function stockSignal(stock, signals, pool) {
@@ -312,13 +318,27 @@ function stockSignal(stock, signals, pool) {
   const directRisk = directSegments.some(part => hardRiskPattern.test(part) || hasLargeDrop(part, 7));
   const directPressure = directSegments.some(part => pressurePattern.test(part) || hasAnyDrop(part));
   const directTrigger = directSegments.some(part => !isConditionalSignal(part) && (hardStrongPattern.test(part) || hasLargeGain(part, 5)));
-  if (directRisk) return { level: "risk" };
-  if (directPressure) return { level: "pressure" };
-  if (directTrigger) return { level: pool === "watch_only" ? "watch" : "trigger" };
-  if (directPressure || pressurePattern.test(tagText)) return { level: "pressure" };
-  if (watchPattern.test(tagText) || directSegments.some(part => hasAnyGain(part))) return { level: "watch" };
-  if (directSegments.length || tagMatched.length) return { level: "watch" };
-  return { level: "idle" };
+  if (directRisk) return { level: "risk", reason: shortReason(directSegments, "硬风险") };
+  if (directPressure) return { level: "pressure", reason: shortReason(directSegments, "个股承压") };
+  if (directTrigger) return { level: pool === "watch_only" ? "watch" : "trigger", reason: shortReason(directSegments, "强信号") };
+  if (pressurePattern.test(tagText)) return { level: "pressure", reason: matchedTagReason(tags, tagText, "方向承压") };
+  if (watchPattern.test(tagText) || directSegments.some(part => hasAnyGain(part))) {
+    return { level: "watch", reason: directSegments.length ? shortReason(directSegments, "待确认") : matchedTagReason(tags, tagText, "方向观察") };
+  }
+  if (directSegments.length || tagMatched.length) return { level: "watch", reason: directSegments.length ? "个股被提及" : matchedTagReason(tags, tagText, "标签命中") };
+  return { level: "idle", reason: "暂无信号" };
+}
+
+function shortReason(segments, fallback) {
+  const hit = (segments || []).find(Boolean) || "";
+  const cleaned = hit.replace(/[{}"\\[\\]]/g, "").replace(/\s+/g, "");
+  if (!cleaned) return fallback;
+  return truncateText(cleaned, 16);
+}
+
+function matchedTagReason(tags, text, fallback) {
+  const tag = (tags || []).find(t => t && text.includes(t));
+  return tag ? `${tag}${fallback.replace(/^方向/, "")}` : fallback;
 }
 
 function hasAnyDrop(text) {
