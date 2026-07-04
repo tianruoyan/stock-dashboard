@@ -817,6 +817,7 @@ function renderMidday(data) {
   updatePanelMeta("midday", data.timestamp);
   const el = document.getElementById("midday");
   let html = "";
+  html += renderMiddayDecision(data);
 
   // 上午数据快照
   if (data.morning_snapshot) {
@@ -827,13 +828,14 @@ function renderMidday(data) {
       const ms = data.morning_snapshot;
       if (ms.indices) {
         html += ms.indices.map(i => {
-          const p = parseFloat(i.pct) || 0;
+          const p = parseFloat(i.change_pct ?? i.pct) || 0;
           const cls = p >= 0 ? 'up' : 'down';
           return `<span style="margin-right:12px"><b>${i.name}</b> <span class="${cls}">${p > 0 ? '+' : ''}${p.toFixed(2)}%</span></span>`;
         }).join('');
       }
-      if (ms.breadth) {
-        html += `<br><span style="font-size:12px">涨停${ms.breadth.limit_up||'?'}家 跌停${ms.breadth.limit_down||'?'}家</span>`;
+      const breadth = ms.breadth || ms.sentiment;
+      if (breadth) {
+        html += `<br><span style="font-size:12px">涨停${breadth.limit_up || breadth.limit_up_count || '?'}家 跌停${breadth.limit_down || breadth.limit_down_count || '?'}家${breadth.break_board_count ? ` 炸板${breadth.break_board_count}家` : ""}</span>`;
       }
     }
     html += '</div></div>';
@@ -846,7 +848,7 @@ function renderMidday(data) {
     if (mr.one_sentence) html += `<div class="breadth">${mr.one_sentence}</div>`;
     if (mr.main_trends) {
       html += mr.main_trends.map(t =>
-        `<div class="theme-item ${(t.status||'').includes('强')?'strong-theme':''}"><b>${t.name}</b> <span class="muted">— ${t.status}</span>${t.evidence?`<br><span style="font-size:12px">${typeof t.evidence==='string'?t.evidence:formatEvidenceList(t.evidence)}</span>`:''}</div>`
+        `<div class="theme-item ${(t.status||'').includes('强')?'strong-theme':''}"><b>${escapeHtml(t.name)}</b> <span class="muted">— ${escapeHtml(t.status || "")}</span>${t.evidence ? renderEvidenceDetails(t.evidence) : ""}</div>`
       ).join('');
     }
     html += '</div>';
@@ -873,6 +875,43 @@ function renderMidday(data) {
   }
 
   el.innerHTML = html || '<div class="empty">午间休市后更新</div>';
+}
+
+function renderMiddayDecision(data) {
+  const review = data.morning_review || {};
+  const trends = Array.isArray(review.main_trends) ? review.main_trends : [];
+  const strong = trends.find(t => /强/.test(t.status || "")) || trends[0];
+  const watch = Array.isArray(data.afternoon_watch) ? data.afternoon_watch : [];
+  const risks = data.risk || data.risks || [];
+  const sentiment = data.morning_snapshot?.sentiment || {};
+  const limitUp = Number(sentiment.limit_up_count || sentiment.limit_up || 0);
+  const limitDown = Number(sentiment.limit_down_count || sentiment.limit_down || 0);
+  const broken = Number(sentiment.break_board_count || sentiment.broken_limit_count || 0);
+  const mood = broken >= 30 || limitDown >= 15 ? "分歧警戒" : limitUp >= 60 && limitDown <= 10 ? "午后可攻可守" : "等待确认";
+  const moodCls = mood.includes("警戒") ? "warn" : mood.includes("攻") ? "good" : "neutral";
+  const riskText = Array.isArray(risks) && risks.length ? (typeof risks[0] === "string" ? risks[0] : risks[0].text) : "暂未给出风险阈值";
+  return `<div class="decision-strip midday-decision">
+    <div class="decision-card primary">
+      <span class="decision-label">午后主线</span>
+      <b>${escapeHtml(strong ? trendName(strong) : "等待主线确认")}</b>
+      <span>${escapeHtml(strong?.status || review.one_sentence || "暂无")}</span>
+    </div>
+    <div class="decision-card ${moodCls}">
+      <span class="decision-label">情绪</span>
+      <b>${escapeHtml(mood)}</b>
+      <span>涨停${limitUp || "-"} / 跌停${limitDown || "-"} / 炸板${broken || "-"}</span>
+    </div>
+    <div class="decision-card action">
+      <span class="decision-label">下午验证</span>
+      <b>${escapeHtml(watch.length ? `看${Math.min(watch.length, 3)}个信号` : "等待信号")}</b>
+      <span>${escapeHtml(truncateText(watch.slice(0, 2).join("；"), 62) || "无")}</span>
+    </div>
+    <div class="decision-card risk">
+      <span class="decision-label">风险阈值</span>
+      <b>${escapeHtml(risks.length ? "先盯分歧" : "暂无")}</b>
+      <span>${escapeHtml(truncateText(riskText, 62))}</span>
+    </div>
+  </div>`;
 }
 
 /* =========================
