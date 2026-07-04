@@ -332,13 +332,16 @@ function stockSignal(stock, signals, pool) {
     .filter(part => name && part.includes(name));
   const tagMatched = signals.filter(s => tags.some(t => t && s.text.includes(t)));
   const tagText = tagMatched.map(s => s.text).join(" ");
+  const strongTag = matchedStrongThemeTag(tags);
+  const pressureTag = matchedPressureThemeTag(tags, signals);
   const directRisk = directSegments.some(part => hardRiskPattern.test(part) || hasLargeDrop(part, 7));
   const directPressure = directSegments.some(part => !isConditionalSignal(part) && (pressurePattern.test(part) || hasAnyDrop(part)));
   const directTrigger = directSegments.some(part => !isConditionalSignal(part) && (hardStrongPattern.test(part) || hasLargeGain(part, 5)));
   if (directRisk) return { level: "risk", reason: shortReason(directSegments, "硬风险") };
   if (directPressure) return { level: "pressure", reason: pressureReason(directSegments) };
   if (directTrigger) return { level: pool === "watch_only" ? "watch" : "trigger", reason: shortReason(directSegments, "强信号") };
-  if (pressurePattern.test(tagText)) return { level: "pressure", reason: matchedTagReason(tags, tagText, "方向承压") };
+  if (strongTag) return { level: "watch", reason: `${strongTag}强主线` };
+  if (pressureTag) return { level: "pressure", reason: `${pressureTag}承压` };
   if (watchPattern.test(tagText) || directSegments.some(part => hasAnyGain(part))) {
     return { level: "watch", reason: directSegments.length ? shortReason(directSegments, "待确认") : matchedTagReason(tags, tagText, "方向观察") };
   }
@@ -369,6 +372,29 @@ function pressureReason(segments) {
 function matchedTagReason(tags, text, fallback) {
   const tag = (tags || []).find(t => t && text.includes(t));
   return tag ? `${tag}${fallback.replace(/^方向/, "")}` : fallback;
+}
+
+function matchedStrongThemeTag(tags) {
+  const intraday = cached("data/intraday.json") || {};
+  const postmarket = cached("data/postmarket.json") || {};
+  const themes = [
+    ...getIntradayThemes(intraday),
+    ...(postmarket.hotspots || []),
+    ...(postmarket.strong_themes || [])
+  ];
+  const strongThemes = themes.filter(isPriorityTheme);
+  return (tags || []).find(tag =>
+    tag && strongThemes.some(theme => JSON.stringify(theme).includes(tag))
+  ) || "";
+}
+
+function matchedPressureThemeTag(tags, signals) {
+  const riskPattern = /退潮|回落|补跌|弱|压制|风险/;
+  const conditionalPattern = /若|如果|是否|能否|等待|观察|看|需|需要|验证|不能|未|不构成|不升级/;
+  const parts = (signals || []).flatMap(s => s.text.split(/[。；;\n]/));
+  return (tags || []).find(tag => tag && parts.some(part =>
+    part.includes(tag) && riskPattern.test(part) && !conditionalPattern.test(part)
+  )) || "";
 }
 
 function hasAnyDrop(text) {
