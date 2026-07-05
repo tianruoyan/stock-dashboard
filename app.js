@@ -1960,16 +1960,22 @@ function renderTopicCard(t, fallbackTimestamp) {
     const statusBadge = statusCls === "strong" ? "🔥" :
                         statusCls === "sentiment" ? "🔻" : "➖";
     const updatedAt = formatUpdateTime(t.updated_at || t.timestamp || fallbackTimestamp);
+    const conclusion = t.conclusion || t.core_view || "";
+    const related = Array.isArray(t.related_topics) ? t.related_topics : [];
     return `<div class="card ${statusCls}">
       <div class="card-head"><b>${t.name}</b></div>
       ${updatedAt ? `<div class="card-updated"><span class="updated-dot"></span>已更新 · ${updatedAt}</div>` : ""}
       <div class="card-body">${statusBadge} ${escapeHtml(t.status || "观察")}</div>
+      ${conclusion ? `<div class="topic-conclusion">${escapeHtml(conclusion)}</div>` : ""}
+      ${related.length ? `<div class="topic-related">${related.slice(0, 6).map(v => `<span>${escapeHtml(v)}</span>`).join("")}</div>` : ""}
       ${t.action ? `<div class="card-body">${escapeHtml(truncateText(t.action, 92))}</div>` : ""}
       ${t.note ? `<details class="alert-detail"><summary>更新依据</summary><div>${escapeHtml(t.note)}</div></details>` : ""}
     </div>`;
 }
 
 function pickVisibleTopics(topics) {
+  const integrated = topics.filter(t => t.display === "integrated" || t.level === "母题材");
+  if (integrated.length) return integrated.slice(0, 4);
   const focus = topics.find(t => /强化|强|观察|博弈/.test([t.status, t.action].join(" ")) && !/风险|弱|降级|回避/.test([t.status, t.action, t.note].join(" "))) || topics[0];
   const risk = topics.find(t => /风险|弱|降级|回避/.test([t.status, t.action, t.note].join(" ")));
   const pending = topics.find(t => t !== focus && t !== risk && /观察|待|验证/.test([t.status, t.action, t.note].join(" ")));
@@ -1983,32 +1989,34 @@ function pickVisibleTopics(topics) {
 }
 
 function renderTopicsDecision(topics) {
-  const riskTopics = topics.filter(t => /风险|弱|降级|回避/.test([t.status, t.action, t.note].join(" ")));
-  const activeTopics = topics.filter(t => /强化|强|观察|博弈/.test([t.status, t.action].join(" ")) && !riskTopics.includes(t));
-  const focus = activeTopics[0] || topics[0];
+  const integrated = topics.filter(t => t.display === "integrated" || t.level === "母题材");
+  const decisionTopics = integrated.length ? integrated : topics;
+  const riskTopics = decisionTopics.filter(t => /风险|弱|降级|回避/.test([t.status, t.action, t.note].join(" ")));
+  const activeTopics = decisionTopics.filter(t => /强化|强|观察|博弈|择强|监控/.test([t.status, t.action].join(" ")) && !riskTopics.includes(t));
+  const focus = activeTopics[0] || decisionTopics[0];
   const risk = riskTopics[0];
   const updatedCount = topics.length;
-  const watchText = focus?.action || "等待专题更新";
+  const watchText = focus?.conclusion || focus?.action || "等待专题更新";
   return `<div class="decision-strip topics-decision">
     <div class="decision-card primary">
-      <span class="decision-label">专题焦点</span>
+      <span class="decision-label">7月主线焦点</span>
       <b>${escapeHtml(focus?.name || "暂无")}</b>
       <span>${escapeHtml(focus?.status || "观察")}</span>
     </div>
     <div class="decision-card action">
-      <span class="decision-label">下一步验证</span>
-      <b>${escapeHtml(truncateText(focus?.action || "等待盘面确认", 24))}</b>
+      <span class="decision-label">有意义的结论</span>
+      <b>${escapeHtml(truncateText(focus?.conclusion || focus?.action || "等待盘面确认", 30))}</b>
       <span>${escapeHtml(truncateText(watchText, 62))}</span>
     </div>
     <div class="decision-card risk">
-      <span class="decision-label">风险专题</span>
+      <span class="decision-label">回避/降级</span>
       <b>${escapeHtml(risk?.name || "暂无明确风险")}</b>
       <span>${escapeHtml(truncateText(risk?.action || risk?.note || "继续观察是否扩散", 62))}</span>
     </div>
     <div class="decision-card neutral">
-      <span class="decision-label">覆盖</span>
-      <b>${updatedCount} 个专题</b>
-      <span>${escapeHtml(topics.slice(0, 3).map(t => t.name).join(" / "))}</span>
+      <span class="decision-label">关联题材</span>
+      <b>${integrated.length || updatedCount} 组</b>
+      <span>${escapeHtml(decisionTopics.slice(0, 3).map(t => t.name).join(" / "))}</span>
     </div>
   </div>`;
 }
