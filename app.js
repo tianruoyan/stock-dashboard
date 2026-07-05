@@ -147,10 +147,11 @@ function renderDashboardControl() {
   const latest = latestTimestamp([intraday, postmarket, evening, alert]);
   const priority = strong.slice(0, 3).map(trendName);
   const avoid = risks.slice(0, 3).map(trendName);
+  const relatedTags = relatedTopicTags(priority.join(" "), avoid.join(" "), alertStocks.join(" "), p0.map(p => p.title || p.text || "").join(" "));
 
   el.innerHTML = `<div class="control-hero ${style.cls}">
     <div>
-      <div class="control-eyebrow">当前风格</div>
+      <div class="control-eyebrow">核心结论</div>
       <div class="control-title">${escapeHtml(style.title)}</div>
       <div class="control-sub">${escapeHtml(style.reason)}</div>
       <div class="control-meta">有效时间：${escapeHtml(latest ? formatUpdateTime(latest) : "待更新")} · ${escapeHtml(dataFreshness(latest))}</div>
@@ -163,10 +164,10 @@ function renderDashboardControl() {
   </div>
   <div class="decision-strip control-strip">
     <div class="decision-card primary"><span class="decision-label">优先方向</span><b>${escapeHtml(priority[0] || "等待确认")}</b><span>${escapeHtml(priority.slice(1).join(" / ") || "没有共振前不抢")}</span></div>
-    <div class="decision-card risk"><span class="decision-label">回避方向</span><b>${escapeHtml(avoid[0] || "暂无明确")}</b><span>${escapeHtml(avoid.slice(1).join(" / ") || "看弱线是否扩散")}</span></div>
+    <div class="decision-card action"><span class="decision-label">关联题材</span><b>${escapeHtml(relatedTags[0] || "等待映射")}</b><span>${escapeHtml(relatedTags.slice(1).join(" / ") || "按母题材合并观察")}</span></div>
     <div class="decision-card primary"><span class="decision-label">进攻盯 · ${escapeHtml(attackCandidate.source)}</span><b>${escapeHtml(attackWatch[0] || "暂无")}</b><span>${escapeHtml(attackWatch.slice(1).join(" / ") || attackCandidate.note)}</span></div>
     <div class="decision-card risk"><span class="decision-label">风险盯 · ${escapeHtml(riskCandidate.source)}</span><b>${escapeHtml(riskWatch[0] || "暂无")}</b><span>${escapeHtml(riskWatch.slice(1).join(" / ") || riskCandidate.note)}</span></div>
-    <div class="decision-card action"><span class="decision-label">事件盯</span><b>${escapeHtml(truncateText(eventWatch[0] || "暂无", 18))}</b><span>${escapeHtml(truncateText(eventWatch.slice(1).join(" / ") || "看P0公告/舆情映射", 42))}</span></div>
+    <div class="decision-card risk"><span class="decision-label">回避/降级</span><b>${escapeHtml(avoid[0] || "暂无明确")}</b><span>${escapeHtml(avoid.slice(1).join(" / ") || eventWatch[0] || "看弱线和P0是否扩散")}</span></div>
   </div>`;
 }
 
@@ -210,6 +211,19 @@ function dataFreshness(timestamp) {
 
 function uniqueList(items) {
   return Array.from(new Set((items || []).filter(Boolean).map(v => String(v).trim()).filter(Boolean)));
+}
+
+function relatedTopicTags(...parts) {
+  const text = parts.flat().filter(Boolean).join(" ");
+  const groups = [
+    { name: "科技硬件链", re: /半导体|设备|材料|CPO|光模块|存储|HBM|PCB|电子布|封装|硅片|算力|芯片|北方|中微|华海|安集|雅克|澜起|兆易|中际|新易盛|沪电|胜宏/ },
+    { name: "机器人/工业自动化", re: /机器人|工业自动化|通用设备|自动化设备|减速器|伺服|控制器|机器视觉|步科|绿的|埃斯顿|中大力德|双环|拓斯达|汇川|奥普特/ },
+    { name: "医药修复链", re: /医药|化学制药|创新药|原料药|制剂|CRO|恒瑞|科伦|普洛|九典|金城|赛托|共同药业|广生堂|艾力斯|百济|诺诚|荣昌/ },
+    { name: "老登风格切换", re: /券商|证券|保险|白酒|酒|畜牧|银行|地产|中字头|权重|中信证券|国泰海通|东方财富|平安|茅台|五粮液|牧原|温氏/ },
+    { name: "回避/降级集合", re: /风险|回避|降级|光伏|逆变器|功率半导体|SiC|第三代半导体|新能源出海|AIDC电源|暴跌|减持|监管|澄清/ }
+  ];
+  const matched = groups.filter(g => g.re.test(text)).map(g => g.name);
+  return uniqueList(matched).slice(0, 5);
 }
 
 function extractStocks(item) {
@@ -716,20 +730,29 @@ function renderAlertsSummary(alerts, timestamp) {
   const leaders = Array.from(new Set(alerts.flatMap(a => (a.leaders || []).map(l => l.name)).filter(Boolean))).slice(0, 4);
   const tone = riskCount >= tradeCount ? "risk" : "hot";
   const timeText = formatUpdateTime(timestamp);
+  const relatedTags = relatedTopicTags(alerts.map(a => [a.sector, a.type, a.reason].join(" ")).join(" "), leaders.join(" "));
   el.innerHTML = `
-    <div class="alert-focus ${tone}">
-      <span class="decision-label">最新</span>
+    <div class="decision-strip alerts-decision">
+    <div class="decision-card ${tone === "hot" ? "primary" : "risk"}">
+      <span class="decision-label">核心结论</span>
       <b>${escapeHtml(latest.sector || "盘中异动")}</b>
       <span>${escapeHtml(latest.type || latest.signal_type || "等待分类")} · ${escapeHtml(latest.time || timeText || "")}</span>
     </div>
-    <div class="alert-metrics">
-      <span class="metric risk">风险 ${riskCount}</span>
-      <span class="metric hot">交易 ${tradeCount}</span>
-      <span class="metric volume">放量 ${volumeCount}</span>
+    <div class="decision-card action">
+      <span class="decision-label">关联题材</span>
+      <b>${escapeHtml(relatedTags[0] || "等待映射")}</b>
+      <span>${escapeHtml(relatedTags.slice(1).join(" / ") || "按母题材合并观察")}</span>
     </div>
-    <div class="alert-leaderline">
-      <span class="decision-label">核心股</span>
+    <div class="decision-card primary">
+      <span class="decision-label">相关个股</span>
       <b>${leaders.length ? leaders.map(escapeHtml).join(" / ") : "暂无"}</b>
+      <span>${escapeHtml(`交易 ${tradeCount} / 放量 ${volumeCount}`)}</span>
+    </div>
+    <div class="decision-card risk">
+      <span class="decision-label">回避/降级</span>
+      <b>${escapeHtml(riskCount ? `风险 ${riskCount}` : "暂无明确")}</b>
+      <span>${escapeHtml(riskCount ? "看是否从单点扩散成板块压力" : "无风险信号前不预设降级")}</span>
+    </div>
     </div>
   `;
 }
@@ -789,25 +812,26 @@ function renderIntradayDecision(data) {
   const riskNames = risks.slice(0, 2).map(t => trendName(t)).join(" / ") || "暂无明确风险线";
   const sentiment = intradayMood(data);
   const action = intradayActionText(data, strong, risks, sentiment);
+  const relatedTags = relatedTopicTags(themes.map(t => [trendName(t), trendStatus(t), t.reason, t.continuity].join(" ")).join(" "));
 
   el.innerHTML = `
     <div class="decision-card primary">
-      <span class="decision-label">主线</span>
+      <span class="decision-label">核心结论</span>
       <b>${escapeHtml(primaryName)}</b>
       <span>${escapeHtml(primaryStatus)}</span>
     </div>
-    <div class="decision-card ${sentiment.cls}">
-      <span class="decision-label">情绪</span>
-      <b>${escapeHtml(sentiment.title)}</b>
-      <span>${escapeHtml(sentiment.detail)}</span>
+    <div class="decision-card action">
+      <span class="decision-label">关联题材</span>
+      <b>${escapeHtml(relatedTags[0] || "等待映射")}</b>
+      <span>${escapeHtml(relatedTags.slice(1).join(" / ") || sentiment.detail)}</span>
     </div>
     <div class="decision-card risk">
-      <span class="decision-label">风险</span>
+      <span class="decision-label">回避/降级</span>
       <b>${escapeHtml(riskNames)}</b>
       <span>${escapeHtml(risks[0]?.risk || "看是否扩散")}</span>
     </div>
     <div class="decision-card action">
-      <span class="decision-label">动作</span>
+      <span class="decision-label">下一步验证</span>
       <b>${escapeHtml(action.title)}</b>
       <span>${escapeHtml(action.detail)}</span>
     </div>
@@ -1171,27 +1195,27 @@ function renderPremarket(data) {
 
   // === Codex 格式: 集合竞价 + 情绪判断 ===
   if (data.market_context || data.strong_lines || data.watch_lines) {
+    const ctx = data.market_context || {};
     // 竞价情绪
     if (data.market_context) {
-      const ctx = data.market_context;
       const mood = (ctx.limit_diff || 0) >= 0 ? 'up' : 'down';
       html += '<div class="subsection"><h3>⚡ 集合竞价情绪</h3>';
       html += `<div class="breadth">涨停 <b>${ctx.limit_up_count||0}</b> / 跌停 <b>${ctx.limit_down_count||0}</b> · 差值 <span class="${mood}">${ctx.limit_diff||0}</span> · 涨停:跌停 <b>${ctx.limit_ratio||'-'}</b>${ctx.denominator ? `<span class="muted"> (${ctx.denominator})</span>` : ''}</div>`;
       html += '</div>';
     }
-    if (data.market_context.open_style || data.market_context.sentiment_judgement || data.market_context.benefit_themes || data.market_context.risk_points) {
+    if (ctx.open_style || ctx.sentiment_judgement || ctx.benefit_themes || ctx.risk_points) {
       html += '<div class="subsection"><h3>🧭 开盘情绪预判</h3>';
-      if (data.market_context.open_style || data.market_context.sentiment_judgement) {
-        html += `<div class="theme-item premarket-lead"><b>${escapeHtml(data.market_context.open_style || "待判断")}</b></div>`;
-        if (data.market_context.sentiment_judgement) {
-          html += renderBulletList(takePremarketPoints(data.market_context.sentiment_judgement, 2, 140), "premarket-points");
+      if (ctx.open_style || ctx.sentiment_judgement) {
+        html += `<div class="theme-item premarket-lead"><b>${escapeHtml(ctx.open_style || "待判断")}</b></div>`;
+        if (ctx.sentiment_judgement) {
+          html += renderBulletList(takePremarketPoints(ctx.sentiment_judgement, 2, 140), "premarket-points");
         }
       }
-      if (data.market_context.benefit_themes) {
-        html += '<div class="tag-row">受益：' + data.market_context.benefit_themes.slice(0, 5).map(s => `<span class="tag">${escapeHtml(s)}</span>`).join(" ") + '</div>';
+      if (ctx.benefit_themes) {
+        html += '<div class="tag-row">受益：' + ctx.benefit_themes.slice(0, 5).map(s => `<span class="tag">${escapeHtml(s)}</span>`).join(" ") + '</div>';
       }
-      if (data.market_context.risk_points) {
-        html += '<div class="tag-row">风险：' + data.market_context.risk_points.slice(0, 5).map(s => `<span class="tag">${escapeHtml(s)}</span>`).join(" ") + '</div>';
+      if (ctx.risk_points) {
+        html += '<div class="tag-row">风险：' + ctx.risk_points.slice(0, 5).map(s => `<span class="tag">${escapeHtml(s)}</span>`).join(" ") + '</div>';
       }
       html += '</div>';
     }
@@ -1310,25 +1334,26 @@ function renderPremarketDecision(data) {
   const risk = riskPoints[0] || "暂无明确风险点";
   const news = Array.isArray(data.overnight_news) ? data.overnight_news[0] : null;
   const newsText = news ? (news.text || news.title || "") : "";
+  const relatedTags = relatedTopicTags(primary, watchLines.join(" "), strongLines.join(" "), newsText, verify);
 
   return `<div class="decision-strip premarket-decision">
     <div class="decision-card ${tone}">
-      <span class="decision-label">开盘风格</span>
+      <span class="decision-label">核心结论</span>
       <b>${escapeHtml(style)}</b>
       <span>${escapeHtml(truncateText(data.summary || verify, 62))}</span>
     </div>
-    <div class="decision-card primary">
-      <span class="decision-label">优先方向</span>
-      <b>${escapeHtml(truncateText(primary, 24))}</b>
-      <span>${escapeHtml(watchLines.slice(1, 4).join(" / ") || "等集合竞价扩散")}</span>
+    <div class="decision-card action">
+      <span class="decision-label">关联题材</span>
+      <b>${escapeHtml(relatedTags[0] || truncateText(primary, 24))}</b>
+      <span>${escapeHtml(relatedTags.slice(1).join(" / ") || watchLines.slice(0, 3).join(" / ") || "等集合竞价扩散")}</span>
     </div>
     <div class="decision-card risk">
-      <span class="decision-label">最大风险</span>
+      <span class="decision-label">回避/降级</span>
       <b>${escapeHtml(truncateText(risk, 24))}</b>
       <span>${escapeHtml(truncateText(riskPoints.slice(1, 3).join("；") || risk, 62))}</span>
     </div>
     <div class="decision-card action">
-      <span class="decision-label">验证条件</span>
+      <span class="decision-label">下一步验证</span>
       <b>${escapeHtml(ctx.limit_up_count == null ? "等9:25数据" : "看竞价强弱")}</b>
       <span>${escapeHtml(truncateText(newsText || verify || "看涨跌停、低开收敛和承接扩散", 62))}</span>
     </div>
@@ -1423,24 +1448,25 @@ function renderMiddayDecision(data) {
   const mood = broken >= 30 || limitDown >= 15 ? "分歧警戒" : limitUp >= 60 && limitDown <= 10 ? "午后可攻可守" : "等待确认";
   const moodCls = mood.includes("警戒") ? "warn" : mood.includes("攻") ? "good" : "neutral";
   const riskText = Array.isArray(risks) && risks.length ? (typeof risks[0] === "string" ? risks[0] : risks[0].text) : "暂未给出风险阈值";
+  const relatedTags = relatedTopicTags(trends.map(t => [trendName(t), t.status, t.reason].join(" ")).join(" "), watch.join(" "), riskText);
   return `<div class="decision-strip midday-decision">
     <div class="decision-card primary">
-      <span class="decision-label">午后主线</span>
+      <span class="decision-label">核心结论</span>
       <b>${escapeHtml(strong ? trendName(strong) : "等待主线确认")}</b>
       <span>${escapeHtml(strong?.status || review.one_sentence || "暂无")}</span>
     </div>
-    <div class="decision-card ${moodCls}">
-      <span class="decision-label">情绪</span>
-      <b>${escapeHtml(mood)}</b>
-      <span>涨停${limitUp || "-"} / 跌停${limitDown || "-"} / 炸板${broken || "-"}</span>
+    <div class="decision-card action">
+      <span class="decision-label">关联题材</span>
+      <b>${escapeHtml(relatedTags[0] || mood)}</b>
+      <span>${escapeHtml(relatedTags.slice(1).join(" / ") || `涨停${limitUp || "-"} / 跌停${limitDown || "-"} / 炸板${broken || "-"}`)}</span>
     </div>
     <div class="decision-card action">
-      <span class="decision-label">下午验证</span>
+      <span class="decision-label">下一步验证</span>
       <b>${escapeHtml(watch.length ? `看${Math.min(watch.length, 3)}个信号` : "等待信号")}</b>
       <span>${escapeHtml(truncateText(watch.slice(0, 2).join("；"), 62) || "无")}</span>
     </div>
     <div class="decision-card risk">
-      <span class="decision-label">风险阈值</span>
+      <span class="decision-label">回避/降级</span>
       <b>${escapeHtml(risks.length ? "先盯分歧" : "暂无")}</b>
       <span>${escapeHtml(truncateText(riskText, 62))}</span>
     </div>
@@ -1642,25 +1668,26 @@ function renderPostmarketDecision(data) {
   const limitDown = mb.limit_down ?? data.index?.["跌停"];
   const broken = mb.broken_board ?? data.index?.["炸板"];
   const tone = /负反馈|不支持|风险|分歧/.test([patch.summary, patch.impact, reviewText].join(" ")) ? "warn" : /强|支持|扩散/.test([patch.summary, patch.impact, reviewText].join(" ")) ? "good" : "neutral";
+  const relatedTags = relatedTopicTags(hotspots.map(h => [trendName(h), h.status, h.continuity, h.risk].join(" ")).join(" "), reviewText, patch.summary, patch.impact);
 
   return `<div class="decision-strip postmarket-decision">
     <div class="decision-card primary">
-      <span class="decision-label">次日主线</span>
+      <span class="decision-label">核心结论</span>
       <b>${escapeHtml(strong ? trendName(strong) : "等待主线确认")}</b>
       <span>${escapeHtml(strong?.status || reviewText || "暂无")}</span>
     </div>
     <div class="decision-card ${tone}">
-      <span class="decision-label">尾盘验证</span>
-      <b>${escapeHtml(patch.impact ? "已校验" : "待校验")}</b>
-      <span>${escapeHtml(truncateText(patch.summary || patch.impact || reviewText, 62))}</span>
+      <span class="decision-label">关联题材</span>
+      <b>${escapeHtml(relatedTags[0] || (patch.impact ? "尾盘已校验" : "待校验"))}</b>
+      <span>${escapeHtml(relatedTags.slice(1).join(" / ") || truncateText(patch.summary || patch.impact || reviewText, 62))}</span>
     </div>
     <div class="decision-card risk">
-      <span class="decision-label">最大风险</span>
+      <span class="decision-label">回避/降级</span>
       <b>${escapeHtml(riskLine ? trendName(riskLine) : "暂无明确风险线")}</b>
       <span>${escapeHtml(truncateText(riskLine?.risk || "看炸板/跌停是否继续扩大", 62))}</span>
     </div>
     <div class="decision-card action">
-      <span class="decision-label">明日动作</span>
+      <span class="decision-label">下一步验证</span>
       <b>${escapeHtml(watch.length ? `看${Math.min(watch.length, 3)}个条件` : "等待确认")}</b>
       <span>${escapeHtml(truncateText(watch.slice(0, 2).join("；") || `涨停${limitUp || "-"} / 跌停${limitDown || "-"} / 炸板${broken || "-"}`, 62))}</span>
     </div>
@@ -1839,24 +1866,25 @@ function renderEveningDecision(data, news, p0Alerts, counts) {
   const overall = data.sentiment_summary?.overall || (p0Alerts.length ? "P0优先" : positive > negative ? "偏正面" : negative > positive ? "偏负面" : "中性");
   const watch = topP0?.watch_next_day || news.find(n => Array.isArray(n.verify_next_day))?.verify_next_day || [];
   const tone = /负|风险|P0|警惕/.test(overall) || p0Alerts.length ? "warn" : /正/.test(overall) ? "good" : "neutral";
+  const relatedTags = relatedTopicTags(p0Alerts.map(p => [p.title, p.why_p0].join(" ")).join(" "), news.map(n => [n.title, n.text, n.tag].join(" ")).join(" "));
   return `<div class="decision-strip evening-decision">
     <div class="decision-card ${tone}">
-      <span class="decision-label">晚间级别</span>
+      <span class="decision-label">核心结论</span>
       <b>${escapeHtml(overall)}</b>
       <span>P0 ${p0Alerts.length} / 正${positive} 负${negative} 中${neutral}</span>
     </div>
     <div class="decision-card primary">
-      <span class="decision-label">最大变量</span>
-      <b>${escapeHtml(truncateText(topP0?.title || "暂无P0", 24))}</b>
-      <span>${escapeHtml(truncateText(topP0?.why_p0 || "等待晚间新增舆情", 62))}</span>
+      <span class="decision-label">关联题材</span>
+      <b>${escapeHtml(relatedTags[0] || truncateText(topP0?.title || "暂无P0", 24))}</b>
+      <span>${escapeHtml(relatedTags.slice(1).join(" / ") || truncateText(topP0?.why_p0 || "等待晚间新增舆情", 62))}</span>
     </div>
     <div class="decision-card risk">
-      <span class="decision-label">竞价风险</span>
+      <span class="decision-label">回避/降级</span>
       <b>${escapeHtml(truncateText(riskP0?.title || "暂无明确风险", 24))}</b>
       <span>${escapeHtml(truncateText(riskP0?.why_p0 || "看核心观察池是否批量高低开", 62))}</span>
     </div>
     <div class="decision-card action">
-      <span class="decision-label">次日观察</span>
+      <span class="decision-label">下一步验证</span>
       <b>${escapeHtml(watch.length ? `看${Math.min(watch.length, 3)}个信号` : "等待验证")}</b>
       <span>${escapeHtml(truncateText(watch.slice(0, 2).join("；") || "看9:25竞价、核心池高低开和风格切换", 62))}</span>
     </div>
