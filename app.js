@@ -145,9 +145,9 @@ function renderDashboardControl() {
   const style = inferMarketStyle(intraday, postmarket, evening);
   const position = inferPositionRange(style, riskConfig);
   const latest = latestTimestamp([intraday, postmarket, evening, alert]);
-  const priority = strong.slice(0, 3).map(trendName);
-  const avoid = risks.slice(0, 3).map(trendName);
-  const relatedTags = relatedTopicTags(priority.join(" "), avoid.join(" "), alertStocks.join(" "), p0.map(p => p.title || p.text || "").join(" "));
+  const priority = strong.slice(0, 3).map(themeDisplayName);
+  const avoid = risks.slice(0, 3).map(themeDisplayName);
+  const relatedTags = positiveRelatedTopicTags(priority.join(" "), avoid.join(" "), alertStocks.join(" "), p0.map(p => p.title || p.text || "").join(" "));
 
   el.innerHTML = `<div class="control-hero ${style.cls}">
     <div>
@@ -224,6 +224,10 @@ function relatedTopicTags(...parts) {
   ];
   const matched = groups.filter(g => g.re.test(text)).map(g => g.name);
   return uniqueList(matched).slice(0, 5);
+}
+
+function positiveRelatedTopicTags(...parts) {
+  return relatedTopicTags(...parts).filter(tag => tag !== "回避/降级集合");
 }
 
 function extractStocks(item) {
@@ -325,12 +329,12 @@ function renderWatchLine(label, rows) {
 function renderGroupedWatchStocks(rows) {
   const groups = new Map();
   rows.forEach(stock => {
-    const reason = stock.signal?.reason || "未标注";
-    if (!groups.has(reason)) groups.set(reason, []);
-    groups.get(reason).push(stock);
+    const label = stockProfileLabel(stock) || "待确认方向";
+    if (!groups.has(label)) groups.set(label, []);
+    groups.get(label).push(stock);
   });
-  return Array.from(groups.entries()).map(([reason, stocks]) =>
-    `<span class="watch-reason-group"><em>${escapeHtml(reason)}</em>${stocks.map(renderWatchStockName).join(" / ")}</span>`
+  return Array.from(groups.entries()).map(([label, stocks]) =>
+    `<span class="watch-reason-group"><em>${escapeHtml(label)}</em>${stocks.map(renderWatchStockName).join(" / ")}</span>`
   ).join("");
 }
 
@@ -341,8 +345,18 @@ function renderWatchStock(stock) {
 }
 
 function renderWatchStockName(stock) {
-  const label = stockProfileLabel(stock);
-  return `<span class="watch-stock-name">${escapeHtml(stock.name || stock.code)}${label ? `<small>${escapeHtml(label)}</small>` : ""}</span>`;
+  const label = watchSignalBadge(stock.signal?.level);
+  return `<span class="watch-stock-name">${escapeHtml(displayStockName(stock.name || stock.code))}${label ? `<small>${escapeHtml(label)}</small>` : ""}</span>`;
+}
+
+function watchSignalBadge(level) {
+  return {
+    trigger: "触发",
+    risk: "风险",
+    pressure: "承压",
+    watch: "待验证",
+    idle: ""
+  }[level] || "";
 }
 
 function stockSignal(stock, signals, pool) {
@@ -375,16 +389,66 @@ function stockSignal(stock, signals, pool) {
 }
 
 function signalTags(tags) {
-  const management = /^(观察池|个人跟踪|观察仓|小登池|中登池|老登池|风格切换|科技题材|A股|同花顺自选|设置页新增|同花顺自选导入)$/;
+  const management = /^(观察池|个人跟踪|观察仓|小登池|中登池|老登池|风格切换|科技题材|A股|同花顺自选|设置页新增|同花顺自选导入|待标注方向)$/;
   return (tags || []).filter(tag => tag && !management.test(tag));
 }
 
 function stockProfileLabel(stock) {
+  const code = normalizeStockCodeForMatch(stock.code);
+  const name = String(stock.name || "").replace(/^XD/, "");
+  const precise = {
+    sh603650: "光刻胶",
+    sz301526: "电子布/玻纤",
+    sz300033: "金融科技",
+    sh688160: "工业自动化",
+    sh688017: "机器人减速器",
+    sz002747: "工业机器人",
+    sz300536: "待确认方向",
+    sh688777: "工业自动化",
+    sz300418: "AI应用",
+    sz002261: "华为算力",
+    sh688111: "AI办公",
+    sh688549: "半导体材料",
+    sz300346: "光刻胶",
+    sh603078: "湿电子化学品",
+    sz002409: "半导体材料",
+    sh688019: "CMP抛光液",
+    sh688120: "CMP设备",
+    sz002371: "半导体设备",
+    sh688012: "半导体设备",
+    sh688432: "硅材料",
+    sh688126: "半导体硅片",
+    sh688795: "国产GPU",
+    sh603986: "存储/MCU",
+    sh688008: "存储/HBM",
+    sh588170: "半导体ETF",
+    sh515230: "软件ETF",
+    sh515120: "创新药ETF",
+    sz159530: "机器人ETF",
+    hk2513: "AI应用",
+    hk9880: "人形机器人"
+  };
+  const byName = {
+    金山办: "AI办公",
+    中巨芯: "半导体材料",
+    摩尔线程: "国产GPU",
+    科创半导体: "半导体ETF",
+    软件ETF: "软件ETF",
+    创新药ETF: "创新药ETF",
+    机器人ETF: "机器人ETF",
+    优必选: "人形机器人",
+    智谱: "AI应用"
+  };
+  const mapped = precise[code] || Object.entries(byName).find(([key]) => name.includes(key))?.[1];
+  if (mapped) return mapped;
   const tags = signalTags([...(stock.tags || []), ...inferredStockTags(stock)]);
-  const preferred = tags.find(tag =>
-    /半导体|设备|材料|光刻胶|机器人|自动化|AI|算力|软件|ETF|创新药|GPU|存储|硅|电子布|金融/.test(tag)
-  ) || tags[0] || "";
-  return preferred;
+  return tags.find(tag => /半导体|设备|材料|光刻胶|机器人|自动化|AI|算力|软件|ETF|创新药|GPU|存储|硅|电子布|金融|医药|CPO|PCB/.test(tag)) || tags[0] || "待确认方向";
+}
+
+function displayStockName(name) {
+  const text = String(name || "");
+  if (text === "XD金山办") return "金山办公";
+  return text.replace(/^XD/, "");
 }
 
 function inferredStockTags(stock) {
@@ -730,7 +794,7 @@ function renderAlertsSummary(alerts, timestamp) {
   const leaders = Array.from(new Set(alerts.flatMap(a => (a.leaders || []).map(l => l.name)).filter(Boolean))).slice(0, 4);
   const tone = riskCount >= tradeCount ? "risk" : "hot";
   const timeText = formatUpdateTime(timestamp);
-  const relatedTags = relatedTopicTags(alerts.map(a => [a.sector, a.type, a.reason].join(" ")).join(" "), leaders.join(" "));
+  const relatedTags = positiveRelatedTopicTags(alerts.map(a => [a.sector, a.type, a.reason].join(" ")).join(" "), leaders.join(" "));
   el.innerHTML = `
     <div class="decision-strip alerts-decision">
     <div class="decision-card ${tone === "hot" ? "primary" : "risk"}">
@@ -807,12 +871,12 @@ function renderIntradayDecision(data) {
   const strong = themes.filter(isPriorityTheme);
   const risks = themes.filter(t => isAvoidTheme(t) && !strong.some(s => trendName(s) === trendName(t)));
   const primary = strong[0] || themes[0];
-  const primaryName = primary ? trendName(primary) : "等待主线确认";
+  const primaryName = primary ? themeDisplayName(primary) : "等待主线确认";
   const primaryStatus = primary ? trendStatus(primary) || "观察" : "暂无";
-  const riskNames = risks.slice(0, 2).map(t => trendName(t)).join(" / ") || "暂无明确风险线";
+  const riskNames = risks.slice(0, 2).map(t => themeDisplayName(t)).join(" / ") || "暂无明确风险线";
   const sentiment = intradayMood(data);
   const action = intradayActionText(data, strong, risks, sentiment);
-  const relatedTags = relatedTopicTags(themes.map(t => [trendName(t), trendStatus(t), t.reason, t.continuity].join(" ")).join(" "));
+  const relatedTags = positiveRelatedTopicTags(themes.map(t => [trendName(t), trendStatus(t), t.reason, t.continuity].join(" ")).join(" "));
 
   el.innerHTML = `
     <div class="decision-card primary">
@@ -897,13 +961,13 @@ function renderCodexIntraday(data) {
       html += `<div class="breadth">${data.main_trends}</div>`;
     } else {
       html += data.main_trends.map(t => {
-        const name = trendName(t);
+        const name = themeDisplayName(t);
         const status = trendStatus(t);
         const cls = status.includes('强') ? 'strong-theme' : '';
         const evidence = t.evidence ? renderEvidenceDetails(t.evidence) : "";
         const continuity = t.continuity ? `<div class="theme-line">${escapeHtml(truncateText(t.continuity, 90))}</div>` : "";
         const risk = t.risk ? `<div class="theme-line risk-text">风险：${escapeHtml(truncateText(t.risk, 90))}</div>` : "";
-        return `<div class="theme-item ${cls}"><b>${escapeHtml(name)}</b>${status ? ` <span class="muted">— ${escapeHtml(status)}</span>` : ""}${continuity}${risk}${evidence}</div>`;
+        return `<div class="theme-item ${cls}"><b>${escapeHtml(name)}</b>${status ? ` <span class="muted">— ${escapeHtml(status)}</span>` : ""}${renderThemeSubTags(t)}${continuity}${risk}${evidence}</div>`;
       }).join('');
     }
     html += '</div>';
@@ -922,7 +986,7 @@ function renderCodexIntraday(data) {
       const evidence = t.evidence ? renderEvidenceDetails(t.evidence) : "";
       const continuity = t.continuity ? `<div class="theme-line">${escapeHtml(truncateText(t.continuity, 90))}</div>` : "";
       const risk = t.risk ? `<div class="theme-line risk-text">风险：${escapeHtml(truncateText(t.risk, 90))}</div>` : "";
-      return `<div class="theme-item ${cls}"><b>${icon} ${escapeHtml(trendName(t))}</b>${status ? ` <span class="muted">— ${escapeHtml(status)}</span>` : ""}${continuity}${risk}${evidence}</div>`;
+      return `<div class="theme-item ${cls}"><b>${icon} ${escapeHtml(themeDisplayName(t))}</b>${status ? ` <span class="muted">— ${escapeHtml(status)}</span>` : ""}${renderThemeSubTags(t)}${continuity}${risk}${evidence}</div>`;
     }).join('');
     html += '</div>';
   }
@@ -1015,11 +1079,11 @@ function buildIntradaySectorLists(data) {
   const source = Array.isArray(data.themes) && data.themes.length ? data.themes : (Array.isArray(data.main_trends) ? data.main_trends : []);
   const inferredTop = source
     .filter(t => typeof t === "object" && /强|强化|资金|观察/.test(trendStatus(t)) && !/风险|弱|退潮/.test(trendStatus(t)))
-    .map(t => ({ name: trendName(t), status: trendStatus(t), detail: trendStatus(t) }))
+    .map(t => ({ name: themeDisplayName(t), status: trendStatus(t), detail: themeSubDirections(t).join(" / ") || trendStatus(t) }))
     .slice(0, 5);
   const inferredBottom = source
     .filter(t => typeof t === "object" && /风险|弱|退潮|回落/.test(trendStatus(t)))
-    .map(t => ({ name: trendName(t), status: trendStatus(t), detail: trendStatus(t) }))
+    .map(t => ({ name: themeDisplayName(t), status: trendStatus(t), detail: themeSubDirections(t).join(" / ") || trendStatus(t) }))
     .slice(0, 5);
   return {
     conceptTop: conceptTop.length ? conceptTop : inferredTop,
@@ -1033,6 +1097,48 @@ function buildIntradaySectorLists(data) {
 function trendName(item) {
   if (typeof item === "string") return item;
   return item?.name || item?.sector || item?.theme || item?.title || "未命名主线";
+}
+
+function themeDisplayName(item) {
+  const name = trendName(item);
+  const text = [name, item?.status, item?.continuity, item?.risk, ...(item?.stocks || [])].join(" ");
+  if (/汽车零部件|汽车零部|机器人|通用设备|自动化设备/.test(text) && /机器人|通用设备|自动化设备/.test(text)) {
+    return "机器人/工业自动化";
+  }
+  if (/电子布|玻纤|PCB|覆铜板/.test(text)) return "PCB材料链";
+  if (/半导体设备|CMP设备|刻蚀|沉积|清洗/.test(text)) return "半导体设备";
+  if (/半导体材料|光刻胶|硅片|硅材料|CMP抛光|靶材/.test(text)) return "半导体材料";
+  if (/CPO|光模块|光通信/.test(text)) return "CPO/光模块";
+  if (/存储|HBM|DDR|兆易|澜起|佰维|江波龙/.test(text)) return "存储/HBM";
+  if (/AI应用|视频生成|办公|软件|传媒/.test(text)) return "AI应用";
+  if (/化学制药|创新药|原料药|医药/.test(text)) return "医药修复链";
+  if (/券商|证券|保险|白酒|畜牧|权重/.test(text)) return "老登风格切换";
+  return name;
+}
+
+function themeSubDirections(item) {
+  const name = trendName(item);
+  const text = [name, item?.status, item?.continuity, item?.risk, ...(item?.stocks || [])].join(" ");
+  const rules = [
+    ["汽车零部件", /汽车零部件|汽车零部|飞龙股份|圣龙股份|明新旭腾|晋拓股份/],
+    ["机器人", /机器人|绿的谐波|埃斯顿|中大力德|优必选/],
+    ["通用设备", /通用设备|日发精机|夏厦精密|杭齿前进|丰光精密/],
+    ["自动化设备", /自动化设备|步科股份|雷赛智能|中控技术|汇川技术/],
+    ["半导体设备", /半导体设备|北方华创|中微公司|华海清科|芯源微|拓荆科技/],
+    ["半导体材料", /半导体材料|雅克科技|安集科技|江丰电子|中巨芯|南大光电|晶瑞电材/],
+    ["CPO/光模块", /CPO|光模块|新易盛|中际旭创|天孚通信|光迅科技/],
+    ["存储/HBM", /存储|HBM|兆易创新|澜起科技|佰维存储|江波龙/],
+    ["PCB材料", /PCB|电子布|玻纤|覆铜板|中国巨石|国际复材|生益科技|沪电股份|胜宏科技/],
+    ["AI应用", /AI应用|视频生成|昆仑万维|金山办公|智谱|商汤|快手/],
+    ["医药", /化学制药|创新药|原料药|恒瑞|科伦|百济|艾力斯/],
+    ["老登切换", /券商|证券|保险|白酒|畜牧|权重/]
+  ];
+  return rules.filter(([, re]) => re.test(text)).map(([label]) => label).slice(0, 6);
+}
+
+function renderThemeSubTags(item) {
+  const tags = themeSubDirections(item);
+  return tags.length ? `<div class="topic-related theme-subtags">${tags.map(tag => `<span>${escapeHtml(tag)}</span>`).join("")}</div>` : "";
 }
 
 function trendStatus(item) {
@@ -1334,7 +1440,7 @@ function renderPremarketDecision(data) {
   const risk = riskPoints[0] || "暂无明确风险点";
   const news = Array.isArray(data.overnight_news) ? data.overnight_news[0] : null;
   const newsText = news ? (news.text || news.title || "") : "";
-  const relatedTags = relatedTopicTags(primary, watchLines.join(" "), strongLines.join(" "), newsText, verify);
+  const relatedTags = positiveRelatedTopicTags(primary, watchLines.join(" "), strongLines.join(" "), newsText, verify);
 
   return `<div class="decision-strip premarket-decision">
     <div class="decision-card ${tone}">
@@ -1448,11 +1554,11 @@ function renderMiddayDecision(data) {
   const mood = broken >= 30 || limitDown >= 15 ? "分歧警戒" : limitUp >= 60 && limitDown <= 10 ? "午后可攻可守" : "等待确认";
   const moodCls = mood.includes("警戒") ? "warn" : mood.includes("攻") ? "good" : "neutral";
   const riskText = Array.isArray(risks) && risks.length ? (typeof risks[0] === "string" ? risks[0] : risks[0].text) : "暂未给出风险阈值";
-  const relatedTags = relatedTopicTags(trends.map(t => [trendName(t), t.status, t.reason].join(" ")).join(" "), watch.join(" "), riskText);
+  const relatedTags = positiveRelatedTopicTags(trends.map(t => [trendName(t), t.status, t.reason].join(" ")).join(" "), watch.join(" "), riskText);
   return `<div class="decision-strip midday-decision">
     <div class="decision-card primary">
       <span class="decision-label">核心结论</span>
-      <b>${escapeHtml(strong ? trendName(strong) : "等待主线确认")}</b>
+      <b>${escapeHtml(strong ? themeDisplayName(strong) : "等待主线确认")}</b>
       <span>${escapeHtml(strong?.status || review.one_sentence || "暂无")}</span>
     </div>
     <div class="decision-card action">
@@ -1668,12 +1774,12 @@ function renderPostmarketDecision(data) {
   const limitDown = mb.limit_down ?? data.index?.["跌停"];
   const broken = mb.broken_board ?? data.index?.["炸板"];
   const tone = /负反馈|不支持|风险|分歧/.test([patch.summary, patch.impact, reviewText].join(" ")) ? "warn" : /强|支持|扩散/.test([patch.summary, patch.impact, reviewText].join(" ")) ? "good" : "neutral";
-  const relatedTags = relatedTopicTags(hotspots.map(h => [trendName(h), h.status, h.continuity, h.risk].join(" ")).join(" "), reviewText, patch.summary, patch.impact);
+  const relatedTags = positiveRelatedTopicTags(hotspots.map(h => [trendName(h), h.status, h.continuity, h.risk].join(" ")).join(" "), reviewText, patch.summary, patch.impact);
 
   return `<div class="decision-strip postmarket-decision">
     <div class="decision-card primary">
       <span class="decision-label">核心结论</span>
-      <b>${escapeHtml(strong ? trendName(strong) : "等待主线确认")}</b>
+      <b>${escapeHtml(strong ? themeDisplayName(strong) : "等待主线确认")}</b>
       <span>${escapeHtml(strong?.status || reviewText || "暂无")}</span>
     </div>
     <div class="decision-card ${tone}">
@@ -1683,7 +1789,7 @@ function renderPostmarketDecision(data) {
     </div>
     <div class="decision-card risk">
       <span class="decision-label">回避/降级</span>
-      <b>${escapeHtml(riskLine ? trendName(riskLine) : "暂无明确风险线")}</b>
+      <b>${escapeHtml(riskLine ? themeDisplayName(riskLine) : "暂无明确风险线")}</b>
       <span>${escapeHtml(truncateText(riskLine?.risk || "看炸板/跌停是否继续扩大", 62))}</span>
     </div>
     <div class="decision-card action">
@@ -1866,7 +1972,7 @@ function renderEveningDecision(data, news, p0Alerts, counts) {
   const overall = data.sentiment_summary?.overall || (p0Alerts.length ? "P0优先" : positive > negative ? "偏正面" : negative > positive ? "偏负面" : "中性");
   const watch = topP0?.watch_next_day || news.find(n => Array.isArray(n.verify_next_day))?.verify_next_day || [];
   const tone = /负|风险|P0|警惕/.test(overall) || p0Alerts.length ? "warn" : /正/.test(overall) ? "good" : "neutral";
-  const relatedTags = relatedTopicTags(p0Alerts.map(p => [p.title, p.why_p0].join(" ")).join(" "), news.map(n => [n.title, n.text, n.tag].join(" ")).join(" "));
+  const relatedTags = positiveRelatedTopicTags(p0Alerts.map(p => [p.title, p.why_p0].join(" ")).join(" "), news.map(n => [n.title, n.text, n.tag].join(" ")).join(" "));
   return `<div class="decision-strip evening-decision">
     <div class="decision-card ${tone}">
       <span class="decision-label">核心结论</span>
