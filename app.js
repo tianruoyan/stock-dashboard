@@ -594,15 +594,42 @@ function isConditionalSignal(text) {
 }
 
 function collectSignalText() {
+  const intraday = cached("data/intraday.json") || {};
+  const postmarket = cached("data/postmarket.json") || {};
+  const evening = cached("data/evening-sentiment.json") || {};
+  const topics = cached("data/topics.json") || {};
   const sources = [
     ...(cached("data/alert.json")?.alerts || []),
-    ...(cached("data/intraday.json")?.main_trends || []),
-    ...(cached("data/intraday.json")?.themes || []),
-    ...(cached("data/postmarket.json")?.hotspots || []),
-    ...(cached("data/evening-sentiment.json")?.p0_alerts || []),
-    ...(cached("data/topics.json")?.topics || [])
+    ...asArray(intraday.main_trends),
+    ...themeGroupsToItems(intraday.themes),
+    ...asArray(postmarket.hotspots),
+    ...asArray(evening.p0_alerts),
+    ...asArray(topics.topics)
   ];
   return sources.map(item => ({ text: JSON.stringify(item, null, 0) }));
+}
+
+function asArray(value) {
+  return Array.isArray(value) ? value : [];
+}
+
+function themeGroupsToItems(value) {
+  if (Array.isArray(value)) return value;
+  if (!value || typeof value !== "object") return [];
+  return Object.entries(value).flatMap(([group, items]) =>
+    (Array.isArray(items) ? items : [items]).filter(Boolean).map(item =>
+      typeof item === "string" ? { name: item, status: themeGroupLabel(group) } : { group, ...item }
+    )
+  );
+}
+
+function themeGroupLabel(group) {
+  return {
+    strong: "强主线",
+    watch: "观察",
+    funds_game: "资金博弈",
+    risk: "风险"
+  }[group] || group;
 }
 
 function renderPortfolioRisk() {
@@ -1101,7 +1128,7 @@ function trendName(item) {
 
 function themeDisplayName(item) {
   const name = trendName(item);
-  const text = [name, item?.status, item?.continuity, item?.risk, ...(item?.stocks || [])].join(" ");
+  const text = [name, item?.status, item?.continuity, item?.risk, ...themeStockText(item)].join(" ");
   if (/汽车零部件|汽车零部|机器人|通用设备|自动化设备/.test(text) && /机器人|通用设备|自动化设备/.test(text)) {
     return "机器人/工业自动化";
   }
@@ -1118,7 +1145,7 @@ function themeDisplayName(item) {
 
 function themeSubDirections(item) {
   const name = trendName(item);
-  const text = [name, item?.status, item?.continuity, item?.risk, ...(item?.stocks || [])].join(" ");
+  const text = [name, item?.status, item?.continuity, item?.risk, ...themeStockText(item)].join(" ");
   const rules = [
     ["汽车零部件", /汽车零部件|汽车零部|飞龙股份|圣龙股份|明新旭腾|晋拓股份/],
     ["机器人", /机器人|绿的谐波|埃斯顿|中大力德|优必选/],
@@ -1139,6 +1166,12 @@ function themeSubDirections(item) {
 function renderThemeSubTags(item) {
   const tags = themeSubDirections(item);
   return tags.length ? `<div class="topic-related theme-subtags">${tags.map(tag => `<span>${escapeHtml(tag)}</span>`).join("")}</div>` : "";
+}
+
+function themeStockText(item) {
+  const stocks = item?.stocks || item?.leaders || item?.representatives || [];
+  if (!Array.isArray(stocks)) return [String(stocks || "")];
+  return stocks.map(stock => typeof stock === "string" ? stock : (stock?.name || stock?.symbol || stock?.code || "")).filter(Boolean);
 }
 
 function trendStatus(item) {
