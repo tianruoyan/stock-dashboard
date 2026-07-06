@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-07-04T22:30:00+08:00",
+  "timestamp": "2026-07-06T09:17:09+08:00",
   "sources": [
     {
       "id": "mootdx",
@@ -15,7 +15,7 @@
       "role": "实时价、指数、ETF、PE/PB、市值、换手率、涨跌停价",
       "status": "ok",
       "cadence": "盘中高频，适合观察池轮询",
-      "note": "作为高频 HTTP 行情主源；用于 3 分钟涨跌幅、指数和 ETF 风格判断。"
+      "note": "9:15盘前使用腾讯港股HTTP获取恒指、恒科、港股核心标的，返回正常。"
     },
     {
       "id": "eastmoney",
@@ -48,6 +48,14 @@
       "status": "degraded",
       "cadence": "按需低频调用",
       "note": "用于补充归因和交叉验证，不作为唯一结论来源。"
+    },
+    {
+      "id": "yahoo_finance",
+      "name": "Yahoo Finance HTTP",
+      "role": "海外指数、美股、日韩与港股补充行情",
+      "status": "degraded",
+      "cadence": "按需低频补充",
+      "note": "9:15盘前美股/日韩/港股多数返回正常；个别港股与期货代码出现SSL或空返回，已用腾讯港股和XIN9 A50代理交叉补足，未用失败数据生成结论。"
     }
   ],
   "rules": [
