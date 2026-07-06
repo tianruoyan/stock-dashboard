@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-07-06T14:33:20+08:00",
+  "timestamp": "2026-07-06T15:09:09+08:00",
   "sources": [
     {
       "id": "mootdx",
@@ -15,7 +15,7 @@
       "role": "实时价、指数、ETF、PE/PB、市值、换手率、涨跌停价",
       "status": "ok",
       "cadence": "盘中高频，适合观察池轮询",
-      "note": "14:30盘中使用腾讯HTTP获取指数、港股、观察池和专项实时价，返回正常。"
+      "note": "15:09盘后使用腾讯/看板盘中样本交叉验证核心标的，盘中实时价正常。"
     },
     {
       "id": "eastmoney",
@@ -23,7 +23,7 @@
       "role": "涨停池、炸板池、跌停池、行业/概念排行、资金流、龙虎榜、研报",
       "status": "ok",
       "cadence": "低频限流，建议 60-120 秒以上",
-      "note": "14:30通过东方财富结构数据接口获取涨停池、跌停池、炸板池和行业分布，返回正常；继续仅作低频结构数据源。"
+      "note": "15:09通过东方财富/akshare获取全A收盘、涨停池、跌停池、炸板池，返回正常。"
     },
     {
       "id": "cninfo_exchange",
@@ -56,6 +56,14 @@
       "status": "degraded",
       "cadence": "按需低频补充",
       "note": "9:15盘前美股/日韩/港股多数返回正常；个别港股与期货代码出现SSL或空返回，已用腾讯港股和XIN9 A50代理交叉补足，未用失败数据生成结论。"
+    },
+    {
+      "id": "sw_components",
+      "name": "申万一级成分映射",
+      "role": "盘后5%/8%上涨分层行业归类",
+      "status": "degraded",
+      "cadence": "盘后低频",
+      "note": "15:09获取申万一级行业成分时部分行业组件返回字段异常，已将未匹配样本单列，不影响涨跌幅分层总数。"
     }
   ],
   "rules": [
@@ -66,9 +74,11 @@
     "任一数据源失败时保留上一版 JSON，并在 source-health.json 标注降级或异常。"
   ],
   "last_effective_run": {
-    "timestamp": "2026-07-06T14:33:20+08:00",
-    "type": "intraday_half_hour",
-    "result": "ok",
-    "degraded_sources": []
+    "timestamp": "2026-07-06T15:09:09+08:00",
+    "type": "a_share_postmarket",
+    "result": "ok_with_sw_mapping_partial_degradation",
+    "degraded_sources": [
+      "sw_components"
+    ]
   }
 }
