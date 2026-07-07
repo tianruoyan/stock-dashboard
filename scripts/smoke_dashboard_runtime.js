@@ -395,6 +395,9 @@ async function main() {
   if (MOJIBAKE_RE.test(wholePage)) {
     issues.push(issue("critical", "mojibake_rendered", "页面运行后出现疑似乱码文本"));
   }
+  if (RAW_SOURCE_ERROR_RE.test(wholePage)) {
+    issues.push(issue("critical", "raw_source_error_rendered", "页面运行后出现底层英文源错误，需转成中文复核提示"));
+  }
   const statusText = document.getElementById("status")?.textContent || "";
   if (/JS ERROR/.test(statusText)) {
     issues.push(issue("critical", "window_onerror", statusText, "status"));

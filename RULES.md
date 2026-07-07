@@ -390,6 +390,7 @@ Codex (分析引擎)              Cola (稳定管道)
 | 2026-07-07 | alert invalidated 时必须在盘中异动区展示分组 fallback_checks，至少包含宽度替代、主线替代、新线替代 | 盘中异动不可用时不能只显示“等待修复”；必须给出可执行替代观察，维持盘中交易监测连续性 |
 | 2026-07-07 | 前端不得在早盘/质量卡/数据源健康中直接展示 Can not decode、JSON decode failed、proxy disconnect 等底层源错误 | 底层接口报错会形成乱码感和误读；用户侧只展示中文复核提示、影响范围和下一步动作，原始错误留在后台日志/JSON 供排障 |
 | 2026-07-07 | decision-feed.decision_brief 必须同步 quality-report.action_plan 的优先处置动作，并在雷达顶部显示“处置动作” | 机会/风险雷达是盘中决策入口，不能只提示风险优先；数据降级时必须同步告诉用户先修复/复核什么、何时解除降权 |
+| 2026-07-07 | 用户侧页面不得直接展示 ths_sina_or_akshare_quote_decode、tencent_hk_http、eastmoney_hk_akshare 等技术源 ID | 盘中看板服务交易判断，源状态要翻译成 A股行情源、港股腾讯报价、港股东方财富/akshare 等中文名称，技术 ID 仅留在后台排障数据中 |
 ---
 
 ## 🐍 Python 环境

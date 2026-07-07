@@ -151,8 +151,16 @@ function hasMojibake(value) {
 }
 
 function userFacingText(value) {
-  const text = String(value ?? "");
+  let text = String(value ?? "");
   if (!text) return "";
+  text = text
+    .replace(/\bths_sina_or_akshare_quote_decode\b/g, "A股行情源")
+    .replace(/\btencent_hk_http\b/g, "港股腾讯报价")
+    .replace(/\beastmoney_hk_akshare\b/g, "港股东方财富/akshare")
+    .replace(/\bofficial_policy_global_web_scan\b/g, "政策与全球事件扫描")
+    .replace(/\bsource-health\.json\b/g, "数据源健康")
+    .replace(/\bquality-report\.json\b/g, "质量报告")
+    .replace(/\bdata-trust\.json\b/g, "文件可信度");
   if (/Can not decode value starting with|JSON decode failed|proxy disconnect|decode failed|failed with/i.test(text)) {
     if (/hk|港股|Eastmoney|stock_hk/i.test(text)) {
       return "港股行情源连接/解码异常，港股与日韩映射需人工复核。";
