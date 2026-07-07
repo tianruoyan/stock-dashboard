@@ -567,7 +567,8 @@ function checkTraderViewLanguage(document, issues) {
   const targets = [
     ["dashboard-control", "今日结论"],
     ["data-quality-gate", "使用提醒"],
-    ["opportunity-risk-radar", "机会与风险"]
+    ["opportunity-risk-radar", "机会与风险"],
+    ["portfolio-risk", "仓位提示"]
   ];
   const forbidden = [
     "信号可用性",
@@ -589,11 +590,19 @@ function checkTraderViewLanguage(document, issues) {
     "data-trust",
     "source-health"
   ];
+  const portfolioForbidden = ["Alpha", "ETF回撤", "单票上限", "止损", "半导体专题"];
   for (const [id, label] of targets) {
     const rendered = normalizeRenderedText(document.getElementById(id)?.collectHtml() || "");
     for (const term of forbidden) {
       if (rendered.includes(term)) {
         issues.push(issue("critical", "backend_term_rendered", `${label}仍展示后台诊断词：${term}`, id));
+      }
+    }
+    if (id === "portfolio-risk") {
+      for (const term of portfolioForbidden) {
+        if (rendered.includes(term)) {
+          issues.push(issue("critical", "portfolio_topic_rule_rendered", `仓位提示仍展示专题研究参数：${term}`, id));
+        }
       }
     }
   }

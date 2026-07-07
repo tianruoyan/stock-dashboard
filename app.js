@@ -219,7 +219,6 @@ function renderDashboardControl() {
   const postmarket = cached("data/postmarket.json") || {};
   const evening = currentDayData(cached("data/evening-sentiment.json"));
   const alert = cached("data/alert.json") || {};
-  const riskConfig = cached("config/alert-config.json") || {};
   const themes = getIntradayThemes(intraday);
   const strong = themes.filter(isPriorityTheme);
   const risks = themes.filter(t => isAvoidTheme(t) && !strong.some(s => trendName(s) === trendName(t)));
@@ -238,7 +237,7 @@ function renderDashboardControl() {
   if (decisionGate) {
     style = { title: decisionGate.title, cls: decisionGate.cls, reason: decisionGate.reason };
   }
-  const position = inferPositionRange(style, riskConfig);
+  const position = inferPositionRange(style, decisionGate);
   const latest = dashboardEffectiveTimestamp() || latestTimestamp([intraday, postmarket, alert]);
   let priority = strong.slice(0, 3).map(themeDisplayName);
   let avoid = risks.slice(0, 3).map(themeDisplayName);
@@ -387,12 +386,18 @@ function inferMarketStyle(intraday, postmarket, evening) {
   return { title: "等待确认", cls: "neutral", reason: "缺少足够强的方向证据，降低操作频率。" };
 }
 
-function inferPositionRange(style, cfg) {
-  const risk = cfg.july_portfolio_risk || {};
-  const alphaLimit = risk.position_limits?.["Alpha总仓位上限"] || "22%";
-  if (style.cls === "warn") return { range: "20%-40%", note: `去Alpha，Alpha上限参考${alphaLimit}` };
-  if (style.cls === "good") return { range: "50%-70%", note: `保留弹性，但Alpha不超过${alphaLimit}` };
-  return { range: "30%-50%", note: "只保留龙头/中军观察仓" };
+function inferPositionRange(style, decisionGate = null) {
+  const title = `${style?.title || ""} ${style?.reason || ""}`;
+  if (decisionGate?.riskFirst || /先防守|风险优先|不追|暂无进攻|退潮|压制|负反馈/.test(title)) {
+    return { range: "10%-30%", note: "跟随核心结论：先控回撤，只保留观察仓。" };
+  }
+  if (style?.cls === "warn" || /防御|分化|风险|弱/.test(title)) {
+    return { range: "20%-40%", note: "跟随核心结论：少做弹性，等风险收敛。" };
+  }
+  if (style?.cls === "good" || /进攻|强主线|扩散|共振/.test(title)) {
+    return { range: "50%-70%", note: "跟随核心结论：可提高参与，但仍看承接。" };
+  }
+  return { range: "30%-50%", note: "跟随核心结论：方向未明，保持机动。" };
 }
 
 function latestTimestamp(items) {
@@ -1989,29 +1994,66 @@ function themeGroupLabel(group) {
 function renderPortfolioRisk() {
   const el = document.getElementById("portfolio-risk");
   if (!el) return;
-  const cfg = cached("config/alert-config.json");
-  if (!cfg?.july_portfolio_risk) {
-    el.innerHTML = '<div class="empty">仓位风控配置待接入</div>';
-    return;
+  const decisionGate = dashboardDecisionGate();
+  let style = inferMarketStyle(cached("data/intraday.json") || {}, cached("data/postmarket.json") || {}, currentDayData(cached("data/evening-sentiment.json")));
+  if (decisionGate) {
+    style = { title: decisionGate.title, cls: decisionGate.cls, reason: decisionGate.reason };
   }
-  const risk = cfg.july_portfolio_risk;
-  const style = inferMarketStyle(cached("data/intraday.json") || {}, cached("data/postmarket.json") || {}, currentDayData(cached("data/evening-sentiment.json")));
-  const pos = inferPositionRange(style, cfg);
-  const techRisk = /半导体材料|科技|AI应用|光刻胶/.test(JSON.stringify([cached("data/intraday.json"), cached("data/postmarket.json"), currentDayData(cached("data/evening-sentiment.json"))])) && style.cls === "warn";
-  const alphaState = techRisk ? "暂停/去Alpha" : "允许但受限";
-  const limits = risk.position_limits || {};
-  const etf = risk.sector_drawdown || {};
-  const stop = risk.stop_loss || {};
+  const pos = inferPositionRange(style, decisionGate);
+  const structure = portfolioStructureFromConclusion(style, decisionGate);
+  const trigger = portfolioTriggerFromConclusion(style, decisionGate);
   el.innerHTML = `<div class="decision-strip risk-decision">
-    <div class="decision-card ${style.cls}"><span class="decision-label">风险状态</span><b>${escapeHtml(style.title)}</b><span>${escapeHtml(style.reason)}</span></div>
+    <div class="decision-card ${style.cls}"><span class="decision-label">当前状态</span><b>${escapeHtml(style.title)}</b><span>${escapeHtml(style.reason)}</span></div>
     <div class="decision-card action"><span class="decision-label">建议总仓</span><b>${escapeHtml(pos.range)}</b><span>${escapeHtml(pos.note)}</span></div>
-    <div class="decision-card risk"><span class="decision-label">Alpha</span><b>${escapeHtml(alphaState)}</b><span>上限 ${escapeHtml(limits["Alpha总仓位上限"] || "待配置")}</span></div>
-    <div class="decision-card neutral"><span class="decision-label">强制降仓</span><b>ETF回撤规则</b><span>${escapeHtml(Object.entries(etf).slice(0, 2).map(([k, v]) => `${k}:${v}`).join("；") || "待配置")}</span></div>
-  </div>
-  <div class="risk-rule-row">
-    <span>单票上限：${escapeHtml(Object.entries(limits).slice(0, 3).map(([k, v]) => `${k}${v}`).join(" / ") || "待配置")}</span>
-    <span>止损：${escapeHtml(Object.entries(stop).slice(0, 2).map(([k, v]) => `${k}${v}`).join(" / ") || "待配置")}</span>
+    <div class="decision-card neutral"><span class="decision-label">仓位结构</span><b>${escapeHtml(structure.title)}</b><span>${escapeHtml(structure.detail)}</span></div>
+    <div class="decision-card risk"><span class="decision-label">触发条件</span><b>${escapeHtml(trigger.title)}</b><span>${escapeHtml(trigger.detail)}</span></div>
   </div>`;
+}
+
+function portfolioStructureFromConclusion(style, decisionGate = null) {
+  const text = `${style?.title || ""} ${style?.reason || ""}`;
+  if (decisionGate?.riskFirst || /先防守|不追|退潮|压制|负反馈/.test(text)) {
+    return {
+      title: "观察仓为主",
+      detail: "只留核心方向观察仓；弹性仓暂停，等风险收敛再说。"
+    };
+  }
+  if (style?.cls === "warn" || /防御|分化|风险|弱/.test(text)) {
+    return {
+      title: "核心仓为主",
+      detail: "减少高弹性博弈，保留能代表主线的核心股。"
+    };
+  }
+  if (style?.cls === "good" || /进攻|强主线|扩散|共振/.test(text)) {
+    return {
+      title: "核心+弹性",
+      detail: "核心股压舱，弹性仓只跟随扩散和承接确认。"
+    };
+  }
+  return {
+    title: "现金机动",
+    detail: "方向未明，先保留机动仓位等待确认。"
+  };
+}
+
+function portfolioTriggerFromConclusion(style, decisionGate = null) {
+  const text = `${style?.title || ""} ${style?.reason || ""}`;
+  if (decisionGate?.riskFirst || /先防守|不追|退潮|压制|负反馈/.test(text)) {
+    return {
+      title: "先看收敛",
+      detail: "跌停/炸板减少、核心股承接、后排扩散同时出现，再提高仓位。"
+    };
+  }
+  if (style?.cls === "good" || /进攻|强主线|扩散|共振/.test(text)) {
+    return {
+      title: "防冲高回落",
+      detail: "若核心股放量滞涨或后排不跟，仓位退回观察。"
+    };
+  }
+  return {
+    title: "等方向确认",
+    detail: "没有持续扩散前，不因单点强势提高仓位。"
+  };
 }
 
 function renderSignalReview(data) {
