@@ -80,6 +80,7 @@ def main() -> int:
             "info": sum(1 for item in issues if item["severity"] == "info"),
             "blocking": sum(1 for item in issues if item.get("impact_level") == "blocking"),
             "price_review": sum(1 for item in issues if item.get("impact_level") == "price_review"),
+            "signal_review": sum(1 for item in issues if item.get("impact_level") == "signal_review"),
             "background_review": sum(1 for item in issues if item.get("impact_level") == "background_review"),
         },
         "rules": [
@@ -90,7 +91,7 @@ def main() -> int:
             "盘中异动非空时必须带可信行情源证明；污染源仍降级时，无可信源证明的 active alert 为 critical。",
             "涨停/跌停/强势/弱势等标签必须与 change_pct 方向一致，冲突时进入 warning。",
             "decision-feed 如存在，机会/风险/验证项必须带标题、结论、置信度和来源文件。",
-            "每个 issue 必须带 impact_level/decision_action，区分交易阻断、价格复核和背景复核。",
+            "每个 issue 必须带 impact_level/decision_action，区分交易阻断、价格复核、信号复核和背景复核。",
         ],
     }
     OUT.write_text(json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
@@ -538,6 +539,7 @@ def summarize(status: str, issues: list[dict[str, Any]]) -> str:
     info = sum(1 for item in issues if item["severity"] == "info")
     blocking = sum(1 for item in issues if item.get("impact_level") == "blocking")
     price_review = sum(1 for item in issues if item.get("impact_level") == "price_review")
+    signal_review = sum(1 for item in issues if item.get("impact_level") == "signal_review")
     background = sum(1 for item in issues if item.get("impact_level") == "background_review")
     if status == "critical":
         return f"发现 {critical} 个严重数据问题，信号不得直接用于交易判断。"
@@ -547,6 +549,8 @@ def summarize(status: str, issues: list[dict[str, Any]]) -> str:
             parts.append(f"{blocking} 个交易阻断")
         if price_review:
             parts.append(f"{price_review} 个价格/行情复核")
+        if signal_review:
+            parts.append(f"{signal_review} 个信号复核")
         if background:
             parts.append(f"{background} 个背景复核")
         return f"发现 {warning} 个降级/需复核项（{'，'.join(parts) or '需复核'}），核心结论可看但必须按影响分层使用。"

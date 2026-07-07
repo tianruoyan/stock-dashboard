@@ -347,6 +347,12 @@ function renderDataQualityGate() {
       cls: report.cls
     },
     {
+      label: "交易影响",
+      title: report.impactTitle || "无阻断",
+      detail: report.impactDetail || "无交易阻断",
+      cls: report.impactCls || "good"
+    },
+    {
       label: "最新有效",
       title: formatUpdateTime(report.latest) || "待更新",
       detail: dataFreshness(report.latest),
@@ -389,6 +395,7 @@ function renderDataQualityGate() {
       <b>${escapeHtml(card.title)}</b>
       <span>${escapeHtml(card.detail)}</span>
     </div>`).join("")}</div>
+    ${report.impactBadges?.length ? `<div class="quality-impact-row">${report.impactBadges.map(item => `<span class="${escapeHtml(item.cls)}">${escapeHtml(item.text)}</span>`).join("")}</div>` : ""}
     ${report.issues.length ? `<div class="quality-issues">${report.issues.slice(0, 4).map(item => `<span>${escapeHtml(item)}</span>`).join("")}</div>` : ""}`;
 }
 
@@ -414,6 +421,7 @@ function buildDataQualityReport() {
     };
     const mapped = statusMap[audited.status] || statusMap.degraded;
     const issues = (audited.issues || []).map(item => item.message || item.code || "").filter(Boolean);
+    const impactSummary = summarizeQualityImpact(audited.counts || {});
     const degraded = (audited.issues || [])
       .filter(item => item.code === "source_degraded")
       .map(item => item.message || "")
@@ -429,6 +437,10 @@ function buildDataQualityReport() {
       degraded,
       issues: [...automationSummary.issues, ...coverageSummary.issues, ...trustSummary.issues, ...sectionSummary.issues, ...issues],
       summary: audited.summary || "数据审计报告已接入",
+      impactTitle: impactSummary.title,
+      impactDetail: impactSummary.detail,
+      impactCls: impactSummary.cls,
+      impactBadges: impactSummary.badges,
       sectionTitle: sectionSummary.title,
       sectionDetail: sectionSummary.detail,
       sectionCls: sectionSummary.cls,
@@ -501,6 +513,50 @@ function summarizeAutomationHealth(report) {
     detail: truncateText(detail, 90),
     cls: blocking.length ? "warn" : (bad.length || waiting.length ? "neutral" : "good"),
     issues
+  };
+}
+
+function summarizeQualityImpact(counts) {
+  const blocking = Number(counts.blocking || 0);
+  const priceReview = Number(counts.price_review || 0);
+  const signalReview = Number(counts.signal_review || 0);
+  const backgroundReview = Number(counts.background_review || 0);
+  const reviewTotal = priceReview + signalReview;
+  const badges = [
+    { key: "blocking", label: "交易阻断", count: blocking, cls: blocking ? "risk" : "good" },
+    { key: "price", label: "行情复核", count: priceReview, cls: priceReview ? "warn" : "good" },
+    { key: "signal", label: "信号复核", count: signalReview, cls: signalReview ? "warn" : "good" },
+    { key: "background", label: "背景复核", count: backgroundReview, cls: backgroundReview ? "neutral" : "good" }
+  ].map(item => ({ ...item, text: `${item.label} ${item.count}` }));
+  if (blocking) {
+    return {
+      title: `${blocking} 阻断 / ${reviewTotal} 复核`,
+      detail: "阻断项不得用于交易触发；行情和信号需二次确认",
+      cls: "warn",
+      badges
+    };
+  }
+  if (reviewTotal) {
+    return {
+      title: `${reviewTotal} 项需复核`,
+      detail: "结论可看，但行情/信号需确认后升级",
+      cls: "neutral",
+      badges
+    };
+  }
+  if (backgroundReview) {
+    return {
+      title: "仅背景复核",
+      detail: `${backgroundReview} 项背景覆盖不足，不阻断交易触发`,
+      cls: "good",
+      badges
+    };
+  }
+  return {
+    title: "无阻断",
+    detail: "未发现交易阻断或行情复核项",
+    cls: "good",
+    badges
   };
 }
 

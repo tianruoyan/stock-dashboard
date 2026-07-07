@@ -2,6 +2,7 @@
 
 | Display Version | Date | Edition | Tag / Commit | Summary | Rollback Note |
 |---|---:|---:|---|---|---|
+| 2026-07-07 第79版｜质量影响分层展示 | 2026-07-07 | 第79版 | tag: `v2026.07.07-m79-quality-impact-display` | 顶部数据质量卡新增“交易影响”卡片和分层贴条，直接展示交易阻断、行情复核、信号复核、背景复核数量；`quality-report` 计数补齐 `signal_review`，运行时烟雾测试要求影响分层必须渲染，避免把所有 warning 混成同一类风险。 | 回滚到第78版可用 `git checkout v2026.07.07-m78-japan-korea-clean`，或回滚到本版本 tag。 |
 | 2026-07-07 第78版｜日韩早盘清爽提示 | 2026-07-07 | 第78版 | tag: `v2026.07.07-m78-japan-korea-clean` | 盘前“日韩早盘”遇到数据源降级、未核实或疑似乱码时，只显示固定中文“待复核”提示和白名单复核清单，不再把原始长句、英文错误或未核实文本渲染到页面；运行时烟雾测试同步更新门禁。 | 回滚到第77版可用 `git checkout v2026.07.07-m77-quality-impact-levels`，或回滚到本版本 tag。 |
 | 2026-07-07 第77版｜质量问题影响分层 | 2026-07-07 | 第77版 | tag: `v2026.07.07-m77-quality-impact-levels` | `quality-report` 每条 issue 新增 `impact_level` 和 `decision_action`，把问题区分为交易阻断、价格/行情复核、信号复核、背景复核；汇总增加 blocking/price_review/background_review 计数。`decision-feed` 只把交易阻断、价格复核和信号复核纳入机会降权旗标，避免把政策网页覆盖不足等背景问题和行情污染混成同一级风险。 | 回滚到第76版可用 `git checkout v2026.07.07-m76-control-effective-time`，或回滚到本版本 tag。 |
 | 2026-07-07 第76版｜总控有效时间校准 | 2026-07-07 | 第76版 | tag: `v2026.07.07-m76-control-effective-time` | 首页顶部「今日总控」的有效时间改为从 `data-trust` 中选择最新可信的当前/背景决策材料，不再用 invalidated/missing/stale 文件时间，也不再漏掉最新 `decision-feed`/`theme-shifts` 时间。运行时测试新增门禁，防止污染异动时间或旧阶段时间污染总控有效时间。 | 回滚到第75版可用 `git checkout v2026.07.07-m75-trust-phase-sla`，或回滚到本版本 tag。 |

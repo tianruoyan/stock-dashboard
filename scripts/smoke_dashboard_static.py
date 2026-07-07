@@ -272,7 +272,7 @@ def check_quality_report(issues: list[dict[str, Any]]) -> None:
         if not item.get("decision_action"):
             issues.append(issue("warning", "data/quality-report.json", "missing_issue_action", f"issues[{index}] 缺少 decision_action"))
     counts = data.get("counts") or {}
-    for key in ("blocking", "price_review", "background_review"):
+    for key in ("blocking", "price_review", "signal_review", "background_review"):
         if key not in counts:
             issues.append(issue("warning", "data/quality-report.json", "missing_impact_count", f"counts.{key} 缺失"))
 

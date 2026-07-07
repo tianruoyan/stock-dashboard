@@ -366,6 +366,7 @@ async function main() {
   if (!qualityHtml.includes("自动化心跳")) {
     issues.push(issue("critical", "automation_health_not_rendered", "自动化心跳未进入顶部质量卡", "data-quality-gate"));
   }
+  checkQualityImpactRendering(qualityHtml, issues);
   if (/(?:C|D)级/.test(opportunityColumn)) {
     issues.push(issue("critical", "downgraded_opportunity_rendered", "C/D级降权机会进入了机会候选栏，应转入下一步验证", "opportunity-risk-radar"));
   }
@@ -638,6 +639,26 @@ function checkPremarketJapanKoreaGuard(document, issues) {
   const rawSnippet = stableSnippet(jk);
   if (rawSnippet && rendered.includes(rawSnippet) && !rawSnippet.includes("日韩早盘")) {
     issues.push(issue("critical", "japan_korea_raw_text_rendered", `日韩早盘仍展示原始降级文本：${rawSnippet}`, "section-premarket"));
+  }
+}
+
+function checkQualityImpactRendering(qualityHtml, issues) {
+  const report = readJsonIfExists("data/quality-report.json");
+  const counts = report.counts || {};
+  const rendered = normalizeRenderedText(qualityHtml);
+  const required = [
+    ["blocking", "交易阻断"],
+    ["price_review", "行情复核"],
+    ["signal_review", "信号复核"],
+    ["background_review", "背景复核"]
+  ];
+  for (const [key, label] of required) {
+    if (Number(counts[key] || 0) > 0 && !rendered.includes(label)) {
+      issues.push(issue("critical", "quality_impact_not_rendered", `数据质量卡未显示影响分层：${label}`, "data-quality-gate"));
+    }
+  }
+  if ((Number(counts.blocking || 0) > 0 || Number(counts.price_review || 0) > 0) && !rendered.includes("交易影响")) {
+    issues.push(issue("critical", "quality_impact_card_missing", "数据质量卡缺少交易影响卡片", "data-quality-gate"));
   }
 }
 
