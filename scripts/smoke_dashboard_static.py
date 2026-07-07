@@ -137,6 +137,7 @@ def check_decision_feed(issues: list[dict[str, Any]]) -> None:
         issues.append(issue("critical", "data/decision-feed.json", "bad_json", f"决策流不可读：{exc}"))
         return
     current_date = data.get("current_signal_date") or signal_date(data.get("timestamp"))
+    quality_status = ((data.get("quality_gate") or {}).get("status") or "").strip()
     for section in ("opportunities", "risks", "verifications"):
         rows = data.get(section)
         if not isinstance(rows, list):
@@ -152,6 +153,11 @@ def check_decision_feed(issues: list[dict[str, Any]]) -> None:
                 issues.append(issue("warning", "data/decision-feed.json", "generic_opportunity", f"机会栏含泛化分类桶：{title}"))
             if section == "opportunities" and has_stale_relative_time(text, current_date):
                 issues.append(issue("warning", "data/decision-feed.json", "stale_relative_time", f"机会栏含过期相对日期：{title}"))
+            if section == "opportunities" and quality_status in {"degraded", "critical"}:
+                if not item.get("quality_flags"):
+                    issues.append(issue("warning", "data/decision-feed.json", "missing_quality_flags", f"数据降级但机会缺少降权原因：{title}"))
+                if item.get("confidence") in {"medium", "high"}:
+                    issues.append(issue("warning", "data/decision-feed.json", "opportunity_not_downgraded", f"数据降级但机会置信度未降权：{title}"))
             if section in {"opportunities", "risks"} and item.get("confidence") == "high" and not item.get("evidence"):
                 issues.append(issue("warning", "data/decision-feed.json", "high_confidence_without_evidence", f"{title} 高置信但缺少证据"))
             if section in {"opportunities", "risks"} and not item.get("source_files"):

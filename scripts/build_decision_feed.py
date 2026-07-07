@@ -31,6 +31,7 @@ def main() -> int:
     feed = {
         "timestamp": now_iso(),
         "current_signal_date": signal_date,
+        "quality_gate": quality_gate(files.get("quality-report.json") or {}),
         "summary": build_summary(files),
         "opportunities": dedupe_items(build_opportunities(files, signal_date))[:8],
         "risks": dedupe_items(build_risks(files))[:8],
@@ -38,7 +39,7 @@ def main() -> int:
         "rules": [
             "每条机会/风险必须带 source_files；没有证据时置信度不得高于 low。",
             "机会只代表候选方向，必须经过下一步验证，不生成交易指令。",
-            "quality-report 为 degraded/critical 时，所有机会自动降权。",
+            "quality-report 为 degraded/critical 时，所有机会必须带 quality_flags 并自动降权。",
         ],
     }
     OUT.write_text(json.dumps(feed, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
@@ -66,7 +67,8 @@ def build_summary(files: dict[str, Any]) -> str:
 def build_opportunities(files: dict[str, Any], current_date: str) -> list[dict[str, Any]]:
     items: list[dict[str, Any]] = []
     quality = files.get("quality-report.json") or {}
-    quality_degraded = quality.get("status") in {"degraded", "critical"}
+    gate = quality_gate(quality)
+    quality_degraded = gate["status"] in {"degraded", "critical"}
 
     for theme, source in theme_candidates(files):
         if is_generic_bucket(theme):
@@ -90,6 +92,7 @@ def build_opportunities(files: dict[str, Any], current_date: str) -> list[dict[s
             tags=related_tags(text),
             source_files=[source],
             tone="good",
+            quality_flags=gate["decision_flags"] if quality_degraded else [],
         ))
 
     post = files.get("postmarket.json") or {}
@@ -105,6 +108,7 @@ def build_opportunities(files: dict[str, Any], current_date: str) -> list[dict[s
             tags=related_tags(stock["conclusion"]),
             source_files=["postmarket.json"],
             tone="good",
+            quality_flags=gate["decision_flags"] if quality_degraded else [],
         ))
     return items
 
@@ -263,7 +267,31 @@ def decision_item(**kwargs: Any) -> dict[str, Any]:
         "watch_next": clean_list(kwargs.get("watch_next") or [])[:4],
         "invalidation": trim(kwargs.get("invalidation") or "等待反向量价信号确认。", 140),
         "tags": clean_list(kwargs.get("tags") or [])[:5],
+        "quality_flags": clean_list(kwargs.get("quality_flags") or [])[:4],
         "tone": kwargs.get("tone") or "neutral",
+    }
+
+
+def quality_gate(quality: dict[str, Any]) -> dict[str, Any]:
+    status = quality.get("status") or "unknown"
+    issues = [
+        issue.get("message", "")
+        for issue in as_list(quality.get("issues"))
+        if isinstance(issue, dict) and issue.get("severity") in {"critical", "warning"}
+    ]
+    flags = []
+    for text in issues:
+        if "alert" in text or "异动" in text or "污染" in text:
+            flags.append("盘中异动源降级，alert 类信号降权")
+        if "quote_time" in text or "港" in text:
+            flags.append("港股收盘窗口可能非终值")
+        if "decode" in text or "数据源" in text or "source" in text:
+            flags.append("行情源降级，需复核涨跌幅")
+    flags = clean_list(flags) or (["数据质量待确认"] if status in {"degraded", "critical"} else [])
+    return {
+        "status": status,
+        "summary": quality.get("summary") or "",
+        "decision_flags": flags[:4],
     }
 
 
@@ -329,7 +357,7 @@ def is_risk_text(status: str, text: str) -> bool:
 
 def confidence_from(evidence: list[str], text: str, quality_degraded: bool) -> str:
     if quality_degraded:
-        return "low" if len(evidence) < 3 else "medium"
+        return "low"
     if len(evidence) >= 3 or re.search(r"\d+|涨停|跌停|成交|尾盘|封板", text):
         return "high"
     if evidence:

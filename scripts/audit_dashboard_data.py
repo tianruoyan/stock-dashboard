@@ -192,6 +192,7 @@ def validate_decision_feed(data: Any, issues: list[dict[str, Any]], current_date
     if not isinstance(data, dict):
         issues.append(issue("critical", "decision-feed.json", "bad_decision_feed", "decision-feed 根节点必须是对象"))
         return
+    quality_status = ((data.get("quality_gate") or {}).get("status") or "").strip()
     feed_date = data.get("current_signal_date") or signal_date(data.get("timestamp"))
     if feed_date != current_date:
         issues.append(issue("warning", "decision-feed.json", "stale_decision_feed", f"decision-feed 日期不是当前交易日：{feed_date}"))
@@ -211,6 +212,11 @@ def validate_decision_feed(data: Any, issues: list[dict[str, Any]], current_date
                 issues.append(issue("warning", "decision-feed.json", "high_confidence_without_evidence", f"{section}[{index}] 高置信但缺少 evidence", f"{section}[{index}]"))
             if section == "opportunities" and has_stale_relative_time(json.dumps(item, ensure_ascii=False), current_date):
                 issues.append(issue("warning", "decision-feed.json", "stale_relative_time", f"{section}[{index}] 含过期相对日期", f"{section}[{index}]"))
+            if section == "opportunities" and quality_status in {"degraded", "critical"}:
+                if not item.get("quality_flags"):
+                    issues.append(issue("warning", "decision-feed.json", "missing_quality_flags", f"{section}[{index}] 数据降级但缺少 quality_flags", f"{section}[{index}]"))
+                if item.get("confidence") in {"medium", "high"}:
+                    issues.append(issue("warning", "decision-feed.json", "opportunity_not_downgraded", f"{section}[{index}] 数据降级但机会置信度未降权", f"{section}[{index}]"))
 
 
 def has_stale_relative_time(text: str, current_date: str) -> bool:

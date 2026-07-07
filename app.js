@@ -346,11 +346,12 @@ function renderRadarItem(item) {
   const tone = item.tone || "neutral";
   const tags = (item.tags || []).slice(0, 4).map(tag => `<span>${escapeHtml(tag)}</span>`).join("");
   const details = [
+    item.qualityFlags ? ["降权", item.qualityFlags] : null,
     item.evidence ? ["证据", item.evidence] : null,
     item.watchNext ? ["验证", item.watchNext] : null,
     item.invalidation ? ["证伪", item.invalidation] : null,
     item.sources ? ["来源", item.sources] : null
-  ].filter(Boolean).map(([label, value]) => `<div class="radar-detail"><span>${label}</span><b>${escapeHtml(Array.isArray(value) ? value.join("；") : value)}</b></div>`).join("");
+  ].filter(Boolean).map(([label, value]) => `<div class="radar-detail ${label === "降权" ? "quality" : ""}"><span>${label}</span><b>${escapeHtml(Array.isArray(value) ? value.join("；") : value)}</b></div>`).join("");
   return `<div class="radar-item ${tone}">
     <div class="radar-item-head">
       <b>${escapeHtml(item.title)}</b>
@@ -459,7 +460,8 @@ function decisionFeedToRadarItem(item, fallbackTone) {
     evidence: evidence.slice(0, 2),
     watchNext: watchNext.slice(0, 1),
     invalidation: item.invalidation,
-    sources: sources.map(sourceShortName)
+    sources: sources.map(sourceShortName),
+    qualityFlags: (item.quality_flags || []).slice(0, 3)
   };
 }
 

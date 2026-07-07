@@ -335,6 +335,7 @@ Codex (分析引擎)              Cola (稳定管道)
 | 2026-07-07 | 老登小登盘中提醒优先使用行情源原始涨跌幅字段，并撤下 14:13 异常 alert 批次 | AKShare A股spot返回HTML/异常内容，导致北方华创/中微公司等被错误写成跌停附近，必须防止污染观察池分类和异动面板 |
 | 2026-07-07 | 新增 scripts/audit_dashboard_data.py 和 data/quality-report.json，要求自动化写完 JSON 后执行数据审计 | 平台需要在展示和研判前先发现乱码、过期、污染源、异常涨跌幅和字段缺失，降低盘中误判风险 |
 | 2026-07-07 | 新增 scripts/smoke_dashboard_static.py 和 data/smoke-report.json，发布前检查页面容器、导航锚点、缓存版本、JS语法、坏字面量和决策流噪音 | 数据正确不等于页面能稳定使用，必须在 GitHub Pages 发布前拦截 JS ERROR、漏显示、乱码和旧相对日期复活 |
+| 2026-07-07 | decision-feed 新增 quality_gate/quality_flags，数据 degraded/critical 时机会项统一低置信并展示降权原因 | 防止用户只看到机会候选而忽略行情源降级、alert 污染或港股收盘窗口非终值，降低盘中误用风险 |
 ---
 
 ## 🐍 Python 环境

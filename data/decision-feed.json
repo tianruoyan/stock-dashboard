@@ -1,6 +1,15 @@
 {
-  "timestamp": "2026-07-07T16:49:18+08:00",
+  "timestamp": "2026-07-07T16:54:45+08:00",
   "current_signal_date": "2026-07-07",
+  "quality_gate": {
+    "status": "degraded",
+    "summary": "发现 3 个降级/需复核项，核心结论可看但必须降权。",
+    "decision_flags": [
+      "盘中异动源降级，alert 类信号降权",
+      "行情源降级，需复核涨跌幅",
+      "港股收盘窗口可能非终值"
+    ]
+  },
   "summary": "A股收盘偏退潮：涨停33、跌停23、炸板23，涨停:跌停约33:23；清洁样本5310只中，5%-8%有75只，8%以上56只，跌5%以上681只。半导体/硅片/封装仍是最强残余主线，但尾盘资金不支持全面进攻。 数据质量：发现 3 个降级/需复核项，核心结论可看但必须降权。",
   "opportunities": [
     {
@@ -22,6 +31,11 @@
         "科技硬件链",
         "风控"
       ],
+      "quality_flags": [
+        "盘中异动源降级，alert 类信号降权",
+        "行情源降级，需复核涨跌幅",
+        "港股收盘窗口可能非终值"
+      ],
       "tone": "good"
     },
     {
@@ -42,13 +56,18 @@
       "tags": [
         "机器人/工业自动化"
       ],
+      "quality_flags": [
+        "盘中异动源降级，alert 类信号降权",
+        "行情源降级，需复核涨跌幅",
+        "港股收盘窗口可能非终值"
+      ],
       "tone": "good"
     },
     {
       "title": "化工/材料/资源轮动",
       "type": "theme",
       "conclusion": "今日低位轮动明显，更多是资金寻找低位和非科技替代。",
-      "confidence": "medium",
+      "confidence": "low",
       "evidence": [
         "涨停池有雅化集团、佛塑科技、晨光新材、百合花、宝地矿业。",
         "5%-8%组有硅宝科技、东岳硅材、天华新能、容百科技等材料样本。",
@@ -65,6 +84,11 @@
       "invalidation": "化工/材料/资源轮动核心股冲高回落、ETF转弱或后排不扩散，则机会降级为观察。",
       "tags": [
         "科技硬件链"
+      ],
+      "quality_flags": [
+        "盘中异动源降级，alert 类信号降权",
+        "行情源降级，需复核涨跌幅",
+        "港股收盘窗口可能非终值"
       ],
       "tone": "good"
     }
@@ -92,6 +116,7 @@
         "仓位",
         "风控"
       ],
+      "quality_flags": [],
       "tone": "risk"
     },
     {
@@ -116,6 +141,7 @@
         "数据质量",
         "风控"
       ],
+      "quality_flags": [],
       "tone": "risk"
     },
     {
@@ -136,6 +162,7 @@
       "tags": [
         "科技硬件链"
       ],
+      "quality_flags": [],
       "tone": "risk"
     },
     {
@@ -156,6 +183,7 @@
       "tags": [
         "科技硬件链"
       ],
+      "quality_flags": [],
       "tone": "risk"
     },
     {
@@ -177,6 +205,7 @@
         "科技硬件链",
         "风控"
       ],
+      "quality_flags": [],
       "tone": "risk"
     },
     {
@@ -198,6 +227,7 @@
         "科技硬件链",
         "风控"
       ],
+      "quality_flags": [],
       "tone": "risk"
     },
     {
@@ -220,6 +250,7 @@
         "机器人/工业自动化",
         "风控"
       ],
+      "quality_flags": [],
       "tone": "risk"
     },
     {
@@ -243,6 +274,7 @@
         "医药修复链",
         "风控"
       ],
+      "quality_flags": [],
       "tone": "risk"
     }
   ],
@@ -263,6 +295,7 @@
       "tags": [
         "科技硬件链"
       ],
+      "quality_flags": [],
       "tone": "neutral"
     },
     {
@@ -281,6 +314,7 @@
       "tags": [
         "风控"
       ],
+      "quality_flags": [],
       "tone": "risk"
     },
     {
@@ -299,6 +333,7 @@
       "tags": [
         "医药修复链"
       ],
+      "quality_flags": [],
       "tone": "risk"
     },
     {
@@ -317,12 +352,13 @@
       "tags": [
         "老登风格切换"
       ],
+      "quality_flags": [],
       "tone": "risk"
     }
   ],
   "rules": [
     "每条机会/风险必须带 source_files；没有证据时置信度不得高于 low。",
     "机会只代表候选方向，必须经过下一步验证，不生成交易指令。",
-    "quality-report 为 degraded/critical 时，所有机会自动降权。"
+    "quality-report 为 degraded/critical 时，所有机会必须带 quality_flags 并自动降权。"
   ]
 }
