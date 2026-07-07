@@ -210,13 +210,14 @@ title: 分析模型说明书
 **Codex 职责（写 + 可选推）：**
 1. 产出 JSON 时先写临时文件，写完后 `mv` 覆盖正式文件
 2. 所有本轮 JSON 写完后，执行 `python3 scripts/audit_dashboard_data.py`，更新 `data/quality-report.json`
-3. 若审计为 critical：不得发布，保留本地报告并修数据
-4. 若审计不是 critical：创建 `.push-now` 信号文件
-5. 尝试 `scripts/push_with_audit.sh`（内部会再次审计并静默 push）：成功最好，不成功 Cola 会补推
+3. 同步执行 `python3 scripts/smoke_dashboard_static.py`，更新 `data/smoke-report.json`
+4. 若数据审计或页面烟雾测试为 critical：不得发布，保留本地报告并修数据/页面
+5. 若审计和烟雾测试不是 critical：创建 `.push-now` 信号文件
+6. 尝试 `scripts/push_with_audit.sh`（内部会再次生成 decision-feed、审计、烟雾测试并静默 push）：成功最好，不成功 Cola 会补推
 
 **Cola 职责（推 + 兜底）：**
 1. 每 2 分钟扫描一次仓库
-2. 若发现 `.push-now`：调用 `scripts/push_with_audit.sh`，审计通过才 push，成功后删信号
+2. 若发现 `.push-now`：调用 `scripts/push_with_audit.sh`，审计和烟雾测试通过才 push，成功后删信号
 3. 若 `.push-now` 不存在但有变更：也先调用 `scripts/push_with_audit.sh`（兜底）
 4. 盘前 9:16/9:26 定点推送
 
@@ -333,6 +334,7 @@ Codex (分析引擎)              Cola (稳定管道)
 | 2026-07-04 | 新增数据源优先级与 source-health 看板 | 从模型主观分析升级为数据源结构化捕捉 + 模型解释分级，降低漏捕和不可追溯风险 |
 | 2026-07-07 | 老登小登盘中提醒优先使用行情源原始涨跌幅字段，并撤下 14:13 异常 alert 批次 | AKShare A股spot返回HTML/异常内容，导致北方华创/中微公司等被错误写成跌停附近，必须防止污染观察池分类和异动面板 |
 | 2026-07-07 | 新增 scripts/audit_dashboard_data.py 和 data/quality-report.json，要求自动化写完 JSON 后执行数据审计 | 平台需要在展示和研判前先发现乱码、过期、污染源、异常涨跌幅和字段缺失，降低盘中误判风险 |
+| 2026-07-07 | 新增 scripts/smoke_dashboard_static.py 和 data/smoke-report.json，发布前检查页面容器、导航锚点、缓存版本、JS语法、坏字面量和决策流噪音 | 数据正确不等于页面能稳定使用，必须在 GitHub Pages 发布前拦截 JS ERROR、漏显示、乱码和旧相对日期复活 |
 ---
 
 ## 🐍 Python 环境

@@ -7,11 +7,13 @@ cd "$ROOT" || exit 1
 python3 scripts/build_decision_feed.py >/dev/null 2>&1 || true
 python3 scripts/audit_dashboard_data.py
 audit_status=$?
+python3 scripts/smoke_dashboard_static.py
+smoke_status=$?
 
-git add data/quality-report.json data/decision-feed.json >/dev/null 2>&1 || true
+git add data/quality-report.json data/decision-feed.json data/smoke-report.json >/dev/null 2>&1 || true
 
-if [ "$audit_status" -ne 0 ]; then
-  echo "dashboard audit found critical issues; skip push"
+if [ "$audit_status" -ne 0 ] || [ "$smoke_status" -ne 0 ]; then
+  echo "dashboard audit/smoke found critical issues; skip push"
   git commit -m "Update dashboard quality report" >/dev/null 2>&1 || true
   exit 1
 fi
