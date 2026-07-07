@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-07-07T23:42:28+08:00",
+  "timestamp": "2026-07-08T00:16:12+08:00",
   "current_signal_date": "2026-07-07",
   "quality_gate": {
     "status": "degraded",
@@ -65,6 +65,93 @@
         "file": "source-health.json",
         "next_step": "暂停对应交易触发；等待污染批次撤下、可信行情源恢复并重产 JSON。",
         "unblock_condition": "quality-report blocking=0，相关文件不再 invalidated/missing。"
+      }
+    ]
+  },
+  "signal_queue": {
+    "summary": "无可用机会，4 条风险优先，5 条只做验证，4 条禁用直用。",
+    "active_opportunities": [],
+    "trackable_risks": [
+      {
+        "title": "全市场亏钱效应",
+        "grade": "A",
+        "use_action": "可跟踪",
+        "reason": "次日先看跌停/炸板是否收敛，再判断强线能否从抱团转扩散。"
+      },
+      {
+        "title": "数据质量降级",
+        "grade": "A",
+        "use_action": "可跟踪",
+        "reason": "污染 alert 修复前，盘中异动信号必须降权；观察池个股涨跌幅以已审计源为准。"
+      },
+      {
+        "title": "半导体/硅片/封装/设备零部件",
+        "grade": "A",
+        "use_action": "可跟踪",
+        "reason": "看核心个股、ETF、后排扩散和尾盘承接是否同向确认。"
+      },
+      {
+        "title": "低位硬件/消费电子/元件",
+        "grade": "A",
+        "use_action": "可跟踪",
+        "reason": "看核心个股、ETF、后排扩散和尾盘承接是否同向确认。"
+      }
+    ],
+    "verification_queue": [
+      {
+        "title": "新线观察：低位硬件/消费电子/元件",
+        "grade": "C",
+        "use_action": "降权观察",
+        "reason": "看核心个股、ETF、后排扩散和尾盘承接是否同向确认。"
+      },
+      {
+        "title": "化工/材料/资源轮动",
+        "grade": "C",
+        "use_action": "降权观察",
+        "reason": "看核心个股、ETF、后排扩散和尾盘承接是否同向确认。"
+      },
+      {
+        "title": "科技硬件链",
+        "grade": "D",
+        "use_action": "仅复核",
+        "reason": "保留半导体为核心强线，CPO/PCB/AI应用只做分支验证，不替代主线。"
+      },
+      {
+        "title": "主线变化：老登风格切换",
+        "grade": "D",
+        "use_action": "仅复核",
+        "reason": "继续作为风格雷达；只有券商+保险或畜牧+白酒同步放量才升级。"
+      },
+      {
+        "title": "机器人/具身智能",
+        "grade": "D",
+        "use_action": "仅复核",
+        "reason": "宇树IPO预期可带动情绪，但优先看减速器、伺服、传感器、机器视觉是否放量扩散；对收入贡献尚早的纯概念股防高开兑现。"
+      }
+    ],
+    "disabled_signals": [
+      {
+        "title": "冲突主线机会",
+        "use_action": "禁用追高",
+        "reason": "同一主线存在风险优先冲突，只保留验证条件，不作为交易触发。"
+      },
+      {
+        "title": "科技硬件链",
+        "grade": "D",
+        "use_action": "仅复核",
+        "reason": "保留半导体为核心强线，CPO/PCB/AI应用只做分支验证，不替代主线。"
+      },
+      {
+        "title": "主线变化：老登风格切换",
+        "grade": "D",
+        "use_action": "仅复核",
+        "reason": "继续作为风格雷达；只有券商+保险或畜牧+白酒同步放量才升级。"
+      },
+      {
+        "title": "机器人/具身智能",
+        "grade": "D",
+        "use_action": "仅复核",
+        "reason": "宇树IPO预期可带动情绪，但优先看减速器、伺服、传感器、机器视觉是否放量扩散；对收入贡献尚早的纯概念股防高开兑现。"
       }
     ]
   },
@@ -877,6 +964,7 @@
     "同一主线同时出现在机会、风险或验证栏时，必须输出 conflicts，给出风险优先/仅验证/可升级的统一判定。",
     "theme-shifts 用于识别升温、新线、抱团、降温和风险变化，并进入机会/风险/验证栏。",
     "observation_coverage 必须说明主动扫描、盘后扫描、专题继承和验证队列占比，避免雷达只复述既有配置。",
-    "decision_brief 必须给出一句话站位、依据、风险焦点和升级条件，作为盘中交易口径入口。"
+    "decision_brief 必须给出一句话站位、依据、风险焦点和升级条件，作为盘中交易口径入口。",
+    "signal_queue 必须把可用机会、可跟踪风险、仅验证和禁用信号拆开，避免用户把降权候选误当机会。"
   ]
 }

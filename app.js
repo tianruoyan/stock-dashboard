@@ -721,9 +721,10 @@ function renderOpportunityRiskRadar() {
     <em>${escapeHtml(radar.gate.detail || "只按验证条件跟踪，不生成交易指令。")}</em>
   </div>` : "";
   const brief = renderDecisionBrief(radar.decisionBrief);
+  const queue = renderSignalQueue(radar.signalQueue);
   const observation = renderObservationCoverage(radar.observationCoverage);
   const conflicts = renderRadarConflicts(radar.conflicts || []);
-  el.innerHTML = `${gate}${brief}${observation}${conflicts}<div class="radar-grid">
+  el.innerHTML = `${gate}${brief}${queue}${observation}${conflicts}<div class="radar-grid">
     <div class="radar-column">
       <div class="radar-head"><b>机会候选</b><span>${radar.opportunities.length ? "需要验证，不直接追高" : "暂无高置信机会"}</span></div>
       ${radar.opportunities.length ? radar.opportunities.map(renderRadarItem).join("") : '<div class="empty-sm">等待主线扩散或观察池个股确认</div>'}
@@ -736,6 +737,26 @@ function renderOpportunityRiskRadar() {
       <div class="radar-head"><b>下一步验证</b><span>盘中只看可证伪信号</span></div>
       ${radar.verifications.length ? radar.verifications.map(renderRadarItem).join("") : '<div class="empty-sm">暂无验证条件</div>'}
     </div>
+  </div>`;
+}
+
+function renderSignalQueue(queue) {
+  if (!queue) return "";
+  const groups = [
+    ["可用机会", queue.active_opportunities || [], "good"],
+    ["风险优先", queue.trackable_risks || [], "risk"],
+    ["只做验证", queue.verification_queue || [], "watch"],
+    ["禁用直用", queue.disabled_signals || [], "blocked"]
+  ];
+  const html = groups.map(([label, items, cls]) => {
+    const body = items.length
+      ? items.slice(0, 3).map(item => `<span><b>${escapeHtml(item.title || "未命名")}</b><em>${escapeHtml(item.grade || "-")}级 · ${escapeHtml(item.use_action || "")}</em></span>`).join("")
+      : "<span><b>暂无</b><em>等待新信号</em></span>";
+    return `<div class="signal-queue-group ${cls}"><label>${label}</label>${body}</div>`;
+  }).join("");
+  return `<div class="signal-queue">
+    <div class="signal-queue-head"><b>信号可用性</b><span>${escapeHtml(queue.summary || "按可用性拆分信号队列")}</span></div>
+    <div class="signal-queue-grid">${html}</div>
   </div>`;
 }
 
@@ -784,6 +805,7 @@ function buildOpportunityRiskRadar() {
     return {
       gate: radarGateFromFeed(feed, actionableOpportunities, downgradedOpportunities),
       decisionBrief: feed.decision_brief,
+      signalQueue: feed.signal_queue,
       observationCoverage: feed.observation_coverage,
       conflicts: (feed.conflicts || []).map(decisionConflictToRadarItem),
       opportunities: actionableOpportunities.slice(0, 6),

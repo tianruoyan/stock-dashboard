@@ -566,11 +566,12 @@ function checkDecisionUpgradeRendering(radarHtml, issues) {
 function checkDecisionBriefRendering(radarHtml, issues) {
   const feed = readJsonIfExists("data/decision-feed.json");
   const brief = feed.decision_brief;
-  if (!brief) return;
   const rendered = normalizeRenderedText(radarHtml);
   if (RAW_SOURCE_ERROR_RE.test(rendered)) {
     issues.push(issue("critical", "radar_raw_source_error_rendered", "机会/风险雷达仍展示底层英文源错误，需转成中文复核提示", "opportunity-risk-radar"));
   }
+  checkSignalQueueRendering(rendered, feed.signal_queue, issues);
+  if (!brief) return;
   if (!rendered.includes("决策口径")) {
     issues.push(issue("critical", "decision_brief_not_rendered", "机会/风险雷达未显示决策口径摘要", "opportunity-risk-radar"));
     return;
@@ -600,6 +601,23 @@ function checkDecisionBriefRendering(radarHtml, issues) {
         issues.push(issue("critical", "decision_brief_quality_action_not_rendered", `处置动作内容未渲染：${next}`, "opportunity-risk-radar"));
       }
     }
+  }
+}
+
+function checkSignalQueueRendering(rendered, queue, issues) {
+  if (!queue) return;
+  if (!rendered.includes("信号可用性")) {
+    issues.push(issue("critical", "signal_queue_not_rendered", "机会/风险雷达未显示信号可用性队列", "opportunity-risk-radar"));
+    return;
+  }
+  for (const label of ["可用机会", "风险优先", "只做验证", "禁用直用"]) {
+    if (!rendered.includes(label)) {
+      issues.push(issue("critical", "signal_queue_not_rendered", `信号可用性缺少分类：${label}`, "opportunity-risk-radar"));
+    }
+  }
+  const summary = stableSnippet(queue.summary);
+  if (summary && !rendered.includes(summary)) {
+    issues.push(issue("critical", "signal_queue_not_rendered", `信号可用性摘要未渲染：${summary}`, "opportunity-risk-radar"));
   }
 }
 

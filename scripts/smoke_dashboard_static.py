@@ -186,6 +186,16 @@ def check_decision_feed(issues: list[dict[str, Any]]) -> None:
                     for key in ("label", "file", "next_step"):
                         if not action.get(key):
                             issues.append(issue("warning", "data/decision-feed.json", "missing_decision_brief_quality_action_field", f"quality_actions[{index}].{key} 缺失"))
+    queue = data.get("signal_queue")
+    if not isinstance(queue, dict):
+        issues.append(issue("warning", "data/decision-feed.json", "missing_signal_queue", "decision-feed 缺少 signal_queue"))
+    else:
+        for key in ("summary", "active_opportunities", "trackable_risks", "verification_queue", "disabled_signals"):
+            if key not in queue:
+                issues.append(issue("warning", "data/decision-feed.json", "missing_signal_queue_field", f"signal_queue.{key} 缺失"))
+        for key in ("active_opportunities", "trackable_risks", "verification_queue", "disabled_signals"):
+            if key in queue and not isinstance(queue.get(key), list):
+                issues.append(issue("warning", "data/decision-feed.json", "bad_signal_queue_field", f"signal_queue.{key} 不是数组"))
     for section in ("opportunities", "risks", "verifications"):
         rows = data.get(section)
         if not isinstance(rows, list):
@@ -488,6 +498,15 @@ def check_data_trust(issues: list[dict[str, Any]]) -> None:
     if not isinstance(rows, list) or not rows:
         issues.append(issue("warning", "data/data-trust.json", "bad_data_trust", "files 缺失或为空"))
         return
+    trust_date = data.get("current_signal_date")
+    for rel in ("data/decision-feed.json", "data/quality-report.json"):
+        try:
+            other = json.loads((ROOT / rel).read_text(encoding="utf-8"))
+        except Exception:
+            continue
+        other_date = other.get("current_signal_date")
+        if trust_date and other_date and trust_date != other_date:
+            issues.append(issue("warning", "data/data-trust.json", "signal_date_mismatch", f"data-trust 交易日 {trust_date} 与 {rel} {other_date} 不一致"))
     required_files = {"data/alert.json", "data/intraday.json", "data/premarket.json", "data/midday.json", "data/postmarket.json", "data/topics.json", "data/theme-shifts.json", "data/decision-feed.json"}
     present = {item.get("file") for item in rows if isinstance(item, dict)}
     missing = sorted(required_files - present)

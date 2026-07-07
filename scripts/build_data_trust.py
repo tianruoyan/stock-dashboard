@@ -407,7 +407,11 @@ def worse_status(left: str, right: str) -> str:
 
 def latest_signal_date(payloads: dict[str, Any]) -> str:
     dates = []
-    for rel in ("data/alert.json", "data/intraday.json", "data/midday.json", "data/postmarket.json", "data/topics.json", "data/theme-shifts.json", "data/decision-feed.json"):
+    for rel in ("data/theme-shifts.json", "data/decision-feed.json"):
+        data = payloads.get(rel)
+        if isinstance(data, dict) and data.get("current_signal_date"):
+            dates.append(str(data.get("current_signal_date")))
+    for rel in ("data/alert.json", "data/intraday.json", "data/midday.json", "data/postmarket.json", "data/topics.json"):
         data = payloads.get(rel)
         date = signal_date(data.get("timestamp") if isinstance(data, dict) else "")
         if date:

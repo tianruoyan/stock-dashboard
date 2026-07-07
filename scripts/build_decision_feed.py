@@ -40,6 +40,7 @@ def main() -> int:
         "summary": build_summary(files),
         "observation_coverage": build_observation_coverage(opportunities, risks, verifications),
         "decision_brief": build_decision_brief(opportunities, risks, verifications, conflicts, files),
+        "signal_queue": build_signal_queue(opportunities, risks, verifications, conflicts),
         "opportunities": opportunities,
         "risks": risks,
         "verifications": verifications,
@@ -57,6 +58,7 @@ def main() -> int:
             "theme-shifts 用于识别升温、新线、抱团、降温和风险变化，并进入机会/风险/验证栏。",
             "observation_coverage 必须说明主动扫描、盘后扫描、专题继承和验证队列占比，避免雷达只复述既有配置。",
             "decision_brief 必须给出一句话站位、依据、风险焦点和升级条件，作为盘中交易口径入口。",
+            "signal_queue 必须把可用机会、可跟踪风险、仅验证和禁用信号拆开，避免用户把降权候选误当机会。",
         ],
     }
     OUT.write_text(json.dumps(feed, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
@@ -151,6 +153,65 @@ def quality_action_items(quality_report: dict[str, Any]) -> list[dict[str, str]]
             "unblock_condition": trim(first_text(item.get("unblock_condition"), ""), 90),
         })
     return rows[:2]
+
+
+def build_signal_queue(
+    opportunities: list[dict[str, Any]],
+    risks: list[dict[str, Any]],
+    verifications: list[dict[str, Any]],
+    conflicts: list[dict[str, Any]],
+) -> dict[str, Any]:
+    active_opportunities = [
+        queue_item(item, "可跟踪机会")
+        for item in opportunities
+        if item.get("signal_grade") in {"A", "B"} and not re.search(r"仅复核|降权|等待", str(item.get("use_action") or ""))
+    ][:3]
+    trackable_risks = [
+        queue_item(item, "优先风险")
+        for item in risks
+        if item.get("signal_grade") in {"A", "B"}
+    ][:4]
+    verification_queue = [
+        queue_item(item, "等待确认")
+        for item in [
+            *[op for op in opportunities if op.get("signal_grade") in {"C", "D"} or re.search(r"仅复核|降权|等待", str(op.get("use_action") or ""))],
+            *verifications,
+        ]
+    ][:5]
+    disabled_signals = []
+    if any(item.get("severity") == "risk_first" for item in conflicts):
+        disabled_signals.append({
+            "title": "冲突主线机会",
+            "use_action": "禁用追高",
+            "reason": "同一主线存在风险优先冲突，只保留验证条件，不作为交易触发。",
+        })
+    disabled_signals.extend([
+        queue_item(item, "禁用直用")
+        for item in opportunities
+        if item.get("quality_flags") and item.get("signal_grade") == "D"
+    ][:3])
+    return {
+        "summary": signal_queue_summary(active_opportunities, trackable_risks, verification_queue, disabled_signals),
+        "active_opportunities": active_opportunities,
+        "trackable_risks": trackable_risks,
+        "verification_queue": verification_queue,
+        "disabled_signals": disabled_signals[:4],
+    }
+
+
+def queue_item(item: dict[str, Any], default_action: str) -> dict[str, str]:
+    return {
+        "title": trim(item.get("title") or "未命名信号", 36),
+        "grade": trim(item.get("signal_grade") or "-", 4),
+        "use_action": trim(item.get("use_action") or default_action, 18),
+        "reason": trim(first_text(item.get("next_action"), item.get("conclusion"), *(item.get("watch_next") or [])), 100),
+    }
+
+
+def signal_queue_summary(active: list[dict[str, Any]], risks: list[dict[str, Any]], verify: list[dict[str, Any]], disabled: list[dict[str, Any]]) -> str:
+    if active:
+        return f"{len(active)} 条机会可跟踪，{len(risks)} 条风险优先，{len(verify)} 条只做验证。"
+    return f"无可用机会，{len(risks)} 条风险优先，{len(verify)} 条只做验证，{len(disabled)} 条禁用直用。"
 
 
 def build_opportunities(files: dict[str, Any], current_date: str) -> list[dict[str, Any]]:
