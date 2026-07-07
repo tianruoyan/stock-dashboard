@@ -2549,16 +2549,19 @@ function renderAlerts(data) {
     const isOld = ageMin > 30;
     const isStale = ageMin > 60;
 
-    const cls = a.is_old_economy ? "card sentiment" :
-                a.signal_type?.includes("交易") ? "card hot" : "card";
+    const purpose = alertPurpose(a);
+    const cls = purpose === "style" ? "card sentiment" :
+                purpose === "trade" ? "card hot" :
+                purpose === "risk" ? "card risk-card" : "card";
     const fadeCls = isStale ? " faded" : isOld ? " dim" : "";
     const ageLabel = ageMin < 1 ? "刚刚" : ageMin < 60 ? `${ageMin}分钟前` : `${Math.floor(ageMin / 60)}小时前`;
 
-    const badge = a.is_old_economy ? '<span class="badge old">老登</span>' :
-                  a.signal_type?.includes("交易") ? '<span class="badge signal">交易信号</span>' :
+    const badge = purpose === "style" ? `<span class="badge old">${escapeHtml(alertStyleLabel(a))}</span>` :
+                  purpose === "trade" ? '<span class="badge signal">交易异动</span>' :
+                  purpose === "risk" ? '<span class="badge risk">风险异动</span>' :
                   a.signal_type?.includes("观察") ? '<span class="badge watch">观察</span>' :
                   a.signal_type?.includes("放量") ? '<span class="badge volume">放量</span>' :
-                  a.signal_type?.includes("风险") ? '<span class="badge risk">风险</span>' : '';
+                  '';
     const leaders = (a.leaders || []).slice(0, 3).map(l => {
       const move = Number(l.change_pct);
       const moveText = Number.isFinite(move)
@@ -2579,6 +2582,7 @@ function renderAlerts(data) {
     return `<div class="${cls}${fadeCls}">
       <div class="card-head">${badge}<b>${a.sector}</b><span class="time">${displayAlertTime(a)} · ${ageLabel}</span></div>
       <div class="card-body"><b>${escapeHtml(a.type || "异动")}</b>${shortReason ? ` · ${escapeHtml(shortReason)}` : ""}</div>
+      ${purpose === "style" ? '<div class="alert-style-note">用于判断盘面风格，不直接作为买卖触发</div>' : ""}
       ${leaders ? `<div class="card-leaders">${leaders}</div>` : ""}
       ${factorHtml}
       ${reasonDetail}
@@ -2660,20 +2664,27 @@ function renderAlertsSummary(alerts, timestamp, invalidatedState = null, sourceD
     el.innerHTML = '<div class="alert-summary-empty">暂无新异动，等待触发</div>';
     return;
   }
-  const latest = alerts[0];
-  const riskCount = alerts.filter(a => /风险|跌|回落|弱/.test([a.signal_type, a.type, a.reason].join(" "))).length;
-  const tradeCount = alerts.filter(a => /交易|急拉|强化|买/.test([a.signal_type, a.type, a.reason].join(" "))).length;
+  const tradeAlerts = alerts.filter(a => alertPurpose(a) === "trade");
+  const riskAlerts = alerts.filter(a => alertPurpose(a) === "risk");
+  const styleAlerts = alerts.filter(a => alertPurpose(a) === "style");
+  const actionable = [...tradeAlerts, ...riskAlerts].sort((a, b) => (b._eventTime || 0) - (a._eventTime || 0));
+  const latest = actionable[0] || alerts[0];
+  const riskCount = riskAlerts.length;
+  const tradeCount = tradeAlerts.length;
   const volumeCount = alerts.filter(a => /放量|成交/.test([a.signal_type, a.type, a.reason].join(" "))).length;
-  const leaders = Array.from(new Set(alerts.flatMap(a => (a.leaders || []).map(l => l.name)).filter(Boolean))).slice(0, 4);
+  const leaders = Array.from(new Set(actionable.flatMap(a => (a.leaders || []).map(l => l.name)).filter(Boolean))).slice(0, 4);
   const tone = riskCount >= tradeCount ? "risk" : "hot";
   const timeText = formatUpdateTime(timestamp);
-  const relatedTags = positiveRelatedTopicTags(alerts.map(a => [a.sector, a.type, a.reason].join(" ")).join(" "), leaders.join(" "));
+  const relatedTags = positiveRelatedTopicTags(actionable.map(a => [a.sector, a.type, a.reason].join(" ")).join(" "), leaders.join(" "));
+  const styleText = styleAlerts.length
+    ? `${styleAlerts.slice(0, 2).map(a => alertStyleLabel(a)).join(" / ")} ${styleAlerts.length}条`
+    : "暂无";
   el.innerHTML = `
     <div class="decision-strip alerts-decision">
     <div class="decision-card ${tone === "hot" ? "primary" : "risk"}">
       <span class="decision-label">核心结论</span>
-      <b>${escapeHtml(latest.sector || "盘中异动")}</b>
-      <span>${escapeHtml(latest.type || latest.signal_type || "等待分类")} · ${escapeHtml(displayAlertTime(latest) || timeText || "")}</span>
+      <b>${escapeHtml(actionable.length ? (latest.sector || "盘中异动") : "暂无交易异动")}</b>
+      <span>${escapeHtml(actionable.length ? `${latest.type || latest.signal_type || "等待分类"} · ${displayAlertTime(latest) || timeText || ""}` : "小登/老登只用于风格判断")}</span>
     </div>
     <div class="decision-card action">
       <span class="decision-label">关联题材</span>
@@ -2685,6 +2696,11 @@ function renderAlertsSummary(alerts, timestamp, invalidatedState = null, sourceD
       <b>${leaders.length ? leaders.map(escapeHtml).join(" / ") : "暂无"}</b>
       <span>${escapeHtml(`交易 ${tradeCount} / 放量 ${volumeCount}`)}</span>
     </div>
+    <div class="decision-card neutral">
+      <span class="decision-label">风格观察</span>
+      <b>${escapeHtml(styleText)}</b>
+      <span>小登/老登用于判断盘面风格</span>
+    </div>
     <div class="decision-card risk">
       <span class="decision-label">回避/降级</span>
       <b>${escapeHtml(riskCount ? `风险 ${riskCount}` : "暂无明确")}</b>
@@ -2692,6 +2708,25 @@ function renderAlertsSummary(alerts, timestamp, invalidatedState = null, sourceD
     </div>
     </div>
   `;
+}
+
+function alertPurpose(alert) {
+  const text = [alert?.signal_type, alert?.type, alert?.reason, alert?.sector, alert?.trigger_rule, alert?.rule, alert?.rule_id]
+    .filter(Boolean)
+    .join(" ");
+  if (alert?.is_old_economy || /小登|老登|风格|style_rotation|small_deng|old_deng|resonance|共振/.test(text)) return "style";
+  if (/风险|急跌|跌停|下跌|回落|走弱|杀|破位|补跌/.test(text)) return "risk";
+  if (/交易|急拉|拉升|突破|强化|涨停|大涨|放量|成交/.test(text)) return "trade";
+  return "watch";
+}
+
+function alertStyleLabel(alert) {
+  const text = [alert?.signal_type, alert?.type, alert?.reason, alert?.sector, alert?.trigger_rule, alert?.rule, alert?.rule_id]
+    .filter(Boolean)
+    .join(" ");
+  if (/老登|old_deng|resonance/.test(text) || alert?.is_old_economy) return "老登风格";
+  if (/小登|small_deng/.test(text)) return "小登风格";
+  return "风格观察";
 }
 
 function alertQuoteAuditSummary(data) {
