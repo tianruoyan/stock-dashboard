@@ -12,7 +12,8 @@ const FILES = [
   "config/watchlist.json",
   "config/alert-config.json",
   "data/requirements.json",
-  "data/source-health.json"
+  "data/source-health.json",
+  "data/section-health.json"
 ];
 
 let cache = {};
@@ -44,11 +45,12 @@ async function updateAll() {
         render(file, data);
       }
     } catch (e) {
-      if (file.includes("signal-review") || file.includes("quality-report") || file.includes("decision-feed")) {
+      if (file.includes("signal-review") || file.includes("quality-report") || file.includes("decision-feed") || file.includes("section-health")) {
         cache[file] = null;
         if (file.includes("signal-review")) renderSignalReview(null);
         if (file.includes("quality-report")) renderDataQualityGate();
         if (file.includes("decision-feed")) renderOpportunityRiskRadar();
+        if (file.includes("section-health")) renderDataQualityGate();
       } else {
         console.error("load failed:", file);
       }
@@ -76,6 +78,7 @@ function render(file, data) {
   else if (file === "config/alert-config.json") renderPortfolioRisk();
   else if (file === "data/requirements.json") renderRequirements(data);
   else if (file === "data/source-health.json") renderSourceHealth(data);
+  else if (file === "data/section-health.json") renderDataQualityGate();
 }
 
 function formatUpdateTime(timestamp) {
@@ -243,6 +246,12 @@ function renderDataQualityGate() {
       title: report.degraded.length ? `${report.degraded.length} 条` : "无",
       detail: report.degraded.slice(0, 2).join(" / ") || "核心行情源正常",
       cls: report.degraded.length ? "warn" : "good"
+    },
+    {
+      label: "区块健康",
+      title: report.sectionTitle || "待接入",
+      detail: report.sectionDetail || "区块级健康矩阵待生成",
+      cls: report.sectionCls || "neutral"
     }
   ];
   el.innerHTML = `<div class="decision-strip quality-strip">${cards.map(card => `
@@ -256,6 +265,7 @@ function renderDataQualityGate() {
 
 function buildDataQualityReport() {
   const audited = cached("data/quality-report.json");
+  const sectionHealth = cached("data/section-health.json");
   if (audited?.status && audited.current_signal_date === currentSignalDate()) {
     const latest = latestTimestamp([
       cached("data/intraday.json"),
@@ -276,13 +286,17 @@ function buildDataQualityReport() {
       .filter(item => item.code === "source_degraded")
       .map(item => item.message || "")
       .filter(Boolean);
+    const sectionSummary = summarizeSectionHealth(sectionHealth);
     return {
       level: mapped.level,
       cls: mapped.cls,
       latest,
       degraded,
-      issues,
-      summary: audited.summary || "数据审计报告已接入"
+      issues: [...sectionSummary.issues, ...issues],
+      summary: audited.summary || "数据审计报告已接入",
+      sectionTitle: sectionSummary.title,
+      sectionDetail: sectionSummary.detail,
+      sectionCls: sectionSummary.cls
     };
   }
   const files = [
@@ -320,6 +334,25 @@ function buildDataQualityReport() {
   if (critical) return { level: "谨慎使用", cls: "warn", latest, degraded, issues, summary: "存在污染/异常字段，信号需二次确认" };
   if (stale || degraded.length) return { level: "降级可用", cls: "neutral", latest, degraded, issues, summary: "核心数据可用，但部分来源需降权" };
   return { level: "可用", cls: "good", latest, degraded, issues, summary: "核心数据结构正常" };
+}
+
+function summarizeSectionHealth(report) {
+  if (!report || !Array.isArray(report.sections)) {
+    return { title: "待接入", detail: "区块级健康矩阵待生成", cls: "neutral", issues: [] };
+  }
+  const bad = report.sections.filter(item => ["invalidated", "missing"].includes(item.status));
+  const stale = report.sections.filter(item => item.status === "stale");
+  const degraded = report.sections.filter(item => item.status === "degraded");
+  const focus = [...bad, ...stale, ...degraded].slice(0, 4);
+  const title = bad.length ? `${bad.length} 块不可用` : (stale.length || degraded.length ? `${stale.length + degraded.length} 块降权` : "全部可用");
+  const detail = report.summary || (focus.length ? focus.map(item => `${item.label}:${item.action}`).join(" / ") : "核心区块可正常使用");
+  const issues = focus.map(item => `${item.label}：${item.action}，${item.reason || item.status}`);
+  return {
+    title,
+    detail: truncateText(detail, 90),
+    cls: bad.length ? "warn" : (stale.length || degraded.length ? "neutral" : "good"),
+    issues
+  };
 }
 
 function renderOpportunityRiskRadar() {

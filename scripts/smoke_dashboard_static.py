@@ -45,6 +45,7 @@ def main() -> int:
     check_app_files(app, issues)
     check_bad_literals(issues)
     check_decision_feed(issues)
+    check_section_health(issues)
 
     status = overall_status(issues)
     report = {
@@ -59,6 +60,7 @@ def main() -> int:
             "FILES 列出的必需 JSON/配置文件存在。",
             "data/config/settings 文件不含常见坏字面量。",
             "decision-feed 不含泛化机会、旧相对日期和高置信无证据项。",
+            "section-health 区块矩阵结构完整，能指出不可用/降权区块。",
         ],
     }
     OUT.write_text(json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
@@ -162,6 +164,29 @@ def check_decision_feed(issues: list[dict[str, Any]]) -> None:
                 issues.append(issue("warning", "data/decision-feed.json", "high_confidence_without_evidence", f"{title} 高置信但缺少证据"))
             if section in {"opportunities", "risks"} and not item.get("source_files"):
                 issues.append(issue("warning", "data/decision-feed.json", "missing_source", f"{title} 缺少来源文件"))
+
+
+def check_section_health(issues: list[dict[str, Any]]) -> None:
+    path = ROOT / "data" / "section-health.json"
+    try:
+        data = json.loads(path.read_text(encoding="utf-8"))
+    except Exception as exc:
+        issues.append(issue("warning", "data/section-health.json", "section_health_missing", f"区块健康矩阵不可读：{exc}"))
+        return
+    sections = data.get("sections")
+    if not isinstance(sections, list) or not sections:
+        issues.append(issue("warning", "data/section-health.json", "bad_section_health", "sections 缺失或为空"))
+        return
+    required = {"control", "radar", "watchlist", "risk", "alerts", "intraday", "premarket", "midday", "postmarket", "evening", "topics"}
+    present = {item.get("id") for item in sections if isinstance(item, dict)}
+    missing = sorted(required - present)
+    if missing:
+        issues.append(issue("warning", "data/section-health.json", "missing_sections", f"区块健康缺少：{', '.join(missing)}"))
+    for item in sections:
+        if not isinstance(item, dict):
+            continue
+        if not item.get("status") or not item.get("label") or not isinstance(item.get("files"), list):
+            issues.append(issue("warning", "data/section-health.json", "bad_section_item", f"{item.get('id') or 'unknown'} 字段不完整"))
 
 
 def has_stale_relative_time(text: str, current_date: str) -> bool:

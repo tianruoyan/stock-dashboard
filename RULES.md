@@ -210,10 +210,11 @@ title: 分析模型说明书
 **Codex 职责（写 + 可选推）：**
 1. 产出 JSON 时先写临时文件，写完后 `mv` 覆盖正式文件
 2. 所有本轮 JSON 写完后，执行 `python3 scripts/audit_dashboard_data.py`，更新 `data/quality-report.json`
-3. 同步执行 `python3 scripts/smoke_dashboard_static.py`，更新 `data/smoke-report.json`
-4. 若数据审计或页面烟雾测试为 critical：不得发布，保留本地报告并修数据/页面
-5. 若审计和烟雾测试不是 critical：创建 `.push-now` 信号文件
-6. 尝试 `scripts/push_with_audit.sh`（内部会再次生成 decision-feed、审计、烟雾测试并静默 push）：成功最好，不成功 Cola 会补推
+3. 执行 `python3 scripts/build_section_health.py`，更新 `data/section-health.json`
+4. 同步执行 `python3 scripts/smoke_dashboard_static.py`，更新 `data/smoke-report.json`
+5. 若数据审计或页面烟雾测试为 critical：不得发布，保留本地报告并修数据/页面
+6. 若审计和烟雾测试不是 critical：创建 `.push-now` 信号文件
+7. 尝试 `scripts/push_with_audit.sh`（内部会再次生成 decision-feed、审计、区块健康、烟雾测试并静默 push）：成功最好，不成功 Cola 会补推
 
 **Cola 职责（推 + 兜底）：**
 1. 每 2 分钟扫描一次仓库
@@ -336,6 +337,7 @@ Codex (分析引擎)              Cola (稳定管道)
 | 2026-07-07 | 新增 scripts/audit_dashboard_data.py 和 data/quality-report.json，要求自动化写完 JSON 后执行数据审计 | 平台需要在展示和研判前先发现乱码、过期、污染源、异常涨跌幅和字段缺失，降低盘中误判风险 |
 | 2026-07-07 | 新增 scripts/smoke_dashboard_static.py 和 data/smoke-report.json，发布前检查页面容器、导航锚点、缓存版本、JS语法、坏字面量和决策流噪音 | 数据正确不等于页面能稳定使用，必须在 GitHub Pages 发布前拦截 JS ERROR、漏显示、乱码和旧相对日期复活 |
 | 2026-07-07 | decision-feed 新增 quality_gate/quality_flags，数据 degraded/critical 时机会项统一低置信并展示降权原因 | 防止用户只看到机会候选而忽略行情源降级、alert 污染或港股收盘窗口非终值，降低盘中误用风险 |
+| 2026-07-07 | 新增 scripts/build_section_health.py 和 data/section-health.json，将数据质量映射到总控、雷达、观察池、异动、盘前、盘中、盘后、晚间等区块 | 全局 degraded 不足以指导盘中使用，必须明确每个区块是正常、降权、过期还是等待重产，防止错误区块被当成有效信号 |
 ---
 
 ## 🐍 Python 环境
