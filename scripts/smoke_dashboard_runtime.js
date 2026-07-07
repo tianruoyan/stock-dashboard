@@ -749,6 +749,11 @@ function checkDashboardThemeCards(document, issues) {
   if (!rendered.includes("标准板块")) {
     issues.push(issue("critical", "dashboard_theme_standard_missing", "今日结论优先方向/暂不参与必须显示标准板块映射", "dashboard-control"));
   }
+  for (const label of ["结论类型", "依据刷新", "页面刷新"]) {
+    if (!rendered.includes(label)) {
+      issues.push(issue("critical", "dashboard_conclusion_meta_missing", `今日结论缺少${label}说明`, "dashboard-control"));
+    }
+  }
   const order = ["优先方向", "暂不参与", "强势验证", "风险/失效"].map(label => rendered.indexOf(label));
   if (order.some(index => index < 0) || order.some((index, i) => i > 0 && index < order[i - 1])) {
     issues.push(issue("critical", "dashboard_card_order_wrong", "今日结论卡片顺序应为：优先方向、暂不参与、强势验证、风险/失效", "dashboard-control"));

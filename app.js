@@ -21,6 +21,7 @@ const FILES = [
 ];
 
 let cache = {};
+let refreshTimer = null;
 
 // Debug: show errors on page
 window.onerror = function(msg, url, line) {
@@ -29,15 +30,14 @@ window.onerror = function(msg, url, line) {
 };
 
 init();
-setInterval(updateAll, 30000);
 setInterval(updateTime, 1000);
 
-function init() { updateAll(); }
+function init() { updateAll({ scheduleNext: shouldAutoScheduleRefresh() }); }
 
 /* =========================
    主更新
 ========================= */
-async function updateAll() {
+async function updateAll(options = {}) {
   for (const file of FILES) {
     try {
       const res = await fetch(file + "?t=" + Date.now());
@@ -66,6 +66,28 @@ async function updateAll() {
   }
   renderGlobalDecisionModules();
   document.getElementById("lastUpdate").innerText = new Date().toLocaleTimeString();
+  if (options.scheduleNext && shouldAutoScheduleRefresh()) scheduleNextRefresh();
+}
+
+function scheduleNextRefresh() {
+  if (refreshTimer) clearTimeout(refreshTimer);
+  refreshTimer = setTimeout(() => updateAll({ scheduleNext: true }), currentRefreshIntervalMs());
+}
+
+function currentRefreshIntervalMs(now = new Date()) {
+  const day = now.getDay();
+  if (day === 0 || day === 6) return 5 * 60 * 1000;
+  const minutes = now.getHours() * 60 + now.getMinutes();
+  if (minutes >= 9 * 60 + 15 && minutes <= 11 * 60 + 35) return 30 * 1000;
+  if (minutes >= 13 * 60 && minutes <= 15 * 60 + 10) return 30 * 1000;
+  if (minutes >= 8 * 60 + 30 && minutes < 9 * 60 + 15) return 60 * 1000;
+  if (minutes > 11 * 60 + 35 && minutes < 13 * 60) return 2 * 60 * 1000;
+  if (minutes > 15 * 60 + 10 && minutes <= 21 * 60 + 30) return 2 * 60 * 1000;
+  return 5 * 60 * 1000;
+}
+
+function shouldAutoScheduleRefresh() {
+  return typeof window !== "undefined" && window.document === document;
 }
 
 /* =========================
@@ -234,6 +256,7 @@ function renderDashboardControl() {
   }
   const position = inferPositionRange(style, decisionGate);
   const latest = dashboardEffectiveTimestamp() || latestTimestamp([intraday, postmarket, alert]);
+  const conclusionMeta = dashboardConclusionMeta(latest);
   const marketThemes = dashboardMarketThemeSummary(intraday, postmarket);
   const priority = marketThemes.priority;
   const avoid = marketThemes.avoid.length ? marketThemes.avoid : normalizeDashboardThemeList(risks.slice(0, 3).map(themeDisplayName));
@@ -244,6 +267,7 @@ function renderDashboardControl() {
       <div class="control-title">${escapeHtml(style.title)}</div>
       <div class="control-sub">${escapeHtml(style.reason)}</div>
       <div class="control-meta">有效时间：${escapeHtml(latest ? formatUpdateTime(latest) : "待更新")} · ${escapeHtml(dataFreshness(latest))}</div>
+      <div class="control-meta">结论类型：${escapeHtml(conclusionMeta.type)} · 依据刷新：${escapeHtml(conclusionMeta.basis)} · 页面刷新：${escapeHtml(conclusionMeta.refresh)}</div>
     </div>
     <div class="control-position">
       <span>建议仓位</span>
@@ -281,6 +305,47 @@ function dashboardMarketThemeSummary(intraday, postmarket) {
     .map(row => row.display))
     .slice(0, 4);
   return { priority: fallbackPriority, avoid, related };
+}
+
+function dashboardConclusionMeta(latest) {
+  const trust = cached("data/data-trust.json") || {};
+  const phase = trust.session_phase || inferSessionPhaseByTime();
+  const typeMap = {
+    premarket: "盘前预案",
+    morning: "盘中动态",
+    midday: "盘中动态",
+    afternoon: "盘中动态",
+    postmarket: "盘后复盘",
+    evening: "晚间舆情",
+    overnight: "盘后/隔夜复盘"
+  };
+  const usable = Array.isArray(trust.files) ? trust.files
+    .filter(file => file?.timestamp && file.usable !== false)
+    .filter(file => ["current", "background"].includes(file.session_relevance))
+    .sort((a, b) => Date.parse(b.timestamp) - Date.parse(a.timestamp)) : [];
+  const basis = usable.slice(0, 2).map(file => `${file.label || file.file} ${formatUpdateTime(file.timestamp)}`).join("；")
+    || (latest ? formatUpdateTime(latest) : "待更新");
+  return {
+    type: typeMap[phase] || "动态结论",
+    basis,
+    refresh: `当前${formatRefreshInterval(currentRefreshIntervalMs())}`
+  };
+}
+
+function inferSessionPhaseByTime(now = new Date()) {
+  const minutes = now.getHours() * 60 + now.getMinutes();
+  if (minutes >= 8 * 60 + 30 && minutes < 9 * 60 + 30) return "premarket";
+  if (minutes >= 9 * 60 + 30 && minutes <= 11 * 60 + 35) return "morning";
+  if (minutes > 11 * 60 + 35 && minutes < 13 * 60) return "midday";
+  if (minutes >= 13 * 60 && minutes <= 15 * 60 + 10) return "afternoon";
+  if (minutes > 15 * 60 + 10 && minutes <= 18 * 60) return "postmarket";
+  if (minutes > 18 * 60 && minutes <= 23 * 60) return "evening";
+  return "overnight";
+}
+
+function formatRefreshInterval(ms) {
+  if (ms <= 30 * 1000) return "30秒";
+  return `${Math.round(ms / 60000)}分钟`;
 }
 
 function normalizeDashboardThemeList(names) {
