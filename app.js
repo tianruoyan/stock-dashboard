@@ -253,7 +253,7 @@ function renderDashboardControl() {
   </div>
   <div class="decision-strip control-strip">
     <div class="decision-card ${decisionGate?.riskFirst ? "neutral" : "primary"}"><span class="decision-label">优先方向</span><b>${escapeHtml(priority[0] || "等待盘面确认")}</b><span>${escapeHtml(priority.slice(1).join(" / ") || "按当日强弱排序，不等同于追高")}</span></div>
-    <div class="decision-card ${decisionGate?.riskFirst ? "neutral" : "primary"}"><span class="decision-label">强势验证 · ${escapeHtml(decisionGate?.riskFirst ? "只验证" : strongWatch.source)}</span><b>${escapeHtml(dashboardPickMain(strongWatch, "暂无强势验证"))}</b><span>${escapeHtml(decisionGate?.riskFirst ? `不追高，${dashboardPickDetail(strongWatch, "只看承接和扩散")}` : dashboardPickDetail(strongWatch, "等待强主线和个股强信号同时出现"))}</span></div>
+    <div class="decision-card ${decisionGate?.riskFirst ? "neutral" : "primary"}"><span class="decision-label">强势验证 · ${escapeHtml(decisionGate?.riskFirst ? "只验证" : strongWatch.source)}</span><b>${escapeHtml(dashboardPickMain(strongWatch, "暂无强势验证"))}</b><span>${escapeHtml(decisionGate?.riskFirst ? dashboardRiskFirstPickDetail(strongWatch) : dashboardPickDetail(strongWatch, "等待强主线和个股强信号同时出现"))}</span></div>
     <div class="decision-card risk"><span class="decision-label">风险/失效 · ${escapeHtml(riskWatch.source)}</span><b>${escapeHtml(dashboardPickMain(riskWatch, "暂无硬风险"))}</b><span>${escapeHtml(dashboardPickDetail(riskWatch, "普通下跌不列入，等事件或放量破位信号"))}</span></div>
     <div class="decision-card risk"><span class="decision-label">暂不参与</span><b>${escapeHtml(avoid[0] || "暂无明确")}</b><span>${escapeHtml(avoid.slice(1).join(" / ") || eventWatch[0] || "看弱线和P0是否扩散")}</span></div>
   </div>`;
@@ -1583,9 +1583,9 @@ function dashboardStockPickReason(stock, signal, theme, mode) {
   const themeLabel = dashboardStockThemeLabel(stock, theme);
   const signalLabel = signal?.badge || signal?.reason || pctBadge(signal?.changePct);
   if (mode === "risk") {
-    return `${themeLabel} + ${signalLabel || "风险信号"}`;
+    return `${themeLabel}，${signalLabel || "风险信号"}`;
   }
-  return `${themeLabel} + ${signalLabel || "个股走强"}`;
+  return `${themeLabel}，${signalLabel || "个股走强"}`;
 }
 
 function dashboardStockThemeLabel(stock, theme) {
@@ -1606,7 +1606,12 @@ function dashboardPickMain(picks, fallback) {
 function dashboardPickDetail(picks, fallback) {
   const rows = (picks?.rows || []).slice(1);
   if (!rows.length) return fallback;
-  return rows.map(row => `${row.name}｜${row.reason}`).join(" / ");
+  return rows.map(row => `${row.name}｜${row.reason}`).join("；");
+}
+
+function dashboardRiskFirstPickDetail(picks) {
+  const detail = dashboardPickDetail(picks, "");
+  return detail ? `不追高，只验证：${detail}` : "不追高，只看承接和扩散";
 }
 
 function isPriorityTheme(item) {

@@ -746,6 +746,12 @@ function checkDashboardThemeCards(document, issues) {
   if (/甬矽电子[｜|]\s*半导体材料/.test(rendered)) {
     issues.push(issue("critical", "dashboard_packaging_stock_mislabeled", "甬矽电子属于封装/封测链，不应在今日结论中标成半导体材料", "dashboard-control"));
   }
+  if (/\+\s*\+\d/.test(rendered)) {
+    issues.push(issue("critical", "dashboard_watch_plus_plus", "今日结论个股理由不应出现“+ +涨幅”这类难读表达", "dashboard-control"));
+  }
+  if (/｜[^；。]*\s\/\s[^。]*｜/.test(rendered)) {
+    issues.push(issue("critical", "dashboard_watch_slash_chain", "今日结论个股理由不应使用斜杠串联多只股票，应使用分号断句", "dashboard-control"));
+  }
   if (/主线变化[：:]老登风格切换.*老登风格切换/.test(rendered)) {
     issues.push(issue("critical", "dashboard_theme_duplicate", "题材卡仍重复展示主线变化前缀和原题材名", "dashboard-control"));
   }
