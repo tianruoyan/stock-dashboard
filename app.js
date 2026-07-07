@@ -362,7 +362,8 @@ function watchSignalBadge(level) {
 function stockSignal(stock, signals, pool) {
   const name = stock.name || "";
   const tags = signalTags([...(stock.tags || []), ...inferredStockTags(stock)]);
-  const hardRiskPattern = /跌停|接近跌停|减持|监管|问询|立案|处罚|澄清|业绩雷|暴跌|放量大跌|放量下跌|破位|跌破|降级|风险核心|负反馈核心/;
+  const hardEventRiskPattern = /减持|监管|问询|立案|处罚|澄清|业绩雷/;
+  const priceRiskPattern = /跌停|接近跌停|暴跌|放量大跌|放量下跌|破位|跌破|降级|风险核心|负反馈核心/;
   const pressurePattern = /风险|弱|退潮|回落|下跌|压制|分歧|补跌/;
   const hardStrongPattern = /涨停|封板|急拉|大涨|放量上涨|放量走强|强势|领涨|突破|加速/;
   const watchPattern = /交易|强|主线|强化|修复|承接|高开|扩散/;
@@ -373,12 +374,14 @@ function stockSignal(stock, signals, pool) {
   const tagText = tagMatched.map(s => s.text).join(" ");
   const strongTag = matchedStrongThemeTag(tags);
   const pressureTag = matchedPressureThemeTag(tags, signals);
-  const directRisk = directSegments.some(part => hardRiskPattern.test(part) || hasLargeDrop(part, 7));
+  const directEventRisk = directSegments.some(part => hardEventRiskPattern.test(part));
+  const directRisk = directSegments.some(part => priceRiskPattern.test(part) || hasLargeDrop(part, 7));
   const directPressure = directSegments.some(part => !isConditionalSignal(part) && (pressurePattern.test(part) || hasAnyDrop(part)));
   const directTrigger = directSegments.some(part => !isConditionalSignal(part) && (hardStrongPattern.test(part) || hasLargeGain(part, 5)));
+  if (directEventRisk) return { level: "risk", reason: shortReason(directSegments, "事件风险") };
+  if (directTrigger) return { level: "trigger", reason: shortReason(strongSegments(directSegments), "强信号") };
   if (directRisk) return { level: "risk", reason: shortReason(directSegments, "硬风险") };
   if (directPressure) return { level: "pressure", reason: pressureReason(directSegments) };
-  if (directTrigger) return { level: "trigger", reason: shortReason(directSegments, "强信号") };
   if (strongTag) return { level: "trigger", reason: `${strongTag}强主线` };
   if (pressureTag) return { level: "pressure", reason: `${pressureTag}承压` };
   if (watchPattern.test(tagText) || directSegments.some(part => hasAnyGain(part))) {
@@ -535,6 +538,12 @@ function pressureReason(segments) {
   if (/补跌/.test(text)) return "补跌承压";
   if (/压制/.test(text)) return "受压制";
   return "个股承压";
+}
+
+function strongSegments(segments) {
+  const pattern = /涨停|封板|急拉|大涨|放量上涨|放量走强|强势|领涨|突破|加速|\+\d+(\.\d+)?%/;
+  const hits = (segments || []).filter(part => pattern.test(part) && !isConditionalSignal(part));
+  return hits.length ? hits : segments;
 }
 
 function matchedTagReason(tags, text, fallback) {
