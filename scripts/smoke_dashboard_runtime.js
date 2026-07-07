@@ -417,7 +417,7 @@ async function main() {
       "文件可信度出现不可用或当前阶段超时时，今日总控必须显示具体文件状态。",
       "今日总控有效时间必须使用最新可信决策材料，不得使用 invalidated/missing/stale 文件时间。",
       "alert.json 撤下污染批次时，盘中异动区必须显示不可用和替代观察，不得只显示普通空状态。",
-      "日韩早盘源降级时必须显示清晰降级提示和待复核清单，不得展示原始乱码/未核实字符串。",
+    "日韩早盘源降级时必须显示固定中文待复核提示和复核清单，不得展示原始乱码/未核实字符串。",
       "核心 JSON 字段有数据时，页面对应区块必须渲染关键结论或代表项。",
       "确认区块健康贴条能在运行时生成。"
     ]
@@ -632,8 +632,8 @@ function checkPremarketJapanKoreaGuard(document, issues) {
   if (!needsGuard) return;
   const html = document.getElementById("section-premarket")?.collectHtml() || "";
   const rendered = normalizeRenderedText(html);
-  if (!rendered.includes("日韩早盘数据源降级") || !rendered.includes("待复核")) {
-    issues.push(issue("critical", "japan_korea_guard_not_rendered", "日韩早盘数据源降级时未显示清晰降级提示和待复核清单", "section-premarket"));
+  if (!rendered.includes("日韩早盘：待复核") || !rendered.includes("复核清单")) {
+    issues.push(issue("critical", "japan_korea_guard_not_rendered", "日韩早盘数据源降级时未显示固定待复核提示和复核清单", "section-premarket"));
   }
   const rawSnippet = stableSnippet(jk);
   if (rawSnippet && rendered.includes(rawSnippet) && !rawSnippet.includes("日韩早盘")) {

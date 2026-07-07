@@ -2614,7 +2614,7 @@ function renderJapanKoreaMorning(jk) {
   if (typeof jk === "string") {
     const degraded = /降级|未核实|待确认|再确认|乱码|decode|failed|error/i.test(jk) || hasMojibake(jk);
     if (degraded) {
-      return renderJapanKoreaDegraded(extractJapanKoreaWatchList(jk));
+      return renderJapanKoreaDegraded();
     }
     const tags = japanKoreaTextTags(jk);
     return tags.length
@@ -2672,20 +2672,6 @@ function japanKoreaTextTags(text) {
   }).filter(Boolean);
 }
 
-function extractJapanKoreaWatchList(text) {
-  const raw = String(text || "");
-  const known = [
-    ["日经225", /日经|Nikkei/i],
-    ["韩国KOSPI", /KOSPI|韩国/i],
-    ["三星电子", /三星|Samsung/i],
-    ["SK海力士", /SK\s*海力士|SK\s*Hynix/i],
-    ["东京电子", /东京电子|Tokyo\s*Electron/i],
-    ["Advantest", /Advantest/i]
-  ];
-  const found = known.filter(([, re]) => re.test(raw)).map(([label]) => label);
-  return found.length ? found : null;
-}
-
 function normalizeJapanKoreaWatchList(value) {
   const defaults = ["日经225", "韩国KOSPI", "三星电子", "SK海力士", "东京电子", "Advantest"];
   const list = Array.isArray(value)
@@ -2700,9 +2686,9 @@ function normalizeJapanKoreaWatchList(value) {
 function renderJapanKoreaDegraded(confirmList) {
   const watchList = normalizeJapanKoreaWatchList(confirmList);
   return `<div class="source-note source-note-warning">
-    <b>日韩早盘数据源降级：</b>
-    <span>未取得可靠实时行情，暂不展示疑似乱码或未核实数值。</span>
-    <span>待复核：${watchList.map(item => escapeHtml(item)).join(" / ")}</span>
+    <b>日韩早盘：待复核</b>
+    <span>实时源未取得可靠行情，页面不展示未核实数值。</span>
+    <span>复核清单：${watchList.map(item => escapeHtml(item)).join(" / ")}</span>
   </div>`;
 }
 
