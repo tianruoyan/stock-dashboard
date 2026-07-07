@@ -224,15 +224,10 @@ function renderDashboardControl() {
   const risks = themes.filter(t => isAvoidTheme(t) && !strong.some(s => trendName(s) === trendName(t)));
   const p0 = evening.p0_alerts || [];
   const alertStocks = (alert.alerts || []).flatMap(a => (a.leaders || []).map(l => l.name)).filter(Boolean);
-  const attackCandidate = buildPersonalWatchTargets(strong[0], alertStocks);
-  const attackWatch = uniqueList([
-    ...attackCandidate.stocks,
-    ...(attackCandidate.source === "个人池" ? alertStocks : [])
-  ]).slice(0, 5);
-  const riskCandidate = buildPersonalWatchTargets(risks[0], []);
-  const riskWatch = uniqueList(riskCandidate.stocks).filter(s => !attackWatch.includes(s)).slice(0, 5);
   const eventWatch = uniqueList(p0.map(p => p.title || p.text || p.event)).slice(0, 5);
   const decisionGate = dashboardDecisionGate();
+  const strongWatch = buildDashboardStockPicks(strong, risks, "strong", alertStocks);
+  const riskWatch = buildDashboardStockPicks(strong, risks, "risk", []);
   let style = inferMarketStyle(intraday, postmarket, evening);
   if (decisionGate) {
     style = { title: decisionGate.title, cls: decisionGate.cls, reason: decisionGate.reason };
@@ -258,8 +253,8 @@ function renderDashboardControl() {
   </div>
   <div class="decision-strip control-strip">
     <div class="decision-card ${decisionGate?.riskFirst ? "neutral" : "primary"}"><span class="decision-label">优先方向</span><b>${escapeHtml(priority[0] || "等待盘面确认")}</b><span>${escapeHtml(priority.slice(1).join(" / ") || "按当日强弱排序，不等同于追高")}</span></div>
-    <div class="decision-card ${decisionGate?.riskFirst ? "neutral" : "primary"}"><span class="decision-label">进攻盯 · ${escapeHtml(decisionGate?.riskFirst ? "暂停" : attackCandidate.source)}</span><b>${escapeHtml(decisionGate?.riskFirst ? "暂无进攻点" : (attackWatch[0] || "暂无"))}</b><span>${escapeHtml(decisionGate?.riskFirst ? "只看承接和扩散，不做追高触发" : (attackWatch.slice(1).join(" / ") || attackCandidate.note))}</span></div>
-    <div class="decision-card risk"><span class="decision-label">风险盯 · ${escapeHtml(riskCandidate.source)}</span><b>${escapeHtml(riskWatch[0] || "暂无")}</b><span>${escapeHtml(riskWatch.slice(1).join(" / ") || riskCandidate.note)}</span></div>
+    <div class="decision-card ${decisionGate?.riskFirst ? "neutral" : "primary"}"><span class="decision-label">强势验证 · ${escapeHtml(decisionGate?.riskFirst ? "只验证" : strongWatch.source)}</span><b>${escapeHtml(dashboardPickMain(strongWatch, "暂无强势验证"))}</b><span>${escapeHtml(decisionGate?.riskFirst ? `不追高，${dashboardPickDetail(strongWatch, "只看承接和扩散")}` : dashboardPickDetail(strongWatch, "等待强主线和个股强信号同时出现"))}</span></div>
+    <div class="decision-card risk"><span class="decision-label">风险/失效 · ${escapeHtml(riskWatch.source)}</span><b>${escapeHtml(dashboardPickMain(riskWatch, "暂无硬风险"))}</b><span>${escapeHtml(dashboardPickDetail(riskWatch, "普通下跌不列入，等事件或放量破位信号"))}</span></div>
     <div class="decision-card risk"><span class="decision-label">暂不参与</span><b>${escapeHtml(avoid[0] || "暂无明确")}</b><span>${escapeHtml(avoid.slice(1).join(" / ") || eventWatch[0] || "看弱线和P0是否扩散")}</span></div>
   </div>`;
 }
@@ -1511,6 +1506,98 @@ function buildPersonalWatchTargets(theme, alertStocks = []) {
   }
   const market = uniqueList([...themeStocks, ...alertStocks]).slice(0, 5);
   return { stocks: market, source: "市场样本", note: "未命中个人池，只作强线样本观察" };
+}
+
+function buildDashboardStockPicks(strongThemes, riskThemes, mode, alertStocks = []) {
+  const wl = cached("config/watchlist.json") || {};
+  const personalStocks = wl.watch_only?.stocks || [];
+  const signals = collectSignalText();
+  const themes = mode === "risk" ? riskThemes : strongThemes;
+  const rows = personalStocks
+    .map(stock => {
+      const signal = stockSignal(stock, signals, "watch_only");
+      const theme = bestMatchedThemeForStock(stock, themes);
+      return { stock, signal, theme, reason: dashboardStockPickReason(stock, signal, theme, mode) };
+    })
+    .filter(row => mode === "risk" ? isDashboardRiskPick(row) : isDashboardStrongPick(row))
+    .sort((a, b) => (b.signal.score || 0) - (a.signal.score || 0))
+    .slice(0, 5)
+    .map(row => ({ name: displayStockName(row.stock.name || row.stock.code), reason: row.reason }));
+
+  if (rows.length) return { rows, source: "个人池" };
+
+  if (mode === "strong" && strongThemes.length) {
+    const theme = strongThemes[0];
+    const themeName = themeDisplayName(theme);
+    const marketRows = uniqueList([...extractStocks(theme), ...alertStocks])
+      .slice(0, 5)
+      .map(name => ({ name: displayStockName(name), reason: `${themeName}强线样本` }));
+    if (marketRows.length) return { rows: marketRows, source: "市场样本" };
+  }
+
+  return { rows: [], source: mode === "risk" ? "个人池" : "待确认" };
+}
+
+function isDashboardStrongPick(row) {
+  if (!row.theme) return false;
+  return row.signal?.tone === "strong" && (row.signal.score || 0) >= 70;
+}
+
+function isDashboardRiskPick(row) {
+  const signal = row.signal || {};
+  const text = [signal.reason, signal.badge, signal.volumeBadge].join(" ");
+  if (signal.tone !== "weak") return false;
+  if (/事件风险|硬风险|跌停|大跌|破位|降级/.test(text)) return true;
+  return Boolean(row.theme) && (signal.score || 0) >= 85;
+}
+
+function bestMatchedThemeForStock(stock, themes) {
+  return (themes || []).find(theme => stockMatchesTheme(stock, theme)) || null;
+}
+
+function stockMatchesTheme(stock, theme) {
+  if (!stock || !theme) return false;
+  const stockName = displayStockName(stock.name || "");
+  const themeStocks = extractStocks(theme).map(displayStockName);
+  if (stockName && themeStocks.includes(stockName)) return true;
+  const keywords = uniqueList([
+    trendName(theme),
+    themeDisplayName(theme),
+    ...themeSubDirections(theme),
+    ...themeStocks
+  ]
+    .flatMap(value => String(value || "").split(/[\\/、,，\s-]+/))
+    .filter(value => value.length >= 2));
+  const stockText = [
+    stockName,
+    stock.code,
+    stock.source,
+    stockProfileLabel(stock),
+    ...(stock.tags || []),
+    ...inferredStockTags(stock)
+  ].filter(Boolean).join(" ");
+  return keywords.some(keyword => stockText.includes(keyword));
+}
+
+function dashboardStockPickReason(stock, signal, theme, mode) {
+  const themeLabel = theme ? themeDisplayName(theme) : stockProfileLabel(stock);
+  const signalLabel = signal?.badge || signal?.reason || pctBadge(signal?.changePct);
+  if (mode === "risk") {
+    return `${themeLabel} + ${signalLabel || "风险信号"}`;
+  }
+  return `${themeLabel} + ${signalLabel || "个股走强"}`;
+}
+
+function dashboardPickMain(picks, fallback) {
+  const first = picks?.rows?.[0];
+  if (!first) return fallback;
+  return `${first.name}｜${first.reason}`;
+}
+
+function dashboardPickDetail(picks, fallback) {
+  const rows = (picks?.rows || []).slice(1);
+  if (!rows.length) return fallback;
+  return rows.map(row => `${row.name}｜${row.reason}`).join(" / ");
 }
 
 function isPriorityTheme(item) {

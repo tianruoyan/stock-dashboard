@@ -735,6 +735,14 @@ function checkDashboardThemeCards(document, issues) {
   if (/关联题材/.test(rendered)) {
     issues.push(issue("critical", "dashboard_related_card_redundant", "今日结论第一屏不应同时展示与优先方向重复的关联题材卡", "dashboard-control"));
   }
+  if (/进攻盯|风险盯/.test(rendered)) {
+    issues.push(issue("critical", "dashboard_watch_old_labels", "今日结论第一屏不应继续展示旧的进攻盯/风险盯口径", "dashboard-control"));
+  }
+  for (const label of ["强势验证", "风险/失效"]) {
+    if (!rendered.includes(label)) {
+      issues.push(issue("critical", "dashboard_watch_new_labels_missing", `今日结论第一屏缺少${label}卡片`, "dashboard-control"));
+    }
+  }
   if (/主线变化[：:]老登风格切换.*老登风格切换/.test(rendered)) {
     issues.push(issue("critical", "dashboard_theme_duplicate", "题材卡仍重复展示主线变化前缀和原题材名", "dashboard-control"));
   }
