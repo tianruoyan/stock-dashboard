@@ -7,6 +7,7 @@ const FILES = [
   "data/evening-sentiment.json",
   "data/topics.json",
   "data/quality-report.json",
+  "data/decision-feed.json",
   "data/signal-review.json",
   "config/watchlist.json",
   "config/alert-config.json",
@@ -43,10 +44,11 @@ async function updateAll() {
         render(file, data);
       }
     } catch (e) {
-      if (file.includes("signal-review") || file.includes("quality-report")) {
+      if (file.includes("signal-review") || file.includes("quality-report") || file.includes("decision-feed")) {
         cache[file] = null;
         if (file.includes("signal-review")) renderSignalReview(null);
         if (file.includes("quality-report")) renderDataQualityGate();
+        if (file.includes("decision-feed")) renderOpportunityRiskRadar();
       } else {
         console.error("load failed:", file);
       }
@@ -68,6 +70,7 @@ function render(file, data) {
   else if (file === "data/evening-sentiment.json") renderEvening(data);
   else if (file === "data/topics.json") renderTopics(data);
   else if (file === "data/quality-report.json") renderDataQualityGate();
+  else if (file === "data/decision-feed.json") renderOpportunityRiskRadar();
   else if (file === "data/signal-review.json") renderSignalReview(data);
   else if (file === "config/watchlist.json") renderWatchlistDecision();
   else if (file === "config/alert-config.json") renderPortfolioRisk();
@@ -353,6 +356,14 @@ function renderRadarItem(item) {
 }
 
 function buildOpportunityRiskRadar() {
+  const feed = currentDecisionFeed();
+  if (feed) {
+    return {
+      opportunities: (feed.opportunities || []).map(item => decisionFeedToRadarItem(item, "good")).slice(0, 6),
+      risks: (feed.risks || []).map(item => decisionFeedToRadarItem(item, "risk")).slice(0, 7),
+      verifications: (feed.verifications || []).map(item => decisionFeedToRadarItem(item, "neutral")).slice(0, 6)
+    };
+  }
   const intraday = cached("data/intraday.json") || {};
   const postmarket = cached("data/postmarket.json") || {};
   const midday = cached("data/midday.json") || {};
@@ -417,6 +428,47 @@ function buildOpportunityRiskRadar() {
     risks: [...(breadthRisk ? [breadthRisk] : []), ...weakStocks, ...riskThemes].slice(0, 7),
     verifications: dedupeRadarItems(verifications).slice(0, 6)
   };
+}
+
+function currentDecisionFeed() {
+  const feed = cached("data/decision-feed.json");
+  if (!feed || typeof feed !== "object") return null;
+  const feedDate = feed.current_signal_date || signalDate(feed.timestamp);
+  if (feedDate && feedDate !== currentSignalDate()) return null;
+  if (!Array.isArray(feed.opportunities) && !Array.isArray(feed.risks) && !Array.isArray(feed.verifications)) return null;
+  return feed;
+}
+
+function decisionFeedToRadarItem(item, fallbackTone) {
+  const evidence = (item.evidence || []).filter(Boolean);
+  const watchNext = (item.watch_next || []).filter(Boolean);
+  const sources = (item.source_files || []).filter(Boolean);
+  const reasonParts = [
+    item.conclusion,
+    evidence.length ? `证据：${evidence.slice(0, 2).join("；")}` : "",
+    watchNext.length ? `验证：${watchNext[0]}` : ""
+  ].filter(Boolean);
+  return {
+    title: item.title || "未命名信号",
+    reason: truncateText(reasonParts.join(" ｜ "), 150),
+    confidence: confidenceLabel(item.confidence),
+    tone: item.tone || fallbackTone || "neutral",
+    tags: uniqueList([...(item.tags || []), ...sources.map(sourceShortName)]).slice(0, 5)
+  };
+}
+
+function confidenceLabel(value) {
+  const map = {
+    high: "高置信",
+    medium: "中置信",
+    low: "低置信",
+    actionable: "可验证"
+  };
+  return map[value] || value || "观察";
+}
+
+function sourceShortName(source) {
+  return String(source || "").replace(/^data\//, "").replace(/\.json$/, "");
 }
 
 function buildWatchlistSignalRows() {

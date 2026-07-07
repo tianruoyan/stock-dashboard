@@ -2,6 +2,7 @@
 
 | Display Version | Date | Edition | Tag / Commit | Summary | Rollback Note |
 |---|---:|---:|---|---|---|
+| 2026-07-07 第40版｜结构化机会风险流 | 2026-07-07 | 第40版 | tag: `v2026.07.07-m40-decision-feed` | 新增 `data/decision-feed.json` 和生成脚本，把机会候选、风险提示、下一步验证从前端临时拼文本升级为带来源、证据、置信度和证伪条件的结构化决策流；前端雷达优先读取该文件，发布脚本自动刷新并审计。 | 回滚到第39版可用 `git checkout v2026.07.07-m39-japan-korea-warning`，或回滚到本版本 tag。 |
 | 2026-07-07 第39版｜日韩早盘降级提示 | 2026-07-07 | 第39版 | tag: `v2026.07.07-m39-japan-korea-warning` | 盘前外部环境里的“日韩早盘”遇到数据源降级、未核实或待确认时，改成清楚的黄色提示条，不再把原始长句混排行情展示，减少中英混排造成的乱码感。 | 回滚到第38版可用 `git checkout v2026.07.07-m38-audit-before-push`，或回滚到本版本 tag。 |
 | 2026-07-07 第38版｜审计前置发布 | 2026-07-07 | 第38版 | tag: `v2026.07.07-m38-audit-before-push` | 新增 `scripts/push_with_audit.sh` 标准发布入口；自动化写完 JSON 后先生成 `quality-report.json`，critical 时不发布；同花顺观察池同步后也自动运行数据审计再触发 `.push-now`。 | 回滚到第37版可用 `git checkout v2026.07.07-m37-data-audit`，或回滚到本版本 tag。 |
 | 2026-07-07 第37版｜数据审计管道 | 2026-07-07 | 第37版 | tag: `v2026.07.07-m37-data-audit` | 新增 `scripts/audit_dashboard_data.py` 和 `data/quality-report.json`，将 JSON 解析、坏字面量、过期时间戳、污染 alert、降级数据源、观察池异常涨跌幅、盘后/晚间必填字段纳入自动审计，并由看板数据质量闸门优先读取审计报告。 | 回滚到第36版可用 `git checkout v2026.07.07-m36-quality-radar`，或回滚到本版本 tag。 |

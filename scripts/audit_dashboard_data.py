@@ -57,6 +57,7 @@ def main() -> int:
     validate_postmarket(files.get("postmarket.json"), issues)
     validate_evening(files.get("evening-sentiment.json"), issues, current_date)
     validate_source_health(files.get("source-health.json"), issues)
+    validate_decision_feed(files.get("decision-feed.json"), issues, current_date)
 
     status = overall_status(issues)
     report = {
@@ -75,6 +76,7 @@ def main() -> int:
             "当日核心文件时间戳不一致、数据源降级、alert污染撤下为 warning。",
             "晚间舆情过期只标 info；前端不得把非当日晚间舆情用于今日总控。",
             "观察池个股出现异常涨跌幅时进入 warning，必须回查行情源。",
+            "decision-feed 如存在，机会/风险/验证项必须带标题、结论、置信度和来源文件。",
         ],
     }
     OUT.write_text(json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
@@ -182,6 +184,31 @@ def validate_source_health(data: Any, issues: list[dict[str, Any]]) -> None:
         status = source.get("status")
         if status in {"degraded", "bad"}:
             issues.append(issue("warning", "source-health.json", "source_degraded", f"{name}: {source.get('note') or source.get('detail') or source.get('usage') or status}"))
+
+
+def validate_decision_feed(data: Any, issues: list[dict[str, Any]], current_date: str) -> None:
+    if data in (None, {}):
+        return
+    if not isinstance(data, dict):
+        issues.append(issue("critical", "decision-feed.json", "bad_decision_feed", "decision-feed 根节点必须是对象"))
+        return
+    feed_date = data.get("current_signal_date") or signal_date(data.get("timestamp"))
+    if feed_date != current_date:
+        issues.append(issue("warning", "decision-feed.json", "stale_decision_feed", f"decision-feed 日期不是当前交易日：{feed_date}"))
+    for section in ("opportunities", "risks", "verifications"):
+        rows = data.get(section)
+        if not isinstance(rows, list):
+            issues.append(issue("warning", "decision-feed.json", "missing_decision_section", f"{section} 缺失或不是数组"))
+            continue
+        for index, item in enumerate(rows):
+            if not isinstance(item, dict):
+                issues.append(issue("critical", "decision-feed.json", "bad_decision_item", f"{section}[{index}] 不是对象", section))
+                continue
+            for key in ("title", "conclusion", "confidence", "source_files"):
+                if not item.get(key):
+                    issues.append(issue("warning", "decision-feed.json", "missing_decision_field", f"{section}[{index}].{key} 缺失", f"{section}[{index}]"))
+            if section in {"opportunities", "risks"} and item.get("confidence") == "high" and not item.get("evidence"):
+                issues.append(issue("warning", "decision-feed.json", "high_confidence_without_evidence", f"{section}[{index}] 高置信但缺少 evidence", f"{section}[{index}]"))
 
 
 def issue(severity: str, file: str, code: str, message: str, path: str = "") -> dict[str, Any]:

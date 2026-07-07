@@ -4,10 +4,11 @@ set -u
 ROOT="/Users/sweet_orange/stock-dashboard"
 cd "$ROOT" || exit 1
 
+python3 scripts/build_decision_feed.py >/dev/null 2>&1 || true
 python3 scripts/audit_dashboard_data.py
 audit_status=$?
 
-git add data/quality-report.json >/dev/null 2>&1 || true
+git add data/quality-report.json data/decision-feed.json >/dev/null 2>&1 || true
 
 if [ "$audit_status" -ne 0 ]; then
   echo "dashboard audit found critical issues; skip push"
