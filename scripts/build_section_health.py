@@ -18,7 +18,6 @@ BAD_LITERALS = ("[object Object]", "undefined", "None%", "NaN", "Infinity")
 SECTIONS = [
     {"id": "control", "label": "今日总控", "files": ["data/intraday.json", "data/postmarket.json", "data/quality-report.json", "data/theme-shifts.json", "data/decision-feed.json"]},
     {"id": "watchlist", "label": "我的观察池", "files": ["config/watchlist.json", "data/intraday.json", "data/postmarket.json", "data/topics.json", "data/quality-report.json"]},
-    {"id": "risk", "label": "仓位风控", "files": ["config/alert-config.json", "data/intraday.json", "data/postmarket.json", "data/quality-report.json"]},
     {"id": "alerts", "label": "盘中异动", "files": ["data/alert.json", "data/source-health.json"]},
     {"id": "intraday", "label": "盘中全景", "files": ["data/intraday.json", "data/source-health.json"]},
     {"id": "premarket", "label": "早盘盘前", "files": ["data/premarket.json", "data/source-health.json"]},
