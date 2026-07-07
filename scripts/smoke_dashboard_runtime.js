@@ -385,6 +385,7 @@ async function main() {
   if (!badges.length) {
     issues.push(issue("warning", "missing_section_badges", "运行时未生成区块健康贴条"));
   }
+  checkDataRenderCoverage(document, issues);
 
   const status = issues.some(item => item.severity === "critical")
     ? "critical"
@@ -403,6 +404,7 @@ async function main() {
       "拦截 console error、JS ERROR、对象直出、未定义值、非数字值和疑似乱码。",
       "critical 监测盲区必须进入机会/风险雷达的风险栏。",
       "C/D级降权机会不得进入机会候选栏，只能进入下一步验证。",
+      "核心 JSON 字段有数据时，页面对应区块必须渲染关键结论或代表项。",
       "确认区块健康贴条能在运行时生成。"
     ]
   };
@@ -430,4 +432,76 @@ function badLiteralLabel(literal) {
     "NaN": "非数字值被直接显示",
     "Infinity": "无限大数值被直接显示"
   }[literal] || "异常字面量";
+}
+
+function checkDataRenderCoverage(document, issues) {
+  const checks = [];
+  const intraday = readJsonIfExists("data/intraday.json");
+  const premarket = readJsonIfExists("data/premarket.json");
+  const midday = readJsonIfExists("data/midday.json");
+  const postmarket = readJsonIfExists("data/postmarket.json");
+  const topics = readJsonIfExists("data/topics.json");
+
+  addCoverageCheck(checks, "section-intraday", intraday.summary, "盘中全景 summary 未渲染");
+  addCoverageCheck(checks, "section-intraday", firstThemeName(intraday.main_trends), "盘中全景主线未渲染");
+  addCoverageCheck(checks, "section-intraday", firstActionText(intraday.actions), "盘中全景行动建议未渲染");
+  addCoverageCheck(checks, "section-intraday", firstIndexName(intraday), "盘中全景指数/港股快照未渲染");
+  addCoverageCheck(checks, "section-premarket", premarket.summary, "早盘 summary 未渲染");
+  addCoverageCheck(checks, "section-midday", midday.morning_review?.one_sentence, "午盘一句话复盘未渲染");
+  addCoverageCheck(checks, "section-midday", firstActionText(midday.afternoon_watch), "午盘下午关注信号未渲染");
+  addCoverageCheck(checks, "section-postmarket", postmarket.closing_auction_patch?.summary, "盘后收盘竞价补丁未渲染");
+  addCoverageCheck(checks, "section-postmarket", firstThemeName(postmarket.hotspots), "盘后热点主线未渲染");
+  addCoverageCheck(checks, "section-topics", firstThemeName(topics.topics), "专题首项未渲染");
+
+  for (const check of checks) {
+    const html = document.getElementById(check.target)?.collectHtml() || "";
+    const rendered = normalizeRenderedText(html);
+    if (check.snippet && !rendered.includes(check.snippet)) {
+      issues.push(issue("critical", "key_data_not_rendered", check.message, check.target));
+    }
+  }
+}
+
+function addCoverageCheck(checks, target, value, message) {
+  const snippet = stableSnippet(value);
+  if (snippet) checks.push({ target, snippet, message });
+}
+
+function stableSnippet(value) {
+  const text = normalizeRenderedText(value);
+  if (!text || text.length < 4) return "";
+  return text.slice(0, Math.min(12, text.length));
+}
+
+function normalizeRenderedText(value) {
+  return String(value || "")
+    .replace(/<[^>]+>/g, "")
+    .replace(/&amp;/g, "&")
+    .replace(/&lt;/g, "<")
+    .replace(/&gt;/g, ">")
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;/g, "'")
+    .replace(/\s+/g, "")
+    .trim();
+}
+
+function firstThemeName(value) {
+  if (!Array.isArray(value) || !value.length) return "";
+  const first = value.find(Boolean);
+  if (!first) return "";
+  return typeof first === "string" ? first : (first.name || first.sector || first.theme || first.title || "");
+}
+
+function firstActionText(value) {
+  if (!Array.isArray(value) || !value.length) return "";
+  const first = value.find(Boolean);
+  if (!first) return "";
+  return typeof first === "string" ? first : (first.text || first.action || first.note || first.name || "");
+}
+
+function firstIndexName(intraday) {
+  if (Array.isArray(intraday.indices) && intraday.indices[0]) return intraday.indices[0].name || "";
+  const snapshot = intraday.index?.HK_close_window_snapshot;
+  if (Array.isArray(snapshot) && snapshot[0]) return snapshot[0].name || "";
+  return "";
 }

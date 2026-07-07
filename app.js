@@ -1743,8 +1743,9 @@ function renderIntraday(data) {
   renderIntradayDecision(data);
   // 指数行
   const idxEl = document.getElementById("intraday-indices");
-  if (data.indices) {
-    idxEl.innerHTML = renderIndexRow(data.indices);
+  const intradayIndices = intradayIndexItems(data);
+  if (intradayIndices.length) {
+    idxEl.innerHTML = renderIndexRow(intradayIndices);
   } else {
     idxEl.innerHTML = '<span class="empty-sm">指数数据待更新</span>';
   }
@@ -1858,6 +1859,10 @@ function intradayActionText(data, strong, risks, sentiment) {
 function renderCodexIntraday(data) {
   let html = '';
 
+  if (data.summary) {
+    html += `<div class="subsection"><h3>📌 盘中结论</h3><div class="breadth">${escapeHtml(data.summary)}</div></div>`;
+  }
+
   // 涨停情绪（只有有实际数据才显示）
   if (data.limit_up_count != null || (data.sentiment && (data.sentiment.limit_up_count || data.sentiment.limit_ratio))) {
     const s = data.sentiment || {};
@@ -1876,12 +1881,14 @@ function renderCodexIntraday(data) {
     } else {
       html += data.main_trends.map(t => {
         const name = themeDisplayName(t);
+        const rawName = trendName(t);
         const status = trendStatus(t);
         const cls = status.includes('强') ? 'strong-theme' : '';
+        const rawLabel = rawName && rawName !== name ? ` <span class="muted">原始：${escapeHtml(rawName)}</span>` : "";
         const evidence = t.evidence ? renderEvidenceDetails(t.evidence) : "";
         const continuity = t.continuity ? `<div class="theme-line">${escapeHtml(truncateText(t.continuity, 90))}</div>` : "";
         const risk = t.risk ? `<div class="theme-line risk-text">风险：${escapeHtml(truncateText(t.risk, 90))}</div>` : "";
-        return `<div class="theme-item ${cls}"><b>${escapeHtml(name)}</b>${status ? ` <span class="muted">— ${escapeHtml(status)}</span>` : ""}${renderThemeSubTags(t)}${continuity}${risk}${evidence}</div>`;
+        return `<div class="theme-item ${cls}"><b>${escapeHtml(name)}</b>${rawLabel}${status ? ` <span class="muted">— ${escapeHtml(status)}</span>` : ""}${renderThemeSubTags(t)}${continuity}${risk}${evidence}</div>`;
       }).join('');
     }
     html += '</div>';
@@ -1949,6 +1956,28 @@ function renderCodexIntraday(data) {
   }
   analysisEl.innerHTML = html;
   analysisEl.style.display = 'block';
+}
+
+function intradayIndexItems(data) {
+  if (Array.isArray(data.indices)) return data.indices;
+  if (data.indices && typeof data.indices === "object") return data.indices;
+  const index = data.index || {};
+  if (Array.isArray(index.indices)) return index.indices;
+  if (Array.isArray(index.a_share_indices)) return index.a_share_indices;
+  if (Array.isArray(index.hk_indices)) return index.hk_indices;
+  if (Array.isArray(index.HK_close_window_snapshot)) {
+    const priority = ["hkHSI", "hkHSTECH", "hk00981", "hk01347", "hk01024", "hk00020"];
+    return priority
+      .map(code => index.HK_close_window_snapshot.find(item => item.code === code))
+      .filter(Boolean)
+      .map(item => ({
+        name: item.name || item.code,
+        change_pct: item.change_pct,
+        close: item.price,
+        note: item.quote_time ? `快照 ${item.quote_time.slice(11)}` : ""
+      }));
+  }
+  return [];
 }
 
 function renderIntradaySentimentBlock(sentiment) {
