@@ -2611,10 +2611,10 @@ function renderAlertInvalidatedState(state) {
     : '<div class="alert-fallback-list"><span>现在看什么：先看盘中全景、涨跌停/炸板宽度、观察池强弱和专题静态结论。</span></div>';
   return `<div class="alert-blocked trader-empty">
     <div class="alert-blocked-head">
-      <span class="badge watch">等待</span>
-      <b>暂无有效异动信号</b>
+      <span class="badge risk">不可用</span>
+      <b>当前不可用</b>
     </div>
-    <p>本区只展示可用于盘中识别机会和风险的最新题材/个股异动。没有新的有效卡片时，不把技术状态当作异动展示。</p>
+    <p>盘中异动提醒当前没有可用信号，暂不能作为交易或风险触发。</p>
     <h3>现在看什么</h3>
     ${checks}
   </div>`;
@@ -2643,20 +2643,15 @@ function renderAlertsSummary(alerts, timestamp, invalidatedState = null, sourceD
   if (invalidatedState?.invalidated) {
     el.innerHTML = `
       <div class="decision-strip alerts-decision">
-        <div class="decision-card neutral">
+        <div class="decision-card risk">
           <span class="decision-label">核心结论</span>
-          <b>暂无有效异动</b>
-          <span>等待新的题材或个股变化</span>
+          <b>当前不可用</b>
+          <span>本区暂不提供交易/风险触发</span>
         </div>
         <div class="decision-card action">
-          <span class="decision-label">当前看</span>
+          <span class="decision-label">替代观察</span>
           <b>全景 / 观察池 / 宽度</b>
-          <span>有新异动卡片后再回到本区</span>
-        </div>
-        <div class="decision-card neutral">
-          <span class="decision-label">本区用途</span>
-          <b>发现盘中新变化</b>
-          <span>只展示题材、个股、交易或风险异动</span>
+          <span>用这些确认题材和个股变化</span>
         </div>
       </div>`;
     return;

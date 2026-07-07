@@ -419,7 +419,7 @@ async function main() {
       "主页面不得展示信号队列、源状态、文件可信、自动化心跳、区块健康、降权等后台诊断词。",
       "无 A/B 级可用机会时，机会与风险区必须显示先防守、等确认、不追高。",
       "今日总控有效时间必须使用最新可信决策材料，不得使用 invalidated/missing/stale 文件时间。",
-      "盘中异动失效时，前台必须回到交易者视角：暂无有效异动、说明本区用途，并给出替代观察。",
+      "盘中异动无有效信号时，前台只显示当前不可用和替代观察，不展示后台诊断。",
       "日韩早盘源异常时必须显示固定中文待复核提示和复核清单，不得展示原始乱码/未核实字符串。",
       "核心 JSON 字段有数据时，页面对应区块必须渲染关键结论或代表项。"
     ]
@@ -917,8 +917,8 @@ function checkInvalidatedAlertRendering(document, issues) {
     document.getElementById("alerts")?.collectHtml() || ""
   ].join("");
   const rendered = normalizeRenderedText(html);
-  if (!rendered.includes("暂无有效异动") || !rendered.includes("本区用途")) {
-    issues.push(issue("critical", "invalidated_alert_not_rendered", "盘中异动失效时未回到交易者视角", "section-alerts"));
+  if (!rendered.includes("当前不可用") || !rendered.includes("暂不提供交易/风险触发")) {
+    issues.push(issue("critical", "invalidated_alert_not_rendered", "盘中异动失效时未显示当前不可用", "section-alerts"));
   }
   if (!rendered.includes("现在看什么") || !rendered.includes("宽度替代")) {
     issues.push(issue("critical", "invalidated_alert_fallback_missing", "盘中异动失效时未显示替代观察动作", "section-alerts"));
