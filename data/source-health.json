@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-07-07T16:01:14+08:00",
+  "timestamp": "2026-07-07T20:01:42+08:00",
   "sources": {
     "tencent_http": {
       "status": "ok",
@@ -47,6 +47,30 @@
       "errors": [
         "akshare.stock_hk_spot_em failed with Eastmoney push2 proxy disconnect; akshare.stock_hk_spot JSON decode failed."
       ]
+    },
+    "cninfo_watchlist_announcement_scan": {
+      "status": "ok_empty",
+      "last_check": "2026-07-07T20:01:42+08:00",
+      "usage": "20:00晚间观察池108只唯一股票公告扫描",
+      "detail": "巨潮2026-07-07单日逐票查询命中0条、错误0条；无新增重大公告命中。",
+      "sample_count": 108,
+      "errors": []
+    },
+    "sina_announcement_page_sample": {
+      "status": "ok_empty",
+      "last_check": "2026-07-07T20:01:42+08:00",
+      "usage": "20:00晚间重点样本公告页抽检",
+      "detail": "新浪重点公告页未发现2026-07-07新增命中；作为巨潮公告扫描补充，不作为唯一来源。",
+      "errors": []
+    },
+    "official_policy_global_web_scan": {
+      "status": "degraded",
+      "last_check": "2026-07-07T20:01:42+08:00",
+      "usage": "20:00晚间政策与全球标杆事件扫描",
+      "detail": "通用网页检索返回信息有限；本次未据此升级任何结论，仅保留官方入口覆盖和本地盘面证据，后续需继续用部委/交易所/公司官网正式公告补验。",
+      "errors": [
+        "generic web search returned limited actionable results"
+      ]
     }
   },
   "rules": [
@@ -56,14 +80,14 @@
     "任一数据源失败时保留上一版 JSON，并在source-health.json标注降级或异常。"
   ],
   "last_effective_run": {
-    "timestamp": "2026-07-07T15:16:39+08:00",
-    "type": "postmarket_a_share_close",
-    "result": "updated_postmarket_topics_with_tail_check",
+    "timestamp": "2026-07-07T20:01:42+08:00",
+    "type": "evening_full_matrix_scan",
+    "result": "updated_evening_sentiment_with_p0_and_coverage",
     "degraded_sources": [
-      "ths_sina_or_akshare_quote_decode"
+      "official_policy_global_web_scan"
     ]
   },
   "status": "degraded",
-  "notes": "港股收盘窗口使用腾讯HTTP快照；东方财富/akshare港股结构源失败，未编造最终收盘价。",
+  "notes": "20:00晚间扫描：巨潮观察池公告源正常但无命中；通用网页检索信息有限，未基于不可验证消息升级结论。",
   "overall_status": "degraded"
 }
