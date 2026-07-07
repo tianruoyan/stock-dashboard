@@ -1580,12 +1580,21 @@ function stockMatchesTheme(stock, theme) {
 }
 
 function dashboardStockPickReason(stock, signal, theme, mode) {
-  const themeLabel = theme ? themeDisplayName(theme) : stockProfileLabel(stock);
+  const themeLabel = dashboardStockThemeLabel(stock, theme);
   const signalLabel = signal?.badge || signal?.reason || pctBadge(signal?.changePct);
   if (mode === "risk") {
     return `${themeLabel} + ${signalLabel || "风险信号"}`;
   }
   return `${themeLabel} + ${signalLabel || "个股走强"}`;
+}
+
+function dashboardStockThemeLabel(stock, theme) {
+  const profile = stockProfileLabel(stock);
+  const themeLabel = theme ? themeDisplayName(theme) : "";
+  if (/半导体/.test(themeLabel) && /封装|封测/.test(profile)) return profile;
+  if (/半导体/.test(themeLabel) && /硅片|硅材料/.test(profile)) return profile;
+  if (/半导体/.test(themeLabel) && /设备/.test(profile)) return profile;
+  return themeLabel || profile || "待确认方向";
 }
 
 function dashboardPickMain(picks, fallback) {
@@ -1886,6 +1895,7 @@ function stockProfileLabel(stock) {
     sh688012: "半导体设备",
     sh688432: "硅材料",
     sh688126: "半导体硅片",
+    sh688362: "半导体封装/封测",
     sh688795: "国产GPU",
     sh603986: "存储/MCU",
     sh688008: "存储/HBM",
@@ -1910,7 +1920,7 @@ function stockProfileLabel(stock) {
   const mapped = precise[code] || Object.entries(byName).find(([key]) => name.includes(key))?.[1];
   if (mapped) return mapped;
   const tags = signalTags([...(stock.tags || []), ...inferredStockTags(stock)]);
-  return tags.find(tag => /半导体|设备|材料|光刻胶|机器人|自动化|AI|算力|软件|ETF|创新药|GPU|存储|硅|电子布|金融|医药|CPO|PCB/.test(tag)) || tags[0] || "待确认方向";
+  return tags.find(tag => /半导体|封装|封测|设备|材料|光刻胶|机器人|自动化|AI|算力|软件|ETF|创新药|GPU|存储|硅|电子布|金融|医药|CPO|PCB/.test(tag)) || tags[0] || "待确认方向";
 }
 
 function displayStockName(name) {
@@ -1938,6 +1948,7 @@ function inferredStockTags(stock) {
     sh688012: ["半导体设备"],
     sh688432: ["硅材料"],
     sh688126: ["硅片材料"],
+    sh688362: ["先进封装", "半导体封测"],
     sh688795: ["国产GPU"],
     sh603986: ["存储/MCU"],
     sh688008: ["存储/HBM"],
@@ -1964,6 +1975,7 @@ function inferredStockTags(stock) {
     中微公司: ["半导体设备"],
     有研硅: ["硅材料"],
     沪硅产业: ["硅片材料"],
+    甬矽电子: ["先进封装", "半导体封测"],
     摩尔线程: ["国产GPU"],
     兆易创新: ["存储/MCU"],
     澜起科技: ["存储/HBM"],
@@ -2924,6 +2936,7 @@ function themeDisplayName(item) {
   }
   if (/电子布|玻纤|PCB|覆铜板/.test(text)) return "PCB材料链";
   if (/半导体设备|CMP设备|刻蚀|沉积|清洗/.test(text)) return "半导体设备";
+  if (/封装|封测|华天科技|长电科技|甬矽电子|通富微电|晶方科技/.test(text)) return "半导体封装";
   if (/半导体材料|光刻胶|硅片|硅材料|CMP抛光|靶材/.test(text)) return "半导体材料";
   if (/CPO|光模块|光通信/.test(text)) return "CPO/光模块";
   if (/存储|HBM|DDR|兆易|澜起|佰维|江波龙/.test(text)) return "存储/HBM";
@@ -2942,6 +2955,7 @@ function themeSubDirections(item) {
     ["通用设备", /通用设备|日发精机|夏厦精密|杭齿前进|丰光精密/],
     ["自动化设备", /自动化设备|步科股份|雷赛智能|中控技术|汇川技术/],
     ["半导体设备", /半导体设备|北方华创|中微公司|华海清科|芯源微|拓荆科技/],
+    ["半导体封装", /封装|封测|华天科技|长电科技|甬矽电子|通富微电|晶方科技/],
     ["半导体材料", /半导体材料|雅克科技|安集科技|江丰电子|中巨芯|南大光电|晶瑞电材/],
     ["CPO/光模块", /CPO|光模块|新易盛|中际旭创|天孚通信|光迅科技/],
     ["存储/HBM", /存储|HBM|兆易创新|澜起科技|佰维存储|江波龙/],

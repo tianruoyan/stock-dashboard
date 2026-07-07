@@ -743,6 +743,9 @@ function checkDashboardThemeCards(document, issues) {
       issues.push(issue("critical", "dashboard_watch_new_labels_missing", `今日结论第一屏缺少${label}卡片`, "dashboard-control"));
     }
   }
+  if (/甬矽电子[｜|]\s*半导体材料/.test(rendered)) {
+    issues.push(issue("critical", "dashboard_packaging_stock_mislabeled", "甬矽电子属于封装/封测链，不应在今日结论中标成半导体材料", "dashboard-control"));
+  }
   if (/主线变化[：:]老登风格切换.*老登风格切换/.test(rendered)) {
     issues.push(issue("critical", "dashboard_theme_duplicate", "题材卡仍重复展示主线变化前缀和原题材名", "dashboard-control"));
   }
