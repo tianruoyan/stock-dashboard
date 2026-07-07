@@ -962,11 +962,36 @@ function radarSourceTrustSummary(sources) {
   return sources.slice(0, 3).map(source => {
     const normalized = String(source || "").replace(/^data\//, "");
     const row = byFile.get(normalized);
-    if (!row) return `${sourceShortName(source)}:未纳入可信矩阵`;
+    if (!row) return systemSourceTrustSummary(normalized);
     const action = trustActionShort(row.use_action || row.status);
     const phase = trustPhaseShort(row.session_relevance);
     return `${row.label || sourceShortName(source)}:${action}/${phase}`;
   }).join("；");
+}
+
+function systemSourceTrustSummary(source) {
+  const normalized = String(source || "").replace(/^data\//, "");
+  const systemSources = {
+    "quality-report.json": ["质量报告", cached("data/quality-report.json")?.status],
+    "source-health.json": ["数据源健康", cached("data/source-health.json")?.overall_status || cached("data/source-health.json")?.status],
+    "build-report.json": ["构建报告", cached("data/build-report.json")?.status],
+    "smoke-report.json": ["静态门禁", cached("data/smoke-report.json")?.status],
+    "runtime-smoke-report.json": ["运行时门禁", cached("data/runtime-smoke-report.json")?.status],
+    "automation-health.json": ["自动化心跳", cached("data/automation-health.json")?.overall_status || cached("data/automation-health.json")?.status],
+    "monitoring-coverage.json": ["监测盲区", cached("data/monitoring-coverage.json")?.status],
+    "section-health.json": ["区块健康", cached("data/section-health.json")?.overall_status || cached("data/section-health.json")?.status]
+  };
+  const row = systemSources[normalized];
+  if (!row) return `${sourceShortName(source)}:未纳入可信矩阵`;
+  return `${row[0]}:${systemStatusShort(row[1])}/当前`;
+}
+
+function systemStatusShort(value) {
+  const text = String(value || "");
+  if (/critical|blocked|invalidated|missing|blind_spot/.test(text)) return "不可用";
+  if (/degraded|warning/.test(text)) return "降权";
+  if (/ok|trusted/.test(text)) return "正常";
+  return text || "待确认";
 }
 
 function trustActionShort(value) {

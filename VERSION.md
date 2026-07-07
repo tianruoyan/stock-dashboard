@@ -2,6 +2,7 @@
 
 | Display Version | Date | Edition | Tag / Commit | Summary | Rollback Note |
 |---|---:|---:|---|---|---|
+| 2026-07-07 第86版｜系统报告源状态 | 2026-07-07 | 第86版 | tag: `v2026.07.07-m86-system-source-trust` | 雷达“源状态”新增系统报告映射：`quality-report`、`source-health`、构建报告、静态/运行时门禁、自动化心跳、监测盲区和区块健康都会显示为质量报告/数据源健康等中文状态，不再显示“未纳入可信矩阵”。运行时门禁同步拦截未知源状态回流。 | 回滚到第85版可用 `git checkout v2026.07.07-m85-radar-source-trust`，或回滚到本版本 tag。 |
 | 2026-07-07 第85版｜雷达来源可信状态 | 2026-07-07 | 第85版 | tag: `v2026.07.07-m85-radar-source-trust` | 机会/风险雷达卡片新增“源状态”行，把 `source_files` 映射到 `data-trust`，显示来源文件是正常、降权、不可用，以及当前/阶段回看/背景状态；运行时门禁要求雷达必须渲染来源可信状态，避免只给结论和来源名却隐藏数据可信度。 | 回滚到第84版可用 `git checkout v2026.07.07-m84-control-conflict-sync`，或回滚到本版本 tag。 |
 | 2026-07-07 第84版｜总控同步冲突口径 | 2026-07-07 | 第84版 | tag: `v2026.07.07-m84-control-conflict-sync` | 首页「今日总控」接入 `decision-feed.conflicts`：当雷达判定同一主线为 `risk_first` 时，总控核心结论同步显示“主线冲突，风险优先”，并把冲突主题加入回避/降级方向。运行时门禁要求总控必须显示风险优先冲突主题，防止第一屏和雷达口径不一致。 | 回滚到第83版可用 `git checkout v2026.07.07-m83-build-step-error-gate`，或回滚到本版本 tag。 |
 | 2026-07-07 第83版｜构建异常阻断 | 2026-07-07 | 第83版 | tag: `v2026.07.07-m83-build-step-error-gate` | 统一构建脚本现在只要任一步骤返回码非 0 或抛异常，就标记 `script_error` 并阻断发布，不再读取旧报告误判为 degraded；静态烟雾测试同步检查 build-report 中任何异常步骤，防止审计/渲染脚本自身坏掉却被隐藏。 | 回滚到第82版可用 `git checkout v2026.07.07-m82-radar-conflict-check`，或回滚到本版本 tag。 |
