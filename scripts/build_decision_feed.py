@@ -485,13 +485,23 @@ def signal_usability(item: dict[str, Any]) -> dict[str, Any]:
 
 def quality_gate(quality: dict[str, Any]) -> dict[str, Any]:
     status = quality.get("status") or "unknown"
-    issues = [
-        issue.get("message", "")
+    actionable_issues = [
+        issue
         for issue in as_list(quality.get("issues"))
-        if isinstance(issue, dict) and issue.get("severity") in {"critical", "warning"}
+        if isinstance(issue, dict)
+        and issue.get("severity") in {"critical", "warning"}
+        and issue.get("impact_level") in {"blocking", "price_review", "signal_review"}
     ]
     flags = []
-    for text in issues:
+    for issue in actionable_issues:
+        text = issue.get("message", "")
+        impact = issue.get("impact_level", "")
+        if impact == "blocking":
+            flags.append("交易阻断项未修复，相关信号不可直接用")
+        if impact == "price_review":
+            flags.append("行情/涨跌幅需二次源复核")
+        if impact == "signal_review":
+            flags.append("机会信号需降权转验证")
         if "alert" in text or "异动" in text or "污染" in text:
             flags.append("盘中异动源降级，alert 类信号降权")
         if "quote_time" in text or "港" in text:
@@ -503,6 +513,9 @@ def quality_gate(quality: dict[str, Any]) -> dict[str, Any]:
         "status": status,
         "summary": quality.get("summary") or "",
         "decision_flags": flags[:4],
+        "blocking_count": (quality.get("counts") or {}).get("blocking", 0),
+        "price_review_count": (quality.get("counts") or {}).get("price_review", 0),
+        "background_review_count": (quality.get("counts") or {}).get("background_review", 0),
     }
 
 

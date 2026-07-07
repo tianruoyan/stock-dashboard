@@ -1,49 +1,62 @@
 {
-  "timestamp": "2026-07-07T22:08:40+08:00",
+  "timestamp": "2026-07-07T22:12:39+08:00",
   "current_signal_date": "2026-07-07",
   "status": "degraded",
-  "summary": "发现 5 个降级/需复核项，核心结论可看但必须降权。",
+  "summary": "发现 5 个降级/需复核项（2 个交易阻断，2 个价格/行情复核，1 个背景复核），核心结论可看但必须按影响分层使用。",
   "issues": [
     {
       "severity": "warning",
       "file": "alert.json",
       "path": "",
       "code": "invalidated_source",
-      "message": "2026-07-07 14:13:52 批次的盘中异动使用了异常行情源数据，北方华创/中微公司等日内涨跌幅失真，已撤下该批 alert，等待修复后的盘中提醒进程重新产出。"
+      "message": "2026-07-07 14:13:52 批次的盘中异动使用了异常行情源数据，北方华创/中微公司等日内涨跌幅失真，已撤下该批 alert，等待修复后的盘中提醒进程重新产出。",
+      "impact_level": "blocking",
+      "decision_action": "对应信号等待重产，页面必须显示阻断"
     },
     {
       "severity": "warning",
       "file": "source-health.json",
       "path": "",
       "code": "source_degraded",
-      "message": "ths_sina_or_akshare_quote_decode: akshare A股spot继续出现Can not decode value starting with character \"<\"；14:13:52 alert 批次已确认污染北方华创/中微公司等涨跌幅，已撤下该批 alert，并要求盘中提醒优先使用行情源原始涨跌幅字段。"
+      "message": "ths_sina_or_akshare_quote_decode: akshare A股spot继续出现Can not decode value starting with character \"<\"；14:13:52 alert 批次已确认污染北方华创/中微公司等涨跌幅，已撤下该批 alert，并要求盘中提醒优先使用行情源原始涨跌幅字段。",
+      "impact_level": "blocking",
+      "decision_action": "对应信号等待重产，页面必须显示阻断"
     },
     {
       "severity": "warning",
       "file": "source-health.json",
       "path": "",
       "code": "source_degraded",
-      "message": "tencent_hk_http: 接口可用，最新quote_time=2026/07/07 15:57:50；16:00后可能仍非收市竞价终值，按收盘窗口快照使用。"
+      "message": "tencent_hk_http: 接口可用，最新quote_time=2026/07/07 15:57:50；16:00后可能仍非收市竞价终值，按收盘窗口快照使用。",
+      "impact_level": "price_review",
+      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
     },
     {
       "severity": "warning",
       "file": "source-health.json",
       "path": "",
       "code": "source_failed",
-      "message": "eastmoney_hk_akshare: akshare.stock_hk_spot_em failed with Eastmoney push2 proxy disconnect; akshare.stock_hk_spot JSON decode failed."
+      "message": "eastmoney_hk_akshare: akshare.stock_hk_spot_em failed with Eastmoney push2 proxy disconnect; akshare.stock_hk_spot JSON decode failed.",
+      "impact_level": "price_review",
+      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
     },
     {
       "severity": "warning",
       "file": "source-health.json",
       "path": "",
       "code": "source_degraded",
-      "message": "official_policy_global_web_scan: 通用网页检索返回信息有限；本次未据此升级任何结论，仅保留官方入口覆盖和本地盘面证据，后续需继续用部委/交易所/公司官网正式公告补验。"
+      "message": "official_policy_global_web_scan: 通用网页检索返回信息有限；本次未据此升级任何结论，仅保留官方入口覆盖和本地盘面证据，后续需继续用部委/交易所/公司官网正式公告补验。",
+      "impact_level": "background_review",
+      "decision_action": "仅作政策/背景覆盖复核，不阻断盘中价格和交易触发"
     }
   ],
   "counts": {
     "critical": 0,
     "warning": 5,
-    "info": 0
+    "info": 0,
+    "blocking": 2,
+    "price_review": 2,
+    "background_review": 1
   },
   "rules": [
     "异常文本、JSON解析失败、必需文件缺失为 critical。",
@@ -52,6 +65,7 @@
     "观察池个股出现异常涨跌幅时进入 warning，必须回查行情源。",
     "盘中异动非空时必须带可信行情源证明；污染源仍降级时，无可信源证明的 active alert 为 critical。",
     "涨停/跌停/强势/弱势等标签必须与 change_pct 方向一致，冲突时进入 warning。",
-    "decision-feed 如存在，机会/风险/验证项必须带标题、结论、置信度和来源文件。"
+    "decision-feed 如存在，机会/风险/验证项必须带标题、结论、置信度和来源文件。",
+    "每个 issue 必须带 impact_level/decision_action，区分交易阻断、价格复核和背景复核。"
   ]
 }

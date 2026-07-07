@@ -78,6 +78,9 @@ def main() -> int:
             "critical": sum(1 for item in issues if item["severity"] == "critical"),
             "warning": sum(1 for item in issues if item["severity"] == "warning"),
             "info": sum(1 for item in issues if item["severity"] == "info"),
+            "blocking": sum(1 for item in issues if item.get("impact_level") == "blocking"),
+            "price_review": sum(1 for item in issues if item.get("impact_level") == "price_review"),
+            "background_review": sum(1 for item in issues if item.get("impact_level") == "background_review"),
         },
         "rules": [
             "异常文本、JSON解析失败、必需文件缺失为 critical。",
@@ -87,6 +90,7 @@ def main() -> int:
             "盘中异动非空时必须带可信行情源证明；污染源仍降级时，无可信源证明的 active alert 为 critical。",
             "涨停/跌停/强势/弱势等标签必须与 change_pct 方向一致，冲突时进入 warning。",
             "decision-feed 如存在，机会/风险/验证项必须带标题、结论、置信度和来源文件。",
+            "每个 issue 必须带 impact_level/decision_action，区分交易阻断、价格复核和背景复核。",
         ],
     }
     OUT.write_text(json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
@@ -464,13 +468,50 @@ def has_stale_relative_time(text: str, current_date: str) -> bool:
 
 
 def issue(severity: str, file: str, code: str, message: str, path: str = "") -> dict[str, Any]:
+    impact_level, decision_action = issue_impact(code, file, message)
     return {
         "severity": severity,
         "file": file,
         "path": path,
         "code": code,
         "message": message,
+        "impact_level": impact_level,
+        "decision_action": decision_action,
     }
+
+
+def issue_impact(code: str, file: str, message: str) -> tuple[str, str]:
+    text = f"{code} {file} {message}"
+    if re.search(r"official_policy|政策|通用网页|官网|部委", text, re.I):
+        return "background_review", "仅作政策/背景覆盖复核，不阻断盘中价格和交易触发"
+    if code in {
+        "missing_file",
+        "bad_literal",
+        "mojibake_text",
+        "bad_change_pct",
+        "bad_alerts",
+        "invalidated_alert_has_rows",
+        "active_alert_without_trusted_source",
+        "impossible_alert_pct",
+    }:
+        return "blocking", "禁止作为交易依据，需修复后重产"
+    if code == "invalidated_source" or re.search(r"污染|撤下|invalidated", text, re.I):
+        return "blocking", "对应信号等待重产，页面必须显示阻断"
+    if code in {
+        "source_degraded",
+        "source_failed",
+        "watchlist_extreme_change",
+        "watchlist_limit_down_like",
+        "label_pct_conflict",
+        "strength_pct_conflict",
+        "weakness_pct_conflict",
+        "suspicious_alert_pct",
+        "bad_alert_leader_pct",
+    } or re.search(r"decode|行情|涨跌幅|quote|akshare|source", text, re.I):
+        return "price_review", "价格/涨跌幅相关结论降权，需二次行情源复核"
+    if code in {"missing_quality_flags", "opportunity_not_downgraded", "high_confidence_without_evidence"}:
+        return "signal_review", "机会信号必须降权并转入验证"
+    return "background_review", "仅作背景复核，不单独阻断交易判断"
 
 
 def bad_literal_label(literal: str) -> str:
@@ -495,10 +536,20 @@ def summarize(status: str, issues: list[dict[str, Any]]) -> str:
     critical = sum(1 for item in issues if item["severity"] == "critical")
     warning = sum(1 for item in issues if item["severity"] == "warning")
     info = sum(1 for item in issues if item["severity"] == "info")
+    blocking = sum(1 for item in issues if item.get("impact_level") == "blocking")
+    price_review = sum(1 for item in issues if item.get("impact_level") == "price_review")
+    background = sum(1 for item in issues if item.get("impact_level") == "background_review")
     if status == "critical":
         return f"发现 {critical} 个严重数据问题，信号不得直接用于交易判断。"
     if status == "degraded":
-        return f"发现 {warning} 个降级/需复核项，核心结论可看但必须降权。"
+        parts = []
+        if blocking:
+            parts.append(f"{blocking} 个交易阻断")
+        if price_review:
+            parts.append(f"{price_review} 个价格/行情复核")
+        if background:
+            parts.append(f"{background} 个背景复核")
+        return f"发现 {warning} 个降级/需复核项（{'，'.join(parts) or '需复核'}），核心结论可看但必须按影响分层使用。"
     return f"数据结构检查通过，仅有 {info} 个提示项。"
 
 

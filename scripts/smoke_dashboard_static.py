@@ -46,6 +46,7 @@ def main() -> int:
     check_app_files(app, issues)
     check_bad_literals(issues)
     check_build_report(issues)
+    check_quality_report(issues)
     check_automation_health(issues)
     check_theme_shifts(issues)
     check_decision_feed(issues)
@@ -249,6 +250,31 @@ def check_build_report(issues: list[dict[str, Any]]) -> None:
         issues.append(issue("warning", "data/build-report.json", "missing_build_steps", f"统一构建缺少步骤：{', '.join(missing)}"))
     if data.get("status") == "blocked":
         issues.append(issue("critical", "data/build-report.json", "build_blocked", data.get("summary") or "统一构建阻断发布"))
+
+
+def check_quality_report(issues: list[dict[str, Any]]) -> None:
+    path = ROOT / "data" / "quality-report.json"
+    try:
+        data = json.loads(path.read_text(encoding="utf-8"))
+    except Exception as exc:
+        issues.append(issue("warning", "data/quality-report.json", "quality_report_missing", f"数据审计报告不可读：{exc}"))
+        return
+    rows = data.get("issues")
+    if not isinstance(rows, list):
+        issues.append(issue("warning", "data/quality-report.json", "bad_quality_issues", "issues 缺失或不是数组"))
+        return
+    for index, item in enumerate(rows):
+        if not isinstance(item, dict):
+            issues.append(issue("warning", "data/quality-report.json", "bad_quality_issue", f"issues[{index}] 不是对象"))
+            continue
+        if item.get("impact_level") not in {"blocking", "price_review", "signal_review", "background_review"}:
+            issues.append(issue("warning", "data/quality-report.json", "missing_issue_impact", f"issues[{index}] 缺少有效 impact_level"))
+        if not item.get("decision_action"):
+            issues.append(issue("warning", "data/quality-report.json", "missing_issue_action", f"issues[{index}] 缺少 decision_action"))
+    counts = data.get("counts") or {}
+    for key in ("blocking", "price_review", "background_review"):
+        if key not in counts:
+            issues.append(issue("warning", "data/quality-report.json", "missing_impact_count", f"counts.{key} 缺失"))
 
 
 def check_theme_shifts(issues: list[dict[str, Any]]) -> None:
