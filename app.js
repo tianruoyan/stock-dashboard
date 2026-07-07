@@ -353,7 +353,10 @@ function watchSignalBadge(signal) {
 function stockSignal(stock, signals, pool) {
   const name = stock.name || "";
   const tags = signalTags([...(stock.tags || []), ...inferredStockTags(stock)]);
-  const context = stockContextText(name, signals);
+  const currentDate = currentSignalDate();
+  const todaySignals = filterSignalsByDate(signals, currentDate);
+  const context = stockContextText(name, todaySignals, { includeCurrentData: true });
+  const contextAll = stockContextText(name, signals, { includeCurrentData: false });
   const changePct = stockChangePct(name, context);
   const volumeBadge = stockVolumeBadge(context);
   const hardEventRiskPattern = /减持|监管|问询|立案|处罚|澄清|业绩雷/;
@@ -361,14 +364,17 @@ function stockSignal(stock, signals, pool) {
   const pressurePattern = /风险|弱|退潮|回落|下跌|压制|分歧|补跌/;
   const hardStrongPattern = /涨停|封板|急拉|大涨|放量上涨|放量走强|强势|领涨|突破|加速/;
   const watchPattern = /交易|强|主线|强化|修复|承接|高开|扩散/;
-  const directSegments = signals
+  const directSegments = todaySignals
+    .flatMap(s => s.text.split(/[。；;，,\n]/))
+    .filter(part => name && part.includes(name));
+  const allDirectSegments = signals
     .flatMap(s => s.text.split(/[。；;，,\n]/))
     .filter(part => name && part.includes(name));
   const tagMatched = signals.filter(s => tags.some(t => t && s.text.includes(t)));
   const tagText = tagMatched.map(s => s.text).join(" ");
   const strongTag = matchedStrongThemeTag(tags);
   const pressureTag = matchedPressureThemeTag(tags, signals);
-  const directEventRisk = directSegments.some(part => hardEventRiskPattern.test(part));
+  const directEventRisk = allDirectSegments.some(part => hardEventRiskPattern.test(part));
   const directRisk = directSegments.some(part => priceRiskPattern.test(part) || hasLargeDrop(part, 7));
   const directPressure = directSegments.some(part => !isConditionalSignal(part) && (pressurePattern.test(part) || hasAnyDrop(part)));
   const directTrigger = directSegments.some(part => !isConditionalSignal(part) && (hardStrongPattern.test(part) || hasLargeGain(part, 5)));
@@ -399,7 +405,7 @@ function stockSignal(stock, signals, pool) {
   if (watchPattern.test(tagText) || directSegments.some(part => hasAnyGain(part))) {
     return watchTone("neutral", directSegments.length ? shortReason(directSegments, "待确认") : matchedTagReason(tags, tagText, "方向观察"), pctBadge(changePct) || volumeBadge || "待确认", changePct, volumeBadge, 40);
   }
-  if (directSegments.length || tagMatched.length) return watchTone("neutral", directSegments.length ? "个股被提及" : matchedTagReason(tags, tagText, "标签命中"), pctBadge(changePct) || "待观察", changePct, volumeBadge, 30);
+  if (directSegments.length || tagMatched.length || contextAll) return watchTone("neutral", directSegments.length ? "个股被提及" : matchedTagReason(tags, tagText, "标签命中"), pctBadge(changePct) || "待观察", changePct, volumeBadge, 30);
   return watchTone("neutral", "暂无信号", pctBadge(changePct), changePct, volumeBadge, 0);
 }
 
@@ -408,14 +414,12 @@ function watchTone(tone, reason, badge, changePct, volumeBadge, score) {
   return { tone, reason, badge, changePct, volumeBadge, score: score + moveScore };
 }
 
-function stockContextText(name, signals) {
+function stockContextText(name, signals, options = {}) {
   const cleanName = displayStockName(name);
   if (!cleanName) return "";
   const corpus = [
     ...(signals || []).map(s => s.text || ""),
-    JSON.stringify(cached("data/intraday.json") || {}),
-    JSON.stringify(cached("data/alert.json") || {}),
-    JSON.stringify(cached("data/topics.json") || {})
+    ...(options.includeCurrentData ? currentDayDataTexts() : [])
   ].join("\n");
   const windows = [];
   let start = 0;
@@ -426,6 +430,18 @@ function stockContextText(name, signals) {
     start = idx + cleanName.length;
   }
   return windows.join("\n");
+}
+
+function currentDayDataTexts() {
+  const currentDate = currentSignalDate();
+  return [
+    ["data/intraday.json", cached("data/intraday.json")],
+    ["data/alert.json", cached("data/alert.json")],
+    ["data/midday.json", cached("data/midday.json")],
+    ["data/postmarket.json", cached("data/postmarket.json")]
+  ]
+    .filter(([, data]) => signalDate(data?.timestamp) === currentDate)
+    .map(([, data]) => JSON.stringify(data || {}));
 }
 
 function stockChangePct(name, context) {
@@ -743,15 +759,48 @@ function collectSignalText() {
   const postmarket = cached("data/postmarket.json") || {};
   const evening = cached("data/evening-sentiment.json") || {};
   const topics = cached("data/topics.json") || {};
-  const sources = [
-    ...(cached("data/alert.json")?.alerts || []),
-    ...asArray(intraday.main_trends),
-    ...themeGroupsToItems(intraday.themes),
-    ...asArray(postmarket.hotspots),
-    ...asArray(evening.p0_alerts),
-    ...asArray(topics.topics)
+  const alert = cached("data/alert.json") || {};
+  return [
+    ...signalsFromItems(alert.alerts, alert.timestamp),
+    ...signalsFromItems(intraday.main_trends, intraday.timestamp),
+    ...signalsFromItems(themeGroupsToItems(intraday.themes), intraday.timestamp),
+    ...signalsFromItems(postmarket.hotspots, postmarket.timestamp),
+    ...signalsFromItems(evening.p0_alerts, evening.timestamp),
+    ...signalsFromItems(topics.topics, topics.timestamp)
   ];
-  return sources.map(item => ({ text: JSON.stringify(item, null, 0) }));
+}
+
+function signalsFromItems(items, fallbackTimestamp) {
+  return asArray(items).map(item => {
+    const timestamp = item?.updated_at || item?.timestamp || fallbackTimestamp || "";
+    return {
+      text: JSON.stringify(item, null, 0),
+      date: signalDate(timestamp),
+      timestamp
+    };
+  });
+}
+
+function currentSignalDate() {
+  const dates = [
+    cached("data/alert.json")?.timestamp,
+    cached("data/intraday.json")?.timestamp,
+    cached("data/midday.json")?.timestamp,
+    cached("data/topics.json")?.timestamp,
+    cached("data/postmarket.json")?.timestamp
+  ].map(signalDate).filter(Boolean).sort();
+  return dates[dates.length - 1] || "";
+}
+
+function filterSignalsByDate(signals, date) {
+  if (!date) return signals || [];
+  return (signals || []).filter(signal => signal.date === date);
+}
+
+function signalDate(timestamp) {
+  const text = String(timestamp || "");
+  const match = text.match(/\d{4}-\d{2}-\d{2}/);
+  return match ? match[0] : "";
 }
 
 function asArray(value) {
