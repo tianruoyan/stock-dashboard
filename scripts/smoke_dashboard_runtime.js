@@ -789,6 +789,11 @@ function checkInvalidatedAlertRendering(document, issues) {
   if (!rendered.includes("替代观察") || !rendered.includes("宽度替代")) {
     issues.push(issue("critical", "invalidated_alert_fallback_missing", "盘中异动撤下污染批次时未显示替代观察动作", "section-alerts"));
   }
+  for (const snippet of ["主线替代", "新线替代"]) {
+    if (!rendered.includes(snippet)) {
+      issues.push(issue("critical", "invalidated_alert_fallback_missing", `盘中异动替代观察缺少分类：${snippet}`, "section-alerts"));
+    }
+  }
   if (rendered.includes("暂无新异动") || rendered.includes("等待触发") || rendered.includes("暂无盘中异动")) {
     issues.push(issue("critical", "invalidated_alert_shown_as_empty", "盘中异动撤下污染批次时被渲染成普通空状态", "section-alerts"));
   }

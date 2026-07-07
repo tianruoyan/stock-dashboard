@@ -2071,7 +2071,7 @@ function alertInvalidationState(data) {
 
 function renderAlertInvalidatedState(state) {
   const checks = state.fallbackChecks.length
-    ? `<div class="alert-fallback-list">${state.fallbackChecks.map(item => `<span>${escapeHtml(item)}</span>`).join("")}</div>`
+    ? renderAlertFallbackChecks(state.fallbackChecks)
     : '<div class="alert-fallback-list"><span>替代观察：先看盘中全景、涨跌停/炸板宽度、观察池强弱和专题静态结论。</span></div>';
   const evidence = state.evidence.length
     ? `<details class="alert-detail"><summary>撤下依据</summary><div>${state.evidence.map(escapeHtml).join("<br>")}</div></details>`
@@ -2090,6 +2090,23 @@ function renderAlertInvalidatedState(state) {
     ${checks}
     ${evidence}
   </div>`;
+}
+
+function renderAlertFallbackChecks(checks) {
+  return `<div class="alert-fallback-list">${checks.map(item => {
+    const parsed = parseFallbackCheck(item);
+    return `<div class="alert-fallback-item">
+      <span>${escapeHtml(parsed.label)}</span>
+      <b>${escapeHtml(parsed.detail)}</b>
+    </div>`;
+  }).join("")}</div>`;
+}
+
+function parseFallbackCheck(text) {
+  const raw = String(text || "").trim();
+  const match = raw.match(/^([^：:]{2,16})[：:]\s*(.+)$/);
+  if (!match) return { label: "替代观察", detail: raw };
+  return { label: match[1], detail: match[2] };
 }
 
 function renderAlertsSummary(alerts, timestamp, invalidatedState = null, sourceData = null) {

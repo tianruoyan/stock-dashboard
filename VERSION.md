@@ -2,6 +2,7 @@
 
 | Display Version | Date | Edition | Tag / Commit | Summary | Rollback Note |
 |---|---:|---:|---|---|---|
+| 2026-07-07 第96版｜异动替代观察分组 | 2026-07-07 | 第96版 | tag: `v2026.07.07-m96-alert-fallback-checks` | 盘中异动被污染批次阻断时，异动区不再只显示长文本替代观察，而是按“宽度替代、主线替代、新线替代、雷达替代”等前缀拆成分组卡片；运行时门禁要求异动阻断时必须显示具体替代分类，避免异动不可用后变成空提示。 | 回滚到第95版可用 `git checkout v2026.07.07-m95-quality-action-plan`，或回滚到本版本 tag。 |
 | 2026-07-07 第95版｜质量处置计划 | 2026-07-07 | 第95版 | tag: `v2026.07.07-m95-quality-action-plan` | `quality-report` 新增 `action_plan`，把降级/阻断问题按交易阻断、行情复核、信号复核、背景复核排序，并输出问题、下一步处置和解除条件；顶部数据质量卡新增处置计划条，运行时门禁要求 action_plan 必须渲染，避免只显示“degraded”而不给修复动作。 | 回滚到第94版可用 `git checkout v2026.07.07-m94-decision-brief`，或回滚到本版本 tag。 |
 | 2026-07-07 第94版｜决策口径摘要 | 2026-07-07 | 第94版 | tag: `v2026.07.07-m94-decision-brief` | `decision-feed` 新增 `decision_brief`，集中输出一句话站位、当前动作、依据、风险焦点、升级条件和验证焦点；机会/风险雷达顶部新增“决策口径”条，先给出风险优先/等待确认/可跟踪的统一口径，再展示主动观察、冲突和三栏细节。运行时门禁要求决策口径必须渲染。 | 回滚到第93版可用 `git checkout v2026.07.07-m93-json-contract-audit`，或回滚到本版本 tag。 |
 | 2026-07-07 第93版｜核心JSON契约审计 | 2026-07-07 | 第93版 | tag: `v2026.07.07-m93-json-contract-audit` | 数据审计新增核心 JSON 轻量字段契约：盘前、盘中、午盘、盘后、晚间、专题等文件的关键渲染字段必须存在且类型正确，例如 `intraday.main_trends` 必须是数组、`midday.morning_review` 必须是对象、`evening.news/p0_alerts` 必须是数组。契约按“页面可渲染”口径放宽，允许行动建议为字符串或对象，避免误报。 | 回滚到第92版可用 `git checkout v2026.07.07-m92-cross-file-stock-audit`，或回滚到本版本 tag。 |
