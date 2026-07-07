@@ -746,6 +746,16 @@ function checkDashboardThemeCards(document, issues) {
   if (/甬矽电子[｜|]\s*半导体材料/.test(rendered)) {
     issues.push(issue("critical", "dashboard_packaging_stock_mislabeled", "甬矽电子属于封装/封测链，不应在今日结论中标成半导体材料", "dashboard-control"));
   }
+  if (!rendered.includes("标准板块")) {
+    issues.push(issue("critical", "dashboard_theme_standard_missing", "今日结论优先方向/暂不参与必须显示标准板块映射", "dashboard-control"));
+  }
+  const order = ["优先方向", "暂不参与", "强势验证", "风险/失效"].map(label => rendered.indexOf(label));
+  if (order.some(index => index < 0) || order.some((index, i) => i > 0 && index < order[i - 1])) {
+    issues.push(issue("critical", "dashboard_card_order_wrong", "今日结论卡片顺序应为：优先方向、暂不参与、强势验证、风险/失效", "dashboard-control"));
+  }
+  if (/医药修复链|老登风格切换/.test(rendered)) {
+    issues.push(issue("critical", "dashboard_theme_mixed_dimension", "今日结论不应直接展示混合交易状态或风格词，应显示统一交易分支", "dashboard-control"));
+  }
   if (/\+\s*\+\d/.test(rendered)) {
     issues.push(issue("critical", "dashboard_watch_plus_plus", "今日结论个股理由不应出现“+ +涨幅”这类难读表达", "dashboard-control"));
   }

@@ -236,7 +236,7 @@ function renderDashboardControl() {
   const latest = dashboardEffectiveTimestamp() || latestTimestamp([intraday, postmarket, alert]);
   const marketThemes = dashboardMarketThemeSummary(intraday, postmarket);
   const priority = marketThemes.priority;
-  const avoid = marketThemes.avoid.length ? marketThemes.avoid : risks.slice(0, 3).map(themeDisplayName);
+  const avoid = marketThemes.avoid.length ? marketThemes.avoid : normalizeDashboardThemeList(risks.slice(0, 3).map(themeDisplayName));
 
   el.innerHTML = `<div class="control-hero ${style.cls}">
     <div>
@@ -252,10 +252,10 @@ function renderDashboardControl() {
     </div>
   </div>
   <div class="decision-strip control-strip">
-    <div class="decision-card ${decisionGate?.riskFirst ? "neutral" : "primary"}"><span class="decision-label">优先方向</span><b>${escapeHtml(priority[0] || "等待盘面确认")}</b><span>${escapeHtml(priority.slice(1).join(" / ") || "按当日强弱排序，不等同于追高")}</span></div>
+    <div class="decision-card ${decisionGate?.riskFirst ? "neutral" : "primary"}"><span class="decision-label">优先方向</span><b>${escapeHtml(dashboardThemeMain(priority, "等待盘面确认"))}</b><span>${escapeHtml(dashboardThemeHint(priority, "按当日强弱排序，不等同于追高"))}</span></div>
+    <div class="decision-card risk"><span class="decision-label">暂不参与</span><b>${escapeHtml(dashboardThemeMain(avoid, "暂无明确"))}</b><span>${escapeHtml(dashboardThemeHint(avoid, eventWatch[0] || "看弱线和P0是否扩散"))}</span></div>
     <div class="decision-card ${decisionGate?.riskFirst ? "neutral" : "primary"}"><span class="decision-label">强势验证 · ${escapeHtml(decisionGate?.riskFirst ? "只验证" : strongWatch.source)}</span><b>${escapeHtml(dashboardPickMain(strongWatch, "暂无强势验证"))}</b><span>${escapeHtml(decisionGate?.riskFirst ? dashboardRiskFirstPickDetail(strongWatch) : dashboardPickDetail(strongWatch, "等待强主线和个股强信号同时出现"))}</span></div>
     <div class="decision-card risk"><span class="decision-label">风险/失效 · ${escapeHtml(riskWatch.source)}</span><b>${escapeHtml(dashboardPickMain(riskWatch, "暂无硬风险"))}</b><span>${escapeHtml(dashboardPickDetail(riskWatch, "普通下跌不列入，等事件或放量破位信号"))}</span></div>
-    <div class="decision-card risk"><span class="decision-label">暂不参与</span><b>${escapeHtml(avoid[0] || "暂无明确")}</b><span>${escapeHtml(avoid.slice(1).join(" / ") || eventWatch[0] || "看弱线和P0是否扩散")}</span></div>
   </div>`;
 }
 
@@ -264,8 +264,8 @@ function dashboardMarketThemeSummary(intraday, postmarket) {
   const priorityRows = rows
     .filter(row => row.bucket !== "risk" && row.priorityEligible)
     .sort((a, b) => b.score - a.score);
-  const priority = uniqueList(priorityRows.map(row => row.display)).slice(0, 4);
-  const avoid = uniqueList(rows
+  const priority = normalizeDashboardThemeList(priorityRows.map(row => row.display)).slice(0, 4);
+  const avoid = normalizeDashboardThemeList(rows
     .filter(row => row.bucket === "risk")
     .sort((a, b) => b.score - a.score)
     .map(row => row.display))
@@ -275,12 +275,56 @@ function dashboardMarketThemeSummary(intraday, postmarket) {
     .flatMap(row => row.related.length ? row.related : positiveRelatedTopicTags(row.text)))
     .filter(tag => !/风控|数据质量|仓位|回避/.test(tag))
     .slice(0, 5);
-  const fallbackPriority = priority.length ? priority : uniqueList(rows
+  const fallbackPriority = priority.length ? priority : normalizeDashboardThemeList(rows
     .filter(row => row.bucket !== "risk")
     .sort((a, b) => b.score - a.score)
     .map(row => row.display))
     .slice(0, 4);
   return { priority: fallbackPriority, avoid, related };
+}
+
+function normalizeDashboardThemeList(names) {
+  const mapped = uniqueList(names.map(normalizeDashboardThemeName).filter(Boolean))
+    .map(display => ({ display, standard: dashboardStandardBoard(display) }));
+  return mapped;
+}
+
+function normalizeDashboardThemeName(name) {
+  const text = String(name || "");
+  if (!text) return "";
+  if (/医药修复链|化学制药|创新药|CRO/.test(text)) return "创新药/CRO";
+  if (/老登风格切换|券商|证券|保险|白酒|畜牧|权重/.test(text)) return "金融/消费权重";
+  return text;
+}
+
+function dashboardStandardBoard(display) {
+  const text = String(display || "");
+  const rules = [
+    [/半导体硅片/, "半导体 / 硅片"],
+    [/半导体封装/, "半导体 / 封测"],
+    [/半导体设备/, "半导体 / 专用设备"],
+    [/半导体材料|光刻胶|CMP|靶材/, "半导体 / 电子化学品"],
+    [/PCB材料链/, "电子元件 / PCB / 玻纤"],
+    [/CPO|光模块/, "通信设备 / 光模块"],
+    [/存储|HBM/, "半导体 / 存储"],
+    [/AI应用/, "软件服务 / 传媒互联网 / 人工智能"],
+    [/机器人|工业自动化/, "通用设备 / 自动化设备 / 机器人"],
+    [/汽车零部件/, "汽车零部件"],
+    [/创新药|CRO/, "化学制药 / 创新药 / CRO"],
+    [/金融\/消费权重/, "证券 / 保险 / 白酒 / 养殖"]
+  ];
+  return rules.find(([re]) => re.test(text))?.[1] || "待映射";
+}
+
+function dashboardThemeMain(items, fallback) {
+  return items?.[0]?.display || fallback;
+}
+
+function dashboardThemeHint(items, fallback) {
+  const first = items?.[0];
+  if (!first) return fallback;
+  const others = (items || []).slice(1).map(item => `${item.display}（${item.standard}）`);
+  return `标准板块：${first.standard}${others.length ? `；其他：${others.join(" / ")}` : ""}`;
 }
 
 function collectDashboardThemeRows(intraday, postmarket) {
@@ -1460,8 +1504,8 @@ function relatedTopicTags(...parts) {
   const groups = [
     { name: "科技硬件链", re: /半导体|设备|材料|CPO|光模块|存储|HBM|PCB|电子布|封装|硅片|算力|芯片|北方|中微|华海|安集|雅克|澜起|兆易|中际|新易盛|沪电|胜宏/ },
     { name: "机器人/工业自动化", re: /机器人|工业自动化|通用设备|自动化设备|减速器|伺服|控制器|机器视觉|步科|绿的|埃斯顿|中大力德|双环|拓斯达|汇川|奥普特/ },
-    { name: "医药修复链", re: /医药|化学制药|创新药|原料药|制剂|CRO|恒瑞|科伦|普洛|九典|金城|赛托|共同药业|广生堂|艾力斯|百济|诺诚|荣昌/ },
-    { name: "老登风格切换", re: /券商|证券|保险|白酒|酒|畜牧|银行|地产|中字头|权重|中信证券|国泰海通|东方财富|平安|茅台|五粮液|牧原|温氏/ },
+    { name: "创新药/CRO", re: /医药|化学制药|创新药|原料药|制剂|CRO|恒瑞|科伦|普洛|九典|金城|赛托|共同药业|广生堂|艾力斯|百济|诺诚|荣昌/ },
+    { name: "金融/消费权重", re: /券商|证券|保险|白酒|酒|畜牧|银行|地产|中字头|权重|中信证券|国泰海通|东方财富|平安|茅台|五粮液|牧原|温氏/ },
     { name: "回避/降级集合", re: /风险|回避|降级|光伏|逆变器|功率半导体|SiC|第三代半导体|新能源出海|AIDC电源|暴跌|减持|监管|澄清/ }
   ];
   const matched = groups.filter(g => g.re.test(text)).map(g => g.name);
@@ -2946,8 +2990,8 @@ function themeDisplayName(item) {
   if (/CPO|光模块|光通信/.test(text)) return "CPO/光模块";
   if (/存储|HBM|DDR|兆易|澜起|佰维|江波龙/.test(text)) return "存储/HBM";
   if (/AI应用|视频生成|办公|软件|传媒/.test(text)) return "AI应用";
-  if (/化学制药|创新药|原料药|医药/.test(text)) return "医药修复链";
-  if (/券商|证券|保险|白酒|畜牧|权重/.test(text)) return "老登风格切换";
+  if (/化学制药|创新药|原料药|医药/.test(text)) return "创新药/CRO";
+  if (/券商|证券|保险|白酒|畜牧|权重/.test(text)) return "金融/消费权重";
   return name;
 }
 
