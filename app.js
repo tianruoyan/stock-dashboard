@@ -502,10 +502,17 @@ function renderRadarItem(item) {
 function buildOpportunityRiskRadar() {
   const feed = currentDecisionFeed();
   if (feed) {
+    const coverage = monitoringCoverageRadarItems();
     return {
       opportunities: (feed.opportunities || []).map(item => decisionFeedToRadarItem(item, "good")).slice(0, 6),
-      risks: (feed.risks || []).map(item => decisionFeedToRadarItem(item, "risk")).slice(0, 7),
-      verifications: (feed.verifications || []).map(item => decisionFeedToRadarItem(item, "neutral")).slice(0, 6)
+      risks: dedupeRadarItems([
+        ...coverage.risks,
+        ...(feed.risks || []).map(item => decisionFeedToRadarItem(item, "risk"))
+      ]).slice(0, 8),
+      verifications: dedupeRadarItems([
+        ...coverage.verifications,
+        ...(feed.verifications || []).map(item => decisionFeedToRadarItem(item, "neutral"))
+      ]).slice(0, 7)
     };
   }
   const intraday = cached("data/intraday.json") || {};
@@ -572,6 +579,56 @@ function buildOpportunityRiskRadar() {
     risks: [...(breadthRisk ? [breadthRisk] : []), ...weakStocks, ...riskThemes].slice(0, 7),
     verifications: dedupeRadarItems(verifications).slice(0, 6)
   };
+}
+
+function monitoringCoverageRadarItems() {
+  const coverage = cached("data/monitoring-coverage.json");
+  if (!coverage || !Array.isArray(coverage.blind_spots)) {
+    return { risks: [], verifications: [] };
+  }
+  const currentDate = currentSignalDate();
+  const coverageDate = coverage.current_signal_date || signalDate(coverage.timestamp);
+  if (coverageDate && coverageDate !== currentDate) {
+    return { risks: [], verifications: [] };
+  }
+  const important = coverage.blind_spots
+    .filter(item => item && ["critical", "warning"].includes(item.severity))
+    .sort((a, b) => severityRank(b.severity) - severityRank(a.severity));
+  const risks = important.map(item => ({
+    title: item.title || "监测盲区",
+    reason: truncateText(item.conclusion || "", 108),
+    confidence: item.severity === "critical" ? "核心盲区" : "降权盲区",
+    tone: "risk",
+    tags: uniqueList(["监测盲区", ...(item.source_files || []).map(sourceShortName)]).slice(0, 5),
+    evidence: (item.evidence || []).slice(0, 2),
+    watchNext: (item.impacted_decisions || []).slice(0, 2),
+    invalidation: item.fallback_action,
+    sources: (item.source_files || []).map(sourceShortName),
+    signalGrade: item.severity === "critical" ? "A" : "B",
+    signalScore: item.severity === "critical" ? 95 : 72,
+    useAction: item.severity === "critical" ? "优先处理" : "降权观察",
+    useReasons: ["自动监测断点", "影响盘中决策", "已给替代观察"]
+  }));
+  const verifications = important.slice(0, 3).map(item => ({
+    title: `${item.title || "监测盲区"}替代观察`,
+    reason: truncateText(item.fallback_action || item.conclusion || "", 108),
+    confidence: "替代验证",
+    tone: "neutral",
+    tags: uniqueList(["盲区替代", ...(item.source_files || []).map(sourceShortName)]).slice(0, 5),
+    evidence: (item.impacted_decisions || []).slice(0, 2),
+    watchNext: item.fallback_action ? [item.fallback_action] : [],
+    invalidation: "对应数据文件恢复 trusted，且盲区报告不再提示该断点。",
+    sources: (item.source_files || []).map(sourceShortName),
+    signalGrade: "B",
+    signalScore: 70,
+    useAction: "等待确认",
+    useReasons: ["替代观察动作", "可证伪"]
+  }));
+  return { risks, verifications };
+}
+
+function severityRank(severity) {
+  return { info: 1, warning: 2, critical: 3 }[severity] || 0;
 }
 
 function currentDecisionFeed() {

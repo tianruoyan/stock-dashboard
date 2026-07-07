@@ -2,6 +2,7 @@
 
 | Display Version | Date | Edition | Tag / Commit | Summary | Rollback Note |
 |---|---:|---:|---|---|---|
+| 2026-07-07 第52版｜盲区并入风险雷达 | 2026-07-07 | 第52版 | tag: `v2026.07.07-m52-blindspot-radar` | 将 `monitoring-coverage` 的 critical/warning 盲区并入机会/风险雷达：critical 盲区进入风险栏前排，替代观察动作进入验证栏；运行时烟雾测试新增校验，critical 盲区必须渲染到雷达风险栏。 | 回滚到第51版可用 `git checkout v2026.07.07-m51-monitoring-coverage`，或回滚到本版本 tag。 |
 | 2026-07-07 第51版｜监测盲区雷达 | 2026-07-07 | 第51版 | tag: `v2026.07.07-m51-monitoring-coverage` | 新增 `scripts/build_monitoring_coverage.py` 和 `data/monitoring-coverage.json`，把不可用/降权数据翻译成交易监测盲区：影响哪些决策、为什么、临时替代观察动作是什么；顶部质量卡新增“监测盲区”，发布门强制检查盲区字段。 | 回滚到第50版可用 `git checkout v2026.07.07-m50-data-trust`，或回滚到本版本 tag。 |
 | 2026-07-07 第50版｜数据文件可信度 | 2026-07-07 | 第50版 | tag: `v2026.07.07-m50-data-trust` | 新增 `scripts/build_data_trust.py` 和 `data/data-trust.json`，把全局审计翻译成每个核心数据文件的 trusted/degraded/stale/invalidated/missing、可信分、使用动作和原因；顶部质量卡新增“文件可信”，发布脚本先审计再生成文件级可信度并复审。 | 回滚到第49版可用 `git checkout v2026.07.07-m49-signal-usability`，或回滚到本版本 tag。 |
 | 2026-07-07 第49版｜信号可用性分级 | 2026-07-07 | 第49版 | tag: `v2026.07.07-m49-signal-usability` | `decision-feed` 每条机会/风险/验证新增 `signal_score`、`signal_grade`、`use_action`、`use_reasons`，把“能不能用、怎么用”显式写清楚；雷达卡片显示 A/B/C/D 级和可跟踪/等待确认/降权观察/仅复核动作；审计和 smoke 测试强制检查信号可用性字段。 | 回滚到第48版可用 `git checkout v2026.07.07-m48-runtime-smoke`，或回滚到本版本 tag。 |

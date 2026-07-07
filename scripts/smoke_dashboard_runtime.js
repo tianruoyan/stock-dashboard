@@ -231,6 +231,14 @@ function readText(relPath) {
   return fs.readFileSync(path.join(ROOT, relPath), "utf8");
 }
 
+function readJsonIfExists(relPath) {
+  try {
+    return JSON.parse(readText(relPath));
+  } catch {
+    return {};
+  }
+}
+
 function writeReport(report) {
   fs.writeFileSync(OUT, JSON.stringify(report, null, 2) + "\n", "utf8");
 }
@@ -339,6 +347,16 @@ async function main() {
   }
 
   const wholePage = document.body.collectHtml();
+  const radarHtml = document.getElementById("opportunity-risk-radar")?.collectHtml() || "";
+  const coverage = readJsonIfExists("data/monitoring-coverage.json");
+  const criticalBlindSpots = Array.isArray(coverage.blind_spots)
+    ? coverage.blind_spots.filter(item => item && item.severity === "critical")
+    : [];
+  for (const item of criticalBlindSpots) {
+    if (item.title && !radarHtml.includes(item.title)) {
+      issues.push(issue("critical", "blind_spot_not_rendered", `核心监测盲区未进入雷达风险栏：${item.title}`, "opportunity-risk-radar"));
+    }
+  }
   for (const literal of BAD_LITERALS) {
     if (wholePage.includes(literal)) {
       issues.push(issue("critical", "bad_literal_rendered", `页面运行后出现异常文本：${badLiteralLabel(literal)}`));
@@ -371,6 +389,7 @@ async function main() {
       "使用本地真实 JSON 执行 app.js 的 updateAll 渲染路径。",
       "关键决策区块运行后必须非空。",
       "拦截 console error、JS ERROR、对象直出、未定义值、非数字值和疑似乱码。",
+      "critical 监测盲区必须进入机会/风险雷达的风险栏。",
       "确认区块健康贴条能在运行时生成。"
     ]
   };
