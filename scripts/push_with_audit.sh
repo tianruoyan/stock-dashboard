@@ -4,32 +4,12 @@ set -u
 ROOT="/Users/sweet_orange/stock-dashboard"
 cd "$ROOT" || exit 1
 
-python3 scripts/build_theme_shifts.py >/dev/null 2>&1 || true
-python3 scripts/build_decision_feed.py >/dev/null 2>&1 || true
-python3 scripts/audit_dashboard_data.py >/dev/null 2>&1 || true
-python3 scripts/build_theme_shifts.py >/dev/null 2>&1 || true
-python3 scripts/build_decision_feed.py >/dev/null 2>&1 || true
-python3 scripts/build_data_trust.py >/dev/null 2>&1 || true
-python3 scripts/build_monitoring_coverage.py >/dev/null 2>&1 || true
-python3 scripts/audit_dashboard_data.py
-audit_status=$?
-python3 scripts/build_theme_shifts.py >/dev/null 2>&1 || true
-python3 scripts/build_decision_feed.py >/dev/null 2>&1 || true
-python3 scripts/build_data_trust.py >/dev/null 2>&1 || true
-python3 scripts/build_monitoring_coverage.py >/dev/null 2>&1 || true
-python3 scripts/build_section_health.py >/dev/null 2>&1 || true
-python3 scripts/smoke_dashboard_static.py
-smoke_status=$?
-NODE_BIN="/Users/sweet_orange/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node"
-if [ ! -x "$NODE_BIN" ]; then
-  NODE_BIN="node"
-fi
-"$NODE_BIN" scripts/smoke_dashboard_runtime.js
-runtime_status=$?
+python3 scripts/build_dashboard_reports.py
+build_status=$?
 
-git add data/quality-report.json data/theme-shifts.json data/decision-feed.json data/data-trust.json data/monitoring-coverage.json data/section-health.json data/smoke-report.json data/runtime-smoke-report.json >/dev/null 2>&1 || true
+git add data/build-report.json data/quality-report.json data/theme-shifts.json data/decision-feed.json data/data-trust.json data/monitoring-coverage.json data/section-health.json data/smoke-report.json data/runtime-smoke-report.json >/dev/null 2>&1 || true
 
-if [ "$audit_status" -ne 0 ] || [ "$smoke_status" -ne 0 ] || [ "$runtime_status" -ne 0 ]; then
+if [ "$build_status" -ne 0 ]; then
   echo "dashboard audit/smoke found critical issues; skip push"
   git commit -m "Update dashboard quality report" >/dev/null 2>&1 || true
   exit 1

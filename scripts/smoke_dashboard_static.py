@@ -45,6 +45,7 @@ def main() -> int:
     check_index_contract(index, issues)
     check_app_files(app, issues)
     check_bad_literals(issues)
+    check_build_report(issues)
     check_theme_shifts(issues)
     check_decision_feed(issues)
     check_data_trust(issues)
@@ -186,6 +187,28 @@ def check_decision_feed(issues: list[dict[str, Any]]) -> None:
                 issues.append(issue("warning", "data/decision-feed.json", "bad_signal_grade", f"{title} signal_grade 非 A/B/C/D"))
             if isinstance(item.get("evidence_score"), (int, float)) and not 0 <= item.get("evidence_score") <= 100:
                 issues.append(issue("warning", "data/decision-feed.json", "bad_evidence_score", f"{title} evidence_score 不在 0-100"))
+
+
+def check_build_report(issues: list[dict[str, Any]]) -> None:
+    path = ROOT / "data" / "build-report.json"
+    try:
+        data = json.loads(path.read_text(encoding="utf-8"))
+    except Exception as exc:
+        issues.append(issue("warning", "data/build-report.json", "build_report_missing", f"统一构建报告不可读：{exc}"))
+        return
+    rows = data.get("steps")
+    if not isinstance(rows, list) or not rows:
+        issues.append(issue("warning", "data/build-report.json", "bad_build_report", "steps 缺失或为空"))
+        return
+    if data.get("status") == "running":
+        return
+    names = {item.get("name") for item in rows if isinstance(item, dict)}
+    required = {"theme-shifts:pre", "decision-feed:pre", "audit", "data-trust", "monitoring-coverage", "section-health", "static-smoke", "runtime-smoke"}
+    missing = sorted(required - names)
+    if missing:
+        issues.append(issue("warning", "data/build-report.json", "missing_build_steps", f"统一构建缺少步骤：{', '.join(missing)}"))
+    if data.get("status") == "blocked":
+        issues.append(issue("critical", "data/build-report.json", "build_blocked", data.get("summary") or "统一构建阻断发布"))
 
 
 def check_theme_shifts(issues: list[dict[str, Any]]) -> None:

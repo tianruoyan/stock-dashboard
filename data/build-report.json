@@ -1,0 +1,101 @@
+{
+  "status": "ok",
+  "summary": "统一构建完成，未发现发布阻断项。",
+  "steps": [
+    {
+      "name": "theme-shifts:pre",
+      "command": "python3 scripts/build_theme_shifts.py",
+      "returncode": 0,
+      "status": "ok",
+      "blocking": false,
+      "stdout_tail": "theme-shifts: 3 shifts - 风险2；升温1",
+      "stderr_tail": ""
+    },
+    {
+      "name": "decision-feed:pre",
+      "command": "python3 scripts/build_decision_feed.py",
+      "returncode": 0,
+      "status": "ok",
+      "blocking": false,
+      "stdout_tail": "decision-feed: 4 opportunities, 8 risks, 4 verifications",
+      "stderr_tail": ""
+    },
+    {
+      "name": "audit",
+      "command": "python3 scripts/audit_dashboard_data.py",
+      "returncode": 0,
+      "status": "degraded",
+      "blocking": false,
+      "stdout_tail": "degraded: 发现 3 个降级/需复核项，核心结论可看但必须降权。",
+      "stderr_tail": ""
+    },
+    {
+      "name": "theme-shifts:post-audit",
+      "command": "python3 scripts/build_theme_shifts.py",
+      "returncode": 0,
+      "status": "ok",
+      "blocking": false,
+      "stdout_tail": "theme-shifts: 3 shifts - 风险2；升温1",
+      "stderr_tail": ""
+    },
+    {
+      "name": "decision-feed:post-audit",
+      "command": "python3 scripts/build_decision_feed.py",
+      "returncode": 0,
+      "status": "ok",
+      "blocking": false,
+      "stdout_tail": "decision-feed: 4 opportunities, 8 risks, 4 verifications",
+      "stderr_tail": ""
+    },
+    {
+      "name": "data-trust",
+      "command": "python3 scripts/build_data_trust.py",
+      "returncode": 0,
+      "status": "ok",
+      "blocking": false,
+      "stdout_tail": "data-trust: degraded - 1 个数据文件不可用（盘中异动），4 个文件需降权，3 个同日文件已过当前阶段。",
+      "stderr_tail": ""
+    },
+    {
+      "name": "monitoring-coverage",
+      "command": "python3 scripts/build_monitoring_coverage.py",
+      "returncode": 0,
+      "status": "ok",
+      "blocking": false,
+      "stdout_tail": "monitoring-coverage: blind_spot - 1 个核心监测盲区（盘中异动触发盲区），5 个降权盲区。",
+      "stderr_tail": ""
+    },
+    {
+      "name": "section-health",
+      "command": "python3 scripts/build_section_health.py",
+      "returncode": 0,
+      "status": "ok",
+      "blocking": false,
+      "stdout_tail": "section-health: degraded - 1 个区块不可直接使用，9 个区块需降权。",
+      "stderr_tail": ""
+    },
+    {
+      "name": "static-smoke",
+      "command": "python3 scripts/smoke_dashboard_static.py",
+      "returncode": 0,
+      "status": "ok",
+      "blocking": false,
+      "stdout_tail": "ok: 页面静态烟雾测试通过。",
+      "stderr_tail": ""
+    },
+    {
+      "name": "runtime-smoke",
+      "command": "/Users/sweet_orange/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node scripts/smoke_dashboard_runtime.js",
+      "returncode": 0,
+      "status": "ok",
+      "blocking": false,
+      "stdout_tail": "ok: 页面运行时渲染烟雾测试通过。",
+      "stderr_tail": ""
+    }
+  ],
+  "rules": [
+    "先生成 theme-shifts 和 decision-feed，再审计。",
+    "审计会更新 quality-report，因此审计后必须重刷 theme-shifts、decision-feed、data-trust、monitoring、section-health。",
+    "audit/static-smoke/runtime-smoke 出现 critical 才阻断发布；degraded 只作为看板降权提示。"
+  ]
+}

@@ -209,12 +209,10 @@ title: 分析模型说明书
 
 **Codex 职责（写 + 可选推）：**
 1. 产出 JSON 时先写临时文件，写完后 `mv` 覆盖正式文件
-2. 所有本轮 JSON 写完后，执行 `python3 scripts/audit_dashboard_data.py`，更新 `data/quality-report.json`
-3. 执行 `python3 scripts/build_section_health.py`，更新 `data/section-health.json`
-4. 同步执行 `python3 scripts/smoke_dashboard_static.py`，更新 `data/smoke-report.json`
-5. 若数据审计或页面烟雾测试为 critical：不得发布，保留本地报告并修数据/页面
-6. 若审计和烟雾测试不是 critical：创建 `.push-now` 信号文件
-7. 尝试 `scripts/push_with_audit.sh`（内部会再次生成 decision-feed、审计、区块健康、烟雾测试并静默 push）：成功最好，不成功 Cola 会补推
+2. 所有本轮 JSON 写完后，执行 `python3 scripts/build_dashboard_reports.py`，按固定顺序更新 `theme-shifts`、`decision-feed`、`quality-report`、`data-trust`、`monitoring-coverage`、`section-health`、`smoke-report` 和 `runtime-smoke-report`
+3. 若统一构建报告 `data/build-report.json` 为 blocked：不得发布，保留本地报告并修数据/页面
+4. 若统一构建不是 blocked：创建 `.push-now` 信号文件
+5. 尝试 `scripts/push_with_audit.sh`（内部会再次调用统一构建入口并静默 push）：成功最好，不成功 Cola 会补推
 
 **Cola 职责（推 + 兜底）：**
 1. 每 2 分钟扫描一次仓库
@@ -352,6 +350,7 @@ Codex (分析引擎)              Cola (稳定管道)
 | 2026-07-07 | 数据审计新增涨跌幅与当前强弱/涨跌停标签一致性检查 | 防止伪跌停、伪强势、映射文本串线导致观察池和机会风险雷达误判 |
 | 2026-07-07 | data-trust 新增核心文件新鲜度 SLA，当前阶段文件超时自动降权 | 盘中交易不能只看文件是否当天，实时区块必须满足分钟级刷新要求，防止旧 alert/旧全景误导交易 |
 | 2026-07-07 | 新增 theme-shifts 主线变化雷达，识别升温、新线、抱团、降温和风险变化并并入机会/风险雷达 | 平台需要主动发现边际变化，而不是只展示既有专题和用户提示；主线变化必须可追溯、可验证、可降权 |
+| 2026-07-07 | 新增 build_dashboard_reports 统一构建入口，固定衍生数据、审计、可信度、盲区、区块健康和烟雾测试顺序 | 多个脚本互相依赖，分散调用容易造成 quality-report、decision-feed、data-trust 版本错位，影响盘中稳定性 |
 ---
 
 ## 🐍 Python 环境
