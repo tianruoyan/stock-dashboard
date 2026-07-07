@@ -2,6 +2,7 @@
 
 | Display Version | Date | Edition | Tag / Commit | Summary | Rollback Note |
 |---|---:|---:|---|---|---|
+| 2026-07-07 第84版｜总控同步冲突口径 | 2026-07-07 | 第84版 | tag: `v2026.07.07-m84-control-conflict-sync` | 首页「今日总控」接入 `decision-feed.conflicts`：当雷达判定同一主线为 `risk_first` 时，总控核心结论同步显示“主线冲突，风险优先”，并把冲突主题加入回避/降级方向。运行时门禁要求总控必须显示风险优先冲突主题，防止第一屏和雷达口径不一致。 | 回滚到第83版可用 `git checkout v2026.07.07-m83-build-step-error-gate`，或回滚到本版本 tag。 |
 | 2026-07-07 第83版｜构建异常阻断 | 2026-07-07 | 第83版 | tag: `v2026.07.07-m83-build-step-error-gate` | 统一构建脚本现在只要任一步骤返回码非 0 或抛异常，就标记 `script_error` 并阻断发布，不再读取旧报告误判为 degraded；静态烟雾测试同步检查 build-report 中任何异常步骤，防止审计/渲染脚本自身坏掉却被隐藏。 | 回滚到第82版可用 `git checkout v2026.07.07-m82-radar-conflict-check`，或回滚到本版本 tag。 |
 | 2026-07-07 第82版｜雷达冲突校验 | 2026-07-07 | 第82版 | tag: `v2026.07.07-m82-radar-conflict-check` | `decision-feed` 新增 `conflicts`，自动识别同一主线同时进入机会、风险或验证栏的多空冲突，并给出“风险优先，只做验证”或“候选分歧，观察验证”等统一口径；机会/风险雷达顶部新增“冲突校验”条，静态、审计和运行时门禁防止同题材冲突漏判或漏显。 | 回滚到第81版可用 `git checkout v2026.07.07-m81-alert-quote-audit`，或回滚到本版本 tag。 |
 | 2026-07-07 第81版｜异动行情审计契约 | 2026-07-07 | 第81版 | tag: `v2026.07.07-m81-alert-quote-audit` | 非空 `alert.json` 必须带结构化 `quote_audit`，声明行情源、quote_time、涨跌幅字段、样本数、最大 leader 涨跌幅和交叉源验证；污染源环境下未交叉验证直接阻断。盘中异动摘要新增“行情审计”卡，静态和运行时烟雾测试同步防止 active alert 缺审计或页面漏显。 | 回滚到第80版可用 `git checkout v2026.07.07-m80-radar-next-action`，或回滚到本版本 tag。 |

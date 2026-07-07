@@ -269,6 +269,21 @@ function dashboardDecisionGate() {
   const actionable = opportunities.filter(isActionableOpportunity);
   const downgraded = opportunities.filter(item => !isActionableOpportunity(item));
   const risks = (feed.risks || []).filter(item => ["A", "B"].includes(String(item.signal_grade || "").toUpperCase()));
+  const riskFirstConflicts = (feed.conflicts || []).filter(item => item.severity === "risk_first");
+  if (riskFirstConflicts.length) {
+    const focus = riskFirstConflicts[0];
+    return {
+      riskFirst: true,
+      cls: "warn",
+      title: "主线冲突，风险优先",
+      reason: `${focus.theme || "关键主线"}：${focus.verdict || "风险优先，只做验证"}。${focus.action || "先按风险栏处理，满足验证条件后再升级。"}`,
+      avoid: uniqueList([
+        ...riskFirstConflicts.map(item => item.theme).filter(Boolean),
+        ...risks.slice(0, 3).map(item => item.title).filter(Boolean),
+        "数据质量降级"
+      ])
+    };
+  }
   if (!actionable.length && downgraded.length) {
     return {
       riskFirst: true,

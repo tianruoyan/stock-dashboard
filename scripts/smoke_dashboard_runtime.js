@@ -375,6 +375,7 @@ async function main() {
   checkDecisionConflictRendering(radarHtml, issues);
   checkFallbackChecksRendering(radarHtml, coverage, issues);
   checkRadarGateRendering(document, radarHtml, issues);
+  checkDashboardConflictRendering(document, issues);
   checkDashboardTrustGateRendering(document, issues);
   checkDashboardEffectiveTimeRendering(document, issues);
   checkInvalidatedAlertRendering(document, issues);
@@ -540,6 +541,24 @@ function checkDecisionConflictRendering(radarHtml, issues) {
     if (verdict && !rendered.includes(verdict)) {
       issues.push(issue("critical", "signal_conflict_not_rendered", `冲突判定未渲染：${verdict}`, "opportunity-risk-radar"));
     }
+  }
+}
+
+function checkDashboardConflictRendering(document, issues) {
+  const feed = readJsonIfExists("data/decision-feed.json");
+  const conflicts = Array.isArray(feed.conflicts)
+    ? feed.conflicts.filter(item => item && item.severity === "risk_first")
+    : [];
+  if (!conflicts.length) return;
+  const rendered = normalizeRenderedText(document.getElementById("dashboard-control")?.collectHtml() || "");
+  for (const snippet of ["主线冲突", "风险优先"]) {
+    if (!rendered.includes(snippet)) {
+      issues.push(issue("critical", "dashboard_conflict_not_rendered", `今日总控未同步冲突口径：${snippet}`, "dashboard-control"));
+    }
+  }
+  const theme = stableSnippet(conflicts[0].theme);
+  if (theme && !rendered.includes(theme)) {
+    issues.push(issue("critical", "dashboard_conflict_not_rendered", `今日总控未显示风险优先冲突主题：${theme}`, "dashboard-control"));
   }
 }
 
