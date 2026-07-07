@@ -259,7 +259,7 @@ function renderDashboardControl() {
   </div>
   <div class="decision-strip control-strip">
     <div class="decision-card ${decisionGate?.riskFirst ? "neutral" : "primary"}"><span class="decision-label">优先方向</span><b>${escapeHtml(priority[0] || "等待盘面确认")}</b><span>${escapeHtml(priority.slice(1).join(" / ") || "按当日强弱排序，不等同于追高")}</span></div>
-    <div class="decision-card action"><span class="decision-label">关联题材</span><b>${escapeHtml(relatedTags[0] || "等待映射")}</b><span>${escapeHtml(relatedTags.slice(1).join(" / ") || "从当日板块和题材映射归类")}</span></div>
+    <div class="decision-card action"><span class="decision-label">关联题材</span><b>${escapeHtml(relatedTags[0] || "等待映射")}</b><span>${escapeHtml(relatedTopicHint(relatedTags))}</span></div>
     <div class="decision-card ${decisionGate?.riskFirst ? "neutral" : "primary"}"><span class="decision-label">进攻盯 · ${escapeHtml(decisionGate?.riskFirst ? "暂停" : attackCandidate.source)}</span><b>${escapeHtml(decisionGate?.riskFirst ? "暂无进攻点" : (attackWatch[0] || "暂无"))}</b><span>${escapeHtml(decisionGate?.riskFirst ? "只看承接和扩散，不做追高触发" : (attackWatch.slice(1).join(" / ") || attackCandidate.note))}</span></div>
     <div class="decision-card risk"><span class="decision-label">风险盯 · ${escapeHtml(riskCandidate.source)}</span><b>${escapeHtml(riskWatch[0] || "暂无")}</b><span>${escapeHtml(riskWatch.slice(1).join(" / ") || riskCandidate.note)}</span></div>
     <div class="decision-card risk"><span class="decision-label">暂不参与</span><b>${escapeHtml(avoid[0] || "暂无明确")}</b><span>${escapeHtml(avoid.slice(1).join(" / ") || eventWatch[0] || "看弱线和P0是否扩散")}</span></div>
@@ -322,10 +322,18 @@ function collectDashboardThemeRows(intraday, postmarket) {
 function dedupeThemeRows(rows) {
   const byName = new Map();
   for (const row of rows) {
-    const existing = byName.get(row.display);
-    if (!existing || row.score > existing.score) byName.set(row.display, row);
+    const key = normalizeThemeName(row.display);
+    const existing = byName.get(key);
+    const normalized = { ...row, display: key };
+    if (!existing || normalized.score > existing.score) byName.set(key, normalized);
   }
   return [...byName.values()];
+}
+
+function relatedTopicHint(tags) {
+  const rows = uniqueList((tags || []).map(normalizeThemeName).filter(Boolean));
+  if (rows.length <= 1) return "按当日板块和题材映射归类";
+  return `相关分类：${rows.slice(1).join(" / ")}`;
 }
 
 function dashboardTrustGate() {
@@ -2761,8 +2769,15 @@ function buildIntradaySectorLists(data) {
 }
 
 function trendName(item) {
-  if (typeof item === "string") return item;
-  return item?.name || item?.sector || item?.theme || item?.title || "未命名主线";
+  const raw = typeof item === "string" ? item : (item?.name || item?.sector || item?.theme || item?.title || "未命名主线");
+  return normalizeThemeName(raw);
+}
+
+function normalizeThemeName(value) {
+  return String(value || "")
+    .replace(/^(主线变化|新线观察|替代观察|验证|机会|风险)\s*[：:]\s*/g, "")
+    .replace(/\s+有升温迹象.*$/g, "")
+    .trim() || "未命名主线";
 }
 
 function themeDisplayName(item) {

@@ -736,6 +736,9 @@ function checkDashboardThemeCards(document, issues) {
       issues.push(issue("critical", "dashboard_theme_card_action_text", `题材卡仍展示处理动作而不是盘面题材：${snippet}`, "dashboard-control"));
     }
   }
+  if (/主线变化[：:]老登风格切换.*老登风格切换/.test(rendered)) {
+    issues.push(issue("critical", "dashboard_theme_duplicate", "题材卡仍重复展示主线变化前缀和原题材名", "dashboard-control"));
+  }
 }
 
 function checkFallbackChecksRendering(radarHtml, coverage, issues) {
