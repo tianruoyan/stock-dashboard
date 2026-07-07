@@ -1080,19 +1080,14 @@ function renderCodexIntraday(data) {
 
   // 情绪详情
   if (data.sentiment && typeof data.sentiment === 'object' && Object.keys(data.sentiment).length > 0) {
-    html += '<div class="subsection"><h3>📈 盘面情绪</h3><ul class="news-list">';
-    for (const [k, v] of Object.entries(data.sentiment)) {
-      if (v === null || v === undefined || v === "") continue;
-      const label = intradaySentimentLabel(k);
-      html += `<li><b>${label}</b>：${escapeHtml(formatDisplayValue(v))}</li>`;
-    }
-    html += '</ul></div>';
+    html += renderIntradaySentimentBlock(data.sentiment);
   }
 
   // 操作建议
-  if (data.actions) {
-    html += '<div class="subsection"><h3>💡 午后建议</h3><ul class="news-list">';
-    html += data.actions.map(a => `<li>${a}</li>`).join('');
+  const afternoonAdvice = intradayAdviceItems(data);
+  if (afternoonAdvice.length) {
+    html += '<div class="subsection"><h3>💡 午后建议</h3><ul class="news-list strong">';
+    html += afternoonAdvice.slice(0, 6).map(a => `<li>${escapeHtml(a)}</li>`).join('');
     html += '</ul></div>';
   }
 
@@ -1127,6 +1122,40 @@ function renderCodexIntraday(data) {
   }
   analysisEl.innerHTML = html;
   analysisEl.style.display = 'block';
+}
+
+function renderIntradaySentimentBlock(sentiment) {
+  const items = Object.entries(sentiment || {}).filter(([, v]) => v !== null && v !== undefined && v !== "");
+  if (!items.length) return "";
+  const judgement = sentiment.judgement || sentiment.interpretation || "";
+  const headline = judgement ? `<div class="breadth"><b>${escapeHtml(judgement)}</b></div>` : "";
+  let html = `<div class="subsection"><h3>📈 盘面情绪</h3>${headline}<ul class="news-list">`;
+  for (const [k, v] of items) {
+    if (["judgement", "interpretation"].includes(k)) continue;
+    const label = intradaySentimentLabel(k);
+    html += `<li><b>${label}</b>：${escapeHtml(formatDisplayValue(v))}</li>`;
+  }
+  html += '</ul></div>';
+  return html;
+}
+
+function intradayAdviceItems(data) {
+  const midday = cached("data/midday.json") || {};
+  const items = [
+    ...arrayTextItems(data.actions),
+    ...arrayTextItems(data.afternoon_watch),
+    ...arrayTextItems(midday.afternoon_watch)
+  ];
+  return uniqueList(items).filter(Boolean);
+}
+
+function arrayTextItems(value) {
+  if (!Array.isArray(value)) return [];
+  return value.map(item => {
+    if (typeof item === "string") return item;
+    if (!item || typeof item !== "object") return "";
+    return item.text || item.action || item.note || item.name || JSON.stringify(item);
+  }).filter(Boolean);
 }
 
 function renderSectorList(elId, sectors, dir) {
@@ -1246,6 +1275,9 @@ function intradaySentimentLabel(key) {
     limit_down_count: "跌停数",
     limit_diff: "涨跌停差值",
     broken_limit_count: "炸板数",
+    limit_up_pct_estimated: "涨停占比估算",
+    limit_down_pct_estimated: "跌停占比估算",
+    compare_with_last: "较上一时点",
     limit_ratio: "涨跌停比",
     judgement: "情绪判断",
     interpretation: "解读",
