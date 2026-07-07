@@ -1,45 +1,51 @@
 {
-  "timestamp": "2026-07-07T14:34:21+08:00",
+  "timestamp": "2026-07-07T15:16:39+08:00",
   "sources": {
     "tencent_http": {
       "status": "ok",
-      "usage": "指数、ETF、港股与观察池实时报价",
-      "checked_at": "2026-07-07T14:34:21+08:00",
-      "errors": []
+      "usage": "指数、ETF、港股、观察池与全A批量报价；全Araw 5527，clean 5310",
+      "checked_at": "2026-07-07T15:16:39+08:00",
+      "errors": [],
+      "all_quote_errors_count": 0
     },
     "eastmoney_push2_akshare": {
       "status": "ok",
-      "usage": "涨停池30、跌停池31、炸板池26及结构分布",
-      "checked_at": "2026-07-07T14:34:21+08:00",
+      "usage": "涨停池33、跌停池23、炸板池23",
+      "checked_at": "2026-07-07T15:16:39+08:00",
       "errors": {}
+    },
+    "tencent_minute": {
+      "status": "ok",
+      "usage": "14:55-15:00尾盘关键样本分钟线",
+      "checked_at": "2026-07-07T15:16:39+08:00",
+      "sample_errors": {}
     },
     "mootdx_tdx": {
       "status": "not_used",
-      "usage": "本次腾讯HTTP可用，未启用通达信降级",
-      "checked_at": "2026-07-07T14:34:21+08:00"
+      "usage": "腾讯HTTP和分钟线可用，未启用通达信降级",
+      "checked_at": "2026-07-07T15:16:39+08:00"
     },
     "ths_sina_or_akshare_quote_decode": {
       "status": "degraded",
-      "usage": "监控日志中的补充行情/同花顺新浪或akshare报价链路",
-      "checked_at": "2026-07-07T14:34:21+08:00",
-      "note": "继承14:15监控日志异常：Can not decode value starting with character \"<\"；本轮核心行情使用腾讯HTTP与东方财富结构数据。"
+      "usage": "新浪/同花顺补充报价链路",
+      "checked_at": "2026-07-07T15:16:39+08:00",
+      "note": "akshare新浪A股spot继续出现Can not decode value starting with character \"<\"；已用腾讯全A批量报价替代。"
     }
   },
   "rules": [
     "高频盘中行情优先使用 mootdx / 腾讯，禁止用东财做全市场高频轮询。",
     "东财只用于涨停池、炸板池、跌停池、资金流、龙虎榜等独有结构数据，并且必须限流。",
-    "盘中异动先由行情数据生成候选信号，再由模型解释题材、扩散、持续性和风险。",
-    "盘前、盘后、晚间结论必须带 evidence 或 source，无法验证的内容只能列为观察。",
-    "任一数据源失败时保留上一版 JSON，并在 source-health.json 标注降级或异常。"
+    "收盘复盘必须先做14:55-15:00尾盘校验，再写postmarket.json。",
+    "任一数据源失败时保留上一版 JSON，并在source-health.json标注降级或异常。"
   ],
   "last_effective_run": {
-    "timestamp": "2026-07-07T14:34:21+08:00",
-    "type": "intraday_1430_update",
-    "result": "updated_intraday_topics_with_degraded_supplemental_quote_source",
+    "timestamp": "2026-07-07T15:16:39+08:00",
+    "type": "postmarket_a_share_close",
+    "result": "updated_postmarket_topics_with_tail_check",
     "degraded_sources": [
       "ths_sina_or_akshare_quote_decode"
     ]
   },
   "status": "degraded",
-  "notes": "14:30腾讯HTTP与东方财富结构数据可用；补充报价链路延续降级标注。"
+  "notes": "收盘核心数据由腾讯HTTP全A报价、腾讯分钟线、东方财富/akshare结构池完成；新浪/同花顺补充链路仍降级。"
 }
