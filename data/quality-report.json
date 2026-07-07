@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-07-08T00:24:12+08:00",
+  "timestamp": "2026-07-08T00:32:10+08:00",
   "current_signal_date": "2026-07-07",
   "status": "degraded",
   "summary": "发现 5 个降级/需复核项（2 个交易阻断，2 个价格/行情复核，1 个背景复核），核心结论可看但必须按影响分层使用。",
@@ -18,7 +18,7 @@
       "file": "source-health.json",
       "path": "",
       "code": "source_degraded",
-      "message": "ths_sina_or_akshare_quote_decode: akshare A股spot继续出现Can not decode value starting with character \"<\"；14:13:52 alert 批次已确认污染北方华创/中微公司等涨跌幅，已撤下该批 alert，并要求盘中提醒优先使用行情源原始涨跌幅字段。",
+      "message": "A股补充行情源解码异常，盘中异动和个股涨跌幅需以已审计源复核。",
       "impact_level": "blocking",
       "decision_action": "对应信号等待重产，页面必须显示阻断"
     },
@@ -36,7 +36,7 @@
       "file": "source-health.json",
       "path": "",
       "code": "source_failed",
-      "message": "eastmoney_hk_akshare: akshare.stock_hk_spot_em failed with Eastmoney push2 proxy disconnect; akshare.stock_hk_spot JSON decode failed.",
+      "message": "港股结构行情源连接/解码异常，港股映射和收盘窗口价格需二次复核。",
       "impact_level": "price_review",
       "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
     },
@@ -68,7 +68,7 @@
       "label": "先修复阻断",
       "file": "source-health.json",
       "code": "source_degraded",
-      "problem": "ths_sina_or_akshare_quote_decode: akshare A股spot继续出现Can not decode value starting with character \"<\"；14:13:52 alert 批次已确认污染北方华创/中微公司等涨跌幅，已撤…",
+      "problem": "A股补充行情源解码异常，盘中异动和个股涨跌幅需以已审计源复核。",
       "decision_action": "对应信号等待重产，页面必须显示阻断",
       "next_step": "暂停对应交易触发；等待污染批次撤下、可信行情源恢复并重产 JSON。",
       "unblock_condition": "quality-report blocking=0，相关文件不再 invalidated/missing。"

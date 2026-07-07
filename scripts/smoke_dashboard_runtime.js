@@ -389,6 +389,7 @@ async function main() {
   checkRadarGateRendering(document, radarHtml, issues);
   checkDashboardConflictRendering(document, issues);
   checkDashboardTrustGateRendering(document, issues);
+  checkSectionUpcomingTrustRendering(document, issues);
   checkDashboardEffectiveTimeRendering(document, issues);
   checkInvalidatedAlertRendering(document, issues);
   checkActiveAlertAuditRendering(document, issues);
@@ -786,6 +787,28 @@ function checkDashboardTrustGateRendering(document, issues) {
   for (const snippet of expected.slice(0, 4)) {
     if (!rendered.includes(snippet)) {
       issues.push(issue("critical", "dashboard_trust_gate_not_rendered", `今日总控缺少文件可信状态：${snippet}`, "dashboard-control"));
+    }
+  }
+}
+
+function checkSectionUpcomingTrustRendering(document, issues) {
+  const trust = readJsonIfExists("data/data-trust.json");
+  const files = Array.isArray(trust.files) ? trust.files : [];
+  const fileToSection = new Map([
+    ["data/intraday.json", "section-intraday"],
+    ["data/premarket.json", "section-premarket"],
+    ["data/midday.json", "section-midday"],
+    ["data/postmarket.json", "section-postmarket"],
+    ["data/evening-sentiment.json", "section-evening"],
+    ["data/topics.json", "section-topics"]
+  ]);
+  for (const file of files.filter(item => item.session_relevance === "upcoming")) {
+    const target = fileToSection.get(file.file);
+    if (!target) continue;
+    const rendered = normalizeRenderedText(document.getElementById(target)?.collectHtml() || "");
+    const expected = file.session_action || "等待对应阶段产出";
+    if (!rendered.includes(expected)) {
+      issues.push(issue("critical", "section_upcoming_state_not_rendered", `${file.label} 未显示待产出状态：${expected}`, target));
     }
   }
 }

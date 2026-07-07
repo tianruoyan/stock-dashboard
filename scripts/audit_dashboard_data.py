@@ -915,10 +915,21 @@ def issue(severity: str, file: str, code: str, message: str, path: str = "") -> 
         "file": file,
         "path": path,
         "code": code,
-        "message": message,
+        "message": user_facing_source_message(message),
         "impact_level": impact_level,
         "decision_action": decision_action,
     }
+
+
+def user_facing_source_message(message: str) -> str:
+    text = str(message or "")
+    if re.search(r"Can not decode value starting with|JSON decode failed|proxy disconnect|failed with|decode failed", text, re.I):
+        if re.search(r"hk|港股|stock_hk|Eastmoney|push2", text, re.I):
+            return "港股结构行情源连接/解码异常，港股映射和收盘窗口价格需二次复核。"
+        if re.search(r"japan|korea|nikkei|kospi|日韩|日经|韩国", text, re.I):
+            return "日韩早盘实时源异常，页面仅保留待复核清单，不展示未核实数值。"
+        return "A股补充行情源解码异常，盘中异动和个股涨跌幅需以已审计源复核。"
+    return text
 
 
 def issue_impact(code: str, file: str, message: str) -> tuple[str, str]:

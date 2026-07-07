@@ -110,8 +110,19 @@ def source_health_flags(source_health: dict[str, Any]) -> list[str]:
         if not isinstance(source, dict):
             continue
         if source.get("status") in {"degraded", "bad", "failed"}:
-            rows.append(f"{name}: {source.get('note') or source.get('detail') or source.get('usage') or source.get('status')}")
+            rows.append(source_flag_message(name, source))
     return clean_list(rows)
+
+
+def source_flag_message(name: str, source: dict[str, Any]) -> str:
+    text = f"{name}: {source.get('note') or source.get('detail') or source.get('usage') or source.get('status')}"
+    if re.search(r"Can not decode value starting with|JSON decode failed|proxy disconnect|failed with|decode failed", text, re.I):
+        if re.search(r"hk|港股|stock_hk|Eastmoney|push2", text, re.I):
+            return "港股结构行情源连接/解码异常，港股映射和收盘窗口价格需二次复核。"
+        if re.search(r"japan|korea|nikkei|kospi|日韩|日经|韩国", text, re.I):
+            return "日韩早盘实时源异常，页面仅保留待复核清单，不展示未核实数值。"
+        return "A股补充行情源解码异常，盘中异动和个股涨跌幅需以已审计源复核。"
+    return text
 
 
 def latest_signal_date(payloads: dict[str, Any]) -> str:

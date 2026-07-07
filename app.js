@@ -698,6 +698,7 @@ function summarizeSectionHealth(report) {
 function renderSectionHealthBadges() {
   const report = cached("data/section-health.json");
   if (!report || !Array.isArray(report.sections)) return;
+  const trustBySection = sectionTrustRows();
   report.sections.forEach(section => {
     const panel = document.getElementById(`section-${section.id}`);
     if (!panel) return;
@@ -708,10 +709,62 @@ function renderSectionHealthBadges() {
       const heading = panel.querySelector("h2");
       heading?.insertAdjacentElement("afterend", badge);
     }
-    const cls = sectionHealthClass(section.status);
+    const trust = trustBySection.get(section.id);
+    const view = sectionBadgeView(section, trust);
+    const cls = sectionHealthClass(view.status);
     badge.className = `section-health-badge ${cls}`;
-    badge.innerHTML = `<span>${escapeHtml(section.action || section.status || "待确认")}</span><b>${escapeHtml(truncateText(userFacingText(section.reason || "区块状态待确认"), 120))}</b>`;
+    badge.innerHTML = `<span>${escapeHtml(view.action)}</span><b>${escapeHtml(truncateText(userFacingText(view.reason), 120))}</b>`;
   });
+}
+
+function sectionTrustRows() {
+  const trust = cached("data/data-trust.json");
+  const rows = Array.isArray(trust?.files) ? trust.files : [];
+  const byFile = new Map(rows.map(row => [String(row.file || "").replace(/^data\//, ""), row]));
+  const map = new Map();
+  const sectionFiles = {
+    alerts: "alert.json",
+    intraday: "intraday.json",
+    premarket: "premarket.json",
+    midday: "midday.json",
+    postmarket: "postmarket.json",
+    evening: "evening-sentiment.json",
+    topics: "topics.json"
+  };
+  Object.entries(sectionFiles).forEach(([section, file]) => {
+    const row = byFile.get(file);
+    if (row) map.set(section, row);
+  });
+  return map;
+}
+
+function sectionBadgeView(section, trust) {
+  if (trust?.session_relevance === "upcoming") {
+    return {
+      status: "stale",
+      action: trust.session_action || "等待对应阶段产出",
+      reason: `${trust.label || section.label || "该区块"}：${trust.session_reason || "对应阶段尚未到来，当前仅保留上一交易日回看。"}`
+    };
+  }
+  if (trust?.session_relevance === "blocked" || ["invalidated", "missing"].includes(trust?.status)) {
+    return {
+      status: trust.status || "invalidated",
+      action: trust.use_action || trust.session_action || "不可用于当前决策",
+      reason: trust.reason || section.reason || "该区块当前不可用"
+    };
+  }
+  if (trust?.session_relevance === "current" && trust.status === "degraded") {
+    return {
+      status: "degraded",
+      action: trust.use_action || "降权参考",
+      reason: trust.reason || section.reason || "当前阶段可看但需降权"
+    };
+  }
+  return {
+    status: section.status,
+    action: section.action || section.status || "待确认",
+    reason: section.reason || "区块状态待确认"
+  };
 }
 
 function sectionHealthClass(status) {
