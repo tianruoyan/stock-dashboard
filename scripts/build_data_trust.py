@@ -73,6 +73,7 @@ def trust_row(spec: dict[str, Any], data: Any, current_date: str, quality_issues
     status = "trusted"
     ts = data.get("timestamp") if isinstance(data, dict) else ""
 
+    row_signal_date = signal_date_for_row(rel, data, ts)
     if not path.exists() or data in (None, {}):
         status = "missing"
         reasons.append("文件缺失或不可读")
@@ -82,9 +83,9 @@ def trust_row(spec: dict[str, Any], data: Any, current_date: str, quality_issues
     elif isinstance(data, dict) and data.get("source_status") == "invalidated":
         status = "invalidated"
         reasons.append(data.get("note") or "数据批次已撤下")
-    elif ts and signal_date(ts) and current_date and signal_date(ts) != current_date:
+    elif row_signal_date and current_date and row_signal_date != current_date:
         status = "stale"
-        reasons.append(f"时间戳不是当前交易日：{ts}")
+        reasons.append(f"数据交易日不是当前交易日：{row_signal_date}")
     elif rel.endswith("decision-feed.json"):
         feed_status, feed_reasons = decision_feed_status(data)
         status = worse_status(status, feed_status)
@@ -114,6 +115,7 @@ def trust_row(spec: dict[str, Any], data: Any, current_date: str, quality_issues
         "label": spec["label"],
         "role": spec["role"],
         "timestamp": ts or "",
+        "signal_date": row_signal_date or "",
         "status": status,
         "session_phase": phase,
         "session_relevance": session["relevance"],
@@ -351,9 +353,10 @@ def session_relevance(spec: dict[str, Any], status: str, phase: str) -> dict[str
             "reason": "专题/配置类结论不绑定单一盘中阶段",
         }
     if session == "decision":
+        current_phases = {"premarket", "morning", "midday", "afternoon", "postmarket", "evening", "overnight"}
         return {
-            "relevance": "current" if phase in {"premarket", "morning", "midday", "afternoon", "postmarket", "evening"} else "historical",
-            "action": "当前决策流" if phase in {"premarket", "morning", "midday", "afternoon", "postmarket", "evening"} else "隔夜前需重刷",
+            "relevance": "current" if phase in current_phases else "historical",
+            "action": "当前决策流" if phase in current_phases else "隔夜前需重刷",
             "reason": "机会风险流随核心数据刷新，需结合文件可信度使用",
         }
     matrix = {
@@ -417,6 +420,14 @@ def latest_signal_date(payloads: dict[str, Any]) -> str:
         if date:
             dates.append(date)
     return sorted(dates)[-1] if dates else now_iso()[:10]
+
+
+def signal_date_for_row(rel: str, data: Any, timestamp: Any) -> str:
+    if isinstance(data, dict) and rel in {"data/theme-shifts.json", "data/decision-feed.json"}:
+        current_signal_date = data.get("current_signal_date")
+        if current_signal_date:
+            return str(current_signal_date)
+    return signal_date(timestamp)
 
 
 def load_json(path: Path) -> Any:

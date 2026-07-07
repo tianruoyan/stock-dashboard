@@ -531,8 +531,8 @@ def check_data_trust(issues: list[dict[str, Any]]) -> None:
                 issues.append(issue("warning", "data/data-trust.json", "postmarket_false_stale", "盘后复盘在晚间/隔夜/盘前阶段不应按 6 小时实时 SLA 误报超时"))
             if int(item.get("freshness_minutes") or 0) < 1080:
                 issues.append(issue("warning", "data/data-trust.json", "postmarket_short_sla", "盘后复盘隔夜有效期应至少覆盖到次日盘前"))
-        if item.get("file") == "data/decision-feed.json" and phase == "evening" and item.get("session_relevance") == "historical":
-            issues.append(issue("warning", "data/data-trust.json", "decision_feed_false_historical", "晚间机会风险流应作为当前决策材料，而不是历史回看"))
+        if item.get("file") == "data/decision-feed.json" and phase in {"evening", "overnight"} and item.get("session_relevance") == "historical":
+            issues.append(issue("warning", "data/data-trust.json", "decision_feed_false_historical", "晚间/隔夜机会风险流应作为当前决策材料，而不是历史回看"))
 
 
 def check_monitoring_coverage(issues: list[dict[str, Any]]) -> None:

@@ -2,6 +2,7 @@
 
 | Display Version | Date | Edition | Tag / Commit | Summary | Rollback Note |
 |---|---:|---:|---|---|---|
+| 2026-07-08 第104版｜隔夜决策流口径 | 2026-07-08 | 第104版 | tag: `v2026.07.08-m104-overnight-decision-trust` | 修复隔夜跨零点文件可信度：`theme-shifts.json` 和 `decision-feed.json` 按 `current_signal_date` 判断交易日，生成时间只用于新鲜度；overnight 阶段的机会风险流/主线变化标记为“当前决策流”，不再误判为历史回看。静态门禁要求晚间/隔夜 decision-feed 不得被标成 historical。 | 回滚到第103版可用 `git checkout v2026.07.07-m103-signal-queue`，或回滚到本版本 tag。 |
 | 2026-07-07 第103版｜信号可用性队列 | 2026-07-07 | 第103版 | tag: `v2026.07.07-m103-signal-queue` | `decision-feed` 新增 `signal_queue`，把信号拆成可用机会、风险优先、只做验证、禁用直用四类；机会/风险雷达顶部新增“信号可用性”状态条，先展示哪些信号能跟踪、哪些只能验证或禁用直用。同时修复午夜后 `data-trust.current_signal_date` 被构建时间带偏的问题，文件可信度跟随最新交易数据日期，静态门禁检查 data-trust、decision-feed、quality-report 交易日一致。 | 回滚到第102版可用 `git checkout v2026.07.07-m102-source-id-gate`，或回滚到本版本 tag。 |
 | 2026-07-07 第102版｜技术源ID门禁 | 2026-07-07 | 第102版 | tag: `v2026.07.07-m102-source-id-gate` | 运行时门禁新增全页面技术源 ID 拦截：页面渲染后不得出现 `ths_sina_or_akshare_quote_decode`、`tencent_hk_http`、`eastmoney_hk_akshare`、`official_policy_global_web_scan` 等内部源名，必须显示中文数据源名称或中文复核提示。 | 回滚到第101版可用 `git checkout v2026.07.07-m101-source-label-cleanup`，或回滚到本版本 tag。 |
 | 2026-07-07 第101版｜源名中文化 | 2026-07-07 | 第101版 | tag: `v2026.07.07-m101-source-label-cleanup` | 用户侧展示清洗新增源名翻译：`ths_sina_or_akshare_quote_decode`、`tencent_hk_http`、`eastmoney_hk_akshare` 等技术 ID 在页面中显示为 A股行情源、港股腾讯报价、港股东方财富/akshare 等中文名称；运行时门禁从局部扩展为全页面拦截底层英文源错误。 | 回滚到第100版可用 `git checkout v2026.07.07-m100-radar-source-cleanup`，或回滚到本版本 tag。 |
