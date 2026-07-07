@@ -14,7 +14,7 @@ const REQUIRED_RENDER_TARGETS = [
   "dashboard-control",
   "watchlist-decision",
   "alerts-summary",
-  "intraday-decision",
+  "intraday-analysis",
   "intraday-indices",
   "premarket",
   "midday",

@@ -21,7 +21,7 @@ CRITICAL_IDS = {
     "dashboard-control",
     "watchlist-decision",
     "alerts",
-    "intraday-decision",
+    "intraday-analysis",
     "intraday-indices",
     "premarket",
     "midday",

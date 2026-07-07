@@ -2751,7 +2751,6 @@ function alertQuoteAuditSummary(data) {
 ========================= */
 function renderIntraday(data) {
   updatePanelMeta("intraday-indices", data.timestamp);
-  renderIntradayDecision(data);
 
   const idxEl = document.getElementById("intraday-indices");
   const intradayIndices = intradayIndexItems(data);
@@ -2784,42 +2783,6 @@ function renderIntraday(data) {
   if (data.main_trends && data.main_trends.length) {
     renderSectorList("concept-top", data.main_trends, "up");
   }
-}
-
-function renderIntradayDecision(data) {
-  const el = document.getElementById("intraday-decision");
-  if (!el) return;
-  const themes = getIntradayThemes(data);
-  const strong = themes.filter(isPriorityTheme);
-  const risks = themes.filter(t => isAvoidTheme(t) && !strong.some(s => trendName(s) === trendName(t)));
-  const sentiment = intradayMood(data);
-  const action = intradayActionText(data, strong, risks, sentiment);
-  const indexSignal = intradayIndexSignal(data);
-  const widthSignal = intradayWidthSignal(data, sentiment);
-  const riskSignal = intradayRiskSpreadSignal(data, risks);
-
-  el.innerHTML = `
-    <div class="decision-card ${indexSignal.cls}">
-      <span class="decision-label">指数温度</span>
-      <b>${escapeHtml(indexSignal.title)}</b>
-      <span>${escapeHtml(indexSignal.detail)}</span>
-    </div>
-    <div class="decision-card ${widthSignal.cls}">
-      <span class="decision-label">市场宽度</span>
-      <b>${escapeHtml(widthSignal.title)}</b>
-      <span>${escapeHtml(widthSignal.detail)}</span>
-    </div>
-    <div class="decision-card ${riskSignal.cls}">
-      <span class="decision-label">风险扩散</span>
-      <b>${escapeHtml(riskSignal.title)}</b>
-      <span>${escapeHtml(riskSignal.detail)}</span>
-    </div>
-    <div class="decision-card action">
-      <span class="decision-label">盘中观察</span>
-      <b>${escapeHtml(action.title)}</b>
-      <span>${escapeHtml(action.detail)}</span>
-    </div>
-  `;
 }
 
 function getIntradayThemes(data) {
@@ -2940,7 +2903,7 @@ function renderCodexIntraday(data) {
   const riskSignal = intradayRiskSpreadSignal(data, risks);
   const strongText = strong.map(t => themeDisplayName(t)).join(" / ") || "暂无明确强度证据";
   const riskText = risks.map(t => themeDisplayName(t)).join(" / ") || "暂无明确风险证据";
-  const adviceText = afternoonAdvice.slice(0, 3).join("；") || action.detail;
+  const adviceItems = intradayObservationItems(afternoonAdvice, action);
 
   let html = `
     <div class="subsection intraday-snapshot">
@@ -2969,7 +2932,9 @@ function renderCodexIntraday(data) {
         <div class="snapshot-item snapshot-wide">
           <span>盘中观察</span>
           <b>${escapeHtml(action.title)}</b>
-          <em>${escapeHtml(adviceText)}</em>
+          <ul class="snapshot-list">
+            ${adviceItems.map(item => `<li>${escapeHtml(item)}</li>`).join("")}
+          </ul>
         </div>
       </div>
     </div>
@@ -2984,6 +2949,21 @@ function renderCodexIntraday(data) {
   }
   analysisEl.innerHTML = html;
   analysisEl.style.display = 'block';
+}
+
+function intradayObservationItems(items, action) {
+  const source = (Array.isArray(items) && items.length) ? items.slice(0, 3) : [action.detail];
+  return source
+    .flatMap(item => String(item || "").split(/[；;]/))
+    .map(cleanObservationText)
+    .filter(Boolean);
+}
+
+function cleanObservationText(text) {
+  return String(text || "")
+    .replace(/^[；;\s]+/g, "")
+    .replace(/[；;\s]+$/g, "")
+    .trim();
 }
 
 function intradayIndexItems(data) {
