@@ -458,9 +458,9 @@ function checkDataRenderCoverage(document, issues) {
   const postmarket = readJsonIfExists("data/postmarket.json");
   const topics = readJsonIfExists("data/topics.json");
 
-  addCoverageCheck(checks, "section-intraday", intraday.summary, "盘中全景 summary 未渲染");
-  addCoverageCheck(checks, "section-intraday", firstThemeName(intraday.main_trends), "盘中全景主线未渲染");
-  addCoverageCheck(checks, "section-intraday", firstActionText(intraday.actions), "盘中全景行动建议未渲染");
+  addCoverageCheck(checks, "section-intraday", intraday.sentiment?.judgement || intraday.sentiment?.interpretation, "盘中全景盘面状态未渲染");
+  addCoverageCheck(checks, "section-intraday", intraday.sentiment?.limit_up_count != null ? `涨停${intraday.sentiment.limit_up_count}` : "", "盘中全景宽度未渲染");
+  addCoverageCheck(checks, "section-intraday", firstThemeName(intraday.main_trends).split(/[\/／]/)[0], "盘中全景主线未渲染");
   addCoverageCheck(checks, "section-intraday", firstIndexName(intraday), "盘中全景指数/港股快照未渲染");
   addCoverageCheck(checks, "section-premarket", premarket.summary, "早盘 summary 未渲染");
   addCoverageCheck(checks, "section-midday", midday.morning_review?.one_sentence, "午盘一句话复盘未渲染");
