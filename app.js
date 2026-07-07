@@ -10,6 +10,7 @@ const FILES = [
   "data/data-trust.json",
   "data/monitoring-coverage.json",
   "data/decision-feed.json",
+  "data/theme-shifts.json",
   "data/signal-review.json",
   "config/watchlist.json",
   "config/alert-config.json",
@@ -47,13 +48,14 @@ async function updateAll() {
         render(file, data);
       }
     } catch (e) {
-      if (file.includes("signal-review") || file.includes("quality-report") || file.includes("data-trust") || file.includes("monitoring-coverage") || file.includes("decision-feed") || file.includes("section-health")) {
+      if (file.includes("signal-review") || file.includes("quality-report") || file.includes("data-trust") || file.includes("monitoring-coverage") || file.includes("decision-feed") || file.includes("theme-shifts") || file.includes("section-health")) {
         cache[file] = null;
         if (file.includes("signal-review")) renderSignalReview(null);
         if (file.includes("quality-report")) renderDataQualityGate();
         if (file.includes("data-trust")) renderDataQualityGate();
         if (file.includes("monitoring-coverage")) renderDataQualityGate();
         if (file.includes("decision-feed")) renderOpportunityRiskRadar();
+        if (file.includes("theme-shifts")) renderOpportunityRiskRadar();
         if (file.includes("section-health")) renderDataQualityGate();
       } else {
         console.error("load failed:", file);
@@ -79,6 +81,7 @@ function render(file, data) {
   else if (file === "data/data-trust.json") renderDataQualityGate();
   else if (file === "data/monitoring-coverage.json") renderDataQualityGate();
   else if (file === "data/decision-feed.json") renderOpportunityRiskRadar();
+  else if (file === "data/theme-shifts.json") renderOpportunityRiskRadar();
   else if (file === "data/signal-review.json") renderSignalReview(data);
   else if (file === "config/watchlist.json") renderWatchlistDecision();
   else if (file === "config/alert-config.json") renderPortfolioRisk();
@@ -690,6 +693,7 @@ function discoveryTypeLabel(value) {
     topic_watch_scan: "专题观察继承",
     risk_guardrail: "风控兜底",
     verification_queue: "待验证队列",
+    theme_shift_scan: "主线变化扫描",
     derived_signal: "模型派生"
   }[value] || String(value || "模型派生");
 }

@@ -25,6 +25,7 @@ def main() -> int:
             "topics.json",
             "quality-report.json",
             "source-health.json",
+            "theme-shifts.json",
         )
     }
     signal_date = latest_signal_date(files)
@@ -42,6 +43,7 @@ def main() -> int:
             "quality-report 为 degraded/critical 时，所有机会必须带 quality_flags 并自动降权。",
             "每条信号必须输出 signal_grade/use_action/use_reasons，前端按可用性而不是标题强弱展示。",
             "每条信号必须输出 discovery_type/evidence_score/missing_evidence，用于区分主动发现、继承专题、风险兜底和证据缺口。",
+            "theme-shifts 用于识别升温、新线、抱团、降温和风险变化，并进入机会/风险/验证栏。",
         ],
     }
     OUT.write_text(json.dumps(feed, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
@@ -98,6 +100,23 @@ def build_opportunities(files: dict[str, Any], current_date: str) -> list[dict[s
             quality_flags=gate["decision_flags"] if quality_degraded else [],
         ))
 
+    for shift in theme_shift_candidates(files, {"warming", "emerging"}):
+        shift_text = " ".join([shift.get("theme", ""), shift.get("conclusion", ""), shift.get("risk", "")])
+        items.append(decision_item(
+            title=f"主线变化：{shift.get('theme')}",
+            item_type="theme_shift",
+            conclusion=shift.get("conclusion") or "主线有边际升温迹象。",
+            confidence="low" if quality_degraded else "medium",
+            evidence=shift.get("evidence") or [],
+            watch_next=shift.get("watch_next") or [],
+            invalidation=shift.get("risk") or "次日不能继续扩散或核心股冲高回落，则降级为观察。",
+            tags=related_tags(shift_text),
+            source_files=shift.get("source_files") or ["theme-shifts.json"],
+            tone="good",
+            discovery_type="theme_shift_scan",
+            quality_flags=clean_list([*(gate["decision_flags"] if quality_degraded else []), *(shift.get("quality_flags") or [])]),
+        ))
+
     post = files.get("postmarket.json") or {}
     for stock in strong_stock_candidates(post):
         items.append(decision_item(
@@ -142,6 +161,22 @@ def build_risks(files: dict[str, Any]) -> list[dict[str, Any]]:
             discovery_type="risk_guardrail",
         ))
 
+    for shift in theme_shift_candidates(files, {"risk", "crowded", "fading"}):
+        shift_text = " ".join([shift.get("theme", ""), shift.get("conclusion", ""), shift.get("risk", "")])
+        items.append(decision_item(
+            title=f"主线变化：{shift.get('theme')}",
+            item_type="theme_shift",
+            conclusion=shift.get("conclusion") or shift.get("risk") or "主线边际转弱，需要降权。",
+            confidence="high" if shift.get("state") in {"risk", "crowded"} and number(shift.get("score")) >= 70 else "medium",
+            evidence=shift.get("evidence") or [],
+            watch_next=shift.get("watch_next") or [],
+            invalidation="风险信号收敛、后排扩散恢复且核心股放量承接。",
+            tags=related_tags(shift_text),
+            source_files=shift.get("source_files") or ["theme-shifts.json"],
+            tone="risk",
+            discovery_type="theme_shift_scan",
+        ))
+
     for theme, source in theme_candidates(files):
         if is_generic_bucket(theme):
             continue
@@ -162,6 +197,7 @@ def build_risks(files: dict[str, Any]) -> list[dict[str, Any]]:
             tone="risk",
             discovery_type=discovery_type_for(source, theme, "risk"),
         ))
+
     return items
 
 
@@ -173,6 +209,8 @@ def build_verifications(files: dict[str, Any]) -> list[dict[str, Any]]:
         ("postmarket.json", files.get("postmarket.json", {}).get("next_day_watch")),
         ("postmarket.json", files.get("postmarket.json", {}).get("closing_auction_patch", {}).get("watch_next_day")),
     ]
+    for shift in theme_shift_candidates(files, {"warming", "emerging", "risk", "crowded", "fading"}):
+        candidates.append(("theme-shifts.json", shift.get("watch_next")))
     for source, values in candidates:
         for text in text_items(values):
             rows.append(decision_item(
@@ -189,6 +227,13 @@ def build_verifications(files: dict[str, Any]) -> list[dict[str, Any]]:
                 discovery_type="verification_queue",
             ))
     return rows
+
+
+def theme_shift_candidates(files: dict[str, Any], states: set[str]) -> list[dict[str, Any]]:
+    rows = files.get("theme-shifts.json", {}).get("shifts") if isinstance(files.get("theme-shifts.json"), dict) else []
+    if not isinstance(rows, list):
+        return []
+    return [row for row in rows if isinstance(row, dict) and row.get("state") in states]
 
 
 def theme_candidates(files: dict[str, Any]) -> list[tuple[dict[str, Any], str]]:

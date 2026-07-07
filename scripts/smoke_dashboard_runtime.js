@@ -349,6 +349,7 @@ async function main() {
   const wholePage = document.body.collectHtml();
   const radarHtml = document.getElementById("opportunity-risk-radar")?.collectHtml() || "";
   const coverage = readJsonIfExists("data/monitoring-coverage.json");
+  const themeShifts = readJsonIfExists("data/theme-shifts.json");
   const criticalBlindSpots = Array.isArray(coverage.blind_spots)
     ? coverage.blind_spots.filter(item => item && item.severity === "critical")
     : [];
@@ -356,6 +357,9 @@ async function main() {
     if (item.title && !radarHtml.includes(item.title)) {
       issues.push(issue("critical", "blind_spot_not_rendered", `核心监测盲区未进入雷达风险栏：${item.title}`, "opportunity-risk-radar"));
     }
+  }
+  if (Array.isArray(themeShifts.shifts) && themeShifts.shifts.length && !radarHtml.includes("主线变化")) {
+    issues.push(issue("critical", "theme_shift_not_rendered", "主线变化报告未进入机会/风险雷达", "opportunity-risk-radar"));
   }
   for (const literal of BAD_LITERALS) {
     if (wholePage.includes(literal)) {

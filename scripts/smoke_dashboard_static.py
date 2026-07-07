@@ -45,6 +45,7 @@ def main() -> int:
     check_index_contract(index, issues)
     check_app_files(app, issues)
     check_bad_literals(issues)
+    check_theme_shifts(issues)
     check_decision_feed(issues)
     check_data_trust(issues)
     check_monitoring_coverage(issues)
@@ -117,6 +118,8 @@ def check_app_files(app: str, issues: list[dict[str, Any]]) -> None:
             issues.append(issue("critical", "app.js", "missing_manifest_file", f"FILES 中的文件不存在：{rel}"))
     if "data/decision-feed.json" not in paths:
         issues.append(issue("warning", "app.js", "decision_feed_not_loaded", "FILES 未加载 data/decision-feed.json"))
+    if "data/theme-shifts.json" not in paths:
+        issues.append(issue("warning", "app.js", "theme_shifts_not_loaded", "FILES 未加载 data/theme-shifts.json"))
 
 
 def check_bad_literals(issues: list[dict[str, Any]]) -> None:
@@ -185,6 +188,28 @@ def check_decision_feed(issues: list[dict[str, Any]]) -> None:
                 issues.append(issue("warning", "data/decision-feed.json", "bad_evidence_score", f"{title} evidence_score 不在 0-100"))
 
 
+def check_theme_shifts(issues: list[dict[str, Any]]) -> None:
+    path = ROOT / "data" / "theme-shifts.json"
+    try:
+        data = json.loads(path.read_text(encoding="utf-8"))
+    except Exception as exc:
+        issues.append(issue("warning", "data/theme-shifts.json", "theme_shifts_missing", f"主线变化报告不可读：{exc}"))
+        return
+    rows = data.get("shifts")
+    if not isinstance(rows, list):
+        issues.append(issue("warning", "data/theme-shifts.json", "bad_theme_shifts", "shifts 缺失或不是数组"))
+        return
+    for index, item in enumerate(rows):
+        if not isinstance(item, dict):
+            issues.append(issue("warning", "data/theme-shifts.json", "bad_shift_item", f"shifts[{index}] 不是对象"))
+            continue
+        for key in ("theme", "state", "score", "conclusion", "evidence", "watch_next", "source_files"):
+            if item.get(key) in (None, "", []):
+                issues.append(issue("warning", "data/theme-shifts.json", "missing_shift_field", f"shifts[{index}].{key} 缺失"))
+        if item.get("state") not in {"warming", "emerging", "crowded", "fading", "risk", "watch"}:
+            issues.append(issue("warning", "data/theme-shifts.json", "bad_shift_state", f"shifts[{index}].state 非法"))
+
+
 def check_data_trust(issues: list[dict[str, Any]]) -> None:
     path = ROOT / "data" / "data-trust.json"
     try:
@@ -196,7 +221,7 @@ def check_data_trust(issues: list[dict[str, Any]]) -> None:
     if not isinstance(rows, list) or not rows:
         issues.append(issue("warning", "data/data-trust.json", "bad_data_trust", "files 缺失或为空"))
         return
-    required_files = {"data/alert.json", "data/intraday.json", "data/premarket.json", "data/midday.json", "data/postmarket.json", "data/topics.json", "data/decision-feed.json"}
+    required_files = {"data/alert.json", "data/intraday.json", "data/premarket.json", "data/midday.json", "data/postmarket.json", "data/topics.json", "data/theme-shifts.json", "data/decision-feed.json"}
     present = {item.get("file") for item in rows if isinstance(item, dict)}
     missing = sorted(required_files - present)
     if missing:

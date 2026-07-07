@@ -23,6 +23,7 @@ CORE_FILES = [
     {"file": "data/postmarket.json", "label": "盘后复盘", "depends_on_source": True, "role": "收盘复盘和次日观察", "session": "postmarket", "freshness_minutes": 360},
     {"file": "data/evening-sentiment.json", "label": "晚间舆情", "depends_on_source": False, "role": "隔夜事件和公告", "session": "evening", "freshness_minutes": 720},
     {"file": "data/topics.json", "label": "专题跟踪", "depends_on_source": False, "role": "中期专题结论", "session": "background", "freshness_minutes": 10080},
+    {"file": "data/theme-shifts.json", "label": "主线变化", "depends_on_source": False, "role": "升温/降温/抱团/风险变化", "session": "decision", "freshness_minutes": 30},
     {"file": "data/decision-feed.json", "label": "机会风险流", "depends_on_source": False, "role": "结构化机会/风险/验证", "session": "decision", "freshness_minutes": 30},
 ]
 
@@ -384,7 +385,7 @@ def worse_status(left: str, right: str) -> str:
 
 def latest_signal_date(payloads: dict[str, Any]) -> str:
     dates = []
-    for rel in ("data/alert.json", "data/intraday.json", "data/midday.json", "data/postmarket.json", "data/topics.json", "data/decision-feed.json"):
+    for rel in ("data/alert.json", "data/intraday.json", "data/midday.json", "data/postmarket.json", "data/topics.json", "data/theme-shifts.json", "data/decision-feed.json"):
         data = payloads.get(rel)
         date = signal_date(data.get("timestamp") if isinstance(data, dict) else "")
         if date:

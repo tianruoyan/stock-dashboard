@@ -2,6 +2,7 @@
 
 | Display Version | Date | Edition | Tag / Commit | Summary | Rollback Note |
 |---|---:|---:|---|---|---|
+| 2026-07-07 第58版｜主线变化雷达 | 2026-07-07 | 第58版 | tag: `v2026.07.07-m58-theme-shifts` | 新增 `scripts/build_theme_shifts.py` 和 `data/theme-shifts.json`，从盘中全景、盘后热点、专题跟踪中识别升温、新线、抱团、降温和风险变化；`decision-feed` 将主线变化并入机会/风险/验证栏，雷达显示“主线变化扫描”，发布门、文件可信度和区块健康同步纳入该文件。 | 回滚到第57版可用 `git checkout v2026.07.07-m57-freshness-sla`，或回滚到本版本 tag。 |
 | 2026-07-07 第57版｜数据新鲜度SLA | 2026-07-07 | 第57版 | tag: `v2026.07.07-m57-freshness-sla` | `data-trust` 新增 `freshness_status/age_minutes/freshness_action/freshness_reason`，给盘中异动、盘中全景、盘前、午盘、盘后、晚间、专题和机会风险流分别设置刷新 SLA；当前阶段文件超时会自动降权并在顶部质量卡提示，阶段回看文件不再伪装成实时依据。 | 回滚到第56版可用 `git checkout v2026.07.07-m56-label-pct-audit`，或回滚到本版本 tag。 |
 | 2026-07-07 第56版｜涨跌标签校验 | 2026-07-07 | 第56版 | tag: `v2026.07.07-m56-label-pct-audit` | 数据审计新增盘口标签一致性检查：`change_pct` 与“涨停/封板/跌停/强势/弱势/风险”等当前标签冲突时进入 warning；同时排除“前日强势后兑现、映射逻辑里其他标的涨停”等合理语境，降低伪跌停、伪强势和标签串线污染看板。 | 回滚到第55版可用 `git checkout v2026.07.07-m55-evidence-gap`，或回滚到本版本 tag。 |
 | 2026-07-07 第55版｜信号证据缺口 | 2026-07-07 | 第55版 | tag: `v2026.07.07-m55-evidence-gap` | `decision-feed` 每条机会/风险/验证新增 `discovery_type`、`evidence_score`、`missing_evidence`，区分主动盘面扫描、主动个股扫描、专题继承、风险兜底和待验证队列；雷达卡片显示发现方式、证据分和证据缺口，发布门强制检查这些字段。 | 回滚到第54版可用 `git checkout v2026.07.07-m54-session-trust`，或回滚到本版本 tag。 |

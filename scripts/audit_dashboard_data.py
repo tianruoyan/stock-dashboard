@@ -60,6 +60,7 @@ def main() -> int:
     validate_postmarket(files.get("postmarket.json"), issues)
     validate_evening(files.get("evening-sentiment.json"), issues, current_date)
     validate_source_health(files.get("source-health.json"), issues)
+    validate_theme_shifts(files.get("theme-shifts.json"), issues, current_date)
     validate_decision_feed(files.get("decision-feed.json"), issues, current_date)
     validate_data_trust(files.get("data-trust.json"), issues, current_date)
     validate_monitoring_coverage(files.get("monitoring-coverage.json"), issues, current_date)
@@ -254,6 +255,31 @@ def validate_decision_feed(data: Any, issues: list[dict[str, Any]], current_date
                     issues.append(issue("warning", "decision-feed.json", "missing_quality_flags", f"{section}[{index}] 数据降级但缺少 quality_flags", f"{section}[{index}]"))
                 if item.get("confidence") in {"medium", "high"}:
                     issues.append(issue("warning", "decision-feed.json", "opportunity_not_downgraded", f"{section}[{index}] 数据降级但机会置信度未降权", f"{section}[{index}]"))
+
+
+def validate_theme_shifts(data: Any, issues: list[dict[str, Any]], current_date: str) -> None:
+    if data in (None, {}):
+        issues.append(issue("warning", "theme-shifts.json", "missing_theme_shifts", "theme-shifts 缺失，无法识别主线边际变化"))
+        return
+    if not isinstance(data, dict):
+        issues.append(issue("critical", "theme-shifts.json", "bad_theme_shifts", "theme-shifts 根节点必须是对象"))
+        return
+    shift_date = data.get("current_signal_date") or signal_date(data.get("timestamp"))
+    if shift_date != current_date:
+        issues.append(issue("warning", "theme-shifts.json", "stale_theme_shifts", f"theme-shifts 日期不是当前交易日：{shift_date}"))
+    rows = data.get("shifts")
+    if not isinstance(rows, list):
+        issues.append(issue("warning", "theme-shifts.json", "missing_shifts", "shifts 缺失或不是数组"))
+        return
+    for index, item in enumerate(rows):
+        if not isinstance(item, dict):
+            issues.append(issue("warning", "theme-shifts.json", "bad_shift_item", f"shifts[{index}] 不是对象", f"shifts[{index}]"))
+            continue
+        for key in ("theme", "state", "score", "conclusion", "evidence", "watch_next", "source_files"):
+            if item.get(key) in (None, "", []):
+                issues.append(issue("warning", "theme-shifts.json", "missing_shift_field", f"shifts[{index}].{key} 缺失", f"shifts[{index}]"))
+        if item.get("state") not in (None, "warming", "emerging", "crowded", "fading", "risk", "watch"):
+            issues.append(issue("warning", "theme-shifts.json", "bad_shift_state", f"shifts[{index}].state 非法", f"shifts[{index}]"))
 
 
 def validate_data_trust(data: Any, issues: list[dict[str, Any]], current_date: str) -> None:
