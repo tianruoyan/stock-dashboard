@@ -17,7 +17,7 @@ cd /Users/sweet_orange/stock-dashboard
 python3 scripts/import_ths_watchlist.py --mode ths
 ```
 
-脚本只会追加或补全 `config/watchlist.json` 里的 `watch_only`，不会删除已有观察池股票。同步成功后会 `touch .push-now`，由现有推送守护负责发布。
+脚本会把 `config/watchlist.json` 里的 `watch_only` 镜像为同花顺当前自选股：同花顺新增则新增，同花顺删除则删除。`small_deng` 和 `old_deng` 仍是独立风格监测池，不跟随同花顺删除。同步成功后会 `touch .push-now`，由现有推送守护负责发布。
 
 ## 备用方式：iCloud 文本
 
@@ -56,7 +56,7 @@ launchctl unload ~/Library/LaunchAgents/com.stock-dashboard.ths-watchlist.plist 
 launchctl load ~/Library/LaunchAgents/com.stock-dashboard.ths-watchlist.plist
 ```
 
-默认每 30 分钟同步一次，开机后自动跑一次。后台任务使用 `--mode auto`：优先读桌面同花顺，失败后回退到 iCloud 文本。
+默认每 30 分钟同步一次，开机后自动跑一次。后台任务优先读桌面同花顺；同步结果以同花顺自选股为准，有增有减。
 
 ## macOS 权限
 

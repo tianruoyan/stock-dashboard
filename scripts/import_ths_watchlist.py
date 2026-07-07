@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
-"""Import exported TongHuaShun watchlist into config/watchlist.json.
+"""Mirror TongHuaShun watchlist into config/watchlist.json.
 
-This script only appends/updates watch_only stocks. It never removes existing
-manual entries, so a bad export cannot wipe the personal watchlist.
+Only the watch_only pool follows TongHuaShun exactly. The small_deng and
+old_deng pools remain independent style-monitoring pools.
 """
 import argparse
 import json
@@ -306,6 +306,7 @@ def enrich(item):
 def merge_watchlist(watchlist, imported):
     pool = watchlist.setdefault("watch_only", {})
     stocks = pool.setdefault("stocks", [])
+    old_count = len(stocks)
     by_code = {}
     for s in stocks:
         code = normalize_code(s.get("code"))
@@ -317,34 +318,47 @@ def merge_watchlist(watchlist, imported):
     by_name = {s.get("name"): s for s in stocks if s.get("name")}
     added = 0
     updated = 0
+    mirrored = []
+    seen = set()
     for raw in imported:
         stock = enrich(raw)
         code = normalize_code(stock.get("code"))
         name = stock.get("name")
         digits = re.sub(r"\D", "", code or "")
+        key = code or digits or name
+        if key and key in seen:
+            continue
+        if key:
+            seen.add(key)
         existing = (code and by_code.get(code)) or (digits and by_code.get(digits)) or (name and by_name.get(name))
         if existing:
+            merged = dict(existing)
             existing_code = normalize_code(existing.get("code"))
             if code and (existing_code != code or existing.get("code") != code):
-                existing["code"] = code
+                merged["code"] = code
                 updated += 1
             existing_name = str(existing.get("name") or "")
             if name and (not existing_name or normalize_code(existing_name) == existing_code):
-                existing["name"] = name
+                merged["name"] = name
                 updated += 1
-            tags = list(dict.fromkeys([*(existing.get("tags") or []), "同花顺自选", "观察池"]))
+            tags = list(dict.fromkeys([*(merged.get("tags") or []), "同花顺自选", "观察池"]))
             tags = list(dict.fromkeys([*PROFILE_TAGS.get(code, []), *tags]))
-            if tags != existing.get("tags"):
-                existing["tags"] = tags
+            if tags != merged.get("tags"):
+                merged["tags"] = tags
                 updated += 1
+            merged["source"] = "同花顺自选导入"
+            mirrored.append(merged)
             continue
-        stocks.append(stock)
+        mirrored.append(stock)
         if code:
             by_code[code] = stock
         if name:
             by_name[name] = stock
         added += 1
-    return added, updated
+    pool["stocks"] = mirrored
+    pool["_说明"] = "个人观察池—与同花顺自选股保持一致；同步时有增有减。小登池/老登池不受影响。"
+    removed = max(old_count - len(mirrored) + added, 0)
+    return added, updated, removed
 
 
 def main():
@@ -382,13 +396,13 @@ def main():
         print("no stocks found", file=sys.stderr)
         return 1
     watchlist = load_json(WATCHLIST_PATH)
-    added, updated = merge_watchlist(watchlist, imported)
+    added, updated, removed = merge_watchlist(watchlist, imported)
     if args.dry_run:
-        print(json.dumps({"source": import_source, "found": len(imported), "added": added, "updated": updated}, ensure_ascii=False))
+        print(json.dumps({"source": import_source, "found": len(imported), "added": added, "updated": updated, "removed": removed, "mode": "mirror"}, ensure_ascii=False))
         return 0
     save_json(WATCHLIST_PATH, watchlist)
     PUSH_MARKER.touch()
-    print(json.dumps({"source": import_source, "found": len(imported), "added": added, "updated": updated, "saved": str(WATCHLIST_PATH)}, ensure_ascii=False))
+    print(json.dumps({"source": import_source, "found": len(imported), "added": added, "updated": updated, "removed": removed, "mode": "mirror", "saved": str(WATCHLIST_PATH)}, ensure_ascii=False))
     return 0
 
 
