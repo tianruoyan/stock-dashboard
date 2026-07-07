@@ -721,10 +721,6 @@ function checkDashboardConflictRendering(document, issues) {
       issues.push(issue("critical", "dashboard_conflict_jargon_rendered", `今日结论仍展示后台判定话术：${forbidden}`, "dashboard-control"));
     }
   }
-  const theme = stableSnippet(conflicts[0].theme);
-  if (theme && !rendered.includes(theme)) {
-    issues.push(issue("critical", "dashboard_conflict_not_rendered", `今日结论未说明相关方向：${theme}`, "dashboard-control"));
-  }
 }
 
 function checkDashboardThemeCards(document, issues) {
@@ -735,6 +731,9 @@ function checkDashboardThemeCards(document, issues) {
     if (rendered.includes(snippet)) {
       issues.push(issue("critical", "dashboard_theme_card_action_text", `题材卡仍展示处理动作而不是盘面题材：${snippet}`, "dashboard-control"));
     }
+  }
+  if (/关联题材/.test(rendered)) {
+    issues.push(issue("critical", "dashboard_related_card_redundant", "今日结论第一屏不应同时展示与优先方向重复的关联题材卡", "dashboard-control"));
   }
   if (/主线变化[：:]老登风格切换.*老登风格切换/.test(rendered)) {
     issues.push(issue("critical", "dashboard_theme_duplicate", "题材卡仍重复展示主线变化前缀和原题材名", "dashboard-control"));

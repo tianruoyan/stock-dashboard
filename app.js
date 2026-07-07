@@ -241,7 +241,6 @@ function renderDashboardControl() {
   const latest = dashboardEffectiveTimestamp() || latestTimestamp([intraday, postmarket, alert]);
   const marketThemes = dashboardMarketThemeSummary(intraday, postmarket);
   const priority = marketThemes.priority;
-  const relatedTags = marketThemes.related;
   const avoid = marketThemes.avoid.length ? marketThemes.avoid : risks.slice(0, 3).map(themeDisplayName);
 
   el.innerHTML = `<div class="control-hero ${style.cls}">
@@ -259,7 +258,6 @@ function renderDashboardControl() {
   </div>
   <div class="decision-strip control-strip">
     <div class="decision-card ${decisionGate?.riskFirst ? "neutral" : "primary"}"><span class="decision-label">优先方向</span><b>${escapeHtml(priority[0] || "等待盘面确认")}</b><span>${escapeHtml(priority.slice(1).join(" / ") || "按当日强弱排序，不等同于追高")}</span></div>
-    <div class="decision-card action"><span class="decision-label">关联题材</span><b>${escapeHtml(relatedTags[0] || "等待映射")}</b><span>${escapeHtml(relatedTopicHint(relatedTags))}</span></div>
     <div class="decision-card ${decisionGate?.riskFirst ? "neutral" : "primary"}"><span class="decision-label">进攻盯 · ${escapeHtml(decisionGate?.riskFirst ? "暂停" : attackCandidate.source)}</span><b>${escapeHtml(decisionGate?.riskFirst ? "暂无进攻点" : (attackWatch[0] || "暂无"))}</b><span>${escapeHtml(decisionGate?.riskFirst ? "只看承接和扩散，不做追高触发" : (attackWatch.slice(1).join(" / ") || attackCandidate.note))}</span></div>
     <div class="decision-card risk"><span class="decision-label">风险盯 · ${escapeHtml(riskCandidate.source)}</span><b>${escapeHtml(riskWatch[0] || "暂无")}</b><span>${escapeHtml(riskWatch.slice(1).join(" / ") || riskCandidate.note)}</span></div>
     <div class="decision-card risk"><span class="decision-label">暂不参与</span><b>${escapeHtml(avoid[0] || "暂无明确")}</b><span>${escapeHtml(avoid.slice(1).join(" / ") || eventWatch[0] || "看弱线和P0是否扩散")}</span></div>
@@ -271,7 +269,7 @@ function dashboardMarketThemeSummary(intraday, postmarket) {
   const priorityRows = rows
     .filter(row => row.bucket !== "risk" && row.priorityEligible)
     .sort((a, b) => b.score - a.score);
-  const priority = selectPriorityThemeDisplays(priorityRows, 4);
+  const priority = uniqueList(priorityRows.map(row => row.display)).slice(0, 4);
   const avoid = uniqueList(rows
     .filter(row => row.bucket === "risk")
     .sort((a, b) => b.score - a.score)
@@ -288,20 +286,6 @@ function dashboardMarketThemeSummary(intraday, postmarket) {
     .map(row => row.display))
     .slice(0, 4);
   return { priority: fallbackPriority, avoid, related };
-}
-
-function selectPriorityThemeDisplays(rows, limit) {
-  const selected = [];
-  let semiconductorCount = 0;
-  for (const row of rows) {
-    if (/^半导体/.test(row.display)) {
-      if (semiconductorCount >= 2) continue;
-      semiconductorCount += 1;
-    }
-    if (!selected.includes(row.display)) selected.push(row.display);
-    if (selected.length >= limit) break;
-  }
-  return selected;
 }
 
 function collectDashboardThemeRows(intraday, postmarket) {
