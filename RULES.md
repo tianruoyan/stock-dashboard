@@ -383,6 +383,7 @@ Codex (分析引擎)              Cola (稳定管道)
 | 2026-07-07 | 降权机会必须输出 upgrade_rank/upgrade_priority/upgrade_condition，并在雷达验证栏显示升级排序和升级门槛 | 数据质量降级时不能把候选方向直接包装成机会，也不能完全丢掉；需要保留“明天先验证谁、满足什么才升级”的交易辅助信息 |
 | 2026-07-07 | 核心 JSON 内 timestamp/updated_at/quote_time/event_time/generated_at 不得超前当前时间；超前时进入 future_timestamp 和 data-trust.future | 盘中交易不能把未来时间误判成最新有效数据；时间超前必须降权复核并从总控有效时间里排除 |
 | 2026-07-07 | decision-feed 必须输出 observation_coverage，信号必须标注 observation_source/independent_observation，并在雷达显示主动观察覆盖 | 平台要明确区分系统主动扫描、盘后结构扫描、专题继承和验证队列，避免只复述用户已有分析点或配置清单 |
+| 2026-07-07 | 观察池个股必须做同阶段跨文件一致性审计，涨跌幅大幅冲突、强弱互斥或涨跌停互斥进入 price_review | 防止同一个股在不同区块一边显示强势/涨停、一边显示弱势/跌停；但盘前、盘中、盘后不同阶段快照不得机械互比造成假警报 |
 ---
 
 ## 🐍 Python 环境
