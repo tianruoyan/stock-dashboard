@@ -690,13 +690,14 @@ function renderRadarItem(item) {
     item.discoveryType ? ["发现", discoveryTypeLabel(item.discoveryType)] : null,
     item.evidenceScore !== undefined ? ["证据分", `${item.evidenceScore}分`] : null,
     item.missingEvidence?.length ? ["缺口", item.missingEvidence.slice(0, 2)] : null,
+    item.nextAction ? ["动作", item.nextAction] : null,
     item.useReasons ? ["口径", item.useReasons] : null,
     item.qualityFlags ? ["降权", item.qualityFlags] : null,
     item.evidence ? ["证据", item.evidence] : null,
     item.watchNext ? ["验证", item.watchNext] : null,
     item.invalidation ? ["证伪", item.invalidation] : null,
     item.sources ? ["来源", item.sources] : null
-  ].filter(Boolean).map(([label, value]) => `<div class="radar-detail ${label === "降权" || label === "缺口" ? "quality" : ""}"><span>${label}</span><b>${escapeHtml(Array.isArray(value) ? value.join("；") : value)}</b></div>`).join("");
+  ].filter(Boolean).map(([label, value]) => `<div class="radar-detail ${["降权", "缺口"].includes(label) ? "quality" : (label === "动作" ? "action" : "")}"><span>${label}</span><b>${escapeHtml(Array.isArray(value) ? value.join("；") : value)}</b></div>`).join("");
   return `<div class="radar-item ${tone}">
     <div class="radar-item-head">
       <b>${escapeHtml(item.title)}</b>
@@ -906,7 +907,8 @@ function decisionFeedToRadarItem(item, fallbackTone) {
     useReasons: (item.use_reasons || []).slice(0, 4),
     discoveryType: item.discovery_type,
     evidenceScore: item.evidence_score,
-    missingEvidence: (item.missing_evidence || []).slice(0, 4)
+    missingEvidence: (item.missing_evidence || []).slice(0, 4),
+    nextAction: item.next_action
   };
 }
 
@@ -927,6 +929,7 @@ function downgradedOpportunityToVerification(item) {
     reason: item.reason || "机会证据不足，先转入验证队列。",
     triggerReason: item.triggerReason || "降权候选触发：证据或数据质量不足，先转入验证队列。",
     watchNext: item.watchNext?.length ? item.watchNext : ["等待板块扩散、核心承接和数据质量恢复后再升级。"],
+    nextAction: item.nextAction || (item.watchNext?.[0] || "等待板块扩散、核心承接和数据质量恢复后再升级。"),
     invalidation: item.invalidation || "风险项不收敛或核心股不放量承接，则不升级为机会。",
     useAction: "等待确认",
     useReasons: uniqueList([...(item.useReasons || []), "C/D级机会不进入机会栏", "先验证再升级"])

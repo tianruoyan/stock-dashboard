@@ -44,6 +44,7 @@ def main() -> int:
             "每条信号必须输出 signal_grade/use_action/use_reasons，前端按可用性而不是标题强弱展示。",
             "每条信号必须输出 discovery_type/evidence_score/missing_evidence，用于区分主动发现、继承专题、风险兜底和证据缺口。",
             "每条信号必须输出 trigger_reason，用一句话解释为什么系统把它推到雷达。",
+            "每条信号必须输出 next_action，把证据缺口翻译成下一交易窗口可执行检查。",
             "theme-shifts 用于识别升温、新线、抱团、降温和风险变化，并进入机会/风险/验证栏。",
         ],
     }
@@ -375,9 +376,34 @@ def decision_item(**kwargs: Any) -> dict[str, Any]:
         "discovery_type": kwargs.get("discovery_type") or "derived_signal",
         "evidence_score": evidence_score,
         "missing_evidence": missing[:5],
+        "next_action": trim(next_action_for(kwargs.get("item_type") or "signal", watch_next, missing, kwargs.get("tone") or "neutral"), 180),
     }
     item.update(signal_usability(item))
     return item
+
+
+def next_action_for(item_type: str, watch_next: list[str], missing: list[str], tone: str) -> str:
+    if watch_next:
+        return watch_next[0]
+    joined = " ".join(missing)
+    actions: list[str] = []
+    if "量化盘口" in joined:
+        actions.append("先看涨停/封板数量、成交放大和尾盘承接，确认后再升级。")
+    if "代表股" in joined:
+        actions.append("补看代表股是否强于板块 ETF，至少 2-3 只核心股同向确认。")
+    if "数据源降级" in joined:
+        actions.append("等待二次行情源或数据质量恢复，未恢复前只做观察不触发交易。")
+    if "来源文件" in joined:
+        actions.append("补充来源文件后再使用该信号。")
+    if "下一步验证" in joined:
+        actions.append("补写可证伪条件：看竞价、开盘 15 分钟、午后承接或尾盘方向。")
+    if actions:
+        return "；".join(actions[:2])
+    if item_type == "risk" or tone == "risk":
+        return "先按风险项处理，等待风险收敛后再恢复进攻判断。"
+    if item_type == "verification":
+        return "按验证条件观察，不满足即不升级。"
+    return "等待量价、代表股和数据质量同时确认后再升级。"
 
 
 def trigger_reason_for(kwargs: dict[str, Any], evidence: list[str], watch_next: list[str]) -> str:

@@ -371,6 +371,7 @@ async function main() {
     issues.push(issue("critical", "downgraded_opportunity_rendered", "C/D级降权机会进入了机会候选栏，应转入下一步验证", "opportunity-risk-radar"));
   }
   checkDecisionTriggerRendering(radarHtml, issues);
+  checkDecisionNextActionRendering(radarHtml, issues);
   checkFallbackChecksRendering(radarHtml, coverage, issues);
   checkRadarGateRendering(document, radarHtml, issues);
   checkDashboardTrustGateRendering(document, issues);
@@ -494,6 +495,27 @@ function checkDecisionTriggerRendering(radarHtml, issues) {
   for (const snippet of mustRender) {
     if (!rendered.includes(snippet)) {
       issues.push(issue("critical", "trigger_reason_not_rendered", `触发原因未渲染：${snippet}`, "opportunity-risk-radar"));
+    }
+  }
+}
+
+function checkDecisionNextActionRendering(radarHtml, issues) {
+  const feed = readJsonIfExists("data/decision-feed.json");
+  const items = [
+    ...(Array.isArray(feed.opportunities) ? feed.opportunities : []),
+    ...(Array.isArray(feed.risks) ? feed.risks : []),
+    ...(Array.isArray(feed.verifications) ? feed.verifications : [])
+  ].filter(item => item && item.next_action);
+  if (!items.length) return;
+  const rendered = normalizeRenderedText(radarHtml);
+  if (!rendered.includes("动作")) {
+    issues.push(issue("critical", "next_action_not_rendered", "机会/风险雷达未显示下一步动作", "opportunity-risk-radar"));
+    return;
+  }
+  const mustRender = items.slice(0, 3).map(item => stableSnippet(item.next_action)).filter(Boolean);
+  for (const snippet of mustRender) {
+    if (!rendered.includes(snippet)) {
+      issues.push(issue("critical", "next_action_not_rendered", `下一步动作未渲染：${snippet}`, "opportunity-risk-radar"));
     }
   }
 }

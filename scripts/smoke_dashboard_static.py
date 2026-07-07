@@ -184,7 +184,7 @@ def check_decision_feed(issues: list[dict[str, Any]]) -> None:
                 issues.append(issue("warning", "data/decision-feed.json", "missing_source", f"{title} 缺少来源文件"))
             if not item.get("trigger_reason"):
                 issues.append(issue("warning", "data/decision-feed.json", "missing_trigger_reason", f"{title} 缺少触发原因"))
-            for key in ("signal_grade", "signal_score", "use_action", "use_reasons", "discovery_type", "evidence_score"):
+            for key in ("signal_grade", "signal_score", "use_action", "use_reasons", "discovery_type", "evidence_score", "next_action"):
                 if item.get(key) in (None, "", []):
                     issues.append(issue("warning", "data/decision-feed.json", "missing_usability_field", f"{title} 缺少 {key}"))
             if "missing_evidence" not in item or not isinstance(item.get("missing_evidence"), list):

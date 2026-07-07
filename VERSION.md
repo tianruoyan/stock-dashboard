@@ -2,6 +2,7 @@
 
 | Display Version | Date | Edition | Tag / Commit | Summary | Rollback Note |
 |---|---:|---:|---|---|---|
+| 2026-07-07 第80版｜雷达下一步动作 | 2026-07-07 | 第80版 | tag: `v2026.07.07-m80-radar-next-action` | `decision-feed` 每条机会、风险、验证信号新增 `next_action`，把证据缺口翻译成下一交易窗口可执行检查；机会/风险雷达卡片新增“动作”行，运行时烟雾测试要求下一步动作必须渲染，避免主动雷达退化成结论列表。 | 回滚到第79版可用 `git checkout v2026.07.07-m79-quality-impact-display`，或回滚到本版本 tag。 |
 | 2026-07-07 第79版｜质量影响分层展示 | 2026-07-07 | 第79版 | tag: `v2026.07.07-m79-quality-impact-display` | 顶部数据质量卡新增“交易影响”卡片和分层贴条，直接展示交易阻断、行情复核、信号复核、背景复核数量；`quality-report` 计数补齐 `signal_review`，运行时烟雾测试要求影响分层必须渲染，避免把所有 warning 混成同一类风险。 | 回滚到第78版可用 `git checkout v2026.07.07-m78-japan-korea-clean`，或回滚到本版本 tag。 |
 | 2026-07-07 第78版｜日韩早盘清爽提示 | 2026-07-07 | 第78版 | tag: `v2026.07.07-m78-japan-korea-clean` | 盘前“日韩早盘”遇到数据源降级、未核实或疑似乱码时，只显示固定中文“待复核”提示和白名单复核清单，不再把原始长句、英文错误或未核实文本渲染到页面；运行时烟雾测试同步更新门禁。 | 回滚到第77版可用 `git checkout v2026.07.07-m77-quality-impact-levels`，或回滚到本版本 tag。 |
 | 2026-07-07 第77版｜质量问题影响分层 | 2026-07-07 | 第77版 | tag: `v2026.07.07-m77-quality-impact-levels` | `quality-report` 每条 issue 新增 `impact_level` 和 `decision_action`，把问题区分为交易阻断、价格/行情复核、信号复核、背景复核；汇总增加 blocking/price_review/background_review 计数。`decision-feed` 只把交易阻断、价格复核和信号复核纳入机会降权旗标，避免把政策网页覆盖不足等背景问题和行情污染混成同一级风险。 | 回滚到第76版可用 `git checkout v2026.07.07-m76-control-effective-time`，或回滚到本版本 tag。 |
