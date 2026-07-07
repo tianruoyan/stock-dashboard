@@ -553,13 +553,13 @@ function checkDecisionBriefRendering(radarHtml, issues) {
     issues.push(issue("critical", "radar_raw_source_error_rendered", "机会/风险雷达仍展示底层英文源错误，需转成中文复核提示", "opportunity-risk-radar"));
   }
   if (!brief) return;
-  if (!rendered.includes("今天怎么做")) {
-    issues.push(issue("critical", "decision_brief_not_rendered", "机会与风险区未显示交易动作摘要", "opportunity-risk-radar"));
+  if (!rendered.includes("判断依据")) {
+    issues.push(issue("critical", "decision_brief_not_rendered", "判断依据区未显示依据摘要", "opportunity-risk-radar"));
     return;
   }
   for (const value of [brief.stance, brief.action].map(stableSnippet).filter(Boolean)) {
     if (!rendered.includes(value)) {
-      issues.push(issue("critical", "decision_brief_not_rendered", `交易动作摘要未渲染：${value}`, "opportunity-risk-radar"));
+      issues.push(issue("critical", "decision_brief_not_rendered", `依据摘要未渲染：${value}`, "opportunity-risk-radar"));
     }
   }
 }
@@ -568,7 +568,7 @@ function checkTraderViewLanguage(document, issues) {
   const targets = [
     ["dashboard-control", "今日结论"],
     ["data-quality-gate", "使用提醒"],
-    ["opportunity-risk-radar", "机会与风险"],
+    ["opportunity-risk-radar", "判断依据"],
     ["portfolio-risk", "仓位提示"]
   ];
   const forbidden = [
@@ -815,9 +815,14 @@ function checkRadarGateRendering(document, radarHtml, issues) {
   });
   if (actionable.length) return;
   const rendered = normalizeRenderedText(radarHtml);
-  for (const snippet of ["先防守", "等确认", "不追高"]) {
+  for (const snippet of ["本区作用", "解释今日结论", "判断依据"]) {
     if (!rendered.includes(snippet)) {
-      issues.push(issue("critical", "radar_gate_not_rendered", `缺少交易人可读判断：${snippet}`, "opportunity-risk-radar"));
+      issues.push(issue("critical", "radar_gate_not_rendered", `缺少判断依据区说明：${snippet}`, "opportunity-risk-radar"));
+    }
+  }
+  for (const oldLabel of ["今天怎么做", "当前判断", "机会候选", "风险提示", "下一步验证"]) {
+    if (rendered.includes(oldLabel)) {
+      issues.push(issue("critical", "radar_old_decision_label_rendered", `判断依据区仍展示旧总控式栏目：${oldLabel}`, "opportunity-risk-radar"));
     }
   }
   const controlRendered = normalizeRenderedText(document.getElementById("dashboard-control")?.collectHtml() || "");

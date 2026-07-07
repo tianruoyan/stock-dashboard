@@ -199,6 +199,9 @@ function userFacingText(value) {
     .replace(/降权观察/g, "谨慎观察")
     .replace(/降权参考/g, "谨慎参考")
     .replace(/降权/g, "谨慎参考")
+    .replace(/机会候选/g, "可观察方向")
+    .replace(/候选方向/g, "可观察方向")
+    .replace(/下一步验证/g, "看什么会改变判断")
     .replace(/监测盲区/g, "实时提醒缺口")
     .replace(/信号可用性/g, "当前信号")
     .replace(/文件可信度/g, "数据状态")
@@ -642,14 +645,22 @@ function renderDataQualityGate() {
   const el = document.getElementById("data-quality-gate");
   if (!el) return;
   const report = buildDataQualityReport();
-  const cards = traderNoticeCards(report);
-  el.innerHTML = `<div class="decision-strip quality-strip trader-notice">${cards.map(card => `
-    <div class="decision-card ${card.cls}">
-      <span class="decision-label">${escapeHtml(card.label)}</span>
-      <b>${escapeHtml(card.title)}</b>
-      <span>${escapeHtml(userFacingText(card.detail))}</span>
-    </div>`).join("")}</div>
-    `;
+  el.innerHTML = renderEvidenceStatus(report);
+}
+
+function renderEvidenceStatus(report) {
+  const blocked = /阻断|不可用/.test(`${report.impactTitle || ""} ${report.summary || ""} ${report.sectionDetail || ""}`);
+  const stale = /上一阶段|待产出|超时|历史/.test(`${report.fileTrustDetail || ""} ${report.sectionDetail || ""} ${report.automationDetail || ""}`);
+  const title = blocked ? "依据需谨慎" : (report.cls === "good" && !stale ? "依据可参考" : "依据待确认");
+  const detail = blocked
+    ? "盘中异动未恢复，下面只解释结论依据，不作为买卖触发。"
+    : (stale ? "部分材料来自上一阶段，先看是否被新盘面验证。" : "关键材料已接入，仍按验证条件跟踪。");
+  const latest = formatUpdateTime(report.latest) || "待更新";
+  return `<div class="radar-gate ${blocked ? "risk" : (stale ? "warn" : "good")}">
+    <span>依据状态</span>
+    <b>${escapeHtml(title)}</b>
+    <em>${escapeHtml(detail)} 最近依据：${escapeHtml(latest)}</em>
+  </div>`;
 }
 
 function traderNoticeCards(report) {
@@ -1012,23 +1023,23 @@ function renderOpportunityRiskRadar() {
   const el = document.getElementById("opportunity-risk-radar");
   if (!el) return;
   const radar = buildOpportunityRiskRadar();
-  const gate = radar.gate ? `<div class="radar-gate ${escapeHtml(radar.gate.cls || "neutral")}">
-    <span>${escapeHtml(radar.gate.label || "当前判断")}</span>
-    <b>${escapeHtml(radar.gate.title || "等待确认")}</b>
-    <em>${escapeHtml(radar.gate.detail || "只按验证条件跟踪，不生成交易指令。")}</em>
-  </div>` : "";
+  const gate = `<div class="radar-gate neutral">
+    <span>本区作用</span>
+    <b>解释今日结论</b>
+    <em>只列影响结论的机会、风险和改变判断的信号；具体动作以前面的今日结论为准。</em>
+  </div>`;
   const brief = renderDecisionBrief(radar.decisionBrief);
   el.innerHTML = `${gate}${brief}<div class="radar-grid">
     <div class="radar-column">
-      <div class="radar-head"><b>机会候选</b><span>${radar.opportunities.length ? "需要验证，不直接追高" : "暂无高置信机会"}</span></div>
+      <div class="radar-head"><b>可跟踪机会</b><span>${radar.opportunities.length ? "能改变结论的正向线索" : "暂无高置信机会"}</span></div>
       ${radar.opportunities.length ? radar.opportunities.map(renderRadarItem).join("") : '<div class="empty-sm">等待主线扩散或观察池个股确认</div>'}
     </div>
     <div class="radar-column">
-      <div class="radar-head"><b>风险提示</b><span>${radar.risks.length ? "优先控制回撤" : "暂无新增风险"}</span></div>
+      <div class="radar-head"><b>暂不碰原因</b><span>${radar.risks.length ? "解释为什么先回避" : "暂无新增风险"}</span></div>
       ${radar.risks.length ? radar.risks.map(renderRadarItem).join("") : '<div class="empty-sm">等待跌停/尾盘/舆情信号</div>'}
     </div>
     <div class="radar-column">
-      <div class="radar-head"><b>下一步验证</b><span>盘中只看可证伪信号</span></div>
+      <div class="radar-head"><b>改变判断的信号</b><span>满足后才调整今日结论</span></div>
       ${radar.verifications.length ? radar.verifications.map(renderRadarItem).join("") : '<div class="empty-sm">暂无验证条件</div>'}
     </div>
   </div>`;
@@ -1189,13 +1200,13 @@ function renderDecisionBrief(brief) {
   const cls = /风险|回撤|无明确/.test(String(brief.stance || "")) ? "risk" : (/等待|验证/.test(String(brief.stance || "")) ? "watch" : "good");
   return `<div class="radar-brief ${cls}">
     <div class="radar-brief-main">
-      <span>今天怎么做</span>
+      <span>判断依据</span>
       <b>${escapeHtml(brief.stance || "等待确认")}</b>
       <p>${escapeHtml(brief.action || "只按验证条件跟踪，不生成交易指令。")}</p>
     </div>
     <div class="radar-brief-side">
-      ${risks ? `<div><label>先避开</label>${risks}</div>` : ""}
-      ${upgrades ? `<div><label>转强条件</label>${upgrades}</div>` : ""}
+      ${risks ? `<div><label>主要压力</label>${risks}</div>` : ""}
+      ${upgrades ? `<div><label>会改变判断</label>${upgrades}</div>` : ""}
     </div>
   </div>`;
 }
