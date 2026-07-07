@@ -2,6 +2,7 @@
 
 | Display Version | Date | Edition | Tag / Commit | Summary | Rollback Note |
 |---|---:|---:|---|---|---|
+| 2026-07-07 第53版｜日韩早盘强防护 | 2026-07-07 | 第53版 | tag: `v2026.07.07-m53-japan-korea-guard` | 盘前“日韩早盘”不再展示原始字符串；字符串/数组字符串必须先提取日经、KOSPI、三星、SK海力士、东京电子、Advantest 等白名单行情数值，提取不到或发现降级/疑似乱码时统一显示中文降级提示。 | 回滚到第52版可用 `git checkout v2026.07.07-m52-blindspot-radar`，或回滚到本版本 tag。 |
 | 2026-07-07 第52版｜盲区并入风险雷达 | 2026-07-07 | 第52版 | tag: `v2026.07.07-m52-blindspot-radar` | 将 `monitoring-coverage` 的 critical/warning 盲区并入机会/风险雷达：critical 盲区进入风险栏前排，替代观察动作进入验证栏；运行时烟雾测试新增校验，critical 盲区必须渲染到雷达风险栏。 | 回滚到第51版可用 `git checkout v2026.07.07-m51-monitoring-coverage`，或回滚到本版本 tag。 |
 | 2026-07-07 第51版｜监测盲区雷达 | 2026-07-07 | 第51版 | tag: `v2026.07.07-m51-monitoring-coverage` | 新增 `scripts/build_monitoring_coverage.py` 和 `data/monitoring-coverage.json`，把不可用/降权数据翻译成交易监测盲区：影响哪些决策、为什么、临时替代观察动作是什么；顶部质量卡新增“监测盲区”，发布门强制检查盲区字段。 | 回滚到第50版可用 `git checkout v2026.07.07-m50-data-trust`，或回滚到本版本 tag。 |
 | 2026-07-07 第50版｜数据文件可信度 | 2026-07-07 | 第50版 | tag: `v2026.07.07-m50-data-trust` | 新增 `scripts/build_data_trust.py` 和 `data/data-trust.json`，把全局审计翻译成每个核心数据文件的 trusted/degraded/stale/invalidated/missing、可信分、使用动作和原因；顶部质量卡新增“文件可信”，发布脚本先审计再生成文件级可信度并复审。 | 回滚到第49版可用 `git checkout v2026.07.07-m49-signal-usability`，或回滚到本版本 tag。 |

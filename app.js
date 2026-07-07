@@ -2285,10 +2285,17 @@ function renderJapanKoreaMorning(jk) {
       const confirmList = extractAfter(jk, "再确认") || "日经、KOSPI、三星、SK海力士、东京电子/Advantest";
       return renderJapanKoreaDegraded(confirmList);
     }
-    return `<div class="source-note"><b>日韩早盘：</b>${escapeHtml(truncateText(jk, 80))}</div>`;
+    const tags = japanKoreaTextTags(jk);
+    return tags.length
+      ? '<div class="tag-row">日韩早盘：' + tags.map(s => `<span class="tag">${escapeHtml(s)}</span>`).join(" ") + '</div>'
+      : fallback;
   }
   if (Array.isArray(jk)) {
-    const rendered = jk.map(s => formatMarketTag(s)).filter(v => v && !hasMojibake(v));
+    const rendered = jk.flatMap(s => {
+      if (typeof s === "string") return japanKoreaTextTags(s);
+      const tag = formatMarketTag(s);
+      return tag ? [tag] : [];
+    }).filter(v => v && !hasMojibake(v));
     return rendered.length
       ? '<div class="tag-row">日韩早盘：' + rendered.map(s => `<span class="tag">${escapeHtml(s)}</span>`).join(" ") + '</div>'
       : fallback;
@@ -2313,6 +2320,25 @@ function renderJapanKoreaMorning(jk) {
     return tags.length ? '<div class="tag-row">日韩早盘：' + tags.join(" ") + '</div>' : fallback;
   }
   return "";
+}
+
+function japanKoreaTextTags(text) {
+  if (!text || hasMojibake(text)) return [];
+  const raw = String(text);
+  const rules = [
+    ["日经225", /(?:日经(?:225)?|Nikkei(?:\s*225)?)[：:\s]*([+-]?\d+(?:\.\d+)?%?)/i],
+    ["韩国KOSPI", /(?:韩国\s*)?KOSPI[：:\s]*([+-]?\d+(?:\.\d+)?%?)/i],
+    ["三星电子", /(?:三星(?:电子)?|Samsung(?:\s*Electronics)?)[：:\s]*([+-]?\d+(?:\.\d+)?%?)/i],
+    ["SK海力士", /(?:SK\s*海力士|SK\s*Hynix)[：:\s]*([+-]?\d+(?:\.\d+)?%?)/i],
+    ["东京电子", /(?:东京电子|Tokyo\s*Electron)[：:\s]*([+-]?\d+(?:\.\d+)?%?)/i],
+    ["Advantest", /Advantest[：:\s]*([+-]?\d+(?:\.\d+)?%?)/i]
+  ];
+  return rules.map(([label, re]) => {
+    const match = raw.match(re);
+    if (!match) return "";
+    const value = match[1].includes("%") ? match[1] : `${match[1]}%`;
+    return `${label}：${value}`;
+  }).filter(Boolean);
 }
 
 function renderJapanKoreaDegraded(confirmList) {
