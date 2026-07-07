@@ -29,7 +29,7 @@ def main() -> int:
         )
     }
     signal_date = latest_signal_date(files)
-    opportunities = dedupe_items(build_opportunities(files, signal_date))[:8]
+    opportunities = rank_upgrade_candidates(dedupe_items(build_opportunities(files, signal_date)))[:8]
     risks = dedupe_items(build_risks(files))[:8]
     verifications = dedupe_items(build_verifications(files))[:8]
     feed = {
@@ -49,6 +49,7 @@ def main() -> int:
             "每条信号必须输出 discovery_type/evidence_score/missing_evidence，用于区分主动发现、继承专题、风险兜底和证据缺口。",
             "每条信号必须输出 trigger_reason，用一句话解释为什么系统把它推到雷达。",
             "每条信号必须输出 next_action，把证据缺口翻译成下一交易窗口可执行检查。",
+            "每条机会必须输出 upgrade_rank/upgrade_priority/upgrade_condition，降权后进入验证栏也要保留升级排序和升级门槛。",
             "同一主线同时出现在机会、风险或验证栏时，必须输出 conflicts，给出风险优先/仅验证/可升级的统一判定。",
             "theme-shifts 用于识别升温、新线、抱团、降温和风险变化，并进入机会/风险/验证栏。",
         ],
@@ -160,6 +161,60 @@ def build_opportunities(files: dict[str, Any], current_date: str) -> list[dict[s
             quality_flags=gate["decision_flags"] if quality_degraded else [],
         ))
     return items
+
+
+def rank_upgrade_candidates(items: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    ranked = sorted(items, key=upgrade_sort_score, reverse=True)
+    for index, item in enumerate(ranked, 1):
+        item["upgrade_rank"] = index
+        item["upgrade_priority"] = upgrade_priority_for(item)
+        item["upgrade_condition"] = upgrade_condition_for(item)
+    return ranked
+
+
+def upgrade_sort_score(item: dict[str, Any]) -> float:
+    score = number(item.get("evidence_score")) * 0.55 + number(item.get("signal_score")) * 0.35
+    if item.get("discovery_type") in {"active_market_scan", "theme_shift_scan", "active_stock_scan"}:
+        score += 8
+    if item.get("watch_next"):
+        score += 5
+    if item.get("quality_flags"):
+        score -= min(12, 4 + len(clean_list(item.get("quality_flags"))) * 2)
+    if item.get("use_action") == "仅复核":
+        score -= 10
+    if item.get("tone") == "risk":
+        score -= 20
+    return score
+
+
+def upgrade_priority_for(item: dict[str, Any]) -> str:
+    grade = str(item.get("signal_grade") or "").upper()
+    action = str(item.get("use_action") or "")
+    score = upgrade_sort_score(item)
+    if "仅复核" in action or grade == "D":
+        return "仅复核"
+    if score >= 65:
+        return "优先验证"
+    if score >= 50:
+        return "观察验证"
+    return "低优先"
+
+
+def upgrade_condition_for(item: dict[str, Any]) -> str:
+    parts: list[str] = []
+    next_action = str(item.get("next_action") or "").strip()
+    if next_action:
+        parts.append(next_action)
+    else:
+        parts.append("先看板块扩散、核心股承接和尾盘方向是否同向确认。")
+    missing = "；".join(clean_list(item.get("missing_evidence") or []))
+    if "量化盘口" in missing:
+        parts.append("补齐涨停/封板数量、成交放大和尾盘承接证据。")
+    if "代表股" in missing:
+        parts.append("至少2-3只核心股强于板块ETF或指数。")
+    if item.get("quality_flags"):
+        parts.append("数据质量恢复或二次行情源确认前，不升级为可用机会。")
+    return trim("；".join(unique_keep_order(parts)), 220)
 
 
 def risk_theme_candidates(files: dict[str, Any]) -> list[tuple[dict[str, Any], str]]:
@@ -783,6 +838,18 @@ def clean_list(values: list[Any]) -> list[str]:
     rows = []
     for value in values:
         text = trim(str(value or "").replace("\n", " "), 180)
+        if not text or text in seen:
+            continue
+        seen.add(text)
+        rows.append(text)
+    return rows
+
+
+def unique_keep_order(values: list[str]) -> list[str]:
+    seen = set()
+    rows = []
+    for value in values:
+        text = trim(str(value or "").replace("\n", " "), 240)
         if not text or text in seen:
             continue
         seen.add(text)

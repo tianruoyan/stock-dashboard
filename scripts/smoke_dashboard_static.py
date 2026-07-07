@@ -189,12 +189,18 @@ def check_decision_feed(issues: list[dict[str, Any]]) -> None:
             for key in ("signal_grade", "signal_score", "use_action", "use_reasons", "discovery_type", "evidence_score", "next_action"):
                 if item.get(key) in (None, "", []):
                     issues.append(issue("warning", "data/decision-feed.json", "missing_usability_field", f"{title} 缺少 {key}"))
+            if section == "opportunities":
+                for key in ("upgrade_rank", "upgrade_priority", "upgrade_condition"):
+                    if item.get(key) in (None, "", []):
+                        issues.append(issue("warning", "data/decision-feed.json", "missing_upgrade_field", f"{title} 缺少 {key}"))
             if "missing_evidence" not in item or not isinstance(item.get("missing_evidence"), list):
                 issues.append(issue("warning", "data/decision-feed.json", "missing_usability_field", f"{title} 缺少 missing_evidence 数组"))
             if item.get("signal_grade") not in (None, "A", "B", "C", "D"):
                 issues.append(issue("warning", "data/decision-feed.json", "bad_signal_grade", f"{title} signal_grade 非 A/B/C/D"))
             if isinstance(item.get("evidence_score"), (int, float)) and not 0 <= item.get("evidence_score") <= 100:
                 issues.append(issue("warning", "data/decision-feed.json", "bad_evidence_score", f"{title} evidence_score 不在 0-100"))
+            if section == "opportunities" and isinstance(item.get("upgrade_rank"), int) and item.get("upgrade_rank") <= 0:
+                issues.append(issue("warning", "data/decision-feed.json", "bad_upgrade_rank", f"{title} upgrade_rank 必须为正整数"))
     check_decision_conflicts(data, issues)
     check_postmarket_risk_hotspots(data, issues)
     check_unplanned_theme_detection(data, issues)

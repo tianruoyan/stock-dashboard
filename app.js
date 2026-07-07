@@ -707,6 +707,7 @@ function renderRadarItem(item) {
     item.evidenceScore !== undefined ? ["证据分", `${item.evidenceScore}分`] : null,
     item.missingEvidence?.length ? ["缺口", item.missingEvidence.slice(0, 2)] : null,
     item.nextAction ? ["动作", item.nextAction] : null,
+    item.upgradeRank ? ["升级", `#${item.upgradeRank} ${item.upgradePriority || "观察验证"}：${item.upgradeCondition || "等待确认后再升级。"}`] : null,
     item.useReasons ? ["口径", item.useReasons] : null,
     item.qualityFlags ? ["降权", item.qualityFlags] : null,
     item.evidence ? ["证据", item.evidence] : null,
@@ -714,7 +715,7 @@ function renderRadarItem(item) {
     item.invalidation ? ["证伪", item.invalidation] : null,
     item.sourceTrust ? ["源状态", item.sourceTrust] : null,
     item.sources ? ["来源", item.sources] : null
-  ].filter(Boolean).map(([label, value]) => `<div class="radar-detail ${["降权", "缺口"].includes(label) ? "quality" : (label === "动作" ? "action" : "")}"><span>${label}</span><b>${escapeHtml(Array.isArray(value) ? value.join("；") : value)}</b></div>`).join("");
+  ].filter(Boolean).map(([label, value]) => `<div class="radar-detail ${["降权", "缺口"].includes(label) ? "quality" : (["动作", "升级"].includes(label) ? "action" : "")}"><span>${label}</span><b>${escapeHtml(Array.isArray(value) ? value.join("；") : value)}</b></div>`).join("");
   return `<div class="radar-item ${tone}">
     <div class="radar-item-head">
       <b>${escapeHtml(item.title)}</b>
@@ -950,6 +951,9 @@ function decisionFeedToRadarItem(item, fallbackTone) {
     evidenceScore: item.evidence_score,
     missingEvidence: (item.missing_evidence || []).slice(0, 4),
     nextAction: item.next_action,
+    upgradeRank: item.upgrade_rank,
+    upgradePriority: item.upgrade_priority,
+    upgradeCondition: item.upgrade_condition,
     sourceTrust: radarSourceTrustSummary(sources)
   };
 }

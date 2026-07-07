@@ -372,6 +372,7 @@ async function main() {
   }
   checkDecisionTriggerRendering(radarHtml, issues);
   checkDecisionNextActionRendering(radarHtml, issues);
+  checkDecisionUpgradeRendering(radarHtml, issues);
   checkDecisionConflictRendering(radarHtml, issues);
   checkDecisionSourceTrustRendering(radarHtml, issues);
   checkFallbackChecksRendering(radarHtml, coverage, issues);
@@ -417,8 +418,9 @@ async function main() {
       "拦截 console error、JS ERROR、对象直出、未定义值、非数字值和疑似乱码。",
       "critical 监测盲区必须进入机会/风险雷达的风险栏。",
       "C/D级降权机会不得进入机会候选栏，只能进入下一步验证。",
-      "机会/风险雷达必须渲染 decision-feed 的触发原因。",
-      "critical 盲区的 fallback_checks 必须渲染到机会/风险雷达。",
+    "机会/风险雷达必须渲染 decision-feed 的触发原因。",
+    "critical 盲区的 fallback_checks 必须渲染到机会/风险雷达。",
+    "机会候选被降权转验证时，必须渲染升级排序和升级条件。",
       "无 A/B 级可用机会时，机会/风险雷达必须显示无可用机会、风险优先和只做验证。",
       "文件可信度出现不可用或当前阶段超时时，今日总控必须显示具体文件状态。",
       "今日总控有效时间必须使用最新可信决策材料，不得使用 invalidated/missing/stale 文件时间。",
@@ -520,6 +522,28 @@ function checkDecisionNextActionRendering(radarHtml, issues) {
   for (const snippet of mustRender) {
     if (!rendered.includes(snippet)) {
       issues.push(issue("critical", "next_action_not_rendered", `下一步动作未渲染：${snippet}`, "opportunity-risk-radar"));
+    }
+  }
+}
+
+function checkDecisionUpgradeRendering(radarHtml, issues) {
+  const feed = readJsonIfExists("data/decision-feed.json");
+  const items = (Array.isArray(feed.opportunities) ? feed.opportunities : [])
+    .filter(item => item && item.upgrade_rank && item.upgrade_condition);
+  if (!items.length) return;
+  const rendered = normalizeRenderedText(radarHtml);
+  if (!rendered.includes("升级")) {
+    issues.push(issue("critical", "upgrade_condition_not_rendered", "机会/风险雷达未显示升级排序和升级条件", "opportunity-risk-radar"));
+    return;
+  }
+  for (const item of items.slice(0, 3)) {
+    const rank = `#${item.upgrade_rank}`;
+    const condition = stableSnippet(item.upgrade_condition);
+    if (!rendered.includes(rank)) {
+      issues.push(issue("critical", "upgrade_rank_not_rendered", `升级排序未渲染：${rank}`, "opportunity-risk-radar"));
+    }
+    if (condition && !rendered.includes(condition)) {
+      issues.push(issue("critical", "upgrade_condition_not_rendered", `升级条件未渲染：${condition}`, "opportunity-risk-radar"));
     }
   }
 }

@@ -2,6 +2,7 @@
 
 | Display Version | Date | Edition | Tag / Commit | Summary | Rollback Note |
 |---|---:|---:|---|---|---|
+| 2026-07-07 第89版｜升级候选排序 | 2026-07-07 | 第89版 | tag: `v2026.07.07-m89-upgrade-candidate-rank` | `decision-feed` 的机会候选新增 `upgrade_rank/upgrade_priority/upgrade_condition`，当数据降级导致机会转入“下一步验证”时，雷达仍显示候选升级排序和升级门槛；运行时门禁要求页面必须渲染“升级”行，避免只剩风险提示而丢掉明日优先验证方向。 | 回滚到第88版可用 `git checkout v2026.07.07-m88-japan-korea-structured`，或回滚到本版本 tag。 |
 | 2026-07-07 第88版｜日韩早盘结构化降级 | 2026-07-07 | 第88版 | tag: `v2026.07.07-m88-japan-korea-structured` | `premarket.json` 的日韩早盘从自由文本改为结构化降级对象，只保留待复核状态和白名单复核清单；页面缓存版本同步升级，避免旧脚本或原始长句造成乱码感。 | 回滚到第87版可用 `git checkout v2026.07.07-m87-postmarket-risk-priority`，或回滚到本版本 tag。 |
 | 2026-07-07 第87版｜盘后热点风险优先 | 2026-07-07 | 第87版 | tag: `v2026.07.07-m87-postmarket-risk-priority` | 风险生成顺序调整为盘后热点优先：带风险、分歧、退潮、反抽失败、弱化等词的盘后热点会先进入风险栏，避免被中期专题风险挤掉；静态门禁新增盘后风险热点覆盖检查，防止 CPO/国产算力、电子布/PCB 等活跃方向漏出雷达。 | 回滚到第86版可用 `git checkout v2026.07.07-m86-system-source-trust`，或回滚到本版本 tag。 |
 | 2026-07-07 第86版｜系统报告源状态 | 2026-07-07 | 第86版 | tag: `v2026.07.07-m86-system-source-trust` | 雷达“源状态”新增系统报告映射：`quality-report`、`source-health`、构建报告、静态/运行时门禁、自动化心跳、监测盲区和区块健康都会显示为质量报告/数据源健康等中文状态，不再显示“未纳入可信矩阵”。运行时门禁同步拦截未知源状态回流。 | 回滚到第85版可用 `git checkout v2026.07.07-m85-radar-source-trust`，或回滚到本版本 tag。 |
