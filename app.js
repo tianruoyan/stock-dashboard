@@ -150,6 +150,25 @@ function hasMojibake(value) {
   return /[�ÃÂ]|(?:æ|å|ç|è|é)[A-Za-z0-9_\- ]{0,8}/.test(String(value ?? ""));
 }
 
+function userFacingText(value) {
+  const text = String(value ?? "");
+  if (!text) return "";
+  if (/Can not decode value starting with|JSON decode failed|proxy disconnect|decode failed|failed with/i.test(text)) {
+    if (/hk|港股|Eastmoney|stock_hk/i.test(text)) {
+      return "港股行情源连接/解码异常，港股与日韩映射需人工复核。";
+    }
+    if (/japan|korea|nikkei|kospi|日韩|日经|韩国/i.test(text)) {
+      return "日韩早盘实时源异常，页面仅保留待复核清单，不展示未核实数值。";
+    }
+    return "行情源解码异常，相关行情与异动信号需二次复核。";
+  }
+  return text;
+}
+
+function userFacingList(items) {
+  return (items || []).map(userFacingText).filter(Boolean);
+}
+
 function cached(path) {
   return cache[path] || null;
 }
@@ -380,7 +399,7 @@ function renderDataQualityGate() {
     {
       label: "降级源",
       title: report.degraded.length ? `${report.degraded.length} 条` : "无",
-      detail: report.degraded.slice(0, 2).join(" / ") || "核心行情源正常",
+      detail: userFacingList(report.degraded).slice(0, 2).join(" / ") || "核心行情源正常",
       cls: report.degraded.length ? "warn" : "good"
     },
     {
@@ -412,16 +431,16 @@ function renderDataQualityGate() {
     <div class="decision-card ${card.cls}">
       <span class="decision-label">${escapeHtml(card.label)}</span>
       <b>${escapeHtml(card.title)}</b>
-      <span>${escapeHtml(card.detail)}</span>
+      <span>${escapeHtml(userFacingText(card.detail))}</span>
     </div>`).join("")}</div>
     ${report.impactBadges?.length ? `<div class="quality-impact-row">${report.impactBadges.map(item => `<span class="${escapeHtml(item.cls)}">${escapeHtml(item.text)}</span>`).join("")}</div>` : ""}
     ${report.actionPlan?.length ? `<div class="quality-action-plan">${report.actionPlan.slice(0, 3).map(item => `
       <div>
         <span>${escapeHtml(item.label || "处置")}</span>
-        <b>${escapeHtml(item.file || "unknown")}：${escapeHtml(item.next_step || item.decision_action || "")}</b>
-        <em>${escapeHtml(item.unblock_condition || "")}</em>
+        <b>${escapeHtml(item.file || "unknown")}：${escapeHtml(userFacingText(item.next_step || item.decision_action || ""))}</b>
+        <em>${escapeHtml(userFacingText(item.unblock_condition || ""))}</em>
       </div>`).join("")}</div>` : ""}
-    ${report.issues.length ? `<div class="quality-issues">${report.issues.slice(0, 4).map(item => `<span>${escapeHtml(item)}</span>`).join("")}</div>` : ""}`;
+    ${report.issues.length ? `<div class="quality-issues">${userFacingList(report.issues).slice(0, 4).map(item => `<span>${escapeHtml(item)}</span>`).join("")}</div>` : ""}`;
 }
 
 function buildDataQualityReport() {
@@ -445,11 +464,11 @@ function buildDataQualityReport() {
       critical: { level: "谨慎使用", cls: "warn" }
     };
     const mapped = statusMap[audited.status] || statusMap.degraded;
-    const issues = (audited.issues || []).map(item => item.message || item.code || "").filter(Boolean);
+    const issues = (audited.issues || []).map(item => userFacingText(item.message || item.code || "")).filter(Boolean);
     const impactSummary = summarizeQualityImpact(audited.counts || {});
     const degraded = (audited.issues || [])
       .filter(item => item.code === "source_degraded")
-      .map(item => item.message || "")
+      .map(item => userFacingText(item.message || ""))
       .filter(Boolean);
     const sectionSummary = summarizeSectionHealth(sectionHealth);
     const trustSummary = summarizeDataTrust(dataTrust);
@@ -461,7 +480,7 @@ function buildDataQualityReport() {
       latest,
       degraded,
       issues: [...automationSummary.issues, ...coverageSummary.issues, ...trustSummary.issues, ...sectionSummary.issues, ...issues],
-      summary: audited.summary || "数据审计报告已接入",
+      summary: userFacingText(audited.summary || "数据审计报告已接入"),
       impactTitle: impactSummary.title,
       impactDetail: impactSummary.detail,
       impactCls: impactSummary.cls,
@@ -506,7 +525,7 @@ function buildDataQualityReport() {
   });
   const degraded = Object.entries(sourceHealth.sources || {})
     .filter(([, src]) => src?.status === "degraded" || src?.status === "bad")
-    .map(([name, src]) => src.usage || src.detail || src.note || name);
+    .map(([name, src]) => userFacingText(src.usage || src.detail || src.note || name));
   if (sourceHealth.overall_status === "degraded" || sourceHealth.status === "degraded") {
     issues.push("数据源整体降级");
   }
@@ -673,7 +692,7 @@ function renderSectionHealthBadges() {
     }
     const cls = sectionHealthClass(section.status);
     badge.className = `section-health-badge ${cls}`;
-    badge.innerHTML = `<span>${escapeHtml(section.action || section.status || "待确认")}</span><b>${escapeHtml(truncateText(section.reason || "区块状态待确认", 120))}</b>`;
+    badge.innerHTML = `<span>${escapeHtml(section.action || section.status || "待确认")}</span><b>${escapeHtml(truncateText(userFacingText(section.reason || "区块状态待确认"), 120))}</b>`;
   });
 }
 
@@ -2798,7 +2817,13 @@ function renderPremarket(data) {
 
     // 来源
     if (data.sources) {
-      html += '<div class="subsection"><span class="muted" style="font-size:11px">数据源：' + data.sources.map(s => s.url ? `<a href="${s.url}" target="_blank" style="color:#58A6FF">${s.name}</a>` : s.name).join(" · ") + '</span></div>';
+      const sources = data.sources
+        .map(s => typeof s === "string" ? { name: "", url: s } : (s || {}))
+        .map(s => ({ name: cleanShortNote(s.name || s.title || s.source || ""), url: s.url || s.href || "" }))
+        .filter(s => s.name);
+      if (sources.length) {
+        html += '<div class="subsection"><span class="muted" style="font-size:11px">数据源：' + sources.map(s => s.url ? `<a href="${s.url}" target="_blank" style="color:#58A6FF">${escapeHtml(s.name)}</a>` : escapeHtml(s.name)).join(" · ") + '</span></div>';
+      }
     }
   }
 
@@ -3745,13 +3770,14 @@ function renderSourceHealth(data) {
     const cls = status === "ok" ? "ok" : status === "degraded" ? "warn" : "bad";
     const label = status === "ok" ? "正常" : status === "degraded" ? "降级" : "异常";
     const cadence = source.cadence ? `<div class="source-meta">频率：${escapeHtml(source.cadence)}</div>` : "";
-    const note = source.note ? `<div class="source-note">${escapeHtml(source.note)}</div>` : "";
+    const noteText = userFacingText(source.note || source.detail || "");
+    const note = noteText ? `<div class="source-note">${escapeHtml(noteText)}</div>` : "";
     return `<div class="source-card ${cls}">
       <div class="source-head">
         <b>${escapeHtml(source.name || source.id || "未命名数据源")}</b>
         <span class="source-status">${label}</span>
       </div>
-      <div class="source-meta">${escapeHtml(source.role || source.usage || source.detail || "")}</div>
+      <div class="source-meta">${escapeHtml(userFacingText(source.role || source.usage || source.detail || ""))}</div>
       ${cadence}
       ${note}
     </div>`;

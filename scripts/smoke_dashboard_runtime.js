@@ -7,6 +7,7 @@ const ROOT = path.resolve(__dirname, "..");
 const OUT = path.join(ROOT, "data", "runtime-smoke-report.json");
 const BAD_LITERALS = ["[object Object]", "undefined", "None%", "NaN", "Infinity"];
 const MOJIBAKE_RE = /[�ÃÂ]|(?:æ|å|ç|è|é)[A-Za-z0-9_\- ]{0,8}/;
+const RAW_SOURCE_ERROR_RE = /Can not decode value starting with|JSON decode failed|proxy disconnect|failed with/i;
 const OPTIONAL_FILES = new Set(["data/signal-review.json"]);
 const REQUIRED_RENDER_TARGETS = [
   "dashboard-control",
@@ -823,6 +824,9 @@ function checkPremarketJapanKoreaGuard(document, issues) {
   const rendered = normalizeRenderedText(html);
   if (!rendered.includes("日韩早盘：待复核") || !rendered.includes("复核清单")) {
     issues.push(issue("critical", "japan_korea_guard_not_rendered", "日韩早盘数据源降级时未显示固定待复核提示和复核清单", "section-premarket"));
+  }
+  if (RAW_SOURCE_ERROR_RE.test(rendered)) {
+    issues.push(issue("critical", "premarket_raw_source_error_rendered", "早盘区块仍展示底层英文源错误，需转成中文复核提示", "section-premarket"));
   }
   const rawSnippet = stableSnippet(jk);
   if (rawSnippet && rendered.includes(rawSnippet) && !rawSnippet.includes("日韩早盘")) {
