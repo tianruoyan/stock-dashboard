@@ -373,6 +373,7 @@ async function main() {
   checkDecisionTriggerRendering(radarHtml, issues);
   checkDecisionNextActionRendering(radarHtml, issues);
   checkDecisionConflictRendering(radarHtml, issues);
+  checkDecisionSourceTrustRendering(radarHtml, issues);
   checkFallbackChecksRendering(radarHtml, coverage, issues);
   checkRadarGateRendering(document, radarHtml, issues);
   checkDashboardConflictRendering(document, issues);
@@ -541,6 +542,29 @@ function checkDecisionConflictRendering(radarHtml, issues) {
     if (verdict && !rendered.includes(verdict)) {
       issues.push(issue("critical", "signal_conflict_not_rendered", `冲突判定未渲染：${verdict}`, "opportunity-risk-radar"));
     }
+  }
+}
+
+function checkDecisionSourceTrustRendering(radarHtml, issues) {
+  const feed = readJsonIfExists("data/decision-feed.json");
+  const trust = readJsonIfExists("data/data-trust.json");
+  const trustFiles = new Set((Array.isArray(trust.files) ? trust.files : []).map(item => String(item.file || "").replace(/^data\//, "")));
+  const items = [
+    ...(Array.isArray(feed.opportunities) ? feed.opportunities : []),
+    ...(Array.isArray(feed.risks) ? feed.risks : []),
+    ...(Array.isArray(feed.verifications) ? feed.verifications : [])
+  ].filter(item => item && Array.isArray(item.source_files) && item.source_files.some(source => trustFiles.has(String(source || "").replace(/^data\//, ""))));
+  if (!items.length) return;
+  const rendered = normalizeRenderedText(radarHtml);
+  if (!rendered.includes("源状态")) {
+    issues.push(issue("critical", "source_trust_not_rendered", "机会/风险雷达未显示来源可信状态", "opportunity-risk-radar"));
+    return;
+  }
+  const firstSource = String(items[0].source_files.find(source => trustFiles.has(String(source || "").replace(/^data\//, ""))) || "").replace(/^data\//, "");
+  const row = (trust.files || []).find(item => String(item.file || "").replace(/^data\//, "") === firstSource);
+  const label = stableSnippet(row?.label || firstSource.replace(/\.json$/, ""));
+  if (label && !rendered.includes(label)) {
+    issues.push(issue("critical", "source_trust_not_rendered", `雷达源状态未显示来源标签：${label}`, "opportunity-risk-radar"));
   }
 }
 

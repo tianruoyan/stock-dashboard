@@ -712,6 +712,7 @@ function renderRadarItem(item) {
     item.evidence ? ["证据", item.evidence] : null,
     item.watchNext ? ["验证", item.watchNext] : null,
     item.invalidation ? ["证伪", item.invalidation] : null,
+    item.sourceTrust ? ["源状态", item.sourceTrust] : null,
     item.sources ? ["来源", item.sources] : null
   ].filter(Boolean).map(([label, value]) => `<div class="radar-detail ${["降权", "缺口"].includes(label) ? "quality" : (label === "动作" ? "action" : "")}"><span>${label}</span><b>${escapeHtml(Array.isArray(value) ? value.join("；") : value)}</b></div>`).join("");
   return `<div class="radar-item ${tone}">
@@ -948,8 +949,43 @@ function decisionFeedToRadarItem(item, fallbackTone) {
     discoveryType: item.discovery_type,
     evidenceScore: item.evidence_score,
     missingEvidence: (item.missing_evidence || []).slice(0, 4),
-    nextAction: item.next_action
+    nextAction: item.next_action,
+    sourceTrust: radarSourceTrustSummary(sources)
   };
+}
+
+function radarSourceTrustSummary(sources) {
+  if (!sources.length) return "";
+  const trust = cached("data/data-trust.json");
+  const rows = Array.isArray(trust?.files) ? trust.files : [];
+  const byFile = new Map(rows.map(row => [String(row.file || "").replace(/^data\//, ""), row]));
+  return sources.slice(0, 3).map(source => {
+    const normalized = String(source || "").replace(/^data\//, "");
+    const row = byFile.get(normalized);
+    if (!row) return `${sourceShortName(source)}:未纳入可信矩阵`;
+    const action = trustActionShort(row.use_action || row.status);
+    const phase = trustPhaseShort(row.session_relevance);
+    return `${row.label || sourceShortName(source)}:${action}/${phase}`;
+  }).join("；");
+}
+
+function trustActionShort(value) {
+  const text = String(value || "");
+  if (/等待|不可|重产|修复/.test(text)) return "不可用";
+  if (/降权/.test(text)) return "降权";
+  if (/正常|trusted/.test(text)) return "正常";
+  if (/stale|过期/.test(text)) return "过期";
+  return text || "待确认";
+}
+
+function trustPhaseShort(value) {
+  return {
+    current: "当前",
+    historical: "阶段回看",
+    background: "背景",
+    upcoming: "待产出",
+    blocked: "阻断"
+  }[value] || value || "未知";
 }
 
 function isActionableOpportunity(item) {
