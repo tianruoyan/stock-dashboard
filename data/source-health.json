@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-07-07T15:42:12+08:00",
+  "timestamp": "2026-07-07T16:01:14+08:00",
   "sources": {
     "tencent_http": {
       "status": "ok",
@@ -33,11 +33,20 @@
     },
     "tencent_hk_http": {
       "status": "degraded",
-      "last_check": "2026-07-07T15:31:14+08:00",
-      "usage": "港股15:30尾盘映射快照",
-      "detail": "接口可用但quote_time最新为2026/07/07 15:19:45，相对当前15:31延迟约13分钟；按延迟快照使用。",
-      "sample_count": 18,
+      "last_check": "2026-07-07T16:01:14+08:00",
+      "usage": "港股16:00收盘窗口快照",
+      "detail": "接口可用，最新quote_time=2026/07/07 15:57:50；16:00后可能仍非收市竞价终值，按收盘窗口快照使用。",
+      "sample_count": 21,
       "errors": []
+    },
+    "eastmoney_hk_akshare": {
+      "status": "failed",
+      "last_check": "2026-07-07T16:01:14+08:00",
+      "usage": "港股结构行情交叉验证",
+      "detail": "akshare.stock_hk_spot_em failed with Eastmoney push2 proxy disconnect; akshare.stock_hk_spot JSON decode failed.",
+      "errors": [
+        "akshare.stock_hk_spot_em failed with Eastmoney push2 proxy disconnect; akshare.stock_hk_spot JSON decode failed."
+      ]
     }
   },
   "rules": [
@@ -55,6 +64,6 @@
     ]
   },
   "status": "degraded",
-  "notes": "港股尾盘更新使用腾讯HTTP延迟快照；A股收盘结构沿用15:01已校验版本。14:13:52 盘中异动 alert 因 akshare A股spot 解码/昨收链路异常已撤下。",
+  "notes": "港股收盘窗口使用腾讯HTTP快照；东方财富/akshare港股结构源失败，未编造最终收盘价。",
   "overall_status": "degraded"
 }
