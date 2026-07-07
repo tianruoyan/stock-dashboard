@@ -56,6 +56,9 @@ def build_blind_spots(trust: dict[str, dict[str, Any]], source_health: dict[str,
     postmarket = trust.get("data/postmarket.json") or {}
     evening = trust.get("data/evening-sentiment.json") or {}
     decision = trust.get("data/decision-feed.json") or {}
+    postmarket_data = load_json(DATA_DIR / "postmarket.json")
+    intraday_data = load_json(DATA_DIR / "intraday.json")
+    decision_data = load_json(DATA_DIR / "decision-feed.json")
 
     if alert.get("status") in {"invalidated", "missing"}:
         rows.append(blind_spot(
@@ -66,7 +69,8 @@ def build_blind_spots(trust: dict[str, dict[str, Any]], source_health: dict[str,
             ["盘中异动卡不能作为买卖触发依据", "观察池高频强弱切换可能滞后", "新题材第一次扩散可能需要人工从盘中全景确认"],
             [alert.get("reason") or "alert 文件不可用"],
             "不要依赖异动提醒；改看盘中全景、涨跌停池、专题/观察池静态结论，并等待修复后重产 alert。",
-            ["data/alert.json", "data/data-trust.json"]
+            ["data/alert.json", "data/data-trust.json"],
+            fallback_checks=alert_fallback_checks(postmarket_data, intraday_data, decision_data)
         ))
     elif alert.get("status") == "degraded":
         rows.append(blind_spot(
@@ -77,7 +81,8 @@ def build_blind_spots(trust: dict[str, dict[str, Any]], source_health: dict[str,
             ["交易信号不能直接执行", "同题材连续触发需要看原始行情源确认"],
             [alert.get("reason") or "alert 文件降权"],
             "只把 alert 当成线索，必须结合指数、板块宽度和个股原始报价确认。",
-            ["data/alert.json", "data/data-trust.json"]
+            ["data/alert.json", "data/data-trust.json"],
+            fallback_checks=alert_fallback_checks(postmarket_data, intraday_data, decision_data)
         ))
 
     if intraday.get("status") == "degraded":
@@ -167,6 +172,7 @@ def blind_spot(
     evidence: list[str],
     fallback_action: str,
     source_files: list[str],
+    fallback_checks: list[str] | None = None,
 ) -> dict[str, Any]:
     return {
         "id": item_id,
@@ -176,8 +182,73 @@ def blind_spot(
         "impacted_decisions": clean_list(impacted_decisions)[:4],
         "evidence": clean_list(evidence)[:4],
         "fallback_action": trim(fallback_action, 180),
+        "fallback_checks": clean_list(fallback_checks or [])[:6],
         "source_files": source_files[:4],
     }
+
+
+def alert_fallback_checks(postmarket: dict[str, Any], intraday: dict[str, Any], decision_feed: dict[str, Any]) -> list[str]:
+    checks: list[str] = []
+    breadth = market_breadth_text(postmarket, intraday)
+    if breadth:
+        checks.append(breadth)
+    checks.extend(theme_checks(postmarket))
+    checks.extend(decision_checks(decision_feed))
+    if not checks:
+        checks.append("替代观察：先看涨停/跌停/炸板是否收敛，再看核心主线代表股是否同步高开承接。")
+    return checks
+
+
+def market_breadth_text(postmarket: dict[str, Any], intraday: dict[str, Any]) -> str:
+    mb = ((postmarket.get("index") or {}).get("market_breadth") or {}) if isinstance(postmarket, dict) else {}
+    sentiment = intraday.get("sentiment") or {} if isinstance(intraday, dict) else {}
+    limit_up = mb.get("limit_up") or sentiment.get("limit_up_count")
+    limit_down = mb.get("limit_down") or sentiment.get("limit_down_count")
+    broken = mb.get("broken_board") or sentiment.get("broken_limit_count")
+    down5 = mb.get("down5")
+    if not any(v is not None for v in (limit_up, limit_down, broken, down5)):
+        return ""
+    return f"宽度替代：9:25/9:30先看涨停{limit_up or '-'}、跌停{limit_down or '-'}、炸板{broken or '-'}、跌5%以上{down5 or '-'}是否收敛；不收敛则风险优先。"
+
+
+def theme_checks(postmarket: dict[str, Any]) -> list[str]:
+    rows: list[str] = []
+    for theme in postmarket.get("hotspots") or []:
+        if not isinstance(theme, dict):
+            continue
+        name = str(theme.get("name") or "")
+        status = str(theme.get("status") or "")
+        stocks = stock_names(theme.get("stocks"))[:4]
+        if not name or not stocks:
+            continue
+        state_text = " ".join([name, status, str(theme.get("continuity") or ""), str(theme.get("note") or "")])
+        if re.search(r"风险线|弱化|退潮|反抽失败|证伪", state_text):
+            rows.append(f"风险线替代：{name} 看 {'/'.join(stocks)} 是否继续低开或弱反抽；未修复前不升级。")
+        elif re.search(r"低位|消费电子|元件|新线|轮动增强", name + status):
+            rows.append(f"新线替代：{name} 看 {'/'.join(stocks)} 是否继续扩散；只强一日则按轮动处理。")
+        elif len(rows) < 4:
+            rows.append(f"主线替代：{name} 看 {'/'.join(stocks)} 是否同步高开承接，单点强不升级。")
+    return rows[:4]
+
+
+def decision_checks(decision_feed: dict[str, Any]) -> list[str]:
+    rows: list[str] = []
+    for item in (decision_feed.get("risks") or [])[:3]:
+        if isinstance(item, dict) and item.get("watch_next"):
+            rows.append(f"雷达替代：{trim(item.get('title'), 28)}：{trim((item.get('watch_next') or [''])[0], 90)}")
+    return rows[:2]
+
+
+def stock_names(value: Any) -> list[str]:
+    rows = []
+    if not isinstance(value, list):
+        return rows
+    for item in value:
+        if isinstance(item, dict):
+            rows.append(str(item.get("name") or item.get("symbol") or ""))
+        else:
+            rows.append(str(item or ""))
+    return clean_list(rows)
 
 
 def hk_source_flags(source_health: dict[str, Any]) -> list[str]:

@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-07-07T20:43:19+08:00",
+  "timestamp": "2026-07-07T20:47:59+08:00",
   "current_signal_date": "2026-07-07",
   "overall_status": "blind_spot",
   "summary": "1 个核心监测盲区（盘中异动触发盲区），5 个降权盲区。",
@@ -23,6 +23,14 @@
         "2026-07-07 14:13:52 批次的盘中异动使用了异常行情源数据，北方华创/中微公司等日内涨跌幅失真，已撤下该批 alert，等待修复后的盘中提醒进程重新产出。"
       ],
       "fallback_action": "不要依赖异动提醒；改看盘中全景、涨跌停池、专题/观察池静态结论，并等待修复后重产 alert。",
+      "fallback_checks": [
+        "宽度替代：9:25/9:30先看涨停33、跌停23、炸板23、跌5%以上-是否收敛；不收敛则风险优先。",
+        "主线替代：半导体/硅片/封装/设备零部件 看 有研硅/沪硅产业/有研新材/TCL中环 是否同步高开承接，单点强不升级。",
+        "新线替代：低位硬件/消费电子/元件 看 威尔高/视源股份/魅视科技/实益达 是否继续扩散；只强一日则按轮动处理。",
+        "主线替代：化工/材料/资源轮动 看 雅化集团/佛塑科技/晨光新材/百合花 是否同步高开承接，单点强不升级。",
+        "主线替代：CPO/国产算力 看 光迅科技/新易盛/中际旭创/天孚通信 是否同步高开承接，单点强不升级。",
+        "雷达替代：全市场亏钱效应：次日先看跌停/炸板是否收敛，再判断强线能否从抱团转扩散。"
+      ],
       "source_files": [
         "data/alert.json",
         "data/data-trust.json"
@@ -42,6 +50,7 @@
         "ths_sina_or_akshare_quote_decode: akshare A股spot继续出现Can not decode value starting with character \"<\"；14:13:52 alert 批次已确认污染北方华创/中微公司等涨跌幅，已撤下该批 alert，并要求盘中提醒优先使用行情源原始涨跌幅字段。；tencent_hk_http: 接口可用，最新quote_time=2026/07/07 1…"
       ],
       "fallback_action": "优先看涨跌停/炸板/尾盘承接等结构证据，不用单个涨跌幅做结论。",
+      "fallback_checks": [],
       "source_files": [
         "data/intraday.json",
         "data/data-trust.json"
@@ -60,6 +69,7 @@
         "ths_sina_or_akshare_quote_decode: akshare A股spot继续出现Can not decode value starting with character \"<\"；14:13:52 alert 批次已确认污染北方华创/中微公司等涨跌幅，已撤下该批 alert，并要求盘中提醒优先使用行情源原始涨跌幅字段。；tencent_hk_http: 接口可用，最新quote_time=2026/07/07 1…"
       ],
       "fallback_action": "开盘只按竞价确认后的 A 股反馈升级，不把外盘映射直接升为强主线。",
+      "fallback_checks": [],
       "source_files": [
         "data/premarket.json",
         "data/source-health.json"
@@ -78,6 +88,7 @@
         "ths_sina_or_akshare_quote_decode: akshare A股spot继续出现Can not decode value starting with character \"<\"；14:13:52 alert 批次已确认污染北方华创/中微公司等涨跌幅，已撤下该批 alert，并要求盘中提醒优先使用行情源原始涨跌幅字段。；tencent_hk_http: 接口可用，最新quote_time=2026/07/07 1…"
       ],
       "fallback_action": "把盘后结论拆成次日验证条件，不直接继承为次日交易方向。",
+      "fallback_checks": [],
       "source_files": [
         "data/postmarket.json",
         "data/source-health.json"
@@ -96,6 +107,7 @@
         "发现 5 个降级/需复核项，核心结论可看但必须降权。"
       ],
       "fallback_action": "只跟踪验证条件；若风险项不收敛，不升级任何机会。",
+      "fallback_checks": [],
       "source_files": [
         "data/decision-feed.json",
         "data/data-trust.json"
@@ -115,6 +127,7 @@
         "eastmoney_hk_akshare: akshare.stock_hk_spot_em failed with Eastmoney push2 proxy disconnect; akshare.stock_hk_spot JSON decode failed."
       ],
       "fallback_action": "港股映射只作情绪背景，以 A 股竞价和开盘30分钟承接为准。",
+      "fallback_checks": [],
       "source_files": [
         "data/source-health.json"
       ]

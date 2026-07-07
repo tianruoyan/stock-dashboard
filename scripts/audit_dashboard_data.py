@@ -446,6 +446,8 @@ def validate_monitoring_coverage(data: Any, issues: list[dict[str, Any]], curren
         for key in ("id", "title", "severity", "conclusion", "impacted_decisions", "fallback_action", "source_files"):
             if item.get(key) in (None, "", []):
                 issues.append(issue("warning", "monitoring-coverage.json", "missing_blind_spot_field", f"blind_spots[{index}].{key} 缺失", f"blind_spots[{index}]"))
+        if item.get("severity") == "critical" and item.get("fallback_checks") in (None, "", []):
+            issues.append(issue("warning", "monitoring-coverage.json", "missing_fallback_checks", f"blind_spots[{index}] 核心盲区缺少可执行 fallback_checks", f"blind_spots[{index}]"))
         if item.get("severity") not in (None, "critical", "warning", "info"):
             issues.append(issue("warning", "monitoring-coverage.json", "bad_blind_spot_severity", f"blind_spots[{index}].severity 非法", f"blind_spots[{index}]"))
 
