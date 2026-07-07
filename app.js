@@ -354,10 +354,12 @@ function stockSignal(stock, signals, pool) {
   const name = stock.name || "";
   const tags = signalTags([...(stock.tags || []), ...inferredStockTags(stock)]);
   const currentDate = currentSignalDate();
-  const todaySignals = filterSignalsByDate(signals, currentDate);
+  const todaySignals = filterSignalsByDate(signals, currentDate)
+    .filter(signal => !(hasCurrentPostmarket() && signal.source === "alert"));
   const context = stockContextText(name, todaySignals, { includeCurrentData: true });
   const contextAll = stockContextText(name, signals, { includeCurrentData: false });
-  const changePct = stockChangePct(name, context);
+  const latestChangePct = latestStockChangePct(name);
+  const changePct = Number.isFinite(latestChangePct) ? latestChangePct : stockChangePct(name, context);
   const volumeBadge = stockVolumeBadge(context);
   const hardEventRiskPattern = /减持|监管|问询|立案|处罚|澄清|业绩雷/;
   const priceRiskPattern = /跌停|接近跌停|暴跌|放量大跌|放量下跌|破位|跌破|降级|风险核心|负反馈核心/;
@@ -379,8 +381,8 @@ function stockSignal(stock, signals, pool) {
   const directPressure = directSegments.some(part => !isConditionalSignal(part) && (pressurePattern.test(part) || hasAnyDrop(part)));
   const directTrigger = directSegments.some(part => !isConditionalSignal(part) && (hardStrongPattern.test(part) || hasLargeGain(part, 5)));
   const contextStrong = namedContextHasPattern(name, context, hardStrongPattern);
-  const contextRisk = !isConditionalSignal(context) && priceRiskPattern.test(context);
-  const contextPressure = !isConditionalSignal(context) && pressurePattern.test(context);
+  const contextRisk = namedContextHasPattern(name, context, priceRiskPattern);
+  const contextPressure = namedContextHasPattern(name, context, pressurePattern);
   const positiveMove = Number.isFinite(changePct) && changePct >= 3;
   const strongMove = Number.isFinite(changePct) && changePct >= 5;
   const weakMove = Number.isFinite(changePct) && changePct <= -3;
@@ -395,7 +397,7 @@ function stockSignal(stock, signals, pool) {
       : [pctBadge(changePct), volumeBadge].filter(Boolean).join("/") || "走强";
     return watchTone("strong", currentNamedStrong ? shortReason(strongSegments([...directSegments, namedStrongContext(name, context)]), "强信号") : "当日大涨", badge, changePct, volumeBadge, 90);
   }
-  if (currentWeak) return watchTone("weak", directRisk || contextRisk ? "硬风险" : pressureReason(directSegments), priceRiskBadge([...directSegments, context]) || pressureBadge([...directSegments, context]) || pctBadge(changePct), changePct, volumeBadge, 85);
+  if (currentWeak) return watchTone("weak", directRisk || contextRisk ? "硬风险" : pressureReason(directSegments), priceRiskBadge([...directSegments, namedRiskContext(name, context)]) || pressureBadge([...directSegments, namedRiskContext(name, context)]) || pctBadge(changePct), changePct, volumeBadge, 85);
   if (strongTag && positiveMove) return watchTone("strong", `${strongTag}强线内走强`, [pctBadge(changePct), volumeBadge].filter(Boolean).join("/") || "强线走强", changePct, volumeBadge, 72);
   if (pressureTag && weakMove) return watchTone("weak", `${pressureTag}承压`, [pctBadge(changePct), volumeBadge].filter(Boolean).join("/") || "方向承压", changePct, volumeBadge, 70);
   if (positiveMove) return watchTone("strong", directSegments.length ? shortReason(directSegments, "个股走强") : "当日走强", [pctBadge(changePct), volumeBadge].filter(Boolean).join("/") || "上涨", changePct, volumeBadge, 62);
@@ -436,12 +438,28 @@ function currentDayDataTexts() {
   const currentDate = currentSignalDate();
   return [
     ["data/intraday.json", cached("data/intraday.json")],
-    ["data/alert.json", cached("data/alert.json")],
+    ...(hasCurrentPostmarket() ? [] : [["data/alert.json", cached("data/alert.json")]]),
     ["data/midday.json", cached("data/midday.json")],
     ["data/postmarket.json", cached("data/postmarket.json")]
   ]
     .filter(([, data]) => signalDate(data?.timestamp) === currentDate)
     .map(([, data]) => JSON.stringify(data || {}));
+}
+
+function latestStockChangePct(name) {
+  const currentDate = currentSignalDate();
+  const sources = [
+    cached("data/postmarket.json"),
+    cached("data/intraday.json"),
+    cached("data/midday.json"),
+    ...(hasCurrentPostmarket() ? [] : [cached("data/alert.json")])
+  ];
+  for (const data of sources) {
+    if (signalDate(data?.timestamp) !== currentDate) continue;
+    const value = stockChangePct(name, JSON.stringify(data || {}));
+    if (Number.isFinite(value)) return value;
+  }
+  return NaN;
 }
 
 function stockChangePct(name, context) {
@@ -481,6 +499,17 @@ function namedStrongContext(name, context) {
     if (isConditionalSignal(part)) return false;
     const afterName = part.match(new RegExp(`${cleanName}([^。；;\\n]{0,80})`));
     return afterName ? /涨停|封板|急拉|大涨|放量上涨|放量走强|强势|领涨|突破|加速/.test(afterName[1]) : false;
+  }).join(" ");
+}
+
+function namedRiskContext(name, context) {
+  const cleanName = escapeRegExp(displayStockName(name));
+  const text = String(context || "");
+  const clauses = text.split(/[。；;\n]/).filter(part => part.includes(displayStockName(name)));
+  return clauses.filter(part => {
+    if (isConditionalSignal(part)) return false;
+    const afterName = part.match(new RegExp(`${cleanName}([^。；;\\n]{0,80})`));
+    return afterName ? /跌停|接近跌停|暴跌|放量大跌|放量下跌|破位|跌破|降级|风险核心|负反馈核心|-\d+(?:\.\d+)?%/.test(afterName[1]) : false;
   }).join(" ");
 }
 
@@ -761,22 +790,23 @@ function collectSignalText() {
   const topics = cached("data/topics.json") || {};
   const alert = cached("data/alert.json") || {};
   return [
-    ...signalsFromItems(alert.alerts, alert.timestamp),
-    ...signalsFromItems(intraday.main_trends, intraday.timestamp),
-    ...signalsFromItems(themeGroupsToItems(intraday.themes), intraday.timestamp),
-    ...signalsFromItems(postmarket.hotspots, postmarket.timestamp),
-    ...signalsFromItems(evening.p0_alerts, evening.timestamp),
-    ...signalsFromItems(topics.topics, topics.timestamp)
+    ...signalsFromItems(alert.alerts, alert.timestamp, "alert"),
+    ...signalsFromItems(intraday.main_trends, intraday.timestamp, "intraday"),
+    ...signalsFromItems(themeGroupsToItems(intraday.themes), intraday.timestamp, "intraday"),
+    ...signalsFromItems(postmarket.hotspots, postmarket.timestamp, "postmarket"),
+    ...signalsFromItems(evening.p0_alerts, evening.timestamp, "evening"),
+    ...signalsFromItems(topics.topics, topics.timestamp, "topics")
   ];
 }
 
-function signalsFromItems(items, fallbackTimestamp) {
+function signalsFromItems(items, fallbackTimestamp, source) {
   return asArray(items).map(item => {
     const timestamp = item?.updated_at || item?.timestamp || fallbackTimestamp || "";
     return {
       text: JSON.stringify(item, null, 0),
       date: signalDate(timestamp),
-      timestamp
+      timestamp,
+      source
     };
   });
 }
@@ -801,6 +831,10 @@ function signalDate(timestamp) {
   const text = String(timestamp || "");
   const match = text.match(/\d{4}-\d{2}-\d{2}/);
   return match ? match[0] : "";
+}
+
+function hasCurrentPostmarket() {
+  return signalDate(cached("data/postmarket.json")?.timestamp) === currentSignalDate();
 }
 
 function asArray(value) {
