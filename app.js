@@ -82,7 +82,6 @@ function currentRefreshIntervalMs(now = new Date()) {
   if (minutes >= 13 * 60 && minutes <= 15 * 60 + 10) return 30 * 1000;
   if (minutes >= 8 * 60 + 30 && minutes < 9 * 60 + 15) return 60 * 1000;
   if (minutes > 11 * 60 + 35 && minutes < 13 * 60) return 2 * 60 * 1000;
-  if (minutes > 15 * 60 + 10 && minutes <= 21 * 60 + 30) return 2 * 60 * 1000;
   return 5 * 60 * 1000;
 }
 
