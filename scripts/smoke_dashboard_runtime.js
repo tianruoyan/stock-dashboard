@@ -1029,6 +1029,8 @@ function checkQualityActionPlanRendering(qualityHtml, issues) {
 
 function firstIndexName(intraday) {
   if (Array.isArray(intraday.indices) && intraday.indices[0]) return intraday.indices[0].name || "";
+  const aShare = intraday.index?.A_share_close_reference || intraday.index?.a_share_close_reference || intraday.index?.a_share_indices;
+  if (Array.isArray(aShare) && aShare[0]) return aShare[0].name || "";
   const snapshot = intraday.index?.HK_close_window_snapshot;
   if (Array.isArray(snapshot) && snapshot[0]) return snapshot[0].name || "";
   return "";

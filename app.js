@@ -2792,31 +2792,30 @@ function renderIntradayDecision(data) {
   const themes = getIntradayThemes(data);
   const strong = themes.filter(isPriorityTheme);
   const risks = themes.filter(t => isAvoidTheme(t) && !strong.some(s => trendName(s) === trendName(t)));
-  const primary = strong[0] || themes[0];
-  const primaryName = primary ? themeDisplayName(primary) : "等待主线确认";
-  const primaryStatus = primary ? trendStatus(primary) || "观察" : "暂无";
-  const riskNames = risks.slice(0, 2).map(t => themeDisplayName(t)).join(" / ") || "暂无明确风险线";
   const sentiment = intradayMood(data);
   const action = intradayActionText(data, strong, risks, sentiment);
+  const indexSignal = intradayIndexSignal(data);
+  const widthSignal = intradayWidthSignal(data, sentiment);
+  const riskSignal = intradayRiskSpreadSignal(data, risks);
 
   el.innerHTML = `
+    <div class="decision-card ${indexSignal.cls}">
+      <span class="decision-label">指数温度</span>
+      <b>${escapeHtml(indexSignal.title)}</b>
+      <span>${escapeHtml(indexSignal.detail)}</span>
+    </div>
+    <div class="decision-card ${widthSignal.cls}">
+      <span class="decision-label">市场宽度</span>
+      <b>${escapeHtml(widthSignal.title)}</b>
+      <span>${escapeHtml(widthSignal.detail)}</span>
+    </div>
+    <div class="decision-card ${riskSignal.cls}">
+      <span class="decision-label">风险扩散</span>
+      <b>${escapeHtml(riskSignal.title)}</b>
+      <span>${escapeHtml(riskSignal.detail)}</span>
+    </div>
     <div class="decision-card action">
-      <span class="decision-label">盘面状态</span>
-      <b>${escapeHtml(sentiment.title)}</b>
-      <span>${escapeHtml(sentiment.detail)}</span>
-    </div>
-    <div class="decision-card primary">
-      <span class="decision-label">强方向</span>
-      <b>${escapeHtml(primaryName)}</b>
-      <span>${escapeHtml(primaryStatus)}</span>
-    </div>
-    <div class="decision-card risk">
-      <span class="decision-label">风险方向</span>
-      <b>${escapeHtml(riskNames)}</b>
-      <span>${escapeHtml(risks[0]?.risk || "看是否扩散")}</span>
-    </div>
-    <div class="decision-card action">
-      <span class="decision-label">盘中动作</span>
+      <span class="decision-label">盘中观察</span>
       <b>${escapeHtml(action.title)}</b>
       <span>${escapeHtml(action.detail)}</span>
     </div>
@@ -2850,7 +2849,7 @@ function intradayActionText(data, strong, risks, sentiment) {
   if (actions.length) {
     return {
       title: `看${Math.min(actions.length, 3)}个验证信号`,
-      detail: truncateText(actions.slice(0, 2).join("；"), 58)
+      detail: actions.slice(0, 3).join("；")
     };
   }
   if (sentiment.cls === "warn" || risks.length >= 2) {
@@ -2862,6 +2861,71 @@ function intradayActionText(data, strong, risks, sentiment) {
   return { title: "等待确认", detail: "没有共振前降低操作频率" };
 }
 
+function intradayWidthSignal(data, sentiment) {
+  const s = data.sentiment || {};
+  const up = Number(s.limit_up_count ?? data.limit_up_count ?? 0);
+  const down = Number(s.limit_down_count ?? data.limit_down_count ?? 0);
+  const broken = Number(s.broken_limit_count ?? data.broken_limit_count ?? 0);
+  if (!up && !down && !broken) {
+    return { title: "宽度待更新", detail: sentiment.detail || "等待涨跌停和炸板数据", cls: "neutral" };
+  }
+  const cls = down >= 20 || broken >= 30 ? "risk" : up >= 70 && down <= 10 ? "good" : "action";
+  return {
+    title: `涨停${up} / 跌停${down} / 炸板${broken}`,
+    detail: sentiment.title,
+    cls
+  };
+}
+
+function intradayRiskSpreadSignal(data, risks) {
+  const s = data.sentiment || {};
+  const down = Number(s.limit_down_count ?? data.limit_down_count ?? 0);
+  const broken = Number(s.broken_limit_count ?? data.broken_limit_count ?? 0);
+  const riskNames = risks.slice(0, 2).map(t => themeDisplayName(t)).join(" / ");
+  if (down >= 20 || broken >= 30) {
+    return {
+      title: "风险未收敛",
+      detail: riskNames ? `${riskNames}；看跌停和炸板是否继续扩散` : "看跌停和炸板是否继续扩散",
+      cls: "risk"
+    };
+  }
+  if (riskNames) {
+    return { title: "局部风险线", detail: `${riskNames}；只作为回避证据，不替代今日结论`, cls: "warn" };
+  }
+  return { title: "暂未扩散", detail: "没有看到明确风险线时，继续看宽度和前排承接", cls: "neutral" };
+}
+
+function intradayIndexSignal(data) {
+  const indices = intradayIndexItems(data).slice(0, 6);
+  if (!indices.length) return { title: "指数待更新", detail: "优先读取A股核心指数", cls: "neutral" };
+  const parsed = indices.map(item => Number(item.change_pct ?? item.pct ?? 0)).filter(Number.isFinite);
+  const upCount = parsed.filter(v => v > 0).length;
+  const downCount = parsed.filter(v => v < 0).length;
+  const worst = indices
+    .map(item => ({ name: item.name || item.market || "指数", pct: Number(item.change_pct ?? item.pct ?? 0) }))
+    .filter(item => Number.isFinite(item.pct))
+    .sort((a, b) => a.pct - b.pct)[0];
+  const best = indices
+    .map(item => ({ name: item.name || item.market || "指数", pct: Number(item.change_pct ?? item.pct ?? 0) }))
+    .filter(item => Number.isFinite(item.pct))
+    .sort((a, b) => b.pct - a.pct)[0];
+  if (downCount >= Math.max(3, upCount + 2)) {
+    return {
+      title: "指数偏弱",
+      detail: worst ? `${worst.name}${formatPct(worst.pct)}；先看是否止跌` : `${downCount}个核心指数下跌`,
+      cls: "risk"
+    };
+  }
+  if (upCount >= Math.max(3, downCount + 2)) {
+    return {
+      title: "指数偏强",
+      detail: best ? `${best.name}${formatPct(best.pct)}；看是否带动宽度` : `${upCount}个核心指数上涨`,
+      cls: "good"
+    };
+  }
+  return { title: "指数分化", detail: `${upCount}涨 / ${downCount}跌，看权重与题材是否共振`, cls: "action" };
+}
+
 function renderCodexIntraday(data) {
   const sentiment = intradayMood(data);
   const themes = getIntradayThemes(data);
@@ -2870,41 +2934,42 @@ function renderCodexIntraday(data) {
     .filter(t => isAvoidTheme(t) && !strong.some(s => trendName(s) === trendName(t)))
     .slice(0, 3);
   const afternoonAdvice = intradayAdviceItems(data);
-  const s = data.sentiment || {};
-  const up = Number(s.limit_up_count ?? data.limit_up_count ?? 0);
-  const down = Number(s.limit_down_count ?? data.limit_down_count ?? 0);
-  const broken = Number(s.broken_limit_count ?? data.broken_limit_count ?? 0);
-  const widthText = up || down || broken
-    ? `涨停${up || 0} / 跌停${down || 0} / 炸板${broken || 0}`
-    : "宽度数据待更新";
   const action = intradayActionText(data, strong, risks, sentiment);
-  const strongText = strong.map(t => themeDisplayName(t)).join(" / ") || "暂无明确强方向";
-  const riskText = risks.map(t => themeDisplayName(t)).join(" / ") || "暂无明确风险线";
-  const adviceText = afternoonAdvice.slice(0, 2).join("；") || action.detail;
+  const indexSignal = intradayIndexSignal(data);
+  const widthSignal = intradayWidthSignal(data, sentiment);
+  const riskSignal = intradayRiskSpreadSignal(data, risks);
+  const strongText = strong.map(t => themeDisplayName(t)).join(" / ") || "暂无明确强度证据";
+  const riskText = risks.map(t => themeDisplayName(t)).join(" / ") || "暂无明确风险证据";
+  const adviceText = afternoonAdvice.slice(0, 3).join("；") || action.detail;
 
   let html = `
     <div class="subsection intraday-snapshot">
-      <h3>盘中态势速读</h3>
+      <h3>盘中事实速读</h3>
       <div class="snapshot-grid">
         <div class="snapshot-item">
+          <span>指数</span>
+          <b>${escapeHtml(indexSignal.title)}</b>
+          <em>${escapeHtml(indexSignal.detail)}</em>
+        </div>
+        <div class="snapshot-item">
           <span>宽度</span>
-          <b>${escapeHtml(widthText)}</b>
-          <em>${escapeHtml(sentiment.title)}</em>
+          <b>${escapeHtml(widthSignal.title)}</b>
+          <em>${escapeHtml(widthSignal.detail)}</em>
         </div>
         <div class="snapshot-item">
-          <span>强方向</span>
+          <span>强弱证据</span>
           <b>${escapeHtml(strongText)}</b>
-          <em>只看前排承接，不追后排补涨</em>
+          <em>只说明盘面强度，不直接等同于优先买入</em>
         </div>
         <div class="snapshot-item">
-          <span>风险方向</span>
-          <b>${escapeHtml(riskText)}</b>
-          <em>风险扩散时先降频，不做弱线反抽</em>
+          <span>风险证据</span>
+          <b>${escapeHtml(riskSignal.title)}</b>
+          <em>${escapeHtml(riskText === "暂无明确风险证据" ? riskSignal.detail : `${riskText}；${riskSignal.detail}`)}</em>
         </div>
-        <div class="snapshot-item">
-          <span>盘中动作</span>
+        <div class="snapshot-item snapshot-wide">
+          <span>盘中观察</span>
           <b>${escapeHtml(action.title)}</b>
-          <em>${escapeHtml(truncateText(adviceText, 72))}</em>
+          <em>${escapeHtml(adviceText)}</em>
         </div>
       </div>
     </div>
@@ -2927,6 +2992,8 @@ function intradayIndexItems(data) {
   const index = data.index || {};
   if (Array.isArray(index.indices)) return index.indices;
   if (Array.isArray(index.a_share_indices)) return index.a_share_indices;
+  if (Array.isArray(index.a_share_close_reference)) return normalizeIndexItems(index.a_share_close_reference);
+  if (Array.isArray(index.A_share_close_reference)) return normalizeIndexItems(index.A_share_close_reference);
   if (Array.isArray(index.hk_indices)) return index.hk_indices;
   if (Array.isArray(index.HK_close_window_snapshot)) {
     const priority = ["hkHSI", "hkHSTECH", "hk00981", "hk01347", "hk01024", "hk00020"];
@@ -2941,6 +3008,13 @@ function intradayIndexItems(data) {
       }));
   }
   return [];
+}
+
+function normalizeIndexItems(items) {
+  return items.map(item => ({
+    ...item,
+    close: item.close ?? item.price
+  }));
 }
 
 function renderIntradaySentimentBlock(sentiment) {
