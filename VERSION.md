@@ -2,6 +2,7 @@
 
 | Display Version | Date | Edition | Tag / Commit | Summary | Rollback Note |
 |---|---:|---:|---|---|---|
+| 2026-07-07 第71版｜异动污染阻断显示 | 2026-07-07 | 第71版 | tag: `v2026.07.07-m71-alert-invalidated-block` | `alert.json` 或文件可信度判定为 `invalidated` 时，盘中异动区不再显示普通“暂无/等待触发”，而是显示污染批次已撤下、不可作为交易触发、等待重产和替代观察清单；`data-trust`/`monitoring-coverage` 后加载时会回刷异动区，运行时测试新增门禁防止阻断状态漏显。 | 回滚到第70版可用 `git checkout v2026.07.07-m70-fallback-render-gate`，或回滚到本版本 tag。 |
 | 2026-07-07 第70版｜替代检查渲染门禁 | 2026-07-07 | 第70版 | tag: `v2026.07.07-m70-fallback-render-gate` | 运行时烟雾测试新增 critical 盲区 `fallback_checks` 渲染门禁：盲区替代检查写入 JSON 后，前几条关键检查必须出现在机会/风险雷达里，防止“数据有替代动作但页面没显示”。 | 回滚到第69版可用 `git checkout v2026.07.07-m69-japan-korea-guardrail`，或回滚到本版本 tag。 |
 | 2026-07-07 第69版｜日韩早盘降级展示门禁 | 2026-07-07 | 第69版 | tag: `v2026.07.07-m69-japan-korea-guardrail` | 盘前“日韩早盘”源降级时显示独立中文提示，明确“不展示疑似乱码或未核实数值”并列出待复核标的；运行时烟雾测试新增门禁，要求降级提示和待复核清单必须渲染，防止原始降级字符串或乱码感内容回流页面。 | 回滚到第68版可用 `git checkout v2026.07.07-m68-blindspot-fallback-checks`，或回滚到本版本 tag。 |
 | 2026-07-07 第68版｜盲区替代检查表 | 2026-07-07 | 第68版 | tag: `v2026.07.07-m68-blindspot-fallback-checks` | `monitoring-coverage` 为核心盲区新增 `fallback_checks`，当盘中异动失效时自动给出可执行替代观察：市场宽度、半导体核心、新线、风险线和雷达风险项；前端雷达优先展示这些检查项，审计和静态烟雾测试要求 critical 盲区必须具备可执行替代检查。 | 回滚到第67版可用 `git checkout v2026.07.07-m67-source-failed-audit`，或回滚到本版本 tag。 |

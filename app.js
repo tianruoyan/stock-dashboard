@@ -80,8 +80,14 @@ function render(file, data) {
   else if (file === "data/evening-sentiment.json") renderEvening(data);
   else if (file === "data/topics.json") renderTopics(data);
   else if (file === "data/quality-report.json") renderDataQualityGate();
-  else if (file === "data/data-trust.json") renderDataQualityGate();
-  else if (file === "data/monitoring-coverage.json") renderDataQualityGate();
+  else if (file === "data/data-trust.json") {
+    renderDataQualityGate();
+    rerenderAlertsIfLoaded();
+  }
+  else if (file === "data/monitoring-coverage.json") {
+    renderDataQualityGate();
+    rerenderAlertsIfLoaded();
+  }
   else if (file === "data/decision-feed.json") renderOpportunityRiskRadar();
   else if (file === "data/theme-shifts.json") renderOpportunityRiskRadar();
   else if (file === "data/automation-health.json") renderDataQualityGate();
@@ -94,6 +100,11 @@ function render(file, data) {
     renderDataQualityGate();
     renderSectionHealthBadges();
   }
+}
+
+function rerenderAlertsIfLoaded() {
+  const alertData = cached("data/alert.json");
+  if (alertData) renderAlerts(alertData);
 }
 
 function formatUpdateTime(timestamp) {
@@ -1644,6 +1655,12 @@ function renderAlerts(data) {
   const el = document.getElementById("alerts");
   const now = Date.now();
   localStorage.removeItem(ALERT_KEY);
+  const invalidated = alertInvalidationState(data);
+  if (invalidated.invalidated) {
+    renderAlertsSummary([], data.timestamp, invalidated);
+    el.innerHTML = renderAlertInvalidatedState(invalidated);
+    return;
+  }
   const saved = sortAlertsByEventTime(
     (data.alerts || [])
       .map(a => normalizeAlertTime({ ...a, _received: alertEventTime(a, data.timestamp, now) }, data.timestamp, now))
@@ -1697,9 +1714,77 @@ function renderAlerts(data) {
   }).join("");
 }
 
-function renderAlertsSummary(alerts, timestamp) {
+function alertInvalidationState(data) {
+  const trust = cached("data/data-trust.json");
+  const trustRow = Array.isArray(trust?.files)
+    ? trust.files.find(item => item.file === "data/alert.json")
+    : null;
+  const invalidated = data?.source_status === "invalidated" || trustRow?.status === "invalidated";
+  const coverage = cached("data/monitoring-coverage.json");
+  const blindSpot = Array.isArray(coverage?.blind_spots)
+    ? coverage.blind_spots.find(item => item.id === "intraday-alert-trigger" || /盘中异动/.test(item.title || ""))
+    : null;
+  return {
+    invalidated,
+    reason: data?.note || trustRow?.reason || blindSpot?.conclusion || "盘中异动当前不可用，等待修复后重产。",
+    action: trustRow?.use_action || blindSpot?.fallback_action || "等待重产",
+    fallbackChecks: Array.isArray(blindSpot?.fallback_checks) ? blindSpot.fallback_checks.slice(0, 4) : [],
+    evidence: Array.isArray(blindSpot?.evidence) ? blindSpot.evidence.slice(0, 2) : []
+  };
+}
+
+function renderAlertInvalidatedState(state) {
+  const checks = state.fallbackChecks.length
+    ? `<div class="alert-fallback-list">${state.fallbackChecks.map(item => `<span>${escapeHtml(item)}</span>`).join("")}</div>`
+    : '<div class="alert-fallback-list"><span>替代观察：先看盘中全景、涨跌停/炸板宽度、观察池强弱和专题静态结论。</span></div>';
+  const evidence = state.evidence.length
+    ? `<details class="alert-detail"><summary>撤下依据</summary><div>${state.evidence.map(escapeHtml).join("<br>")}</div></details>`
+    : "";
+  return `<div class="alert-blocked">
+    <div class="alert-blocked-head">
+      <span class="badge risk">不可用</span>
+      <b>盘中异动已撤下污染批次</b>
+    </div>
+    <p>${escapeHtml(state.reason)}</p>
+    <div class="source-note source-note-warning">
+      <b>交易处理：</b>
+      <span>异动卡不能作为买卖触发依据，${escapeHtml(state.action)}。</span>
+    </div>
+    <h3>替代观察</h3>
+    ${checks}
+    ${evidence}
+  </div>`;
+}
+
+function renderAlertsSummary(alerts, timestamp, invalidatedState = null) {
   const el = document.getElementById("alerts-summary");
   if (!el) return;
+  if (invalidatedState?.invalidated) {
+    el.innerHTML = `
+      <div class="decision-strip alerts-decision">
+        <div class="decision-card risk">
+          <span class="decision-label">核心结论</span>
+          <b>异动触发不可用</b>
+          <span>污染批次已撤下，不能当交易触发</span>
+        </div>
+        <div class="decision-card action">
+          <span class="decision-label">当前动作</span>
+          <b>${escapeHtml(invalidatedState.action || "等待重产")}</b>
+          <span>修复前只看替代观察和盘中全景</span>
+        </div>
+        <div class="decision-card neutral">
+          <span class="decision-label">替代信号</span>
+          <b>宽度 / 主线 / 新线</b>
+          <span>涨跌停、炸板、观察池承接优先</span>
+        </div>
+        <div class="decision-card risk">
+          <span class="decision-label">风险提示</span>
+          <b>不要恢复旧 alert</b>
+          <span>必须由修复后的行情源重产</span>
+        </div>
+      </div>`;
+    return;
+  }
   if (!alerts.length) {
     el.innerHTML = '<div class="alert-summary-empty">暂无新异动，等待触发</div>';
     return;

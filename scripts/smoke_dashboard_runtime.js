@@ -371,6 +371,7 @@ async function main() {
   }
   checkDecisionTriggerRendering(radarHtml, issues);
   checkFallbackChecksRendering(radarHtml, coverage, issues);
+  checkInvalidatedAlertRendering(document, issues);
   checkPremarketJapanKoreaGuard(document, issues);
   for (const literal of BAD_LITERALS) {
     if (wholePage.includes(literal)) {
@@ -409,6 +410,7 @@ async function main() {
       "C/D级降权机会不得进入机会候选栏，只能进入下一步验证。",
       "机会/风险雷达必须渲染 decision-feed 的触发原因。",
       "critical 盲区的 fallback_checks 必须渲染到机会/风险雷达。",
+      "alert.json 撤下污染批次时，盘中异动区必须显示不可用和替代观察，不得只显示普通空状态。",
       "日韩早盘源降级时必须显示清晰降级提示和待复核清单，不得展示原始乱码/未核实字符串。",
       "核心 JSON 字段有数据时，页面对应区块必须渲染关键结论或代表项。",
       "确认区块健康贴条能在运行时生成。"
@@ -502,6 +504,30 @@ function checkFallbackChecksRendering(radarHtml, coverage, issues) {
         issues.push(issue("critical", "fallback_checks_not_rendered", `核心盲区替代检查未渲染：${snippet}`, "opportunity-risk-radar"));
       }
     }
+  }
+}
+
+function checkInvalidatedAlertRendering(document, issues) {
+  const alert = readJsonIfExists("data/alert.json");
+  const trust = readJsonIfExists("data/data-trust.json");
+  const trustRow = Array.isArray(trust.files)
+    ? trust.files.find(item => item.file === "data/alert.json")
+    : null;
+  const invalidated = alert.source_status === "invalidated" || trustRow?.status === "invalidated";
+  if (!invalidated) return;
+  const html = [
+    document.getElementById("alerts-summary")?.collectHtml() || "",
+    document.getElementById("alerts")?.collectHtml() || ""
+  ].join("");
+  const rendered = normalizeRenderedText(html);
+  if (!rendered.includes("异动触发不可用") || !rendered.includes("污染批次已撤下")) {
+    issues.push(issue("critical", "invalidated_alert_not_rendered", "盘中异动撤下污染批次时未显示不可用状态", "section-alerts"));
+  }
+  if (!rendered.includes("替代观察") || !rendered.includes("宽度替代")) {
+    issues.push(issue("critical", "invalidated_alert_fallback_missing", "盘中异动撤下污染批次时未显示替代观察动作", "section-alerts"));
+  }
+  if (rendered.includes("暂无新异动") || rendered.includes("等待触发") || rendered.includes("暂无盘中异动")) {
+    issues.push(issue("critical", "invalidated_alert_shown_as_empty", "盘中异动撤下污染批次时被渲染成普通空状态", "section-alerts"));
   }
 }
 
