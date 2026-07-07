@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-07-07T10:22:46+08:00",
+  "timestamp": "2026-07-07T10:25:41+08:00",
   "sources": {
     "tencent_http": {
       "status": "ok",
@@ -19,8 +19,8 @@
     "ths_sina_or_akshare_quote_decode": {
       "status": "degraded",
       "usage": "监控日志中的补充行情/同花顺新浪或akshare报价链路",
-      "checked_at": "2026-07-07T10:22:46+08:00",
-      "note": "10:23巡检仍看到行情源异常：Can not decode value starting with character \"<\"；监控进程存活且日志持续更新，本轮有硅片正式提醒，已更新 alert.json。"
+      "checked_at": "2026-07-07T10:25:41+08:00",
+      "note": "10:25监控日志仍连续出现行情源异常：Can not decode value starting with character \"<\"；监控进程存活且日志持续更新，本轮未发现未推送的新增正式提醒，保留上一版 alert.json。"
     }
   },
   "rules": [
@@ -31,13 +31,13 @@
     "任一数据源失败时保留上一版 JSON，并在 source-health.json 标注降级或异常。"
   ],
   "last_effective_run": {
-    "timestamp": "2026-07-07T10:22:46+08:00",
+    "timestamp": "2026-07-07T10:25:41+08:00",
     "type": "intraday_monitor_patrol",
-    "result": "formal_alerts_with_degraded_quote_source",
+    "result": "running_with_degraded_quote_source_no_new_unpushed_alert",
     "degraded_sources": [
       "ths_sina_or_akshare_quote_decode"
     ]
   },
   "status": "degraded",
-  "notes": "10:23监控进程与日志正常；补充报价链路持续解码异常，已记录降级；硅片新增正式提醒已更新。"
+  "notes": "10:25监控进程与日志正常；补充报价链路持续解码异常，已记录降级；未发现未推送的新增正式提醒。"
 }
