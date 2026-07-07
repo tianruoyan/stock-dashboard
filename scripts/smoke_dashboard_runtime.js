@@ -673,6 +673,8 @@ function checkDashboardTrustGateRendering(document, issues) {
   for (const file of files) {
     if (["invalidated", "missing"].includes(file.status)) {
       expected.push(`${file.label}不可用`);
+    } else if (file.freshness_status === "future") {
+      expected.push(`${file.label}超前`);
     } else if (file.session_relevance === "current" && file.freshness_status === "stale") {
       expected.push(`${file.label}超时`);
     } else if (file.session_relevance === "current" && file.freshness_status === "aging") {
@@ -698,7 +700,7 @@ function checkDashboardEffectiveTimeRendering(document, issues) {
     .filter(file => file && file.timestamp)
     .filter(file => !["invalidated", "missing", "stale"].includes(file.status))
     .filter(file => ["current", "background"].includes(file.session_relevance))
-    .filter(file => !["blocked", "unknown", "phase_expired"].includes(file.freshness_status));
+    .filter(file => !["blocked", "unknown", "phase_expired", "future"].includes(file.freshness_status));
   if (!eligible.length) return;
   const latest = eligible
     .slice()

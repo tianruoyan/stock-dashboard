@@ -381,6 +381,7 @@ Codex (分析引擎)              Cola (稳定管道)
 | 2026-07-07 | 风险栏必须优先覆盖盘后热点中的风险/分歧/退潮方向 | 次日交易更依赖最新盘后热点结构，不能让中期专题风险挤掉 CPO、电子布/PCB、低位硬件等当天活跃风险线 |
 | 2026-07-07 | premarket.json 的日韩早盘降级状态必须结构化输出 source_status/display_status/pending_confirmation，不再写自由长文本 | 外部实时源异常时，自由文本容易在页面形成乱码感或缓存旧文案；结构化字段更容易被前端固定渲染和门禁校验 |
 | 2026-07-07 | 降权机会必须输出 upgrade_rank/upgrade_priority/upgrade_condition，并在雷达验证栏显示升级排序和升级门槛 | 数据质量降级时不能把候选方向直接包装成机会，也不能完全丢掉；需要保留“明天先验证谁、满足什么才升级”的交易辅助信息 |
+| 2026-07-07 | 核心 JSON 内 timestamp/updated_at/quote_time/event_time/generated_at 不得超前当前时间；超前时进入 future_timestamp 和 data-trust.future | 盘中交易不能把未来时间误判成最新有效数据；时间超前必须降权复核并从总控有效时间里排除 |
 ---
 
 ## 🐍 Python 环境

@@ -232,6 +232,10 @@ function dashboardTrustGate() {
       items.push(`${file.label}不可用`);
       continue;
     }
+    if (file.freshness_status === "future") {
+      items.push(`${file.label}超前`);
+      continue;
+    }
     if (file.session_relevance === "current" && file.freshness_status === "stale") {
       items.push(`${file.label}超时`);
       continue;
@@ -246,7 +250,7 @@ function dashboardTrustGate() {
   }
   if (!items.length) return null;
   return {
-    cls: items.some(item => /不可用|超时/.test(item)) ? "risk" : "warn",
+    cls: items.some(item => /不可用|超时|超前/.test(item)) ? "risk" : "warn",
     items: uniqueList(items).slice(0, 4)
   };
 }
@@ -258,7 +262,7 @@ function dashboardEffectiveTimestamp() {
     .filter(file => file && file.timestamp)
     .filter(file => !["invalidated", "missing", "stale"].includes(file.status))
     .filter(file => ["current", "background"].includes(file.session_relevance))
-    .filter(file => !["blocked", "unknown", "phase_expired"].includes(file.freshness_status));
+    .filter(file => !["blocked", "unknown", "phase_expired", "future"].includes(file.freshness_status));
   return latestTimestamp(usable.map(file => ({ timestamp: file.timestamp })));
 }
 
@@ -602,18 +606,20 @@ function summarizeDataTrust(report) {
   const stale = report.files.filter(item => item.status === "stale");
   const degraded = report.files.filter(item => item.status === "degraded");
   const historical = report.files.filter(item => item.session_relevance === "historical" && !["invalidated", "missing", "stale"].includes(item.status));
+  const freshnessFuture = report.files.filter(item => item.freshness_status === "future");
   const freshnessBad = report.files.filter(item => item.freshness_status === "stale" && item.session_relevance === "current");
   const freshnessAging = report.files.filter(item => item.freshness_status === "aging" && item.session_relevance === "current");
-  const focus = [...blocked, ...freshnessBad, ...degraded, ...stale, ...historical, ...freshnessAging].slice(0, 5);
+  const focus = [...blocked, ...freshnessFuture, ...freshnessBad, ...degraded, ...stale, ...historical, ...freshnessAging].slice(0, 5);
   const title = blocked.length
     ? `${blocked.length} 个不可用`
-    : (freshnessBad.length ? `${freshnessBad.length} 个超时 / ${degraded.length + stale.length} 个降权`
-      : (degraded.length || stale.length || historical.length || freshnessAging.length ? `${degraded.length + stale.length} 个降权 / ${historical.length} 个阶段回看` : "全部可信"));
+    : (freshnessFuture.length ? `${freshnessFuture.length} 个时间超前 / ${degraded.length + stale.length} 个降权`
+      : (freshnessBad.length ? `${freshnessBad.length} 个超时 / ${degraded.length + stale.length} 个降权`
+        : (degraded.length || stale.length || historical.length || freshnessAging.length ? `${degraded.length + stale.length} 个降权 / ${historical.length} 个阶段回看` : "全部可信")));
   const detail = report.summary || (focus.length ? focus.map(item => `${item.label}:${item.use_action}`).join(" / ") : "核心数据文件可正常使用");
   const issues = focus.map(item => {
     const sessionText = item.session_action ? `；${item.session_action}` : "";
-    const freshnessText = item.freshness_status === "stale" || item.freshness_status === "aging" ? `；${item.freshness_action}` : "";
-    const reason = item.freshness_status === "stale" || item.freshness_status === "aging"
+    const freshnessText = ["future", "stale", "aging"].includes(item.freshness_status) ? `；${item.freshness_action}` : "";
+    const reason = ["future", "stale", "aging"].includes(item.freshness_status)
       ? item.freshness_reason
       : (item.session_relevance === "historical" && item.session_reason ? item.session_reason : (item.reason || item.status));
     return `${item.label}：${item.use_action}${sessionText}${freshnessText}，${reason}`;
@@ -621,7 +627,7 @@ function summarizeDataTrust(report) {
   return {
     title,
     detail: truncateText(detail, 90),
-    cls: blocked.length || freshnessBad.length ? "warn" : (degraded.length || stale.length || freshnessAging.length ? "neutral" : "good"),
+    cls: blocked.length || freshnessFuture.length || freshnessBad.length ? "warn" : (degraded.length || stale.length || freshnessAging.length ? "neutral" : "good"),
     issues
   };
 }

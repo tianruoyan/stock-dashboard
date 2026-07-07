@@ -464,7 +464,7 @@ def check_data_trust(issues: list[dict[str, Any]]) -> None:
             issues.append(issue("warning", "data/data-trust.json", "bad_trust_status", f"files[{index}].status 非法"))
         if item.get("session_relevance") not in {"current", "historical", "upcoming", "background", "blocked"}:
             issues.append(issue("warning", "data/data-trust.json", "bad_session_relevance", f"files[{index}].session_relevance 非法"))
-        if item.get("freshness_status") not in {"fresh", "aging", "stale", "unknown", "phase_expired", "blocked"}:
+        if item.get("freshness_status") not in {"fresh", "aging", "stale", "future", "unknown", "phase_expired", "blocked"}:
             issues.append(issue("warning", "data/data-trust.json", "bad_freshness_status", f"files[{index}].freshness_status 非法"))
         phase = item.get("session_phase")
         if item.get("file") == "data/postmarket.json" and phase in {"evening", "overnight", "premarket"}:

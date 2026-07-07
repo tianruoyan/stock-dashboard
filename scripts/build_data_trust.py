@@ -12,6 +12,7 @@ ROOT = Path(__file__).resolve().parents[1]
 DATA_DIR = ROOT / "data"
 OUT = DATA_DIR / "data-trust.json"
 TZ = timezone(timedelta(hours=8))
+FUTURE_TIMESTAMP_TOLERANCE_SECONDS = 120
 BAD_LITERALS = ("[object Object]", "undefined", "None%", "NaN", "Infinity")
 MOJIBAKE_PATTERN = re.compile(r"[�ÃÂ]|(?:æ|å|ç|è|é)[A-Za-z0-9_\- ]{0,8}")
 
@@ -57,6 +58,7 @@ def main() -> int:
             "invalidated/missing：不得作为盘中交易依据，等待重产或修复。",
             "session_relevance：区分同一交易日内的当前可用、阶段回看、待产出和背景参考。",
             "freshness_status：当前阶段文件必须满足各自延迟 SLA；过期实时数据自动降权。",
+            "future：文件时间戳超前当前时间，视为时间错位并降权，不参与最新有效时间。",
         ],
     }
     OUT.write_text(json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
@@ -104,7 +106,7 @@ def trust_row(spec: dict[str, Any], data: Any, current_date: str, quality_issues
     session = session_relevance(spec, status, phase)
     freshness_limit = effective_freshness_minutes(spec, phase)
     freshness = freshness_state(spec, ts, status, session["relevance"], phase, now)
-    if freshness["status"] == "stale" and status not in {"missing", "invalidated", "stale"}:
+    if freshness["status"] in {"stale", "future"} and status not in {"missing", "invalidated", "stale"}:
         status = worse_status(status, "degraded")
         reasons = clean_list([*reasons, freshness["reason"]])
     return {
@@ -220,7 +222,7 @@ def trust_score(status: str, reasons: list[str], relevance: str = "current", fre
         "missing": 0,
     }.get(status, 50)
     session_penalty = {"historical": 18, "upcoming": 10, "background": 0, "current": 0}.get(relevance, 0)
-    freshness_penalty = {"stale": 24, "aging": 10, "unknown": 8, "phase_expired": 0, "fresh": 0}.get(freshness, 0)
+    freshness_penalty = {"future": 28, "stale": 24, "aging": 10, "unknown": 8, "phase_expired": 0, "fresh": 0}.get(freshness, 0)
     return max(0, min(100, base - min(20, len(reasons) * 4) - session_penalty - freshness_penalty))
 
 
@@ -239,6 +241,15 @@ def freshness_state(spec: dict[str, Any], ts: Any, status: str, relevance: str, 
             "age_minutes": None,
             "action": "时间待确认",
             "reason": "缺少可解析 timestamp",
+        }
+    future_seconds = (parsed - now).total_seconds()
+    if future_seconds > FUTURE_TIMESTAMP_TOLERANCE_SECONDS:
+        future_minutes = int(future_seconds // 60)
+        return {
+            "status": "future",
+            "age_minutes": -future_minutes,
+            "action": "时间超前，降权复核",
+            "reason": f"{spec.get('label', '该文件')} timestamp 超前当前时间约 {future_minutes} 分钟",
         }
     age = max(0, int((now - parsed).total_seconds() // 60))
     limit = effective_freshness_minutes(spec, phase)

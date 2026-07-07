@@ -14,6 +14,7 @@ DATA_DIR = ROOT / "data"
 CONFIG_DIR = ROOT / "config"
 OUT = DATA_DIR / "quality-report.json"
 TZ = timezone(timedelta(hours=8))
+FUTURE_TIMESTAMP_TOLERANCE_SECONDS = 120
 BAD_LITERALS = ("[object Object]", "undefined", "None%", "NaN", "Infinity")
 MOJIBAKE_PATTERN = re.compile(r"[�ÃÂ]|(?:æ|å|ç|è|é)[A-Za-z0-9_\- ]{0,8}")
 REQUIRED_JSON = (
@@ -32,6 +33,7 @@ def main() -> int:
     issues: list[dict[str, Any]] = []
     watch_names = load_watchlist_names()
     current_date = latest_signal_date(files)
+    now = datetime.now(TZ)
 
     for name in REQUIRED_JSON:
         if name not in files:
@@ -51,11 +53,14 @@ def main() -> int:
             elif signal_date(ts) != current_date:
                 severity = "info" if name in {"evening-sentiment.json", "requirements.json"} else "warning"
                 issues.append(issue(severity, name, "stale_timestamp", f"时间戳不是当前交易日：{ts}"))
+            else:
+                validate_timestamp_value(name, "timestamp", ts, issues, now)
 
         if isinstance(data, dict) and data.get("source_status") == "invalidated":
             issues.append(issue("warning", name, "invalidated_source", data.get("note", "数据批次已撤下")))
 
         scan_change_pct(name, data, watch_names, issues)
+        scan_timestamp_fields(name, data, issues, now)
 
     validate_postmarket(files.get("postmarket.json"), issues)
     validate_alert(files.get("alert.json"), files.get("source-health.json"), issues)
@@ -92,6 +97,7 @@ def main() -> int:
             "涨停/跌停/强势/弱势等标签必须与 change_pct 方向一致，冲突时进入 warning。",
             "decision-feed 如存在，机会/风险/验证项必须带标题、结论、置信度和来源文件。",
             "每个 issue 必须带 impact_level/decision_action，区分交易阻断、价格复核、信号复核和背景复核。",
+            "timestamp/updated_at/quote_time 超过当前时间容忍阈值时进入 warning，禁止被当作最新实时依据。",
         ],
     }
     OUT.write_text(json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
@@ -138,6 +144,47 @@ def latest_signal_date(files: dict[str, Any]) -> str:
 def signal_date(value: Any) -> str:
     match = re.search(r"\d{4}-\d{2}-\d{2}", str(value or ""))
     return match.group(0) if match else ""
+
+
+def parse_timestamp(value: Any) -> datetime | None:
+    text = str(value or "").strip()
+    if not text:
+        return None
+    try:
+        parsed = datetime.fromisoformat(text.replace("Z", "+00:00"))
+    except Exception:
+        match = re.search(r"\d{4}-\d{2}-\d{2}T\d{2}:\d{2}(?::\d{2})?", text)
+        if not match:
+            return None
+        try:
+            parsed = datetime.fromisoformat(match.group(0))
+        except Exception:
+            return None
+    if parsed.tzinfo is None:
+        parsed = parsed.replace(tzinfo=TZ)
+    return parsed.astimezone(TZ)
+
+
+def scan_timestamp_fields(name: str, obj: Any, issues: list[dict[str, Any]], now: datetime, path: str = "") -> None:
+    if isinstance(obj, dict):
+        for key, value in obj.items():
+            child_path = f"{path}.{key}" if path else key
+            if key in {"timestamp", "updated_at", "quote_time", "event_time", "generated_at"}:
+                validate_timestamp_value(name, child_path, value, issues, now)
+            scan_timestamp_fields(name, value, issues, now, child_path)
+    elif isinstance(obj, list):
+        for index, value in enumerate(obj):
+            scan_timestamp_fields(name, value, issues, now, f"{path}[{index}]")
+
+
+def validate_timestamp_value(name: str, path: str, value: Any, issues: list[dict[str, Any]], now: datetime) -> None:
+    parsed = parse_timestamp(value)
+    if not parsed:
+        return
+    delta = (parsed - now).total_seconds()
+    if delta > FUTURE_TIMESTAMP_TOLERANCE_SECONDS:
+        minutes = int(delta // 60)
+        issues.append(issue("warning", name, "future_timestamp", f"{path} 超前当前时间约 {minutes} 分钟：{value}", path))
 
 
 def scan_change_pct(name: str, obj: Any, watch_names: set[str], issues: list[dict[str, Any]], path: str = "") -> None:
@@ -533,7 +580,7 @@ def validate_data_trust(data: Any, issues: list[dict[str, Any]], current_date: s
             issues.append(issue("warning", "data-trust.json", "bad_trust_status", f"files[{index}].status 非法", f"files[{index}]"))
         if item.get("session_relevance") not in (None, "current", "historical", "upcoming", "background", "blocked"):
             issues.append(issue("warning", "data-trust.json", "bad_session_relevance", f"files[{index}].session_relevance 非法", f"files[{index}]"))
-        if item.get("freshness_status") not in (None, "fresh", "aging", "stale", "unknown", "phase_expired", "blocked"):
+        if item.get("freshness_status") not in (None, "fresh", "aging", "stale", "future", "unknown", "phase_expired", "blocked"):
             issues.append(issue("warning", "data-trust.json", "bad_freshness_status", f"files[{index}].freshness_status 非法", f"files[{index}]"))
 
 
@@ -611,6 +658,7 @@ def issue_impact(code: str, file: str, message: str) -> tuple[str, str]:
     if code in {
         "source_degraded",
         "source_failed",
+        "future_timestamp",
         "watchlist_extreme_change",
         "watchlist_limit_down_like",
         "label_pct_conflict",
