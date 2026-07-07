@@ -1,71 +1,22 @@
 {
-  "timestamp": "2026-07-07T10:00:11+08:00",
-  "sources": [
-    {
-      "id": "mootdx",
-      "name": "mootdx / 通达信 TCP",
-      "role": "高频行情、K线、盘口、逐笔、F10 基础数据",
+  "timestamp": "2026-07-07T10:03:30+08:00",
+  "sources": {
+    "tencent_http": {
       "status": "ok",
-      "cadence": "盘中高频，优先用于异动候选",
-      "note": "作为实时行情第一优先级；海外或 TCP 不通时降级到腾讯行情。"
+      "usage": "指数、ETF、港股与观察池实时报价",
+      "checked_at": "2026-07-07T10:03:30+08:00"
     },
-    {
-      "id": "tencent",
-      "name": "腾讯财经 HTTP",
-      "role": "实时价、指数、ETF、港股/美股补充行情",
+    "eastmoney_push2_akshare": {
       "status": "ok",
-      "cadence": "盘中高频，适合观察池轮询",
-      "note": "09:31通过腾讯HTTP获取A股指数、ETF、观察池与专项个股行情，返回正常。"
+      "usage": "涨停池30、跌停池5、炸板池12及结构分布",
+      "checked_at": "2026-07-07T10:03:30+08:00"
     },
-    {
-      "id": "eastmoney",
-      "name": "东方财富 push2 / push2ex",
-      "role": "公告库、涨停池、结构数据",
-      "status": "ok",
-      "cadence": "低频限流，建议 60-120 秒以上",
-      "note": "09:31通过akshare/东方财富获取涨停池、跌停池、炸板池，返回正常；全A现货接口此前仍作为降级记录，不影响本次结构判断。"
-    },
-    {
-      "id": "cninfo_exchange",
-      "name": "巨潮 / 交易所公告",
-      "role": "个股公告、定增、减持、业绩、风险提示",
-      "status": "ok",
-      "cadence": "盘后和晚间低频扫描",
-      "note": "09:00通过东方财富公告库与巨潮入口核验7月6日/7月7日公告，筛出中微、普源、永鼎、奥来德、光迅、赛微等关键事件。"
-    },
-    {
-      "id": "official_policy",
-      "name": "官方政策源",
-      "role": "工信部、发改委、商务部、交易所、地方政府",
-      "status": "degraded",
-      "cadence": "晚间全量 + 盘前增量",
-      "note": "09:00发改委/商务部官网可访问；工信部首页返回403，本次未发现可引用的部委新增半导体/AI/新材料硬确认。"
-    },
-    {
-      "id": "ths_sina",
-      "name": "同花顺 / 新浪",
-      "role": "涨停原因、热榜、财报三表、补充行情",
-      "status": "degraded",
-      "cadence": "按需低频调用",
-      "note": "10:00监控日志仍连续出现行情源异常：Can not decode value starting with character \"<\"；监控进程存活且日志持续更新，本轮未发现未推送的新增正式提醒，保留上一版 alert.json。"
-    },
-    {
-      "id": "yahoo_finance",
-      "name": "Yahoo Finance HTTP",
-      "role": "海外指数、美股、日韩补充行情",
-      "status": "degraded",
-      "cadence": "按需低频补充",
-      "note": "09:00尝试日韩指数与芯片股分钟行情，出现SSL EOF/429限流，日韩早盘留待9:15用备用源再确认。"
-    },
-    {
-      "id": "sw_components",
-      "name": "申万一级成分映射",
-      "role": "盘后5%/8%上涨分层行业归类",
-      "status": "degraded",
-      "cadence": "盘后低频",
-      "note": "15:09获取申万一级行业成分时部分行业组件返回字段异常，已将未匹配样本单列，不影响涨跌幅分层总数。"
+    "mootdx_tdx": {
+      "status": "not_used",
+      "usage": "本次腾讯HTTP可用，未启用通达信降级",
+      "checked_at": "2026-07-07T10:03:30+08:00"
     }
-  ],
+  },
   "rules": [
     "高频盘中行情优先使用 mootdx / 腾讯，禁止用东财做全市场高频轮询。",
     "东财只用于涨停池、炸板池、跌停池、资金流、龙虎榜等独有结构数据，并且必须限流。",
@@ -73,12 +24,7 @@
     "盘前、盘后、晚间结论必须带 evidence 或 source，无法验证的内容只能列为观察。",
     "任一数据源失败时保留上一版 JSON，并在 source-health.json 标注降级或异常。"
   ],
-  "last_effective_run": {
-    "timestamp": "2026-07-07T10:00:11+08:00",
-    "type": "intraday_monitor_patrol",
-    "result": "running_with_degraded_quote_source_no_new_alert",
-    "degraded_sources": [
-      "ths_sina_or_akshare_quote_decode"
-    ]
-  }
+  "last_effective_run": "intraday_1000",
+  "status": "ok",
+  "notes": "10:00有效盘中更新，未发现关键数据源失败；东方财富仅用于盘面结构，腾讯用于实时高频报价。"
 }
