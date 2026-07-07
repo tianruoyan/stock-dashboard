@@ -2,6 +2,7 @@
 
 | Display Version | Date | Edition | Tag / Commit | Summary | Rollback Note |
 |---|---:|---:|---|---|---|
+| 2026-07-07 第50版｜数据文件可信度 | 2026-07-07 | 第50版 | tag: `v2026.07.07-m50-data-trust` | 新增 `scripts/build_data_trust.py` 和 `data/data-trust.json`，把全局审计翻译成每个核心数据文件的 trusted/degraded/stale/invalidated/missing、可信分、使用动作和原因；顶部质量卡新增“文件可信”，发布脚本先审计再生成文件级可信度并复审。 | 回滚到第49版可用 `git checkout v2026.07.07-m49-signal-usability`，或回滚到本版本 tag。 |
 | 2026-07-07 第49版｜信号可用性分级 | 2026-07-07 | 第49版 | tag: `v2026.07.07-m49-signal-usability` | `decision-feed` 每条机会/风险/验证新增 `signal_score`、`signal_grade`、`use_action`、`use_reasons`，把“能不能用、怎么用”显式写清楚；雷达卡片显示 A/B/C/D 级和可跟踪/等待确认/降权观察/仅复核动作；审计和 smoke 测试强制检查信号可用性字段。 | 回滚到第48版可用 `git checkout v2026.07.07-m48-runtime-smoke`，或回滚到本版本 tag。 |
 | 2026-07-07 第48版｜运行时渲染门禁 | 2026-07-07 | 第48版 | tag: `v2026.07.07-m48-runtime-smoke` | 新增 `scripts/smoke_dashboard_runtime.js` 和 `data/runtime-smoke-report.json`，发布前用真实 JSON 执行 `app.js` 的 `updateAll` 渲染路径，拦截 JS ERROR、console error、关键区块空白、`undefined`、`[object Object]`、NaN 和疑似乱码；`push_with_audit.sh` 接入动态门禁。 | 回滚到第47版可用 `git checkout v2026.07.07-m47-japan-korea-safe`，或回滚到本版本 tag。 |
 | 2026-07-07 第47版｜日韩早盘防乱码 | 2026-07-07 | 第47版 | tag: `v2026.07.07-m47-japan-korea-safe` | 收紧盘前“日韩早盘”展示逻辑：只展示已识别的日经/KOSPI/三星/SK海力士/东京电子/Advantest数值字段；遇到降级、未核实、解码失败或疑似乱码时统一显示中文降级提示。数据审计和页面烟雾测试新增疑似乱码拦截。 | 回滚到第46版可用 `git checkout v2026.07.07-m46-section-deps`，或回滚到本版本 tag。 |

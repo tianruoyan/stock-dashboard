@@ -61,6 +61,7 @@ def main() -> int:
     validate_evening(files.get("evening-sentiment.json"), issues, current_date)
     validate_source_health(files.get("source-health.json"), issues)
     validate_decision_feed(files.get("decision-feed.json"), issues, current_date)
+    validate_data_trust(files.get("data-trust.json"), issues, current_date)
 
     status = overall_status(issues)
     report = {
@@ -225,6 +226,31 @@ def validate_decision_feed(data: Any, issues: list[dict[str, Any]], current_date
                     issues.append(issue("warning", "decision-feed.json", "missing_quality_flags", f"{section}[{index}] 数据降级但缺少 quality_flags", f"{section}[{index}]"))
                 if item.get("confidence") in {"medium", "high"}:
                     issues.append(issue("warning", "decision-feed.json", "opportunity_not_downgraded", f"{section}[{index}] 数据降级但机会置信度未降权", f"{section}[{index}]"))
+
+
+def validate_data_trust(data: Any, issues: list[dict[str, Any]], current_date: str) -> None:
+    if data in (None, {}):
+        return
+    if not isinstance(data, dict):
+        issues.append(issue("critical", "data-trust.json", "bad_data_trust", "data-trust 根节点必须是对象"))
+        return
+    trust_date = data.get("current_signal_date") or signal_date(data.get("timestamp"))
+    if trust_date != current_date:
+        issues.append(issue("warning", "data-trust.json", "stale_data_trust", f"data-trust 日期不是当前交易日：{trust_date}"))
+    rows = data.get("files")
+    if not isinstance(rows, list) or not rows:
+        issues.append(issue("warning", "data-trust.json", "missing_trust_files", "files 缺失或为空"))
+        return
+    required = {"file", "label", "status", "trust_score", "use_action", "reason"}
+    for index, item in enumerate(rows):
+        if not isinstance(item, dict):
+            issues.append(issue("warning", "data-trust.json", "bad_trust_item", f"files[{index}] 不是对象", f"files[{index}]"))
+            continue
+        for key in required:
+            if item.get(key) in (None, "", []):
+                issues.append(issue("warning", "data-trust.json", "missing_trust_field", f"files[{index}].{key} 缺失", f"files[{index}]"))
+        if item.get("status") not in (None, "trusted", "degraded", "stale", "invalidated", "missing"):
+            issues.append(issue("warning", "data-trust.json", "bad_trust_status", f"files[{index}].status 非法", f"files[{index}]"))
 
 
 def has_stale_relative_time(text: str, current_date: str) -> bool:

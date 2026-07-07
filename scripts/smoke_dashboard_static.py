@@ -46,6 +46,7 @@ def main() -> int:
     check_app_files(app, issues)
     check_bad_literals(issues)
     check_decision_feed(issues)
+    check_data_trust(issues)
     check_section_health(issues, index, app)
 
     status = overall_status(issues)
@@ -61,6 +62,7 @@ def main() -> int:
             "FILES 列出的必需 JSON/配置文件存在。",
             "data/config/settings 文件不含常见坏字面量。",
             "decision-feed 不含泛化机会、旧相对日期和高置信无证据项。",
+            "data-trust 文件级可信度结构完整，能标记不可用/降权数据文件。",
             "section-health 区块矩阵结构完整，能指出不可用/降权区块。",
             "section-health 每个区块能映射到页面面板，并由前端贴状态条。",
         ],
@@ -175,6 +177,33 @@ def check_decision_feed(issues: list[dict[str, Any]]) -> None:
                     issues.append(issue("warning", "data/decision-feed.json", "missing_usability_field", f"{title} 缺少 {key}"))
             if item.get("signal_grade") not in (None, "A", "B", "C", "D"):
                 issues.append(issue("warning", "data/decision-feed.json", "bad_signal_grade", f"{title} signal_grade 非 A/B/C/D"))
+
+
+def check_data_trust(issues: list[dict[str, Any]]) -> None:
+    path = ROOT / "data" / "data-trust.json"
+    try:
+        data = json.loads(path.read_text(encoding="utf-8"))
+    except Exception as exc:
+        issues.append(issue("warning", "data/data-trust.json", "data_trust_missing", f"文件可信度报告不可读：{exc}"))
+        return
+    rows = data.get("files")
+    if not isinstance(rows, list) or not rows:
+        issues.append(issue("warning", "data/data-trust.json", "bad_data_trust", "files 缺失或为空"))
+        return
+    required_files = {"data/alert.json", "data/intraday.json", "data/premarket.json", "data/midday.json", "data/postmarket.json", "data/topics.json", "data/decision-feed.json"}
+    present = {item.get("file") for item in rows if isinstance(item, dict)}
+    missing = sorted(required_files - present)
+    if missing:
+        issues.append(issue("warning", "data/data-trust.json", "missing_trust_rows", f"缺少核心文件可信度：{', '.join(missing)}"))
+    for index, item in enumerate(rows):
+        if not isinstance(item, dict):
+            issues.append(issue("warning", "data/data-trust.json", "bad_trust_item", f"files[{index}] 不是对象"))
+            continue
+        for key in ("file", "label", "status", "trust_score", "use_action", "reason"):
+            if item.get(key) in (None, "", []):
+                issues.append(issue("warning", "data/data-trust.json", "missing_trust_field", f"files[{index}].{key} 缺失"))
+        if item.get("status") not in {"trusted", "degraded", "stale", "invalidated", "missing"}:
+            issues.append(issue("warning", "data/data-trust.json", "bad_trust_status", f"files[{index}].status 非法"))
 
 
 def check_section_health(issues: list[dict[str, Any]], index: str, app: str) -> None:

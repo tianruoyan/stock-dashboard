@@ -5,8 +5,11 @@ ROOT="/Users/sweet_orange/stock-dashboard"
 cd "$ROOT" || exit 1
 
 python3 scripts/build_decision_feed.py >/dev/null 2>&1 || true
+python3 scripts/audit_dashboard_data.py >/dev/null 2>&1 || true
+python3 scripts/build_data_trust.py >/dev/null 2>&1 || true
 python3 scripts/audit_dashboard_data.py
 audit_status=$?
+python3 scripts/build_data_trust.py >/dev/null 2>&1 || true
 python3 scripts/build_section_health.py >/dev/null 2>&1 || true
 python3 scripts/smoke_dashboard_static.py
 smoke_status=$?
@@ -17,7 +20,7 @@ fi
 "$NODE_BIN" scripts/smoke_dashboard_runtime.js
 runtime_status=$?
 
-git add data/quality-report.json data/decision-feed.json data/section-health.json data/smoke-report.json data/runtime-smoke-report.json >/dev/null 2>&1 || true
+git add data/quality-report.json data/decision-feed.json data/data-trust.json data/section-health.json data/smoke-report.json data/runtime-smoke-report.json >/dev/null 2>&1 || true
 
 if [ "$audit_status" -ne 0 ] || [ "$smoke_status" -ne 0 ] || [ "$runtime_status" -ne 0 ]; then
   echo "dashboard audit/smoke found critical issues; skip push"

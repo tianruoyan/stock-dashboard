@@ -1,0 +1,109 @@
+{
+  "timestamp": "2026-07-07T18:46:47+08:00",
+  "current_signal_date": "2026-07-07",
+  "overall_status": "degraded",
+  "summary": "1 个数据文件不可用（盘中异动），4 个文件需降权。",
+  "counts": {
+    "trusted": 2,
+    "degraded": 4,
+    "stale": 1,
+    "invalidated": 1,
+    "missing": 0
+  },
+  "files": [
+    {
+      "file": "data/alert.json",
+      "label": "盘中异动",
+      "role": "高频触发信号",
+      "timestamp": "2026-07-07T15:42:12+08:00",
+      "status": "invalidated",
+      "trust_score": 6,
+      "usable": false,
+      "use_action": "等待重产",
+      "reason": "2026-07-07 14:13:52 批次的盘中异动使用了异常行情源数据，北方华创/中微公司等日内涨跌幅失真，已撤下该批 alert，等待修复后的盘中提醒进程重新产出。"
+    },
+    {
+      "file": "data/intraday.json",
+      "label": "盘中全景",
+      "role": "盘面结构和情绪",
+      "timestamp": "2026-07-07T16:01:14+08:00",
+      "status": "degraded",
+      "trust_score": 54,
+      "usable": true,
+      "use_action": "降权参考",
+      "reason": "ths_sina_or_akshare_quote_decode: akshare A股spot继续出现Can not decode value starting with character \"<\"；14:13:52 alert 批次已确认污染北方华创/中微公司等涨跌幅，已撤下该批 alert，并要求盘中提醒优先使用行情源原始涨跌幅字段。；tencent_hk_http: 接口可用，最新quote_time=2026/07/07 1…"
+    },
+    {
+      "file": "data/premarket.json",
+      "label": "早盘盘前",
+      "role": "开盘前研判",
+      "timestamp": "2026-07-07T09:25:30+08:00",
+      "status": "degraded",
+      "trust_score": 54,
+      "usable": true,
+      "use_action": "降权参考",
+      "reason": "ths_sina_or_akshare_quote_decode: akshare A股spot继续出现Can not decode value starting with character \"<\"；14:13:52 alert 批次已确认污染北方华创/中微公司等涨跌幅，已撤下该批 alert，并要求盘中提醒优先使用行情源原始涨跌幅字段。；tencent_hk_http: 接口可用，最新quote_time=2026/07/07 1…"
+    },
+    {
+      "file": "data/midday.json",
+      "label": "午盘盘前",
+      "role": "午后验证框架",
+      "timestamp": "2026-07-07T11:32:30+08:00",
+      "status": "trusted",
+      "trust_score": 92,
+      "usable": true,
+      "use_action": "正常使用",
+      "reason": "结构与时间戳正常"
+    },
+    {
+      "file": "data/postmarket.json",
+      "label": "盘后复盘",
+      "role": "收盘复盘和次日观察",
+      "timestamp": "2026-07-07T15:16:39+08:00",
+      "status": "degraded",
+      "trust_score": 54,
+      "usable": true,
+      "use_action": "降权参考",
+      "reason": "ths_sina_or_akshare_quote_decode: akshare A股spot继续出现Can not decode value starting with character \"<\"；14:13:52 alert 批次已确认污染北方华创/中微公司等涨跌幅，已撤下该批 alert，并要求盘中提醒优先使用行情源原始涨跌幅字段。；tencent_hk_http: 接口可用，最新quote_time=2026/07/07 1…"
+    },
+    {
+      "file": "data/evening-sentiment.json",
+      "label": "晚间舆情",
+      "role": "隔夜事件和公告",
+      "timestamp": "2026-07-05T20:10:00+08:00",
+      "status": "stale",
+      "trust_score": 41,
+      "usable": true,
+      "use_action": "仅作背景",
+      "reason": "时间戳不是当前交易日：2026-07-05T20:10:00+08:00"
+    },
+    {
+      "file": "data/topics.json",
+      "label": "专题跟踪",
+      "role": "中期专题结论",
+      "timestamp": "2026-07-07T15:16:39+08:00",
+      "status": "trusted",
+      "trust_score": 92,
+      "usable": true,
+      "use_action": "正常使用",
+      "reason": "结构与时间戳正常"
+    },
+    {
+      "file": "data/decision-feed.json",
+      "label": "机会风险流",
+      "role": "结构化机会/风险/验证",
+      "timestamp": "2026-07-07T18:46:47+08:00",
+      "status": "degraded",
+      "trust_score": 58,
+      "usable": true,
+      "use_action": "降权参考",
+      "reason": "发现 3 个降级/需复核项，核心结论可看但必须降权。"
+    }
+  ],
+  "rules": [
+    "trusted：可作为当前阶段交易辅助依据。",
+    "degraded：可参考但必须降权，需要结合下一步验证。",
+    "stale：非当前交易日或阶段，只能作为历史背景。",
+    "invalidated/missing：不得作为盘中交易依据，等待重产或修复。"
+  ]
+}

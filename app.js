@@ -7,6 +7,7 @@ const FILES = [
   "data/evening-sentiment.json",
   "data/topics.json",
   "data/quality-report.json",
+  "data/data-trust.json",
   "data/decision-feed.json",
   "data/signal-review.json",
   "config/watchlist.json",
@@ -45,10 +46,11 @@ async function updateAll() {
         render(file, data);
       }
     } catch (e) {
-      if (file.includes("signal-review") || file.includes("quality-report") || file.includes("decision-feed") || file.includes("section-health")) {
+      if (file.includes("signal-review") || file.includes("quality-report") || file.includes("data-trust") || file.includes("decision-feed") || file.includes("section-health")) {
         cache[file] = null;
         if (file.includes("signal-review")) renderSignalReview(null);
         if (file.includes("quality-report")) renderDataQualityGate();
+        if (file.includes("data-trust")) renderDataQualityGate();
         if (file.includes("decision-feed")) renderOpportunityRiskRadar();
         if (file.includes("section-health")) renderDataQualityGate();
       } else {
@@ -72,6 +74,7 @@ function render(file, data) {
   else if (file === "data/evening-sentiment.json") renderEvening(data);
   else if (file === "data/topics.json") renderTopics(data);
   else if (file === "data/quality-report.json") renderDataQualityGate();
+  else if (file === "data/data-trust.json") renderDataQualityGate();
   else if (file === "data/decision-feed.json") renderOpportunityRiskRadar();
   else if (file === "data/signal-review.json") renderSignalReview(data);
   else if (file === "config/watchlist.json") renderWatchlistDecision();
@@ -260,6 +263,12 @@ function renderDataQualityGate() {
       title: report.sectionTitle || "待接入",
       detail: report.sectionDetail || "区块级健康矩阵待生成",
       cls: report.sectionCls || "neutral"
+    },
+    {
+      label: "文件可信",
+      title: report.fileTrustTitle || "待接入",
+      detail: report.fileTrustDetail || "数据文件可信度待生成",
+      cls: report.fileTrustCls || "neutral"
     }
   ];
   el.innerHTML = `<div class="decision-strip quality-strip">${cards.map(card => `
@@ -274,6 +283,7 @@ function renderDataQualityGate() {
 function buildDataQualityReport() {
   const audited = cached("data/quality-report.json");
   const sectionHealth = cached("data/section-health.json");
+  const dataTrust = cached("data/data-trust.json");
   if (audited?.status && audited.current_signal_date === currentSignalDate()) {
     const latest = latestTimestamp([
       cached("data/intraday.json"),
@@ -295,16 +305,20 @@ function buildDataQualityReport() {
       .map(item => item.message || "")
       .filter(Boolean);
     const sectionSummary = summarizeSectionHealth(sectionHealth);
+    const trustSummary = summarizeDataTrust(dataTrust);
     return {
       level: mapped.level,
       cls: mapped.cls,
       latest,
       degraded,
-      issues: [...sectionSummary.issues, ...issues],
+      issues: [...trustSummary.issues, ...sectionSummary.issues, ...issues],
       summary: audited.summary || "数据审计报告已接入",
       sectionTitle: sectionSummary.title,
       sectionDetail: sectionSummary.detail,
-      sectionCls: sectionSummary.cls
+      sectionCls: sectionSummary.cls,
+      fileTrustTitle: trustSummary.title,
+      fileTrustDetail: trustSummary.detail,
+      fileTrustCls: trustSummary.cls
     };
   }
   const files = [
@@ -342,6 +356,25 @@ function buildDataQualityReport() {
   if (critical) return { level: "谨慎使用", cls: "warn", latest, degraded, issues, summary: "存在污染/异常字段，信号需二次确认" };
   if (stale || degraded.length) return { level: "降级可用", cls: "neutral", latest, degraded, issues, summary: "核心数据可用，但部分来源需降权" };
   return { level: "可用", cls: "good", latest, degraded, issues, summary: "核心数据结构正常" };
+}
+
+function summarizeDataTrust(report) {
+  if (!report || !Array.isArray(report.files)) {
+    return { title: "待接入", detail: "文件级可信度待生成", cls: "neutral", issues: [] };
+  }
+  const blocked = report.files.filter(item => ["invalidated", "missing"].includes(item.status));
+  const stale = report.files.filter(item => item.status === "stale");
+  const degraded = report.files.filter(item => item.status === "degraded");
+  const focus = [...blocked, ...degraded, ...stale].slice(0, 4);
+  const title = blocked.length ? `${blocked.length} 个不可用` : (degraded.length || stale.length ? `${degraded.length + stale.length} 个降权` : "全部可信");
+  const detail = report.summary || (focus.length ? focus.map(item => `${item.label}:${item.use_action}`).join(" / ") : "核心数据文件可正常使用");
+  const issues = focus.map(item => `${item.label}：${item.use_action}，${item.reason || item.status}`);
+  return {
+    title,
+    detail: truncateText(detail, 90),
+    cls: blocked.length ? "warn" : (degraded.length || stale.length ? "neutral" : "good"),
+    issues
+  };
 }
 
 function summarizeSectionHealth(report) {
