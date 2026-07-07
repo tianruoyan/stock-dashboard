@@ -1,26 +1,26 @@
 {
-  "timestamp": "2026-07-07T13:32:09+08:00",
+  "timestamp": "2026-07-07T13:34:30+08:00",
   "sources": {
     "tencent_http": {
       "status": "ok",
       "usage": "指数、ETF、港股与观察池实时报价",
-      "checked_at": "2026-07-07T13:05:30+08:00"
+      "checked_at": "2026-07-07T13:34:30+08:00"
     },
     "eastmoney_push2_akshare": {
       "status": "ok",
-      "usage": "涨停池32、跌停池18、炸板池20及结构分布",
-      "checked_at": "2026-07-07T13:05:30+08:00"
+      "usage": "涨停池29、跌停池21、炸板池24及结构分布",
+      "checked_at": "2026-07-07T13:34:30+08:00"
     },
     "mootdx_tdx": {
       "status": "not_used",
       "usage": "本次腾讯HTTP可用，未启用通达信降级",
-      "checked_at": "2026-07-07T13:05:30+08:00"
+      "checked_at": "2026-07-07T13:34:30+08:00"
     },
     "ths_sina_or_akshare_quote_decode": {
       "status": "degraded",
       "usage": "监控日志中的补充行情/同花顺新浪或akshare报价链路",
-      "checked_at": "2026-07-07T13:32:09+08:00",
-      "note": "13:28-13:32监控日志持续出现行情源异常：Can not decode value starting with character \"<\"；监控进程存活且日志持续更新，本轮同步13:28-13:31新增正式提醒。"
+      "checked_at": "2026-07-07T13:34:30+08:00",
+      "note": "延续13:28记录：补充报价链路仍出现 Can not decode value starting with character \"<\"；13:30核心行情继续使用腾讯HTTP与东方财富/akshare结构数据交叉验证。"
     }
   },
   "rules": [
@@ -31,13 +31,13 @@
     "任一数据源失败时保留上一版 JSON，并在 source-health.json 标注降级或异常。"
   ],
   "last_effective_run": {
-    "timestamp": "2026-07-07T13:32:09+08:00",
-    "type": "intraday_monitor_patrol",
-    "result": "new_alerts_pushed_with_degraded_quote_source",
+    "timestamp": "2026-07-07T13:34:30+08:00",
+    "type": "intraday_1330_update",
+    "result": "intraday_topics_written_with_degraded_supplement_quote_source",
     "degraded_sources": [
       "ths_sina_or_akshare_quote_decode"
     ]
   },
   "status": "degraded",
-  "notes": "13:32监控进程与日志正常；补充报价链路持续解码异常；已同步13:28-13:31新增正式提醒。"
+  "notes": "13:30盘中：腾讯HTTP与东方财富/akshare结构数据正常；补充报价链路延续降级，不影响本轮核心结论但已记录。"
 }
