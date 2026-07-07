@@ -201,11 +201,13 @@ def check_data_trust(issues: list[dict[str, Any]]) -> None:
         if not isinstance(item, dict):
             issues.append(issue("warning", "data/data-trust.json", "bad_trust_item", f"files[{index}] 不是对象"))
             continue
-        for key in ("file", "label", "status", "trust_score", "use_action", "reason"):
+        for key in ("file", "label", "status", "trust_score", "use_action", "reason", "session_phase", "session_relevance", "session_action", "session_reason"):
             if item.get(key) in (None, "", []):
                 issues.append(issue("warning", "data/data-trust.json", "missing_trust_field", f"files[{index}].{key} 缺失"))
         if item.get("status") not in {"trusted", "degraded", "stale", "invalidated", "missing"}:
             issues.append(issue("warning", "data/data-trust.json", "bad_trust_status", f"files[{index}].status 非法"))
+        if item.get("session_relevance") not in {"current", "historical", "upcoming", "background", "blocked"}:
+            issues.append(issue("warning", "data/data-trust.json", "bad_session_relevance", f"files[{index}].session_relevance 非法"))
 
 
 def check_monitoring_coverage(issues: list[dict[str, Any]]) -> None:

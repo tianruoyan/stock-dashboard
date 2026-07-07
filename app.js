@@ -398,10 +398,17 @@ function summarizeDataTrust(report) {
   const blocked = report.files.filter(item => ["invalidated", "missing"].includes(item.status));
   const stale = report.files.filter(item => item.status === "stale");
   const degraded = report.files.filter(item => item.status === "degraded");
-  const focus = [...blocked, ...degraded, ...stale].slice(0, 4);
-  const title = blocked.length ? `${blocked.length} 个不可用` : (degraded.length || stale.length ? `${degraded.length + stale.length} 个降权` : "全部可信");
+  const historical = report.files.filter(item => item.session_relevance === "historical" && !["invalidated", "missing", "stale"].includes(item.status));
+  const focus = [...blocked, ...degraded, ...stale, ...historical].slice(0, 5);
+  const title = blocked.length
+    ? `${blocked.length} 个不可用`
+    : (degraded.length || stale.length || historical.length ? `${degraded.length + stale.length} 个降权 / ${historical.length} 个阶段回看` : "全部可信");
   const detail = report.summary || (focus.length ? focus.map(item => `${item.label}:${item.use_action}`).join(" / ") : "核心数据文件可正常使用");
-  const issues = focus.map(item => `${item.label}：${item.use_action}，${item.reason || item.status}`);
+  const issues = focus.map(item => {
+    const sessionText = item.session_action ? `；${item.session_action}` : "";
+    const reason = item.session_relevance === "historical" && item.session_reason ? item.session_reason : (item.reason || item.status);
+    return `${item.label}：${item.use_action}${sessionText}，${reason}`;
+  });
   return {
     title,
     detail: truncateText(detail, 90),

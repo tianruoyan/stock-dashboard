@@ -242,7 +242,7 @@ def validate_data_trust(data: Any, issues: list[dict[str, Any]], current_date: s
     if not isinstance(rows, list) or not rows:
         issues.append(issue("warning", "data-trust.json", "missing_trust_files", "files 缺失或为空"))
         return
-    required = {"file", "label", "status", "trust_score", "use_action", "reason"}
+    required = {"file", "label", "status", "trust_score", "use_action", "reason", "session_phase", "session_relevance", "session_action", "session_reason"}
     for index, item in enumerate(rows):
         if not isinstance(item, dict):
             issues.append(issue("warning", "data-trust.json", "bad_trust_item", f"files[{index}] 不是对象", f"files[{index}]"))
@@ -252,6 +252,8 @@ def validate_data_trust(data: Any, issues: list[dict[str, Any]], current_date: s
                 issues.append(issue("warning", "data-trust.json", "missing_trust_field", f"files[{index}].{key} 缺失", f"files[{index}]"))
         if item.get("status") not in (None, "trusted", "degraded", "stale", "invalidated", "missing"):
             issues.append(issue("warning", "data-trust.json", "bad_trust_status", f"files[{index}].status 非法", f"files[{index}]"))
+        if item.get("session_relevance") not in (None, "current", "historical", "upcoming", "background", "blocked"):
+            issues.append(issue("warning", "data-trust.json", "bad_session_relevance", f"files[{index}].session_relevance 非法", f"files[{index}]"))
 
 
 def validate_monitoring_coverage(data: Any, issues: list[dict[str, Any]], current_date: str) -> None:
