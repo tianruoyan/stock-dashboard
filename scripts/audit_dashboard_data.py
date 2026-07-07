@@ -81,6 +81,7 @@ def main() -> int:
             "当日核心文件时间戳不一致、数据源降级、alert污染撤下为 warning。",
             "晚间舆情过期只标 info；前端不得把非当日晚间舆情用于今日总控。",
             "观察池个股出现异常涨跌幅时进入 warning，必须回查行情源。",
+            "涨停/跌停/强势/弱势等标签必须与 change_pct 方向一致，冲突时进入 warning。",
             "decision-feed 如存在，机会/风险/验证项必须带标题、结论、置信度和来源文件。",
         ],
     }
@@ -133,6 +134,7 @@ def signal_date(value: Any) -> str:
 def scan_change_pct(name: str, obj: Any, watch_names: set[str], issues: list[dict[str, Any]], path: str = "") -> None:
     if isinstance(obj, dict):
         item_name = str(obj.get("name") or obj.get("sector") or obj.get("title") or "").replace("XD", "")
+        local_text = directional_label_text(obj)
         if "change_pct" in obj:
             try:
                 pct = float(obj["change_pct"])
@@ -142,6 +144,14 @@ def scan_change_pct(name: str, obj: Any, watch_names: set[str], issues: list[dic
                     issues.append(issue("warning", name, "watchlist_extreme_change", f"{item_name} 涨跌幅 {pct}，需回查源", path))
                 if item_name in watch_names and -10.9 <= pct <= -9.8:
                     issues.append(issue("warning", name, "watchlist_limit_down_like", f"{item_name} 接近跌停 {pct}，需确认是否真实", path))
+                if re.search(r"跌停|接近跌停|封死跌停", local_text) and pct > -8:
+                    issues.append(issue("warning", name, "label_pct_conflict", f"{item_name or path} 文本含跌停/接近跌停，但 change_pct={pct}，标签需复核", path))
+                if re.search(r"涨停|封板|20cm|20CM", local_text) and pct < 8:
+                    issues.append(issue("warning", name, "label_pct_conflict", f"{item_name or path} 文本含涨停/封板，但 change_pct={pct}，标签需复核", path))
+                if re.search(r"强势|领涨|大涨|放量上涨|放量走强", local_text) and not re.search(r"前日|昨日|此前|兑现|转弱|回落|负反馈", local_text) and pct < -2:
+                    issues.append(issue("warning", name, "strength_pct_conflict", f"{item_name or path} 标为强势但 change_pct={pct}，需复核方向", path))
+                if re.search(r"弱势|大跌|放量下跌|负反馈|风险核心", local_text) and pct > 2:
+                    issues.append(issue("warning", name, "weakness_pct_conflict", f"{item_name or path} 标为弱势/风险但 change_pct={pct}，需复核方向", path))
             except Exception:
                 issues.append(issue("critical", name, "bad_change_pct", f"{item_name or path} change_pct 非数字：{obj['change_pct']}", path))
         for key, value in obj.items():
@@ -149,6 +159,19 @@ def scan_change_pct(name: str, obj: Any, watch_names: set[str], issues: list[dic
     elif isinstance(obj, list):
         for index, value in enumerate(obj):
             scan_change_pct(name, value, watch_names, issues, f"{path}[{index}]")
+
+
+def compact_json(value: Any) -> str:
+    try:
+        return json.dumps(value, ensure_ascii=False, separators=(",", ":"))
+    except Exception:
+        return str(value)
+
+
+def directional_label_text(obj: dict[str, Any]) -> str:
+    keys = ("status", "strength", "trend", "type", "signal_type", "tag", "label", "note", "reason")
+    parts = [str(obj.get(key) or "") for key in keys]
+    return " ".join(parts)
 
 
 def validate_postmarket(data: Any, issues: list[dict[str, Any]]) -> None:

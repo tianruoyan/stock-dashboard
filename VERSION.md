@@ -2,6 +2,7 @@
 
 | Display Version | Date | Edition | Tag / Commit | Summary | Rollback Note |
 |---|---:|---:|---|---|---|
+| 2026-07-07 第56版｜涨跌标签校验 | 2026-07-07 | 第56版 | tag: `v2026.07.07-m56-label-pct-audit` | 数据审计新增盘口标签一致性检查：`change_pct` 与“涨停/封板/跌停/强势/弱势/风险”等当前标签冲突时进入 warning；同时排除“前日强势后兑现、映射逻辑里其他标的涨停”等合理语境，降低伪跌停、伪强势和标签串线污染看板。 | 回滚到第55版可用 `git checkout v2026.07.07-m55-evidence-gap`，或回滚到本版本 tag。 |
 | 2026-07-07 第55版｜信号证据缺口 | 2026-07-07 | 第55版 | tag: `v2026.07.07-m55-evidence-gap` | `decision-feed` 每条机会/风险/验证新增 `discovery_type`、`evidence_score`、`missing_evidence`，区分主动盘面扫描、主动个股扫描、专题继承、风险兜底和待验证队列；雷达卡片显示发现方式、证据分和证据缺口，发布门强制检查这些字段。 | 回滚到第54版可用 `git checkout v2026.07.07-m54-session-trust`，或回滚到本版本 tag。 |
 | 2026-07-07 第54版｜交易阶段可信度 | 2026-07-07 | 第54版 | tag: `v2026.07.07-m54-session-trust` | `data-trust` 新增 `session_phase/session_relevance/session_action/session_reason`，把同一交易日内的早盘、午盘、盘中、盘后数据区分为当前阶段可用、阶段回看、待产出和背景参考；顶部质量卡同步显示“阶段回看”，避免过期阶段数据被当成实时交易依据。 | 回滚到第53版可用 `git checkout v2026.07.07-m53-japan-korea-guard`，或回滚到本版本 tag。 |
 | 2026-07-07 第53版｜日韩早盘强防护 | 2026-07-07 | 第53版 | tag: `v2026.07.07-m53-japan-korea-guard` | 盘前“日韩早盘”不再展示原始字符串；字符串/数组字符串必须先提取日经、KOSPI、三星、SK海力士、东京电子、Advantest 等白名单行情数值，提取不到或发现降级/疑似乱码时统一显示中文降级提示。 | 回滚到第52版可用 `git checkout v2026.07.07-m52-blindspot-radar`，或回滚到本版本 tag。 |
