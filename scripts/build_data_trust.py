@@ -16,19 +16,20 @@ BAD_LITERALS = ("[object Object]", "undefined", "None%", "NaN", "Infinity")
 MOJIBAKE_PATTERN = re.compile(r"[�ÃÂ]|(?:æ|å|ç|è|é)[A-Za-z0-9_\- ]{0,8}")
 
 CORE_FILES = [
-    {"file": "data/alert.json", "label": "盘中异动", "depends_on_source": True, "role": "高频触发信号", "session": "market"},
-    {"file": "data/intraday.json", "label": "盘中全景", "depends_on_source": True, "role": "盘面结构和情绪", "session": "market"},
-    {"file": "data/premarket.json", "label": "早盘盘前", "depends_on_source": True, "role": "开盘前研判", "session": "premarket"},
-    {"file": "data/midday.json", "label": "午盘盘前", "depends_on_source": False, "role": "午后验证框架", "session": "midday"},
-    {"file": "data/postmarket.json", "label": "盘后复盘", "depends_on_source": True, "role": "收盘复盘和次日观察", "session": "postmarket"},
-    {"file": "data/evening-sentiment.json", "label": "晚间舆情", "depends_on_source": False, "role": "隔夜事件和公告", "session": "evening"},
-    {"file": "data/topics.json", "label": "专题跟踪", "depends_on_source": False, "role": "中期专题结论", "session": "background"},
-    {"file": "data/decision-feed.json", "label": "机会风险流", "depends_on_source": False, "role": "结构化机会/风险/验证", "session": "decision"},
+    {"file": "data/alert.json", "label": "盘中异动", "depends_on_source": True, "role": "高频触发信号", "session": "market", "freshness_minutes": 5},
+    {"file": "data/intraday.json", "label": "盘中全景", "depends_on_source": True, "role": "盘面结构和情绪", "session": "market", "freshness_minutes": 15},
+    {"file": "data/premarket.json", "label": "早盘盘前", "depends_on_source": True, "role": "开盘前研判", "session": "premarket", "freshness_minutes": 90},
+    {"file": "data/midday.json", "label": "午盘盘前", "depends_on_source": False, "role": "午后验证框架", "session": "midday", "freshness_minutes": 120},
+    {"file": "data/postmarket.json", "label": "盘后复盘", "depends_on_source": True, "role": "收盘复盘和次日观察", "session": "postmarket", "freshness_minutes": 360},
+    {"file": "data/evening-sentiment.json", "label": "晚间舆情", "depends_on_source": False, "role": "隔夜事件和公告", "session": "evening", "freshness_minutes": 720},
+    {"file": "data/topics.json", "label": "专题跟踪", "depends_on_source": False, "role": "中期专题结论", "session": "background", "freshness_minutes": 10080},
+    {"file": "data/decision-feed.json", "label": "机会风险流", "depends_on_source": False, "role": "结构化机会/风险/验证", "session": "decision", "freshness_minutes": 30},
 ]
 
 
 def main() -> int:
-    phase = trading_phase(datetime.now(TZ))
+    now = datetime.now(TZ)
+    phase = trading_phase(now)
     payloads = {spec["file"]: load_json(ROOT / spec["file"]) for spec in CORE_FILES}
     quality = load_json(DATA_DIR / "quality-report.json")
     source_health = load_json(DATA_DIR / "source-health.json")
@@ -36,7 +37,7 @@ def main() -> int:
     quality_issues = quality.get("issues") if isinstance(quality, dict) else []
     source_flags = degraded_source_flags(source_health)
     files = [
-        trust_row(spec, payloads.get(spec["file"]), current_date, quality_issues, source_flags, phase)
+        trust_row(spec, payloads.get(spec["file"]), current_date, quality_issues, source_flags, phase, now)
         for spec in CORE_FILES
     ]
     counts = {status: sum(1 for row in files if row["status"] == status) for status in ("trusted", "degraded", "stale", "invalidated", "missing")}
@@ -54,6 +55,7 @@ def main() -> int:
             "stale：非当前交易日或阶段，只能作为历史背景。",
             "invalidated/missing：不得作为盘中交易依据，等待重产或修复。",
             "session_relevance：区分同一交易日内的当前可用、阶段回看、待产出和背景参考。",
+            "freshness_status：当前阶段文件必须满足各自延迟 SLA；过期实时数据自动降权。",
         ],
     }
     OUT.write_text(json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
@@ -61,7 +63,7 @@ def main() -> int:
     return 0
 
 
-def trust_row(spec: dict[str, Any], data: Any, current_date: str, quality_issues: list[Any], source_flags: list[str], phase: str) -> dict[str, Any]:
+def trust_row(spec: dict[str, Any], data: Any, current_date: str, quality_issues: list[Any], source_flags: list[str], phase: str, now: datetime) -> dict[str, Any]:
     rel = spec["file"]
     path = ROOT / rel
     reasons: list[str] = []
@@ -99,6 +101,10 @@ def trust_row(spec: dict[str, Any], data: Any, current_date: str, quality_issues
 
     reasons = clean_list(reasons)
     session = session_relevance(spec, status, phase)
+    freshness = freshness_state(spec, ts, status, session["relevance"], now)
+    if freshness["status"] == "stale" and status not in {"missing", "invalidated", "stale"}:
+        status = worse_status(status, "degraded")
+        reasons = clean_list([*reasons, freshness["reason"]])
     return {
         "file": rel,
         "label": spec["label"],
@@ -109,7 +115,12 @@ def trust_row(spec: dict[str, Any], data: Any, current_date: str, quality_issues
         "session_relevance": session["relevance"],
         "session_action": session["action"],
         "session_reason": session["reason"],
-        "trust_score": trust_score(status, reasons, session["relevance"]),
+        "freshness_status": freshness["status"],
+        "freshness_minutes": spec.get("freshness_minutes", 0),
+        "age_minutes": freshness["age_minutes"],
+        "freshness_action": freshness["action"],
+        "freshness_reason": freshness["reason"],
+        "trust_score": trust_score(status, reasons, session["relevance"], freshness["status"]),
         "usable": status in {"trusted", "degraded", "stale"},
         "use_action": action_for(status),
         "reason": trim("；".join(reasons) or "结构与时间戳正常", 220),
@@ -173,7 +184,13 @@ def summarize(files: list[dict[str, Any]]) -> str:
     degraded = [row for row in files if row["status"] == "degraded"]
     stale = [row for row in files if row["status"] == "stale"]
     historical = [row for row in files if row.get("session_relevance") == "historical" and row["status"] not in {"stale", "missing", "invalidated"}]
-    suffix = f"，{len(historical)} 个同日文件已过当前阶段" if historical else ""
+    freshness_stale = [row for row in files if row.get("freshness_status") == "stale" and row.get("session_relevance") == "current"]
+    suffix_parts = []
+    if historical:
+        suffix_parts.append(f"{len(historical)} 个同日文件已过当前阶段")
+    if freshness_stale:
+        suffix_parts.append(f"{len(freshness_stale)} 个当前阶段文件超时")
+    suffix = "，" + "，".join(suffix_parts) if suffix_parts else ""
     if blocked:
         names = "、".join(row["label"] for row in blocked[:3])
         return f"{len(blocked)} 个数据文件不可用（{names}），{len(degraded)} 个文件需降权{suffix}。"
@@ -192,7 +209,7 @@ def action_for(status: str) -> str:
     }.get(status, "待确认")
 
 
-def trust_score(status: str, reasons: list[str], relevance: str = "current") -> int:
+def trust_score(status: str, reasons: list[str], relevance: str = "current", freshness: str = "fresh") -> int:
     base = {
         "trusted": 92,
         "degraded": 62,
@@ -201,7 +218,75 @@ def trust_score(status: str, reasons: list[str], relevance: str = "current") -> 
         "missing": 0,
     }.get(status, 50)
     session_penalty = {"historical": 18, "upcoming": 10, "background": 0, "current": 0}.get(relevance, 0)
-    return max(0, min(100, base - min(20, len(reasons) * 4) - session_penalty))
+    freshness_penalty = {"stale": 24, "aging": 10, "unknown": 8, "phase_expired": 0, "fresh": 0}.get(freshness, 0)
+    return max(0, min(100, base - min(20, len(reasons) * 4) - session_penalty - freshness_penalty))
+
+
+def freshness_state(spec: dict[str, Any], ts: Any, status: str, relevance: str, now: datetime) -> dict[str, Any]:
+    if status in {"missing", "invalidated"}:
+        return {
+            "status": "blocked",
+            "age_minutes": None,
+            "action": "等待修复",
+            "reason": "文件不可用，无法判断新鲜度",
+        }
+    parsed = parse_timestamp(ts)
+    if not parsed:
+        return {
+            "status": "unknown",
+            "age_minutes": None,
+            "action": "时间待确认",
+            "reason": "缺少可解析 timestamp",
+        }
+    age = max(0, int((now - parsed).total_seconds() // 60))
+    limit = int(spec.get("freshness_minutes") or 0)
+    label = spec.get("label", "该文件")
+    if relevance != "current":
+        return {
+            "status": "phase_expired",
+            "age_minutes": age,
+            "action": "不按实时新鲜度使用",
+            "reason": f"{label}不是当前实时阶段，按阶段状态处理",
+        }
+    if limit and age > limit:
+        return {
+            "status": "stale",
+            "age_minutes": age,
+            "action": "当前阶段降权",
+            "reason": f"{label}已 {age} 分钟未刷新，超过 {limit} 分钟 SLA",
+        }
+    if limit and age > max(1, int(limit * 0.7)):
+        return {
+            "status": "aging",
+            "age_minutes": age,
+            "action": "临近超时",
+            "reason": f"{label}已 {age} 分钟未刷新，接近 {limit} 分钟 SLA",
+        }
+    return {
+        "status": "fresh",
+        "age_minutes": age,
+        "action": "新鲜度正常",
+        "reason": f"{label}刷新延迟 {age} 分钟，未超过 {limit} 分钟 SLA",
+    }
+
+
+def parse_timestamp(value: Any) -> datetime | None:
+    text = str(value or "").strip()
+    if not text:
+        return None
+    try:
+        parsed = datetime.fromisoformat(text.replace("Z", "+00:00"))
+    except Exception:
+        match = re.search(r"\d{4}-\d{2}-\d{2}T\d{2}:\d{2}(?::\d{2})?", text)
+        if not match:
+            return None
+        try:
+            parsed = datetime.fromisoformat(match.group(0))
+        except Exception:
+            return None
+    if parsed.tzinfo is None:
+        parsed = parsed.replace(tzinfo=TZ)
+    return parsed.astimezone(TZ)
 
 
 def trading_phase(now: datetime) -> str:

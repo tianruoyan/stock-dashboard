@@ -399,20 +399,26 @@ function summarizeDataTrust(report) {
   const stale = report.files.filter(item => item.status === "stale");
   const degraded = report.files.filter(item => item.status === "degraded");
   const historical = report.files.filter(item => item.session_relevance === "historical" && !["invalidated", "missing", "stale"].includes(item.status));
-  const focus = [...blocked, ...degraded, ...stale, ...historical].slice(0, 5);
+  const freshnessBad = report.files.filter(item => item.freshness_status === "stale" && item.session_relevance === "current");
+  const freshnessAging = report.files.filter(item => item.freshness_status === "aging" && item.session_relevance === "current");
+  const focus = [...blocked, ...freshnessBad, ...degraded, ...stale, ...historical, ...freshnessAging].slice(0, 5);
   const title = blocked.length
     ? `${blocked.length} 个不可用`
-    : (degraded.length || stale.length || historical.length ? `${degraded.length + stale.length} 个降权 / ${historical.length} 个阶段回看` : "全部可信");
+    : (freshnessBad.length ? `${freshnessBad.length} 个超时 / ${degraded.length + stale.length} 个降权`
+      : (degraded.length || stale.length || historical.length || freshnessAging.length ? `${degraded.length + stale.length} 个降权 / ${historical.length} 个阶段回看` : "全部可信"));
   const detail = report.summary || (focus.length ? focus.map(item => `${item.label}:${item.use_action}`).join(" / ") : "核心数据文件可正常使用");
   const issues = focus.map(item => {
     const sessionText = item.session_action ? `；${item.session_action}` : "";
-    const reason = item.session_relevance === "historical" && item.session_reason ? item.session_reason : (item.reason || item.status);
-    return `${item.label}：${item.use_action}${sessionText}，${reason}`;
+    const freshnessText = item.freshness_status === "stale" || item.freshness_status === "aging" ? `；${item.freshness_action}` : "";
+    const reason = item.freshness_status === "stale" || item.freshness_status === "aging"
+      ? item.freshness_reason
+      : (item.session_relevance === "historical" && item.session_reason ? item.session_reason : (item.reason || item.status));
+    return `${item.label}：${item.use_action}${sessionText}${freshnessText}，${reason}`;
   });
   return {
     title,
     detail: truncateText(detail, 90),
-    cls: blocked.length ? "warn" : (degraded.length || stale.length ? "neutral" : "good"),
+    cls: blocked.length || freshnessBad.length ? "warn" : (degraded.length || stale.length || freshnessAging.length ? "neutral" : "good"),
     issues
   };
 }
