@@ -192,6 +192,41 @@ def check_decision_feed(issues: list[dict[str, Any]]) -> None:
                 issues.append(issue("warning", "data/decision-feed.json", "bad_signal_grade", f"{title} signal_grade 非 A/B/C/D"))
             if isinstance(item.get("evidence_score"), (int, float)) and not 0 <= item.get("evidence_score") <= 100:
                 issues.append(issue("warning", "data/decision-feed.json", "bad_evidence_score", f"{title} evidence_score 不在 0-100"))
+    check_unplanned_theme_detection(data, issues)
+
+
+def check_unplanned_theme_detection(feed: dict[str, Any], issues: list[dict[str, Any]]) -> None:
+    postmarket_path = ROOT / "data" / "postmarket.json"
+    topics_path = ROOT / "data" / "topics.json"
+    try:
+        postmarket = json.loads(postmarket_path.read_text(encoding="utf-8"))
+        topics = json.loads(topics_path.read_text(encoding="utf-8"))
+    except Exception:
+        return
+    known = {str(item.get("name") or "") for item in topics.get("topics", []) if isinstance(item, dict)}
+    expected = []
+    for item in postmarket.get("hotspots", []):
+        if not isinstance(item, dict):
+            continue
+        name = str(item.get("name") or "")
+        state_text = " ".join(str(item.get(key) or "") for key in ("name", "status", "continuity", "note"))
+        text = json.dumps(item, ensure_ascii=False)
+        if name in known:
+            continue
+        if re.search(r"风险线|弱化|退潮|反抽失败|证伪", state_text):
+            continue
+        if re.search(r"低位|消费电子|元件|首次|轮动增强", state_text) and re.search(r"涨停池|8%以上|5%-8%|封板|涨停|轮动增强|低位轮动|强势组", text):
+            expected.append(name)
+    if not expected:
+        return
+    rendered = {
+        str(item.get("title") or "")
+        for item in (feed.get("opportunities") or []) + (feed.get("verifications") or [])
+        if isinstance(item, dict)
+    }
+    for name in expected[:3]:
+        if not any(name in title for title in rendered):
+            issues.append(issue("warning", "data/decision-feed.json", "missing_unplanned_theme_scan", f"非预设活跃方向未进入雷达：{name}"))
 
 
 def check_build_report(issues: list[dict[str, Any]]) -> None:

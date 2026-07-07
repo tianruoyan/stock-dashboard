@@ -118,6 +118,25 @@ def build_opportunities(files: dict[str, Any], current_date: str) -> list[dict[s
             quality_flags=clean_list([*(gate["decision_flags"] if quality_degraded else []), *(shift.get("quality_flags") or [])]),
         ))
 
+    existing_titles = {item.get("title") for item in items}
+    for theme in unplanned_theme_candidates(files, existing_titles):
+        text = compact_json(theme)
+        items.append(decision_item(
+            title=f"新线观察：{theme_name(theme)}",
+            item_type="unplanned_theme",
+            conclusion=first_text(theme.get("continuity"), theme.get("note"), theme.get("status"), "盘面出现非预设活跃方向，需要验证是否从轮动变主线。"),
+            confidence="low" if quality_degraded else "medium",
+            evidence=evidence_from(theme),
+            watch_next=watch_next_from(theme),
+            invalidation=f"{theme_name(theme)}次日不能继续高开承接、涨停池收缩或代表股冲高回落，则只按一日轮动处理。",
+            tags=related_tags(text) or ["新线观察"],
+            source_files=["postmarket.json"],
+            tone="good",
+            discovery_type="active_market_scan",
+            trigger_reason=f"非预设盘面扫描触发：{theme_name(theme)}不在既有专题精确清单中，但出现涨停池/强势组/轮动增强证据。",
+            quality_flags=gate["decision_flags"] if quality_degraded else [],
+        ))
+
     post = files.get("postmarket.json") or {}
     for stock in strong_stock_candidates(post):
         items.append(decision_item(
@@ -135,6 +154,31 @@ def build_opportunities(files: dict[str, Any], current_date: str) -> list[dict[s
             quality_flags=gate["decision_flags"] if quality_degraded else [],
         ))
     return items
+
+
+def unplanned_theme_candidates(files: dict[str, Any], existing_titles: set[str]) -> list[dict[str, Any]]:
+    topics = files.get("topics.json") or {}
+    post = files.get("postmarket.json") or {}
+    known = {theme_name(item) for item in as_list(topics.get("topics")) if isinstance(item, dict)}
+    rows: list[dict[str, Any]] = []
+    for item in as_list(post.get("hotspots")):
+        if not isinstance(item, dict):
+            continue
+        name = theme_name(item)
+        text = compact_json(item)
+        state_text = " ".join(str(item.get(key) or "") for key in ("name", "status", "continuity", "note"))
+        tags = related_tags(text)
+        if name in known or name in existing_titles or is_generic_bucket(item):
+            continue
+        if tags and any(tag in known for tag in tags) and not re.search(r"低位|消费电子|元件|首次|轮动增强", state_text):
+            continue
+        if re.search(r"风险线|弱化|退潮|反抽失败|证伪", state_text):
+            continue
+        has_activity = re.search(r"涨停池|8%以上|5%-8%|封板|涨停|轮动增强|低位轮动|强势组", text)
+        has_representatives = len(as_list(item.get("stocks"))) >= 3 or len(evidence_from(item)) >= 2
+        if has_activity and has_representatives:
+            rows.append(item)
+    return rows[:3]
 
 
 def build_risks(files: dict[str, Any]) -> list[dict[str, Any]]:
@@ -482,9 +526,9 @@ def missing_evidence_for(item_type: str, evidence: list[str], watch_next: list[s
     joined = " ".join(evidence)
     if item_type not in {"verification", "data_quality"} and not evidence:
         missing.append("缺少可核验证据")
-    if item_type in {"theme", "stock"} and not re.search(r"\d|涨停|跌停|封板|成交|放量|尾盘|竞价|高开|低开", joined):
+    if item_type in {"theme", "stock", "unplanned_theme"} and not re.search(r"\d|涨停|跌停|封板|成交|放量|尾盘|竞价|高开|低开", joined):
         missing.append("缺少量化盘口证据")
-    if item_type == "theme" and not re.search(r"代表股|核心股|龙头|涨停|封板|北方|中微|安集|雅克|华海|绿的|埃斯顿|恒瑞|券商", joined):
+    if item_type in {"theme", "unplanned_theme"} and not re.search(r"代表股|核心股|龙头|涨停|封板|北方|中微|安集|雅克|华海|绿的|埃斯顿|恒瑞|券商|视源|威尔高|魅视|实益达|力鼎|双星", joined):
         missing.append("缺少代表股验证")
     if not watch_next:
         missing.append("缺少下一步验证")
