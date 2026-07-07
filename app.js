@@ -2500,7 +2500,8 @@ function normalizeJapanKoreaWatchList(value) {
 function renderJapanKoreaDegraded(confirmList) {
   const watchList = normalizeJapanKoreaWatchList(confirmList);
   return `<div class="source-note source-note-warning">
-    <b>日韩早盘：</b>数据源降级，暂不采用未核实数据。
+    <b>日韩早盘数据源降级：</b>
+    <span>未取得可靠实时行情，暂不展示疑似乱码或未核实数值。</span>
     <span>待复核：${watchList.map(item => escapeHtml(item)).join(" / ")}</span>
   </div>`;
 }

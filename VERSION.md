@@ -2,6 +2,7 @@
 
 | Display Version | Date | Edition | Tag / Commit | Summary | Rollback Note |
 |---|---:|---:|---|---|---|
+| 2026-07-07 第69版｜日韩早盘降级展示门禁 | 2026-07-07 | 第69版 | tag: `v2026.07.07-m69-japan-korea-guardrail` | 盘前“日韩早盘”源降级时显示独立中文提示，明确“不展示疑似乱码或未核实数值”并列出待复核标的；运行时烟雾测试新增门禁，要求降级提示和待复核清单必须渲染，防止原始降级字符串或乱码感内容回流页面。 | 回滚到第68版可用 `git checkout v2026.07.07-m68-blindspot-fallback-checks`，或回滚到本版本 tag。 |
 | 2026-07-07 第68版｜盲区替代检查表 | 2026-07-07 | 第68版 | tag: `v2026.07.07-m68-blindspot-fallback-checks` | `monitoring-coverage` 为核心盲区新增 `fallback_checks`，当盘中异动失效时自动给出可执行替代观察：市场宽度、半导体核心、新线、风险线和雷达风险项；前端雷达优先展示这些检查项，审计和静态烟雾测试要求 critical 盲区必须具备可执行替代检查。 | 回滚到第67版可用 `git checkout v2026.07.07-m67-source-failed-audit`，或回滚到本版本 tag。 |
 | 2026-07-07 第67版｜失败数据源审计 | 2026-07-07 | 第67版 | tag: `v2026.07.07-m67-source-failed-audit` | 数据审计把 `source-health.json` 中的 `failed` 状态纳入质量报告，输出 `source_failed` warning；港股结构源等直接失败时不再只依赖盲区/可信度报告提示，而是在顶部数据质量卡中同步降权。 | 回滚到第66版可用 `git checkout v2026.07.07-m66-unplanned-theme-scan`，或回滚到本版本 tag。 |
 | 2026-07-07 第66版｜非预设新线扫描 | 2026-07-07 | 第66版 | tag: `v2026.07.07-m66-unplanned-theme-scan` | `decision-feed` 新增非预设盘面扫描：从盘后热点中识别不在既有专题精确清单里、但出现涨停池/强势组/轮动增强证据的方向，生成“新线观察”候选；当前数据降级时仍按 C/D 级转入验证栏。静态烟雾测试新增门禁，确保非预设活跃方向必须进入机会或验证流。 | 回滚到第65版可用 `git checkout v2026.07.07-m65-radar-trigger-reason`，或回滚到本版本 tag。 |

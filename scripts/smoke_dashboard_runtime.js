@@ -370,6 +370,7 @@ async function main() {
     issues.push(issue("critical", "downgraded_opportunity_rendered", "C/D级降权机会进入了机会候选栏，应转入下一步验证", "opportunity-risk-radar"));
   }
   checkDecisionTriggerRendering(radarHtml, issues);
+  checkPremarketJapanKoreaGuard(document, issues);
   for (const literal of BAD_LITERALS) {
     if (wholePage.includes(literal)) {
       issues.push(issue("critical", "bad_literal_rendered", `页面运行后出现异常文本：${badLiteralLabel(literal)}`));
@@ -406,6 +407,7 @@ async function main() {
       "critical 监测盲区必须进入机会/风险雷达的风险栏。",
       "C/D级降权机会不得进入机会候选栏，只能进入下一步验证。",
       "机会/风险雷达必须渲染 decision-feed 的触发原因。",
+      "日韩早盘源降级时必须显示清晰降级提示和待复核清单，不得展示原始乱码/未核实字符串。",
       "核心 JSON 字段有数据时，页面对应区块必须渲染关键结论或代表项。",
       "确认区块健康贴条能在运行时生成。"
     ]
@@ -482,6 +484,24 @@ function checkDecisionTriggerRendering(radarHtml, issues) {
     if (!rendered.includes(snippet)) {
       issues.push(issue("critical", "trigger_reason_not_rendered", `触发原因未渲染：${snippet}`, "opportunity-risk-radar"));
     }
+  }
+}
+
+function checkPremarketJapanKoreaGuard(document, issues) {
+  const premarket = readJsonIfExists("data/premarket.json");
+  const jk = premarket.us_overnight?.japan_korea;
+  if (!jk) return;
+  const statusText = normalizeRenderedText(jk);
+  const needsGuard = /降级|未核实|待确认|再确认|decode|failed|error/i.test(statusText) || MOJIBAKE_RE.test(statusText);
+  if (!needsGuard) return;
+  const html = document.getElementById("section-premarket")?.collectHtml() || "";
+  const rendered = normalizeRenderedText(html);
+  if (!rendered.includes("日韩早盘数据源降级") || !rendered.includes("待复核")) {
+    issues.push(issue("critical", "japan_korea_guard_not_rendered", "日韩早盘数据源降级时未显示清晰降级提示和待复核清单", "section-premarket"));
+  }
+  const rawSnippet = stableSnippet(jk);
+  if (rawSnippet && rendered.includes(rawSnippet) && !rawSnippet.includes("日韩早盘")) {
+    issues.push(issue("critical", "japan_korea_raw_text_rendered", `日韩早盘仍展示原始降级文本：${rawSnippet}`, "section-premarket"));
   }
 }
 
