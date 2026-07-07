@@ -2020,7 +2020,15 @@ function renderPremarket(data) {
 
 function renderJapanKoreaMorning(jk) {
   if (typeof jk === "string") {
-    return `<div class="source-note"><b>日韩早盘：</b>${escapeHtml(truncateText(jk, 120))}</div>`;
+    const degraded = /降级|未核实|待确认|再确认/.test(jk);
+    if (degraded) {
+      const confirmList = extractAfter(jk, "再确认") || "日经、KOSPI、三星、SK海力士、东京电子/Advantest";
+      return `<div class="source-note source-note-warning">
+        <b>日韩早盘：</b>数据源降级，暂不采用未核实数据。
+        <span>待确认：${escapeHtml(cleanShortNote(confirmList))}</span>
+      </div>`;
+    }
+    return `<div class="source-note"><b>日韩早盘：</b>${escapeHtml(truncateText(jk, 80))}</div>`;
   }
   if (Array.isArray(jk)) {
     return '<div class="tag-row">日韩早盘：' + jk.map(s => `<span class="tag">${escapeHtml(formatMarketTag(s))}</span>`).join(" ") + '</div>';
@@ -2029,6 +2037,20 @@ function renderJapanKoreaMorning(jk) {
     return '<div class="tag-row">日韩早盘：' + Object.entries(jk).map(([k, v]) => `<span class="tag">${escapeHtml(externalLabel(k))}：${escapeHtml(formatDisplayValue(v))}</span>`).join(" ") + '</div>';
   }
   return "";
+}
+
+function extractAfter(text, marker) {
+  if (!text || !marker) return "";
+  const idx = String(text).indexOf(marker);
+  if (idx < 0) return "";
+  return String(text).slice(idx + marker.length);
+}
+
+function cleanShortNote(text) {
+  return String(text || "")
+    .replace(/^[：:，,；;\s]+/, "")
+    .replace(/[。；;\s]+$/, "")
+    .trim();
 }
 
 function renderPremarketDecision(data) {
