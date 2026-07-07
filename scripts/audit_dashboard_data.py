@@ -424,6 +424,13 @@ def validate_decision_feed(data: Any, issues: list[dict[str, Any]], current_date
     feed_date = data.get("current_signal_date") or signal_date(data.get("timestamp"))
     if feed_date != current_date:
         issues.append(issue("warning", "decision-feed.json", "stale_decision_feed", f"decision-feed 日期不是当前交易日：{feed_date}"))
+    coverage = data.get("observation_coverage")
+    if not isinstance(coverage, dict):
+        issues.append(issue("warning", "decision-feed.json", "missing_observation_coverage", "observation_coverage 缺失或不是对象"))
+    else:
+        for key in ("summary", "independent_count", "active_market_count", "topic_inherited_count", "status"):
+            if coverage.get(key) in (None, "", []):
+                issues.append(issue("warning", "decision-feed.json", "missing_observation_coverage_field", f"observation_coverage.{key} 缺失"))
     for section in ("opportunities", "risks", "verifications"):
         rows = data.get(section)
         if not isinstance(rows, list):
@@ -439,6 +446,9 @@ def validate_decision_feed(data: Any, issues: list[dict[str, Any]], current_date
             for key in ("signal_grade", "signal_score", "use_action", "use_reasons", "discovery_type", "evidence_score"):
                 if item.get(key) in (None, "", []):
                     issues.append(issue("warning", "decision-feed.json", "missing_usability_field", f"{section}[{index}].{key} 缺失", f"{section}[{index}]"))
+            for key in ("observation_source", "independent_observation"):
+                if key not in item:
+                    issues.append(issue("warning", "decision-feed.json", "missing_observation_field", f"{section}[{index}].{key} 缺失", f"{section}[{index}]"))
             if "missing_evidence" not in item or not isinstance(item.get("missing_evidence"), list):
                 issues.append(issue("warning", "decision-feed.json", "missing_usability_field", f"{section}[{index}].missing_evidence 缺失或不是数组", f"{section}[{index}]"))
             if item.get("signal_grade") not in (None, "A", "B", "C", "D"):
@@ -669,7 +679,14 @@ def issue_impact(code: str, file: str, message: str) -> tuple[str, str]:
         "alert_quote_audit_mismatch",
     } or re.search(r"decode|行情|涨跌幅|quote|akshare|source", text, re.I):
         return "price_review", "价格/涨跌幅相关结论降权，需二次行情源复核"
-    if code in {"missing_quality_flags", "opportunity_not_downgraded", "high_confidence_without_evidence"}:
+    if code in {
+        "missing_quality_flags",
+        "opportunity_not_downgraded",
+        "high_confidence_without_evidence",
+        "missing_observation_coverage",
+        "missing_observation_coverage_field",
+        "missing_observation_field",
+    }:
         return "signal_review", "机会信号必须降权并转入验证"
     return "background_review", "仅作背景复核，不单独阻断交易判断"
 

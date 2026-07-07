@@ -686,8 +686,9 @@ function renderOpportunityRiskRadar() {
     <b>${escapeHtml(radar.gate.title || "等待确认")}</b>
     <em>${escapeHtml(radar.gate.detail || "只按验证条件跟踪，不生成交易指令。")}</em>
   </div>` : "";
+  const observation = renderObservationCoverage(radar.observationCoverage);
   const conflicts = renderRadarConflicts(radar.conflicts || []);
-  el.innerHTML = `${gate}${conflicts}<div class="radar-grid">
+  el.innerHTML = `${gate}${observation}${conflicts}<div class="radar-grid">
     <div class="radar-column">
       <div class="radar-head"><b>机会候选</b><span>${radar.opportunities.length ? "需要验证，不直接追高" : "暂无高置信机会"}</span></div>
       ${radar.opportunities.length ? radar.opportunities.map(renderRadarItem).join("") : '<div class="empty-sm">等待主线扩散或观察池个股确认</div>'}
@@ -710,6 +711,7 @@ function renderRadarItem(item) {
   const details = [
     item.triggerReason ? ["触发", item.triggerReason] : null,
     item.discoveryType ? ["发现", discoveryTypeLabel(item.discoveryType)] : null,
+    item.observationSource ? ["来源类型", `${item.observationSource}${item.independentObservation ? " · 独立观察" : " · 继承/验证"}`] : null,
     item.evidenceScore !== undefined ? ["证据分", `${item.evidenceScore}分`] : null,
     item.missingEvidence?.length ? ["缺口", item.missingEvidence.slice(0, 2)] : null,
     item.nextAction ? ["动作", item.nextAction] : null,
@@ -743,6 +745,7 @@ function buildOpportunityRiskRadar() {
     const downgradedOpportunities = opportunityItems.filter(item => !isActionableOpportunity(item));
     return {
       gate: radarGateFromFeed(feed, actionableOpportunities, downgradedOpportunities),
+      observationCoverage: feed.observation_coverage,
       conflicts: (feed.conflicts || []).map(decisionConflictToRadarItem),
       opportunities: actionableOpportunities.slice(0, 6),
       risks: dedupeRadarItems([
@@ -817,11 +820,27 @@ function buildOpportunityRiskRadar() {
   ];
   return {
     gate: null,
+    observationCoverage: null,
     conflicts: [],
     opportunities: [...strongStocks, ...strongThemes].slice(0, 6),
     risks: [...(breadthRisk ? [breadthRisk] : []), ...weakStocks, ...riskThemes].slice(0, 7),
     verifications: dedupeRadarItems(verifications).slice(0, 6)
   };
+}
+
+function renderObservationCoverage(coverage) {
+  if (!coverage) return "";
+  const statusClass = coverage.status === "active" ? "good" : (coverage.status === "independent" ? "watch" : "risk");
+  const active = Number(coverage.active_market_count || 0);
+  const independent = Number(coverage.independent_count || 0);
+  const inherited = Number(coverage.topic_inherited_count || 0);
+  const titles = Array.isArray(coverage.active_titles) && coverage.active_titles.length
+    ? `<em>${coverage.active_titles.slice(0, 3).map(escapeHtml).join(" / ")}</em>`
+    : "<em>暂无非预设新线，继续等待盘面扫描确认</em>";
+  return `<div class="radar-observation ${statusClass}">
+    <div><span>主动观察覆盖</span><b>${escapeHtml(coverage.summary || "主动观察覆盖待生成")}</b>${titles}</div>
+    <p>主动扫描 ${active} · 独立观察 ${independent} · 专题继承 ${inherited}</p>
+  </div>`;
 }
 
 function renderRadarConflicts(conflicts) {
@@ -960,6 +979,8 @@ function decisionFeedToRadarItem(item, fallbackTone) {
     upgradeRank: item.upgrade_rank,
     upgradePriority: item.upgrade_priority,
     upgradeCondition: item.upgrade_condition,
+    observationSource: item.observation_source,
+    independentObservation: item.independent_observation,
     sourceTrust: radarSourceTrustSummary(sources)
   };
 }

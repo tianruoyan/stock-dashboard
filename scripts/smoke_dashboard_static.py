@@ -160,6 +160,13 @@ def check_decision_feed(issues: list[dict[str, Any]]) -> None:
         return
     current_date = data.get("current_signal_date") or signal_date(data.get("timestamp"))
     quality_status = ((data.get("quality_gate") or {}).get("status") or "").strip()
+    coverage = data.get("observation_coverage")
+    if not isinstance(coverage, dict):
+        issues.append(issue("warning", "data/decision-feed.json", "missing_observation_coverage", "decision-feed 缺少 observation_coverage"))
+    else:
+        for key in ("summary", "independent_count", "active_market_count", "topic_inherited_count", "status"):
+            if coverage.get(key) in (None, "", []):
+                issues.append(issue("warning", "data/decision-feed.json", "missing_observation_coverage_field", f"observation_coverage.{key} 缺失"))
     for section in ("opportunities", "risks", "verifications"):
         rows = data.get(section)
         if not isinstance(rows, list):
@@ -189,6 +196,9 @@ def check_decision_feed(issues: list[dict[str, Any]]) -> None:
             for key in ("signal_grade", "signal_score", "use_action", "use_reasons", "discovery_type", "evidence_score", "next_action"):
                 if item.get(key) in (None, "", []):
                     issues.append(issue("warning", "data/decision-feed.json", "missing_usability_field", f"{title} 缺少 {key}"))
+            for key in ("observation_source", "independent_observation"):
+                if key not in item:
+                    issues.append(issue("warning", "data/decision-feed.json", "missing_observation_field", f"{title} 缺少 {key}"))
             if section == "opportunities":
                 for key in ("upgrade_rank", "upgrade_priority", "upgrade_condition"):
                     if item.get(key) in (None, "", []):

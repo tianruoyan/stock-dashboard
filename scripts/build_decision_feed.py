@@ -37,6 +37,7 @@ def main() -> int:
         "current_signal_date": signal_date,
         "quality_gate": quality_gate(files.get("quality-report.json") or {}),
         "summary": build_summary(files),
+        "observation_coverage": build_observation_coverage(opportunities, risks, verifications),
         "opportunities": opportunities,
         "risks": risks,
         "verifications": verifications,
@@ -52,6 +53,7 @@ def main() -> int:
             "每条机会必须输出 upgrade_rank/upgrade_priority/upgrade_condition，降权后进入验证栏也要保留升级排序和升级门槛。",
             "同一主线同时出现在机会、风险或验证栏时，必须输出 conflicts，给出风险优先/仅验证/可升级的统一判定。",
             "theme-shifts 用于识别升温、新线、抱团、降温和风险变化，并进入机会/风险/验证栏。",
+            "observation_coverage 必须说明主动扫描、盘后扫描、专题继承和验证队列占比，避免雷达只复述既有配置。",
         ],
     }
     OUT.write_text(json.dumps(feed, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
@@ -452,8 +454,65 @@ def decision_item(**kwargs: Any) -> dict[str, Any]:
         "missing_evidence": missing[:5],
         "next_action": trim(next_action_for(kwargs.get("item_type") or "signal", watch_next, missing, kwargs.get("tone") or "neutral"), 180),
     }
+    item["observation_source"] = observation_source_label(item.get("discovery_type"), sources)
+    item["independent_observation"] = is_independent_observation(item.get("discovery_type"), sources)
     item.update(signal_usability(item))
     return item
+
+
+def build_observation_coverage(opportunities: list[dict[str, Any]], risks: list[dict[str, Any]], verifications: list[dict[str, Any]]) -> dict[str, Any]:
+    all_items = opportunities + risks + verifications
+    independent = [item for item in all_items if item.get("independent_observation")]
+    inherited = [item for item in all_items if not item.get("independent_observation")]
+    active_market = [item for item in all_items if item.get("discovery_type") in {"active_market_scan", "active_stock_scan"}]
+    postmarket_scan = [item for item in all_items if item.get("discovery_type") in {"postmarket_theme_scan", "postmarket_risk_scan"}]
+    topic_inherited = [item for item in all_items if item.get("discovery_type") == "topic_watch_scan"]
+    verification = [item for item in all_items if item.get("discovery_type") == "verification_queue"]
+    active_titles = [item.get("title") for item in active_market[:4] if item.get("title")]
+    if active_titles:
+        summary = f"主动扫描捕捉 {len(active_market)} 条：{' / '.join(active_titles)}"
+    elif independent:
+        summary = f"独立盘面/盘后扫描 {len(independent)} 条，但缺少纯主动新线。"
+    else:
+        summary = "当前雷达主要来自专题/配置继承，缺少独立盘面发现，需降权使用。"
+    return {
+        "summary": summary,
+        "independent_count": len(independent),
+        "inherited_count": len(inherited),
+        "active_market_count": len(active_market),
+        "postmarket_scan_count": len(postmarket_scan),
+        "topic_inherited_count": len(topic_inherited),
+        "verification_count": len(verification),
+        "active_titles": active_titles,
+        "status": "active" if active_market else ("independent" if independent else "inherited_only"),
+    }
+
+
+def is_independent_observation(discovery_type: Any, sources: list[str]) -> bool:
+    discovery = str(discovery_type or "")
+    if discovery in {"active_market_scan", "active_stock_scan", "postmarket_theme_scan", "postmarket_risk_scan", "risk_guardrail", "theme_shift_scan"}:
+        return True
+    source_text = " ".join(sources)
+    return bool(re.search(r"intraday|postmarket|midday|theme-shifts|quality-report|source-health", source_text))
+
+
+def observation_source_label(discovery_type: Any, sources: list[str]) -> str:
+    discovery = str(discovery_type or "")
+    if discovery in {"active_market_scan", "active_stock_scan"}:
+        return "主动盘面扫描"
+    if discovery in {"postmarket_theme_scan", "postmarket_risk_scan"}:
+        return "盘后结构扫描"
+    if discovery == "theme_shift_scan":
+        return "主线变化扫描"
+    if discovery == "risk_guardrail":
+        return "系统风控扫描"
+    if discovery == "verification_queue":
+        return "验证队列"
+    if discovery == "topic_watch_scan":
+        return "专题继承"
+    if sources:
+        return "数据派生"
+    return "来源待确认"
 
 
 def next_action_for(item_type: str, watch_next: list[str], missing: list[str], tone: str) -> str:

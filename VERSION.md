@@ -2,6 +2,7 @@
 
 | Display Version | Date | Edition | Tag / Commit | Summary | Rollback Note |
 |---|---:|---:|---|---|---|
+| 2026-07-07 第91版｜主动观察覆盖 | 2026-07-07 | 第91版 | tag: `v2026.07.07-m91-active-observation-coverage` | `decision-feed` 新增 `observation_coverage`，统计主动盘面扫描、盘后结构扫描、专题继承和验证队列；每条信号新增 `observation_source/independent_observation`。雷达顶部展示“主动观察覆盖”，卡片展示来源类型，门禁要求覆盖摘要必须渲染，避免平台只复述既有专题或用户提示。 | 回滚到第90版可用 `git checkout v2026.07.07-m90-future-time-gate`，或回滚到本版本 tag。 |
 | 2026-07-07 第90版｜时间超前门禁 | 2026-07-07 | 第90版 | tag: `v2026.07.07-m90-future-time-gate` | 数据审计新增 `future_timestamp`：核心 JSON 内 `timestamp/updated_at/quote_time/event_time/generated_at` 超过当前时间容忍阈值会进入质量报告并按行情/时间复核降权；`data-trust` 新增 `freshness_status=future`，总控和质量卡显示“时间超前”，且有效时间不再引用 future 文件。 | 回滚到第89版可用 `git checkout v2026.07.07-m89-upgrade-candidate-rank`，或回滚到本版本 tag。 |
 | 2026-07-07 第89版｜升级候选排序 | 2026-07-07 | 第89版 | tag: `v2026.07.07-m89-upgrade-candidate-rank` | `decision-feed` 的机会候选新增 `upgrade_rank/upgrade_priority/upgrade_condition`，当数据降级导致机会转入“下一步验证”时，雷达仍显示候选升级排序和升级门槛；运行时门禁要求页面必须渲染“升级”行，避免只剩风险提示而丢掉明日优先验证方向。 | 回滚到第88版可用 `git checkout v2026.07.07-m88-japan-korea-structured`，或回滚到本版本 tag。 |
 | 2026-07-07 第88版｜日韩早盘结构化降级 | 2026-07-07 | 第88版 | tag: `v2026.07.07-m88-japan-korea-structured` | `premarket.json` 的日韩早盘从自由文本改为结构化降级对象，只保留待复核状态和白名单复核清单；页面缓存版本同步升级，避免旧脚本或原始长句造成乱码感。 | 回滚到第87版可用 `git checkout v2026.07.07-m87-postmarket-risk-priority`，或回滚到本版本 tag。 |
