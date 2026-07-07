@@ -374,6 +374,7 @@ async function main() {
   checkFallbackChecksRendering(radarHtml, coverage, issues);
   checkRadarGateRendering(document, radarHtml, issues);
   checkDashboardConflictRendering(document, issues);
+  checkDashboardThemeCards(document, issues);
   checkTraderViewLanguage(document, issues);
   checkDashboardEffectiveTimeRendering(document, issues);
   checkInvalidatedAlertRendering(document, issues);
@@ -723,6 +724,17 @@ function checkDashboardConflictRendering(document, issues) {
   const theme = stableSnippet(conflicts[0].theme);
   if (theme && !rendered.includes(theme)) {
     issues.push(issue("critical", "dashboard_conflict_not_rendered", `今日结论未说明相关方向：${theme}`, "dashboard-control"));
+  }
+}
+
+function checkDashboardThemeCards(document, issues) {
+  const rendered = normalizeRenderedText(document.getElementById("dashboard-control")?.collectHtml() || "");
+  const badPriority = ["优先方向先控风险", "优先方向只观察", "优先方向不追高"];
+  const badRelated = ["关联题材候选只验证", "关联题材有承接", "关联题材等待映射"];
+  for (const snippet of [...badPriority, ...badRelated]) {
+    if (rendered.includes(snippet)) {
+      issues.push(issue("critical", "dashboard_theme_card_action_text", `题材卡仍展示处理动作而不是盘面题材：${snippet}`, "dashboard-control"));
+    }
   }
 }
 

@@ -239,13 +239,10 @@ function renderDashboardControl() {
   }
   const position = inferPositionRange(style, decisionGate);
   const latest = dashboardEffectiveTimestamp() || latestTimestamp([intraday, postmarket, alert]);
-  let priority = strong.slice(0, 3).map(themeDisplayName);
-  let avoid = risks.slice(0, 3).map(themeDisplayName);
-  if (decisionGate?.riskFirst) {
-    priority = ["先控风险", "只观察", "不追高"];
-    avoid = decisionGate.avoid.length ? decisionGate.avoid : ["全市场亏钱效应", "实时异动未确认", "单点强势未扩散"];
-  }
-  const relatedTags = positiveRelatedTopicTags(priority.join(" "), avoid.join(" "), alertStocks.join(" "), p0.map(p => p.title || p.text || "").join(" "));
+  const marketThemes = dashboardMarketThemeSummary(intraday, postmarket);
+  const priority = marketThemes.priority;
+  const relatedTags = marketThemes.related;
+  const avoid = marketThemes.avoid.length ? marketThemes.avoid : risks.slice(0, 3).map(themeDisplayName);
 
   el.innerHTML = `<div class="control-hero ${style.cls}">
     <div>
@@ -261,12 +258,74 @@ function renderDashboardControl() {
     </div>
   </div>
   <div class="decision-strip control-strip">
-    <div class="decision-card ${decisionGate?.riskFirst ? "risk" : "primary"}"><span class="decision-label">优先方向</span><b>${escapeHtml(priority[0] || "等待确认")}</b><span>${escapeHtml(priority.slice(1).join(" / ") || "没有共振前不抢")}</span></div>
-    <div class="decision-card action"><span class="decision-label">关联题材</span><b>${escapeHtml(decisionGate?.riskFirst ? "候选只验证" : (relatedTags[0] || "等待映射"))}</b><span>${escapeHtml(decisionGate?.riskFirst ? "有承接、有扩散、数据恢复后再升级" : (relatedTags.slice(1).join(" / ") || "按母题材合并观察"))}</span></div>
+    <div class="decision-card ${decisionGate?.riskFirst ? "neutral" : "primary"}"><span class="decision-label">优先方向</span><b>${escapeHtml(priority[0] || "等待盘面确认")}</b><span>${escapeHtml(priority.slice(1).join(" / ") || "按当日强弱排序，不等同于追高")}</span></div>
+    <div class="decision-card action"><span class="decision-label">关联题材</span><b>${escapeHtml(relatedTags[0] || "等待映射")}</b><span>${escapeHtml(relatedTags.slice(1).join(" / ") || "从当日板块和题材映射归类")}</span></div>
     <div class="decision-card ${decisionGate?.riskFirst ? "neutral" : "primary"}"><span class="decision-label">进攻盯 · ${escapeHtml(decisionGate?.riskFirst ? "暂停" : attackCandidate.source)}</span><b>${escapeHtml(decisionGate?.riskFirst ? "暂无进攻点" : (attackWatch[0] || "暂无"))}</b><span>${escapeHtml(decisionGate?.riskFirst ? "只看承接和扩散，不做追高触发" : (attackWatch.slice(1).join(" / ") || attackCandidate.note))}</span></div>
     <div class="decision-card risk"><span class="decision-label">风险盯 · ${escapeHtml(riskCandidate.source)}</span><b>${escapeHtml(riskWatch[0] || "暂无")}</b><span>${escapeHtml(riskWatch.slice(1).join(" / ") || riskCandidate.note)}</span></div>
     <div class="decision-card risk"><span class="decision-label">暂不参与</span><b>${escapeHtml(avoid[0] || "暂无明确")}</b><span>${escapeHtml(avoid.slice(1).join(" / ") || eventWatch[0] || "看弱线和P0是否扩散")}</span></div>
   </div>`;
+}
+
+function dashboardMarketThemeSummary(intraday, postmarket) {
+  const rows = collectDashboardThemeRows(intraday, postmarket);
+  const priority = uniqueList(rows
+    .filter(row => row.bucket !== "risk")
+    .sort((a, b) => b.score - a.score)
+    .map(row => row.display))
+    .slice(0, 4);
+  const avoid = uniqueList(rows
+    .filter(row => row.bucket === "risk")
+    .sort((a, b) => b.score - a.score)
+    .map(row => row.display))
+    .slice(0, 4);
+  const related = uniqueList(rows
+    .filter(row => row.bucket !== "risk")
+    .flatMap(row => row.related.length ? row.related : positiveRelatedTopicTags(row.text)))
+    .filter(tag => !/风控|数据质量|仓位|回避/.test(tag))
+    .slice(0, 5);
+  return { priority, avoid, related };
+}
+
+function collectDashboardThemeRows(intraday, postmarket) {
+  const feed = currentDecisionFeed();
+  const shifts = cached("data/theme-shifts.json");
+  const raw = [
+    ...getIntradayThemes(intraday).map(item => ({ item, source: "盘中", base: 90 })),
+    ...(Array.isArray(postmarket.hotspots) ? postmarket.hotspots : []).map(item => ({ item, source: "盘后", base: 75 })),
+    ...(Array.isArray(feed?.opportunities) ? feed.opportunities : []).map(item => ({ item, source: "机会", base: 70 })),
+    ...(Array.isArray(feed?.risks) ? feed.risks : []).map(item => ({ item, source: "风险", base: 64 })),
+    ...(Array.isArray(shifts?.shifts) ? shifts.shifts : []).map(item => ({ item, source: "变化", base: 58 }))
+  ];
+  const systemNoise = /数据质量|全市场亏钱效应|仓位|风控|实时信号|盘中异动|替代观察/;
+  const rows = raw.map(({ item, source, base }) => {
+    const name = themeDisplayName(item);
+    const status = trendStatus(item);
+    const evidence = Array.isArray(item?.evidence) ? item.evidence : [];
+    const text = [trendName(item), name, status, item?.conclusion, item?.continuity, item?.risk, item?.reason, ...evidence].join(" ");
+    if (!name || systemNoise.test(name)) return null;
+    const bucket = /风险|弱|退潮|压制|负反馈|回落|证伪/.test(text) || source === "风险" ? "risk" : "watch";
+    let score = base;
+    if (/强|强化|主线|抱团|涨停|封板|扩散|轮动增强|偏强/.test(text)) score += 20;
+    if (/观察|资金博弈|分歧/.test(text)) score += 8;
+    if (bucket === "risk") score += 6;
+    return {
+      display: name,
+      bucket,
+      score,
+      text,
+      related: themeSubDirections(item)
+    };
+  }).filter(Boolean);
+  return dedupeThemeRows(rows);
+}
+
+function dedupeThemeRows(rows) {
+  const byName = new Map();
+  for (const row of rows) {
+    const existing = byName.get(row.display);
+    if (!existing || row.score > existing.score) byName.set(row.display, row);
+  }
+  return [...byName.values()];
 }
 
 function dashboardTrustGate() {
