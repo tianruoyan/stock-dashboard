@@ -2,6 +2,7 @@
 
 | Display Version | Date | Edition | Tag / Commit | Summary | Rollback Note |
 |---|---:|---:|---|---|---|
+| 2026-07-07 第63版｜异动可信源门禁 | 2026-07-07 | 第63版 | tag: `v2026.07.07-m63-alert-source-gate` | 数据审计新增 `validate_alert`：盘中异动非空时必须具备可信行情源证明；若污染源仍降级且 active alerts 缺少腾讯/mootdx/通达信/已审计源等证明，直接标为 critical 阻断发布。同时校验 alerts 基础字段、leaders 涨跌幅数值和异常 3 分钟涨跌幅。 | 回滚到第62版可用 `git checkout v2026.07.07-m62-opportunity-gating`，或回滚到本版本 tag。 |
 | 2026-07-07 第62版｜降权机会转验证 | 2026-07-07 | 第62版 | tag: `v2026.07.07-m62-opportunity-gating` | 机会/风险雷达只把 A/B 级且非“降权/仅复核/等待确认”的信号放入机会候选栏；C/D 级机会自动转入“下一步验证”，保留证据、缺口和证伪条件。运行时烟雾测试新增门禁，防止 C/D 级降权机会再次进入机会栏。 | 回滚到第61版可用 `git checkout v2026.07.07-m61-automation-diagnosis`，或回滚到本版本 tag。 |
 | 2026-07-07 第61版｜自动化异常诊断 | 2026-07-07 | 第61版 | tag: `v2026.07.07-m61-automation-diagnosis` | `automation-health` 每个进程新增 `failure_type/diagnosis/next_actions/related_sources`，把盘中异动异常区分为数据源污染批次撤下、产出缺失、时间戳异常或等待窗口；顶部质量卡显示异常类型和第一处理动作。盘前“日韩早盘”降级时只显示固定待复核清单，不再展开疑似乱码或未核实源文本。 | 回滚到第60版可用 `git checkout v2026.07.07-m60-automation-heartbeat`，或回滚到本版本 tag。 |
 | 2026-07-07 第60版｜自动化心跳 | 2026-07-07 | 第60版 | tag: `v2026.07.07-m60-automation-heartbeat` | 新增 `scripts/build_automation_health.py` 和 `data/automation-health.json`，按盘前、盘中全景、盘中异动、午盘、盘后、晚间舆情、专题跟踪检查自动化是否按时产出、是否撤下或等待中；顶部质量卡新增“自动化心跳”，统一构建报告可显示 degraded 但非阻断发布。 | 回滚到第59版可用 `git checkout v2026.07.07-m59-unified-build`，或回滚到本版本 tag。 |

@@ -58,6 +58,7 @@ def main() -> int:
         scan_change_pct(name, data, watch_names, issues)
 
     validate_postmarket(files.get("postmarket.json"), issues)
+    validate_alert(files.get("alert.json"), files.get("source-health.json"), issues)
     validate_evening(files.get("evening-sentiment.json"), issues, current_date)
     validate_source_health(files.get("source-health.json"), issues)
     validate_automation_health(files.get("automation-health.json"), issues, current_date)
@@ -83,6 +84,7 @@ def main() -> int:
             "当日核心文件时间戳不一致、数据源降级、alert污染撤下为 warning。",
             "晚间舆情过期只标 info；前端不得把非当日晚间舆情用于今日总控。",
             "观察池个股出现异常涨跌幅时进入 warning，必须回查行情源。",
+            "盘中异动非空时必须带可信行情源证明；污染源仍降级时，无可信源证明的 active alert 为 critical。",
             "涨停/跌停/强势/弱势等标签必须与 change_pct 方向一致，冲突时进入 warning。",
             "decision-feed 如存在，机会/风险/验证项必须带标题、结论、置信度和来源文件。",
         ],
@@ -189,6 +191,90 @@ def validate_postmarket(data: Any, issues: list[dict[str, Any]]) -> None:
         for key in ("evidence", "continuity", "risk"):
             if not item.get(key):
                 issues.append(issue("warning", "postmarket.json", "missing_hotspot_field", f"hotspots[{index}].{key} 缺失"))
+
+
+def validate_alert(data: Any, source_health: Any, issues: list[dict[str, Any]]) -> None:
+    if not isinstance(data, dict):
+        return
+    alerts = data.get("alerts")
+    if alerts is None:
+        issues.append(issue("warning", "alert.json", "missing_alerts", "alerts 字段缺失"))
+        return
+    if not isinstance(alerts, list):
+        issues.append(issue("critical", "alert.json", "bad_alerts", "alerts 必须是数组"))
+        return
+    if data.get("source_status") == "invalidated" and alerts:
+        issues.append(issue("critical", "alert.json", "invalidated_alert_has_rows", "source_status=invalidated 时 alerts 必须为空，禁止展示已撤下污染批次"))
+    polluted = has_polluted_quote_source(source_health)
+    trusted_proof = alert_trusted_source_text(data)
+    if alerts and polluted and not has_trusted_alert_source(trusted_proof):
+        issues.append(issue(
+            "critical",
+            "alert.json",
+            "active_alert_without_trusted_source",
+            "行情污染源仍降级，但 alert.json 存在 active alerts 且缺少可信源证明；禁止发布为盘中交易依据"
+        ))
+    for index, item in enumerate(alerts):
+        if not isinstance(item, dict):
+            issues.append(issue("critical", "alert.json", "bad_alert_item", f"alerts[{index}] 不是对象", f"alerts[{index}]"))
+            continue
+        for key in ("id", "time", "sector", "type", "leaders", "signal_type"):
+            if item.get(key) in (None, "", []):
+                issues.append(issue("warning", "alert.json", "missing_alert_field", f"alerts[{index}].{key} 缺失", f"alerts[{index}]"))
+        leaders = item.get("leaders") or []
+        if not isinstance(leaders, list):
+            issues.append(issue("warning", "alert.json", "bad_alert_leaders", f"alerts[{index}].leaders 不是数组", f"alerts[{index}].leaders"))
+            continue
+        for leader_index, leader in enumerate(leaders):
+            if not isinstance(leader, dict):
+                issues.append(issue("warning", "alert.json", "bad_alert_leader", f"alerts[{index}].leaders[{leader_index}] 不是对象", f"alerts[{index}].leaders[{leader_index}]"))
+                continue
+            if not leader.get("name"):
+                issues.append(issue("warning", "alert.json", "missing_alert_leader_name", f"alerts[{index}].leaders[{leader_index}].name 缺失", f"alerts[{index}].leaders[{leader_index}]"))
+            if "change_pct" not in leader:
+                issues.append(issue("warning", "alert.json", "missing_alert_leader_pct", f"alerts[{index}].leaders[{leader_index}].change_pct 缺失", f"alerts[{index}].leaders[{leader_index}]"))
+                continue
+            try:
+                pct = float(leader["change_pct"])
+                if not math.isfinite(pct):
+                    raise ValueError("not finite")
+                if abs(pct) > 20.5:
+                    issues.append(issue("critical", "alert.json", "impossible_alert_pct", f"{leader.get('name') or 'leader'} 触发窗口涨跌幅 {pct}，超过A股常规单日涨跌幅边界，疑似污染源", f"alerts[{index}].leaders[{leader_index}]"))
+                elif abs(pct) > 8:
+                    issues.append(issue("warning", "alert.json", "suspicious_alert_pct", f"{leader.get('name') or 'leader'} 触发窗口涨跌幅 {pct}，3分钟窗口需回查原始行情源", f"alerts[{index}].leaders[{leader_index}]"))
+            except Exception:
+                issues.append(issue("critical", "alert.json", "bad_alert_leader_pct", f"{leader.get('name') or 'leader'} change_pct 非数字：{leader.get('change_pct')}", f"alerts[{index}].leaders[{leader_index}]"))
+
+
+def has_polluted_quote_source(source_health: Any) -> bool:
+    if not isinstance(source_health, dict):
+        return False
+    sources = source_health.get("sources") or {}
+    iterator = sources.items() if isinstance(sources, dict) else []
+    for name, source in iterator:
+        if not isinstance(source, dict):
+            continue
+        status = source.get("status")
+        text = f"{name} {source.get('note') or ''} {source.get('detail') or ''} {source.get('usage') or ''}"
+        if status in {"degraded", "bad", "failed"} and re.search(r"污染|decode|akshare|异常|HTML|Can not decode", text, re.I):
+            return True
+    return False
+
+
+def alert_trusted_source_text(data: dict[str, Any]) -> str:
+    keys = ("source", "data_source", "quote_source", "source_name", "source_chain", "source_status", "source_note")
+    parts = [str(data.get(key) or "") for key in keys]
+    for item in data.get("alerts") or []:
+        if isinstance(item, dict):
+            parts.extend(str(item.get(key) or "") for key in keys)
+            for leader in item.get("leaders") or []:
+                if isinstance(leader, dict):
+                    parts.extend(str(leader.get(key) or "") for key in keys)
+    return " ".join(parts)
+
+
+def has_trusted_alert_source(text: str) -> bool:
+    return bool(re.search(r"tencent|腾讯|mootdx|通达信|tdx|原始涨跌幅|已审计|audited|verified|trusted", text, re.I))
 
 
 def validate_evening(data: Any, issues: list[dict[str, Any]], current_date: str) -> None:
