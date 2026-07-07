@@ -384,6 +384,7 @@ Codex (分析引擎)              Cola (稳定管道)
 | 2026-07-07 | 核心 JSON 内 timestamp/updated_at/quote_time/event_time/generated_at 不得超前当前时间；超前时进入 future_timestamp 和 data-trust.future | 盘中交易不能把未来时间误判成最新有效数据；时间超前必须降权复核并从总控有效时间里排除 |
 | 2026-07-07 | decision-feed 必须输出 observation_coverage，信号必须标注 observation_source/independent_observation，并在雷达显示主动观察覆盖 | 平台要明确区分系统主动扫描、盘后结构扫描、专题继承和验证队列，避免只复述用户已有分析点或配置清单 |
 | 2026-07-07 | 观察池个股必须做同阶段跨文件一致性审计，涨跌幅大幅冲突、强弱互斥或涨跌停互斥进入 price_review | 防止同一个股在不同区块一边显示强势/涨停、一边显示弱势/跌停；但盘前、盘中、盘后不同阶段快照不得机械互比造成假警报 |
+| 2026-07-07 | 核心 JSON 必须通过轻量字段契约审计，关键渲染字段缺失或类型错误进入 schema_contract_* | 防止自动化进程把数组写成对象、对象写成字符串等结构漂移导致页面空白、漏显或 undefined；契约按页面可渲染口径设计，避免过严误报 |
 ---
 
 ## 🐍 Python 环境

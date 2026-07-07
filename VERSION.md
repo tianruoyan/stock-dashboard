@@ -2,6 +2,7 @@
 
 | Display Version | Date | Edition | Tag / Commit | Summary | Rollback Note |
 |---|---:|---:|---|---|---|
+| 2026-07-07 第93版｜核心JSON契约审计 | 2026-07-07 | 第93版 | tag: `v2026.07.07-m93-json-contract-audit` | 数据审计新增核心 JSON 轻量字段契约：盘前、盘中、午盘、盘后、晚间、专题等文件的关键渲染字段必须存在且类型正确，例如 `intraday.main_trends` 必须是数组、`midday.morning_review` 必须是对象、`evening.news/p0_alerts` 必须是数组。契约按“页面可渲染”口径放宽，允许行动建议为字符串或对象，避免误报。 | 回滚到第92版可用 `git checkout v2026.07.07-m92-cross-file-stock-audit`，或回滚到本版本 tag。 |
 | 2026-07-07 第92版｜跨文件个股一致性审计 | 2026-07-07 | 第92版 | tag: `v2026.07.07-m92-cross-file-stock-audit` | 数据审计新增观察池个股跨文件一致性检查：同一当前决策阶段内，若同名个股在多个 JSON 中出现涨跌幅大幅冲突、强弱标签互斥或涨跌停互斥，则进入 `price_review`。审计按交易阶段过滤，避免把盘前快照和盘后收盘直接比较造成假警报。 | 回滚到第91版可用 `git checkout v2026.07.07-m91-active-observation-coverage`，或回滚到本版本 tag。 |
 | 2026-07-07 第91版｜主动观察覆盖 | 2026-07-07 | 第91版 | tag: `v2026.07.07-m91-active-observation-coverage` | `decision-feed` 新增 `observation_coverage`，统计主动盘面扫描、盘后结构扫描、专题继承和验证队列；每条信号新增 `observation_source/independent_observation`。雷达顶部展示“主动观察覆盖”，卡片展示来源类型，门禁要求覆盖摘要必须渲染，避免平台只复述既有专题或用户提示。 | 回滚到第90版可用 `git checkout v2026.07.07-m90-future-time-gate`，或回滚到本版本 tag。 |
 | 2026-07-07 第90版｜时间超前门禁 | 2026-07-07 | 第90版 | tag: `v2026.07.07-m90-future-time-gate` | 数据审计新增 `future_timestamp`：核心 JSON 内 `timestamp/updated_at/quote_time/event_time/generated_at` 超过当前时间容忍阈值会进入质量报告并按行情/时间复核降权；`data-trust` 新增 `freshness_status=future`，总控和质量卡显示“时间超前”，且有效时间不再引用 future 文件。 | 回滚到第89版可用 `git checkout v2026.07.07-m89-upgrade-candidate-rank`，或回滚到本版本 tag。 |

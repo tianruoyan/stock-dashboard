@@ -63,6 +63,7 @@ def main() -> int:
         scan_timestamp_fields(name, data, issues, now)
 
     validate_postmarket(files.get("postmarket.json"), issues)
+    validate_core_file_contracts(files, issues)
     validate_alert(files.get("alert.json"), files.get("source-health.json"), issues)
     validate_evening(files.get("evening-sentiment.json"), issues, current_date)
     validate_source_health(files.get("source-health.json"), issues)
@@ -100,6 +101,7 @@ def main() -> int:
             "每个 issue 必须带 impact_level/decision_action，区分交易阻断、价格复核、信号复核和背景复核。",
             "timestamp/updated_at/quote_time 超过当前时间容忍阈值时进入 warning，禁止被当作最新实时依据。",
             "观察池个股跨文件出现涨跌幅大幅冲突、强弱标签互斥或涨跌停互斥时进入 warning。",
+            "核心 JSON 必须满足页面渲染依赖的轻量字段契约，关键字段漏写或类型错误进入 signal_review。",
         ],
     }
     OUT.write_text(json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
@@ -360,6 +362,151 @@ def validate_postmarket(data: Any, issues: list[dict[str, Any]]) -> None:
         for key in ("evidence", "continuity", "risk"):
             if not item.get(key):
                 issues.append(issue("warning", "postmarket.json", "missing_hotspot_field", f"hotspots[{index}].{key} 缺失"))
+
+
+CORE_CONTRACTS: dict[str, dict[str, type | tuple[type, ...]]] = {
+    "premarket.json": {
+        "summary": str,
+        "us_overnight": dict,
+        "hk_auction": dict,
+        "overnight_news": list,
+        "market_context": dict,
+    },
+    "intraday.json": {
+        "summary": str,
+        "index": dict,
+        "sentiment": dict,
+        "main_trends": list,
+        "themes": list,
+        "actions": list,
+    },
+    "midday.json": {
+        "morning_snapshot": dict,
+        "morning_review": dict,
+        "afternoon_watch": list,
+        "risk": list,
+    },
+    "postmarket.json": {
+        "index": dict,
+        "market_breadth": dict,
+        "review": dict,
+        "closing_auction_patch": dict,
+        "hotspots": list,
+        "next_day_watch": list,
+    },
+    "evening-sentiment.json": {
+        "p0_alerts": list,
+        "sentiment_summary": dict,
+        "news": list,
+    },
+    "topics.json": {
+        "topics": list,
+    },
+}
+
+
+def validate_core_file_contracts(files: dict[str, Any], issues: list[dict[str, Any]]) -> None:
+    for file_name, contract in CORE_CONTRACTS.items():
+        data = files.get(file_name)
+        if data in (None, {}):
+            continue
+        if not isinstance(data, dict):
+            issues.append(issue("warning", file_name, "schema_contract_type", f"{file_name} 根节点必须是对象"))
+            continue
+        for path, expected in contract.items():
+            validate_contract_path(file_name, data, path, expected, issues)
+        validate_contract_items(file_name, data, issues)
+
+
+def validate_contract_path(file_name: str, data: dict[str, Any], path: str, expected: type | tuple[type, ...], issues: list[dict[str, Any]]) -> None:
+    exists, value = get_path(data, path)
+    if not exists:
+        issues.append(issue("warning", file_name, "schema_contract_missing", f"{path} 缺失", path))
+        return
+    if not isinstance(value, expected):
+        issues.append(issue("warning", file_name, "schema_contract_type", f"{path} 类型错误：期望 {type_label(expected)}，实际 {type(value).__name__}", path))
+
+
+def validate_contract_items(file_name: str, data: dict[str, Any], issues: list[dict[str, Any]]) -> None:
+    if file_name == "intraday.json":
+        validate_named_array(file_name, data.get("main_trends"), "main_trends", issues)
+        validate_text_or_object_array(file_name, data.get("actions"), "actions", issues)
+    elif file_name == "midday.json":
+        review = data.get("morning_review") or {}
+        if isinstance(review, dict) and not isinstance(review.get("one_sentence"), str):
+            issues.append(issue("warning", file_name, "schema_contract_type", "morning_review.one_sentence 必须是字符串", "morning_review.one_sentence"))
+    elif file_name == "postmarket.json":
+        validate_array_objects(file_name, data.get("hotspots"), "hotspots", ("name", "evidence"), issues)
+    elif file_name == "evening-sentiment.json":
+        validate_array_objects(file_name, data.get("p0_alerts"), "p0_alerts", ("title", "severity", "evidence"), issues)
+        validate_array_objects(file_name, data.get("news"), "news", ("text",), issues)
+    elif file_name == "topics.json":
+        validate_array_objects(file_name, data.get("topics"), "topics", ("name", "status"), issues)
+
+
+def validate_array_objects(file_name: str, value: Any, path: str, required_keys: tuple[str, ...], issues: list[dict[str, Any]]) -> None:
+    if value is None:
+        return
+    if not isinstance(value, list):
+        issues.append(issue("warning", file_name, "schema_contract_type", f"{path} 必须是数组", path))
+        return
+    for index, item in enumerate(value[:12]):
+        item_path = f"{path}[{index}]"
+        if not isinstance(item, dict):
+            issues.append(issue("warning", file_name, "schema_contract_type", f"{item_path} 必须是对象", item_path))
+            continue
+        for key in required_keys:
+            if item.get(key) in (None, "", []):
+                issues.append(issue("warning", file_name, "schema_contract_missing", f"{item_path}.{key} 缺失", item_path))
+
+
+def validate_named_array(file_name: str, value: Any, path: str, issues: list[dict[str, Any]]) -> None:
+    if value is None:
+        return
+    if not isinstance(value, list):
+        issues.append(issue("warning", file_name, "schema_contract_type", f"{path} 必须是数组", path))
+        return
+    for index, item in enumerate(value[:12]):
+        item_path = f"{path}[{index}]"
+        if isinstance(item, str):
+            continue
+        if not isinstance(item, dict):
+            issues.append(issue("warning", file_name, "schema_contract_type", f"{item_path} 必须是对象或字符串", item_path))
+            continue
+        if not first_text(item.get("sector"), item.get("name"), item.get("title"), item.get("display_name"), item.get("theme")):
+            issues.append(issue("warning", file_name, "schema_contract_missing", f"{item_path} 缺少可展示名称字段", item_path))
+
+
+def validate_text_or_object_array(file_name: str, value: Any, path: str, issues: list[dict[str, Any]]) -> None:
+    if value is None:
+        return
+    if not isinstance(value, list):
+        issues.append(issue("warning", file_name, "schema_contract_type", f"{path} 必须是数组", path))
+        return
+    for index, item in enumerate(value[:12]):
+        if not isinstance(item, (str, dict)):
+            issues.append(issue("warning", file_name, "schema_contract_type", f"{path}[{index}] 必须是字符串或对象", f"{path}[{index}]"))
+
+
+def get_path(data: dict[str, Any], path: str) -> tuple[bool, Any]:
+    current: Any = data
+    for part in path.split("."):
+        if not isinstance(current, dict) or part not in current:
+            return False, None
+        current = current[part]
+    return True, current
+
+
+def type_label(expected: type | tuple[type, ...]) -> str:
+    values = expected if isinstance(expected, tuple) else (expected,)
+    return "/".join(value.__name__ for value in values)
+
+
+def first_text(*values: Any) -> str:
+    for value in values:
+        if isinstance(value, str) and value.strip():
+            return value.strip()
+    return ""
 
 
 def validate_alert(data: Any, source_health: Any, issues: list[dict[str, Any]]) -> None:
@@ -806,6 +953,8 @@ def issue_impact(code: str, file: str, message: str) -> tuple[str, str]:
         "missing_observation_coverage",
         "missing_observation_coverage_field",
         "missing_observation_field",
+        "schema_contract_missing",
+        "schema_contract_type",
     }:
         return "signal_review", "机会信号必须降权并转入验证"
     return "background_review", "仅作背景复核，不单独阻断交易判断"
