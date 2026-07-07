@@ -41,6 +41,7 @@ def main() -> int:
             "机会只代表候选方向，必须经过下一步验证，不生成交易指令。",
             "quality-report 为 degraded/critical 时，所有机会必须带 quality_flags 并自动降权。",
             "每条信号必须输出 signal_grade/use_action/use_reasons，前端按可用性而不是标题强弱展示。",
+            "每条信号必须输出 discovery_type/evidence_score/missing_evidence，用于区分主动发现、继承专题、风险兜底和证据缺口。",
         ],
     }
     OUT.write_text(json.dumps(feed, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
@@ -93,6 +94,7 @@ def build_opportunities(files: dict[str, Any], current_date: str) -> list[dict[s
             tags=related_tags(text),
             source_files=[source],
             tone="good",
+            discovery_type=discovery_type_for(source, theme, "opportunity"),
             quality_flags=gate["decision_flags"] if quality_degraded else [],
         ))
 
@@ -109,6 +111,7 @@ def build_opportunities(files: dict[str, Any], current_date: str) -> list[dict[s
             tags=related_tags(stock["conclusion"]),
             source_files=["postmarket.json"],
             tone="good",
+            discovery_type="active_stock_scan",
             quality_flags=gate["decision_flags"] if quality_degraded else [],
         ))
     return items
@@ -136,6 +139,7 @@ def build_risks(files: dict[str, Any]) -> list[dict[str, Any]]:
             tags=["数据质量", "风控"],
             source_files=["quality-report.json", "source-health.json"],
             tone="risk",
+            discovery_type="risk_guardrail",
         ))
 
     for theme, source in theme_candidates(files):
@@ -156,6 +160,7 @@ def build_risks(files: dict[str, Any]) -> list[dict[str, Any]]:
             tags=related_tags(text),
             source_files=[source],
             tone="risk",
+            discovery_type=discovery_type_for(source, theme, "risk"),
         ))
     return items
 
@@ -181,6 +186,7 @@ def build_verifications(files: dict[str, Any]) -> list[dict[str, Any]]:
                 tags=related_tags(text),
                 source_files=[source],
                 tone="risk" if re.search(r"风险|跌停|弱|回落|低开|降级", text) else "neutral",
+                discovery_type="verification_queue",
             ))
     return rows
 
@@ -217,7 +223,7 @@ def strong_stock_candidates(post: dict[str, Any]) -> list[dict[str, Any]]:
                 rows.append({
                     "title": str(name),
                     "conclusion": trim(f"{name}在{theme_name(theme)}中表现强，{note}", 140),
-                    "evidence": [f"{name}涨跌幅 {pct}%" if pct is not None else note].filter(Boolean),
+                    "evidence": clean_list([f"{name}涨跌幅 {pct}%" if pct is not None else note]),
                     "watch_next": [f"看{name}次日竞价和开盘30分钟承接，以及{theme_name(theme)}是否扩散。"],
                 })
     return rows
@@ -249,12 +255,17 @@ def market_breadth_risk(post: dict[str, Any], intraday: dict[str, Any]) -> dict[
             tags=["仓位", "风控"],
             source_files=["postmarket.json", "intraday.json"],
             tone="risk",
+            discovery_type="risk_guardrail",
         )
     return None
 
 
 def decision_item(**kwargs: Any) -> dict[str, Any]:
     evidence = clean_list(kwargs.get("evidence") or [])
+    watch_next = clean_list(kwargs.get("watch_next") or [])
+    sources = clean_list(kwargs.get("source_files") or [])
+    missing = missing_evidence_for(kwargs.get("item_type") or "signal", evidence, watch_next, sources, kwargs.get("quality_flags") or [])
+    evidence_score = evidence_score_for(evidence, watch_next, sources, kwargs.get("invalidation"), missing)
     confidence = kwargs.get("confidence") or ("medium" if evidence else "low")
     if not evidence and confidence == "high":
         confidence = "medium"
@@ -264,12 +275,15 @@ def decision_item(**kwargs: Any) -> dict[str, Any]:
         "conclusion": trim(kwargs.get("conclusion") or "", 180),
         "confidence": confidence,
         "evidence": evidence[:5],
-        "source_files": clean_list(kwargs.get("source_files") or [])[:4],
-        "watch_next": clean_list(kwargs.get("watch_next") or [])[:4],
+        "source_files": sources[:4],
+        "watch_next": watch_next[:4],
         "invalidation": trim(kwargs.get("invalidation") or "等待反向量价信号确认。", 140),
         "tags": clean_list(kwargs.get("tags") or [])[:5],
         "quality_flags": clean_list(kwargs.get("quality_flags") or [])[:4],
         "tone": kwargs.get("tone") or "neutral",
+        "discovery_type": kwargs.get("discovery_type") or "derived_signal",
+        "evidence_score": evidence_score,
+        "missing_evidence": missing[:5],
     }
     item.update(signal_usability(item))
     return item
@@ -284,6 +298,8 @@ def signal_usability(item: dict[str, Any]) -> dict[str, Any]:
     sources = clean_list(item.get("source_files") or [])
     quality_flags = clean_list(item.get("quality_flags") or [])
     invalidation = str(item.get("invalidation") or "").strip()
+    missing_evidence = clean_list(item.get("missing_evidence") or [])
+    evidence_score = number(item.get("evidence_score"))
 
     if evidence:
         score += min(35, 12 + len(evidence) * 7)
@@ -316,6 +332,12 @@ def signal_usability(item: dict[str, Any]) -> dict[str, Any]:
     if quality_flags:
         score -= min(30, 10 + len(quality_flags) * 5)
         reasons.append("数据质量降权")
+    if missing_evidence:
+        score -= min(20, len(missing_evidence) * 5)
+        reasons.append("有证据缺口")
+    if evidence_score >= 80:
+        score += 5
+        reasons.append("证据链较完整")
 
     score = max(0, min(100, score))
     if not evidence and item.get("type") not in {"verification", "data_quality"}:
@@ -360,6 +382,58 @@ def quality_gate(quality: dict[str, Any]) -> dict[str, Any]:
         "summary": quality.get("summary") or "",
         "decision_flags": flags[:4],
     }
+
+
+def discovery_type_for(source: str, item: dict[str, Any], mode: str) -> str:
+    text = compact_json(item)
+    if source == "intraday.json":
+        return "active_market_scan"
+    if source == "postmarket.json" and mode == "risk":
+        return "postmarket_risk_scan"
+    if source == "postmarket.json":
+        return "postmarket_theme_scan"
+    if source == "topics.json":
+        return "topic_watch_scan"
+    if re.search(r"涨停|跌停|炸板|成交|尾盘|竞价", text):
+        return "active_market_scan"
+    return "derived_signal"
+
+
+def missing_evidence_for(item_type: str, evidence: list[str], watch_next: list[str], sources: list[str], quality_flags: list[str]) -> list[str]:
+    missing: list[str] = []
+    joined = " ".join(evidence)
+    if item_type not in {"verification", "data_quality"} and not evidence:
+        missing.append("缺少可核验证据")
+    if item_type in {"theme", "stock"} and not re.search(r"\d|涨停|跌停|封板|成交|放量|尾盘|竞价|高开|低开", joined):
+        missing.append("缺少量化盘口证据")
+    if item_type == "theme" and not re.search(r"代表股|核心股|龙头|涨停|封板|北方|中微|安集|雅克|华海|绿的|埃斯顿|恒瑞|券商", joined):
+        missing.append("缺少代表股验证")
+    if not watch_next:
+        missing.append("缺少下一步验证")
+    if not sources:
+        missing.append("缺少来源文件")
+    if quality_flags:
+        missing.append("数据源降级需二次确认")
+    return clean_list(missing)
+
+
+def evidence_score_for(evidence: list[str], watch_next: list[str], sources: list[str], invalidation: Any, missing: list[str]) -> int:
+    score = 0
+    joined = " ".join(evidence)
+    if evidence:
+        score += min(35, 12 + len(evidence) * 7)
+    if re.search(r"\d|涨停|跌停|封板|成交|放量|尾盘|竞价|高开|低开", joined):
+        score += 20
+    if re.search(r"北方|中微|安集|雅克|华海|绿的|埃斯顿|恒瑞|券商|ETF|代表股|核心股|龙头", joined):
+        score += 15
+    if watch_next:
+        score += 15
+    if sources:
+        score += 10
+    if invalidation:
+        score += 10
+    score -= min(35, len(missing) * 7)
+    return max(0, min(100, score))
 
 
 def latest_signal_date(files: dict[str, Any]) -> str:

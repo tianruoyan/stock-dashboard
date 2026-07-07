@@ -174,11 +174,15 @@ def check_decision_feed(issues: list[dict[str, Any]]) -> None:
                 issues.append(issue("warning", "data/decision-feed.json", "high_confidence_without_evidence", f"{title} 高置信但缺少证据"))
             if section in {"opportunities", "risks"} and not item.get("source_files"):
                 issues.append(issue("warning", "data/decision-feed.json", "missing_source", f"{title} 缺少来源文件"))
-            for key in ("signal_grade", "signal_score", "use_action", "use_reasons"):
+            for key in ("signal_grade", "signal_score", "use_action", "use_reasons", "discovery_type", "evidence_score"):
                 if item.get(key) in (None, "", []):
                     issues.append(issue("warning", "data/decision-feed.json", "missing_usability_field", f"{title} 缺少 {key}"))
+            if "missing_evidence" not in item or not isinstance(item.get("missing_evidence"), list):
+                issues.append(issue("warning", "data/decision-feed.json", "missing_usability_field", f"{title} 缺少 missing_evidence 数组"))
             if item.get("signal_grade") not in (None, "A", "B", "C", "D"):
                 issues.append(issue("warning", "data/decision-feed.json", "bad_signal_grade", f"{title} signal_grade 非 A/B/C/D"))
+            if isinstance(item.get("evidence_score"), (int, float)) and not 0 <= item.get("evidence_score") <= 100:
+                issues.append(issue("warning", "data/decision-feed.json", "bad_evidence_score", f"{title} evidence_score 不在 0-100"))
 
 
 def check_data_trust(issues: list[dict[str, Any]]) -> None:

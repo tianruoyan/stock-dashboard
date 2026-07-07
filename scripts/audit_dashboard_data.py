@@ -213,11 +213,15 @@ def validate_decision_feed(data: Any, issues: list[dict[str, Any]], current_date
             for key in ("title", "conclusion", "confidence", "source_files"):
                 if not item.get(key):
                     issues.append(issue("warning", "decision-feed.json", "missing_decision_field", f"{section}[{index}].{key} 缺失", f"{section}[{index}]"))
-            for key in ("signal_grade", "signal_score", "use_action", "use_reasons"):
+            for key in ("signal_grade", "signal_score", "use_action", "use_reasons", "discovery_type", "evidence_score"):
                 if item.get(key) in (None, "", []):
                     issues.append(issue("warning", "decision-feed.json", "missing_usability_field", f"{section}[{index}].{key} 缺失", f"{section}[{index}]"))
+            if "missing_evidence" not in item or not isinstance(item.get("missing_evidence"), list):
+                issues.append(issue("warning", "decision-feed.json", "missing_usability_field", f"{section}[{index}].missing_evidence 缺失或不是数组", f"{section}[{index}]"))
             if item.get("signal_grade") not in (None, "A", "B", "C", "D"):
                 issues.append(issue("warning", "decision-feed.json", "bad_signal_grade", f"{section}[{index}].signal_grade 非 A/B/C/D", f"{section}[{index}]"))
+            if isinstance(item.get("evidence_score"), (int, float)) and not 0 <= item.get("evidence_score") <= 100:
+                issues.append(issue("warning", "decision-feed.json", "bad_evidence_score", f"{section}[{index}].evidence_score 不在 0-100", f"{section}[{index}]"))
             if section in {"opportunities", "risks"} and item.get("confidence") == "high" and not item.get("evidence"):
                 issues.append(issue("warning", "decision-feed.json", "high_confidence_without_evidence", f"{section}[{index}] 高置信但缺少 evidence", f"{section}[{index}]"))
             if section == "opportunities" and has_stale_relative_time(json.dumps(item, ensure_ascii=False), current_date):

@@ -487,13 +487,16 @@ function renderRadarItem(item) {
   const tags = (item.tags || []).slice(0, 4).map(tag => `<span>${escapeHtml(tag)}</span>`).join("");
   const gradeClass = `grade-${String(item.signalGrade || "C").toLowerCase()}`;
   const details = [
+    item.discoveryType ? ["发现", discoveryTypeLabel(item.discoveryType)] : null,
+    item.evidenceScore !== undefined ? ["证据分", `${item.evidenceScore}分`] : null,
+    item.missingEvidence?.length ? ["缺口", item.missingEvidence.slice(0, 2)] : null,
     item.useReasons ? ["口径", item.useReasons] : null,
     item.qualityFlags ? ["降权", item.qualityFlags] : null,
     item.evidence ? ["证据", item.evidence] : null,
     item.watchNext ? ["验证", item.watchNext] : null,
     item.invalidation ? ["证伪", item.invalidation] : null,
     item.sources ? ["来源", item.sources] : null
-  ].filter(Boolean).map(([label, value]) => `<div class="radar-detail ${label === "降权" ? "quality" : ""}"><span>${label}</span><b>${escapeHtml(Array.isArray(value) ? value.join("；") : value)}</b></div>`).join("");
+  ].filter(Boolean).map(([label, value]) => `<div class="radar-detail ${label === "降权" || label === "缺口" ? "quality" : ""}"><span>${label}</span><b>${escapeHtml(Array.isArray(value) ? value.join("；") : value)}</b></div>`).join("");
   return `<div class="radar-item ${tone}">
     <div class="radar-item-head">
       <b>${escapeHtml(item.title)}</b>
@@ -665,8 +668,24 @@ function decisionFeedToRadarItem(item, fallbackTone) {
     signalGrade: item.signal_grade,
     signalScore: item.signal_score,
     useAction: item.use_action,
-    useReasons: (item.use_reasons || []).slice(0, 4)
+    useReasons: (item.use_reasons || []).slice(0, 4),
+    discoveryType: item.discovery_type,
+    evidenceScore: item.evidence_score,
+    missingEvidence: (item.missing_evidence || []).slice(0, 4)
   };
+}
+
+function discoveryTypeLabel(value) {
+  return {
+    active_market_scan: "主动盘面扫描",
+    active_stock_scan: "主动个股扫描",
+    postmarket_theme_scan: "盘后主线扫描",
+    postmarket_risk_scan: "盘后风险扫描",
+    topic_watch_scan: "专题观察继承",
+    risk_guardrail: "风控兜底",
+    verification_queue: "待验证队列",
+    derived_signal: "模型派生"
+  }[value] || String(value || "模型派生");
 }
 
 function confidenceLabel(value) {
