@@ -800,13 +800,25 @@ function sortAlertsByEventTime(alerts) {
 }
 
 function alertEventTime(alert, baseTimestamp, fallbackMs) {
+  const rawTime = String(alert.time || "");
+  if (/^\d{4}-\d{2}-\d{2}T/.test(rawTime)) {
+    const parsedIso = Date.parse(rawTime);
+    return Number.isNaN(parsedIso) ? fallbackMs : parsedIso;
+  }
   const idDate = String(alert.id || "").match(/^(\d{4})(\d{2})(\d{2})/);
   const base = idDate
     ? `${idDate[1]}-${idDate[2]}-${idDate[3]}`
     : (baseTimestamp ? String(baseTimestamp).slice(0, 10) : new Date(fallbackMs).toISOString().slice(0, 10));
-  const time = /^\d{2}:\d{2}:\d{2}$/.test(alert.time || "") ? alert.time : "00:00:00";
+  const time = /^\d{2}:\d{2}:\d{2}$/.test(rawTime) ? rawTime : "00:00:00";
   const parsed = Date.parse(`${base}T${time}+08:00`);
   return Number.isNaN(parsed) ? fallbackMs : parsed;
+}
+
+function displayAlertTime(alert) {
+  const rawTime = String(alert?.time || "");
+  const iso = rawTime.match(/T(\d{2}:\d{2}:\d{2})/);
+  if (iso) return iso[1];
+  return /^\d{2}:\d{2}:\d{2}$/.test(rawTime) ? rawTime : "--:--:--";
 }
 
 function renderAlerts(data) {
@@ -858,7 +870,7 @@ function renderAlerts(data) {
     const factorHtml = factors.length ? `<div class="alert-factors">${factors.map(f => `<span>${escapeHtml(f)}</span>`).join("")}</div>` : "";
 
     return `<div class="${cls}${fadeCls}">
-      <div class="card-head">${badge}<b>${a.sector}</b><span class="time">${a.time} · ${ageLabel}</span></div>
+      <div class="card-head">${badge}<b>${a.sector}</b><span class="time">${displayAlertTime(a)} · ${ageLabel}</span></div>
       <div class="card-body"><b>${escapeHtml(a.type || "异动")}</b>${shortReason ? ` · ${escapeHtml(shortReason)}` : ""}</div>
       ${leaders ? `<div class="card-leaders">${leaders}</div>` : ""}
       ${factorHtml}
@@ -887,7 +899,7 @@ function renderAlertsSummary(alerts, timestamp) {
     <div class="decision-card ${tone === "hot" ? "primary" : "risk"}">
       <span class="decision-label">核心结论</span>
       <b>${escapeHtml(latest.sector || "盘中异动")}</b>
-      <span>${escapeHtml(latest.type || latest.signal_type || "等待分类")} · ${escapeHtml(latest.time || timeText || "")}</span>
+      <span>${escapeHtml(latest.type || latest.signal_type || "等待分类")} · ${escapeHtml(displayAlertTime(latest) || timeText || "")}</span>
     </div>
     <div class="decision-card action">
       <span class="decision-label">关联题材</span>
