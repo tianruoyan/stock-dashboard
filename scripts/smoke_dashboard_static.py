@@ -167,6 +167,13 @@ def check_decision_feed(issues: list[dict[str, Any]]) -> None:
         for key in ("summary", "independent_count", "active_market_count", "topic_inherited_count", "status"):
             if coverage.get(key) in (None, "", []):
                 issues.append(issue("warning", "data/decision-feed.json", "missing_observation_coverage_field", f"observation_coverage.{key} 缺失"))
+    brief = data.get("decision_brief")
+    if not isinstance(brief, dict):
+        issues.append(issue("warning", "data/decision-feed.json", "missing_decision_brief", "decision-feed 缺少 decision_brief"))
+    else:
+        for key in ("stance", "action", "reasons", "risk_focus", "upgrade_watch"):
+            if key not in brief:
+                issues.append(issue("warning", "data/decision-feed.json", "missing_decision_brief_field", f"decision_brief.{key} 缺失"))
     for section in ("opportunities", "risks", "verifications"):
         rows = data.get(section)
         if not isinstance(rows, list):

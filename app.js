@@ -686,9 +686,10 @@ function renderOpportunityRiskRadar() {
     <b>${escapeHtml(radar.gate.title || "等待确认")}</b>
     <em>${escapeHtml(radar.gate.detail || "只按验证条件跟踪，不生成交易指令。")}</em>
   </div>` : "";
+  const brief = renderDecisionBrief(radar.decisionBrief);
   const observation = renderObservationCoverage(radar.observationCoverage);
   const conflicts = renderRadarConflicts(radar.conflicts || []);
-  el.innerHTML = `${gate}${observation}${conflicts}<div class="radar-grid">
+  el.innerHTML = `${gate}${brief}${observation}${conflicts}<div class="radar-grid">
     <div class="radar-column">
       <div class="radar-head"><b>机会候选</b><span>${radar.opportunities.length ? "需要验证，不直接追高" : "暂无高置信机会"}</span></div>
       ${radar.opportunities.length ? radar.opportunities.map(renderRadarItem).join("") : '<div class="empty-sm">等待主线扩散或观察池个股确认</div>'}
@@ -745,6 +746,7 @@ function buildOpportunityRiskRadar() {
     const downgradedOpportunities = opportunityItems.filter(item => !isActionableOpportunity(item));
     return {
       gate: radarGateFromFeed(feed, actionableOpportunities, downgradedOpportunities),
+      decisionBrief: feed.decision_brief,
       observationCoverage: feed.observation_coverage,
       conflicts: (feed.conflicts || []).map(decisionConflictToRadarItem),
       opportunities: actionableOpportunities.slice(0, 6),
@@ -820,12 +822,33 @@ function buildOpportunityRiskRadar() {
   ];
   return {
     gate: null,
+    decisionBrief: null,
     observationCoverage: null,
     conflicts: [],
     opportunities: [...strongStocks, ...strongThemes].slice(0, 6),
     risks: [...(breadthRisk ? [breadthRisk] : []), ...weakStocks, ...riskThemes].slice(0, 7),
     verifications: dedupeRadarItems(verifications).slice(0, 6)
   };
+}
+
+function renderDecisionBrief(brief) {
+  if (!brief) return "";
+  const reasons = (brief.reasons || []).slice(0, 3).map(item => `<span>${escapeHtml(item)}</span>`).join("");
+  const upgrades = (brief.upgrade_watch || []).slice(0, 2).map(item => `<em>${escapeHtml(item)}</em>`).join("");
+  const risks = (brief.risk_focus || []).slice(0, 3).map(item => `<b>${escapeHtml(item)}</b>`).join("");
+  const cls = /风险|回撤|无明确/.test(String(brief.stance || "")) ? "risk" : (/等待|验证/.test(String(brief.stance || "")) ? "watch" : "good");
+  return `<div class="radar-brief ${cls}">
+    <div class="radar-brief-main">
+      <span>决策口径</span>
+      <b>${escapeHtml(brief.stance || "等待确认")}</b>
+      <p>${escapeHtml(brief.action || "只按验证条件跟踪，不生成交易指令。")}</p>
+    </div>
+    <div class="radar-brief-side">
+      ${risks ? `<div><label>风险焦点</label>${risks}</div>` : ""}
+      ${upgrades ? `<div><label>升级条件</label>${upgrades}</div>` : ""}
+    </div>
+    ${reasons ? `<div class="radar-brief-reasons">${reasons}</div>` : ""}
+  </div>`;
 }
 
 function renderObservationCoverage(coverage) {

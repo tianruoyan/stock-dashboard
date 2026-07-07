@@ -32,16 +32,18 @@ def main() -> int:
     opportunities = rank_upgrade_candidates(dedupe_items(build_opportunities(files, signal_date)))[:8]
     risks = dedupe_items(build_risks(files))[:8]
     verifications = dedupe_items(build_verifications(files))[:8]
+    conflicts = build_signal_conflicts(opportunities, risks, verifications)
     feed = {
         "timestamp": now_iso(),
         "current_signal_date": signal_date,
         "quality_gate": quality_gate(files.get("quality-report.json") or {}),
         "summary": build_summary(files),
         "observation_coverage": build_observation_coverage(opportunities, risks, verifications),
+        "decision_brief": build_decision_brief(opportunities, risks, verifications, conflicts, files),
         "opportunities": opportunities,
         "risks": risks,
         "verifications": verifications,
-        "conflicts": build_signal_conflicts(opportunities, risks, verifications),
+        "conflicts": conflicts,
         "rules": [
             "每条机会/风险必须带 source_files；没有证据时置信度不得高于 low。",
             "机会只代表候选方向，必须经过下一步验证，不生成交易指令。",
@@ -54,6 +56,7 @@ def main() -> int:
             "同一主线同时出现在机会、风险或验证栏时，必须输出 conflicts，给出风险优先/仅验证/可升级的统一判定。",
             "theme-shifts 用于识别升温、新线、抱团、降温和风险变化，并进入机会/风险/验证栏。",
             "observation_coverage 必须说明主动扫描、盘后扫描、专题继承和验证队列占比，避免雷达只复述既有配置。",
+            "decision_brief 必须给出一句话站位、依据、风险焦点和升级条件，作为盘中交易口径入口。",
         ],
     }
     OUT.write_text(json.dumps(feed, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
@@ -76,6 +79,57 @@ def build_summary(files: dict[str, Any]) -> str:
     if quality.get("status") in {"degraded", "critical"}:
         return trim(f"{base} 数据质量：{quality.get('summary')}", 180)
     return trim(base, 180)
+
+
+def build_decision_brief(
+    opportunities: list[dict[str, Any]],
+    risks: list[dict[str, Any]],
+    verifications: list[dict[str, Any]],
+    conflicts: list[dict[str, Any]],
+    files: dict[str, Any],
+) -> dict[str, Any]:
+    quality = quality_gate(files.get("quality-report.json") or {})
+    actionable = [item for item in opportunities if item.get("signal_grade") in {"A", "B"} and not re.search(r"仅复核|降权|等待", str(item.get("use_action") or ""))]
+    high_risks = [item for item in risks if item.get("signal_grade") in {"A", "B"}]
+    risk_first = [item for item in conflicts if item.get("severity") == "risk_first"]
+    upgrade_candidates = [item for item in opportunities if item.get("upgrade_rank")]
+    if risk_first or (not actionable and opportunities):
+        stance = "风险优先，只做验证"
+        action = "不把候选方向当交易机会；先看风险收敛、数据恢复和核心承接。"
+    elif actionable:
+        stance = "存在可跟踪机会"
+        action = "只按验证条件跟踪，不追无证据扩散。"
+    elif high_risks:
+        stance = "无明确机会，控制回撤"
+        action = "优先处理风险项，等待新线或主线重新确认。"
+    else:
+        stance = "等待确认"
+        action = "继续观察主动扫描和验证队列。"
+
+    reasons = clean_list([
+        quality.get("summary") if quality.get("status") in {"degraded", "critical"} else "",
+        f"A/B级风险 {len(high_risks)} 条" if high_risks else "",
+        f"风险优先冲突 {len(risk_first)} 条" if risk_first else "",
+        f"可用机会 {len(actionable)} 条，降权候选 {max(0, len(opportunities) - len(actionable))} 条",
+    ])[:4]
+    risk_focus = [item.get("title") for item in high_risks[:3] if item.get("title")]
+    upgrade_watch = [
+        f"#{item.get('upgrade_rank')} {item.get('title')}：{item.get('upgrade_condition')}"
+        for item in upgrade_candidates[:3]
+        if item.get("title") and item.get("upgrade_condition")
+    ]
+    verification_focus = [
+        item.get("next_action") or first_text(*(item.get("watch_next") or []))
+        for item in verifications[:3]
+    ]
+    return {
+        "stance": stance,
+        "action": action,
+        "reasons": reasons,
+        "risk_focus": risk_focus,
+        "upgrade_watch": clean_list(upgrade_watch)[:3],
+        "verification_focus": clean_list(verification_focus)[:3],
+    }
 
 
 def build_opportunities(files: dict[str, Any], current_date: str) -> list[dict[str, Any]]:

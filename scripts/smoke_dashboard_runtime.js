@@ -373,6 +373,7 @@ async function main() {
   checkDecisionTriggerRendering(radarHtml, issues);
   checkDecisionNextActionRendering(radarHtml, issues);
   checkDecisionUpgradeRendering(radarHtml, issues);
+  checkDecisionBriefRendering(radarHtml, issues);
   checkObservationCoverageRendering(radarHtml, issues);
   checkDecisionConflictRendering(radarHtml, issues);
   checkDecisionSourceTrustRendering(radarHtml, issues);
@@ -420,6 +421,7 @@ async function main() {
       "critical 监测盲区必须进入机会/风险雷达的风险栏。",
       "C/D级降权机会不得进入机会候选栏，只能进入下一步验证。",
     "机会/风险雷达必须渲染 decision-feed 的触发原因。",
+    "机会/风险雷达必须渲染决策口径摘要，先给站位和风险焦点。",
     "机会/风险雷达必须渲染主动观察覆盖，区分主动扫描和专题继承。",
     "critical 盲区的 fallback_checks 必须渲染到机会/风险雷达。",
     "机会候选被降权转验证时，必须渲染升级排序和升级条件。",
@@ -546,6 +548,22 @@ function checkDecisionUpgradeRendering(radarHtml, issues) {
     }
     if (condition && !rendered.includes(condition)) {
       issues.push(issue("critical", "upgrade_condition_not_rendered", `升级条件未渲染：${condition}`, "opportunity-risk-radar"));
+    }
+  }
+}
+
+function checkDecisionBriefRendering(radarHtml, issues) {
+  const feed = readJsonIfExists("data/decision-feed.json");
+  const brief = feed.decision_brief;
+  if (!brief) return;
+  const rendered = normalizeRenderedText(radarHtml);
+  if (!rendered.includes("决策口径")) {
+    issues.push(issue("critical", "decision_brief_not_rendered", "机会/风险雷达未显示决策口径摘要", "opportunity-risk-radar"));
+    return;
+  }
+  for (const value of [brief.stance, brief.action].map(stableSnippet).filter(Boolean)) {
+    if (!rendered.includes(value)) {
+      issues.push(issue("critical", "decision_brief_not_rendered", `决策口径未渲染：${value}`, "opportunity-risk-radar"));
     }
   }
 }

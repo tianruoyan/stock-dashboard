@@ -695,6 +695,13 @@ def validate_decision_feed(data: Any, issues: list[dict[str, Any]], current_date
         for key in ("summary", "independent_count", "active_market_count", "topic_inherited_count", "status"):
             if coverage.get(key) in (None, "", []):
                 issues.append(issue("warning", "decision-feed.json", "missing_observation_coverage_field", f"observation_coverage.{key} 缺失"))
+    brief = data.get("decision_brief")
+    if not isinstance(brief, dict):
+        issues.append(issue("warning", "decision-feed.json", "missing_decision_brief", "decision_brief 缺失或不是对象"))
+    else:
+        for key in ("stance", "action", "reasons", "risk_focus", "upgrade_watch"):
+            if key not in brief:
+                issues.append(issue("warning", "decision-feed.json", "missing_decision_brief_field", f"decision_brief.{key} 缺失"))
     for section in ("opportunities", "risks", "verifications"):
         rows = data.get(section)
         if not isinstance(rows, list):
@@ -953,6 +960,8 @@ def issue_impact(code: str, file: str, message: str) -> tuple[str, str]:
         "missing_observation_coverage",
         "missing_observation_coverage_field",
         "missing_observation_field",
+        "missing_decision_brief",
+        "missing_decision_brief_field",
         "schema_contract_missing",
         "schema_contract_type",
     }:
