@@ -168,8 +168,21 @@ function userFacingText(value) {
     .replace(/\beastmoney_hk_akshare\b/g, "港股东方财富/akshare")
     .replace(/\bofficial_policy_global_web_scan\b/g, "政策与全球事件扫描")
     .replace(/\bsource-health\.json\b/g, "数据源健康")
+    .replace(/\bsource-health\b/g, "数据源")
     .replace(/\bquality-report\.json\b/g, "质量报告")
-    .replace(/\bdata-trust\.json\b/g, "文件可信度");
+    .replace(/\bdata-trust\.json\b/g, "文件可信度")
+    .replace(/\bdata-trust\b/g, "数据状态")
+    .replace(/\bdecision-feed\b/g, "机会风险")
+    .replace(/\bquality-report\b/g, "数据提示");
+  text = text
+    .replace(/降权观察/g, "谨慎观察")
+    .replace(/降权参考/g, "谨慎参考")
+    .replace(/降权/g, "谨慎参考")
+    .replace(/监测盲区/g, "实时提醒缺口")
+    .replace(/信号可用性/g, "当前信号")
+    .replace(/文件可信度/g, "数据状态")
+    .replace(/自动化心跳/g, "更新时间")
+    .replace(/区块健康/g, "区块状态");
   if (/Can not decode value starting with|JSON decode failed|proxy disconnect|decode failed|failed with/i.test(text)) {
     if (/hk|港股|Eastmoney|stock_hk/i.test(text)) {
       return "港股行情源连接/解码异常，港股与日韩映射需人工复核。";
@@ -227,12 +240,11 @@ function renderDashboardControl() {
   }
   const position = inferPositionRange(style, riskConfig);
   const latest = dashboardEffectiveTimestamp() || latestTimestamp([intraday, postmarket, alert]);
-  const trustGate = dashboardTrustGate();
   let priority = strong.slice(0, 3).map(themeDisplayName);
   let avoid = risks.slice(0, 3).map(themeDisplayName);
   if (decisionGate?.riskFirst) {
     priority = ["风险优先", "只做验证", "暂停追高"];
-    avoid = decisionGate.avoid.length ? decisionGate.avoid : ["全市场亏钱效应", "数据质量降级", "污染异动未重产"];
+    avoid = decisionGate.avoid.length ? decisionGate.avoid : ["全市场亏钱效应", "实时异动未确认", "单点强势未扩散"];
   }
   const relatedTags = positiveRelatedTopicTags(priority.join(" "), avoid.join(" "), alertStocks.join(" "), p0.map(p => p.title || p.text || "").join(" "));
 
@@ -242,7 +254,6 @@ function renderDashboardControl() {
       <div class="control-title">${escapeHtml(style.title)}</div>
       <div class="control-sub">${escapeHtml(style.reason)}</div>
       <div class="control-meta">有效时间：${escapeHtml(latest ? formatUpdateTime(latest) : "待更新")} · ${escapeHtml(dataFreshness(latest))}</div>
-      ${trustGate ? `<div class="control-data-gate ${escapeHtml(trustGate.cls)}">${trustGate.items.map(item => `<span>${escapeHtml(item)}</span>`).join("")}</div>` : ""}
     </div>
     <div class="control-position">
       <span>建议仓位</span>
@@ -255,7 +266,7 @@ function renderDashboardControl() {
     <div class="decision-card action"><span class="decision-label">关联题材</span><b>${escapeHtml(decisionGate?.riskFirst ? "候选只验证" : (relatedTags[0] || "等待映射"))}</b><span>${escapeHtml(decisionGate?.riskFirst ? "有承接、有扩散、数据恢复后再升级" : (relatedTags.slice(1).join(" / ") || "按母题材合并观察"))}</span></div>
     <div class="decision-card ${decisionGate?.riskFirst ? "neutral" : "primary"}"><span class="decision-label">进攻盯 · ${escapeHtml(decisionGate?.riskFirst ? "暂停" : attackCandidate.source)}</span><b>${escapeHtml(decisionGate?.riskFirst ? "暂无可用机会" : (attackWatch[0] || "暂无"))}</b><span>${escapeHtml(decisionGate?.riskFirst ? "只看验证条件，不做追高触发" : (attackWatch.slice(1).join(" / ") || attackCandidate.note))}</span></div>
     <div class="decision-card risk"><span class="decision-label">风险盯 · ${escapeHtml(riskCandidate.source)}</span><b>${escapeHtml(riskWatch[0] || "暂无")}</b><span>${escapeHtml(riskWatch.slice(1).join(" / ") || riskCandidate.note)}</span></div>
-    <div class="decision-card risk"><span class="decision-label">回避/降级</span><b>${escapeHtml(avoid[0] || "暂无明确")}</b><span>${escapeHtml(avoid.slice(1).join(" / ") || eventWatch[0] || "看弱线和P0是否扩散")}</span></div>
+    <div class="decision-card risk"><span class="decision-label">暂不参与</span><b>${escapeHtml(avoid[0] || "暂无明确")}</b><span>${escapeHtml(avoid.slice(1).join(" / ") || eventWatch[0] || "看弱线和P0是否扩散")}</span></div>
   </div>`;
 }
 
@@ -320,7 +331,7 @@ function dashboardDecisionGate() {
       avoid: uniqueList([
         ...riskFirstConflicts.map(item => item.theme).filter(Boolean),
         ...risks.slice(0, 3).map(item => item.title).filter(Boolean),
-        "数据质量降级"
+        "实时信号待确认"
       ])
     };
   }
@@ -329,10 +340,10 @@ function dashboardDecisionGate() {
       riskFirst: true,
       cls: "warn",
       title: "无可用机会，风险优先",
-      reason: `当前 ${downgraded.length} 条机会均为降权/仅复核；只做验证，不直接追高。${risks.length ? `A/B级风险 ${risks.length} 条优先处理。` : ""}`,
+      reason: `当前 ${downgraded.length} 条机会还缺少确认；只做验证，不直接追高。${risks.length ? `主要风险 ${risks.length} 条优先处理。` : ""}`,
       avoid: uniqueList([
         ...risks.slice(0, 3).map(item => item.title).filter(Boolean),
-        "数据质量降级"
+        "实时信号待确认"
       ])
     };
   }
@@ -340,7 +351,7 @@ function dashboardDecisionGate() {
     return {
       riskFirst: false,
       cls: "warn",
-      title: "数据降级，机会降权",
+      title: "实时信号需确认",
       reason: feed.quality_gate?.summary || "核心数据需复核，机会只能按验证条件升级。",
       avoid: []
     };
@@ -394,70 +405,39 @@ function renderDataQualityGate() {
   const el = document.getElementById("data-quality-gate");
   if (!el) return;
   const report = buildDataQualityReport();
-  const cards = [
-    {
-      label: "数据可信度",
-      title: report.level,
-      detail: report.summary,
-      cls: report.cls
-    },
-    {
-      label: "交易影响",
-      title: report.impactTitle || "无阻断",
-      detail: report.impactDetail || "无交易阻断",
-      cls: report.impactCls || "good"
-    },
-    {
-      label: "最新有效",
-      title: formatUpdateTime(report.latest) || "待更新",
-      detail: dataFreshness(report.latest),
-      cls: "neutral"
-    },
-    {
-      label: "降级源",
-      title: report.degraded.length ? `${report.degraded.length} 条` : "无",
-      detail: userFacingList(report.degraded).slice(0, 2).join(" / ") || "核心行情源正常",
-      cls: report.degraded.length ? "warn" : "good"
-    },
-    {
-      label: "区块健康",
-      title: report.sectionTitle || "待接入",
-      detail: report.sectionDetail || "区块级健康矩阵待生成",
-      cls: report.sectionCls || "neutral"
-    },
-    {
-      label: "文件可信",
-      title: report.fileTrustTitle || "待接入",
-      detail: report.fileTrustDetail || "数据文件可信度待生成",
-      cls: report.fileTrustCls || "neutral"
-    },
-    {
-      label: "监测盲区",
-      title: report.coverageTitle || "待接入",
-      detail: report.coverageDetail || "监测盲区待生成",
-      cls: report.coverageCls || "neutral"
-    },
-    {
-      label: "自动化心跳",
-      title: report.automationTitle || "待接入",
-      detail: report.automationDetail || "产出心跳待生成",
-      cls: report.automationCls || "neutral"
-    }
-  ];
-  el.innerHTML = `<div class="decision-strip quality-strip">${cards.map(card => `
+  const cards = traderNoticeCards(report);
+  el.innerHTML = `<div class="decision-strip quality-strip trader-notice">${cards.map(card => `
     <div class="decision-card ${card.cls}">
       <span class="decision-label">${escapeHtml(card.label)}</span>
       <b>${escapeHtml(card.title)}</b>
       <span>${escapeHtml(userFacingText(card.detail))}</span>
     </div>`).join("")}</div>
-    ${report.impactBadges?.length ? `<div class="quality-impact-row">${report.impactBadges.map(item => `<span class="${escapeHtml(item.cls)}">${escapeHtml(item.text)}</span>`).join("")}</div>` : ""}
-    ${report.actionPlan?.length ? `<div class="quality-action-plan">${report.actionPlan.slice(0, 3).map(item => `
-      <div>
-        <span>${escapeHtml(item.label || "处置")}</span>
-        <b>${escapeHtml(item.file || "unknown")}：${escapeHtml(userFacingText(item.next_step || item.decision_action || ""))}</b>
-        <em>${escapeHtml(userFacingText(item.unblock_condition || ""))}</em>
-      </div>`).join("")}</div>` : ""}
-    ${report.issues.length ? `<div class="quality-issues">${userFacingList(report.issues).slice(0, 4).map(item => `<span>${escapeHtml(item)}</span>`).join("")}</div>` : ""}`;
+    `;
+}
+
+function traderNoticeCards(report) {
+  const blocked = /阻断|不可用/.test(`${report.impactTitle || ""} ${report.summary || ""} ${report.sectionDetail || ""}`);
+  const stale = /上一阶段|待产出|超时|历史/.test(`${report.fileTrustDetail || ""} ${report.sectionDetail || ""} ${report.automationDetail || ""}`);
+  const latest = formatUpdateTime(report.latest) || "待更新";
+  if (blocked) {
+    return [
+      { label: "当前使用", title: "谨慎使用", detail: "盘中异动未恢复，不能作为买卖触发。", cls: "risk" },
+      { label: "交易动作", title: "先控回撤", detail: "只看风险是否收敛；机会必须等核心承接和宽度确认。", cls: "risk" },
+      { label: "更新时间", title: latest, detail: stale ? "部分内容是上一阶段材料" : dataFreshness(report.latest), cls: "neutral" }
+    ];
+  }
+  if (report.cls === "neutral" || stale) {
+    return [
+      { label: "当前使用", title: "可看但要确认", detail: "结论可参考，动作必须等盘面验证。", cls: "neutral" },
+      { label: "交易动作", title: "等确认", detail: "不追单点强势，只跟踪扩散、承接和风险收敛。", cls: "neutral" },
+      { label: "更新时间", title: latest, detail: dataFreshness(report.latest), cls: "neutral" }
+    ];
+  }
+  return [
+    { label: "当前使用", title: "可正常参考", detail: "关键数据未发现阻断项。", cls: "good" },
+    { label: "交易动作", title: "按信号执行", detail: "仍以验证和证伪条件控制节奏。", cls: "good" },
+    { label: "更新时间", title: latest, detail: dataFreshness(report.latest), cls: "neutral" }
+  ];
 }
 
 function buildDataQualityReport() {
@@ -720,6 +700,10 @@ function renderSectionHealthBadges() {
     }
     const trust = trustBySection.get(section.id);
     const view = sectionBadgeView(section, trust);
+    if (!view.visible) {
+      badge.remove();
+      return;
+    }
     const cls = sectionHealthClass(view.status);
     badge.className = `section-health-badge ${cls}`;
     badge.innerHTML = `<span>${escapeHtml(view.action)}</span><b>${escapeHtml(truncateText(userFacingText(view.reason), 120))}</b>`;
@@ -750,30 +734,34 @@ function sectionTrustRows() {
 function sectionBadgeView(section, trust) {
   if (trust?.session_relevance === "upcoming") {
     return {
+      visible: true,
       status: "stale",
-      action: trust.session_action || "等待对应阶段产出",
-      reason: `${trust.label || section.label || "该区块"}：${trust.session_reason || "对应阶段尚未到来，当前仅保留上一交易日回看。"}`
+      action: "今日待更新",
+      reason: `${trust.label || section.label || "该区块"}尚未到今日产出时间，先看上一阶段结论。`
     };
   }
   if (trust?.session_relevance === "blocked" || ["invalidated", "missing"].includes(trust?.status)) {
     return {
+      visible: true,
       status: trust.status || "invalidated",
-      action: trust.use_action || trust.session_action || "不可用于当前决策",
-      reason: trust.reason || section.reason || "该区块当前不可用"
-    };
-  }
-  if (trust?.session_relevance === "current" && trust.status === "degraded") {
-    return {
-      status: "degraded",
-      action: trust.use_action || "降权参考",
-      reason: trust.reason || section.reason || "当前阶段可看但需降权"
+      action: "暂停使用",
+      reason: traderBlockReason(trust.reason || section.reason || "该区块当前不可用")
     };
   }
   return {
+    visible: false,
     status: section.status,
     action: section.action || section.status || "待确认",
     reason: section.reason || "区块状态待确认"
   };
+}
+
+function traderBlockReason(text) {
+  const value = String(text || "");
+  if (/盘中异动|alert|污染|行情源/.test(value)) {
+    return "盘中异动提醒暂不可作为买卖触发，改看盘中全景、涨跌停宽度和观察池验证。";
+  }
+  return userFacingText(value);
 }
 
 function sectionHealthClass(status) {
@@ -788,15 +776,12 @@ function renderOpportunityRiskRadar() {
   if (!el) return;
   const radar = buildOpportunityRiskRadar();
   const gate = radar.gate ? `<div class="radar-gate ${escapeHtml(radar.gate.cls || "neutral")}">
-    <span>${escapeHtml(radar.gate.label || "雷达闸门")}</span>
+    <span>${escapeHtml(radar.gate.label || "当前判断")}</span>
     <b>${escapeHtml(radar.gate.title || "等待确认")}</b>
     <em>${escapeHtml(radar.gate.detail || "只按验证条件跟踪，不生成交易指令。")}</em>
   </div>` : "";
   const brief = renderDecisionBrief(radar.decisionBrief);
-  const queue = renderSignalQueue(radar.signalQueue);
-  const observation = renderObservationCoverage(radar.observationCoverage);
-  const conflicts = renderRadarConflicts(radar.conflicts || []);
-  el.innerHTML = `${gate}${brief}${queue}${observation}${conflicts}<div class="radar-grid">
+  el.innerHTML = `${gate}${brief}<div class="radar-grid">
     <div class="radar-column">
       <div class="radar-head"><b>机会候选</b><span>${radar.opportunities.length ? "需要验证，不直接追高" : "暂无高置信机会"}</span></div>
       ${radar.opportunities.length ? radar.opportunities.map(renderRadarItem).join("") : '<div class="empty-sm">等待主线扩散或观察池个股确认</div>'}
@@ -834,37 +819,35 @@ function renderSignalQueue(queue) {
 
 function renderRadarItem(item) {
   const tone = item.tone || "neutral";
-  const tags = (item.tags || []).slice(0, 4).map(tag => `<span>${escapeHtml(tag)}</span>`).join("");
+  const tags = (item.tags || []).slice(0, 4).map(tag => `<span>${escapeHtml(userFacingText(tag))}</span>`).join("");
   const gradeClass = `grade-${String(item.signalGrade || "C").toLowerCase()}`;
   const displayDetail = value => Array.isArray(value)
     ? userFacingList(value).join("；")
     : userFacingText(value);
   const details = [
-    item.triggerReason ? ["触发", item.triggerReason] : null,
-    item.discoveryType ? ["发现", discoveryTypeLabel(item.discoveryType)] : null,
-    item.observationSource ? ["来源类型", `${item.observationSource}${item.independentObservation ? " · 独立观察" : " · 继承/验证"}`] : null,
-    item.evidenceScore !== undefined ? ["证据分", `${item.evidenceScore}分`] : null,
-    item.missingEvidence?.length ? ["缺口", item.missingEvidence.slice(0, 2)] : null,
     item.nextAction ? ["动作", item.nextAction] : null,
-    item.upgradeRank ? ["升级", `#${item.upgradeRank} ${item.upgradePriority || "观察验证"}：${item.upgradeCondition || "等待确认后再升级。"}`] : null,
-    item.useReasons ? ["口径", item.useReasons] : null,
-    item.qualityFlags ? ["降权", item.qualityFlags] : null,
-    item.evidence ? ["证据", item.evidence] : null,
-    item.watchNext ? ["验证", item.watchNext] : null,
-    item.invalidation ? ["证伪", item.invalidation] : null,
-    item.sourceTrust ? ["源状态", item.sourceTrust] : null,
-    item.sources ? ["来源", item.sources] : null
-  ].filter(Boolean).map(([label, value]) => `<div class="radar-detail ${["降权", "缺口"].includes(label) ? "quality" : (["动作", "升级"].includes(label) ? "action" : "")}"><span>${label}</span><b>${escapeHtml(displayDetail(value))}</b></div>`).join("");
+    item.evidence ? ["依据", item.evidence.slice(0, 2)] : null,
+    item.watchNext ? ["盯盘", item.watchNext.slice(0, 2)] : null,
+    item.invalidation ? ["作废", item.invalidation] : null
+  ].filter(Boolean).map(([label, value]) => `<div class="radar-detail ${label === "动作" ? "action" : ""}"><span>${label}</span><b>${escapeHtml(displayDetail(value))}</b></div>`).join("");
   return `<div class="radar-item ${tone}">
     <div class="radar-item-head">
-      <b>${escapeHtml(item.title)}</b>
-      <em class="${gradeClass}">${escapeHtml(item.signalGrade ? `${item.signalGrade}级 · ${item.useAction}` : item.confidence || "观察")}</em>
+      <b>${escapeHtml(userFacingText(item.title))}</b>
+      <em class="${gradeClass}">${escapeHtml(traderSignalLabel(item))}</em>
     </div>
-    <div class="radar-use">${escapeHtml(item.confidence || "观察")}${item.signalScore !== undefined ? ` · ${item.signalScore}分` : ""}</div>
     <div class="radar-reason">${escapeHtml(userFacingText(item.reason))}</div>
     ${details}
     ${tags ? `<div class="topic-related">${tags}</div>` : ""}
   </div>`;
+}
+
+function traderSignalLabel(item) {
+  const text = `${item.useAction || ""} ${item.confidence || ""} ${item.tone || ""}`;
+  if (/risk|风险|回撤|不可|禁用/.test(text)) return "风险";
+  if (/仅复核|等待|验证|候选|low|低/.test(text)) return "待确认";
+  if (/降权|谨慎/.test(text)) return "谨慎";
+  if (/可跟踪|high|强/.test(text)) return "可跟踪";
+  return item.confidence || "观察";
 }
 
 function buildOpportunityRiskRadar() {
@@ -964,27 +947,19 @@ function buildOpportunityRiskRadar() {
 
 function renderDecisionBrief(brief) {
   if (!brief) return "";
-  const reasons = (brief.reasons || []).slice(0, 3).map(item => `<span>${escapeHtml(item)}</span>`).join("");
   const upgrades = (brief.upgrade_watch || []).slice(0, 2).map(item => `<em>${escapeHtml(item)}</em>`).join("");
   const risks = (brief.risk_focus || []).slice(0, 3).map(item => `<b>${escapeHtml(item)}</b>`).join("");
-  const actions = (brief.quality_actions || []).slice(0, 2).map(item => {
-    const label = [item.label, item.file].filter(Boolean).join(" · ");
-    const detail = item.next_step || item.unblock_condition || "";
-    return `<em>${escapeHtml(label)}：${escapeHtml(userFacingText(detail))}</em>`;
-  }).join("");
   const cls = /风险|回撤|无明确/.test(String(brief.stance || "")) ? "risk" : (/等待|验证/.test(String(brief.stance || "")) ? "watch" : "good");
   return `<div class="radar-brief ${cls}">
     <div class="radar-brief-main">
-      <span>决策口径</span>
+      <span>今天怎么做</span>
       <b>${escapeHtml(brief.stance || "等待确认")}</b>
       <p>${escapeHtml(brief.action || "只按验证条件跟踪，不生成交易指令。")}</p>
     </div>
     <div class="radar-brief-side">
-      ${actions ? `<div><label>处置动作</label>${actions}</div>` : ""}
-      ${risks ? `<div><label>风险焦点</label>${risks}</div>` : ""}
-      ${upgrades ? `<div><label>升级条件</label>${upgrades}</div>` : ""}
+      ${risks ? `<div><label>先避开</label>${risks}</div>` : ""}
+      ${upgrades ? `<div><label>转强条件</label>${upgrades}</div>` : ""}
     </div>
-    ${reasons ? `<div class="radar-brief-reasons">${reasons}</div>` : ""}
   </div>`;
 }
 
@@ -1032,22 +1007,22 @@ function radarGateFromFeed(feed, actionableOpportunities, downgradedOpportunitie
   if (!actionableOpportunities.length && downgradedOpportunities.length) {
     return {
       cls: "risk",
-      label: "交易闸门",
+      label: "当前判断",
       title: "无可用机会，风险优先",
-      detail: `当前 ${downgradedOpportunities.length} 条机会均为降权/仅复核；只做验证，不直接追高。${highRiskCount ? `A/B级风险 ${highRiskCount} 条优先处理。` : ""}`
+      detail: `当前机会都只能验证，不直接追高。${highRiskCount ? `先处理 ${highRiskCount} 条主要风险。` : ""}`
     };
   }
   if (/degraded|critical|blocked|invalidated/.test(String(qualityStatus))) {
     return {
       cls: "warn",
-      label: "交易闸门",
-      title: "数据降级，机会降权",
-      detail: feed.quality_gate?.summary || "核心数据需复核，机会只能按验证条件升级。"
+      label: "当前判断",
+      title: "信号需确认",
+      detail: "部分实时信号暂不稳定，机会只按盘面验证条件升级。"
     };
   }
   return {
     cls: "good",
-    label: "交易闸门",
+    label: "当前判断",
     title: "存在可跟踪机会",
     detail: "仍需按证据、验证和证伪条件执行。"
   };
@@ -1066,30 +1041,33 @@ function monitoringCoverageRadarItems() {
   const important = coverage.blind_spots
     .filter(item => item && ["critical", "warning"].includes(item.severity))
     .sort((a, b) => severityRank(b.severity) - severityRank(a.severity));
+  const traderCoverageTitle = item => /异动|alert/i.test(`${item.title || ""} ${item.source_files || ""}`)
+    ? "盘中异动提醒暂不可用"
+    : (item.impact || item.title || "实时信号需确认");
   const risks = important.map(item => ({
-    title: item.title || "监测盲区",
+    title: traderCoverageTitle(item),
     reason: truncateText(item.conclusion || "", 108),
-    confidence: item.severity === "critical" ? "核心盲区" : "降权盲区",
+    confidence: item.severity === "critical" ? "风险" : "待确认",
     tone: "risk",
-    tags: uniqueList(["监测盲区", ...(item.source_files || []).map(sourceShortName)]).slice(0, 5),
+    tags: uniqueList(["信号待确认", ...(item.impacted_decisions || []).slice(0, 2)]).slice(0, 5),
     evidence: (item.evidence || []).slice(0, 2),
     watchNext: (item.fallback_checks || item.impacted_decisions || []).slice(0, 3),
     invalidation: item.fallback_action,
     sources: (item.source_files || []).map(sourceShortName),
     signalGrade: item.severity === "critical" ? "A" : "B",
     signalScore: item.severity === "critical" ? 95 : 72,
-    useAction: item.severity === "critical" ? "优先处理" : "降权观察",
+    useAction: item.severity === "critical" ? "优先处理" : "谨慎观察",
     useReasons: ["自动监测断点", "影响盘中决策", "已给替代观察"]
   }));
   const verifications = important.slice(0, 3).map(item => ({
-    title: `${item.title || "监测盲区"}替代观察`,
+    title: `${traderCoverageTitle(item)}的替代观察`,
     reason: truncateText(item.fallback_action || item.conclusion || "", 108),
     confidence: "替代验证",
     tone: "neutral",
-    tags: uniqueList(["盲区替代", ...(item.source_files || []).map(sourceShortName)]).slice(0, 5),
+    tags: uniqueList(["替代观察", ...(item.impacted_decisions || []).slice(0, 2)]).slice(0, 5),
     evidence: (item.impacted_decisions || []).slice(0, 2),
     watchNext: (item.fallback_checks || (item.fallback_action ? [item.fallback_action] : [])).slice(0, 4),
-    invalidation: "对应数据文件恢复 trusted，且盲区报告不再提示该断点。",
+    invalidation: "实时提醒恢复，且页面不再提示该风险。",
     sources: (item.source_files || []).map(sourceShortName),
     signalGrade: "B",
     signalScore: 70,
@@ -1253,7 +1231,17 @@ function confidenceLabel(value) {
 }
 
 function sourceShortName(source) {
-  return String(source || "").replace(/^data\//, "").replace(/\.json$/, "");
+  const normalized = String(source || "").replace(/^data\//, "").replace(/\.json$/, "");
+  const labels = {
+    "source-health": "数据源",
+    "quality-report": "数据提示",
+    "data-trust": "数据状态",
+    "decision-feed": "机会风险",
+    "monitoring-coverage": "替代观察",
+    "automation-health": "更新时间",
+    "section-health": "区块状态"
+  };
+  return labels[normalized] || normalized;
 }
 
 function buildWatchlistSignalRows() {

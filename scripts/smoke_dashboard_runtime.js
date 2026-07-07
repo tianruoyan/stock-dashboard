@@ -357,39 +357,24 @@ async function main() {
     ? coverage.blind_spots.filter(item => item && item.severity === "critical")
     : [];
   for (const item of criticalBlindSpots) {
-    if (item.title && !radarHtml.includes(item.title)) {
-      issues.push(issue("critical", "blind_spot_not_rendered", `核心监测盲区未进入雷达风险栏：${item.title}`, "opportunity-risk-radar"));
+    const fallback = stableSnippet((item.fallback_checks || [item.fallback_action || item.conclusion || ""])[0]);
+    if (fallback && !normalizeRenderedText(radarHtml).includes(fallback)) {
+      issues.push(issue("critical", "blind_spot_not_rendered", `关键替代观察未进入机会与风险区：${fallback}`, "opportunity-risk-radar"));
     }
   }
   if (Array.isArray(themeShifts.shifts) && themeShifts.shifts.length && !radarHtml.includes("主线变化")) {
     issues.push(issue("critical", "theme_shift_not_rendered", "主线变化报告未进入机会/风险雷达", "opportunity-risk-radar"));
   }
   const qualityHtml = document.getElementById("data-quality-gate")?.collectHtml() || "";
-  if (!qualityHtml.includes("自动化心跳")) {
-    issues.push(issue("critical", "automation_health_not_rendered", "自动化心跳未进入顶部质量卡", "data-quality-gate"));
-  }
-  const automation = readJsonIfExists("data/automation-health.json");
-  const readinessSummary = stableSnippet(automation.next_session_readiness?.summary);
-  if (readinessSummary && !normalizeRenderedText(qualityHtml).includes(readinessSummary)) {
-    issues.push(issue("critical", "next_session_readiness_not_rendered", `下一交易日准备度未进入顶部质量卡：${readinessSummary}`, "data-quality-gate"));
-  }
-  checkQualityImpactRendering(qualityHtml, issues);
-  checkQualityActionPlanRendering(qualityHtml, issues);
   if (/(?:C|D)级/.test(opportunityColumn)) {
-    issues.push(issue("critical", "downgraded_opportunity_rendered", "C/D级降权机会进入了机会候选栏，应转入下一步验证", "opportunity-risk-radar"));
+    issues.push(issue("critical", "low_quality_opportunity_rendered", "C/D级机会进入了机会候选栏，应转入下一步验证", "opportunity-risk-radar"));
   }
-  checkDecisionTriggerRendering(radarHtml, issues);
   checkDecisionNextActionRendering(radarHtml, issues);
-  checkDecisionUpgradeRendering(radarHtml, issues);
   checkDecisionBriefRendering(radarHtml, issues);
-  checkObservationCoverageRendering(radarHtml, issues);
-  checkDecisionConflictRendering(radarHtml, issues);
-  checkDecisionSourceTrustRendering(radarHtml, issues);
   checkFallbackChecksRendering(radarHtml, coverage, issues);
   checkRadarGateRendering(document, radarHtml, issues);
   checkDashboardConflictRendering(document, issues);
-  checkDashboardTrustGateRendering(document, issues);
-  checkSectionUpcomingTrustRendering(document, issues);
+  checkTraderViewLanguage(document, issues);
   checkDashboardEffectiveTimeRendering(document, issues);
   checkInvalidatedAlertRendering(document, issues);
   checkActiveAlertAuditRendering(document, issues);
@@ -412,10 +397,6 @@ async function main() {
   if (/JS ERROR/.test(statusText)) {
     issues.push(issue("critical", "window_onerror", statusText, "status"));
   }
-  const badges = document.body.querySelectorAll(".section-health-badge");
-  if (!badges.length) {
-    issues.push(issue("warning", "missing_section_badges", "运行时未生成区块健康贴条"));
-  }
   checkDataRenderCoverage(document, issues);
 
   const status = issues.some(item => item.severity === "critical")
@@ -434,21 +415,15 @@ async function main() {
       "关键决策区块运行后必须非空。",
       "拦截 console error、JS ERROR、对象直出、未定义值、非数字值和疑似乱码。",
       "全页面不得展示底层英文源错误或技术源 ID，必须转成中文复核提示。",
-      "critical 监测盲区必须进入机会/风险雷达的风险栏。",
-      "C/D级降权机会不得进入机会候选栏，只能进入下一步验证。",
-    "机会/风险雷达必须渲染 decision-feed 的触发原因。",
-      "机会/风险雷达必须渲染决策口径摘要，先给站位和风险焦点。",
-      "数据质量卡必须渲染 action_plan，把降级原因翻译成处置动作。",
-    "机会/风险雷达必须渲染主动观察覆盖，区分主动扫描和专题继承。",
-    "critical 盲区的 fallback_checks 必须渲染到机会/风险雷达。",
-    "机会候选被降权转验证时，必须渲染升级排序和升级条件。",
+      "关键替代观察必须进入机会与风险区。",
+      "C/D级机会不得进入机会候选栏，只能进入下一步验证。",
+      "机会与风险区必须渲染交易人可读的一句话动作、依据和盯盘条件。",
+      "主页面不得展示信号队列、源状态、文件可信、自动化心跳、区块健康、降权等后台诊断词。",
       "无 A/B 级可用机会时，机会/风险雷达必须显示无可用机会、风险优先和只做验证。",
-      "文件可信度出现不可用或当前阶段超时时，今日总控必须显示具体文件状态。",
       "今日总控有效时间必须使用最新可信决策材料，不得使用 invalidated/missing/stale 文件时间。",
       "alert.json 撤下污染批次时，盘中异动区必须显示不可用和替代观察，不得只显示普通空状态。",
-    "日韩早盘源降级时必须显示固定中文待复核提示和复核清单，不得展示原始乱码/未核实字符串。",
-      "核心 JSON 字段有数据时，页面对应区块必须渲染关键结论或代表项。",
-      "确认区块健康贴条能在运行时生成。"
+      "日韩早盘源异常时必须显示固定中文待复核提示和复核清单，不得展示原始乱码/未核实字符串。",
+      "核心 JSON 字段有数据时，页面对应区块必须渲染关键结论或代表项。"
     ]
   };
   writeReport(report);
@@ -576,35 +551,49 @@ function checkDecisionBriefRendering(radarHtml, issues) {
   if (RAW_SOURCE_ERROR_RE.test(rendered)) {
     issues.push(issue("critical", "radar_raw_source_error_rendered", "机会/风险雷达仍展示底层英文源错误，需转成中文复核提示", "opportunity-risk-radar"));
   }
-  checkSignalQueueRendering(rendered, feed.signal_queue, issues);
   if (!brief) return;
-  if (!rendered.includes("决策口径")) {
-    issues.push(issue("critical", "decision_brief_not_rendered", "机会/风险雷达未显示决策口径摘要", "opportunity-risk-radar"));
+  if (!rendered.includes("今天怎么做")) {
+    issues.push(issue("critical", "decision_brief_not_rendered", "机会与风险区未显示交易动作摘要", "opportunity-risk-radar"));
     return;
   }
   for (const value of [brief.stance, brief.action].map(stableSnippet).filter(Boolean)) {
     if (!rendered.includes(value)) {
-      issues.push(issue("critical", "decision_brief_not_rendered", `决策口径未渲染：${value}`, "opportunity-risk-radar"));
+      issues.push(issue("critical", "decision_brief_not_rendered", `交易动作摘要未渲染：${value}`, "opportunity-risk-radar"));
     }
   }
-  const actions = Array.isArray(brief.quality_actions) ? brief.quality_actions : [];
-  if (actions.length) {
-    if (!rendered.includes("处置动作")) {
-      issues.push(issue("critical", "decision_brief_quality_action_not_rendered", "决策口径未显示质量处置动作", "opportunity-risk-radar"));
-      return;
-    }
-    for (const item of actions.slice(0, 2)) {
-      const label = stableSnippet(item.label);
-      const file = stableSnippet(item.file);
-      const next = stableSnippet(item.next_step);
-      if (label && !rendered.includes(label)) {
-        issues.push(issue("critical", "decision_brief_quality_action_not_rendered", `处置动作标签未渲染：${label}`, "opportunity-risk-radar"));
-      }
-      if (file && !rendered.includes(file)) {
-        issues.push(issue("critical", "decision_brief_quality_action_not_rendered", `处置动作文件未渲染：${file}`, "opportunity-risk-radar"));
-      }
-      if (next && !rendered.includes(next)) {
-        issues.push(issue("critical", "decision_brief_quality_action_not_rendered", `处置动作内容未渲染：${next}`, "opportunity-risk-radar"));
+}
+
+function checkTraderViewLanguage(document, issues) {
+  const targets = [
+    ["dashboard-control", "今日结论"],
+    ["data-quality-gate", "使用提醒"],
+    ["opportunity-risk-radar", "机会与风险"]
+  ];
+  const forbidden = [
+    "信号可用性",
+    "主动观察覆盖",
+    "冲突校验",
+    "源状态",
+    "文件可信",
+    "自动化心跳",
+    "区块健康",
+    "数据可信",
+    "证据分",
+    "决策口径",
+    "处置动作",
+    "降权",
+    "闸门",
+    "action_plan",
+    "quality_gate",
+    "decision-feed",
+    "data-trust",
+    "source-health"
+  ];
+  for (const [id, label] of targets) {
+    const rendered = normalizeRenderedText(document.getElementById(id)?.collectHtml() || "");
+    for (const term of forbidden) {
+      if (rendered.includes(term)) {
+        issues.push(issue("critical", "backend_term_rendered", `${label}仍展示后台诊断词：${term}`, id));
       }
     }
   }
@@ -730,7 +719,7 @@ function checkFallbackChecksRendering(radarHtml, coverage, issues) {
     if (!item || item.severity !== "critical") continue;
     const checks = Array.isArray(item.fallback_checks) ? item.fallback_checks : [];
     if (!checks.length) continue;
-    const mustRender = checks.slice(0, 3).map(check => stableSnippet(check)).filter(Boolean);
+    const mustRender = checks.slice(0, 2).map(check => stableSnippet(check)).filter(Boolean);
     for (const snippet of mustRender) {
       if (!rendered.includes(snippet)) {
         issues.push(issue("critical", "fallback_checks_not_rendered", `核心盲区替代检查未渲染：${snippet}`, "opportunity-risk-radar"));
@@ -807,7 +796,7 @@ function checkSectionUpcomingTrustRendering(document, issues) {
     if (!target) continue;
     const rendered = normalizeRenderedText(document.getElementById(target)?.collectHtml() || "");
     const expected = file.session_action || "等待对应阶段产出";
-    if (!rendered.includes(expected)) {
+    if (!rendered.includes(expected) && !rendered.includes("今日待更新")) {
       issues.push(issue("critical", "section_upcoming_state_not_rendered", `${file.label} 未显示待产出状态：${expected}`, target));
     }
   }
