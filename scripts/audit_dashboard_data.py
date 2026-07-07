@@ -41,7 +41,7 @@ def main() -> int:
         text = (DATA_DIR / name).read_text(encoding="utf-8")
         for literal in BAD_LITERALS:
             if literal in text:
-                issues.append(issue("critical", name, "bad_literal", f"发现异常文本 {literal}"))
+                issues.append(issue("critical", name, "bad_literal", f"发现异常文本：{bad_literal_label(literal)}"))
         if MOJIBAKE_PATTERN.search(text):
             issues.append(issue("critical", name, "mojibake_text", "发现疑似乱码文本，需先清理数据源编码"))
         ts = data.get("timestamp") if isinstance(data, dict) else None
@@ -241,6 +241,16 @@ def issue(severity: str, file: str, code: str, message: str, path: str = "") -> 
         "code": code,
         "message": message,
     }
+
+
+def bad_literal_label(literal: str) -> str:
+    return {
+        "[object Object]": "对象被直接显示",
+        "undefined": "未定义值被直接显示",
+        "None%": "空值百分比被直接显示",
+        "NaN": "非数字值被直接显示",
+        "Infinity": "无限大数值被直接显示",
+    }.get(literal, "异常字面量")
 
 
 def overall_status(issues: list[dict[str, Any]]) -> str:

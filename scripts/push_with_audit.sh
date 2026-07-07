@@ -10,10 +10,16 @@ audit_status=$?
 python3 scripts/build_section_health.py >/dev/null 2>&1 || true
 python3 scripts/smoke_dashboard_static.py
 smoke_status=$?
+NODE_BIN="/Users/sweet_orange/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node"
+if [ ! -x "$NODE_BIN" ]; then
+  NODE_BIN="node"
+fi
+"$NODE_BIN" scripts/smoke_dashboard_runtime.js
+runtime_status=$?
 
-git add data/quality-report.json data/decision-feed.json data/section-health.json data/smoke-report.json >/dev/null 2>&1 || true
+git add data/quality-report.json data/decision-feed.json data/section-health.json data/smoke-report.json data/runtime-smoke-report.json >/dev/null 2>&1 || true
 
-if [ "$audit_status" -ne 0 ] || [ "$smoke_status" -ne 0 ]; then
+if [ "$audit_status" -ne 0 ] || [ "$smoke_status" -ne 0 ] || [ "$runtime_status" -ne 0 ]; then
   echo "dashboard audit/smoke found critical issues; skip push"
   git commit -m "Update dashboard quality report" >/dev/null 2>&1 || true
   exit 1

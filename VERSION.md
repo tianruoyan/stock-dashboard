@@ -2,6 +2,7 @@
 
 | Display Version | Date | Edition | Tag / Commit | Summary | Rollback Note |
 |---|---:|---:|---|---|---|
+| 2026-07-07 第48版｜运行时渲染门禁 | 2026-07-07 | 第48版 | tag: `v2026.07.07-m48-runtime-smoke` | 新增 `scripts/smoke_dashboard_runtime.js` 和 `data/runtime-smoke-report.json`，发布前用真实 JSON 执行 `app.js` 的 `updateAll` 渲染路径，拦截 JS ERROR、console error、关键区块空白、`undefined`、`[object Object]`、NaN 和疑似乱码；`push_with_audit.sh` 接入动态门禁。 | 回滚到第47版可用 `git checkout v2026.07.07-m47-japan-korea-safe`，或回滚到本版本 tag。 |
 | 2026-07-07 第47版｜日韩早盘防乱码 | 2026-07-07 | 第47版 | tag: `v2026.07.07-m47-japan-korea-safe` | 收紧盘前“日韩早盘”展示逻辑：只展示已识别的日经/KOSPI/三星/SK海力士/东京电子/Advantest数值字段；遇到降级、未核实、解码失败或疑似乱码时统一显示中文降级提示。数据审计和页面烟雾测试新增疑似乱码拦截。 | 回滚到第46版可用 `git checkout v2026.07.07-m46-section-deps`，或回滚到本版本 tag。 |
 | 2026-07-07 第46版｜区块依赖校准 | 2026-07-07 | 第46版 | tag: `v2026.07.07-m46-section-deps` | 校准 `section-health` 依赖关系：观察池和专题跟踪也纳入 `quality-report`，当行情源或 alert 污染导致全局 degraded 时，这些二次研判区块不再显示 ok，而是原地提示“可看但降权”。 | 回滚到第45版可用 `git checkout v2026.07.07-m45-section-badges`，或回滚到本版本 tag。 |
 | 2026-07-07 第45版｜面板健康贴条 | 2026-07-07 | 第45版 | tag: `v2026.07.07-m45-section-badges` | 将 `section-health.json` 的 ok/degraded/stale/invalidated 状态直接贴到对应面板标题下，盘中滚动到异动、晚间、盘中全景等区块时也能看到“等待重产/仅作历史/可看但降权”的状态；烟雾测试新增区块到 DOM 的映射校验。 | 回滚到第44版可用 `git checkout v2026.07.07-m44-section-health`，或回滚到本版本 tag。 |

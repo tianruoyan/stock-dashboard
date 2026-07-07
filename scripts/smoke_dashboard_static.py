@@ -121,7 +121,7 @@ def check_bad_literals(issues: list[dict[str, Any]]) -> None:
             text = read_text(path)
             for literal in BAD_LITERALS:
                 if literal in text:
-                    issues.append(issue("critical", rel(path), "bad_literal", f"发现异常文本 {literal}"))
+                    issues.append(issue("critical", rel(path), "bad_literal", f"发现异常文本：{bad_literal_label(literal)}"))
             if MOJIBAKE_PATTERN.search(text):
                 issues.append(issue("critical", rel(path), "mojibake_text", "发现疑似乱码文本，需先清理数据源编码"))
             try:
@@ -132,7 +132,7 @@ def check_bad_literals(issues: list[dict[str, Any]]) -> None:
         text = read_text(path)
         for literal in BAD_LITERALS:
             if literal in text:
-                issues.append(issue("critical", rel(path), "bad_literal", f"发现异常文本 {literal}"))
+                issues.append(issue("critical", rel(path), "bad_literal", f"发现异常文本：{bad_literal_label(literal)}"))
         if MOJIBAKE_PATTERN.search(text):
             issues.append(issue("critical", rel(path), "mojibake_text", "发现疑似乱码文本，需先清理页面文本"))
 
@@ -219,6 +219,16 @@ def signal_date(value: Any) -> str:
 
 def issue(severity: str, file: str, code: str, message: str) -> dict[str, Any]:
     return {"severity": severity, "file": file, "code": code, "message": message}
+
+
+def bad_literal_label(literal: str) -> str:
+    return {
+        "[object Object]": "对象被直接显示",
+        "undefined": "未定义值被直接显示",
+        "None%": "空值百分比被直接显示",
+        "NaN": "非数字值被直接显示",
+        "Infinity": "无限大数值被直接显示",
+    }.get(literal, "异常字面量")
 
 
 def overall_status(issues: list[dict[str, Any]]) -> str:
