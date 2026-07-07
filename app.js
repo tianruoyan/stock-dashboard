@@ -1680,12 +1680,7 @@ function renderPremarket(data) {
       html += '<div class="tag-row">重点科技股：' + data.us_overnight.tech_stocks.map(s => `<span class="tag">${escapeHtml(formatMarketTag(s))}</span>`).join(" ") + '</div>';
     }
     if (data.us_overnight.japan_korea) {
-      const jk = data.us_overnight.japan_korea;
-      if (Array.isArray(jk)) {
-        html += '<div class="tag-row">日韩早盘：' + jk.map(s => `<span class="tag">${escapeHtml(formatMarketTag(s))}</span>`).join(" ") + '</div>';
-      } else {
-        html += '<div class="tag-row">日韩早盘：' + Object.entries(jk).map(([k, v]) => `<span class="tag">${escapeHtml(externalLabel(k))}：${escapeHtml(formatDisplayValue(v))}</span>`).join(" ") + '</div>';
-      }
+      html += renderJapanKoreaMorning(data.us_overnight.japan_korea);
     }
     if (data.us_overnight.hot_sectors) {
       html += '<div class="tag-row">热点：' + data.us_overnight.hot_sectors.map(s => `<span class="tag">${escapeHtml(s)}</span>`).join(" ") + '</div>';
@@ -1735,6 +1730,19 @@ function renderPremarket(data) {
   }
 
   el.innerHTML = html || '<div class="empty">盘前数据待更新</div>';
+}
+
+function renderJapanKoreaMorning(jk) {
+  if (typeof jk === "string") {
+    return `<div class="source-note"><b>日韩早盘：</b>${escapeHtml(truncateText(jk, 120))}</div>`;
+  }
+  if (Array.isArray(jk)) {
+    return '<div class="tag-row">日韩早盘：' + jk.map(s => `<span class="tag">${escapeHtml(formatMarketTag(s))}</span>`).join(" ") + '</div>';
+  }
+  if (jk && typeof jk === "object") {
+    return '<div class="tag-row">日韩早盘：' + Object.entries(jk).map(([k, v]) => `<span class="tag">${escapeHtml(externalLabel(k))}：${escapeHtml(formatDisplayValue(v))}</span>`).join(" ") + '</div>';
+  }
+  return "";
 }
 
 function renderPremarketDecision(data) {
