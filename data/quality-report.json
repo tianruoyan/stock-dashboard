@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-07-07T23:19:51+08:00",
+  "timestamp": "2026-07-07T23:24:08+08:00",
   "current_signal_date": "2026-07-07",
   "status": "degraded",
   "summary": "发现 5 个降级/需复核项（2 个交易阻断，2 个价格/行情复核，1 个背景复核），核心结论可看但必须按影响分层使用。",
@@ -48,6 +48,52 @@
       "message": "official_policy_global_web_scan: 通用网页检索返回信息有限；本次未据此升级任何结论，仅保留官方入口覆盖和本地盘面证据，后续需继续用部委/交易所/公司官网正式公告补验。",
       "impact_level": "background_review",
       "decision_action": "仅作政策/背景覆盖复核，不阻断盘中价格和交易触发"
+    }
+  ],
+  "action_plan": [
+    {
+      "priority": 1,
+      "impact_level": "blocking",
+      "label": "先修复阻断",
+      "file": "alert.json",
+      "code": "invalidated_source",
+      "problem": "2026-07-07 14:13:52 批次的盘中异动使用了异常行情源数据，北方华创/中微公司等日内涨跌幅失真，已撤下该批 alert，等待修复后的盘中提醒进程重新产出。",
+      "decision_action": "对应信号等待重产，页面必须显示阻断",
+      "next_step": "暂停对应交易触发；等待污染批次撤下、可信行情源恢复并重产 JSON。",
+      "unblock_condition": "quality-report blocking=0，相关文件不再 invalidated/missing。"
+    },
+    {
+      "priority": 1,
+      "impact_level": "blocking",
+      "label": "先修复阻断",
+      "file": "source-health.json",
+      "code": "source_degraded",
+      "problem": "ths_sina_or_akshare_quote_decode: akshare A股spot继续出现Can not decode value starting with character \"<\"；14:13:52 alert 批次已确认污染北方华创/中微公司等涨跌幅，已撤…",
+      "decision_action": "对应信号等待重产，页面必须显示阻断",
+      "next_step": "暂停对应交易触发；等待污染批次撤下、可信行情源恢复并重产 JSON。",
+      "unblock_condition": "quality-report blocking=0，相关文件不再 invalidated/missing。"
+    },
+    {
+      "priority": 2,
+      "impact_level": "price_review",
+      "label": "二次行情复核",
+      "file": "source-health.json",
+      "code": "source_degraded",
+      "problem": "tencent_hk_http: 接口可用，最新quote_time=2026/07/07 15:57:50；16:00后可能仍非收市竞价终值，按收盘窗口快照使用。",
+      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核",
+      "next_step": "用第二行情源复核涨跌幅、quote_time 和代表股方向；未确认前只做验证。",
+      "unblock_condition": "price_review=0 或相关来源标记 trusted/cross verified。"
+    },
+    {
+      "priority": 4,
+      "impact_level": "background_review",
+      "label": "背景来源复核",
+      "file": "source-health.json",
+      "code": "source_degraded",
+      "problem": "official_policy_global_web_scan: 通用网页检索返回信息有限；本次未据此升级任何结论，仅保留官方入口覆盖和本地盘面证据，后续需继续用部委/交易所/公司官网正式公告补验。",
+      "decision_action": "仅作政策/背景覆盖复核，不阻断盘中价格和交易触发",
+      "next_step": "补官方/交易所/公司公告来源；未补齐前不升级为核心依据。",
+      "unblock_condition": "官方来源补齐或确认不影响交易触发。"
     }
   ],
   "counts": {

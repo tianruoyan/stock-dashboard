@@ -81,6 +81,7 @@ def main() -> int:
         "status": status,
         "summary": summarize(status, issues),
         "issues": issues,
+        "action_plan": build_action_plan(issues),
         "counts": {
             "critical": sum(1 for item in issues if item["severity"] == "critical"),
             "warning": sum(1 for item in issues if item["severity"] == "warning"),
@@ -507,6 +508,11 @@ def first_text(*values: Any) -> str:
         if isinstance(value, str) and value.strip():
             return value.strip()
     return ""
+
+
+def trim(value: Any, limit: int = 180) -> str:
+    text = str(value or "").replace("\n", " ").strip()
+    return text if len(text) <= limit else text[: limit - 1] + "…"
 
 
 def validate_alert(data: Any, source_health: Any, issues: list[dict[str, Any]]) -> None:
@@ -967,6 +973,64 @@ def issue_impact(code: str, file: str, message: str) -> tuple[str, str]:
     }:
         return "signal_review", "机会信号必须降权并转入验证"
     return "background_review", "仅作背景复核，不单独阻断交易判断"
+
+
+def build_action_plan(issues: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    priority = {"blocking": 0, "price_review": 1, "signal_review": 2, "background_review": 3}
+    rows = sorted(
+        issues,
+        key=lambda item: (priority.get(item.get("impact_level"), 9), severity_rank(item.get("severity")), str(item.get("file") or "")),
+    )
+    plan: list[dict[str, Any]] = []
+    seen: set[tuple[str, str]] = set()
+    for item in rows:
+        key = (str(item.get("impact_level") or ""), str(item.get("file") or ""))
+        if key in seen:
+            continue
+        seen.add(key)
+        plan.append(action_plan_item(item))
+        if len(plan) >= 6:
+            break
+    return plan
+
+
+def action_plan_item(issue_item: dict[str, Any]) -> dict[str, Any]:
+    impact = issue_item.get("impact_level") or "background_review"
+    file = issue_item.get("file") or "unknown"
+    code = issue_item.get("code") or "unknown"
+    label = {
+        "blocking": "先修复阻断",
+        "price_review": "二次行情复核",
+        "signal_review": "信号结构复核",
+        "background_review": "背景来源复核",
+    }.get(impact, "复核")
+    next_step = {
+        "blocking": "暂停对应交易触发；等待污染批次撤下、可信行情源恢复并重产 JSON。",
+        "price_review": "用第二行情源复核涨跌幅、quote_time 和代表股方向；未确认前只做验证。",
+        "signal_review": "修正字段结构、证据、触发原因和升级条件；未通过前降权展示。",
+        "background_review": "补官方/交易所/公司公告来源；未补齐前不升级为核心依据。",
+    }.get(impact, "按问题说明复核。")
+    unblock = {
+        "blocking": "quality-report blocking=0，相关文件不再 invalidated/missing。",
+        "price_review": "price_review=0 或相关来源标记 trusted/cross verified。",
+        "signal_review": "signal_review=0，decision-feed/核心 JSON 契约通过。",
+        "background_review": "官方来源补齐或确认不影响交易触发。",
+    }.get(impact, "问题消失。")
+    return {
+        "priority": {"blocking": 1, "price_review": 2, "signal_review": 3, "background_review": 4}.get(impact, 9),
+        "impact_level": impact,
+        "label": label,
+        "file": file,
+        "code": code,
+        "problem": trim(issue_item.get("message") or "", 140),
+        "decision_action": issue_item.get("decision_action") or "",
+        "next_step": next_step,
+        "unblock_condition": unblock,
+    }
+
+
+def severity_rank(value: Any) -> int:
+    return {"critical": 0, "warning": 1, "info": 2}.get(str(value or ""), 3)
 
 
 def bad_literal_label(literal: str) -> str:

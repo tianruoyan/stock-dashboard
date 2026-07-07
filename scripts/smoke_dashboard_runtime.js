@@ -367,6 +367,7 @@ async function main() {
     issues.push(issue("critical", "automation_health_not_rendered", "自动化心跳未进入顶部质量卡", "data-quality-gate"));
   }
   checkQualityImpactRendering(qualityHtml, issues);
+  checkQualityActionPlanRendering(qualityHtml, issues);
   if (/(?:C|D)级/.test(opportunityColumn)) {
     issues.push(issue("critical", "downgraded_opportunity_rendered", "C/D级降权机会进入了机会候选栏，应转入下一步验证", "opportunity-risk-radar"));
   }
@@ -421,7 +422,8 @@ async function main() {
       "critical 监测盲区必须进入机会/风险雷达的风险栏。",
       "C/D级降权机会不得进入机会候选栏，只能进入下一步验证。",
     "机会/风险雷达必须渲染 decision-feed 的触发原因。",
-    "机会/风险雷达必须渲染决策口径摘要，先给站位和风险焦点。",
+      "机会/风险雷达必须渲染决策口径摘要，先给站位和风险焦点。",
+      "数据质量卡必须渲染 action_plan，把降级原因翻译成处置动作。",
     "机会/风险雷达必须渲染主动观察覆盖，区分主动扫描和专题继承。",
     "critical 盲区的 fallback_checks 必须渲染到机会/风险雷达。",
     "机会候选被降权转验证时，必须渲染升级排序和升级条件。",
@@ -878,6 +880,19 @@ function firstActionText(value) {
   const first = value.find(Boolean);
   if (!first) return "";
   return typeof first === "string" ? first : (first.text || first.action || first.note || first.name || "");
+}
+
+function checkQualityActionPlanRendering(qualityHtml, issues) {
+  const report = readJsonIfExists("data/quality-report.json");
+  const plan = Array.isArray(report.action_plan) ? report.action_plan : [];
+  if (!plan.length) return;
+  const rendered = normalizeRenderedText(qualityHtml);
+  const first = plan[0] || {};
+  for (const snippet of [first.label, stableSnippet(first.next_step)].filter(Boolean)) {
+    if (!rendered.includes(snippet)) {
+      issues.push(issue("critical", "quality_action_plan_not_rendered", `数据质量卡未显示处置计划：${snippet}`, "data-quality-gate"));
+    }
+  }
 }
 
 function firstIndexName(intraday) {

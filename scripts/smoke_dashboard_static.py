@@ -406,6 +406,17 @@ def check_quality_report(issues: list[dict[str, Any]]) -> None:
     for key in ("blocking", "price_review", "signal_review", "background_review"):
         if key not in counts:
             issues.append(issue("warning", "data/quality-report.json", "missing_impact_count", f"counts.{key} 缺失"))
+    plan = data.get("action_plan")
+    if not isinstance(plan, list):
+        issues.append(issue("warning", "data/quality-report.json", "missing_action_plan", "action_plan 缺失或不是数组"))
+    else:
+        for index, item in enumerate(plan[:4]):
+            if not isinstance(item, dict):
+                issues.append(issue("warning", "data/quality-report.json", "bad_action_plan_item", f"action_plan[{index}] 不是对象"))
+                continue
+            for key in ("label", "file", "next_step", "unblock_condition", "impact_level"):
+                if item.get(key) in (None, "", []):
+                    issues.append(issue("warning", "data/quality-report.json", "missing_action_plan_field", f"action_plan[{index}].{key} 缺失"))
 
 
 def check_theme_shifts(issues: list[dict[str, Any]]) -> None:

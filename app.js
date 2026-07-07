@@ -415,6 +415,12 @@ function renderDataQualityGate() {
       <span>${escapeHtml(card.detail)}</span>
     </div>`).join("")}</div>
     ${report.impactBadges?.length ? `<div class="quality-impact-row">${report.impactBadges.map(item => `<span class="${escapeHtml(item.cls)}">${escapeHtml(item.text)}</span>`).join("")}</div>` : ""}
+    ${report.actionPlan?.length ? `<div class="quality-action-plan">${report.actionPlan.slice(0, 3).map(item => `
+      <div>
+        <span>${escapeHtml(item.label || "处置")}</span>
+        <b>${escapeHtml(item.file || "unknown")}：${escapeHtml(item.next_step || item.decision_action || "")}</b>
+        <em>${escapeHtml(item.unblock_condition || "")}</em>
+      </div>`).join("")}</div>` : ""}
     ${report.issues.length ? `<div class="quality-issues">${report.issues.slice(0, 4).map(item => `<span>${escapeHtml(item)}</span>`).join("")}</div>` : ""}`;
 }
 
@@ -460,6 +466,7 @@ function buildDataQualityReport() {
       impactDetail: impactSummary.detail,
       impactCls: impactSummary.cls,
       impactBadges: impactSummary.badges,
+      actionPlan: audited.action_plan || [],
       sectionTitle: sectionSummary.title,
       sectionDetail: sectionSummary.detail,
       sectionCls: sectionSummary.cls,
