@@ -8,6 +8,7 @@ const OUT = path.join(ROOT, "data", "runtime-smoke-report.json");
 const BAD_LITERALS = ["[object Object]", "undefined", "None%", "NaN", "Infinity"];
 const MOJIBAKE_RE = /[�ÃÂ]|(?:æ|å|ç|è|é)[A-Za-z0-9_\- ]{0,8}/;
 const RAW_SOURCE_ERROR_RE = /Can not decode value starting with|JSON decode failed|proxy disconnect|failed with/i;
+const TECHNICAL_SOURCE_ID_RE = /\b(ths_sina_or_akshare_quote_decode|tencent_hk_http|eastmoney_hk_akshare|official_policy_global_web_scan)\b/;
 const OPTIONAL_FILES = new Set(["data/signal-review.json"]);
 const REQUIRED_RENDER_TARGETS = [
   "dashboard-control",
@@ -398,6 +399,9 @@ async function main() {
   if (RAW_SOURCE_ERROR_RE.test(wholePage)) {
     issues.push(issue("critical", "raw_source_error_rendered", "页面运行后出现底层英文源错误，需转成中文复核提示"));
   }
+  if (TECHNICAL_SOURCE_ID_RE.test(wholePage)) {
+    issues.push(issue("critical", "technical_source_id_rendered", "页面运行后出现技术源 ID，需转成中文数据源名称"));
+  }
   const statusText = document.getElementById("status")?.textContent || "";
   if (/JS ERROR/.test(statusText)) {
     issues.push(issue("critical", "window_onerror", statusText, "status"));
@@ -423,6 +427,7 @@ async function main() {
       "使用本地真实 JSON 执行 app.js 的 updateAll 渲染路径。",
       "关键决策区块运行后必须非空。",
       "拦截 console error、JS ERROR、对象直出、未定义值、非数字值和疑似乱码。",
+      "全页面不得展示底层英文源错误或技术源 ID，必须转成中文复核提示。",
       "critical 监测盲区必须进入机会/风险雷达的风险栏。",
       "C/D级降权机会不得进入机会候选栏，只能进入下一步验证。",
     "机会/风险雷达必须渲染 decision-feed 的触发原因。",

@@ -2,6 +2,7 @@
 
 | Display Version | Date | Edition | Tag / Commit | Summary | Rollback Note |
 |---|---:|---:|---|---|---|
+| 2026-07-07 第102版｜技术源ID门禁 | 2026-07-07 | 第102版 | tag: `v2026.07.07-m102-source-id-gate` | 运行时门禁新增全页面技术源 ID 拦截：页面渲染后不得出现 `ths_sina_or_akshare_quote_decode`、`tencent_hk_http`、`eastmoney_hk_akshare`、`official_policy_global_web_scan` 等内部源名，必须显示中文数据源名称或中文复核提示。 | 回滚到第101版可用 `git checkout v2026.07.07-m101-source-label-cleanup`，或回滚到本版本 tag。 |
 | 2026-07-07 第101版｜源名中文化 | 2026-07-07 | 第101版 | tag: `v2026.07.07-m101-source-label-cleanup` | 用户侧展示清洗新增源名翻译：`ths_sina_or_akshare_quote_decode`、`tencent_hk_http`、`eastmoney_hk_akshare` 等技术 ID 在页面中显示为 A股行情源、港股腾讯报价、港股东方财富/akshare 等中文名称；运行时门禁从局部扩展为全页面拦截底层英文源错误。 | 回滚到第100版可用 `git checkout v2026.07.07-m100-radar-source-cleanup`，或回滚到本版本 tag。 |
 | 2026-07-07 第100版｜雷达源错误清理 | 2026-07-07 | 第100版 | tag: `v2026.07.07-m100-radar-source-cleanup` | 在第99版基础上继续清理机会/风险雷达卡片详情：触发、缺口、降权、证据、验证、证伪等行统一经过用户侧文案清洗，底层 `Can not decode`、`JSON decode failed`、`proxy disconnect` 不再直出；运行时门禁新增雷达原始源错误拦截。 | 回滚到第99版可用 `git checkout v2026.07.07-m99-brief-quality-actions`，或回滚到本版本 tag。 |
 | 2026-07-07 第99版｜决策口径带处置动作 | 2026-07-07 | 第99版 | tag: `v2026.07.07-m99-brief-quality-actions` | `decision-feed.decision_brief` 新增 `quality_actions`，把 `quality-report.action_plan` 中最优先的处置动作同步到机会/风险雷达顶部；雷达“决策口径”旁新增“处置动作”，直接告诉用户先修复/复核什么。静态和运行时门禁要求数据降级时必须产出并渲染处置动作。 | 回滚到第98版可用 `git checkout v2026.07.07-m98-section-source-cleanup`，或回滚到本版本 tag。 |
