@@ -268,11 +268,10 @@ function renderDashboardControl() {
 
 function dashboardMarketThemeSummary(intraday, postmarket) {
   const rows = collectDashboardThemeRows(intraday, postmarket);
-  const priority = uniqueList(rows
+  const priorityRows = rows
     .filter(row => row.bucket !== "risk" && row.priorityEligible)
-    .sort((a, b) => b.score - a.score)
-    .map(row => row.display))
-    .slice(0, 4);
+    .sort((a, b) => b.score - a.score);
+  const priority = selectPriorityThemeDisplays(priorityRows, 4);
   const avoid = uniqueList(rows
     .filter(row => row.bucket === "risk")
     .sort((a, b) => b.score - a.score)
@@ -291,6 +290,20 @@ function dashboardMarketThemeSummary(intraday, postmarket) {
   return { priority: fallbackPriority, avoid, related };
 }
 
+function selectPriorityThemeDisplays(rows, limit) {
+  const selected = [];
+  let semiconductorCount = 0;
+  for (const row of rows) {
+    if (/^半导体/.test(row.display)) {
+      if (semiconductorCount >= 2) continue;
+      semiconductorCount += 1;
+    }
+    if (!selected.includes(row.display)) selected.push(row.display);
+    if (selected.length >= limit) break;
+  }
+  return selected;
+}
+
 function collectDashboardThemeRows(intraday, postmarket) {
   const feed = currentDecisionFeed();
   const shifts = cached("data/theme-shifts.json");
@@ -302,7 +315,7 @@ function collectDashboardThemeRows(intraday, postmarket) {
     ...(Array.isArray(shifts?.shifts) ? shifts.shifts : []).map(item => ({ item, source: "变化", base: 58 }))
   ];
   const systemNoise = /数据质量|全市场亏钱效应|仓位|风控|实时信号|盘中异动|替代观察/;
-  const rows = raw.map(({ item, source, base }) => {
+  const rows = raw.flatMap(({ item, source, base }) => {
     const name = themeDisplayName(item);
     const status = trendStatus(item);
     const evidence = Array.isArray(item?.evidence) ? item.evidence : [];
@@ -318,7 +331,7 @@ function collectDashboardThemeRows(intraday, postmarket) {
     if (bucket === "risk") score += 6;
     const grade = String(item?.signal_grade || "").toUpperCase();
     const priorityEligible = ["盘中", "盘后"].includes(source) || (source === "机会" && !["D"].includes(grade) && !/^主线变化/.test(String(item?.title || "")));
-    return {
+    const baseRow = {
       display: name,
       bucket,
       score,
@@ -326,8 +339,49 @@ function collectDashboardThemeRows(intraday, postmarket) {
       related: themeSubDirections(item),
       priorityEligible
     };
+    return expandDashboardThemeRow(baseRow);
   }).filter(Boolean);
   return dedupeThemeRows(rows);
+}
+
+function expandDashboardThemeRow(row) {
+  if (!/半导体/.test(row.text)) return [row];
+  const subRows = semiconductorStandardRows(row);
+  return subRows.length ? subRows : [row];
+}
+
+function semiconductorStandardRows(row) {
+  const text = row.text;
+  const rules = [
+    {
+      display: "半导体硅片",
+      re: /硅片|有研硅|沪硅产业|TCL中环|上海合晶|中环/,
+      add: 12
+    },
+    {
+      display: "半导体封装",
+      re: /封装|华天科技|长电科技|甬矽电子|通富微电|晶方科技/,
+      add: 10
+    },
+    {
+      display: "半导体设备",
+      re: /半导体设备|设备平台|北方华创|中微公司|华海清科|盛美上海|长川科技|芯源微|拓荆科技|正帆科技/,
+      add: /未形成一致抢筹|中军转弱|不强|分化/.test(text) ? -4 : 8
+    },
+    {
+      display: "半导体材料/零部件",
+      re: /材料|零部件|雅克科技|安集科技|江丰电子|富创精密|新莱应材|中巨芯|南大光电|晶瑞电材|先锋精科/,
+      add: /中军转弱|分化/.test(text) ? -2 : 8
+    }
+  ];
+  return rules
+    .filter(rule => rule.re.test(text))
+    .map(rule => ({
+      ...row,
+      display: rule.display,
+      score: row.score + rule.add,
+      related: uniqueList([rule.display, ...row.related.filter(tag => tag !== "半导体设备" && tag !== "半导体材料")])
+    }));
 }
 
 function dedupeThemeRows(rows) {
@@ -2797,7 +2851,6 @@ function themeDisplayName(item) {
   if (/汽车零部件|汽车零部|机器人|通用设备|自动化设备/.test(text) && /机器人|通用设备|自动化设备/.test(text)) {
     return "机器人/工业自动化";
   }
-  if (/半导体\/硅片\/封装|硅片\/封装\/设备零部件|半导体.*核心抱团/.test(text)) return "半导体核心链";
   if (/电子布|玻纤|PCB|覆铜板/.test(text)) return "PCB材料链";
   if (/半导体设备|CMP设备|刻蚀|沉积|清洗/.test(text)) return "半导体设备";
   if (/半导体材料|光刻胶|硅片|硅材料|CMP抛光|靶材/.test(text)) return "半导体材料";

@@ -748,6 +748,12 @@ function checkDashboardThemeCards(document, issues) {
   if (hasSemiconductor && /优先方向老登风格切换/.test(rendered)) {
     issues.push(issue("critical", "dashboard_theme_priority_wrong", "盘中/盘后存在半导体观察线时，优先方向不应被老登风格观察项覆盖", "dashboard-control"));
   }
+  if (/优先方向半导体核心链/.test(rendered)) {
+    issues.push(issue("critical", "dashboard_semiconductor_too_broad", "优先方向不应使用半导体核心链这种母题材，应拆到硅片/封装/设备/材料零部件等细分方向", "dashboard-control"));
+  }
+  if (hasSemiconductor && !/半导体硅片|半导体封装|半导体设备|半导体材料\/零部件/.test(rendered)) {
+    issues.push(issue("critical", "dashboard_semiconductor_subtheme_missing", "存在半导体主线时，总控缺少半导体细分方向", "dashboard-control"));
+  }
 }
 
 function checkFallbackChecksRendering(radarHtml, coverage, issues) {
