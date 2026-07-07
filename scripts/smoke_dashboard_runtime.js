@@ -370,6 +370,7 @@ async function main() {
     issues.push(issue("critical", "downgraded_opportunity_rendered", "C/D级降权机会进入了机会候选栏，应转入下一步验证", "opportunity-risk-radar"));
   }
   checkDecisionTriggerRendering(radarHtml, issues);
+  checkFallbackChecksRendering(radarHtml, coverage, issues);
   checkPremarketJapanKoreaGuard(document, issues);
   for (const literal of BAD_LITERALS) {
     if (wholePage.includes(literal)) {
@@ -407,6 +408,7 @@ async function main() {
       "critical 监测盲区必须进入机会/风险雷达的风险栏。",
       "C/D级降权机会不得进入机会候选栏，只能进入下一步验证。",
       "机会/风险雷达必须渲染 decision-feed 的触发原因。",
+      "critical 盲区的 fallback_checks 必须渲染到机会/风险雷达。",
       "日韩早盘源降级时必须显示清晰降级提示和待复核清单，不得展示原始乱码/未核实字符串。",
       "核心 JSON 字段有数据时，页面对应区块必须渲染关键结论或代表项。",
       "确认区块健康贴条能在运行时生成。"
@@ -483,6 +485,22 @@ function checkDecisionTriggerRendering(radarHtml, issues) {
   for (const snippet of mustRender) {
     if (!rendered.includes(snippet)) {
       issues.push(issue("critical", "trigger_reason_not_rendered", `触发原因未渲染：${snippet}`, "opportunity-risk-radar"));
+    }
+  }
+}
+
+function checkFallbackChecksRendering(radarHtml, coverage, issues) {
+  const blindSpots = Array.isArray(coverage.blind_spots) ? coverage.blind_spots : [];
+  const rendered = normalizeRenderedText(radarHtml);
+  for (const item of blindSpots) {
+    if (!item || item.severity !== "critical") continue;
+    const checks = Array.isArray(item.fallback_checks) ? item.fallback_checks : [];
+    if (!checks.length) continue;
+    const mustRender = checks.slice(0, 3).map(check => stableSnippet(check)).filter(Boolean);
+    for (const snippet of mustRender) {
+      if (!rendered.includes(snippet)) {
+        issues.push(issue("critical", "fallback_checks_not_rendered", `核心盲区替代检查未渲染：${snippet}`, "opportunity-risk-radar"));
+      }
     }
   }
 }
