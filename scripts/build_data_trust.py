@@ -102,7 +102,8 @@ def trust_row(spec: dict[str, Any], data: Any, current_date: str, quality_issues
 
     reasons = clean_list(reasons)
     session = session_relevance(spec, status, phase)
-    freshness = freshness_state(spec, ts, status, session["relevance"], now)
+    freshness_limit = effective_freshness_minutes(spec, phase)
+    freshness = freshness_state(spec, ts, status, session["relevance"], phase, now)
     if freshness["status"] == "stale" and status not in {"missing", "invalidated", "stale"}:
         status = worse_status(status, "degraded")
         reasons = clean_list([*reasons, freshness["reason"]])
@@ -117,7 +118,7 @@ def trust_row(spec: dict[str, Any], data: Any, current_date: str, quality_issues
         "session_action": session["action"],
         "session_reason": session["reason"],
         "freshness_status": freshness["status"],
-        "freshness_minutes": spec.get("freshness_minutes", 0),
+        "freshness_minutes": freshness_limit,
         "age_minutes": freshness["age_minutes"],
         "freshness_action": freshness["action"],
         "freshness_reason": freshness["reason"],
@@ -223,7 +224,7 @@ def trust_score(status: str, reasons: list[str], relevance: str = "current", fre
     return max(0, min(100, base - min(20, len(reasons) * 4) - session_penalty - freshness_penalty))
 
 
-def freshness_state(spec: dict[str, Any], ts: Any, status: str, relevance: str, now: datetime) -> dict[str, Any]:
+def freshness_state(spec: dict[str, Any], ts: Any, status: str, relevance: str, phase: str, now: datetime) -> dict[str, Any]:
     if status in {"missing", "invalidated"}:
         return {
             "status": "blocked",
@@ -240,7 +241,7 @@ def freshness_state(spec: dict[str, Any], ts: Any, status: str, relevance: str, 
             "reason": "缺少可解析 timestamp",
         }
     age = max(0, int((now - parsed).total_seconds() // 60))
-    limit = int(spec.get("freshness_minutes") or 0)
+    limit = effective_freshness_minutes(spec, phase)
     label = spec.get("label", "该文件")
     if relevance != "current":
         return {
@@ -269,6 +270,16 @@ def freshness_state(spec: dict[str, Any], ts: Any, status: str, relevance: str, 
         "action": "新鲜度正常",
         "reason": f"{label}刷新延迟 {age} 分钟，未超过 {limit} 分钟 SLA",
     }
+
+
+def effective_freshness_minutes(spec: dict[str, Any], phase: str) -> int:
+    session = spec.get("session")
+    base = int(spec.get("freshness_minutes") or 0)
+    if session == "postmarket" and phase in {"evening", "overnight", "premarket"}:
+        return max(base, 1080)
+    if session == "evening" and phase in {"overnight", "premarket"}:
+        return max(base, 900)
+    return base
 
 
 def parse_timestamp(value: Any) -> datetime | None:
@@ -330,8 +341,8 @@ def session_relevance(spec: dict[str, Any], status: str, phase: str) -> dict[str
         }
     if session == "decision":
         return {
-            "relevance": "current" if phase in {"premarket", "morning", "midday", "afternoon", "postmarket"} else "historical",
-            "action": "当前决策流" if phase in {"premarket", "morning", "midday", "afternoon", "postmarket"} else "隔夜前需重刷",
+            "relevance": "current" if phase in {"premarket", "morning", "midday", "afternoon", "postmarket", "evening"} else "historical",
+            "action": "当前决策流" if phase in {"premarket", "morning", "midday", "afternoon", "postmarket", "evening"} else "隔夜前需重刷",
             "reason": "机会风险流随核心数据刷新，需结合文件可信度使用",
         }
     matrix = {
