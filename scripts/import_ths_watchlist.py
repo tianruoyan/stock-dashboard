@@ -9,6 +9,7 @@ import json
 import os
 import re
 import struct
+import subprocess
 import sys
 import urllib.parse
 import urllib.request
@@ -18,6 +19,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 WATCHLIST_PATH = ROOT / "config" / "watchlist.json"
 PUSH_MARKER = ROOT / ".push-now"
+AUDIT_SCRIPT = ROOT / "scripts" / "audit_dashboard_data.py"
 DEFAULT_SOURCE = Path.home() / "Library" / "Mobile Documents" / "com~apple~CloudDocs" / "同花顺自选股.txt"
 THS_COOKIE_PATH = (
     Path.home()
@@ -282,6 +284,12 @@ def save_json(path, data):
     tmp.replace(path)
 
 
+def run_quality_audit():
+    if not AUDIT_SCRIPT.exists():
+        return
+    subprocess.run([sys.executable, str(AUDIT_SCRIPT)], cwd=str(ROOT), check=False)
+
+
 def enrich(item):
     if item.get("code") and item.get("name"):
         code = normalize_code(item["code"])
@@ -401,6 +409,7 @@ def main():
         print(json.dumps({"source": import_source, "found": len(imported), "added": added, "updated": updated, "removed": removed, "mode": "mirror"}, ensure_ascii=False))
         return 0
     save_json(WATCHLIST_PATH, watchlist)
+    run_quality_audit()
     PUSH_MARKER.touch()
     print(json.dumps({"source": import_source, "found": len(imported), "added": added, "updated": updated, "removed": removed, "mode": "mirror", "saved": str(WATCHLIST_PATH)}, ensure_ascii=False))
     return 0

@@ -209,13 +209,15 @@ title: 分析模型说明书
 
 **Codex 职责（写 + 可选推）：**
 1. 产出 JSON 时先写临时文件，写完后 `mv` 覆盖正式文件
-2. 所有本轮 JSON 写完后，创建 `.push-now` 信号文件
-3. 尝试 git push（静默，失败不报错）：成功最好，不成功 Cola 会补推
+2. 所有本轮 JSON 写完后，执行 `python3 scripts/audit_dashboard_data.py`，更新 `data/quality-report.json`
+3. 若审计为 critical：不得发布，保留本地报告并修数据
+4. 若审计不是 critical：创建 `.push-now` 信号文件
+5. 尝试 `scripts/push_with_audit.sh`（内部会再次审计并静默 push）：成功最好，不成功 Cola 会补推
 
 **Cola 职责（推 + 兜底）：**
 1. 每 2 分钟扫描一次仓库
-2. 若发现 `.push-now`：立即 push（重试 3 次），成功后删信号
-3. 若 `.push-now` 不存在但有变更：照样 push（兜底）
+2. 若发现 `.push-now`：调用 `scripts/push_with_audit.sh`，审计通过才 push，成功后删信号
+3. 若 `.push-now` 不存在但有变更：也先调用 `scripts/push_with_audit.sh`（兜底）
 4. 盘前 9:16/9:26 定点推送
 
 **双保险设计：**
@@ -225,9 +227,9 @@ title: 分析模型说明书
 
 **同步时序：**
 ```
-Codex 写 JSON → 创建 .push-now
+Codex 写 JSON → audit_dashboard_data.py → 非 critical → 创建 .push-now
                     ↓ （下次 Cola 扫描，最多 2 分钟）
-              Cola 检测到 → 立即 push（重试 3 次）
+              Cola 检测到 → push_with_audit.sh → git push
                     ↓ （GitHub Pages 构建，1-2 分钟）
               线上更新
 ```
