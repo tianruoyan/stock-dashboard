@@ -19,7 +19,6 @@ CRITICAL_IDS = {
     "status",
     "lastUpdate",
     "dashboard-control",
-    "data-quality-gate",
     "opportunity-risk-radar",
     "watchlist-decision",
     "portfolio-risk",

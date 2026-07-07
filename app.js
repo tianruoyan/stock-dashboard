@@ -644,23 +644,7 @@ function dataFreshness(timestamp) {
 function renderDataQualityGate() {
   const el = document.getElementById("data-quality-gate");
   if (!el) return;
-  const report = buildDataQualityReport();
-  el.innerHTML = renderEvidenceStatus(report);
-}
-
-function renderEvidenceStatus(report) {
-  const blocked = /阻断|不可用/.test(`${report.impactTitle || ""} ${report.summary || ""} ${report.sectionDetail || ""}`);
-  const stale = /上一阶段|待产出|超时|历史/.test(`${report.fileTrustDetail || ""} ${report.sectionDetail || ""} ${report.automationDetail || ""}`);
-  const title = blocked ? "依据需谨慎" : (report.cls === "good" && !stale ? "依据可参考" : "依据待确认");
-  const detail = blocked
-    ? "盘中异动未恢复，下面只解释结论依据，不作为买卖触发。"
-    : (stale ? "部分材料来自上一阶段，先看是否被新盘面验证。" : "关键材料已接入，仍按验证条件跟踪。");
-  const latest = formatUpdateTime(report.latest) || "待更新";
-  return `<div class="radar-gate ${blocked ? "risk" : (stale ? "warn" : "good")}">
-    <span>依据状态</span>
-    <b>${escapeHtml(title)}</b>
-    <em>${escapeHtml(detail)} 最近依据：${escapeHtml(latest)}</em>
-  </div>`;
+  el.innerHTML = "";
 }
 
 function traderNoticeCards(report) {
@@ -1023,13 +1007,8 @@ function renderOpportunityRiskRadar() {
   const el = document.getElementById("opportunity-risk-radar");
   if (!el) return;
   const radar = buildOpportunityRiskRadar();
-  const gate = `<div class="radar-gate neutral">
-    <span>本区作用</span>
-    <b>解释今日结论</b>
-    <em>只列影响结论的机会、风险和改变判断的信号；具体动作以前面的今日结论为准。</em>
-  </div>`;
   const brief = renderDecisionBrief(radar.decisionBrief);
-  el.innerHTML = `${gate}${brief}<div class="radar-grid">
+  el.innerHTML = `${brief}<div class="radar-grid">
     <div class="radar-column">
       <div class="radar-head"><b>可跟踪机会</b><span>${radar.opportunities.length ? "能改变结论的正向线索" : "暂无高置信机会"}</span></div>
       ${radar.opportunities.length ? radar.opportunities.map(renderRadarItem).join("") : '<div class="empty-sm">等待主线扩散或观察池个股确认</div>'}

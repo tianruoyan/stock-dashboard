@@ -12,7 +12,6 @@ const TECHNICAL_SOURCE_ID_RE = /\b(ths_sina_or_akshare_quote_decode|tencent_hk_h
 const OPTIONAL_FILES = new Set(["data/signal-review.json"]);
 const REQUIRED_RENDER_TARGETS = [
   "dashboard-control",
-  "data-quality-gate",
   "opportunity-risk-radar",
   "watchlist-decision",
   "portfolio-risk",
@@ -365,7 +364,6 @@ async function main() {
   if (Array.isArray(themeShifts.shifts) && themeShifts.shifts.length && !radarHtml.includes("主线变化")) {
     issues.push(issue("critical", "theme_shift_not_rendered", "主线变化报告未进入机会/风险雷达", "opportunity-risk-radar"));
   }
-  const qualityHtml = document.getElementById("data-quality-gate")?.collectHtml() || "";
   if (/(?:C|D)级/.test(opportunityColumn)) {
     issues.push(issue("critical", "low_quality_opportunity_rendered", "C/D级机会进入了机会候选栏，应转入下一步验证", "opportunity-risk-radar"));
   }
@@ -567,7 +565,6 @@ function checkDecisionBriefRendering(radarHtml, issues) {
 function checkTraderViewLanguage(document, issues) {
   const targets = [
     ["dashboard-control", "今日结论"],
-    ["data-quality-gate", "使用提醒"],
     ["opportunity-risk-radar", "判断依据"],
     ["portfolio-risk", "仓位提示"]
   ];
@@ -815,12 +812,12 @@ function checkRadarGateRendering(document, radarHtml, issues) {
   });
   if (actionable.length) return;
   const rendered = normalizeRenderedText(radarHtml);
-  for (const snippet of ["本区作用", "解释今日结论", "判断依据"]) {
+  for (const snippet of ["判断依据", "可跟踪机会", "暂不碰原因", "改变判断的信号"]) {
     if (!rendered.includes(snippet)) {
       issues.push(issue("critical", "radar_gate_not_rendered", `缺少判断依据区说明：${snippet}`, "opportunity-risk-radar"));
     }
   }
-  for (const oldLabel of ["今天怎么做", "当前判断", "机会候选", "风险提示", "下一步验证"]) {
+  for (const oldLabel of ["依据状态", "本区作用", "今天怎么做", "当前判断", "机会候选", "风险提示", "下一步验证"]) {
     if (rendered.includes(oldLabel)) {
       issues.push(issue("critical", "radar_old_decision_label_rendered", `判断依据区仍展示旧总控式栏目：${oldLabel}`, "opportunity-risk-radar"));
     }
