@@ -6,6 +6,7 @@ const FILES = [
   "data/postmarket.json",
   "data/evening-sentiment.json",
   "data/topics.json",
+  "data/quality-report.json",
   "data/signal-review.json",
   "config/watchlist.json",
   "config/alert-config.json",
@@ -42,9 +43,10 @@ async function updateAll() {
         render(file, data);
       }
     } catch (e) {
-      if (file.includes("signal-review")) {
+      if (file.includes("signal-review") || file.includes("quality-report")) {
         cache[file] = null;
-        renderSignalReview(null);
+        if (file.includes("signal-review")) renderSignalReview(null);
+        if (file.includes("quality-report")) renderDataQualityGate();
       } else {
         console.error("load failed:", file);
       }
@@ -65,6 +67,7 @@ function render(file, data) {
   else if (file === "data/postmarket.json") renderPostmarket(data);
   else if (file === "data/evening-sentiment.json") renderEvening(data);
   else if (file === "data/topics.json") renderTopics(data);
+  else if (file === "data/quality-report.json") renderDataQualityGate();
   else if (file === "data/signal-review.json") renderSignalReview(data);
   else if (file === "config/watchlist.json") renderWatchlistDecision();
   else if (file === "config/alert-config.json") renderPortfolioRisk();
@@ -249,6 +252,36 @@ function renderDataQualityGate() {
 }
 
 function buildDataQualityReport() {
+  const audited = cached("data/quality-report.json");
+  if (audited?.status && audited.current_signal_date === currentSignalDate()) {
+    const latest = latestTimestamp([
+      cached("data/intraday.json"),
+      cached("data/premarket.json"),
+      cached("data/midday.json"),
+      cached("data/postmarket.json"),
+      cached("data/topics.json"),
+      cached("data/alert.json")
+    ].filter(Boolean));
+    const statusMap = {
+      ok: { level: "可用", cls: "good" },
+      degraded: { level: "降级可用", cls: "neutral" },
+      critical: { level: "谨慎使用", cls: "warn" }
+    };
+    const mapped = statusMap[audited.status] || statusMap.degraded;
+    const issues = (audited.issues || []).map(item => item.message || item.code || "").filter(Boolean);
+    const degraded = (audited.issues || [])
+      .filter(item => item.code === "source_degraded")
+      .map(item => item.message || "")
+      .filter(Boolean);
+    return {
+      level: mapped.level,
+      cls: mapped.cls,
+      latest,
+      degraded,
+      issues,
+      summary: audited.summary || "数据审计报告已接入"
+    };
+  }
   const files = [
     ["盘中", cached("data/intraday.json")],
     ["盘前", cached("data/premarket.json")],

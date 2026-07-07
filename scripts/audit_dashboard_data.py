@@ -1,0 +1,221 @@
+#!/usr/bin/env python3
+from __future__ import annotations
+
+import json
+import math
+import re
+from datetime import datetime, timezone, timedelta
+from pathlib import Path
+from typing import Any
+
+
+ROOT = Path(__file__).resolve().parents[1]
+DATA_DIR = ROOT / "data"
+CONFIG_DIR = ROOT / "config"
+OUT = DATA_DIR / "quality-report.json"
+TZ = timezone(timedelta(hours=8))
+BAD_LITERALS = ("[object Object]", "undefined", "None%", "NaN", "Infinity")
+REQUIRED_JSON = (
+    "alert.json",
+    "intraday.json",
+    "premarket.json",
+    "midday.json",
+    "postmarket.json",
+    "topics.json",
+    "source-health.json",
+)
+
+
+def main() -> int:
+    files = load_json_files()
+    issues: list[dict[str, Any]] = []
+    watch_names = load_watchlist_names()
+    current_date = latest_signal_date(files)
+
+    for name in REQUIRED_JSON:
+        if name not in files:
+            issues.append(issue("critical", name, "missing_file", "必需数据文件缺失"))
+
+    for name, data in files.items():
+        text = (DATA_DIR / name).read_text(encoding="utf-8")
+        for literal in BAD_LITERALS:
+            if literal in text:
+                issues.append(issue("critical", name, "bad_literal", f"发现异常文本 {literal}"))
+        ts = data.get("timestamp") if isinstance(data, dict) else None
+        if name in REQUIRED_JSON:
+            if not ts:
+                issues.append(issue("warning", name, "missing_timestamp", "缺少 timestamp"))
+            elif signal_date(ts) != current_date:
+                severity = "info" if name in {"evening-sentiment.json", "requirements.json"} else "warning"
+                issues.append(issue(severity, name, "stale_timestamp", f"时间戳不是当前交易日：{ts}"))
+
+        if isinstance(data, dict) and data.get("source_status") == "invalidated":
+            issues.append(issue("warning", name, "invalidated_source", data.get("note", "数据批次已撤下")))
+
+        scan_change_pct(name, data, watch_names, issues)
+
+    validate_postmarket(files.get("postmarket.json"), issues)
+    validate_evening(files.get("evening-sentiment.json"), issues, current_date)
+    validate_source_health(files.get("source-health.json"), issues)
+
+    status = overall_status(issues)
+    report = {
+        "timestamp": now_iso(),
+        "current_signal_date": current_date,
+        "status": status,
+        "summary": summarize(status, issues),
+        "issues": issues,
+        "counts": {
+            "critical": sum(1 for item in issues if item["severity"] == "critical"),
+            "warning": sum(1 for item in issues if item["severity"] == "warning"),
+            "info": sum(1 for item in issues if item["severity"] == "info"),
+        },
+        "rules": [
+            "异常文本、JSON解析失败、必需文件缺失为 critical。",
+            "当日核心文件时间戳不一致、数据源降级、alert污染撤下为 warning。",
+            "晚间舆情过期只标 info；前端不得把非当日晚间舆情用于今日总控。",
+            "观察池个股出现异常涨跌幅时进入 warning，必须回查行情源。",
+        ],
+    }
+    OUT.write_text(json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    print(f"{status}: {report['summary']}")
+    return 1 if status == "critical" else 0
+
+
+def load_json_files() -> dict[str, Any]:
+    files: dict[str, Any] = {}
+    for path in sorted(DATA_DIR.glob("*.json")):
+        try:
+            files[path.name] = json.loads(path.read_text(encoding="utf-8"))
+        except Exception as exc:
+            files[path.name] = {}
+            # Parse errors are reported in a second pass using a synthetic issue.
+            print(f"PARSE_ERROR {path.name}: {exc}")
+    return files
+
+
+def load_watchlist_names() -> set[str]:
+    try:
+        data = json.loads((CONFIG_DIR / "watchlist.json").read_text(encoding="utf-8"))
+    except Exception:
+        return set()
+    names: set[str] = set()
+    for group in ("watch_only", "small_deng", "old_deng"):
+        for stock in data.get(group, {}).get("stocks", []):
+            name = str(stock.get("name", "")).replace("XD", "").strip()
+            if name:
+                names.add(name)
+    return names
+
+
+def latest_signal_date(files: dict[str, Any]) -> str:
+    dates = []
+    for name in ("alert.json", "intraday.json", "midday.json", "postmarket.json", "topics.json"):
+        ts = files.get(name, {}).get("timestamp") if isinstance(files.get(name), dict) else None
+        date = signal_date(ts)
+        if date:
+            dates.append(date)
+    return sorted(dates)[-1] if dates else now_iso()[:10]
+
+
+def signal_date(value: Any) -> str:
+    match = re.search(r"\d{4}-\d{2}-\d{2}", str(value or ""))
+    return match.group(0) if match else ""
+
+
+def scan_change_pct(name: str, obj: Any, watch_names: set[str], issues: list[dict[str, Any]], path: str = "") -> None:
+    if isinstance(obj, dict):
+        item_name = str(obj.get("name") or obj.get("sector") or obj.get("title") or "").replace("XD", "")
+        if "change_pct" in obj:
+            try:
+                pct = float(obj["change_pct"])
+                if not math.isfinite(pct):
+                    raise ValueError("not finite")
+                if item_name in watch_names and abs(pct) > 20.5:
+                    issues.append(issue("warning", name, "watchlist_extreme_change", f"{item_name} 涨跌幅 {pct}，需回查源", path))
+                if item_name in watch_names and -10.9 <= pct <= -9.8:
+                    issues.append(issue("warning", name, "watchlist_limit_down_like", f"{item_name} 接近跌停 {pct}，需确认是否真实", path))
+            except Exception:
+                issues.append(issue("critical", name, "bad_change_pct", f"{item_name or path} change_pct 非数字：{obj['change_pct']}", path))
+        for key, value in obj.items():
+            scan_change_pct(name, value, watch_names, issues, f"{path}.{key}" if path else key)
+    elif isinstance(obj, list):
+        for index, value in enumerate(obj):
+            scan_change_pct(name, value, watch_names, issues, f"{path}[{index}]")
+
+
+def validate_postmarket(data: Any, issues: list[dict[str, Any]]) -> None:
+    if not isinstance(data, dict):
+        return
+    patch = data.get("closing_auction_patch") or {}
+    for key in ("summary", "signals", "impact", "watch_next_day"):
+        if not patch.get(key):
+            issues.append(issue("warning", "postmarket.json", "missing_closing_patch_field", f"closing_auction_patch.{key} 缺失"))
+    if not (data.get("review") or {}).get("evidence"):
+        issues.append(issue("warning", "postmarket.json", "missing_review_evidence", "review.evidence 缺失"))
+    for index, item in enumerate(data.get("hotspots") or []):
+        for key in ("evidence", "continuity", "risk"):
+            if not item.get(key):
+                issues.append(issue("warning", "postmarket.json", "missing_hotspot_field", f"hotspots[{index}].{key} 缺失"))
+
+
+def validate_evening(data: Any, issues: list[dict[str, Any]], current_date: str) -> None:
+    if not isinstance(data, dict):
+        return
+    if signal_date(data.get("timestamp")) != current_date:
+        issues.append(issue("info", "evening-sentiment.json", "evening_not_current", "晚间舆情不是当前交易日，不参与今日总控"))
+    for index, item in enumerate(data.get("p0_alerts") or []):
+        for key in ("title", "severity", "why_p0", "evidence", "watch_next_day", "source"):
+            if not item.get(key):
+                issues.append(issue("warning", "evening-sentiment.json", "missing_p0_field", f"p0_alerts[{index}].{key} 缺失"))
+
+
+def validate_source_health(data: Any, issues: list[dict[str, Any]]) -> None:
+    if not isinstance(data, dict):
+        return
+    sources = data.get("sources") or {}
+    if isinstance(sources, dict):
+        iterator = sources.items()
+    else:
+        iterator = ((item.get("id") or item.get("name") or "unknown", item) for item in sources if isinstance(item, dict))
+    for name, source in iterator:
+        status = source.get("status")
+        if status in {"degraded", "bad"}:
+            issues.append(issue("warning", "source-health.json", "source_degraded", f"{name}: {source.get('note') or source.get('detail') or source.get('usage') or status}"))
+
+
+def issue(severity: str, file: str, code: str, message: str, path: str = "") -> dict[str, Any]:
+    return {
+        "severity": severity,
+        "file": file,
+        "path": path,
+        "code": code,
+        "message": message,
+    }
+
+
+def overall_status(issues: list[dict[str, Any]]) -> str:
+    if any(item["severity"] == "critical" for item in issues):
+        return "critical"
+    if any(item["severity"] == "warning" for item in issues):
+        return "degraded"
+    return "ok"
+
+
+def summarize(status: str, issues: list[dict[str, Any]]) -> str:
+    critical = sum(1 for item in issues if item["severity"] == "critical")
+    warning = sum(1 for item in issues if item["severity"] == "warning")
+    info = sum(1 for item in issues if item["severity"] == "info")
+    if status == "critical":
+        return f"发现 {critical} 个严重数据问题，信号不得直接用于交易判断。"
+    if status == "degraded":
+        return f"发现 {warning} 个降级/需复核项，核心结论可看但必须降权。"
+    return f"数据结构检查通过，仅有 {info} 个提示项。"
+
+
+def now_iso() -> str:
+    return datetime.now(TZ).replace(microsecond=0).isoformat()
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
