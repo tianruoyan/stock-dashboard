@@ -18,7 +18,7 @@ BAD_LITERALS = ("[object Object]", "undefined", "None%", "NaN", "Infinity")
 SECTIONS = [
     {"id": "control", "label": "今日总控", "files": ["data/intraday.json", "data/postmarket.json", "data/quality-report.json", "data/decision-feed.json"]},
     {"id": "radar", "label": "机会/风险雷达", "files": ["data/decision-feed.json", "data/quality-report.json"]},
-    {"id": "watchlist", "label": "我的观察池", "files": ["config/watchlist.json", "data/intraday.json", "data/postmarket.json", "data/topics.json"]},
+    {"id": "watchlist", "label": "我的观察池", "files": ["config/watchlist.json", "data/intraday.json", "data/postmarket.json", "data/topics.json", "data/quality-report.json"]},
     {"id": "risk", "label": "仓位风控", "files": ["config/alert-config.json", "data/intraday.json", "data/postmarket.json", "data/quality-report.json"]},
     {"id": "alerts", "label": "盘中异动", "files": ["data/alert.json", "data/source-health.json"]},
     {"id": "intraday", "label": "盘中全景", "files": ["data/intraday.json", "data/source-health.json"]},
@@ -26,7 +26,7 @@ SECTIONS = [
     {"id": "midday", "label": "午盘盘前", "files": ["data/midday.json"]},
     {"id": "postmarket", "label": "午盘盘后", "files": ["data/postmarket.json", "data/source-health.json"]},
     {"id": "evening", "label": "晚间舆情", "files": ["data/evening-sentiment.json"]},
-    {"id": "topics", "label": "专题跟踪", "files": ["data/topics.json", "config/topics-list.json"]},
+    {"id": "topics", "label": "专题跟踪", "files": ["data/topics.json", "config/topics-list.json", "data/quality-report.json"]},
 ]
 
 

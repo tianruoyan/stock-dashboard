@@ -339,6 +339,7 @@ Codex (分析引擎)              Cola (稳定管道)
 | 2026-07-07 | decision-feed 新增 quality_gate/quality_flags，数据 degraded/critical 时机会项统一低置信并展示降权原因 | 防止用户只看到机会候选而忽略行情源降级、alert 污染或港股收盘窗口非终值，降低盘中误用风险 |
 | 2026-07-07 | 新增 scripts/build_section_health.py 和 data/section-health.json，将数据质量映射到总控、雷达、观察池、异动、盘前、盘中、盘后、晚间等区块 | 全局 degraded 不足以指导盘中使用，必须明确每个区块是正常、降权、过期还是等待重产，防止错误区块被当成有效信号 |
 | 2026-07-07 | 前端将 section-health 状态直接贴到对应面板标题下，并在 smoke 测试里校验区块 id 与 DOM 映射 | 盘中用户可能绕过顶部质量卡直接看某个区块，必须在原地提示该区块是否降权、过期或等待重产 |
+| 2026-07-07 | section-health 将观察池和专题跟踪纳入 quality-report 依赖，行情源或 alert 污染时二次研判区块同步降权 | 观察池和专题不是原始静态配置，它们会引用盘中/盘后信号做强弱和主题判断，不能在全局 degraded 时继续显示为完全可用 |
 ---
 
 ## 🐍 Python 环境
