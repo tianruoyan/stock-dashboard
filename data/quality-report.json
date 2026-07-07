@@ -1,8 +1,8 @@
 {
-  "timestamp": "2026-07-07T20:39:36+08:00",
+  "timestamp": "2026-07-07T20:43:19+08:00",
   "current_signal_date": "2026-07-07",
   "status": "degraded",
-  "summary": "发现 3 个降级/需复核项，核心结论可看但必须降权。",
+  "summary": "发现 5 个降级/需复核项，核心结论可看但必须降权。",
   "issues": [
     {
       "severity": "warning",
@@ -10,13 +10,6 @@
       "path": "",
       "code": "invalidated_source",
       "message": "2026-07-07 14:13:52 批次的盘中异动使用了异常行情源数据，北方华创/中微公司等日内涨跌幅失真，已撤下该批 alert，等待修复后的盘中提醒进程重新产出。"
-    },
-    {
-      "severity": "info",
-      "file": "evening-sentiment.json",
-      "path": "",
-      "code": "evening_not_current",
-      "message": "晚间舆情不是当前交易日，不参与今日总控"
     },
     {
       "severity": "warning",
@@ -31,12 +24,26 @@
       "path": "",
       "code": "source_degraded",
       "message": "tencent_hk_http: 接口可用，最新quote_time=2026/07/07 15:57:50；16:00后可能仍非收市竞价终值，按收盘窗口快照使用。"
+    },
+    {
+      "severity": "warning",
+      "file": "source-health.json",
+      "path": "",
+      "code": "source_failed",
+      "message": "eastmoney_hk_akshare: akshare.stock_hk_spot_em failed with Eastmoney push2 proxy disconnect; akshare.stock_hk_spot JSON decode failed."
+    },
+    {
+      "severity": "warning",
+      "file": "source-health.json",
+      "path": "",
+      "code": "source_degraded",
+      "message": "official_policy_global_web_scan: 通用网页检索返回信息有限；本次未据此升级任何结论，仅保留官方入口覆盖和本地盘面证据，后续需继续用部委/交易所/公司官网正式公告补验。"
     }
   ],
   "counts": {
     "critical": 0,
-    "warning": 3,
-    "info": 1
+    "warning": 5,
+    "info": 0
   },
   "rules": [
     "异常文本、JSON解析失败、必需文件缺失为 critical。",

@@ -1,12 +1,12 @@
 {
-  "timestamp": "2026-07-07T20:39:36+08:00",
+  "timestamp": "2026-07-07T20:43:19+08:00",
   "current_signal_date": "2026-07-07",
   "overall_status": "blind_spot",
   "summary": "1 个核心监测盲区（盘中异动触发盲区），5 个降权盲区。",
   "counts": {
     "critical": 1,
     "warning": 5,
-    "info": 1
+    "info": 0
   },
   "blind_spots": [
     {
@@ -84,23 +84,6 @@
       ]
     },
     {
-      "id": "evening-sentiment-stale",
-      "title": "晚间舆情过期",
-      "severity": "info",
-      "conclusion": "晚间公告、P0 舆情和隔夜事件不是当前交易日，不能参与今日总控。",
-      "impacted_decisions": [
-        "次日竞价风险可能缺少最新公告校验",
-        "个股突发公告需要额外扫描"
-      ],
-      "evidence": [
-        "时间戳不是当前交易日：2026-07-05T20:10:00+08:00"
-      ],
-      "fallback_action": "只作历史背景；盘前必须重新跑 8:30 增量扫描和个股公告检查。",
-      "source_files": [
-        "data/evening-sentiment.json"
-      ]
-    },
-    {
       "id": "opportunity-radar-downgraded",
       "title": "机会雷达仅作候选",
       "severity": "warning",
@@ -110,7 +93,7 @@
         "风险栏优先级高于机会栏"
       ],
       "evidence": [
-        "发现 3 个降级/需复核项，核心结论可看但必须降权。"
+        "发现 5 个降级/需复核项，核心结论可看但必须降权。"
       ],
       "fallback_action": "只跟踪验证条件；若风险项不收敛，不升级任何机会。",
       "source_files": [

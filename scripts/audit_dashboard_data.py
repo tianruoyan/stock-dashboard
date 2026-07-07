@@ -298,8 +298,9 @@ def validate_source_health(data: Any, issues: list[dict[str, Any]]) -> None:
         iterator = ((item.get("id") or item.get("name") or "unknown", item) for item in sources if isinstance(item, dict))
     for name, source in iterator:
         status = source.get("status")
-        if status in {"degraded", "bad"}:
-            issues.append(issue("warning", "source-health.json", "source_degraded", f"{name}: {source.get('note') or source.get('detail') or source.get('usage') or status}"))
+        if status in {"degraded", "bad", "failed"}:
+            code = "source_failed" if status == "failed" else "source_degraded"
+            issues.append(issue("warning", "source-health.json", code, f"{name}: {source.get('note') or source.get('detail') or source.get('usage') or status}"))
 
 
 def validate_decision_feed(data: Any, issues: list[dict[str, Any]], current_date: str) -> None:

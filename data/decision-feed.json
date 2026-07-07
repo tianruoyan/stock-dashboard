@@ -1,16 +1,16 @@
 {
-  "timestamp": "2026-07-07T20:39:36+08:00",
+  "timestamp": "2026-07-07T20:43:19+08:00",
   "current_signal_date": "2026-07-07",
   "quality_gate": {
     "status": "degraded",
-    "summary": "发现 3 个降级/需复核项，核心结论可看但必须降权。",
+    "summary": "发现 5 个降级/需复核项，核心结论可看但必须降权。",
     "decision_flags": [
       "盘中异动源降级，alert 类信号降权",
       "行情源降级，需复核涨跌幅",
       "港股收盘窗口可能非终值"
     ]
   },
-  "summary": "A股收盘偏退潮：涨停33、跌停23、炸板23，涨停:跌停约33:23；清洁样本5310只中，5%-8%有75只，8%以上56只，跌5%以上681只。半导体/硅片/封装仍是最强残余主线，但尾盘资金不支持全面进攻。 数据质量：发现 3 个降级/需复核项，核心结论可看但必须降权。",
+  "summary": "A股收盘偏退潮：涨停33、跌停23、炸板23，涨停:跌停约33:23；清洁样本5310只中，5%-8%有75只，8%以上56只，跌5%以上681只。半导体/硅片/封装仍是最强残余主线，但尾盘资金不支持全面进攻。 数据质量：发现 5 个降级/需复核项，核心结论可看但必须降权。",
   "opportunities": [
     {
       "title": "科技硬件链",
@@ -272,12 +272,13 @@
       "title": "数据质量降级",
       "type": "data_quality",
       "trigger_reason": "风控兜底触发：市场宽度、数据质量或回撤条件触发风险优先。",
-      "conclusion": "发现 3 个降级/需复核项，核心结论可看但必须降权。",
+      "conclusion": "发现 5 个降级/需复核项，核心结论可看但必须降权。",
       "confidence": "high",
       "evidence": [
         "2026-07-07 14:13:52 批次的盘中异动使用了异常行情源数据，北方华创/中微公司等日内涨跌幅失真，已撤下该批 alert，等待修复后的盘中提醒进程重新产出。",
         "ths_sina_or_akshare_quote_decode: akshare A股spot继续出现Can not decode value starting with character \"<\"；14:13:52 alert 批次已确认污染北方华创/中微公司等涨跌幅，已撤下该批 alert，并要求盘中提醒优先使用行情源原始涨跌幅字段。",
-        "tencent_hk_http: 接口可用，最新quote_time=2026/07/07 15:57:50；16:00后可能仍非收市竞价终值，按收盘窗口快照使用。"
+        "tencent_hk_http: 接口可用，最新quote_time=2026/07/07 15:57:50；16:00后可能仍非收市竞价终值，按收盘窗口快照使用。",
+        "eastmoney_hk_akshare: akshare.stock_hk_spot_em failed with Eastmoney push2 proxy disconnect; akshare.stock_hk_spot JSON decode failed."
       ],
       "source_files": [
         "quality-report.json",

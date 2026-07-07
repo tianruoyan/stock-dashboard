@@ -2,6 +2,7 @@
 
 | Display Version | Date | Edition | Tag / Commit | Summary | Rollback Note |
 |---|---:|---:|---|---|---|
+| 2026-07-07 第67版｜失败数据源审计 | 2026-07-07 | 第67版 | tag: `v2026.07.07-m67-source-failed-audit` | 数据审计把 `source-health.json` 中的 `failed` 状态纳入质量报告，输出 `source_failed` warning；港股结构源等直接失败时不再只依赖盲区/可信度报告提示，而是在顶部数据质量卡中同步降权。 | 回滚到第66版可用 `git checkout v2026.07.07-m66-unplanned-theme-scan`，或回滚到本版本 tag。 |
 | 2026-07-07 第66版｜非预设新线扫描 | 2026-07-07 | 第66版 | tag: `v2026.07.07-m66-unplanned-theme-scan` | `decision-feed` 新增非预设盘面扫描：从盘后热点中识别不在既有专题精确清单里、但出现涨停池/强势组/轮动增强证据的方向，生成“新线观察”候选；当前数据降级时仍按 C/D 级转入验证栏。静态烟雾测试新增门禁，确保非预设活跃方向必须进入机会或验证流。 | 回滚到第65版可用 `git checkout v2026.07.07-m65-radar-trigger-reason`，或回滚到本版本 tag。 |
 | 2026-07-07 第65版｜雷达触发原因 | 2026-07-07 | 第65版 | tag: `v2026.07.07-m65-radar-trigger-reason` | `decision-feed` 每条机会、风险和验证新增 `trigger_reason`，用一句话解释系统为什么把该信号推入雷达；前端雷达卡片新增“触发”详情行。数据审计、静态烟雾和运行时烟雾测试同步要求触发原因存在并渲染，避免主动提示只有结论、缺少触发逻辑。 | 回滚到第64版可用 `git checkout v2026.07.07-m64-render-coverage`，或回滚到本版本 tag。 |
 | 2026-07-07 第64版｜关键字段渲染门禁 | 2026-07-07 | 第64版 | tag: `v2026.07.07-m64-render-coverage` | 运行时烟雾测试新增“核心 JSON 字段必须渲染”检查：盘中 summary/主线/行动建议/港股快照、早盘 summary、午盘复盘和下午信号、盘后收盘竞价补丁和热点、专题首项都必须出现在对应页面区块。盘中全景补渲染 `summary`，并兼容 `index.HK_close_window_snapshot`，同时主线卡显示整合名和原始细分名，减少漏显和颗粒度误读。 | 回滚到第63版可用 `git checkout v2026.07.07-m63-alert-source-gate`，或回滚到本版本 tag。 |
