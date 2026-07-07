@@ -739,6 +739,15 @@ function checkDashboardThemeCards(document, issues) {
   if (/主线变化[：:]老登风格切换.*老登风格切换/.test(rendered)) {
     issues.push(issue("critical", "dashboard_theme_duplicate", "题材卡仍重复展示主线变化前缀和原题材名", "dashboard-control"));
   }
+  const intraday = readJsonIfExists("data/intraday.json");
+  const postmarket = readJsonIfExists("data/postmarket.json");
+  const hasSemiconductor = [
+    ...(Array.isArray(intraday.main_trends) ? intraday.main_trends : []),
+    ...(Array.isArray(postmarket.hotspots) ? postmarket.hotspots : [])
+  ].some(item => /半导体/.test(`${item?.name || ""} ${item?.status || ""}`) && !/风险线|弱化|退潮/.test(`${item?.status || ""}`));
+  if (hasSemiconductor && /优先方向老登风格切换/.test(rendered)) {
+    issues.push(issue("critical", "dashboard_theme_priority_wrong", "盘中/盘后存在半导体观察线时，优先方向不应被老登风格观察项覆盖", "dashboard-control"));
+  }
 }
 
 function checkFallbackChecksRendering(radarHtml, coverage, issues) {

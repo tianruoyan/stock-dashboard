@@ -269,7 +269,7 @@ function renderDashboardControl() {
 function dashboardMarketThemeSummary(intraday, postmarket) {
   const rows = collectDashboardThemeRows(intraday, postmarket);
   const priority = uniqueList(rows
-    .filter(row => row.bucket !== "risk")
+    .filter(row => row.bucket !== "risk" && row.priorityEligible)
     .sort((a, b) => b.score - a.score)
     .map(row => row.display))
     .slice(0, 4);
@@ -283,7 +283,12 @@ function dashboardMarketThemeSummary(intraday, postmarket) {
     .flatMap(row => row.related.length ? row.related : positiveRelatedTopicTags(row.text)))
     .filter(tag => !/风控|数据质量|仓位|回避/.test(tag))
     .slice(0, 5);
-  return { priority, avoid, related };
+  const fallbackPriority = priority.length ? priority : uniqueList(rows
+    .filter(row => row.bucket !== "risk")
+    .sort((a, b) => b.score - a.score)
+    .map(row => row.display))
+    .slice(0, 4);
+  return { priority: fallbackPriority, avoid, related };
 }
 
 function collectDashboardThemeRows(intraday, postmarket) {
@@ -303,17 +308,23 @@ function collectDashboardThemeRows(intraday, postmarket) {
     const evidence = Array.isArray(item?.evidence) ? item.evidence : [];
     const text = [trendName(item), name, status, item?.conclusion, item?.continuity, item?.risk, item?.reason, ...evidence].join(" ");
     if (!name || systemNoise.test(name)) return null;
-    const bucket = /风险|弱|退潮|压制|负反馈|回落|证伪/.test(text) || source === "风险" ? "risk" : "watch";
+    const positive = /观察线偏强|核心抱团|轮动增强|偏强|强|强化|主线|涨停|封板|扩散|承接/.test(text);
+    const negative = /风险线|风险\/|弱化|退潮|压制|负反馈|反抽失败|证伪|明显弱/.test(text);
+    const explicitStatusRisk = /风险线|弱化|退潮/.test(status);
+    const bucket = source === "风险" || explicitStatusRisk || (negative && !positive) ? "risk" : "watch";
     let score = base;
     if (/强|强化|主线|抱团|涨停|封板|扩散|轮动增强|偏强/.test(text)) score += 20;
     if (/观察|资金博弈|分歧/.test(text)) score += 8;
     if (bucket === "risk") score += 6;
+    const grade = String(item?.signal_grade || "").toUpperCase();
+    const priorityEligible = ["盘中", "盘后"].includes(source) || (source === "机会" && !["D"].includes(grade) && !/^主线变化/.test(String(item?.title || "")));
     return {
       display: name,
       bucket,
       score,
       text,
-      related: themeSubDirections(item)
+      related: themeSubDirections(item),
+      priorityEligible
     };
   }).filter(Boolean);
   return dedupeThemeRows(rows);
@@ -2786,6 +2797,7 @@ function themeDisplayName(item) {
   if (/汽车零部件|汽车零部|机器人|通用设备|自动化设备/.test(text) && /机器人|通用设备|自动化设备/.test(text)) {
     return "机器人/工业自动化";
   }
+  if (/半导体\/硅片\/封装|硅片\/封装\/设备零部件|半导体.*核心抱团/.test(text)) return "半导体核心链";
   if (/电子布|玻纤|PCB|覆铜板/.test(text)) return "PCB材料链";
   if (/半导体设备|CMP设备|刻蚀|沉积|清洗/.test(text)) return "半导体设备";
   if (/半导体材料|光刻胶|硅片|硅材料|CMP抛光|靶材/.test(text)) return "半导体材料";
