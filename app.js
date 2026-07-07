@@ -123,6 +123,10 @@ function escapeHtml(value) {
     .replace(/'/g, "&#39;");
 }
 
+function hasMojibake(value) {
+  return /[�ÃÂ]|(?:æ|å|ç|è|é)[A-Za-z0-9_\- ]{0,8}/.test(String(value ?? ""));
+}
+
 function cached(path) {
   return cache[path] || null;
 }
@@ -1885,6 +1889,8 @@ function externalLabel(key) {
     kospi_change_pct: "韩国KOSPI",
     samsung_change_pct: "三星电子",
     sk_hynix_change_pct: "SK海力士",
+    tokyo_electron_change_pct: "东京电子",
+    advantest_change_pct: "Advantest",
     judgement: "判断",
     indices: "指数",
     hot_sectors: "强势方向",
@@ -2142,24 +2148,48 @@ function renderPremarket(data) {
 }
 
 function renderJapanKoreaMorning(jk) {
+  const fallback = renderJapanKoreaDegraded("日经、KOSPI、三星、SK海力士、东京电子/Advantest");
   if (typeof jk === "string") {
-    const degraded = /降级|未核实|待确认|再确认/.test(jk);
+    const degraded = /降级|未核实|待确认|再确认|乱码|decode|failed|error/i.test(jk) || hasMojibake(jk);
     if (degraded) {
       const confirmList = extractAfter(jk, "再确认") || "日经、KOSPI、三星、SK海力士、东京电子/Advantest";
-      return `<div class="source-note source-note-warning">
-        <b>日韩早盘：</b>数据源降级，暂不采用未核实数据。
-        <span>待确认：${escapeHtml(cleanShortNote(confirmList))}</span>
-      </div>`;
+      return renderJapanKoreaDegraded(confirmList);
     }
     return `<div class="source-note"><b>日韩早盘：</b>${escapeHtml(truncateText(jk, 80))}</div>`;
   }
   if (Array.isArray(jk)) {
-    return '<div class="tag-row">日韩早盘：' + jk.map(s => `<span class="tag">${escapeHtml(formatMarketTag(s))}</span>`).join(" ") + '</div>';
+    const rendered = jk.map(s => formatMarketTag(s)).filter(v => v && !hasMojibake(v));
+    return rendered.length
+      ? '<div class="tag-row">日韩早盘：' + rendered.map(s => `<span class="tag">${escapeHtml(s)}</span>`).join(" ") + '</div>'
+      : fallback;
   }
   if (jk && typeof jk === "object") {
-    return '<div class="tag-row">日韩早盘：' + Object.entries(jk).map(([k, v]) => `<span class="tag">${escapeHtml(externalLabel(k))}：${escapeHtml(formatDisplayValue(v))}</span>`).join(" ") + '</div>';
+    const statusText = JSON.stringify(jk);
+    if (/降级|未核实|待确认|再确认|乱码|decode|failed|error/i.test(statusText) || hasMojibake(statusText)) {
+      return renderJapanKoreaDegraded(jk.pending_confirmation || jk.confirm_list || jk.watch || "日经、KOSPI、三星、SK海力士、东京电子/Advantest");
+    }
+    const allowedKeys = new Set([
+      "nikkei225_change_pct",
+      "kospi_change_pct",
+      "samsung_change_pct",
+      "sk_hynix_change_pct",
+      "tokyo_electron_change_pct",
+      "advantest_change_pct",
+      "judgement"
+    ]);
+    const tags = Object.entries(jk)
+      .filter(([k, v]) => allowedKeys.has(k) && v !== undefined && v !== null && !hasMojibake(v))
+      .map(([k, v]) => `<span class="tag">${escapeHtml(externalLabel(k))}：${escapeHtml(formatDisplayValue(v))}</span>`);
+    return tags.length ? '<div class="tag-row">日韩早盘：' + tags.join(" ") + '</div>' : fallback;
   }
   return "";
+}
+
+function renderJapanKoreaDegraded(confirmList) {
+  return `<div class="source-note source-note-warning">
+    <b>日韩早盘：</b>数据源降级，暂不采用未核实数据。
+    <span>待确认：${escapeHtml(cleanShortNote(formatDisplayValue(confirmList)))}</span>
+  </div>`;
 }
 
 function extractAfter(text, marker) {

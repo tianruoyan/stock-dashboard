@@ -13,6 +13,7 @@ ROOT = Path(__file__).resolve().parents[1]
 OUT = ROOT / "data" / "smoke-report.json"
 TZ = timezone(timedelta(hours=8))
 BAD_LITERALS = ("[object Object]", "undefined", "None%", "NaN", "Infinity")
+MOJIBAKE_PATTERN = re.compile(r"[�ÃÂ]|(?:æ|å|ç|è|é)[A-Za-z0-9_\- ]{0,8}")
 OPTIONAL_FILES = {"data/signal-review.json"}
 CRITICAL_IDS = {
     "status",
@@ -121,6 +122,8 @@ def check_bad_literals(issues: list[dict[str, Any]]) -> None:
             for literal in BAD_LITERALS:
                 if literal in text:
                     issues.append(issue("critical", rel(path), "bad_literal", f"发现异常文本 {literal}"))
+            if MOJIBAKE_PATTERN.search(text):
+                issues.append(issue("critical", rel(path), "mojibake_text", "发现疑似乱码文本，需先清理数据源编码"))
             try:
                 json.loads(text)
             except Exception as exc:
@@ -130,6 +133,8 @@ def check_bad_literals(issues: list[dict[str, Any]]) -> None:
         for literal in BAD_LITERALS:
             if literal in text:
                 issues.append(issue("critical", rel(path), "bad_literal", f"发现异常文本 {literal}"))
+        if MOJIBAKE_PATTERN.search(text):
+            issues.append(issue("critical", rel(path), "mojibake_text", "发现疑似乱码文本，需先清理页面文本"))
 
 
 def check_decision_feed(issues: list[dict[str, Any]]) -> None:

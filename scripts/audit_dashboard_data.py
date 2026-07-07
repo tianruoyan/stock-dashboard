@@ -15,6 +15,7 @@ CONFIG_DIR = ROOT / "config"
 OUT = DATA_DIR / "quality-report.json"
 TZ = timezone(timedelta(hours=8))
 BAD_LITERALS = ("[object Object]", "undefined", "None%", "NaN", "Infinity")
+MOJIBAKE_PATTERN = re.compile(r"[�ÃÂ]|(?:æ|å|ç|è|é)[A-Za-z0-9_\- ]{0,8}")
 REQUIRED_JSON = (
     "alert.json",
     "intraday.json",
@@ -41,6 +42,8 @@ def main() -> int:
         for literal in BAD_LITERALS:
             if literal in text:
                 issues.append(issue("critical", name, "bad_literal", f"发现异常文本 {literal}"))
+        if MOJIBAKE_PATTERN.search(text):
+            issues.append(issue("critical", name, "mojibake_text", "发现疑似乱码文本，需先清理数据源编码"))
         ts = data.get("timestamp") if isinstance(data, dict) else None
         if name in REQUIRED_JSON:
             if not ts:
