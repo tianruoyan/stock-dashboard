@@ -191,6 +191,7 @@ function renderDashboardControl() {
   }
   const position = inferPositionRange(style, riskConfig);
   const latest = latestTimestamp([intraday, postmarket, alert]);
+  const trustGate = dashboardTrustGate();
   let priority = strong.slice(0, 3).map(themeDisplayName);
   let avoid = risks.slice(0, 3).map(themeDisplayName);
   if (decisionGate?.riskFirst) {
@@ -205,6 +206,7 @@ function renderDashboardControl() {
       <div class="control-title">${escapeHtml(style.title)}</div>
       <div class="control-sub">${escapeHtml(style.reason)}</div>
       <div class="control-meta">有效时间：${escapeHtml(latest ? formatUpdateTime(latest) : "待更新")} · ${escapeHtml(dataFreshness(latest))}</div>
+      ${trustGate ? `<div class="control-data-gate ${escapeHtml(trustGate.cls)}">${trustGate.items.map(item => `<span>${escapeHtml(item)}</span>`).join("")}</div>` : ""}
     </div>
     <div class="control-position">
       <span>建议仓位</span>
@@ -219,6 +221,34 @@ function renderDashboardControl() {
     <div class="decision-card risk"><span class="decision-label">风险盯 · ${escapeHtml(riskCandidate.source)}</span><b>${escapeHtml(riskWatch[0] || "暂无")}</b><span>${escapeHtml(riskWatch.slice(1).join(" / ") || riskCandidate.note)}</span></div>
     <div class="decision-card risk"><span class="decision-label">回避/降级</span><b>${escapeHtml(avoid[0] || "暂无明确")}</b><span>${escapeHtml(avoid.slice(1).join(" / ") || eventWatch[0] || "看弱线和P0是否扩散")}</span></div>
   </div>`;
+}
+
+function dashboardTrustGate() {
+  const trust = cached("data/data-trust.json");
+  if (!trust || !Array.isArray(trust.files) || trust.current_signal_date !== currentSignalDate()) return null;
+  const items = [];
+  for (const file of trust.files) {
+    if (["invalidated", "missing"].includes(file.status)) {
+      items.push(`${file.label}不可用`);
+      continue;
+    }
+    if (file.session_relevance === "current" && file.freshness_status === "stale") {
+      items.push(`${file.label}超时`);
+      continue;
+    }
+    if (file.session_relevance === "current" && file.freshness_status === "aging") {
+      items.push(`${file.label}临近超时`);
+      continue;
+    }
+    if (file.session_relevance === "current" && file.status === "degraded") {
+      items.push(`${file.label}降权`);
+    }
+  }
+  if (!items.length) return null;
+  return {
+    cls: items.some(item => /不可用|超时/.test(item)) ? "risk" : "warn",
+    items: uniqueList(items).slice(0, 4)
+  };
 }
 
 function dashboardDecisionGate() {

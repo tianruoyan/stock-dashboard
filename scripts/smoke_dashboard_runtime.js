@@ -372,6 +372,7 @@ async function main() {
   checkDecisionTriggerRendering(radarHtml, issues);
   checkFallbackChecksRendering(radarHtml, coverage, issues);
   checkRadarGateRendering(document, radarHtml, issues);
+  checkDashboardTrustGateRendering(document, issues);
   checkInvalidatedAlertRendering(document, issues);
   checkPremarketJapanKoreaGuard(document, issues);
   for (const literal of BAD_LITERALS) {
@@ -412,6 +413,7 @@ async function main() {
       "机会/风险雷达必须渲染 decision-feed 的触发原因。",
       "critical 盲区的 fallback_checks 必须渲染到机会/风险雷达。",
       "无 A/B 级可用机会时，机会/风险雷达必须显示无可用机会、风险优先和只做验证。",
+      "文件可信度出现不可用或当前阶段超时时，今日总控必须显示具体文件状态。",
       "alert.json 撤下污染批次时，盘中异动区必须显示不可用和替代观察，不得只显示普通空状态。",
       "日韩早盘源降级时必须显示清晰降级提示和待复核清单，不得展示原始乱码/未核实字符串。",
       "核心 JSON 字段有数据时，页面对应区块必须渲染关键结论或代表项。",
@@ -530,6 +532,31 @@ function checkRadarGateRendering(document, radarHtml, issues) {
   for (const snippet of ["无可用机会", "风险优先", "只做验证"]) {
     if (!controlRendered.includes(snippet)) {
       issues.push(issue("critical", "dashboard_gate_not_rendered", `无可用机会时今日总控缺少：${snippet}`, "dashboard-control"));
+    }
+  }
+}
+
+function checkDashboardTrustGateRendering(document, issues) {
+  const trust = readJsonIfExists("data/data-trust.json");
+  const files = Array.isArray(trust.files) ? trust.files : [];
+  if (!files.length) return;
+  const expected = [];
+  for (const file of files) {
+    if (["invalidated", "missing"].includes(file.status)) {
+      expected.push(`${file.label}不可用`);
+    } else if (file.session_relevance === "current" && file.freshness_status === "stale") {
+      expected.push(`${file.label}超时`);
+    } else if (file.session_relevance === "current" && file.freshness_status === "aging") {
+      expected.push(`${file.label}临近超时`);
+    } else if (file.session_relevance === "current" && file.status === "degraded") {
+      expected.push(`${file.label}降权`);
+    }
+  }
+  if (!expected.length) return;
+  const rendered = normalizeRenderedText(document.getElementById("dashboard-control")?.collectHtml() || "");
+  for (const snippet of expected.slice(0, 4)) {
+    if (!rendered.includes(snippet)) {
+      issues.push(issue("critical", "dashboard_trust_gate_not_rendered", `今日总控缺少文件可信状态：${snippet}`, "dashboard-control"));
     }
   }
 }
