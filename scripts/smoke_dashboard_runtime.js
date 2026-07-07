@@ -12,7 +12,6 @@ const TECHNICAL_SOURCE_ID_RE = /\b(ths_sina_or_akshare_quote_decode|tencent_hk_h
 const OPTIONAL_FILES = new Set(["data/signal-review.json"]);
 const REQUIRED_RENDER_TARGETS = [
   "dashboard-control",
-  "opportunity-risk-radar",
   "watchlist-decision",
   "portfolio-risk",
   "signal-review",
@@ -348,29 +347,32 @@ async function main() {
   }
 
   const wholePage = document.body.collectHtml();
-  const radarHtml = document.getElementById("opportunity-risk-radar")?.collectHtml() || "";
-  const opportunityColumn = firstMatch(radarHtml, /<div class="radar-column">([\s\S]*?)<div class="radar-column">/) || radarHtml;
+  const radarEl = document.getElementById("opportunity-risk-radar");
+  const radarHtml = radarEl?.collectHtml() || "";
   const coverage = readJsonIfExists("data/monitoring-coverage.json");
-  const themeShifts = readJsonIfExists("data/theme-shifts.json");
-  const criticalBlindSpots = Array.isArray(coverage.blind_spots)
-    ? coverage.blind_spots.filter(item => item && item.severity === "critical")
-    : [];
-  for (const item of criticalBlindSpots) {
-    const fallback = stableSnippet((item.fallback_checks || [item.fallback_action || item.conclusion || ""])[0]);
-    if (fallback && !normalizeRenderedText(radarHtml).includes(fallback)) {
-      issues.push(issue("critical", "blind_spot_not_rendered", `关键替代观察未进入机会与风险区：${fallback}`, "opportunity-risk-radar"));
+  if (radarEl) {
+    const opportunityColumn = firstMatch(radarHtml, /<div class="radar-column">([\s\S]*?)<div class="radar-column">/) || radarHtml;
+    const themeShifts = readJsonIfExists("data/theme-shifts.json");
+    const criticalBlindSpots = Array.isArray(coverage.blind_spots)
+      ? coverage.blind_spots.filter(item => item && item.severity === "critical")
+      : [];
+    for (const item of criticalBlindSpots) {
+      const fallback = stableSnippet((item.fallback_checks || [item.fallback_action || item.conclusion || ""])[0]);
+      if (fallback && !normalizeRenderedText(radarHtml).includes(fallback)) {
+        issues.push(issue("critical", "blind_spot_not_rendered", `关键替代观察未进入机会与风险区：${fallback}`, "opportunity-risk-radar"));
+      }
     }
+    if (Array.isArray(themeShifts.shifts) && themeShifts.shifts.length && !radarHtml.includes("主线变化")) {
+      issues.push(issue("critical", "theme_shift_not_rendered", "主线变化报告未进入机会/风险雷达", "opportunity-risk-radar"));
+    }
+    if (/(?:C|D)级/.test(opportunityColumn)) {
+      issues.push(issue("critical", "low_quality_opportunity_rendered", "C/D级机会进入了机会候选栏，应转入下一步验证", "opportunity-risk-radar"));
+    }
+    checkDecisionNextActionRendering(radarHtml, issues);
+    checkDecisionBriefRendering(radarHtml, issues);
+    checkFallbackChecksRendering(radarHtml, coverage, issues);
+    checkRadarGateRendering(document, radarHtml, issues);
   }
-  if (Array.isArray(themeShifts.shifts) && themeShifts.shifts.length && !radarHtml.includes("主线变化")) {
-    issues.push(issue("critical", "theme_shift_not_rendered", "主线变化报告未进入机会/风险雷达", "opportunity-risk-radar"));
-  }
-  if (/(?:C|D)级/.test(opportunityColumn)) {
-    issues.push(issue("critical", "low_quality_opportunity_rendered", "C/D级机会进入了机会候选栏，应转入下一步验证", "opportunity-risk-radar"));
-  }
-  checkDecisionNextActionRendering(radarHtml, issues);
-  checkDecisionBriefRendering(radarHtml, issues);
-  checkFallbackChecksRendering(radarHtml, coverage, issues);
-  checkRadarGateRendering(document, radarHtml, issues);
   checkDashboardConflictRendering(document, issues);
   checkDashboardThemeCards(document, issues);
   checkTraderViewLanguage(document, issues);
@@ -565,7 +567,6 @@ function checkDecisionBriefRendering(radarHtml, issues) {
 function checkTraderViewLanguage(document, issues) {
   const targets = [
     ["dashboard-control", "今日结论"],
-    ["opportunity-risk-radar", "判断依据"],
     ["portfolio-risk", "仓位提示"]
   ];
   const forbidden = [

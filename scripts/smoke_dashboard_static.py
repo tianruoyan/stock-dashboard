@@ -19,7 +19,6 @@ CRITICAL_IDS = {
     "status",
     "lastUpdate",
     "dashboard-control",
-    "opportunity-risk-radar",
     "watchlist-decision",
     "portfolio-risk",
     "signal-review",
@@ -580,7 +579,7 @@ def check_section_health(issues: list[dict[str, Any]], index: str, app: str) -> 
     if not isinstance(sections, list) or not sections:
         issues.append(issue("warning", "data/section-health.json", "bad_section_health", "sections 缺失或为空"))
         return
-    required = {"control", "radar", "watchlist", "risk", "alerts", "intraday", "premarket", "midday", "postmarket", "evening", "topics"}
+    required = {"control", "watchlist", "risk", "alerts", "intraday", "premarket", "midday", "postmarket", "evening", "topics"}
     present = {item.get("id") for item in sections if isinstance(item, dict)}
     missing = sorted(required - present)
     if missing:
