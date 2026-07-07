@@ -184,11 +184,19 @@ function renderDashboardControl() {
   const riskCandidate = buildPersonalWatchTargets(risks[0], []);
   const riskWatch = uniqueList(riskCandidate.stocks).filter(s => !attackWatch.includes(s)).slice(0, 5);
   const eventWatch = uniqueList(p0.map(p => p.title || p.text || p.event)).slice(0, 5);
-  const style = inferMarketStyle(intraday, postmarket, evening);
+  const decisionGate = dashboardDecisionGate();
+  let style = inferMarketStyle(intraday, postmarket, evening);
+  if (decisionGate) {
+    style = { title: decisionGate.title, cls: decisionGate.cls, reason: decisionGate.reason };
+  }
   const position = inferPositionRange(style, riskConfig);
   const latest = latestTimestamp([intraday, postmarket, alert]);
-  const priority = strong.slice(0, 3).map(themeDisplayName);
-  const avoid = risks.slice(0, 3).map(themeDisplayName);
+  let priority = strong.slice(0, 3).map(themeDisplayName);
+  let avoid = risks.slice(0, 3).map(themeDisplayName);
+  if (decisionGate?.riskFirst) {
+    priority = ["风险优先", "只做验证", "暂停追高"];
+    avoid = decisionGate.avoid.length ? decisionGate.avoid : ["全市场亏钱效应", "数据质量降级", "污染异动未重产"];
+  }
   const relatedTags = positiveRelatedTopicTags(priority.join(" "), avoid.join(" "), alertStocks.join(" "), p0.map(p => p.title || p.text || "").join(" "));
 
   el.innerHTML = `<div class="control-hero ${style.cls}">
@@ -205,12 +213,43 @@ function renderDashboardControl() {
     </div>
   </div>
   <div class="decision-strip control-strip">
-    <div class="decision-card primary"><span class="decision-label">优先方向</span><b>${escapeHtml(priority[0] || "等待确认")}</b><span>${escapeHtml(priority.slice(1).join(" / ") || "没有共振前不抢")}</span></div>
-    <div class="decision-card action"><span class="decision-label">关联题材</span><b>${escapeHtml(relatedTags[0] || "等待映射")}</b><span>${escapeHtml(relatedTags.slice(1).join(" / ") || "按母题材合并观察")}</span></div>
-    <div class="decision-card primary"><span class="decision-label">进攻盯 · ${escapeHtml(attackCandidate.source)}</span><b>${escapeHtml(attackWatch[0] || "暂无")}</b><span>${escapeHtml(attackWatch.slice(1).join(" / ") || attackCandidate.note)}</span></div>
+    <div class="decision-card ${decisionGate?.riskFirst ? "risk" : "primary"}"><span class="decision-label">优先方向</span><b>${escapeHtml(priority[0] || "等待确认")}</b><span>${escapeHtml(priority.slice(1).join(" / ") || "没有共振前不抢")}</span></div>
+    <div class="decision-card action"><span class="decision-label">关联题材</span><b>${escapeHtml(decisionGate?.riskFirst ? "候选只验证" : (relatedTags[0] || "等待映射"))}</b><span>${escapeHtml(decisionGate?.riskFirst ? "有承接、有扩散、数据恢复后再升级" : (relatedTags.slice(1).join(" / ") || "按母题材合并观察"))}</span></div>
+    <div class="decision-card ${decisionGate?.riskFirst ? "neutral" : "primary"}"><span class="decision-label">进攻盯 · ${escapeHtml(decisionGate?.riskFirst ? "暂停" : attackCandidate.source)}</span><b>${escapeHtml(decisionGate?.riskFirst ? "暂无可用机会" : (attackWatch[0] || "暂无"))}</b><span>${escapeHtml(decisionGate?.riskFirst ? "只看验证条件，不做追高触发" : (attackWatch.slice(1).join(" / ") || attackCandidate.note))}</span></div>
     <div class="decision-card risk"><span class="decision-label">风险盯 · ${escapeHtml(riskCandidate.source)}</span><b>${escapeHtml(riskWatch[0] || "暂无")}</b><span>${escapeHtml(riskWatch.slice(1).join(" / ") || riskCandidate.note)}</span></div>
     <div class="decision-card risk"><span class="decision-label">回避/降级</span><b>${escapeHtml(avoid[0] || "暂无明确")}</b><span>${escapeHtml(avoid.slice(1).join(" / ") || eventWatch[0] || "看弱线和P0是否扩散")}</span></div>
   </div>`;
+}
+
+function dashboardDecisionGate() {
+  const feed = currentDecisionFeed();
+  if (!feed) return null;
+  const opportunities = (feed.opportunities || []).map(item => decisionFeedToRadarItem(item, "good"));
+  const actionable = opportunities.filter(isActionableOpportunity);
+  const downgraded = opportunities.filter(item => !isActionableOpportunity(item));
+  const risks = (feed.risks || []).filter(item => ["A", "B"].includes(String(item.signal_grade || "").toUpperCase()));
+  if (!actionable.length && downgraded.length) {
+    return {
+      riskFirst: true,
+      cls: "warn",
+      title: "无可用机会，风险优先",
+      reason: `当前 ${downgraded.length} 条机会均为降权/仅复核；只做验证，不直接追高。${risks.length ? `A/B级风险 ${risks.length} 条优先处理。` : ""}`,
+      avoid: uniqueList([
+        ...risks.slice(0, 3).map(item => item.title).filter(Boolean),
+        "数据质量降级"
+      ])
+    };
+  }
+  if (/degraded|critical|blocked|invalidated/.test(String(feed.quality_gate?.status || ""))) {
+    return {
+      riskFirst: false,
+      cls: "warn",
+      title: "数据降级，机会降权",
+      reason: feed.quality_gate?.summary || "核心数据需复核，机会只能按验证条件升级。",
+      avoid: []
+    };
+  }
+  return null;
 }
 
 function inferMarketStyle(intraday, postmarket, evening) {

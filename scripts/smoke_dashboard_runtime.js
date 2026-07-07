@@ -371,7 +371,7 @@ async function main() {
   }
   checkDecisionTriggerRendering(radarHtml, issues);
   checkFallbackChecksRendering(radarHtml, coverage, issues);
-  checkRadarGateRendering(radarHtml, issues);
+  checkRadarGateRendering(document, radarHtml, issues);
   checkInvalidatedAlertRendering(document, issues);
   checkPremarketJapanKoreaGuard(document, issues);
   for (const literal of BAD_LITERALS) {
@@ -509,7 +509,7 @@ function checkFallbackChecksRendering(radarHtml, coverage, issues) {
   }
 }
 
-function checkRadarGateRendering(radarHtml, issues) {
+function checkRadarGateRendering(document, radarHtml, issues) {
   const feed = readJsonIfExists("data/decision-feed.json");
   const opportunities = Array.isArray(feed.opportunities) ? feed.opportunities : [];
   if (!opportunities.length) return;
@@ -524,6 +524,12 @@ function checkRadarGateRendering(radarHtml, issues) {
   for (const snippet of ["无可用机会", "风险优先", "只做验证"]) {
     if (!rendered.includes(snippet)) {
       issues.push(issue("critical", "radar_gate_not_rendered", `无可用机会时雷达闸门缺少：${snippet}`, "opportunity-risk-radar"));
+    }
+  }
+  const controlRendered = normalizeRenderedText(document.getElementById("dashboard-control")?.collectHtml() || "");
+  for (const snippet of ["无可用机会", "风险优先", "只做验证"]) {
+    if (!controlRendered.includes(snippet)) {
+      issues.push(issue("critical", "dashboard_gate_not_rendered", `无可用机会时今日总控缺少：${snippet}`, "dashboard-control"));
     }
   }
 }

@@ -2,6 +2,7 @@
 
 | Display Version | Date | Edition | Tag / Commit | Summary | Rollback Note |
 |---|---:|---:|---|---|---|
+| 2026-07-07 第73版｜总控同步风险闸门 | 2026-07-07 | 第73版 | tag: `v2026.07.07-m73-control-risk-gate` | 首页顶部「今日总控」接入与机会/风险雷达一致的交易闸门：当所有机会均为降权/仅复核时，总控核心结论、优先方向和进攻盯同步切换为“无可用机会、风险优先、只做验证”，避免第一屏继续展示可误读的优先方向。运行时测试新增总控/雷达一致性门禁。 | 回滚到第72版可用 `git checkout v2026.07.07-m72-radar-decision-gate`，或回滚到本版本 tag。 |
 | 2026-07-07 第72版｜机会风险闸门 | 2026-07-07 | 第72版 | tag: `v2026.07.07-m72-radar-decision-gate` | 机会/风险雷达新增交易可用性闸门：当 `decision-feed` 里的机会全部为 C/D 级、降权观察或仅复核时，雷达顶部明确显示“无可用机会，风险优先，只做验证”，并继续把候选压到下一步验证栏；运行时测试新增门禁，防止降权机会被页面语义误导成可追机会。 | 回滚到第71版可用 `git checkout v2026.07.07-m71-alert-invalidated-block`，或回滚到本版本 tag。 |
 | 2026-07-07 第71版｜异动污染阻断显示 | 2026-07-07 | 第71版 | tag: `v2026.07.07-m71-alert-invalidated-block` | `alert.json` 或文件可信度判定为 `invalidated` 时，盘中异动区不再显示普通“暂无/等待触发”，而是显示污染批次已撤下、不可作为交易触发、等待重产和替代观察清单；`data-trust`/`monitoring-coverage` 后加载时会回刷异动区，运行时测试新增门禁防止阻断状态漏显。 | 回滚到第70版可用 `git checkout v2026.07.07-m70-fallback-render-gate`，或回滚到本版本 tag。 |
 | 2026-07-07 第70版｜替代检查渲染门禁 | 2026-07-07 | 第70版 | tag: `v2026.07.07-m70-fallback-render-gate` | 运行时烟雾测试新增 critical 盲区 `fallback_checks` 渲染门禁：盲区替代检查写入 JSON 后，前几条关键检查必须出现在机会/风险雷达里，防止“数据有替代动作但页面没显示”。 | 回滚到第69版可用 `git checkout v2026.07.07-m69-japan-korea-guardrail`，或回滚到本版本 tag。 |
