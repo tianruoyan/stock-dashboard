@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-07-07T23:33:16+08:00",
+  "timestamp": "2026-07-07T23:38:23+08:00",
   "current_signal_date": "2026-07-07",
   "quality_gate": {
     "status": "degraded",
@@ -52,6 +52,20 @@
       "明日竞价先看半导体三分支是否批量高开，不以单只有研硅或华虹H强势直接升级主线。",
       "若跌5%以上样本和跌停数不降，继续降低高位题材博弈频率。",
       "港股AI/创新药尾盘弱，相关A股反抽只按承接观察，不追主线。"
+    ],
+    "quality_actions": [
+      {
+        "label": "先修复阻断",
+        "file": "alert.json",
+        "next_step": "暂停对应交易触发；等待污染批次撤下、可信行情源恢复并重产 JSON。",
+        "unblock_condition": "quality-report blocking=0，相关文件不再 invalidated/missing。"
+      },
+      {
+        "label": "先修复阻断",
+        "file": "source-health.json",
+        "next_step": "暂停对应交易触发；等待污染批次撤下、可信行情源恢复并重产 JSON。",
+        "unblock_condition": "quality-report blocking=0，相关文件不再 invalidated/missing。"
+      }
     ]
   },
   "opportunities": [

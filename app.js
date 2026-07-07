@@ -735,6 +735,9 @@ function renderRadarItem(item) {
   const tone = item.tone || "neutral";
   const tags = (item.tags || []).slice(0, 4).map(tag => `<span>${escapeHtml(tag)}</span>`).join("");
   const gradeClass = `grade-${String(item.signalGrade || "C").toLowerCase()}`;
+  const displayDetail = value => Array.isArray(value)
+    ? userFacingList(value).join("；")
+    : userFacingText(value);
   const details = [
     item.triggerReason ? ["触发", item.triggerReason] : null,
     item.discoveryType ? ["发现", discoveryTypeLabel(item.discoveryType)] : null,
@@ -750,14 +753,14 @@ function renderRadarItem(item) {
     item.invalidation ? ["证伪", item.invalidation] : null,
     item.sourceTrust ? ["源状态", item.sourceTrust] : null,
     item.sources ? ["来源", item.sources] : null
-  ].filter(Boolean).map(([label, value]) => `<div class="radar-detail ${["降权", "缺口"].includes(label) ? "quality" : (["动作", "升级"].includes(label) ? "action" : "")}"><span>${label}</span><b>${escapeHtml(Array.isArray(value) ? value.join("；") : value)}</b></div>`).join("");
+  ].filter(Boolean).map(([label, value]) => `<div class="radar-detail ${["降权", "缺口"].includes(label) ? "quality" : (["动作", "升级"].includes(label) ? "action" : "")}"><span>${label}</span><b>${escapeHtml(displayDetail(value))}</b></div>`).join("");
   return `<div class="radar-item ${tone}">
     <div class="radar-item-head">
       <b>${escapeHtml(item.title)}</b>
       <em class="${gradeClass}">${escapeHtml(item.signalGrade ? `${item.signalGrade}级 · ${item.useAction}` : item.confidence || "观察")}</em>
     </div>
     <div class="radar-use">${escapeHtml(item.confidence || "观察")}${item.signalScore !== undefined ? ` · ${item.signalScore}分` : ""}</div>
-    <div class="radar-reason">${escapeHtml(item.reason)}</div>
+    <div class="radar-reason">${escapeHtml(userFacingText(item.reason))}</div>
     ${details}
     ${tags ? `<div class="topic-related">${tags}</div>` : ""}
   </div>`;
@@ -862,6 +865,11 @@ function renderDecisionBrief(brief) {
   const reasons = (brief.reasons || []).slice(0, 3).map(item => `<span>${escapeHtml(item)}</span>`).join("");
   const upgrades = (brief.upgrade_watch || []).slice(0, 2).map(item => `<em>${escapeHtml(item)}</em>`).join("");
   const risks = (brief.risk_focus || []).slice(0, 3).map(item => `<b>${escapeHtml(item)}</b>`).join("");
+  const actions = (brief.quality_actions || []).slice(0, 2).map(item => {
+    const label = [item.label, item.file].filter(Boolean).join(" · ");
+    const detail = item.next_step || item.unblock_condition || "";
+    return `<em>${escapeHtml(label)}：${escapeHtml(userFacingText(detail))}</em>`;
+  }).join("");
   const cls = /风险|回撤|无明确/.test(String(brief.stance || "")) ? "risk" : (/等待|验证/.test(String(brief.stance || "")) ? "watch" : "good");
   return `<div class="radar-brief ${cls}">
     <div class="radar-brief-main">
@@ -870,6 +878,7 @@ function renderDecisionBrief(brief) {
       <p>${escapeHtml(brief.action || "只按验证条件跟踪，不生成交易指令。")}</p>
     </div>
     <div class="radar-brief-side">
+      ${actions ? `<div><label>处置动作</label>${actions}</div>` : ""}
       ${risks ? `<div><label>风险焦点</label>${risks}</div>` : ""}
       ${upgrades ? `<div><label>升级条件</label>${upgrades}</div>` : ""}
     </div>

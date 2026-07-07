@@ -88,11 +88,13 @@ def build_decision_brief(
     conflicts: list[dict[str, Any]],
     files: dict[str, Any],
 ) -> dict[str, Any]:
-    quality = quality_gate(files.get("quality-report.json") or {})
+    quality_report = files.get("quality-report.json") or {}
+    quality = quality_gate(quality_report)
     actionable = [item for item in opportunities if item.get("signal_grade") in {"A", "B"} and not re.search(r"仅复核|降权|等待", str(item.get("use_action") or ""))]
     high_risks = [item for item in risks if item.get("signal_grade") in {"A", "B"}]
     risk_first = [item for item in conflicts if item.get("severity") == "risk_first"]
     upgrade_candidates = [item for item in opportunities if item.get("upgrade_rank")]
+    quality_actions = quality_action_items(quality_report)
     if risk_first or (not actionable and opportunities):
         stance = "风险优先，只做验证"
         action = "不把候选方向当交易机会；先看风险收敛、数据恢复和核心承接。"
@@ -111,6 +113,7 @@ def build_decision_brief(
         f"A/B级风险 {len(high_risks)} 条" if high_risks else "",
         f"风险优先冲突 {len(risk_first)} 条" if risk_first else "",
         f"可用机会 {len(actionable)} 条，降权候选 {max(0, len(opportunities) - len(actionable))} 条",
+        f"先处理：{quality_actions[0]['label']}（{quality_actions[0]['file']}）" if quality_actions else "",
     ])[:4]
     risk_focus = [item.get("title") for item in high_risks[:3] if item.get("title")]
     upgrade_watch = [
@@ -129,7 +132,25 @@ def build_decision_brief(
         "risk_focus": risk_focus,
         "upgrade_watch": clean_list(upgrade_watch)[:3],
         "verification_focus": clean_list(verification_focus)[:3],
+        "quality_actions": quality_actions,
     }
+
+
+def quality_action_items(quality_report: dict[str, Any]) -> list[dict[str, str]]:
+    actions = quality_report.get("action_plan") if isinstance(quality_report, dict) else []
+    if not isinstance(actions, list):
+        return []
+    rows: list[dict[str, str]] = []
+    for item in actions:
+        if not isinstance(item, dict):
+            continue
+        rows.append({
+            "label": trim(first_text(item.get("label"), item.get("impact_level"), "处置"), 18),
+            "file": trim(first_text(item.get("file"), "quality-report.json"), 32),
+            "next_step": trim(first_text(item.get("next_step"), item.get("decision_action"), item.get("problem")), 110),
+            "unblock_condition": trim(first_text(item.get("unblock_condition"), ""), 90),
+        })
+    return rows[:2]
 
 
 def build_opportunities(files: dict[str, Any], current_date: str) -> list[dict[str, Any]]:

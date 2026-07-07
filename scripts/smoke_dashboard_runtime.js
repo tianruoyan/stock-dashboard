@@ -560,6 +560,9 @@ function checkDecisionBriefRendering(radarHtml, issues) {
   const brief = feed.decision_brief;
   if (!brief) return;
   const rendered = normalizeRenderedText(radarHtml);
+  if (RAW_SOURCE_ERROR_RE.test(rendered)) {
+    issues.push(issue("critical", "radar_raw_source_error_rendered", "机会/风险雷达仍展示底层英文源错误，需转成中文复核提示", "opportunity-risk-radar"));
+  }
   if (!rendered.includes("决策口径")) {
     issues.push(issue("critical", "decision_brief_not_rendered", "机会/风险雷达未显示决策口径摘要", "opportunity-risk-radar"));
     return;
@@ -567,6 +570,27 @@ function checkDecisionBriefRendering(radarHtml, issues) {
   for (const value of [brief.stance, brief.action].map(stableSnippet).filter(Boolean)) {
     if (!rendered.includes(value)) {
       issues.push(issue("critical", "decision_brief_not_rendered", `决策口径未渲染：${value}`, "opportunity-risk-radar"));
+    }
+  }
+  const actions = Array.isArray(brief.quality_actions) ? brief.quality_actions : [];
+  if (actions.length) {
+    if (!rendered.includes("处置动作")) {
+      issues.push(issue("critical", "decision_brief_quality_action_not_rendered", "决策口径未显示质量处置动作", "opportunity-risk-radar"));
+      return;
+    }
+    for (const item of actions.slice(0, 2)) {
+      const label = stableSnippet(item.label);
+      const file = stableSnippet(item.file);
+      const next = stableSnippet(item.next_step);
+      if (label && !rendered.includes(label)) {
+        issues.push(issue("critical", "decision_brief_quality_action_not_rendered", `处置动作标签未渲染：${label}`, "opportunity-risk-radar"));
+      }
+      if (file && !rendered.includes(file)) {
+        issues.push(issue("critical", "decision_brief_quality_action_not_rendered", `处置动作文件未渲染：${file}`, "opportunity-risk-radar"));
+      }
+      if (next && !rendered.includes(next)) {
+        issues.push(issue("critical", "decision_brief_quality_action_not_rendered", `处置动作内容未渲染：${next}`, "opportunity-risk-radar"));
+      }
     }
   }
 }

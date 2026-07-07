@@ -174,6 +174,18 @@ def check_decision_feed(issues: list[dict[str, Any]]) -> None:
         for key in ("stance", "action", "reasons", "risk_focus", "upgrade_watch"):
             if key not in brief:
                 issues.append(issue("warning", "data/decision-feed.json", "missing_decision_brief_field", f"decision_brief.{key} 缺失"))
+        if quality_status in {"degraded", "critical"}:
+            actions = brief.get("quality_actions")
+            if not isinstance(actions, list) or not actions:
+                issues.append(issue("warning", "data/decision-feed.json", "missing_decision_brief_quality_actions", "数据降级时 decision_brief 必须带 quality_actions"))
+            else:
+                for index, action in enumerate(actions[:2]):
+                    if not isinstance(action, dict):
+                        issues.append(issue("warning", "data/decision-feed.json", "bad_decision_brief_quality_action", f"quality_actions[{index}] 不是对象"))
+                        continue
+                    for key in ("label", "file", "next_step"):
+                        if not action.get(key):
+                            issues.append(issue("warning", "data/decision-feed.json", "missing_decision_brief_quality_action_field", f"quality_actions[{index}].{key} 缺失"))
     for section in ("opportunities", "risks", "verifications"):
         rows = data.get(section)
         if not isinstance(rows, list):

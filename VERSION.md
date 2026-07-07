@@ -2,6 +2,8 @@
 
 | Display Version | Date | Edition | Tag / Commit | Summary | Rollback Note |
 |---|---:|---:|---|---|---|
+| 2026-07-07 第100版｜雷达源错误清理 | 2026-07-07 | 第100版 | tag: `v2026.07.07-m100-radar-source-cleanup` | 在第99版基础上继续清理机会/风险雷达卡片详情：触发、缺口、降权、证据、验证、证伪等行统一经过用户侧文案清洗，底层 `Can not decode`、`JSON decode failed`、`proxy disconnect` 不再直出；运行时门禁新增雷达原始源错误拦截。 | 回滚到第99版可用 `git checkout v2026.07.07-m99-brief-quality-actions`，或回滚到本版本 tag。 |
+| 2026-07-07 第99版｜决策口径带处置动作 | 2026-07-07 | 第99版 | tag: `v2026.07.07-m99-brief-quality-actions` | `decision-feed.decision_brief` 新增 `quality_actions`，把 `quality-report.action_plan` 中最优先的处置动作同步到机会/风险雷达顶部；雷达“决策口径”旁新增“处置动作”，直接告诉用户先修复/复核什么。静态和运行时门禁要求数据降级时必须产出并渲染处置动作。 | 回滚到第98版可用 `git checkout v2026.07.07-m98-section-source-cleanup`，或回滚到本版本 tag。 |
 | 2026-07-07 第98版｜区块源错误中文化 | 2026-07-07 | 第98版 | tag: `v2026.07.07-m98-section-source-cleanup` | 第97版基础上继续清理面板区块健康贴条：`source-health` 的底层英文错误不再显示在早盘标题下方，统一变成“行情源解码异常，相关行情与异动信号需二次复核”；缓存版本升级到 m98，避免浏览器继续加载 m97 旧脚本。 | 回滚到第97版可用 `git checkout v2026.07.07-m97-source-error-cleanup`，或回滚到本版本 tag。 |
 | 2026-07-07 第97版｜源错误中文化清理 | 2026-07-07 | 第97版 | tag: `v2026.07.07-m97-source-error-cleanup` | 早盘和数据质量卡不再直接展示 `Can not decode`、`JSON decode failed`、`proxy disconnect` 等底层英文源错误，统一翻译为中文复核提示；早盘数据源列表过滤 URL-only 空名称来源，避免出现“数据源： · · ·”和日韩早盘乱码感。运行时门禁新增早盘区块底层源错误拦截。 | 回滚到第96版可用 `git checkout v2026.07.07-m96-alert-fallback-checks`，或回滚到本版本 tag。 |
 | 2026-07-07 第96版｜异动替代观察分组 | 2026-07-07 | 第96版 | tag: `v2026.07.07-m96-alert-fallback-checks` | 盘中异动被污染批次阻断时，异动区不再只显示长文本替代观察，而是按“宽度替代、主线替代、新线替代、雷达替代”等前缀拆成分组卡片；运行时门禁要求异动阻断时必须显示具体替代分类，避免异动不可用后变成空提示。 | 回滚到第95版可用 `git checkout v2026.07.07-m95-quality-action-plan`，或回滚到本版本 tag。 |
