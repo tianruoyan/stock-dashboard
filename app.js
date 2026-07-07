@@ -117,6 +117,8 @@ function cached(path) {
 
 function renderGlobalDecisionModules() {
   renderDashboardControl();
+  renderDataQualityGate();
+  renderOpportunityRiskRadar();
   renderWatchlistDecision();
   renderPortfolioRisk();
 }
@@ -211,6 +213,257 @@ function dataFreshness(timestamp) {
   if (ms < 10 * 60 * 1000) return "实时有效";
   if (ms < 90 * 60 * 1000) return "盘中可用";
   return "注意是否为上一阶段数据";
+}
+
+function renderDataQualityGate() {
+  const el = document.getElementById("data-quality-gate");
+  if (!el) return;
+  const report = buildDataQualityReport();
+  const cards = [
+    {
+      label: "数据可信度",
+      title: report.level,
+      detail: report.summary,
+      cls: report.cls
+    },
+    {
+      label: "最新有效",
+      title: formatUpdateTime(report.latest) || "待更新",
+      detail: dataFreshness(report.latest),
+      cls: "neutral"
+    },
+    {
+      label: "降级源",
+      title: report.degraded.length ? `${report.degraded.length} 条` : "无",
+      detail: report.degraded.slice(0, 2).join(" / ") || "核心行情源正常",
+      cls: report.degraded.length ? "warn" : "good"
+    }
+  ];
+  el.innerHTML = `<div class="decision-strip quality-strip">${cards.map(card => `
+    <div class="decision-card ${card.cls}">
+      <span class="decision-label">${escapeHtml(card.label)}</span>
+      <b>${escapeHtml(card.title)}</b>
+      <span>${escapeHtml(card.detail)}</span>
+    </div>`).join("")}</div>
+    ${report.issues.length ? `<div class="quality-issues">${report.issues.slice(0, 4).map(item => `<span>${escapeHtml(item)}</span>`).join("")}</div>` : ""}`;
+}
+
+function buildDataQualityReport() {
+  const files = [
+    ["盘中", cached("data/intraday.json")],
+    ["盘前", cached("data/premarket.json")],
+    ["午盘", cached("data/midday.json")],
+    ["盘后", cached("data/postmarket.json")],
+    ["专题", cached("data/topics.json")],
+    ["异动", cached("data/alert.json")]
+  ];
+  const sourceHealth = cached("data/source-health.json") || {};
+  const issues = [];
+  const currentDate = currentSignalDate();
+  files.forEach(([label, data]) => {
+    if (!data) {
+      issues.push(`${label}未接入`);
+      return;
+    }
+    const ts = data.timestamp || "";
+    if (!ts) issues.push(`${label}无时间戳`);
+    else if (signalDate(ts) !== currentDate) issues.push(`${label}非当日数据`);
+    const text = JSON.stringify(data);
+    if (/\[object Object\]|undefined|None%|NaN|Infinity/.test(text)) issues.push(`${label}含异常文本`);
+    if (data.source_status === "invalidated") issues.push(`${label}已撤下污染批次`);
+  });
+  const degraded = Object.entries(sourceHealth.sources || {})
+    .filter(([, src]) => src?.status === "degraded" || src?.status === "bad")
+    .map(([name, src]) => src.usage || src.detail || src.note || name);
+  if (sourceHealth.overall_status === "degraded" || sourceHealth.status === "degraded") {
+    issues.push("数据源整体降级");
+  }
+  const latest = latestTimestamp(files.map(([, data]) => data).filter(Boolean));
+  const critical = issues.filter(item => /异常文本|未接入/.test(item)).length;
+  const stale = issues.filter(item => /非当日|无时间戳/.test(item)).length;
+  if (critical) return { level: "谨慎使用", cls: "warn", latest, degraded, issues, summary: "存在污染/异常字段，信号需二次确认" };
+  if (stale || degraded.length) return { level: "降级可用", cls: "neutral", latest, degraded, issues, summary: "核心数据可用，但部分来源需降权" };
+  return { level: "可用", cls: "good", latest, degraded, issues, summary: "核心数据结构正常" };
+}
+
+function renderOpportunityRiskRadar() {
+  const el = document.getElementById("opportunity-risk-radar");
+  if (!el) return;
+  const radar = buildOpportunityRiskRadar();
+  el.innerHTML = `<div class="radar-grid">
+    <div class="radar-column">
+      <div class="radar-head"><b>机会候选</b><span>${radar.opportunities.length ? "需要验证，不直接追高" : "暂无高置信机会"}</span></div>
+      ${radar.opportunities.length ? radar.opportunities.map(renderRadarItem).join("") : '<div class="empty-sm">等待主线扩散或观察池个股确认</div>'}
+    </div>
+    <div class="radar-column">
+      <div class="radar-head"><b>风险提示</b><span>${radar.risks.length ? "优先控制回撤" : "暂无新增风险"}</span></div>
+      ${radar.risks.length ? radar.risks.map(renderRadarItem).join("") : '<div class="empty-sm">等待跌停/尾盘/舆情信号</div>'}
+    </div>
+    <div class="radar-column">
+      <div class="radar-head"><b>下一步验证</b><span>盘中只看可证伪信号</span></div>
+      ${radar.verifications.length ? radar.verifications.map(renderRadarItem).join("") : '<div class="empty-sm">暂无验证条件</div>'}
+    </div>
+  </div>`;
+}
+
+function renderRadarItem(item) {
+  const tone = item.tone || "neutral";
+  const tags = (item.tags || []).slice(0, 4).map(tag => `<span>${escapeHtml(tag)}</span>`).join("");
+  return `<div class="radar-item ${tone}">
+    <div class="radar-item-head">
+      <b>${escapeHtml(item.title)}</b>
+      <em>${escapeHtml(item.confidence || "观察")}</em>
+    </div>
+    <div class="radar-reason">${escapeHtml(item.reason)}</div>
+    ${tags ? `<div class="topic-related">${tags}</div>` : ""}
+  </div>`;
+}
+
+function buildOpportunityRiskRadar() {
+  const intraday = cached("data/intraday.json") || {};
+  const postmarket = cached("data/postmarket.json") || {};
+  const midday = cached("data/midday.json") || {};
+  const topics = cached("data/topics.json") || {};
+  const watchlistSignals = buildWatchlistSignalRows();
+  const themes = [
+    ...getIntradayThemes(intraday),
+    ...(Array.isArray(postmarket.hotspots) ? postmarket.hotspots : []),
+    ...(Array.isArray(topics.topics) ? topics.topics : [])
+  ].filter(Boolean);
+  const strongThemes = dedupeRadarItems(themes
+    .filter(isPriorityTheme)
+    .map(theme => ({
+      title: themeDisplayName(theme),
+      reason: radarThemeReason(theme),
+      confidence: radarConfidence(theme, "opportunity"),
+      tone: "good",
+      tags: themeSubDirections(theme)
+    })));
+  const riskThemes = dedupeRadarItems(themes
+    .filter(isAvoidTheme)
+    .map(theme => ({
+      title: themeDisplayName(theme),
+      reason: radarThemeRisk(theme),
+      confidence: radarConfidence(theme, "risk"),
+      tone: "risk",
+      tags: themeSubDirections(theme)
+    })));
+  const strongStocks = watchlistSignals
+    .filter(item => item.signal.tone === "strong")
+    .slice(0, 4)
+    .map(item => ({
+      title: displayStockName(item.name),
+      reason: `${item.signal.reason}；${item.signal.badge || "强势待验证"}`,
+      confidence: "观察池强信号",
+      tone: "good",
+      tags: [stockProfileLabel(item)].filter(Boolean)
+    }));
+  const weakStocks = watchlistSignals
+    .filter(item => item.signal.tone === "weak")
+    .slice(0, 4)
+    .map(item => ({
+      title: displayStockName(item.name),
+      reason: `${item.signal.reason}；${item.signal.badge || "风险待验证"}`,
+      confidence: "观察池风险",
+      tone: "risk",
+      tags: [stockProfileLabel(item)].filter(Boolean)
+    }));
+  const breadthRisk = marketBreadthRisk(intraday, postmarket);
+  const verifications = [
+    ...verificationItems(intraday, midday, postmarket),
+    ...strongThemes.slice(0, 2).map(item => ({
+      title: `${item.title}能否升级`,
+      reason: "看核心个股是否同步强于ETF、后排是否扩散、尾盘是否承接。",
+      confidence: "盘中验证",
+      tone: "neutral",
+      tags: item.tags
+    }))
+  ];
+  return {
+    opportunities: [...strongStocks, ...strongThemes].slice(0, 6),
+    risks: [...(breadthRisk ? [breadthRisk] : []), ...weakStocks, ...riskThemes].slice(0, 7),
+    verifications: dedupeRadarItems(verifications).slice(0, 6)
+  };
+}
+
+function buildWatchlistSignalRows() {
+  const wl = cached("config/watchlist.json") || {};
+  const signals = collectSignalText();
+  return (wl.watch_only?.stocks || [])
+    .map(stock => ({ ...stock, signal: stockSignal(stock, signals, "watch_only") }))
+    .sort((a, b) => (b.signal.score || 0) - (a.signal.score || 0));
+}
+
+function radarThemeReason(theme) {
+  const parts = [
+    trendStatus(theme),
+    theme.continuity,
+    theme.reason,
+    ...(Array.isArray(theme.evidence) ? theme.evidence : []),
+    theme.note
+  ].filter(Boolean);
+  return truncateText(parts.join("；") || "主线强度有待盘中继续确认", 108);
+}
+
+function radarThemeRisk(theme) {
+  const parts = [
+    trendStatus(theme),
+    theme.risk,
+    theme.continuity,
+    theme.note,
+    ...(Array.isArray(theme.evidence) ? theme.evidence : [])
+  ].filter(Boolean);
+  return truncateText(parts.join("；") || "风险线需观察是否扩散", 108);
+}
+
+function radarConfidence(theme, mode) {
+  const text = JSON.stringify(theme);
+  if (/涨停|封板|证据|evidence|尾盘|成交|放量/.test(text)) return mode === "risk" ? "证据风险" : "证据支持";
+  if (/观察|待验证|分化/.test(text)) return "待验证";
+  return "模型推断";
+}
+
+function marketBreadthRisk(intraday, postmarket) {
+  const s = intraday.sentiment || {};
+  const idx = postmarket.index || {};
+  const down5 = Number(idx["跌幅5%以上"] || postmarket.market_breadth?.down5_count || 0);
+  const limitDown = Number(s.limit_down_count || idx["跌停"] || 0);
+  const broken = Number(s.broken_limit_count || idx["炸板"] || 0);
+  if (down5 >= 500 || limitDown >= 20 || broken >= 25) {
+    return {
+      title: "全市场亏钱效应",
+      reason: `跌5%以上${down5 || "-"}只，跌停${limitDown || "-"}只，炸板${broken || "-"}只；强线不能外推成全面进攻。`,
+      confidence: "高优先级风险",
+      tone: "risk",
+      tags: ["仓位", "回撤"]
+    };
+  }
+  return null;
+}
+
+function verificationItems(intraday, midday, postmarket) {
+  return uniqueList([
+    ...arrayTextItems(intraday.actions),
+    ...arrayTextItems(midday.afternoon_watch),
+    ...arrayTextItems(postmarket.next_day_watch),
+    ...arrayTextItems(postmarket.closing_auction_patch?.watch_next_day)
+  ]).slice(0, 5).map(text => ({
+    title: "验证条件",
+    reason: truncateText(text, 108),
+    confidence: "可证伪",
+    tone: /风险|跌停|弱|回落|低开/.test(text) ? "risk" : "neutral",
+    tags: positiveRelatedTopicTags(text)
+  }));
+}
+
+function dedupeRadarItems(items) {
+  const seen = new Set();
+  return (items || []).filter(item => {
+    const key = item.title;
+    if (!key || seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
 }
 
 function uniqueList(items) {
@@ -2514,7 +2767,9 @@ function renderSourceHealth(data) {
   updatePanelMeta("source-health", data.timestamp);
   const el = document.getElementById("source-health");
   if (!el) return;
-  const sources = data.sources || [];
+  const sources = Array.isArray(data.sources)
+    ? data.sources
+    : Object.entries(data.sources || {}).map(([id, source]) => ({ id, ...(source || {}) }));
   const rules = data.rules || [];
   const sourceCards = sources.map(source => {
     const status = source.status || "unknown";
@@ -2527,7 +2782,7 @@ function renderSourceHealth(data) {
         <b>${escapeHtml(source.name || source.id || "未命名数据源")}</b>
         <span class="source-status">${label}</span>
       </div>
-      <div class="source-meta">${escapeHtml(source.role || "")}</div>
+      <div class="source-meta">${escapeHtml(source.role || source.usage || source.detail || "")}</div>
       ${cadence}
       ${note}
     </div>`;
