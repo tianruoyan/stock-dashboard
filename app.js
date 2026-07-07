@@ -345,18 +345,19 @@ function renderWatchStock(stock) {
 }
 
 function renderWatchStockName(stock) {
-  const label = watchSignalBadge(stock.signal?.level);
+  const label = watchSignalBadge(stock.signal);
   return `<span class="watch-stock-name">${escapeHtml(displayStockName(stock.name || stock.code))}${label ? `<small>${escapeHtml(label)}</small>` : ""}</span>`;
 }
 
-function watchSignalBadge(level) {
-  return {
+function watchSignalBadge(signal) {
+  const base = {
     trigger: "触发",
     risk: "风险",
     pressure: "承压",
     watch: "待验证",
     idle: ""
-  }[level] || "";
+  }[signal?.level] || "";
+  return signal?.badge ? `${base} · ${signal.badge}` : base;
 }
 
 function stockSignal(stock, signals, pool) {
@@ -378,12 +379,12 @@ function stockSignal(stock, signals, pool) {
   const directRisk = directSegments.some(part => priceRiskPattern.test(part) || hasLargeDrop(part, 7));
   const directPressure = directSegments.some(part => !isConditionalSignal(part) && (pressurePattern.test(part) || hasAnyDrop(part)));
   const directTrigger = directSegments.some(part => !isConditionalSignal(part) && (hardStrongPattern.test(part) || hasLargeGain(part, 5)));
-  if (directEventRisk) return { level: "risk", reason: shortReason(directSegments, "事件风险") };
-  if (directTrigger) return { level: "trigger", reason: shortReason(strongSegments(directSegments), "强信号") };
-  if (directRisk) return { level: "risk", reason: shortReason(directSegments, "硬风险") };
-  if (directPressure) return { level: "pressure", reason: pressureReason(directSegments) };
-  if (strongTag) return { level: "trigger", reason: `${strongTag}强主线` };
-  if (pressureTag) return { level: "pressure", reason: `${pressureTag}承压` };
+  if (directEventRisk) return { level: "risk", reason: shortReason(directSegments, "事件风险"), badge: eventRiskBadge(directSegments) };
+  if (directTrigger) return { level: "trigger", reason: shortReason(strongSegments(directSegments), "强信号"), badge: strongSignalBadge(strongSegments(directSegments)) };
+  if (directRisk) return { level: "risk", reason: shortReason(directSegments, "硬风险"), badge: priceRiskBadge(directSegments) };
+  if (directPressure) return { level: "pressure", reason: pressureReason(directSegments), badge: pressureBadge(directSegments) };
+  if (strongTag) return { level: "trigger", reason: `${strongTag}强主线`, badge: "强主线" };
+  if (pressureTag) return { level: "pressure", reason: `${pressureTag}承压`, badge: "方向承压" };
   if (watchPattern.test(tagText) || directSegments.some(part => hasAnyGain(part))) {
     return { level: "watch", reason: directSegments.length ? shortReason(directSegments, "待确认") : matchedTagReason(tags, tagText, "方向观察") };
   }
@@ -538,6 +539,56 @@ function pressureReason(segments) {
   if (/补跌/.test(text)) return "补跌承压";
   if (/压制/.test(text)) return "受压制";
   return "个股承压";
+}
+
+function eventRiskBadge(segments) {
+  const text = (segments || []).join(" ");
+  const labels = [
+    ["减持", /减持/],
+    ["监管", /监管|问询/],
+    ["立案", /立案/],
+    ["处罚", /处罚/],
+    ["澄清", /澄清/],
+    ["业绩雷", /业绩雷/]
+  ].filter(([, re]) => re.test(text)).map(([label]) => label);
+  return labels.slice(0, 2).join("/");
+}
+
+function strongSignalBadge(segments) {
+  const text = (segments || []).join(" ");
+  const labels = [
+    ["涨停", /涨停|20cm|20CM/],
+    ["封板", /封板/],
+    ["大涨", /大涨|\+\d+(?:\.\d+)?%/],
+    ["放量走强", /放量上涨|放量走强/],
+    ["急拉", /急拉|加速/],
+    ["突破", /突破/],
+    ["领涨", /领涨|强势/]
+  ].filter(([, re]) => re.test(text)).map(([label]) => label);
+  return labels.slice(0, 2).join("/");
+}
+
+function priceRiskBadge(segments) {
+  const text = (segments || []).join(" ");
+  const labels = [
+    ["跌停", /跌停|接近跌停/],
+    ["大跌", /暴跌|放量大跌|放量下跌|-\d+(?:\.\d+)?%/],
+    ["破位", /破位|跌破/],
+    ["降级", /降级|风险核心|负反馈核心/]
+  ].filter(([, re]) => re.test(text)).map(([label]) => label);
+  return labels.slice(0, 2).join("/");
+}
+
+function pressureBadge(segments) {
+  const text = (segments || []).join(" ");
+  const labels = [
+    ["回落", /回落/],
+    ["分歧", /分歧/],
+    ["下跌", /下跌|-\d+(?:\.\d+)?%/],
+    ["压制", /压制/],
+    ["补跌", /补跌/]
+  ].filter(([, re]) => re.test(text)).map(([label]) => label);
+  return labels.slice(0, 2).join("/");
 }
 
 function strongSegments(segments) {
