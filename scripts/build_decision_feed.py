@@ -81,7 +81,7 @@ def build_opportunities(files: dict[str, Any], current_date: str) -> list[dict[s
     gate = quality_gate(quality)
     quality_degraded = gate["status"] in {"degraded", "critical"}
 
-    for theme, source in theme_candidates(files):
+    for theme, source in risk_theme_candidates(files):
         if is_generic_bucket(theme):
             continue
         text = compact_json(theme)
@@ -162,6 +162,20 @@ def build_opportunities(files: dict[str, Any], current_date: str) -> list[dict[s
     return items
 
 
+def risk_theme_candidates(files: dict[str, Any]) -> list[tuple[dict[str, Any], str]]:
+    rows: list[tuple[dict[str, Any], str]] = []
+    for item in as_list(files.get("postmarket.json", {}).get("hotspots")):
+        if isinstance(item, dict):
+            rows.append((item, "postmarket.json"))
+    for item in as_list(files.get("intraday.json", {}).get("main_trends")) + as_list(files.get("intraday.json", {}).get("themes")):
+        if isinstance(item, dict):
+            rows.append((item, "intraday.json"))
+    for item in as_list(files.get("topics.json", {}).get("topics")):
+        if isinstance(item, dict):
+            rows.append((item, "topics.json"))
+    return rows
+
+
 def unplanned_theme_candidates(files: dict[str, Any], existing_titles: set[str]) -> list[dict[str, Any]]:
     topics = files.get("topics.json") or {}
     post = files.get("postmarket.json") or {}
@@ -212,23 +226,7 @@ def build_risks(files: dict[str, Any]) -> list[dict[str, Any]]:
             discovery_type="risk_guardrail",
         ))
 
-    for shift in theme_shift_candidates(files, {"risk", "crowded", "fading"}):
-        shift_text = " ".join([shift.get("theme", ""), shift.get("conclusion", ""), shift.get("risk", "")])
-        items.append(decision_item(
-            title=f"主线变化：{shift.get('theme')}",
-            item_type="theme_shift",
-            conclusion=shift.get("conclusion") or shift.get("risk") or "主线边际转弱，需要降权。",
-            confidence="high" if shift.get("state") in {"risk", "crowded"} and number(shift.get("score")) >= 70 else "medium",
-            evidence=shift.get("evidence") or [],
-            watch_next=shift.get("watch_next") or [],
-            invalidation="风险信号收敛、后排扩散恢复且核心股放量承接。",
-            tags=related_tags(shift_text),
-            source_files=shift.get("source_files") or ["theme-shifts.json"],
-            tone="risk",
-            discovery_type="theme_shift_scan",
-        ))
-
-    for theme, source in theme_candidates(files):
+    for theme, source in risk_theme_candidates(files):
         if is_generic_bucket(theme):
             continue
         text = compact_json(theme)
@@ -247,6 +245,22 @@ def build_risks(files: dict[str, Any]) -> list[dict[str, Any]]:
             source_files=[source],
             tone="risk",
             discovery_type=discovery_type_for(source, theme, "risk"),
+        ))
+
+    for shift in theme_shift_candidates(files, {"risk", "crowded", "fading"}):
+        shift_text = " ".join([shift.get("theme", ""), shift.get("conclusion", ""), shift.get("risk", "")])
+        items.append(decision_item(
+            title=f"主线变化：{shift.get('theme')}",
+            item_type="theme_shift",
+            conclusion=shift.get("conclusion") or shift.get("risk") or "主线边际转弱，需要降权。",
+            confidence="high" if shift.get("state") in {"risk", "crowded"} and number(shift.get("score")) >= 70 else "medium",
+            evidence=shift.get("evidence") or [],
+            watch_next=shift.get("watch_next") or [],
+            invalidation="风险信号收敛、后排扩散恢复且核心股放量承接。",
+            tags=related_tags(shift_text),
+            source_files=shift.get("source_files") or ["theme-shifts.json"],
+            tone="risk",
+            discovery_type="theme_shift_scan",
         ))
 
     return items

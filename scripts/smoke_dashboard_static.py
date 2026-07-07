@@ -196,7 +196,35 @@ def check_decision_feed(issues: list[dict[str, Any]]) -> None:
             if isinstance(item.get("evidence_score"), (int, float)) and not 0 <= item.get("evidence_score") <= 100:
                 issues.append(issue("warning", "data/decision-feed.json", "bad_evidence_score", f"{title} evidence_score 不在 0-100"))
     check_decision_conflicts(data, issues)
+    check_postmarket_risk_hotspots(data, issues)
     check_unplanned_theme_detection(data, issues)
+
+
+def check_postmarket_risk_hotspots(feed: dict[str, Any], issues: list[dict[str, Any]]) -> None:
+    try:
+        postmarket = json.loads((ROOT / "data" / "postmarket.json").read_text(encoding="utf-8"))
+    except Exception:
+        return
+    rendered = {
+        normalize_conflict_title(item.get("title"))
+        for item in (feed.get("risks") or []) + (feed.get("verifications") or [])
+        if isinstance(item, dict)
+    }
+    rendered.update(
+        normalize_conflict_title(item.get("theme"))
+        for item in feed.get("conflicts") or []
+        if isinstance(item, dict)
+    )
+    for item in postmarket.get("hotspots", []):
+        if not isinstance(item, dict):
+            continue
+        name = str(item.get("name") or "")
+        text = json.dumps(item, ensure_ascii=False)
+        if not re.search(r"风险|分歧|退潮|反抽失败|弱|回落|炸板|跌停|不支持全面进攻", text):
+            continue
+        key = normalize_conflict_title(name)
+        if key and key not in rendered:
+            issues.append(issue("warning", "data/decision-feed.json", "missing_postmarket_risk_hotspot", f"盘后风险热点未进入风险/验证/冲突栏：{name}"))
 
 
 def check_decision_conflicts(feed: dict[str, Any], issues: list[dict[str, Any]]) -> None:
