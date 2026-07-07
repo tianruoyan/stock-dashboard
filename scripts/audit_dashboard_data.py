@@ -209,6 +209,19 @@ def validate_decision_feed(data: Any, issues: list[dict[str, Any]], current_date
                     issues.append(issue("warning", "decision-feed.json", "missing_decision_field", f"{section}[{index}].{key} 缺失", f"{section}[{index}]"))
             if section in {"opportunities", "risks"} and item.get("confidence") == "high" and not item.get("evidence"):
                 issues.append(issue("warning", "decision-feed.json", "high_confidence_without_evidence", f"{section}[{index}] 高置信但缺少 evidence", f"{section}[{index}]"))
+            if section == "opportunities" and has_stale_relative_time(json.dumps(item, ensure_ascii=False), current_date):
+                issues.append(issue("warning", "decision-feed.json", "stale_relative_time", f"{section}[{index}] 含过期相对日期", f"{section}[{index}]"))
+
+
+def has_stale_relative_time(text: str, current_date: str) -> bool:
+    try:
+        weekday = datetime.fromisoformat(current_date).weekday()
+    except Exception:
+        return False
+    weekday_words = {
+        "周一": 0, "周二": 1, "周三": 2, "周四": 3, "周五": 4, "周六": 5, "周日": 6, "周天": 6,
+    }
+    return any(word in text and weekday != day for word, day in weekday_words.items())
 
 
 def issue(severity: str, file: str, code: str, message: str, path: str = "") -> dict[str, Any]:

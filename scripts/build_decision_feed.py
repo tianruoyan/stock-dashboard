@@ -32,7 +32,7 @@ def main() -> int:
         "timestamp": now_iso(),
         "current_signal_date": signal_date,
         "summary": build_summary(files),
-        "opportunities": dedupe_items(build_opportunities(files))[:8],
+        "opportunities": dedupe_items(build_opportunities(files, signal_date))[:8],
         "risks": dedupe_items(build_risks(files))[:8],
         "verifications": dedupe_items(build_verifications(files))[:8],
         "rules": [
@@ -63,13 +63,17 @@ def build_summary(files: dict[str, Any]) -> str:
     return trim(base, 180)
 
 
-def build_opportunities(files: dict[str, Any]) -> list[dict[str, Any]]:
+def build_opportunities(files: dict[str, Any], current_date: str) -> list[dict[str, Any]]:
     items: list[dict[str, Any]] = []
     quality = files.get("quality-report.json") or {}
     quality_degraded = quality.get("status") in {"degraded", "critical"}
 
     for theme, source in theme_candidates(files):
+        if is_generic_bucket(theme):
+            continue
         text = compact_json(theme)
+        if has_stale_relative_time(text, current_date):
+            continue
         status = trend_status(theme)
         if not is_opportunity_text(status, text):
             continue
@@ -130,6 +134,8 @@ def build_risks(files: dict[str, Any]) -> list[dict[str, Any]]:
         ))
 
     for theme, source in theme_candidates(files):
+        if is_generic_bucket(theme):
+            continue
         text = compact_json(theme)
         status = trend_status(theme)
         if not is_risk_text(status, text):
@@ -289,9 +295,32 @@ def theme_name(item: dict[str, Any]) -> str:
 
 def is_opportunity_text(status: str, text: str) -> bool:
     full_text = status + text
-    if re.search(r"回避/降级|回避|降级|退潮|明显风险|不作?为进攻|风险集合", full_text):
+    hard_negative = r"回避/降级|回避|降级|退潮|明显风险|风险线|风险转观察|不作?为进攻|风险集合|未触发|偏弱|弱化|反抽失败|不追高|外部.*压制"
+    if re.search(hard_negative, full_text):
         return False
-    return bool(re.search(r"强|强化|主线|领涨|封板|涨停|放量|承接|修复", full_text))
+    has_strength = bool(re.search(r"强主线|强化|偏强|最强|领涨|封板|涨停|放量|承接|核心强线", full_text))
+    if not has_strength:
+        return False
+    if re.search(r"不升级|不共振|不能定义为强主线|未形成|弱于|只作|只按|防守|高位分歧|炸板|跌停", full_text):
+        return bool(re.search(r"强主线|强化|核心强线|最强", status))
+    return True
+
+
+def is_generic_bucket(item: dict[str, Any]) -> bool:
+    name = theme_name(item)
+    status = trend_status(item)
+    return name in {"强逻辑", "观察线", "资金博弈线", "风险线"} and name == status
+
+
+def has_stale_relative_time(text: str, current_date: str) -> bool:
+    try:
+        weekday = datetime.fromisoformat(current_date).weekday()
+    except Exception:
+        return False
+    weekday_words = {
+        "周一": 0, "周二": 1, "周三": 2, "周四": 3, "周五": 4, "周六": 5, "周日": 6, "周天": 6,
+    }
+    return any(word in text and weekday != day for word, day in weekday_words.items())
 
 
 def is_risk_text(status: str, text: str) -> bool:

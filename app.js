@@ -345,12 +345,19 @@ function renderOpportunityRiskRadar() {
 function renderRadarItem(item) {
   const tone = item.tone || "neutral";
   const tags = (item.tags || []).slice(0, 4).map(tag => `<span>${escapeHtml(tag)}</span>`).join("");
+  const details = [
+    item.evidence ? ["证据", item.evidence] : null,
+    item.watchNext ? ["验证", item.watchNext] : null,
+    item.invalidation ? ["证伪", item.invalidation] : null,
+    item.sources ? ["来源", item.sources] : null
+  ].filter(Boolean).map(([label, value]) => `<div class="radar-detail"><span>${label}</span><b>${escapeHtml(Array.isArray(value) ? value.join("；") : value)}</b></div>`).join("");
   return `<div class="radar-item ${tone}">
     <div class="radar-item-head">
       <b>${escapeHtml(item.title)}</b>
       <em>${escapeHtml(item.confidence || "观察")}</em>
     </div>
     <div class="radar-reason">${escapeHtml(item.reason)}</div>
+    ${details}
     ${tags ? `<div class="topic-related">${tags}</div>` : ""}
   </div>`;
 }
@@ -443,17 +450,16 @@ function decisionFeedToRadarItem(item, fallbackTone) {
   const evidence = (item.evidence || []).filter(Boolean);
   const watchNext = (item.watch_next || []).filter(Boolean);
   const sources = (item.source_files || []).filter(Boolean);
-  const reasonParts = [
-    item.conclusion,
-    evidence.length ? `证据：${evidence.slice(0, 2).join("；")}` : "",
-    watchNext.length ? `验证：${watchNext[0]}` : ""
-  ].filter(Boolean);
   return {
     title: item.title || "未命名信号",
-    reason: truncateText(reasonParts.join(" ｜ "), 150),
+    reason: truncateText(item.conclusion || "", 108),
     confidence: confidenceLabel(item.confidence),
     tone: item.tone || fallbackTone || "neutral",
-    tags: uniqueList([...(item.tags || []), ...sources.map(sourceShortName)]).slice(0, 5)
+    tags: uniqueList([...(item.tags || []), ...sources.map(sourceShortName)]).slice(0, 5),
+    evidence: evidence.slice(0, 2),
+    watchNext: watchNext.slice(0, 1),
+    invalidation: item.invalidation,
+    sources: sources.map(sourceShortName)
   };
 }
 
