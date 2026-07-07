@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-07-07T09:25:30+08:00",
+  "timestamp": "2026-07-07T09:30:22+08:00",
   "sources": [
     {
       "id": "mootdx",
@@ -47,7 +47,7 @@
       "role": "涨停原因、热榜、财报三表、补充行情",
       "status": "degraded",
       "cadence": "按需低频调用",
-      "note": "10:00监控日志出现行情源异常：Can not decode value starting with character \"<\"；同花顺/新浪类补充源仅作低频交叉验证，不作为盘中异动唯一依据。"
+      "note": "09:30监控日志连续出现行情源异常：Can not decode value starting with character \"<\"；本轮只记录数据源降级，不生成或改写盘中提醒，下一轮继续由高频源重试验证。"
     },
     {
       "id": "yahoo_finance",
@@ -74,12 +74,11 @@
     "任一数据源失败时保留上一版 JSON，并在 source-health.json 标注降级或异常。"
   ],
   "last_effective_run": {
-    "timestamp": "2026-07-07T09:25:30+08:00",
-    "type": "a_share_opening_auction",
-    "result": "ok_with_degraded_turnover",
+    "timestamp": "2026-07-07T09:30:22+08:00",
+    "type": "intraday_monitor_patrol",
+    "result": "running_with_degraded_quote_source",
     "degraded_sources": [
-      "eastmoney_a_spot_em",
-      "yahoo_finance_asia"
+      "ths_sina_or_akshare_quote_decode"
     ]
   }
 }
