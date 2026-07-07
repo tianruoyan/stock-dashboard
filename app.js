@@ -154,6 +154,15 @@ function userFacingText(value) {
   let text = String(value ?? "");
   if (!text) return "";
   text = text
+    .replace(/data\/quality-report\.json/g, "质量报告")
+    .replace(/data\/source-health\.json/g, "数据源健康")
+    .replace(/data\/data-trust\.json/g, "文件可信度")
+    .replace(/data\/decision-feed\.json/g, "机会风险流")
+    .replace(/data\/theme-shifts\.json/g, "主线变化")
+    .replace(/data\/section-health\.json/g, "区块健康")
+    .replace(/data\/质量报告/g, "质量报告")
+    .replace(/data\/数据源健康/g, "数据源健康")
+    .replace(/data\/机会风险流/g, "机会风险流")
     .replace(/\bths_sina_or_akshare_quote_decode\b/g, "A股行情源")
     .replace(/\btencent_hk_http\b/g, "港股腾讯报价")
     .replace(/\beastmoney_hk_akshare\b/g, "港股东方财富/akshare")

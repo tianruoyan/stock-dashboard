@@ -2,6 +2,7 @@
 
 | Display Version | Date | Edition | Tag / Commit | Summary | Rollback Note |
 |---|---:|---:|---|---|---|
+| 2026-07-08 第108版｜区块交易日校准 | 2026-07-08 | 第108版 | tag: `v2026.07.08-m108-section-date-fix2` | `section-health` 对 `quality-report/theme-shifts/decision-feed/data-trust` 等派生报告优先使用 `current_signal_date` 判断交易日，不再因午夜后生成时间把总控、机会雷达、观察池和风控误标为“非当前交易日”；同时清理区块贴条里的 `data/质量报告` 路径残留。静态门禁新增派生报告误判 stale 拦截。 | 回滚到第107版可用 `git checkout v2026.07.08-m107-source-message-sanitize`，或回滚到本版本 tag。 |
 | 2026-07-08 第107版｜源错误中文链路 | 2026-07-08 | 第107版 | tag: `v2026.07.08-m107-source-message-sanitize` | 审计报告、文件可信度、机会风险流、监测盲区和区块健康等派生 JSON 统一把 `decode failed`、代理断连、接口解码异常转成中文复核提示；日韩早盘继续只显示“待复核”和白名单复核清单，避免底层源错误在后续模块重新形成乱码感。 | 回滚到第106版可用 `git checkout v2026.07.08-m106-section-upcoming-badges`，或回滚到本版本 tag。 |
 | 2026-07-08 第106版｜区块待产出贴条 | 2026-07-08 | 第106版 | tag: `v2026.07.08-m106-section-upcoming-badges` | 区块健康贴条合并 `data-trust` 文件可信状态：早盘、盘中、午盘等若属于下一交易日“待产出”，对应区块标题下直接显示“等待对应阶段产出”，避免旧内容裸露成新数据。运行时门禁要求 data-trust 标记 upcoming 的区块必须渲染待产出状态。 | 回滚到第105版可用 `git checkout v2026.07.08-m105-next-session-readiness`，或回滚到本版本 tag。 |
 | 2026-07-08 第105版｜下一交易日准备度 | 2026-07-08 | 第105版 | tag: `v2026.07.08-m105-next-session-readiness` | `automation-health` 新增 `next_session_readiness`，在跨日/开盘前提示下一交易日关键产出是否 ready/pending/overdue；顶部质量卡“自动化心跳”优先显示 7月8日盘前/盘中待产出状态，避免只看到 7月7日流程已到位而误用旧数据。静态和运行时门禁要求准备度结构和页面渲染必须存在。 | 回滚到第104版可用 `git checkout v2026.07.08-m104-overnight-decision-trust`，或回滚到本版本 tag。 |

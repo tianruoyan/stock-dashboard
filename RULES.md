@@ -398,6 +398,7 @@ Codex (分析引擎)              Cola (稳定管道)
 | 2026-07-08 | automation-health 必须输出 next_session_readiness，并在顶部质量卡显示下一交易日待产出/逾期状态 | 跨日后不能只显示上一交易日流程已到位；开盘前必须明确今天盘前、盘中、午盘等关键文件是否待产出，防止误用旧数据 |
 | 2026-07-08 | 区块健康贴条必须合并 data-trust 的 upcoming/blocked/current degraded 状态 | 旧区块内容仍会展示，必须在区块标题下直接提示等待对应阶段产出、不可用或降权，不能只靠顶部质量卡说明 |
 | 2026-07-08 | 用户侧派生 JSON 必须把底层 decode/代理断连/接口失败错误中文化，日韩早盘只输出待复核状态和白名单复核清单 | 审计、可信度、雷达、盲区和区块健康都会被页面消费，不能让后台接口错误在后续模块重新形成乱码感；原始错误仅保留在 source-health 排障层 |
+| 2026-07-08 | section-health 对派生报告必须优先使用 current_signal_date 判断交易日，不得用午夜后的生成 timestamp 误判 stale | 总控、机会雷达、观察池和风控依赖 quality-report/theme-shifts/decision-feed 等派生报告；这些报告跨零点重建时仍属于上一交易决策链，不能被误标历史过期 |
 ---
 
 ## 🐍 Python 环境

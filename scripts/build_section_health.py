@@ -64,15 +64,16 @@ def build_section(spec: dict[str, Any], payloads: dict[str, Any], current_date: 
         data = payloads.get(rel)
         file_status = "ok"
         ts = data.get("timestamp") if isinstance(data, dict) else ""
+        row_date = payload_signal_date(data) if isinstance(data, dict) else ""
         if not path.exists() or data in (None, {}):
             file_status = "missing"
             reasons.append(f"{rel} 缺失或不可读")
         elif isinstance(data, dict) and data.get("source_status") == "invalidated":
             file_status = "invalidated"
             reasons.append(data.get("note") or f"{rel} 已撤下污染批次")
-        elif ts and signal_date(ts) and current_date and signal_date(ts) != current_date:
+        elif row_date and current_date and row_date != current_date:
             file_status = "stale"
-            reasons.append(f"{rel} 非当前交易日：{ts}")
+            reasons.append(f"{rel} 非当前交易日：{row_date}")
         elif contains_bad_literal(path):
             file_status = "missing"
             reasons.append(f"{rel} 含异常文本")
@@ -83,7 +84,7 @@ def build_section(spec: dict[str, Any], payloads: dict[str, Any], current_date: 
             file_status = "degraded"
             reasons.append(f"{rel} 数据源整体降级")
         status_rank = max(status_rank, rank(file_status))
-        file_rows.append({"file": rel, "status": file_status, "timestamp": ts or ""})
+        file_rows.append({"file": rel, "status": file_status, "timestamp": ts or "", "signal_date": row_date})
 
     if "data/source-health.json" in spec["files"] and source_flags:
         status_rank = max(status_rank, rank("degraded"))
@@ -112,6 +113,13 @@ def source_health_flags(source_health: dict[str, Any]) -> list[str]:
         if source.get("status") in {"degraded", "bad", "failed"}:
             rows.append(source_flag_message(name, source))
     return clean_list(rows)
+
+
+def payload_signal_date(data: dict[str, Any]) -> str:
+    current = str(data.get("current_signal_date") or "").strip()
+    if current:
+        return current
+    return signal_date(data.get("timestamp"))
 
 
 def source_flag_message(name: str, source: dict[str, Any]) -> str:

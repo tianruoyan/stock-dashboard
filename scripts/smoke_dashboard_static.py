@@ -597,6 +597,44 @@ def check_section_health(issues: list[dict[str, Any]], index: str, app: str) -> 
             continue
         if not item.get("status") or not item.get("label") or not isinstance(item.get("files"), list):
             issues.append(issue("warning", "data/section-health.json", "bad_section_item", f"{item.get('id') or 'unknown'} 字段不完整"))
+    check_section_health_derived_dates(data, issues)
+
+
+def check_section_health_derived_dates(section_health: dict[str, Any], issues: list[dict[str, Any]]) -> None:
+    current_date = section_health.get("current_signal_date") or ""
+    derived = {"data/quality-report.json", "data/theme-shifts.json", "data/decision-feed.json", "data/data-trust.json"}
+    if not current_date:
+        return
+    for section in section_health.get("sections") or []:
+        if not isinstance(section, dict):
+            continue
+        reason = str(section.get("reason") or "")
+        for row in section.get("files") or []:
+            if not isinstance(row, dict) or row.get("file") not in derived:
+                continue
+            payload = read_json(ROOT / row["file"])
+            if payload.get("current_signal_date") == current_date and row.get("status") == "stale":
+                issues.append(issue(
+                    "warning",
+                    "data/section-health.json",
+                    "derived_file_false_stale",
+                    f"{section.get('label') or section.get('id')} 将派生报告 {row['file']} 误判为非当前交易日"
+                ))
+            if row["file"] in reason and "非当前交易日" in reason and payload.get("current_signal_date") == current_date:
+                issues.append(issue(
+                    "warning",
+                    "data/section-health.json",
+                    "derived_file_timestamp_date_leak",
+                    f"{section.get('label') or section.get('id')} 的原因仍使用派生报告生成日期判断交易日：{row['file']}"
+                ))
+
+
+def read_json(path: Path) -> dict[str, Any]:
+    try:
+        data = json.loads(path.read_text(encoding="utf-8"))
+        return data if isinstance(data, dict) else {}
+    except Exception:
+        return {}
 
 
 def has_stale_relative_time(text: str, current_date: str) -> bool:
