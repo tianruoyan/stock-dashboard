@@ -219,6 +219,7 @@ def validate_alert(data: Any, source_health: Any, issues: list[dict[str, Any]]) 
             "active_alert_without_trusted_source",
             "行情污染源仍降级，但 alert.json 存在 active alerts 且缺少可信源证明；禁止发布为盘中交易依据"
         ))
+    validate_alert_quote_audit(data, alerts, polluted, issues)
     for index, item in enumerate(alerts):
         if not isinstance(item, dict):
             issues.append(issue("critical", "alert.json", "bad_alert_item", f"alerts[{index}] 不是对象", f"alerts[{index}]"))
@@ -249,6 +250,64 @@ def validate_alert(data: Any, source_health: Any, issues: list[dict[str, Any]]) 
                     issues.append(issue("warning", "alert.json", "suspicious_alert_pct", f"{leader.get('name') or 'leader'} 触发窗口涨跌幅 {pct}，3分钟窗口需回查原始行情源", f"alerts[{index}].leaders[{leader_index}]"))
             except Exception:
                 issues.append(issue("critical", "alert.json", "bad_alert_leader_pct", f"{leader.get('name') or 'leader'} change_pct 非数字：{leader.get('change_pct')}", f"alerts[{index}].leaders[{leader_index}]"))
+
+
+def validate_alert_quote_audit(data: dict[str, Any], alerts: list[Any], polluted: bool, issues: list[dict[str, Any]]) -> None:
+    if not alerts:
+        return
+    audit = data.get("quote_audit")
+    if not isinstance(audit, dict):
+        issues.append(issue(
+            "critical",
+            "alert.json",
+            "missing_alert_quote_audit",
+            "alert.json 存在 active alerts，但缺少 quote_audit；必须声明行情源、quote_time、涨跌幅字段和异常值检查"
+        ))
+        return
+    required = ("provider", "quote_time", "pct_field", "sanity_checks")
+    for key in required:
+        if audit.get(key) in (None, "", []):
+            issues.append(issue("critical", "alert.json", "missing_alert_quote_audit_field", f"quote_audit.{key} 缺失", "quote_audit"))
+    sanity = audit.get("sanity_checks") or {}
+    if not isinstance(sanity, dict):
+        issues.append(issue("critical", "alert.json", "bad_alert_quote_audit", "quote_audit.sanity_checks 必须是对象", "quote_audit.sanity_checks"))
+        return
+    for key in ("sample_count", "max_abs_leader_change_pct", "cross_source_verified"):
+        if sanity.get(key) in (None, "", []):
+            issues.append(issue("critical", "alert.json", "missing_alert_quote_audit_field", f"quote_audit.sanity_checks.{key} 缺失", "quote_audit.sanity_checks"))
+    observed = max_abs_alert_leader_pct(alerts)
+    try:
+        reported = float(sanity.get("max_abs_leader_change_pct"))
+        if observed is not None and reported + 0.01 < observed:
+            issues.append(issue("warning", "alert.json", "alert_quote_audit_mismatch", f"quote_audit 最大涨跌幅 {reported} 小于实际 leaders 最大值 {observed}", "quote_audit.sanity_checks"))
+    except Exception:
+        if sanity.get("max_abs_leader_change_pct") not in (None, ""):
+            issues.append(issue("critical", "alert.json", "bad_alert_quote_audit", f"quote_audit.sanity_checks.max_abs_leader_change_pct 非数字：{sanity.get('max_abs_leader_change_pct')}", "quote_audit.sanity_checks"))
+    try:
+        if int(sanity.get("sample_count")) < len(alerts):
+            issues.append(issue("warning", "alert.json", "alert_quote_audit_mismatch", "quote_audit 样本数小于 alerts 数量", "quote_audit.sanity_checks"))
+    except Exception:
+        if sanity.get("sample_count") not in (None, ""):
+            issues.append(issue("critical", "alert.json", "bad_alert_quote_audit", f"quote_audit.sanity_checks.sample_count 非数字：{sanity.get('sample_count')}", "quote_audit.sanity_checks"))
+    if polluted and sanity.get("cross_source_verified") is not True:
+        issues.append(issue("critical", "alert.json", "alert_quote_not_cross_verified", "行情污染源仍降级，active alerts 必须 quote_audit.sanity_checks.cross_source_verified=true 后才能发布", "quote_audit.sanity_checks"))
+
+
+def max_abs_alert_leader_pct(alerts: list[Any]) -> float | None:
+    values: list[float] = []
+    for item in alerts:
+        if not isinstance(item, dict):
+            continue
+        for leader in item.get("leaders") or []:
+            if not isinstance(leader, dict) or "change_pct" not in leader:
+                continue
+            try:
+                pct = float(leader["change_pct"])
+            except Exception:
+                continue
+            if math.isfinite(pct):
+                values.append(abs(pct))
+    return max(values) if values else None
 
 
 def has_polluted_quote_source(source_health: Any) -> bool:
@@ -493,6 +552,10 @@ def issue_impact(code: str, file: str, message: str) -> tuple[str, str]:
         "bad_alerts",
         "invalidated_alert_has_rows",
         "active_alert_without_trusted_source",
+        "missing_alert_quote_audit",
+        "missing_alert_quote_audit_field",
+        "bad_alert_quote_audit",
+        "alert_quote_not_cross_verified",
         "impossible_alert_pct",
     }:
         return "blocking", "禁止作为交易依据，需修复后重产"
@@ -508,6 +571,7 @@ def issue_impact(code: str, file: str, message: str) -> tuple[str, str]:
         "weakness_pct_conflict",
         "suspicious_alert_pct",
         "bad_alert_leader_pct",
+        "alert_quote_audit_mismatch",
     } or re.search(r"decode|行情|涨跌幅|quote|akshare|source", text, re.I):
         return "price_review", "价格/涨跌幅相关结论降权，需二次行情源复核"
     if code in {"missing_quality_flags", "opportunity_not_downgraded", "high_confidence_without_evidence"}:

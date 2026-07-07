@@ -1841,7 +1841,7 @@ function renderAlerts(data) {
       .filter(a => !a._eventTime || a._eventTime <= now + FUTURE_ALERT_TOLERANCE)
   ).slice(0, MAX_ALERTS);
 
-  renderAlertsSummary(saved, data.timestamp);
+  renderAlertsSummary(saved, data.timestamp, null, data);
 
   if (!saved.length) { el.innerHTML = '<div class="empty">暂无盘中异动</div>'; return; }
 
@@ -1930,7 +1930,7 @@ function renderAlertInvalidatedState(state) {
   </div>`;
 }
 
-function renderAlertsSummary(alerts, timestamp, invalidatedState = null) {
+function renderAlertsSummary(alerts, timestamp, invalidatedState = null, sourceData = null) {
   const el = document.getElementById("alerts-summary");
   if (!el) return;
   if (invalidatedState?.invalidated) {
@@ -1971,6 +1971,7 @@ function renderAlertsSummary(alerts, timestamp, invalidatedState = null) {
   const tone = riskCount >= tradeCount ? "risk" : "hot";
   const timeText = formatUpdateTime(timestamp);
   const relatedTags = positiveRelatedTopicTags(alerts.map(a => [a.sector, a.type, a.reason].join(" ")).join(" "), leaders.join(" "));
+  const audit = alertQuoteAuditSummary(sourceData);
   el.innerHTML = `
     <div class="decision-strip alerts-decision">
     <div class="decision-card ${tone === "hot" ? "primary" : "risk"}">
@@ -1993,8 +1994,30 @@ function renderAlertsSummary(alerts, timestamp, invalidatedState = null) {
       <b>${escapeHtml(riskCount ? `风险 ${riskCount}` : "暂无明确")}</b>
       <span>${escapeHtml(riskCount ? "看是否从单点扩散成板块压力" : "无风险信号前不预设降级")}</span>
     </div>
+    <div class="decision-card ${audit.cls}">
+      <span class="decision-label">行情审计</span>
+      <b>${escapeHtml(audit.title)}</b>
+      <span>${escapeHtml(audit.detail)}</span>
+    </div>
     </div>
   `;
+}
+
+function alertQuoteAuditSummary(data) {
+  const audit = data?.quote_audit;
+  if (!audit || typeof audit !== "object") {
+    return { title: "待补 quote_audit", detail: "active alert 需声明行情源和交叉验证", cls: "risk" };
+  }
+  const sanity = audit.sanity_checks || {};
+  const provider = audit.provider || audit.source || "未知源";
+  const verified = sanity.cross_source_verified === true;
+  const maxMove = Number(sanity.max_abs_leader_change_pct);
+  const maxText = Number.isFinite(maxMove) ? `最大${maxMove.toFixed(2)}%` : "最大值待补";
+  return {
+    title: verified ? "已交叉验证" : "待交叉验证",
+    detail: `${provider} · ${formatUpdateTime(audit.quote_time) || audit.quote_time || "时间待补"} · ${maxText}`,
+    cls: verified ? "good" : "risk"
+  };
 }
 
 /* =========================

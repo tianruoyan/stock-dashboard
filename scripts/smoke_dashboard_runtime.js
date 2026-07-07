@@ -377,6 +377,7 @@ async function main() {
   checkDashboardTrustGateRendering(document, issues);
   checkDashboardEffectiveTimeRendering(document, issues);
   checkInvalidatedAlertRendering(document, issues);
+  checkActiveAlertAuditRendering(document, issues);
   checkPremarketJapanKoreaGuard(document, issues);
   for (const literal of BAD_LITERALS) {
     if (wholePage.includes(literal)) {
@@ -643,6 +644,19 @@ function checkInvalidatedAlertRendering(document, issues) {
   }
   if (rendered.includes("暂无新异动") || rendered.includes("等待触发") || rendered.includes("暂无盘中异动")) {
     issues.push(issue("critical", "invalidated_alert_shown_as_empty", "盘中异动撤下污染批次时被渲染成普通空状态", "section-alerts"));
+  }
+}
+
+function checkActiveAlertAuditRendering(document, issues) {
+  const alert = readJsonIfExists("data/alert.json");
+  const alerts = Array.isArray(alert.alerts) ? alert.alerts : [];
+  if (!alerts.length || alert.source_status === "invalidated") return;
+  const rendered = normalizeRenderedText(document.getElementById("alerts-summary")?.collectHtml() || "");
+  if (!rendered.includes("行情审计")) {
+    issues.push(issue("critical", "alert_quote_audit_not_rendered", "active alerts 未显示行情审计摘要", "alerts-summary"));
+  }
+  if (alert.quote_audit && !rendered.includes("交叉验证") && !rendered.includes("quote_audit")) {
+    issues.push(issue("critical", "alert_quote_audit_status_missing", "active alerts 行情审计未显示交叉验证状态", "alerts-summary"));
   }
 }
 

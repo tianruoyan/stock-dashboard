@@ -50,6 +50,7 @@ def main() -> int:
     check_automation_health(issues)
     check_theme_shifts(issues)
     check_decision_feed(issues)
+    check_alert_quote_audit(issues)
     check_data_trust(issues)
     check_monitoring_coverage(issues)
     check_section_health(issues, index, app)
@@ -67,6 +68,7 @@ def main() -> int:
             "FILES 列出的必需 JSON/配置文件存在。",
             "data/config/settings 文件不含常见坏字面量。",
             "decision-feed 不含泛化机会、旧相对日期和高置信无证据项。",
+            "非空 alert.json 必须带 quote_audit，声明行情源、quote_time、涨跌幅字段和交叉验证。",
             "data-trust 文件级可信度结构完整，能标记不可用/降权数据文件。",
             "monitoring-coverage 能说明监测盲区、影响决策和替代观察动作。",
             "section-health 区块矩阵结构完整，能指出不可用/降权区块。",
@@ -194,6 +196,35 @@ def check_decision_feed(issues: list[dict[str, Any]]) -> None:
             if isinstance(item.get("evidence_score"), (int, float)) and not 0 <= item.get("evidence_score") <= 100:
                 issues.append(issue("warning", "data/decision-feed.json", "bad_evidence_score", f"{title} evidence_score 不在 0-100"))
     check_unplanned_theme_detection(data, issues)
+
+
+def check_alert_quote_audit(issues: list[dict[str, Any]]) -> None:
+    path = ROOT / "data" / "alert.json"
+    try:
+        data = json.loads(path.read_text(encoding="utf-8"))
+    except Exception as exc:
+        issues.append(issue("critical", "data/alert.json", "bad_json", f"盘中异动不可读：{exc}"))
+        return
+    alerts = data.get("alerts")
+    if alerts in (None, []):
+        return
+    if not isinstance(alerts, list):
+        issues.append(issue("critical", "data/alert.json", "bad_alerts", "alerts 必须是数组"))
+        return
+    audit = data.get("quote_audit")
+    if not isinstance(audit, dict):
+        issues.append(issue("critical", "data/alert.json", "missing_quote_audit", "非空 alerts 必须带 quote_audit"))
+        return
+    for key in ("provider", "quote_time", "pct_field", "sanity_checks"):
+        if audit.get(key) in (None, "", []):
+            issues.append(issue("critical", "data/alert.json", "missing_quote_audit_field", f"quote_audit.{key} 缺失"))
+    sanity = audit.get("sanity_checks") or {}
+    if not isinstance(sanity, dict):
+        issues.append(issue("critical", "data/alert.json", "bad_quote_audit", "quote_audit.sanity_checks 必须是对象"))
+        return
+    for key in ("sample_count", "max_abs_leader_change_pct", "cross_source_verified"):
+        if sanity.get(key) in (None, "", []):
+            issues.append(issue("critical", "data/alert.json", "missing_quote_audit_field", f"quote_audit.sanity_checks.{key} 缺失"))
 
 
 def check_unplanned_theme_detection(feed: dict[str, Any], issues: list[dict[str, Any]]) -> None:
