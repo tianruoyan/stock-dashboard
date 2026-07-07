@@ -78,7 +78,10 @@ function render(file, data) {
   else if (file === "config/alert-config.json") renderPortfolioRisk();
   else if (file === "data/requirements.json") renderRequirements(data);
   else if (file === "data/source-health.json") renderSourceHealth(data);
-  else if (file === "data/section-health.json") renderDataQualityGate();
+  else if (file === "data/section-health.json") {
+    renderDataQualityGate();
+    renderSectionHealthBadges();
+  }
 }
 
 function formatUpdateTime(timestamp) {
@@ -130,6 +133,7 @@ function renderGlobalDecisionModules() {
   renderOpportunityRiskRadar();
   renderWatchlistDecision();
   renderPortfolioRisk();
+  renderSectionHealthBadges();
 }
 
 function renderDashboardControl() {
@@ -353,6 +357,32 @@ function summarizeSectionHealth(report) {
     cls: bad.length ? "warn" : (stale.length || degraded.length ? "neutral" : "good"),
     issues
   };
+}
+
+function renderSectionHealthBadges() {
+  const report = cached("data/section-health.json");
+  if (!report || !Array.isArray(report.sections)) return;
+  report.sections.forEach(section => {
+    const panel = document.getElementById(`section-${section.id}`);
+    if (!panel) return;
+    let badge = panel.querySelector(".section-health-badge");
+    if (!badge) {
+      badge = document.createElement("div");
+      badge.className = "section-health-badge";
+      const heading = panel.querySelector("h2");
+      heading?.insertAdjacentElement("afterend", badge);
+    }
+    const cls = sectionHealthClass(section.status);
+    badge.className = `section-health-badge ${cls}`;
+    badge.innerHTML = `<span>${escapeHtml(section.action || section.status || "待确认")}</span><b>${escapeHtml(truncateText(section.reason || "区块状态待确认", 120))}</b>`;
+  });
+}
+
+function sectionHealthClass(status) {
+  if (status === "ok") return "ok";
+  if (status === "invalidated" || status === "missing") return "bad";
+  if (status === "stale") return "stale";
+  return "degraded";
 }
 
 function renderOpportunityRiskRadar() {

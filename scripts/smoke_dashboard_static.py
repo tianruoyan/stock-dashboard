@@ -45,7 +45,7 @@ def main() -> int:
     check_app_files(app, issues)
     check_bad_literals(issues)
     check_decision_feed(issues)
-    check_section_health(issues)
+    check_section_health(issues, index, app)
 
     status = overall_status(issues)
     report = {
@@ -61,6 +61,7 @@ def main() -> int:
             "data/config/settings 文件不含常见坏字面量。",
             "decision-feed 不含泛化机会、旧相对日期和高置信无证据项。",
             "section-health 区块矩阵结构完整，能指出不可用/降权区块。",
+            "section-health 每个区块能映射到页面面板，并由前端贴状态条。",
         ],
     }
     OUT.write_text(json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
@@ -166,7 +167,7 @@ def check_decision_feed(issues: list[dict[str, Any]]) -> None:
                 issues.append(issue("warning", "data/decision-feed.json", "missing_source", f"{title} 缺少来源文件"))
 
 
-def check_section_health(issues: list[dict[str, Any]]) -> None:
+def check_section_health(issues: list[dict[str, Any]], index: str, app: str) -> None:
     path = ROOT / "data" / "section-health.json"
     try:
         data = json.loads(path.read_text(encoding="utf-8"))
@@ -182,6 +183,12 @@ def check_section_health(issues: list[dict[str, Any]]) -> None:
     missing = sorted(required - present)
     if missing:
         issues.append(issue("warning", "data/section-health.json", "missing_sections", f"区块健康缺少：{', '.join(missing)}"))
+    dom_ids = set(re.findall(r'id="section-([^"]+)"', index))
+    unmapped = sorted(section_id for section_id in present if section_id not in dom_ids)
+    if unmapped:
+        issues.append(issue("warning", "data/section-health.json", "unmapped_sections", f"区块健康无法映射到页面：{', '.join(unmapped)}"))
+    if "renderSectionHealthBadges" not in app or "section-health-badge" not in app:
+        issues.append(issue("warning", "app.js", "section_badge_not_rendered", "前端未渲染区块健康状态条"))
     for item in sections:
         if not isinstance(item, dict):
             continue

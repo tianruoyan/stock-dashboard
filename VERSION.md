@@ -2,6 +2,7 @@
 
 | Display Version | Date | Edition | Tag / Commit | Summary | Rollback Note |
 |---|---:|---:|---|---|---|
+| 2026-07-07 第45版｜面板健康贴条 | 2026-07-07 | 第45版 | tag: `v2026.07.07-m45-section-badges` | 将 `section-health.json` 的 ok/degraded/stale/invalidated 状态直接贴到对应面板标题下，盘中滚动到异动、晚间、盘中全景等区块时也能看到“等待重产/仅作历史/可看但降权”的状态；烟雾测试新增区块到 DOM 的映射校验。 | 回滚到第44版可用 `git checkout v2026.07.07-m44-section-health`，或回滚到本版本 tag。 |
 | 2026-07-07 第44版｜区块健康矩阵 | 2026-07-07 | 第44版 | tag: `v2026.07.07-m44-section-health` | 新增 `scripts/build_section_health.py` 和 `data/section-health.json`，把全局数据质量拆到各页面区块，标明 ok/degraded/stale/invalidated/missing；数据质量区新增“区块健康”卡，直接提示哪些区块不可用或需降权。 | 回滚到第43版可用 `git checkout v2026.07.07-m43-quality-flags`，或回滚到本版本 tag。 |
 | 2026-07-07 第43版｜机会信号质量降权 | 2026-07-07 | 第43版 | tag: `v2026.07.07-m43-quality-flags` | `decision-feed` 新增 `quality_gate` 和机会项 `quality_flags`；当数据审计为 degraded/critical 时，机会候选统一降为低置信并在雷达卡片显示“降权”原因，审计和烟雾测试同步拦截缺少降权标记或未降权的机会项。 | 回滚到第42版可用 `git checkout v2026.07.07-m42-smoke-gate`，或回滚到本版本 tag。 |
 | 2026-07-07 第42版｜页面烟雾测试发布门 | 2026-07-07 | 第42版 | tag: `v2026.07.07-m42-smoke-gate` | 新增 `scripts/smoke_dashboard_static.py` 和 `data/smoke-report.json`，发布前检查关键容器、导航锚点、缓存版本、JS 语法、坏字面量、决策流泛化机会和旧相对日期；`push_with_audit.sh` 改为数据审计 + 页面烟雾测试双门禁。 | 回滚到第41版可用 `git checkout v2026.07.07-m41-radar-evidence`，或回滚到本版本 tag。 |
