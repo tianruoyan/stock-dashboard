@@ -373,6 +373,7 @@ async function main() {
   checkFallbackChecksRendering(radarHtml, coverage, issues);
   checkRadarGateRendering(document, radarHtml, issues);
   checkDashboardTrustGateRendering(document, issues);
+  checkDashboardEffectiveTimeRendering(document, issues);
   checkInvalidatedAlertRendering(document, issues);
   checkPremarketJapanKoreaGuard(document, issues);
   for (const literal of BAD_LITERALS) {
@@ -414,6 +415,7 @@ async function main() {
       "critical 盲区的 fallback_checks 必须渲染到机会/风险雷达。",
       "无 A/B 级可用机会时，机会/风险雷达必须显示无可用机会、风险优先和只做验证。",
       "文件可信度出现不可用或当前阶段超时时，今日总控必须显示具体文件状态。",
+      "今日总控有效时间必须使用最新可信决策材料，不得使用 invalidated/missing/stale 文件时间。",
       "alert.json 撤下污染批次时，盘中异动区必须显示不可用和替代观察，不得只显示普通空状态。",
       "日韩早盘源降级时必须显示清晰降级提示和待复核清单，不得展示原始乱码/未核实字符串。",
       "核心 JSON 字段有数据时，页面对应区块必须渲染关键结论或代表项。",
@@ -559,6 +561,42 @@ function checkDashboardTrustGateRendering(document, issues) {
       issues.push(issue("critical", "dashboard_trust_gate_not_rendered", `今日总控缺少文件可信状态：${snippet}`, "dashboard-control"));
     }
   }
+}
+
+function checkDashboardEffectiveTimeRendering(document, issues) {
+  const trust = readJsonIfExists("data/data-trust.json");
+  const files = Array.isArray(trust.files) ? trust.files : [];
+  if (!files.length) return;
+  const eligible = files
+    .filter(file => file && file.timestamp)
+    .filter(file => !["invalidated", "missing", "stale"].includes(file.status))
+    .filter(file => ["current", "background"].includes(file.session_relevance))
+    .filter(file => !["blocked", "unknown", "phase_expired"].includes(file.freshness_status));
+  if (!eligible.length) return;
+  const latest = eligible
+    .slice()
+    .sort((a, b) => Date.parse(b.timestamp) - Date.parse(a.timestamp))[0];
+  const rendered = normalizeRenderedText(document.getElementById("dashboard-control")?.collectHtml() || "");
+  const expectedTime = timestampHourMinute(latest.timestamp);
+  if (expectedTime && !rendered.includes(expectedTime)) {
+    issues.push(issue("critical", "dashboard_effective_time_not_latest", `今日总控未显示最新可信决策材料时间：${latest.label} ${expectedTime}`, "dashboard-control"));
+  }
+  const invalidated = files.find(file => file.status === "invalidated" && file.timestamp);
+  const invalidatedTime = timestampHourMinute(invalidated?.timestamp);
+  if (invalidatedTime && invalidatedTime !== expectedTime && rendered.includes(invalidatedTime)) {
+    issues.push(issue("critical", "dashboard_effective_time_invalidated", `今日总控有效时间引用了无效文件时间：${invalidated.label} ${invalidatedTime}`, "dashboard-control"));
+  }
+}
+
+function timestampHourMinute(value) {
+  const parsed = new Date(value || "");
+  if (Number.isNaN(parsed.getTime())) return "";
+  return new Intl.DateTimeFormat("zh-CN", {
+    timeZone: "Asia/Shanghai",
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false
+  }).format(parsed);
 }
 
 function checkInvalidatedAlertRendering(document, issues) {

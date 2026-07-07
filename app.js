@@ -190,7 +190,7 @@ function renderDashboardControl() {
     style = { title: decisionGate.title, cls: decisionGate.cls, reason: decisionGate.reason };
   }
   const position = inferPositionRange(style, riskConfig);
-  const latest = latestTimestamp([intraday, postmarket, alert]);
+  const latest = dashboardEffectiveTimestamp() || latestTimestamp([intraday, postmarket, alert]);
   const trustGate = dashboardTrustGate();
   let priority = strong.slice(0, 3).map(themeDisplayName);
   let avoid = risks.slice(0, 3).map(themeDisplayName);
@@ -249,6 +249,17 @@ function dashboardTrustGate() {
     cls: items.some(item => /不可用|超时/.test(item)) ? "risk" : "warn",
     items: uniqueList(items).slice(0, 4)
   };
+}
+
+function dashboardEffectiveTimestamp() {
+  const trust = cached("data/data-trust.json");
+  if (!trust || !Array.isArray(trust.files) || trust.current_signal_date !== currentSignalDate()) return "";
+  const usable = trust.files
+    .filter(file => file && file.timestamp)
+    .filter(file => !["invalidated", "missing", "stale"].includes(file.status))
+    .filter(file => ["current", "background"].includes(file.session_relevance))
+    .filter(file => !["blocked", "unknown", "phase_expired"].includes(file.freshness_status));
+  return latestTimestamp(usable.map(file => ({ timestamp: file.timestamp })));
 }
 
 function dashboardDecisionGate() {
