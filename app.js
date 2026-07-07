@@ -126,7 +126,7 @@ function renderDashboardControl() {
   if (!el) return;
   const intraday = cached("data/intraday.json") || {};
   const postmarket = cached("data/postmarket.json") || {};
-  const evening = cached("data/evening-sentiment.json") || {};
+  const evening = currentDayData(cached("data/evening-sentiment.json"));
   const alert = cached("data/alert.json") || {};
   const riskConfig = cached("config/alert-config.json") || {};
   const themes = getIntradayThemes(intraday);
@@ -144,7 +144,7 @@ function renderDashboardControl() {
   const eventWatch = uniqueList(p0.map(p => p.title || p.text || p.event)).slice(0, 5);
   const style = inferMarketStyle(intraday, postmarket, evening);
   const position = inferPositionRange(style, riskConfig);
-  const latest = latestTimestamp([intraday, postmarket, evening, alert]);
+  const latest = latestTimestamp([intraday, postmarket, alert]);
   const priority = strong.slice(0, 3).map(themeDisplayName);
   const avoid = risks.slice(0, 3).map(themeDisplayName);
   const relatedTags = positiveRelatedTopicTags(priority.join(" "), avoid.join(" "), alertStocks.join(" "), p0.map(p => p.title || p.text || "").join(" "));
@@ -198,6 +198,10 @@ function inferPositionRange(style, cfg) {
 
 function latestTimestamp(items) {
   return items.map(d => d?.timestamp).filter(Boolean).sort((a, b) => Date.parse(b) - Date.parse(a))[0] || "";
+}
+
+function currentDayData(data) {
+  return signalDate(data?.timestamp) === currentSignalDate() ? data : {};
 }
 
 function dataFreshness(timestamp) {
@@ -869,9 +873,9 @@ function renderPortfolioRisk() {
     return;
   }
   const risk = cfg.july_portfolio_risk;
-  const style = inferMarketStyle(cached("data/intraday.json") || {}, cached("data/postmarket.json") || {}, cached("data/evening-sentiment.json") || {});
+  const style = inferMarketStyle(cached("data/intraday.json") || {}, cached("data/postmarket.json") || {}, currentDayData(cached("data/evening-sentiment.json")));
   const pos = inferPositionRange(style, cfg);
-  const techRisk = /半导体材料|科技|AI应用|光刻胶/.test(JSON.stringify([cached("data/intraday.json"), cached("data/postmarket.json"), cached("data/evening-sentiment.json")])) && style.cls === "warn";
+  const techRisk = /半导体材料|科技|AI应用|光刻胶/.test(JSON.stringify([cached("data/intraday.json"), cached("data/postmarket.json"), currentDayData(cached("data/evening-sentiment.json"))])) && style.cls === "warn";
   const alphaState = techRisk ? "暂停/去Alpha" : "允许但受限";
   const limits = risk.position_limits || {};
   const etf = risk.sector_drawdown || {};
