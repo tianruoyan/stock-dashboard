@@ -342,6 +342,7 @@ Codex (分析引擎)              Cola (稳定管道)
 | 2026-07-07 | section-health 将观察池和专题跟踪纳入 quality-report 依赖，行情源或 alert 污染时二次研判区块同步降权 | 观察池和专题不是原始静态配置，它们会引用盘中/盘后信号做强弱和主题判断，不能在全局 degraded 时继续显示为完全可用 |
 | 2026-07-07 | 盘前日韩早盘只展示白名单字段，遇到降级/解码失败/疑似乱码统一显示中文降级提示；审计和 smoke 测试新增 mojibake 拦截 | 防止外部亚洲市场数据源异常时把乱码或未核实字段直接显示到盘前研判里 |
 | 2026-07-07 | 新增运行时渲染烟雾测试 scripts/smoke_dashboard_runtime.js，并接入 push_with_audit.sh 发布门 | 静态检查无法发现真实 JSON 触发的 JS ERROR、空白区块、undefined、[object Object] 和运行时乱码，必须在推送前实际跑一遍看板渲染 |
+| 2026-07-07 | decision-feed 新增 signal_score/signal_grade/use_action/use_reasons，机会/风险/验证必须说明信号可用性和使用动作 | 盘中交易辅助不能只给标题和结论，必须区分可跟踪、等待确认、降权观察和仅复核，避免低质量信号被误当成交易依据 |
 ---
 
 ## 🐍 Python 环境

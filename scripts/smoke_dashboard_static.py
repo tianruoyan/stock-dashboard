@@ -170,6 +170,11 @@ def check_decision_feed(issues: list[dict[str, Any]]) -> None:
                 issues.append(issue("warning", "data/decision-feed.json", "high_confidence_without_evidence", f"{title} 高置信但缺少证据"))
             if section in {"opportunities", "risks"} and not item.get("source_files"):
                 issues.append(issue("warning", "data/decision-feed.json", "missing_source", f"{title} 缺少来源文件"))
+            for key in ("signal_grade", "signal_score", "use_action", "use_reasons"):
+                if item.get(key) in (None, "", []):
+                    issues.append(issue("warning", "data/decision-feed.json", "missing_usability_field", f"{title} 缺少 {key}"))
+            if item.get("signal_grade") not in (None, "A", "B", "C", "D"):
+                issues.append(issue("warning", "data/decision-feed.json", "bad_signal_grade", f"{title} signal_grade 非 A/B/C/D"))
 
 
 def check_section_health(issues: list[dict[str, Any]], index: str, app: str) -> None:

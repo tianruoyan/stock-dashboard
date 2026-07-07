@@ -211,6 +211,11 @@ def validate_decision_feed(data: Any, issues: list[dict[str, Any]], current_date
             for key in ("title", "conclusion", "confidence", "source_files"):
                 if not item.get(key):
                     issues.append(issue("warning", "decision-feed.json", "missing_decision_field", f"{section}[{index}].{key} 缺失", f"{section}[{index}]"))
+            for key in ("signal_grade", "signal_score", "use_action", "use_reasons"):
+                if item.get(key) in (None, "", []):
+                    issues.append(issue("warning", "decision-feed.json", "missing_usability_field", f"{section}[{index}].{key} 缺失", f"{section}[{index}]"))
+            if item.get("signal_grade") not in (None, "A", "B", "C", "D"):
+                issues.append(issue("warning", "decision-feed.json", "bad_signal_grade", f"{section}[{index}].signal_grade 非 A/B/C/D", f"{section}[{index}]"))
             if section in {"opportunities", "risks"} and item.get("confidence") == "high" and not item.get("evidence"):
                 issues.append(issue("warning", "decision-feed.json", "high_confidence_without_evidence", f"{section}[{index}] 高置信但缺少 evidence", f"{section}[{index}]"))
             if section == "opportunities" and has_stale_relative_time(json.dumps(item, ensure_ascii=False), current_date):

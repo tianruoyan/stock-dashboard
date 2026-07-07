@@ -40,6 +40,7 @@ def main() -> int:
             "每条机会/风险必须带 source_files；没有证据时置信度不得高于 low。",
             "机会只代表候选方向，必须经过下一步验证，不生成交易指令。",
             "quality-report 为 degraded/critical 时，所有机会必须带 quality_flags 并自动降权。",
+            "每条信号必须输出 signal_grade/use_action/use_reasons，前端按可用性而不是标题强弱展示。",
         ],
     }
     OUT.write_text(json.dumps(feed, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
@@ -257,7 +258,7 @@ def decision_item(**kwargs: Any) -> dict[str, Any]:
     confidence = kwargs.get("confidence") or ("medium" if evidence else "low")
     if not evidence and confidence == "high":
         confidence = "medium"
-    return {
+    item = {
         "title": trim(kwargs.get("title") or "未命名信号", 40),
         "type": kwargs.get("item_type") or "signal",
         "conclusion": trim(kwargs.get("conclusion") or "", 180),
@@ -269,6 +270,72 @@ def decision_item(**kwargs: Any) -> dict[str, Any]:
         "tags": clean_list(kwargs.get("tags") or [])[:5],
         "quality_flags": clean_list(kwargs.get("quality_flags") or [])[:4],
         "tone": kwargs.get("tone") or "neutral",
+    }
+    item.update(signal_usability(item))
+    return item
+
+
+def signal_usability(item: dict[str, Any]) -> dict[str, Any]:
+    reasons: list[str] = []
+    score = 0
+    confidence = item.get("confidence")
+    evidence = clean_list(item.get("evidence") or [])
+    watch_next = clean_list(item.get("watch_next") or [])
+    sources = clean_list(item.get("source_files") or [])
+    quality_flags = clean_list(item.get("quality_flags") or [])
+    invalidation = str(item.get("invalidation") or "").strip()
+
+    if evidence:
+        score += min(35, 12 + len(evidence) * 7)
+        reasons.append("有可核验证据")
+    else:
+        reasons.append("缺少证据")
+    if watch_next:
+        score += 20
+        reasons.append("有下一步验证")
+    else:
+        reasons.append("缺少下一步验证")
+    if invalidation:
+        score += 15
+        reasons.append("有证伪条件")
+    else:
+        reasons.append("缺少证伪条件")
+    if sources:
+        score += 15
+        reasons.append("有来源文件")
+    else:
+        reasons.append("缺少来源文件")
+    if confidence == "high":
+        score += 15
+    elif confidence == "medium":
+        score += 8
+    elif confidence == "actionable":
+        score += 10
+    elif confidence == "low":
+        score += 2
+    if quality_flags:
+        score -= min(30, 10 + len(quality_flags) * 5)
+        reasons.append("数据质量降权")
+
+    score = max(0, min(100, score))
+    if not evidence and item.get("type") not in {"verification", "data_quality"}:
+        grade, action = "D", "仅复核"
+    elif quality_flags:
+        grade, action = ("C", "降权观察") if score >= 45 else ("D", "仅复核")
+    elif score >= 80:
+        grade, action = "A", "可跟踪"
+    elif score >= 60:
+        grade, action = "B", "等待确认"
+    elif score >= 40:
+        grade, action = "C", "降权观察"
+    else:
+        grade, action = "D", "仅复核"
+
+    return {
+        "signal_score": score,
+        "signal_grade": grade,
+        "use_action": action,
+        "use_reasons": clean_list(reasons)[:5],
     }
 
 

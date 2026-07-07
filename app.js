@@ -412,7 +412,9 @@ function renderOpportunityRiskRadar() {
 function renderRadarItem(item) {
   const tone = item.tone || "neutral";
   const tags = (item.tags || []).slice(0, 4).map(tag => `<span>${escapeHtml(tag)}</span>`).join("");
+  const gradeClass = `grade-${String(item.signalGrade || "C").toLowerCase()}`;
   const details = [
+    item.useReasons ? ["口径", item.useReasons] : null,
     item.qualityFlags ? ["降权", item.qualityFlags] : null,
     item.evidence ? ["证据", item.evidence] : null,
     item.watchNext ? ["验证", item.watchNext] : null,
@@ -422,8 +424,9 @@ function renderRadarItem(item) {
   return `<div class="radar-item ${tone}">
     <div class="radar-item-head">
       <b>${escapeHtml(item.title)}</b>
-      <em>${escapeHtml(item.confidence || "观察")}</em>
+      <em class="${gradeClass}">${escapeHtml(item.signalGrade ? `${item.signalGrade}级 · ${item.useAction}` : item.confidence || "观察")}</em>
     </div>
+    <div class="radar-use">${escapeHtml(item.confidence || "观察")}${item.signalScore !== undefined ? ` · ${item.signalScore}分` : ""}</div>
     <div class="radar-reason">${escapeHtml(item.reason)}</div>
     ${details}
     ${tags ? `<div class="topic-related">${tags}</div>` : ""}
@@ -528,7 +531,11 @@ function decisionFeedToRadarItem(item, fallbackTone) {
     watchNext: watchNext.slice(0, 1),
     invalidation: item.invalidation,
     sources: sources.map(sourceShortName),
-    qualityFlags: (item.quality_flags || []).slice(0, 3)
+    qualityFlags: (item.quality_flags || []).slice(0, 3),
+    signalGrade: item.signal_grade,
+    signalScore: item.signal_score,
+    useAction: item.use_action,
+    useReasons: (item.use_reasons || []).slice(0, 4)
   };
 }
 
