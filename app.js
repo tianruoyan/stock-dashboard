@@ -750,7 +750,7 @@ function buildDataQualityReport() {
     else if (signalDate(ts) !== currentDate) issues.push(`${label}非当日数据`);
     const text = JSON.stringify(data);
     if (/\[object Object\]|undefined|None%|NaN|Infinity/.test(text)) issues.push(`${label}含异常文本`);
-    if (data.source_status === "invalidated") issues.push(`${label}已撤下污染批次`);
+    if (data.source_status === "invalidated") issues.push(`${label}暂不作为触发依据`);
   });
   const degraded = Object.entries(sourceHealth.sources || {})
     .filter(([, src]) => src?.status === "degraded" || src?.status === "bad")
@@ -761,8 +761,8 @@ function buildDataQualityReport() {
   const latest = latestTimestamp(files.map(([, data]) => data).filter(Boolean));
   const critical = issues.filter(item => /异常文本|未接入/.test(item)).length;
   const stale = issues.filter(item => /非当日|无时间戳/.test(item)).length;
-  if (critical) return { level: "谨慎使用", cls: "warn", latest, degraded, issues, summary: "存在污染/异常字段，信号需二次确认" };
-  if (stale || degraded.length) return { level: "降级可用", cls: "neutral", latest, degraded, issues, summary: "核心数据可用，但部分来源需降权" };
+  if (critical) return { level: "谨慎使用", cls: "warn", latest, degraded, issues, summary: "存在异常数据，信号需二次确认" };
+  if (stale || degraded.length) return { level: "谨慎使用", cls: "neutral", latest, degraded, issues, summary: "核心数据可看，但部分信号需要确认" };
   return { level: "可用", cls: "good", latest, degraded, issues, summary: "核心数据结构正常" };
 }
 
@@ -964,6 +964,14 @@ function sectionTrustRows() {
 }
 
 function sectionBadgeView(section, trust) {
+  if (section.id === "alerts" && (trust?.session_relevance === "blocked" || ["invalidated", "missing"].includes(trust?.status))) {
+    return {
+      visible: false,
+      status: trust.status || "invalidated",
+      action: "等待有效异动",
+      reason: "异动区只展示有效的题材/个股变化。"
+    };
+  }
   if (trust?.session_relevance === "upcoming") {
     return {
       visible: true,
@@ -976,7 +984,7 @@ function sectionBadgeView(section, trust) {
     return {
       visible: true,
       status: trust.status || "invalidated",
-      action: "暂停使用",
+      action: "暂不触发",
       reason: traderBlockReason(trust.reason || section.reason || "该区块当前不可用")
     };
   }
@@ -2599,24 +2607,16 @@ function alertInvalidationState(data) {
 
 function renderAlertInvalidatedState(state) {
   const checks = state.fallbackChecks.length
-    ? renderAlertFallbackChecks(state.fallbackChecks)
-    : '<div class="alert-fallback-list"><span>替代观察：先看盘中全景、涨跌停/炸板宽度、观察池强弱和专题静态结论。</span></div>';
-  const evidence = state.evidence.length
-    ? `<details class="alert-detail"><summary>撤下依据</summary><div>${state.evidence.map(escapeHtml).join("<br>")}</div></details>`
-    : "";
-  return `<div class="alert-blocked">
+    ? renderAlertFallbackChecks(state.fallbackChecks.slice(0, 3))
+    : '<div class="alert-fallback-list"><span>现在看什么：先看盘中全景、涨跌停/炸板宽度、观察池强弱和专题静态结论。</span></div>';
+  return `<div class="alert-blocked trader-empty">
     <div class="alert-blocked-head">
-      <span class="badge risk">不可用</span>
-      <b>盘中异动已撤下污染批次</b>
+      <span class="badge watch">等待</span>
+      <b>暂无有效异动信号</b>
     </div>
-    <p>${escapeHtml(state.reason)}</p>
-    <div class="source-note source-note-warning">
-      <b>交易处理：</b>
-      <span>异动卡不能作为买卖触发依据，${escapeHtml(state.action)}。</span>
-    </div>
-    <h3>替代观察</h3>
+    <p>本区只展示可用于盘中识别机会和风险的最新题材/个股异动。没有新的有效卡片时，不把技术状态当作异动展示。</p>
+    <h3>现在看什么</h3>
     ${checks}
-    ${evidence}
   </div>`;
 }
 
@@ -2643,25 +2643,20 @@ function renderAlertsSummary(alerts, timestamp, invalidatedState = null, sourceD
   if (invalidatedState?.invalidated) {
     el.innerHTML = `
       <div class="decision-strip alerts-decision">
-        <div class="decision-card risk">
+        <div class="decision-card neutral">
           <span class="decision-label">核心结论</span>
-          <b>异动触发不可用</b>
-          <span>污染批次已撤下，不能当交易触发</span>
+          <b>暂无有效异动</b>
+          <span>等待新的题材或个股变化</span>
         </div>
         <div class="decision-card action">
-          <span class="decision-label">当前动作</span>
-          <b>${escapeHtml(invalidatedState.action || "等待重产")}</b>
-          <span>修复前只看替代观察和盘中全景</span>
+          <span class="decision-label">当前看</span>
+          <b>全景 / 观察池 / 宽度</b>
+          <span>有新异动卡片后再回到本区</span>
         </div>
         <div class="decision-card neutral">
-          <span class="decision-label">替代信号</span>
-          <b>宽度 / 主线 / 新线</b>
-          <span>涨跌停、炸板、观察池承接优先</span>
-        </div>
-        <div class="decision-card risk">
-          <span class="decision-label">风险提示</span>
-          <b>不要恢复旧 alert</b>
-          <span>必须由修复后的行情源重产</span>
+          <span class="decision-label">本区用途</span>
+          <b>发现盘中新变化</b>
+          <span>只展示题材、个股、交易或风险异动</span>
         </div>
       </div>`;
     return;
@@ -2678,7 +2673,6 @@ function renderAlertsSummary(alerts, timestamp, invalidatedState = null, sourceD
   const tone = riskCount >= tradeCount ? "risk" : "hot";
   const timeText = formatUpdateTime(timestamp);
   const relatedTags = positiveRelatedTopicTags(alerts.map(a => [a.sector, a.type, a.reason].join(" ")).join(" "), leaders.join(" "));
-  const audit = alertQuoteAuditSummary(sourceData);
   el.innerHTML = `
     <div class="decision-strip alerts-decision">
     <div class="decision-card ${tone === "hot" ? "primary" : "risk"}">
@@ -2700,11 +2694,6 @@ function renderAlertsSummary(alerts, timestamp, invalidatedState = null, sourceD
       <span class="decision-label">回避/降级</span>
       <b>${escapeHtml(riskCount ? `风险 ${riskCount}` : "暂无明确")}</b>
       <span>${escapeHtml(riskCount ? "看是否从单点扩散成板块压力" : "无风险信号前不预设降级")}</span>
-    </div>
-    <div class="decision-card ${audit.cls}">
-      <span class="decision-label">行情审计</span>
-      <b>${escapeHtml(audit.title)}</b>
-      <span>${escapeHtml(audit.detail)}</span>
     </div>
     </div>
   `;

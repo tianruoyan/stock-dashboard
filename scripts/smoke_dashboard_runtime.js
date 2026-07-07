@@ -376,7 +376,6 @@ async function main() {
   checkTraderViewLanguage(document, issues);
   checkDashboardEffectiveTimeRendering(document, issues);
   checkInvalidatedAlertRendering(document, issues);
-  checkActiveAlertAuditRendering(document, issues);
   checkPremarketJapanKoreaGuard(document, issues);
   for (const literal of BAD_LITERALS) {
     if (wholePage.includes(literal)) {
@@ -420,7 +419,7 @@ async function main() {
       "主页面不得展示信号队列、源状态、文件可信、自动化心跳、区块健康、降权等后台诊断词。",
       "无 A/B 级可用机会时，机会与风险区必须显示先防守、等确认、不追高。",
       "今日总控有效时间必须使用最新可信决策材料，不得使用 invalidated/missing/stale 文件时间。",
-      "alert.json 撤下污染批次时，盘中异动区必须显示不可用和替代观察，不得只显示普通空状态。",
+      "盘中异动失效时，前台必须回到交易者视角：暂无有效异动、说明本区用途，并给出替代观察。",
       "日韩早盘源异常时必须显示固定中文待复核提示和复核清单，不得展示原始乱码/未核实字符串。",
       "核心 JSON 字段有数据时，页面对应区块必须渲染关键结论或代表项。"
     ]
@@ -918,32 +917,22 @@ function checkInvalidatedAlertRendering(document, issues) {
     document.getElementById("alerts")?.collectHtml() || ""
   ].join("");
   const rendered = normalizeRenderedText(html);
-  if (!rendered.includes("异动触发不可用") || !rendered.includes("污染批次已撤下")) {
-    issues.push(issue("critical", "invalidated_alert_not_rendered", "盘中异动撤下污染批次时未显示不可用状态", "section-alerts"));
+  if (!rendered.includes("暂无有效异动") || !rendered.includes("本区用途")) {
+    issues.push(issue("critical", "invalidated_alert_not_rendered", "盘中异动失效时未回到交易者视角", "section-alerts"));
   }
-  if (!rendered.includes("替代观察") || !rendered.includes("宽度替代")) {
-    issues.push(issue("critical", "invalidated_alert_fallback_missing", "盘中异动撤下污染批次时未显示替代观察动作", "section-alerts"));
+  if (!rendered.includes("现在看什么") || !rendered.includes("宽度替代")) {
+    issues.push(issue("critical", "invalidated_alert_fallback_missing", "盘中异动失效时未显示替代观察动作", "section-alerts"));
   }
   for (const snippet of ["主线替代", "新线替代"]) {
     if (!rendered.includes(snippet)) {
       issues.push(issue("critical", "invalidated_alert_fallback_missing", `盘中异动替代观察缺少分类：${snippet}`, "section-alerts"));
     }
   }
+  if (rendered.includes("暂停使用") || rendered.includes("污染批次") || rendered.includes("quote_audit") || rendered.includes("行情审计")) {
+    issues.push(issue("critical", "invalidated_alert_backend_terms", "盘中异动失效状态仍展示后台诊断词", "section-alerts"));
+  }
   if (rendered.includes("暂无新异动") || rendered.includes("等待触发") || rendered.includes("暂无盘中异动")) {
-    issues.push(issue("critical", "invalidated_alert_shown_as_empty", "盘中异动撤下污染批次时被渲染成普通空状态", "section-alerts"));
-  }
-}
-
-function checkActiveAlertAuditRendering(document, issues) {
-  const alert = readJsonIfExists("data/alert.json");
-  const alerts = Array.isArray(alert.alerts) ? alert.alerts : [];
-  if (!alerts.length || alert.source_status === "invalidated") return;
-  const rendered = normalizeRenderedText(document.getElementById("alerts-summary")?.collectHtml() || "");
-  if (!rendered.includes("行情审计")) {
-    issues.push(issue("critical", "alert_quote_audit_not_rendered", "active alerts 未显示行情审计摘要", "alerts-summary"));
-  }
-  if (alert.quote_audit && !rendered.includes("交叉验证") && !rendered.includes("quote_audit")) {
-    issues.push(issue("critical", "alert_quote_audit_status_missing", "active alerts 行情审计未显示交叉验证状态", "alerts-summary"));
+    issues.push(issue("critical", "invalidated_alert_shown_as_empty", "盘中异动失效时被渲染成普通空状态", "section-alerts"));
   }
 }
 
