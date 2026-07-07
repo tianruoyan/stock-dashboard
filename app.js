@@ -524,7 +524,12 @@ function renderOpportunityRiskRadar() {
   const el = document.getElementById("opportunity-risk-radar");
   if (!el) return;
   const radar = buildOpportunityRiskRadar();
-  el.innerHTML = `<div class="radar-grid">
+  const gate = radar.gate ? `<div class="radar-gate ${escapeHtml(radar.gate.cls || "neutral")}">
+    <span>${escapeHtml(radar.gate.label || "雷达闸门")}</span>
+    <b>${escapeHtml(radar.gate.title || "等待确认")}</b>
+    <em>${escapeHtml(radar.gate.detail || "只按验证条件跟踪，不生成交易指令。")}</em>
+  </div>` : "";
+  el.innerHTML = `${gate}<div class="radar-grid">
     <div class="radar-column">
       <div class="radar-head"><b>机会候选</b><span>${radar.opportunities.length ? "需要验证，不直接追高" : "暂无高置信机会"}</span></div>
       ${radar.opportunities.length ? radar.opportunities.map(renderRadarItem).join("") : '<div class="empty-sm">等待主线扩散或观察池个股确认</div>'}
@@ -576,6 +581,7 @@ function buildOpportunityRiskRadar() {
     const actionableOpportunities = opportunityItems.filter(isActionableOpportunity);
     const downgradedOpportunities = opportunityItems.filter(item => !isActionableOpportunity(item));
     return {
+      gate: radarGateFromFeed(feed, actionableOpportunities, downgradedOpportunities),
       opportunities: actionableOpportunities.slice(0, 6),
       risks: dedupeRadarItems([
         ...coverage.risks,
@@ -648,9 +654,38 @@ function buildOpportunityRiskRadar() {
     }))
   ];
   return {
+    gate: null,
     opportunities: [...strongStocks, ...strongThemes].slice(0, 6),
     risks: [...(breadthRisk ? [breadthRisk] : []), ...weakStocks, ...riskThemes].slice(0, 7),
     verifications: dedupeRadarItems(verifications).slice(0, 6)
+  };
+}
+
+function radarGateFromFeed(feed, actionableOpportunities, downgradedOpportunities) {
+  const risks = Array.isArray(feed.risks) ? feed.risks : [];
+  const highRiskCount = risks.filter(item => ["A", "B"].includes(String(item.signal_grade || "").toUpperCase())).length;
+  const qualityStatus = feed.quality_gate?.status || "";
+  if (!actionableOpportunities.length && downgradedOpportunities.length) {
+    return {
+      cls: "risk",
+      label: "交易闸门",
+      title: "无可用机会，风险优先",
+      detail: `当前 ${downgradedOpportunities.length} 条机会均为降权/仅复核；只做验证，不直接追高。${highRiskCount ? `A/B级风险 ${highRiskCount} 条优先处理。` : ""}`
+    };
+  }
+  if (/degraded|critical|blocked|invalidated/.test(String(qualityStatus))) {
+    return {
+      cls: "warn",
+      label: "交易闸门",
+      title: "数据降级，机会降权",
+      detail: feed.quality_gate?.summary || "核心数据需复核，机会只能按验证条件升级。"
+    };
+  }
+  return {
+    cls: "good",
+    label: "交易闸门",
+    title: "存在可跟踪机会",
+    detail: "仍需按证据、验证和证伪条件执行。"
   };
 }
 
