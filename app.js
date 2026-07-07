@@ -665,7 +665,8 @@ function renderOpportunityRiskRadar() {
     <b>${escapeHtml(radar.gate.title || "等待确认")}</b>
     <em>${escapeHtml(radar.gate.detail || "只按验证条件跟踪，不生成交易指令。")}</em>
   </div>` : "";
-  el.innerHTML = `${gate}<div class="radar-grid">
+  const conflicts = renderRadarConflicts(radar.conflicts || []);
+  el.innerHTML = `${gate}${conflicts}<div class="radar-grid">
     <div class="radar-column">
       <div class="radar-head"><b>机会候选</b><span>${radar.opportunities.length ? "需要验证，不直接追高" : "暂无高置信机会"}</span></div>
       ${radar.opportunities.length ? radar.opportunities.map(renderRadarItem).join("") : '<div class="empty-sm">等待主线扩散或观察池个股确认</div>'}
@@ -719,6 +720,7 @@ function buildOpportunityRiskRadar() {
     const downgradedOpportunities = opportunityItems.filter(item => !isActionableOpportunity(item));
     return {
       gate: radarGateFromFeed(feed, actionableOpportunities, downgradedOpportunities),
+      conflicts: (feed.conflicts || []).map(decisionConflictToRadarItem),
       opportunities: actionableOpportunities.slice(0, 6),
       risks: dedupeRadarItems([
         ...coverage.risks,
@@ -792,9 +794,32 @@ function buildOpportunityRiskRadar() {
   ];
   return {
     gate: null,
+    conflicts: [],
     opportunities: [...strongStocks, ...strongThemes].slice(0, 6),
     risks: [...(breadthRisk ? [breadthRisk] : []), ...weakStocks, ...riskThemes].slice(0, 7),
     verifications: dedupeRadarItems(verifications).slice(0, 6)
+  };
+}
+
+function renderRadarConflicts(conflicts) {
+  if (!conflicts.length) return "";
+  return `<div class="radar-conflicts">
+    <div class="radar-conflicts-head"><b>冲突校验</b><span>同一主线多空信号统一口径</span></div>
+    ${conflicts.slice(0, 3).map(item => `<div class="radar-conflict ${escapeHtml(item.severity || "watch")}">
+      <b>${escapeHtml(item.theme)}</b>
+      <span>${escapeHtml(item.verdict)}</span>
+      <em>${escapeHtml(item.action)}</em>
+    </div>`).join("")}
+  </div>`;
+}
+
+function decisionConflictToRadarItem(item) {
+  return {
+    theme: item.theme || "未命名主线",
+    verdict: item.verdict || "等待确认",
+    severity: item.severity || "watch",
+    action: item.action || "只做验证，不直接升级。",
+    evidence: item.evidence || []
   };
 }
 

@@ -2,6 +2,7 @@
 
 | Display Version | Date | Edition | Tag / Commit | Summary | Rollback Note |
 |---|---:|---:|---|---|---|
+| 2026-07-07 第82版｜雷达冲突校验 | 2026-07-07 | 第82版 | tag: `v2026.07.07-m82-radar-conflict-check` | `decision-feed` 新增 `conflicts`，自动识别同一主线同时进入机会、风险或验证栏的多空冲突，并给出“风险优先，只做验证”或“候选分歧，观察验证”等统一口径；机会/风险雷达顶部新增“冲突校验”条，静态、审计和运行时门禁防止同题材冲突漏判或漏显。 | 回滚到第81版可用 `git checkout v2026.07.07-m81-alert-quote-audit`，或回滚到本版本 tag。 |
 | 2026-07-07 第81版｜异动行情审计契约 | 2026-07-07 | 第81版 | tag: `v2026.07.07-m81-alert-quote-audit` | 非空 `alert.json` 必须带结构化 `quote_audit`，声明行情源、quote_time、涨跌幅字段、样本数、最大 leader 涨跌幅和交叉源验证；污染源环境下未交叉验证直接阻断。盘中异动摘要新增“行情审计”卡，静态和运行时烟雾测试同步防止 active alert 缺审计或页面漏显。 | 回滚到第80版可用 `git checkout v2026.07.07-m80-radar-next-action`，或回滚到本版本 tag。 |
 | 2026-07-07 第80版｜雷达下一步动作 | 2026-07-07 | 第80版 | tag: `v2026.07.07-m80-radar-next-action` | `decision-feed` 每条机会、风险、验证信号新增 `next_action`，把证据缺口翻译成下一交易窗口可执行检查；机会/风险雷达卡片新增“动作”行，运行时烟雾测试要求下一步动作必须渲染，避免主动雷达退化成结论列表。 | 回滚到第79版可用 `git checkout v2026.07.07-m79-quality-impact-display`，或回滚到本版本 tag。 |
 | 2026-07-07 第79版｜质量影响分层展示 | 2026-07-07 | 第79版 | tag: `v2026.07.07-m79-quality-impact-display` | 顶部数据质量卡新增“交易影响”卡片和分层贴条，直接展示交易阻断、行情复核、信号复核、背景复核数量；`quality-report` 计数补齐 `signal_review`，运行时烟雾测试要求影响分层必须渲染，避免把所有 warning 混成同一类风险。 | 回滚到第78版可用 `git checkout v2026.07.07-m78-japan-korea-clean`，或回滚到本版本 tag。 |

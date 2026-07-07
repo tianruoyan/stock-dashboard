@@ -195,7 +195,50 @@ def check_decision_feed(issues: list[dict[str, Any]]) -> None:
                 issues.append(issue("warning", "data/decision-feed.json", "bad_signal_grade", f"{title} signal_grade 非 A/B/C/D"))
             if isinstance(item.get("evidence_score"), (int, float)) and not 0 <= item.get("evidence_score") <= 100:
                 issues.append(issue("warning", "data/decision-feed.json", "bad_evidence_score", f"{title} evidence_score 不在 0-100"))
+    check_decision_conflicts(data, issues)
     check_unplanned_theme_detection(data, issues)
+
+
+def check_decision_conflicts(feed: dict[str, Any], issues: list[dict[str, Any]]) -> None:
+    conflicts = feed.get("conflicts")
+    if not isinstance(conflicts, list):
+        issues.append(issue("warning", "data/decision-feed.json", "missing_conflicts", "decision-feed 缺少 conflicts 数组"))
+        return
+    expected = expected_conflict_titles(feed)
+    actual = {str(item.get("theme") or "") for item in conflicts if isinstance(item, dict)}
+    for theme in expected[:5]:
+        if theme not in actual:
+            issues.append(issue("warning", "data/decision-feed.json", "missing_signal_conflict", f"同一主线多空信号未进入冲突校验：{theme}"))
+    for index, item in enumerate(conflicts):
+        if not isinstance(item, dict):
+            issues.append(issue("warning", "data/decision-feed.json", "bad_conflict", f"conflicts[{index}] 不是对象"))
+            continue
+        for key in ("theme", "sections", "verdict", "severity", "action", "evidence"):
+            if item.get(key) in (None, "", []):
+                issues.append(issue("warning", "data/decision-feed.json", "missing_conflict_field", f"conflicts[{index}].{key} 缺失"))
+
+
+def expected_conflict_titles(feed: dict[str, Any]) -> list[str]:
+    buckets: dict[str, set[str]] = {}
+    for section in ("opportunities", "risks", "verifications"):
+        for item in feed.get(section) or []:
+            if not isinstance(item, dict):
+                continue
+            key = normalize_conflict_title(item.get("title"))
+            if key:
+                buckets.setdefault(key, set()).add(section)
+    return [key for key, sections in buckets.items() if len(sections) >= 2]
+
+
+def normalize_conflict_title(title: Any) -> str:
+    text = re.sub(r"^(主线变化：|新线观察：)", "", str(title or "").strip())
+    text = re.sub(r"(候选验证|验证)$", "", text).strip()
+    aliases = {
+        "半导体设备": "科技硬件链",
+        "半导体材料": "科技硬件链",
+        "半导体零部件": "科技硬件链",
+    }
+    return aliases.get(text, text)
 
 
 def check_alert_quote_audit(issues: list[dict[str, Any]]) -> None:

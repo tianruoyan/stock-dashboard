@@ -372,6 +372,7 @@ async function main() {
   }
   checkDecisionTriggerRendering(radarHtml, issues);
   checkDecisionNextActionRendering(radarHtml, issues);
+  checkDecisionConflictRendering(radarHtml, issues);
   checkFallbackChecksRendering(radarHtml, coverage, issues);
   checkRadarGateRendering(document, radarHtml, issues);
   checkDashboardTrustGateRendering(document, issues);
@@ -517,6 +518,27 @@ function checkDecisionNextActionRendering(radarHtml, issues) {
   for (const snippet of mustRender) {
     if (!rendered.includes(snippet)) {
       issues.push(issue("critical", "next_action_not_rendered", `下一步动作未渲染：${snippet}`, "opportunity-risk-radar"));
+    }
+  }
+}
+
+function checkDecisionConflictRendering(radarHtml, issues) {
+  const feed = readJsonIfExists("data/decision-feed.json");
+  const conflicts = Array.isArray(feed.conflicts) ? feed.conflicts : [];
+  if (!conflicts.length) return;
+  const rendered = normalizeRenderedText(radarHtml);
+  if (!rendered.includes("冲突校验")) {
+    issues.push(issue("critical", "signal_conflict_not_rendered", "机会/风险雷达未显示冲突校验", "opportunity-risk-radar"));
+    return;
+  }
+  for (const item of conflicts.slice(0, 3)) {
+    const theme = stableSnippet(item.theme);
+    const verdict = stableSnippet(item.verdict);
+    if (theme && !rendered.includes(theme)) {
+      issues.push(issue("critical", "signal_conflict_not_rendered", `冲突题材未渲染：${theme}`, "opportunity-risk-radar"));
+    }
+    if (verdict && !rendered.includes(verdict)) {
+      issues.push(issue("critical", "signal_conflict_not_rendered", `冲突判定未渲染：${verdict}`, "opportunity-risk-radar"));
     }
   }
 }

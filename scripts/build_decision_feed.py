@@ -29,14 +29,18 @@ def main() -> int:
         )
     }
     signal_date = latest_signal_date(files)
+    opportunities = dedupe_items(build_opportunities(files, signal_date))[:8]
+    risks = dedupe_items(build_risks(files))[:8]
+    verifications = dedupe_items(build_verifications(files))[:8]
     feed = {
         "timestamp": now_iso(),
         "current_signal_date": signal_date,
         "quality_gate": quality_gate(files.get("quality-report.json") or {}),
         "summary": build_summary(files),
-        "opportunities": dedupe_items(build_opportunities(files, signal_date))[:8],
-        "risks": dedupe_items(build_risks(files))[:8],
-        "verifications": dedupe_items(build_verifications(files))[:8],
+        "opportunities": opportunities,
+        "risks": risks,
+        "verifications": verifications,
+        "conflicts": build_signal_conflicts(opportunities, risks, verifications),
         "rules": [
             "每条机会/风险必须带 source_files；没有证据时置信度不得高于 low。",
             "机会只代表候选方向，必须经过下一步验证，不生成交易指令。",
@@ -45,6 +49,7 @@ def main() -> int:
             "每条信号必须输出 discovery_type/evidence_score/missing_evidence，用于区分主动发现、继承专题、风险兜底和证据缺口。",
             "每条信号必须输出 trigger_reason，用一句话解释为什么系统把它推到雷达。",
             "每条信号必须输出 next_action，把证据缺口翻译成下一交易窗口可执行检查。",
+            "同一主线同时出现在机会、风险或验证栏时，必须输出 conflicts，给出风险优先/仅验证/可升级的统一判定。",
             "theme-shifts 用于识别升温、新线、抱团、降温和风险变化，并进入机会/风险/验证栏。",
         ],
     }
@@ -769,6 +774,77 @@ def clean_list(values: list[Any]) -> list[str]:
         seen.add(text)
         rows.append(text)
     return rows
+
+
+def build_signal_conflicts(opportunities: list[dict[str, Any]], risks: list[dict[str, Any]], verifications: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    buckets: dict[str, dict[str, list[dict[str, Any]]]] = {}
+    for section, rows in (("opportunities", opportunities), ("risks", risks), ("verifications", verifications)):
+        for item in rows:
+            key = conflict_key(item.get("title"))
+            if not key:
+                continue
+            buckets.setdefault(key, {"opportunities": [], "risks": [], "verifications": []})[section].append(item)
+    conflicts: list[dict[str, Any]] = []
+    for key, rows in buckets.items():
+        sections = [name for name, values in rows.items() if values]
+        if len(sections) < 2:
+            continue
+        risk_best = max((grade_rank(item.get("signal_grade")) for item in rows["risks"]), default=0)
+        opportunity_best = max((grade_rank(item.get("signal_grade")) for item in rows["opportunities"]), default=0)
+        downgraded_opportunity = any(re.search(r"仅复核|降权|等待", str(item.get("use_action") or "")) for item in rows["opportunities"])
+        if risk_best >= 3 and (opportunity_best <= 2 or downgraded_opportunity):
+            verdict = "风险优先，只做验证"
+            action = "先按风险栏处理；只有风险收敛、核心股承接和数据质量恢复后，才允许从验证栏升级。"
+            severity = "risk_first"
+        elif risk_best >= 3 and opportunity_best >= 3:
+            verdict = "多空冲突，等待确认"
+            action = "不直接追高；等竞价、开盘15分钟和尾盘承接给出同向确认。"
+            severity = "conflict"
+        else:
+            verdict = "候选分歧，观察验证"
+            action = "保留验证，不升级为交易机会。"
+            severity = "watch"
+        conflicts.append({
+            "theme": key,
+            "sections": sections,
+            "verdict": verdict,
+            "severity": severity,
+            "action": action,
+            "evidence": conflict_evidence(rows),
+        })
+    return conflicts[:6]
+
+
+def conflict_key(title: Any) -> str:
+    text = trim(title, 80)
+    if not text:
+        return ""
+    text = re.sub(r"^(主线变化：|新线观察：)", "", text)
+    text = re.sub(r"(候选验证|验证)$", "", text)
+    text = text.strip()
+    aliases = {
+        "科技硬件链": "科技硬件链",
+        "半导体设备": "科技硬件链",
+        "半导体材料": "科技硬件链",
+        "半导体零部件": "科技硬件链",
+        "医药修复链": "医药修复链",
+        "老登风格切换": "老登风格切换",
+    }
+    return aliases.get(text, text)
+
+
+def grade_rank(value: Any) -> int:
+    return {"A": 4, "B": 3, "C": 2, "D": 1}.get(str(value or "").upper(), 0)
+
+
+def conflict_evidence(rows: dict[str, list[dict[str, Any]]]) -> list[str]:
+    evidence: list[str] = []
+    for label, values in (("机会", rows.get("opportunities") or []), ("风险", rows.get("risks") or []), ("验证", rows.get("verifications") or [])):
+        if not values:
+            continue
+        item = values[0]
+        evidence.append(f"{label}：{item.get('signal_grade') or '-'}级/{item.get('use_action') or item.get('confidence') or '-'}，{trim(item.get('conclusion') or item.get('next_action') or '', 80)}")
+    return clean_list(evidence)[:4]
 
 
 def dedupe_items(items: list[dict[str, Any]]) -> list[dict[str, Any]]:
