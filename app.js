@@ -243,7 +243,7 @@ function renderDashboardControl() {
   let priority = strong.slice(0, 3).map(themeDisplayName);
   let avoid = risks.slice(0, 3).map(themeDisplayName);
   if (decisionGate?.riskFirst) {
-    priority = ["风险优先", "只做验证", "暂停追高"];
+    priority = ["先控风险", "只观察", "不追高"];
     avoid = decisionGate.avoid.length ? decisionGate.avoid : ["全市场亏钱效应", "实时异动未确认", "单点强势未扩散"];
   }
   const relatedTags = positiveRelatedTopicTags(priority.join(" "), avoid.join(" "), alertStocks.join(" "), p0.map(p => p.title || p.text || "").join(" "));
@@ -264,7 +264,7 @@ function renderDashboardControl() {
   <div class="decision-strip control-strip">
     <div class="decision-card ${decisionGate?.riskFirst ? "risk" : "primary"}"><span class="decision-label">优先方向</span><b>${escapeHtml(priority[0] || "等待确认")}</b><span>${escapeHtml(priority.slice(1).join(" / ") || "没有共振前不抢")}</span></div>
     <div class="decision-card action"><span class="decision-label">关联题材</span><b>${escapeHtml(decisionGate?.riskFirst ? "候选只验证" : (relatedTags[0] || "等待映射"))}</b><span>${escapeHtml(decisionGate?.riskFirst ? "有承接、有扩散、数据恢复后再升级" : (relatedTags.slice(1).join(" / ") || "按母题材合并观察"))}</span></div>
-    <div class="decision-card ${decisionGate?.riskFirst ? "neutral" : "primary"}"><span class="decision-label">进攻盯 · ${escapeHtml(decisionGate?.riskFirst ? "暂停" : attackCandidate.source)}</span><b>${escapeHtml(decisionGate?.riskFirst ? "暂无可用机会" : (attackWatch[0] || "暂无"))}</b><span>${escapeHtml(decisionGate?.riskFirst ? "只看验证条件，不做追高触发" : (attackWatch.slice(1).join(" / ") || attackCandidate.note))}</span></div>
+    <div class="decision-card ${decisionGate?.riskFirst ? "neutral" : "primary"}"><span class="decision-label">进攻盯 · ${escapeHtml(decisionGate?.riskFirst ? "暂停" : attackCandidate.source)}</span><b>${escapeHtml(decisionGate?.riskFirst ? "暂无进攻点" : (attackWatch[0] || "暂无"))}</b><span>${escapeHtml(decisionGate?.riskFirst ? "只看承接和扩散，不做追高触发" : (attackWatch.slice(1).join(" / ") || attackCandidate.note))}</span></div>
     <div class="decision-card risk"><span class="decision-label">风险盯 · ${escapeHtml(riskCandidate.source)}</span><b>${escapeHtml(riskWatch[0] || "暂无")}</b><span>${escapeHtml(riskWatch.slice(1).join(" / ") || riskCandidate.note)}</span></div>
     <div class="decision-card risk"><span class="decision-label">暂不参与</span><b>${escapeHtml(avoid[0] || "暂无明确")}</b><span>${escapeHtml(avoid.slice(1).join(" / ") || eventWatch[0] || "看弱线和P0是否扩散")}</span></div>
   </div>`;
@@ -326,8 +326,8 @@ function dashboardDecisionGate() {
     return {
       riskFirst: true,
       cls: "warn",
-      title: "主线冲突，风险优先",
-      reason: `${focus.theme || "关键主线"}：${focus.verdict || "风险优先，只做验证"}。${focus.action || "先按风险栏处理，满足验证条件后再升级。"}`,
+      title: "先防守，不追新线",
+      reason: plainConflictSummary(focus),
       avoid: uniqueList([
         ...riskFirstConflicts.map(item => item.theme).filter(Boolean),
         ...risks.slice(0, 3).map(item => item.title).filter(Boolean),
@@ -339,8 +339,8 @@ function dashboardDecisionGate() {
     return {
       riskFirst: true,
       cls: "warn",
-      title: "无可用机会，风险优先",
-      reason: `当前 ${downgraded.length} 条机会还缺少确认；只做验证，不直接追高。${risks.length ? `主要风险 ${risks.length} 条优先处理。` : ""}`,
+      title: "先防守，等确认",
+      reason: `现在看到的机会还缺少确认，不直接追高。${risks.length ? `先盯 ${risks.length} 条主要风险有没有收敛。` : "等核心股承接和板块扩散同时出现。"}`,
       avoid: uniqueList([
         ...risks.slice(0, 3).map(item => item.title).filter(Boolean),
         "实时信号待确认"
@@ -357,6 +357,17 @@ function dashboardDecisionGate() {
     };
   }
   return null;
+}
+
+function plainConflictSummary(conflict) {
+  const theme = conflict?.theme || "新方向";
+  const evidence = Array.isArray(conflict?.evidence) ? conflict.evidence.join("；") : "";
+  const isLowHardware = /低位硬件|消费电子|元件/.test(theme);
+  const subject = isLowHardware ? "低位硬件、消费电子这些新线" : `${theme}`;
+  const why = /轮动|首板|不能继续扩散|持续性弱|风险/.test(evidence)
+    ? "有表现，但更像轮动试探，持续性还没确认"
+    : "机会和风险同时出现，方向还没有走顺";
+  return `${subject}${why}。今天不追高，只观察；只有跌停/炸板收敛、核心股继续承接、后排跟上，才考虑从观察升级。`;
 }
 
 function inferMarketStyle(intraday, postmarket, evening) {
@@ -1008,8 +1019,8 @@ function radarGateFromFeed(feed, actionableOpportunities, downgradedOpportunitie
     return {
       cls: "risk",
       label: "当前判断",
-      title: "无可用机会，风险优先",
-      detail: `当前机会都只能验证，不直接追高。${highRiskCount ? `先处理 ${highRiskCount} 条主要风险。` : ""}`
+      title: "先防守，等确认",
+      detail: `当前机会只观察，不追高。${highRiskCount ? `先看 ${highRiskCount} 条主要风险是否收敛。` : "等核心股承接和板块扩散同时出现。"}`
     };
   }
   if (/degraded|critical|blocked|invalidated/.test(String(qualityStatus))) {

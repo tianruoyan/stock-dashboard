@@ -17,6 +17,7 @@ STEPS = [
     ("decision-feed:pre", ["python3", "scripts/build_decision_feed.py"], False),
     ("automation-health:pre", ["python3", "scripts/build_automation_health.py"], False),
     ("audit", ["python3", "scripts/audit_dashboard_data.py"], True),
+    ("alert-recovery-readiness", ["python3", "scripts/build_alert_recovery_readiness.py"], False),
     ("automation-health:post-audit", ["python3", "scripts/build_automation_health.py"], False),
     ("theme-shifts:post-audit", ["python3", "scripts/build_theme_shifts.py"], False),
     ("decision-feed:post-audit", ["python3", "scripts/build_decision_feed.py"], False),
@@ -58,7 +59,7 @@ def write_report(status: str, summary: str, results: list[dict[str, object]]) ->
         "steps": results,
         "rules": [
             "先生成 theme-shifts 和 decision-feed，再审计。",
-            "审计会更新 quality-report，因此审计后必须重刷 automation-health、theme-shifts、decision-feed、data-trust、monitoring、section-health。",
+            "审计会更新 quality-report，因此审计后必须重刷异动恢复就绪、automation-health、theme-shifts、decision-feed、data-trust、monitoring、section-health。",
             "audit/static-smoke/runtime-smoke 出现 critical 才阻断发布；degraded 只作为看板降权提示。",
         ],
     }

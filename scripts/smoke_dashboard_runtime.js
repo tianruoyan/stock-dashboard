@@ -419,7 +419,7 @@ async function main() {
       "C/D级机会不得进入机会候选栏，只能进入下一步验证。",
       "机会与风险区必须渲染交易人可读的一句话动作、依据和盯盘条件。",
       "主页面不得展示信号队列、源状态、文件可信、自动化心跳、区块健康、降权等后台诊断词。",
-      "无 A/B 级可用机会时，机会/风险雷达必须显示无可用机会、风险优先和只做验证。",
+      "无 A/B 级可用机会时，机会与风险区必须显示先防守、等确认、不追高。",
       "今日总控有效时间必须使用最新可信决策材料，不得使用 invalidated/missing/stale 文件时间。",
       "alert.json 撤下污染批次时，盘中异动区必须显示不可用和替代观察，不得只显示普通空状态。",
       "日韩早盘源异常时必须显示固定中文待复核提示和复核清单，不得展示原始乱码/未核实字符串。",
@@ -701,14 +701,19 @@ function checkDashboardConflictRendering(document, issues) {
     : [];
   if (!conflicts.length) return;
   const rendered = normalizeRenderedText(document.getElementById("dashboard-control")?.collectHtml() || "");
-  for (const snippet of ["主线冲突", "风险优先"]) {
+  for (const snippet of ["先防守", "不追"]) {
     if (!rendered.includes(snippet)) {
-      issues.push(issue("critical", "dashboard_conflict_not_rendered", `今日总控未同步冲突口径：${snippet}`, "dashboard-control"));
+      issues.push(issue("critical", "dashboard_conflict_not_rendered", `今日结论未显示交易动作话术：${snippet}`, "dashboard-control"));
+    }
+  }
+  for (const forbidden of ["主线冲突", "风险栏处理", "才允许从验证栏升级"]) {
+    if (rendered.includes(forbidden)) {
+      issues.push(issue("critical", "dashboard_conflict_jargon_rendered", `今日结论仍展示后台判定话术：${forbidden}`, "dashboard-control"));
     }
   }
   const theme = stableSnippet(conflicts[0].theme);
   if (theme && !rendered.includes(theme)) {
-    issues.push(issue("critical", "dashboard_conflict_not_rendered", `今日总控未显示风险优先冲突主题：${theme}`, "dashboard-control"));
+    issues.push(issue("critical", "dashboard_conflict_not_rendered", `今日结论未说明相关方向：${theme}`, "dashboard-control"));
   }
 }
 
@@ -740,15 +745,15 @@ function checkRadarGateRendering(document, radarHtml, issues) {
   });
   if (actionable.length) return;
   const rendered = normalizeRenderedText(radarHtml);
-  for (const snippet of ["无可用机会", "风险优先", "只做验证"]) {
+  for (const snippet of ["先防守", "等确认", "不追高"]) {
     if (!rendered.includes(snippet)) {
-      issues.push(issue("critical", "radar_gate_not_rendered", `无可用机会时雷达闸门缺少：${snippet}`, "opportunity-risk-radar"));
+      issues.push(issue("critical", "radar_gate_not_rendered", `缺少交易人可读判断：${snippet}`, "opportunity-risk-radar"));
     }
   }
   const controlRendered = normalizeRenderedText(document.getElementById("dashboard-control")?.collectHtml() || "");
-  for (const snippet of ["无可用机会", "风险优先", "只做验证"]) {
+  for (const snippet of ["先防守", "不追"]) {
     if (!controlRendered.includes(snippet)) {
-      issues.push(issue("critical", "dashboard_gate_not_rendered", `无可用机会时今日总控缺少：${snippet}`, "dashboard-control"));
+      issues.push(issue("critical", "dashboard_gate_not_rendered", `今日结论缺少交易人可读判断：${snippet}`, "dashboard-control"));
     }
   }
 }
