@@ -348,6 +348,7 @@ async function main() {
 
   const wholePage = document.body.collectHtml();
   const radarHtml = document.getElementById("opportunity-risk-radar")?.collectHtml() || "";
+  const opportunityColumn = firstMatch(radarHtml, /<div class="radar-column">([\s\S]*?)<div class="radar-column">/) || radarHtml;
   const coverage = readJsonIfExists("data/monitoring-coverage.json");
   const themeShifts = readJsonIfExists("data/theme-shifts.json");
   const criticalBlindSpots = Array.isArray(coverage.blind_spots)
@@ -364,6 +365,9 @@ async function main() {
   const qualityHtml = document.getElementById("data-quality-gate")?.collectHtml() || "";
   if (!qualityHtml.includes("自动化心跳")) {
     issues.push(issue("critical", "automation_health_not_rendered", "自动化心跳未进入顶部质量卡", "data-quality-gate"));
+  }
+  if (/(?:C|D)级/.test(opportunityColumn)) {
+    issues.push(issue("critical", "downgraded_opportunity_rendered", "C/D级降权机会进入了机会候选栏，应转入下一步验证", "opportunity-risk-radar"));
   }
   for (const literal of BAD_LITERALS) {
     if (wholePage.includes(literal)) {
@@ -398,6 +402,7 @@ async function main() {
       "关键决策区块运行后必须非空。",
       "拦截 console error、JS ERROR、对象直出、未定义值、非数字值和疑似乱码。",
       "critical 监测盲区必须进入机会/风险雷达的风险栏。",
+      "C/D级降权机会不得进入机会候选栏，只能进入下一步验证。",
       "确认区块健康贴条能在运行时生成。"
     ]
   };

@@ -560,14 +560,18 @@ function buildOpportunityRiskRadar() {
   const feed = currentDecisionFeed();
   if (feed) {
     const coverage = monitoringCoverageRadarItems();
+    const opportunityItems = (feed.opportunities || []).map(item => decisionFeedToRadarItem(item, "good"));
+    const actionableOpportunities = opportunityItems.filter(isActionableOpportunity);
+    const downgradedOpportunities = opportunityItems.filter(item => !isActionableOpportunity(item));
     return {
-      opportunities: (feed.opportunities || []).map(item => decisionFeedToRadarItem(item, "good")).slice(0, 6),
+      opportunities: actionableOpportunities.slice(0, 6),
       risks: dedupeRadarItems([
         ...coverage.risks,
         ...(feed.risks || []).map(item => decisionFeedToRadarItem(item, "risk"))
       ]).slice(0, 8),
       verifications: dedupeRadarItems([
         ...coverage.verifications,
+        ...downgradedOpportunities.map(downgradedOpportunityToVerification),
         ...(feed.verifications || []).map(item => decisionFeedToRadarItem(item, "neutral"))
       ]).slice(0, 7)
     };
@@ -719,6 +723,28 @@ function decisionFeedToRadarItem(item, fallbackTone) {
     discoveryType: item.discovery_type,
     evidenceScore: item.evidence_score,
     missingEvidence: (item.missing_evidence || []).slice(0, 4)
+  };
+}
+
+function isActionableOpportunity(item) {
+  const grade = String(item.signalGrade || "").toUpperCase();
+  const action = String(item.useAction || "");
+  const confidence = String(item.confidence || "");
+  const blocked = /仅复核|降权|等待|低|low|不可|候选/.test(`${action} ${confidence}`);
+  return ["A", "B"].includes(grade) && !blocked;
+}
+
+function downgradedOpportunityToVerification(item) {
+  return {
+    ...item,
+    title: `${item.title}候选验证`,
+    tone: "neutral",
+    confidence: item.confidence || "候选待验证",
+    reason: item.reason || "机会证据不足，先转入验证队列。",
+    watchNext: item.watchNext?.length ? item.watchNext : ["等待板块扩散、核心承接和数据质量恢复后再升级。"],
+    invalidation: item.invalidation || "风险项不收敛或核心股不放量承接，则不升级为机会。",
+    useAction: "等待确认",
+    useReasons: uniqueList([...(item.useReasons || []), "C/D级机会不进入机会栏", "先验证再升级"])
   };
 }
 
