@@ -28,7 +28,9 @@ EXPECTED = [
 def main() -> int:
     now = datetime.now(TZ)
     current_date = current_signal_date()
-    rows = [check_expected(item, now, current_date) for item in EXPECTED]
+    source_health = load_json(DATA_DIR / "source-health.json")
+    quality = load_json(DATA_DIR / "quality-report.json")
+    rows = [check_expected(item, now, current_date, source_health, quality) for item in EXPECTED]
     counts = {
         "ok": sum(1 for row in rows if row["status"] == "ok"),
         "late": sum(1 for row in rows if row["status"] == "late"),
@@ -48,6 +50,7 @@ def main() -> int:
             "waiting：当前时间尚未到该自动化应产出窗口。",
             "late/missing：到点后仍未产出或时间戳非当日。",
             "invalidated：文件存在但 source_status=invalidated，不得作为交易依据。",
+            "failure_type/diagnosis/next_actions 用于区分数据源污染、产出缺失、时间戳异常和等待窗口。",
         ],
     }
     OUT.write_text(json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
@@ -55,7 +58,7 @@ def main() -> int:
     return 0
 
 
-def check_expected(spec: dict[str, Any], now: datetime, current_date: str) -> dict[str, Any]:
+def check_expected(spec: dict[str, Any], now: datetime, current_date: str, source_health: dict[str, Any], quality: dict[str, Any]) -> dict[str, Any]:
     path = DATA_DIR / spec["file"]
     due_at = due_datetime(current_date, spec["due"])
     deadline = due_at + timedelta(minutes=int(spec["grace_minutes"]))
@@ -85,6 +88,7 @@ def check_expected(spec: dict[str, Any], now: datetime, current_date: str) -> di
         status = "late"
         action = "复核时间戳"
         reason = f"时间戳异常超前：{ts}"
+    diagnosis = diagnose(spec, status, reason, data if isinstance(data, dict) else {}, source_health, quality)
     return {
         "id": spec["id"],
         "label": spec["label"],
@@ -96,7 +100,85 @@ def check_expected(spec: dict[str, Any], now: datetime, current_date: str) -> di
         "blocking": bool(spec.get("blocking")) and status in {"missing", "invalidated", "late"},
         "action": action,
         "reason": reason,
+        "failure_type": diagnosis["failure_type"],
+        "diagnosis": diagnosis["diagnosis"],
+        "next_actions": diagnosis["next_actions"],
+        "related_sources": diagnosis["related_sources"],
     }
+
+
+def diagnose(spec: dict[str, Any], status: str, reason: str, data: dict[str, Any], source_health: dict[str, Any], quality: dict[str, Any]) -> dict[str, Any]:
+    source_flags = degraded_sources(source_health)
+    quality_hits = [
+        item.get("message", "")
+        for item in quality.get("issues", [])
+        if isinstance(item, dict) and item.get("file") == spec["file"]
+    ]
+    if status == "ok":
+        return {
+            "failure_type": "none",
+            "diagnosis": "产出正常，未发现自动化层异常。",
+            "next_actions": ["正常读取；仍需结合数据质量卡判断是否降权。"],
+            "related_sources": [],
+        }
+    if status == "waiting":
+        return {
+            "failure_type": "not_due",
+            "diagnosis": "尚未到该自动化的计划产出窗口。",
+            "next_actions": [f"到 {spec['due']} 后再检查是否产出。"],
+            "related_sources": [],
+        }
+    if status == "invalidated":
+        related = [name for name, text in source_flags if any(token in text for token in ("污染", "decode", "akshare", "异常"))]
+        return {
+            "failure_type": "invalidated_source_batch",
+            "diagnosis": reason,
+            "next_actions": [
+                "先修复或切换污染行情源，禁止直接恢复旧 alert。",
+                "重跑对应自动化，写入新的 JSON 后再执行统一构建。",
+                "重产前盘中异动只作为监测盲区，不作为交易触发依据。",
+            ],
+            "related_sources": related or [name for name, _ in source_flags[:3]],
+        }
+    if status == "missing":
+        return {
+            "failure_type": "missing_output",
+            "diagnosis": "到点后没有看到有效 JSON 产出，优先检查自动化进程是否运行。",
+            "next_actions": [
+                "检查对应自动化进程是否仍在运行。",
+                "查看最近一次模型/脚本输出是否报错。",
+                "手动重跑该自动化并触发统一构建。",
+            ],
+            "related_sources": [name for name, _ in source_flags[:3]],
+        }
+    if status == "late":
+        return {
+            "failure_type": "stale_or_time_anomaly",
+            "diagnosis": reason,
+            "next_actions": [
+                "核对文件 timestamp 是否由自动化真实写入。",
+                "重跑自动化，避免使用上一交易日或异常超前数据。",
+            ],
+            "related_sources": [name for name, _ in source_flags[:3]],
+        }
+    return {
+        "failure_type": "unknown",
+        "diagnosis": reason or "自动化状态未知。",
+        "next_actions": ["检查自动化日志并重跑统一构建。"],
+        "related_sources": [name for name, _ in source_flags[:3]],
+    }
+
+
+def degraded_sources(source_health: dict[str, Any]) -> list[tuple[str, str]]:
+    sources = source_health.get("sources") if isinstance(source_health, dict) else {}
+    rows = []
+    iterator = sources.items() if isinstance(sources, dict) else []
+    for name, source in iterator:
+        if not isinstance(source, dict):
+            continue
+        if source.get("status") in {"degraded", "bad", "failed"}:
+            rows.append((str(name), str(source.get("note") or source.get("detail") or source.get("usage") or source.get("status"))))
+    return rows
 
 
 def overall_status(rows: list[dict[str, Any]]) -> str:

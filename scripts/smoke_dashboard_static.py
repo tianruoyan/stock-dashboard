@@ -251,9 +251,11 @@ def check_automation_health(issues: list[dict[str, Any]]) -> None:
         if not isinstance(item, dict):
             issues.append(issue("warning", "data/automation-health.json", "bad_process_item", f"processes[{index}] 不是对象"))
             continue
-        for key in ("id", "label", "file", "due", "status", "action", "reason"):
+        for key in ("id", "label", "file", "due", "status", "action", "reason", "failure_type", "diagnosis", "next_actions"):
             if item.get(key) in (None, "", []):
                 issues.append(issue("warning", "data/automation-health.json", "missing_process_field", f"processes[{index}].{key} 缺失"))
+        if "related_sources" not in item or not isinstance(item.get("related_sources"), list):
+            issues.append(issue("warning", "data/automation-health.json", "missing_process_field", f"processes[{index}].related_sources 缺失或不是数组"))
         if item.get("status") not in {"ok", "waiting", "late", "missing", "invalidated"}:
             issues.append(issue("warning", "data/automation-health.json", "bad_process_status", f"processes[{index}].status 非法"))
 

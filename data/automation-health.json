@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-07-07T19:31:40+08:00",
+  "timestamp": "2026-07-07T19:36:40+08:00",
   "current_signal_date": "2026-07-07",
   "overall_status": "blocked",
   "summary": "1 个自动化产出异常：盘中异动。",
@@ -21,7 +21,13 @@
       "status": "ok",
       "blocking": false,
       "action": "正常使用",
-      "reason": "当日产出已到位"
+      "reason": "当日产出已到位",
+      "failure_type": "none",
+      "diagnosis": "产出正常，未发现自动化层异常。",
+      "next_actions": [
+        "正常读取；仍需结合数据质量卡判断是否降权。"
+      ],
+      "related_sources": []
     },
     {
       "id": "intraday",
@@ -33,7 +39,13 @@
       "status": "ok",
       "blocking": false,
       "action": "正常使用",
-      "reason": "当日产出已到位"
+      "reason": "当日产出已到位",
+      "failure_type": "none",
+      "diagnosis": "产出正常，未发现自动化层异常。",
+      "next_actions": [
+        "正常读取；仍需结合数据质量卡判断是否降权。"
+      ],
+      "related_sources": []
     },
     {
       "id": "alerts",
@@ -45,7 +57,18 @@
       "status": "invalidated",
       "blocking": true,
       "action": "等待重产",
-      "reason": "2026-07-07 14:13:52 批次的盘中异动使用了异常行情源数据，北方华创/中微公司等日内涨跌幅失真，已撤下该批 alert，等待修复后的盘中提醒进程重新产出。"
+      "reason": "2026-07-07 14:13:52 批次的盘中异动使用了异常行情源数据，北方华创/中微公司等日内涨跌幅失真，已撤下该批 alert，等待修复后的盘中提醒进程重新产出。",
+      "failure_type": "invalidated_source_batch",
+      "diagnosis": "2026-07-07 14:13:52 批次的盘中异动使用了异常行情源数据，北方华创/中微公司等日内涨跌幅失真，已撤下该批 alert，等待修复后的盘中提醒进程重新产出。",
+      "next_actions": [
+        "先修复或切换污染行情源，禁止直接恢复旧 alert。",
+        "重跑对应自动化，写入新的 JSON 后再执行统一构建。",
+        "重产前盘中异动只作为监测盲区，不作为交易触发依据。"
+      ],
+      "related_sources": [
+        "ths_sina_or_akshare_quote_decode",
+        "eastmoney_hk_akshare"
+      ]
     },
     {
       "id": "midday",
@@ -57,7 +80,13 @@
       "status": "ok",
       "blocking": false,
       "action": "正常使用",
-      "reason": "当日产出已到位"
+      "reason": "当日产出已到位",
+      "failure_type": "none",
+      "diagnosis": "产出正常，未发现自动化层异常。",
+      "next_actions": [
+        "正常读取；仍需结合数据质量卡判断是否降权。"
+      ],
+      "related_sources": []
     },
     {
       "id": "postmarket",
@@ -69,7 +98,13 @@
       "status": "ok",
       "blocking": false,
       "action": "正常使用",
-      "reason": "当日产出已到位"
+      "reason": "当日产出已到位",
+      "failure_type": "none",
+      "diagnosis": "产出正常，未发现自动化层异常。",
+      "next_actions": [
+        "正常读取；仍需结合数据质量卡判断是否降权。"
+      ],
+      "related_sources": []
     },
     {
       "id": "evening",
@@ -81,7 +116,13 @@
       "status": "waiting",
       "blocking": false,
       "action": "等待产出",
-      "reason": "计划 20:00 后产出"
+      "reason": "计划 20:00 后产出",
+      "failure_type": "not_due",
+      "diagnosis": "尚未到该自动化的计划产出窗口。",
+      "next_actions": [
+        "到 20:00 后再检查是否产出。"
+      ],
+      "related_sources": []
     },
     {
       "id": "topics",
@@ -93,13 +134,20 @@
       "status": "ok",
       "blocking": false,
       "action": "正常使用",
-      "reason": "当日产出已到位"
+      "reason": "当日产出已到位",
+      "failure_type": "none",
+      "diagnosis": "产出正常，未发现自动化层异常。",
+      "next_actions": [
+        "正常读取；仍需结合数据质量卡判断是否降权。"
+      ],
+      "related_sources": []
     }
   ],
   "rules": [
     "ok：当日文件已产出且未撤下。",
     "waiting：当前时间尚未到该自动化应产出窗口。",
     "late/missing：到点后仍未产出或时间戳非当日。",
-    "invalidated：文件存在但 source_status=invalidated，不得作为交易依据。"
+    "invalidated：文件存在但 source_status=invalidated，不得作为交易依据。",
+    "failure_type/diagnosis/next_actions 用于区分数据源污染、产出缺失、时间戳异常和等待窗口。"
   ]
 }

@@ -401,7 +401,10 @@ function summarizeAutomationHealth(report) {
     ? `${blocking.length} 个阻断`
     : (bad.length ? `${bad.length} 个异常` : (waiting.length ? `${waiting.length} 个等待` : "产出正常"));
   const detail = report.summary || (focus.length ? focus.map(item => item.label).join(" / ") : "关键自动化产出均已到位");
-  const issues = focus.map(item => `${item.label}：${item.action || item.status}，${item.reason || ""}`);
+  const issues = focus.map(item => {
+    const action = Array.isArray(item.next_actions) && item.next_actions.length ? item.next_actions[0] : (item.action || item.status);
+    return `${item.label}：${item.failure_type || item.status}，${action}`;
+  });
   return {
     title,
     detail: truncateText(detail, 90),
@@ -2349,12 +2352,11 @@ function renderPremarket(data) {
 }
 
 function renderJapanKoreaMorning(jk) {
-  const fallback = renderJapanKoreaDegraded("日经、KOSPI、三星、SK海力士、东京电子/Advantest");
+  const fallback = renderJapanKoreaDegraded();
   if (typeof jk === "string") {
     const degraded = /降级|未核实|待确认|再确认|乱码|decode|failed|error/i.test(jk) || hasMojibake(jk);
     if (degraded) {
-      const confirmList = extractAfter(jk, "再确认") || "日经、KOSPI、三星、SK海力士、东京电子/Advantest";
-      return renderJapanKoreaDegraded(confirmList);
+      return renderJapanKoreaDegraded(extractJapanKoreaWatchList(jk));
     }
     const tags = japanKoreaTextTags(jk);
     return tags.length
@@ -2374,7 +2376,7 @@ function renderJapanKoreaMorning(jk) {
   if (jk && typeof jk === "object") {
     const statusText = JSON.stringify(jk);
     if (/降级|未核实|待确认|再确认|乱码|decode|failed|error/i.test(statusText) || hasMojibake(statusText)) {
-      return renderJapanKoreaDegraded(jk.pending_confirmation || jk.confirm_list || jk.watch || "日经、KOSPI、三星、SK海力士、东京电子/Advantest");
+      return renderJapanKoreaDegraded(jk.pending_confirmation || jk.confirm_list || jk.watch || jk.watch_list);
     }
     const allowedKeys = new Set([
       "nikkei225_change_pct",
@@ -2412,10 +2414,36 @@ function japanKoreaTextTags(text) {
   }).filter(Boolean);
 }
 
+function extractJapanKoreaWatchList(text) {
+  const raw = String(text || "");
+  const known = [
+    ["日经225", /日经|Nikkei/i],
+    ["韩国KOSPI", /KOSPI|韩国/i],
+    ["三星电子", /三星|Samsung/i],
+    ["SK海力士", /SK\s*海力士|SK\s*Hynix/i],
+    ["东京电子", /东京电子|Tokyo\s*Electron/i],
+    ["Advantest", /Advantest/i]
+  ];
+  const found = known.filter(([, re]) => re.test(raw)).map(([label]) => label);
+  return found.length ? found : null;
+}
+
+function normalizeJapanKoreaWatchList(value) {
+  const defaults = ["日经225", "韩国KOSPI", "三星电子", "SK海力士", "东京电子", "Advantest"];
+  const list = Array.isArray(value)
+    ? value
+    : String(value || "").split(/[、,，/／\s]+/);
+  const cleaned = list
+    .map(item => cleanShortNote(item))
+    .filter(item => item && !hasMojibake(item) && !/降级|未核实|待确认|再确认|decode|failed|error/i.test(item));
+  return cleaned.length ? cleaned.slice(0, 6) : defaults;
+}
+
 function renderJapanKoreaDegraded(confirmList) {
+  const watchList = normalizeJapanKoreaWatchList(confirmList);
   return `<div class="source-note source-note-warning">
     <b>日韩早盘：</b>数据源降级，暂不采用未核实数据。
-    <span>待确认：${escapeHtml(cleanShortNote(formatDisplayValue(confirmList)))}</span>
+    <span>待复核：${watchList.map(item => escapeHtml(item)).join(" / ")}</span>
   </div>`;
 }
 

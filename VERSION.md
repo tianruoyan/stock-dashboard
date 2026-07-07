@@ -2,6 +2,7 @@
 
 | Display Version | Date | Edition | Tag / Commit | Summary | Rollback Note |
 |---|---:|---:|---|---|---|
+| 2026-07-07 第61版｜自动化异常诊断 | 2026-07-07 | 第61版 | tag: `v2026.07.07-m61-automation-diagnosis` | `automation-health` 每个进程新增 `failure_type/diagnosis/next_actions/related_sources`，把盘中异动异常区分为数据源污染批次撤下、产出缺失、时间戳异常或等待窗口；顶部质量卡显示异常类型和第一处理动作。盘前“日韩早盘”降级时只显示固定待复核清单，不再展开疑似乱码或未核实源文本。 | 回滚到第60版可用 `git checkout v2026.07.07-m60-automation-heartbeat`，或回滚到本版本 tag。 |
 | 2026-07-07 第60版｜自动化心跳 | 2026-07-07 | 第60版 | tag: `v2026.07.07-m60-automation-heartbeat` | 新增 `scripts/build_automation_health.py` 和 `data/automation-health.json`，按盘前、盘中全景、盘中异动、午盘、盘后、晚间舆情、专题跟踪检查自动化是否按时产出、是否撤下或等待中；顶部质量卡新增“自动化心跳”，统一构建报告可显示 degraded 但非阻断发布。 | 回滚到第59版可用 `git checkout v2026.07.07-m59-unified-build`，或回滚到本版本 tag。 |
 | 2026-07-07 第59版｜统一构建入口 | 2026-07-07 | 第59版 | tag: `v2026.07.07-m59-unified-build` | 新增 `scripts/build_dashboard_reports.py` 和 `data/build-report.json`，统一按依赖顺序生成主线变化、机会风险流、数据审计、文件可信度、监测盲区、区块健康、静态烟雾和运行时烟雾报告；`push_with_audit.sh` 改为调用统一入口，降低衍生数据版本错位导致的不稳定。 | 回滚到第58版可用 `git checkout v2026.07.07-m58-theme-shifts`，或回滚到本版本 tag。 |
 | 2026-07-07 第58版｜主线变化雷达 | 2026-07-07 | 第58版 | tag: `v2026.07.07-m58-theme-shifts` | 新增 `scripts/build_theme_shifts.py` 和 `data/theme-shifts.json`，从盘中全景、盘后热点、专题跟踪中识别升温、新线、抱团、降温和风险变化；`decision-feed` 将主线变化并入机会/风险/验证栏，雷达显示“主线变化扫描”，发布门、文件可信度和区块健康同步纳入该文件。 | 回滚到第57版可用 `git checkout v2026.07.07-m57-freshness-sla`，或回滚到本版本 tag。 |
