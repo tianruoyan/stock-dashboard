@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-07-07T09:00:51+08:00",
+  "timestamp": "2026-07-07T09:25:30+08:00",
   "sources": [
     {
       "id": "mootdx",
@@ -15,7 +15,7 @@
       "role": "实时价、指数、ETF、港股/美股补充行情",
       "status": "ok",
       "cadence": "盘中高频，适合观察池轮询",
-      "note": "09:00通过腾讯HTTP获取美股7月6日收盘及港股09:03指数字段，返回正常；港股个股仍为昨收，9:15再确认竞价。"
+      "note": "09:25通过腾讯HTTP获取港股竞价、美股隔夜、A股指数/ETF/观察池竞价，返回正常。"
     },
     {
       "id": "eastmoney",
@@ -23,7 +23,7 @@
       "role": "公告库、涨停池、结构数据",
       "status": "degraded",
       "cadence": "低频限流，建议 60-120 秒以上",
-      "note": "09:00公告库通过akshare返回正常；全球指数接口出现ProxyError，未使用失败数据生成日韩结论。"
+      "note": "09:25涨停池/跌停池通过akshare返回正常；全A现货接口返回ProxyError，未取得可靠全市场竞价成交额。"
     },
     {
       "id": "cninfo_exchange",
@@ -74,12 +74,11 @@
     "任一数据源失败时保留上一版 JSON，并在 source-health.json 标注降级或异常。"
   ],
   "last_effective_run": {
-    "timestamp": "2026-07-07T09:00:51+08:00",
-    "type": "premarket_hypothesis_report_0900_makeup",
-    "result": "ok",
+    "timestamp": "2026-07-07T09:25:30+08:00",
+    "type": "a_share_opening_auction",
+    "result": "ok_with_degraded_turnover",
     "degraded_sources": [
-      "eastmoney_global_index",
-      "official_policy_miit",
+      "eastmoney_a_spot_em",
       "yahoo_finance_asia"
     ]
   }
