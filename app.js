@@ -372,17 +372,23 @@ function stockSignal(stock, signals, pool) {
   const directRisk = directSegments.some(part => priceRiskPattern.test(part) || hasLargeDrop(part, 7));
   const directPressure = directSegments.some(part => !isConditionalSignal(part) && (pressurePattern.test(part) || hasAnyDrop(part)));
   const directTrigger = directSegments.some(part => !isConditionalSignal(part) && (hardStrongPattern.test(part) || hasLargeGain(part, 5)));
-  const contextStrong = !isConditionalSignal(context) && hardStrongPattern.test(context);
+  const contextStrong = namedContextHasPattern(name, context, hardStrongPattern);
   const contextRisk = !isConditionalSignal(context) && priceRiskPattern.test(context);
   const contextPressure = !isConditionalSignal(context) && pressurePattern.test(context);
   const positiveMove = Number.isFinite(changePct) && changePct >= 3;
   const strongMove = Number.isFinite(changePct) && changePct >= 5;
   const weakMove = Number.isFinite(changePct) && changePct <= -3;
   const hardWeakMove = Number.isFinite(changePct) && changePct <= -7;
-  const currentStrong = directTrigger || contextStrong || strongMove;
+  const currentNamedStrong = directTrigger || contextStrong;
+  const currentStrong = currentNamedStrong || strongMove;
   const currentWeak = directRisk || contextRisk || hardWeakMove || (directPressure && (weakMove || !Number.isFinite(changePct))) || (contextPressure && weakMove);
   if (directEventRisk) return watchTone("weak", "事件风险", eventRiskBadge(directSegments), changePct, volumeBadge, 100);
-  if (currentStrong) return watchTone("strong", shortReason(strongSegments([...directSegments, context]), "强信号"), strongSignalBadge([...strongSegments(directSegments), context]) || pctBadge(changePct) || volumeBadge, changePct, volumeBadge, 90);
+  if (currentStrong) {
+    const badge = currentNamedStrong
+      ? strongSignalBadge([...strongSegments(directSegments), namedStrongContext(name, context)]) || pctBadge(changePct) || volumeBadge
+      : [pctBadge(changePct), volumeBadge].filter(Boolean).join("/") || "走强";
+    return watchTone("strong", currentNamedStrong ? shortReason(strongSegments([...directSegments, namedStrongContext(name, context)]), "强信号") : "当日大涨", badge, changePct, volumeBadge, 90);
+  }
   if (currentWeak) return watchTone("weak", directRisk || contextRisk ? "硬风险" : pressureReason(directSegments), priceRiskBadge([...directSegments, context]) || pressureBadge([...directSegments, context]) || pctBadge(changePct), changePct, volumeBadge, 85);
   if (strongTag && positiveMove) return watchTone("strong", `${strongTag}强线内走强`, [pctBadge(changePct), volumeBadge].filter(Boolean).join("/") || "强线走强", changePct, volumeBadge, 72);
   if (pressureTag && weakMove) return watchTone("weak", `${pressureTag}承压`, [pctBadge(changePct), volumeBadge].filter(Boolean).join("/") || "方向承压", changePct, volumeBadge, 70);
@@ -424,9 +430,9 @@ function stockContextText(name, signals) {
 
 function stockChangePct(name, context) {
   const cleanName = escapeRegExp(displayStockName(name));
-  const exact = String(context || "").match(new RegExp(`"name"\\s*:\\s*"[^"]*${cleanName}[^"]*"[^{}]{0,260}"change_pct"\\s*:\\s*(-?\\d+(?:\\.\\d+)?)`));
+  const exact = String(context || "").match(new RegExp(`\\{[^{}]{0,160}"name"\\s*:\\s*"[^"]*${cleanName}[^"]*"[^{}]{0,220}"change_pct"\\s*:\\s*(-?\\d+(?:\\.\\d+)?)`));
   if (exact) return Number(exact[1]);
-  const percent = String(context || "").match(new RegExp(`${cleanName}[^\\n。；;]{0,120}([+-]?\\d+(?:\\.\\d+)?)%`));
+  const percent = String(context || "").match(new RegExp(`${cleanName}\\s*[:：]?\\s*([+-]?\\d+(?:\\.\\d+)?)%`));
   if (percent) return Number(percent[1]);
   return NaN;
 }
@@ -438,6 +444,28 @@ function stockVolumeBadge(context) {
   const match = text.match(/(?:成交放大|较昨同期|3分钟放大)(?:至|约)?\s*(\d+(?:\.\d+)?)x/i);
   if (match && Number(match[1]) >= 2) return `${match[1]}x放量`;
   return "";
+}
+
+function namedContextHasPattern(name, context, pattern) {
+  const cleanName = escapeRegExp(displayStockName(name));
+  const text = String(context || "");
+  const clauses = text.split(/[。；;\n]/).filter(part => part.includes(displayStockName(name)));
+  return clauses.some(part => {
+    if (isConditionalSignal(part)) return false;
+    const afterName = part.match(new RegExp(`${cleanName}([^。；;\\n]{0,80})`));
+    return afterName ? pattern.test(afterName[1]) : false;
+  });
+}
+
+function namedStrongContext(name, context) {
+  const cleanName = escapeRegExp(displayStockName(name));
+  const text = String(context || "");
+  const clauses = text.split(/[。；;\n]/).filter(part => part.includes(displayStockName(name)));
+  return clauses.filter(part => {
+    if (isConditionalSignal(part)) return false;
+    const afterName = part.match(new RegExp(`${cleanName}([^。；;\\n]{0,80})`));
+    return afterName ? /涨停|封板|急拉|大涨|放量上涨|放量走强|强势|领涨|突破|加速/.test(afterName[1]) : false;
+  }).join(" ");
 }
 
 function pctBadge(changePct) {
