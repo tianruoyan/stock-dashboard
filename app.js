@@ -78,10 +78,10 @@ function currentRefreshIntervalMs(now = new Date()) {
   const day = now.getDay();
   if (day === 0 || day === 6) return 5 * 60 * 1000;
   const minutes = now.getHours() * 60 + now.getMinutes();
-  if (minutes >= 9 * 60 + 15 && minutes <= 11 * 60 + 35) return 30 * 1000;
-  if (minutes >= 13 * 60 && minutes <= 15 * 60 + 10) return 30 * 1000;
+  if (minutes >= 9 * 60 + 15 && minutes <= 11 * 60 + 30) return 30 * 1000;
+  if (minutes >= 13 * 60 && minutes <= 15 * 60) return 30 * 1000;
   if (minutes >= 8 * 60 + 30 && minutes < 9 * 60 + 15) return 60 * 1000;
-  if (minutes > 11 * 60 + 35 && minutes < 13 * 60) return 2 * 60 * 1000;
+  if (minutes > 11 * 60 + 30 && minutes < 13 * 60) return 2 * 60 * 1000;
   return 5 * 60 * 1000;
 }
 
@@ -308,9 +308,10 @@ function dashboardMarketThemeSummary(intraday, postmarket) {
 
 function dashboardConclusionMeta(latest) {
   const trust = cached("data/data-trust.json") || {};
-  const phase = trust.session_phase || inferSessionPhaseByTime();
+  const phase = inferSessionPhaseByTime();
   const typeMap = {
     premarket: "盘前预案",
+    opening: "开盘确认",
     morning: "盘中动态",
     midday: "盘中动态",
     afternoon: "盘中动态",
@@ -333,11 +334,12 @@ function dashboardConclusionMeta(latest) {
 
 function inferSessionPhaseByTime(now = new Date()) {
   const minutes = now.getHours() * 60 + now.getMinutes();
-  if (minutes >= 8 * 60 + 30 && minutes < 9 * 60 + 30) return "premarket";
-  if (minutes >= 9 * 60 + 30 && minutes <= 11 * 60 + 35) return "morning";
-  if (minutes > 11 * 60 + 35 && minutes < 13 * 60) return "midday";
-  if (minutes >= 13 * 60 && minutes <= 15 * 60 + 10) return "afternoon";
-  if (minutes > 15 * 60 + 10 && minutes <= 18 * 60) return "postmarket";
+  if (minutes >= 8 * 60 + 30 && minutes < 9 * 60 + 15) return "premarket";
+  if (minutes >= 9 * 60 + 15 && minutes < 9 * 60 + 30) return "opening";
+  if (minutes >= 9 * 60 + 30 && minutes <= 11 * 60 + 30) return "morning";
+  if (minutes > 11 * 60 + 30 && minutes < 13 * 60) return "midday";
+  if (minutes >= 13 * 60 && minutes <= 15 * 60) return "afternoon";
+  if (minutes > 15 * 60 && minutes <= 18 * 60) return "postmarket";
   if (minutes > 18 * 60 && minutes <= 23 * 60) return "evening";
   return "overnight";
 }
