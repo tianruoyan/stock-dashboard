@@ -1748,16 +1748,13 @@ function renderWatchPool(key, title, desc, stocks, signals) {
   const displayLimit = key === "watch_only" ? Number.POSITIVE_INFINITY : 5;
   const strong = hits.filter(s => s.signal.tone === "strong").sort(sortWatchSignalRows).slice(0, displayLimit);
   const weak = hits.filter(s => s.signal.tone === "weak").sort(sortWatchSignalRows).slice(0, displayLimit);
+  const event = hits.filter(s => s.signal.tone === "event").sort(sortWatchSignalRows).slice(0, displayLimit);
   const neutral = hits.filter(s => s.signal.tone === "neutral").sort(sortWatchSignalRows).slice(0, displayLimit);
-  const latest = hits
-    .filter(s => s.signal.tone !== "neutral" && s.signal.updatedAt)
-    .sort(sortWatchSignalRows)
-    .slice(0, 10);
   return `<div class="watch-pool-card ${weak.length > strong.length ? "risk" : strong.length ? "hot" : ""}">
     <div class="watch-pool-head"><b>${escapeHtml(title)}</b><span>${stocks.length} 只 · ${escapeHtml(desc)}</span></div>
-    ${renderWatchLine("最新变化", latest, { empty: "暂无新触发" })}
     ${renderWatchLine("强势股", strong, { empty: "暂无" })}
     ${renderWatchLine("弱势股", weak, { empty: "暂无" })}
+    ${renderWatchLine("消息风险", event, { empty: "暂无" })}
     ${renderNeutralWatchLine(neutral)}
   </div>`;
 }
@@ -1810,6 +1807,7 @@ function watchSignalBadge(signal) {
   const base = {
     strong: "强势",
     weak: "弱势",
+    event: "消息",
     neutral: "一般"
   }[signal?.tone] || "";
   return signal?.badge ? `${base} · ${signal.badge}` : base;
@@ -1856,7 +1854,7 @@ function stockSignal(stock, signals, pool) {
   const currentNamedStrong = directTrigger || contextStrong;
   const currentStrong = currentNamedStrong || strongMove;
   const currentWeak = directRisk || contextRisk || hardWeakMove || (directPressure && (weakMove || !Number.isFinite(changePct))) || (contextPressure && weakMove);
-  if (directEventRisk) return watchTone("weak", "事件风险", eventRiskBadge(directSegments), changePct, volumeBadge, 100, updatedAt);
+  if (directEventRisk) return watchTone("event", "待盘面确认", eventRiskBadge(directSegments) || "消息风险", changePct, volumeBadge, 82, updatedAt);
   if (currentStrong) {
     const badge = currentNamedStrong
       ? strongSignalBadge([...strongSegments(directSegments), namedStrongContext(name, context)]) || pctBadge(changePct) || volumeBadge
