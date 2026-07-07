@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-07-06T16:28:10+08:00",
+  "timestamp": "2026-07-07T09:00:51+08:00",
   "sources": [
     {
       "id": "mootdx",
@@ -12,34 +12,34 @@
     {
       "id": "tencent",
       "name": "腾讯财经 HTTP",
-      "role": "实时价、指数、ETF、PE/PB、市值、换手率、涨跌停价",
+      "role": "实时价、指数、ETF、港股/美股补充行情",
       "status": "ok",
       "cadence": "盘中高频，适合观察池轮询",
-      "note": "16:28通过腾讯HTTP获取港股收盘指数、半导体、互联网、创新药、汽车代表股，返回正常。"
+      "note": "09:00通过腾讯HTTP获取美股7月6日收盘及港股09:03指数字段，返回正常；港股个股仍为昨收，9:15再确认竞价。"
     },
     {
       "id": "eastmoney",
       "name": "东方财富 push2 / push2ex",
-      "role": "涨停池、炸板池、跌停池、行业/概念排行、资金流、龙虎榜、研报",
-      "status": "ok",
+      "role": "公告库、涨停池、结构数据",
+      "status": "degraded",
       "cadence": "低频限流，建议 60-120 秒以上",
-      "note": "15:09通过东方财富/akshare获取全A收盘、涨停池、跌停池、炸板池，返回正常。"
+      "note": "09:00公告库通过akshare返回正常；全球指数接口出现ProxyError，未使用失败数据生成日韩结论。"
     },
     {
       "id": "cninfo_exchange",
       "name": "巨潮 / 交易所公告",
-      "role": "个股公告、定增、减持、问询、业绩、风险提示",
+      "role": "个股公告、定增、减持、业绩、风险提示",
       "status": "ok",
       "cadence": "盘后和晚间低频扫描",
-      "note": "晚间 P0 和盘前 overnight_news 的核心证据源。"
+      "note": "09:00通过东方财富公告库与巨潮入口核验7月6日/7月7日公告，筛出中微、普源、永鼎、奥来德、光迅、赛微等关键事件。"
     },
     {
       "id": "official_policy",
       "name": "官方政策源",
-      "role": "工信部、发改委、商务部、网信办、交易所、地方政府",
-      "status": "ok",
+      "role": "工信部、发改委、商务部、交易所、地方政府",
+      "status": "degraded",
       "cadence": "晚间全量 + 盘前增量",
-      "note": "政策和产业确认度优先级高于券商推演和自媒体。"
+      "note": "09:00发改委/商务部官网可访问；工信部首页返回403，本次未发现可引用的部委新增半导体/AI/新材料硬确认。"
     },
     {
       "id": "ths_sina",
@@ -52,10 +52,10 @@
     {
       "id": "yahoo_finance",
       "name": "Yahoo Finance HTTP",
-      "role": "海外指数、美股、日韩与港股补充行情",
+      "role": "海外指数、美股、日韩补充行情",
       "status": "degraded",
       "cadence": "按需低频补充",
-      "note": "9:15盘前美股/日韩/港股多数返回正常；个别港股与期货代码出现SSL或空返回，已用腾讯港股和XIN9 A50代理交叉补足，未用失败数据生成结论。"
+      "note": "09:00尝试日韩指数与芯片股分钟行情，出现SSL EOF/429限流，日韩早盘留待9:15用备用源再确认。"
     },
     {
       "id": "sw_components",
@@ -74,9 +74,13 @@
     "任一数据源失败时保留上一版 JSON，并在 source-health.json 标注降级或异常。"
   ],
   "last_effective_run": {
-    "timestamp": "2026-07-06T16:28:10+08:00",
-    "type": "hk_close_postmarket",
+    "timestamp": "2026-07-07T09:00:51+08:00",
+    "type": "premarket_hypothesis_report_0900_makeup",
     "result": "ok",
-    "degraded_sources": []
+    "degraded_sources": [
+      "eastmoney_global_index",
+      "official_policy_miit",
+      "yahoo_finance_asia"
+    ]
   }
 }
