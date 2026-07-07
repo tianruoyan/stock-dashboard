@@ -47,6 +47,7 @@ def main() -> int:
     check_bad_literals(issues)
     check_decision_feed(issues)
     check_data_trust(issues)
+    check_monitoring_coverage(issues)
     check_section_health(issues, index, app)
 
     status = overall_status(issues)
@@ -63,6 +64,7 @@ def main() -> int:
             "data/config/settings 文件不含常见坏字面量。",
             "decision-feed 不含泛化机会、旧相对日期和高置信无证据项。",
             "data-trust 文件级可信度结构完整，能标记不可用/降权数据文件。",
+            "monitoring-coverage 能说明监测盲区、影响决策和替代观察动作。",
             "section-health 区块矩阵结构完整，能指出不可用/降权区块。",
             "section-health 每个区块能映射到页面面板，并由前端贴状态条。",
         ],
@@ -204,6 +206,28 @@ def check_data_trust(issues: list[dict[str, Any]]) -> None:
                 issues.append(issue("warning", "data/data-trust.json", "missing_trust_field", f"files[{index}].{key} 缺失"))
         if item.get("status") not in {"trusted", "degraded", "stale", "invalidated", "missing"}:
             issues.append(issue("warning", "data/data-trust.json", "bad_trust_status", f"files[{index}].status 非法"))
+
+
+def check_monitoring_coverage(issues: list[dict[str, Any]]) -> None:
+    path = ROOT / "data" / "monitoring-coverage.json"
+    try:
+        data = json.loads(path.read_text(encoding="utf-8"))
+    except Exception as exc:
+        issues.append(issue("warning", "data/monitoring-coverage.json", "monitoring_coverage_missing", f"监测盲区报告不可读：{exc}"))
+        return
+    rows = data.get("blind_spots")
+    if not isinstance(rows, list):
+        issues.append(issue("warning", "data/monitoring-coverage.json", "bad_monitoring_coverage", "blind_spots 缺失或不是数组"))
+        return
+    for index, item in enumerate(rows):
+        if not isinstance(item, dict):
+            issues.append(issue("warning", "data/monitoring-coverage.json", "bad_blind_spot", f"blind_spots[{index}] 不是对象"))
+            continue
+        for key in ("id", "title", "severity", "conclusion", "impacted_decisions", "fallback_action", "source_files"):
+            if item.get(key) in (None, "", []):
+                issues.append(issue("warning", "data/monitoring-coverage.json", "missing_blind_spot_field", f"blind_spots[{index}].{key} 缺失"))
+        if item.get("severity") not in {"critical", "warning", "info"}:
+            issues.append(issue("warning", "data/monitoring-coverage.json", "bad_blind_spot_severity", f"blind_spots[{index}].severity 非法"))
 
 
 def check_section_health(issues: list[dict[str, Any]], index: str, app: str) -> None:

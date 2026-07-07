@@ -8,6 +8,7 @@ const FILES = [
   "data/topics.json",
   "data/quality-report.json",
   "data/data-trust.json",
+  "data/monitoring-coverage.json",
   "data/decision-feed.json",
   "data/signal-review.json",
   "config/watchlist.json",
@@ -46,11 +47,12 @@ async function updateAll() {
         render(file, data);
       }
     } catch (e) {
-      if (file.includes("signal-review") || file.includes("quality-report") || file.includes("data-trust") || file.includes("decision-feed") || file.includes("section-health")) {
+      if (file.includes("signal-review") || file.includes("quality-report") || file.includes("data-trust") || file.includes("monitoring-coverage") || file.includes("decision-feed") || file.includes("section-health")) {
         cache[file] = null;
         if (file.includes("signal-review")) renderSignalReview(null);
         if (file.includes("quality-report")) renderDataQualityGate();
         if (file.includes("data-trust")) renderDataQualityGate();
+        if (file.includes("monitoring-coverage")) renderDataQualityGate();
         if (file.includes("decision-feed")) renderOpportunityRiskRadar();
         if (file.includes("section-health")) renderDataQualityGate();
       } else {
@@ -75,6 +77,7 @@ function render(file, data) {
   else if (file === "data/topics.json") renderTopics(data);
   else if (file === "data/quality-report.json") renderDataQualityGate();
   else if (file === "data/data-trust.json") renderDataQualityGate();
+  else if (file === "data/monitoring-coverage.json") renderDataQualityGate();
   else if (file === "data/decision-feed.json") renderOpportunityRiskRadar();
   else if (file === "data/signal-review.json") renderSignalReview(data);
   else if (file === "config/watchlist.json") renderWatchlistDecision();
@@ -269,6 +272,12 @@ function renderDataQualityGate() {
       title: report.fileTrustTitle || "待接入",
       detail: report.fileTrustDetail || "数据文件可信度待生成",
       cls: report.fileTrustCls || "neutral"
+    },
+    {
+      label: "监测盲区",
+      title: report.coverageTitle || "待接入",
+      detail: report.coverageDetail || "监测盲区待生成",
+      cls: report.coverageCls || "neutral"
     }
   ];
   el.innerHTML = `<div class="decision-strip quality-strip">${cards.map(card => `
@@ -284,6 +293,7 @@ function buildDataQualityReport() {
   const audited = cached("data/quality-report.json");
   const sectionHealth = cached("data/section-health.json");
   const dataTrust = cached("data/data-trust.json");
+  const coverage = cached("data/monitoring-coverage.json");
   if (audited?.status && audited.current_signal_date === currentSignalDate()) {
     const latest = latestTimestamp([
       cached("data/intraday.json"),
@@ -306,19 +316,23 @@ function buildDataQualityReport() {
       .filter(Boolean);
     const sectionSummary = summarizeSectionHealth(sectionHealth);
     const trustSummary = summarizeDataTrust(dataTrust);
+    const coverageSummary = summarizeMonitoringCoverage(coverage);
     return {
       level: mapped.level,
       cls: mapped.cls,
       latest,
       degraded,
-      issues: [...trustSummary.issues, ...sectionSummary.issues, ...issues],
+      issues: [...coverageSummary.issues, ...trustSummary.issues, ...sectionSummary.issues, ...issues],
       summary: audited.summary || "数据审计报告已接入",
       sectionTitle: sectionSummary.title,
       sectionDetail: sectionSummary.detail,
       sectionCls: sectionSummary.cls,
       fileTrustTitle: trustSummary.title,
       fileTrustDetail: trustSummary.detail,
-      fileTrustCls: trustSummary.cls
+      fileTrustCls: trustSummary.cls,
+      coverageTitle: coverageSummary.title,
+      coverageDetail: coverageSummary.detail,
+      coverageCls: coverageSummary.cls
     };
   }
   const files = [
@@ -356,6 +370,25 @@ function buildDataQualityReport() {
   if (critical) return { level: "谨慎使用", cls: "warn", latest, degraded, issues, summary: "存在污染/异常字段，信号需二次确认" };
   if (stale || degraded.length) return { level: "降级可用", cls: "neutral", latest, degraded, issues, summary: "核心数据可用，但部分来源需降权" };
   return { level: "可用", cls: "good", latest, degraded, issues, summary: "核心数据结构正常" };
+}
+
+function summarizeMonitoringCoverage(report) {
+  if (!report || !Array.isArray(report.blind_spots)) {
+    return { title: "待接入", detail: "监测盲区待生成", cls: "neutral", issues: [] };
+  }
+  const critical = report.blind_spots.filter(item => item.severity === "critical");
+  const warning = report.blind_spots.filter(item => item.severity === "warning");
+  const info = report.blind_spots.filter(item => item.severity === "info");
+  const focus = [...critical, ...warning, ...info].slice(0, 4);
+  const title = critical.length ? `${critical.length} 个核心盲区` : (warning.length ? `${warning.length} 个降权盲区` : (info.length ? `${info.length} 个背景盲区` : "无明显盲区"));
+  const detail = report.summary || (focus.length ? focus.map(item => item.title).join(" / ") : "核心监测链路可用");
+  const issues = focus.map(item => `${item.title}：${item.fallback_action || item.conclusion}`);
+  return {
+    title,
+    detail: truncateText(detail, 90),
+    cls: critical.length ? "warn" : (warning.length || info.length ? "neutral" : "good"),
+    issues
+  };
 }
 
 function summarizeDataTrust(report) {

@@ -344,6 +344,7 @@ Codex (分析引擎)              Cola (稳定管道)
 | 2026-07-07 | 新增运行时渲染烟雾测试 scripts/smoke_dashboard_runtime.js，并接入 push_with_audit.sh 发布门 | 静态检查无法发现真实 JSON 触发的 JS ERROR、空白区块、undefined、[object Object] 和运行时乱码，必须在推送前实际跑一遍看板渲染 |
 | 2026-07-07 | decision-feed 新增 signal_score/signal_grade/use_action/use_reasons，机会/风险/验证必须说明信号可用性和使用动作 | 盘中交易辅助不能只给标题和结论，必须区分可跟踪、等待确认、降权观察和仅复核，避免低质量信号被误当成交易依据 |
 | 2026-07-07 | 新增 data-trust 文件级可信度报告，按核心 JSON 输出可信分、状态、使用动作和原因 | 全局 degraded 过粗，盘中需要明确知道哪个数据文件不可用、哪个只能降权参考、哪个可正常作为辅助依据 |
+| 2026-07-07 | 新增 monitoring-coverage 监测盲区报告，说明数据断点影响哪些盘中决策以及临时替代观察动作 | 平台不能只显示“数据降级”，必须告诉用户当前自动监测看不到什么、哪些交易触发不能依赖、该改看哪些确认信号 |
 ---
 
 ## 🐍 Python 环境

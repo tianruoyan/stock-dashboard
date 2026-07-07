@@ -62,6 +62,7 @@ def main() -> int:
     validate_source_health(files.get("source-health.json"), issues)
     validate_decision_feed(files.get("decision-feed.json"), issues, current_date)
     validate_data_trust(files.get("data-trust.json"), issues, current_date)
+    validate_monitoring_coverage(files.get("monitoring-coverage.json"), issues, current_date)
 
     status = overall_status(issues)
     report = {
@@ -251,6 +252,30 @@ def validate_data_trust(data: Any, issues: list[dict[str, Any]], current_date: s
                 issues.append(issue("warning", "data-trust.json", "missing_trust_field", f"files[{index}].{key} 缺失", f"files[{index}]"))
         if item.get("status") not in (None, "trusted", "degraded", "stale", "invalidated", "missing"):
             issues.append(issue("warning", "data-trust.json", "bad_trust_status", f"files[{index}].status 非法", f"files[{index}]"))
+
+
+def validate_monitoring_coverage(data: Any, issues: list[dict[str, Any]], current_date: str) -> None:
+    if data in (None, {}):
+        return
+    if not isinstance(data, dict):
+        issues.append(issue("critical", "monitoring-coverage.json", "bad_monitoring_coverage", "monitoring-coverage 根节点必须是对象"))
+        return
+    coverage_date = data.get("current_signal_date") or signal_date(data.get("timestamp"))
+    if coverage_date != current_date:
+        issues.append(issue("warning", "monitoring-coverage.json", "stale_monitoring_coverage", f"monitoring-coverage 日期不是当前交易日：{coverage_date}"))
+    rows = data.get("blind_spots")
+    if not isinstance(rows, list):
+        issues.append(issue("warning", "monitoring-coverage.json", "missing_blind_spots", "blind_spots 缺失或不是数组"))
+        return
+    for index, item in enumerate(rows):
+        if not isinstance(item, dict):
+            issues.append(issue("warning", "monitoring-coverage.json", "bad_blind_spot", f"blind_spots[{index}] 不是对象", f"blind_spots[{index}]"))
+            continue
+        for key in ("id", "title", "severity", "conclusion", "impacted_decisions", "fallback_action", "source_files"):
+            if item.get(key) in (None, "", []):
+                issues.append(issue("warning", "monitoring-coverage.json", "missing_blind_spot_field", f"blind_spots[{index}].{key} 缺失", f"blind_spots[{index}]"))
+        if item.get("severity") not in (None, "critical", "warning", "info"):
+            issues.append(issue("warning", "monitoring-coverage.json", "bad_blind_spot_severity", f"blind_spots[{index}].severity 非法", f"blind_spots[{index}]"))
 
 
 def has_stale_relative_time(text: str, current_date: str) -> bool:
