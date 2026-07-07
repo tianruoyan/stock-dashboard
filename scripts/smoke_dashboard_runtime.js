@@ -361,6 +361,10 @@ async function main() {
   if (Array.isArray(themeShifts.shifts) && themeShifts.shifts.length && !radarHtml.includes("主线变化")) {
     issues.push(issue("critical", "theme_shift_not_rendered", "主线变化报告未进入机会/风险雷达", "opportunity-risk-radar"));
   }
+  const qualityHtml = document.getElementById("data-quality-gate")?.collectHtml() || "";
+  if (!qualityHtml.includes("自动化心跳")) {
+    issues.push(issue("critical", "automation_health_not_rendered", "自动化心跳未进入顶部质量卡", "data-quality-gate"));
+  }
   for (const literal of BAD_LITERALS) {
     if (wholePage.includes(literal)) {
       issues.push(issue("critical", "bad_literal_rendered", `页面运行后出现异常文本：${badLiteralLabel(literal)}`));

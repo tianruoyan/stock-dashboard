@@ -2,6 +2,7 @@
 
 | Display Version | Date | Edition | Tag / Commit | Summary | Rollback Note |
 |---|---:|---:|---|---|---|
+| 2026-07-07 第60版｜自动化心跳 | 2026-07-07 | 第60版 | tag: `v2026.07.07-m60-automation-heartbeat` | 新增 `scripts/build_automation_health.py` 和 `data/automation-health.json`，按盘前、盘中全景、盘中异动、午盘、盘后、晚间舆情、专题跟踪检查自动化是否按时产出、是否撤下或等待中；顶部质量卡新增“自动化心跳”，统一构建报告可显示 degraded 但非阻断发布。 | 回滚到第59版可用 `git checkout v2026.07.07-m59-unified-build`，或回滚到本版本 tag。 |
 | 2026-07-07 第59版｜统一构建入口 | 2026-07-07 | 第59版 | tag: `v2026.07.07-m59-unified-build` | 新增 `scripts/build_dashboard_reports.py` 和 `data/build-report.json`，统一按依赖顺序生成主线变化、机会风险流、数据审计、文件可信度、监测盲区、区块健康、静态烟雾和运行时烟雾报告；`push_with_audit.sh` 改为调用统一入口，降低衍生数据版本错位导致的不稳定。 | 回滚到第58版可用 `git checkout v2026.07.07-m58-theme-shifts`，或回滚到本版本 tag。 |
 | 2026-07-07 第58版｜主线变化雷达 | 2026-07-07 | 第58版 | tag: `v2026.07.07-m58-theme-shifts` | 新增 `scripts/build_theme_shifts.py` 和 `data/theme-shifts.json`，从盘中全景、盘后热点、专题跟踪中识别升温、新线、抱团、降温和风险变化；`decision-feed` 将主线变化并入机会/风险/验证栏，雷达显示“主线变化扫描”，发布门、文件可信度和区块健康同步纳入该文件。 | 回滚到第57版可用 `git checkout v2026.07.07-m57-freshness-sla`，或回滚到本版本 tag。 |
 | 2026-07-07 第57版｜数据新鲜度SLA | 2026-07-07 | 第57版 | tag: `v2026.07.07-m57-freshness-sla` | `data-trust` 新增 `freshness_status/age_minutes/freshness_action/freshness_reason`，给盘中异动、盘中全景、盘前、午盘、盘后、晚间、专题和机会风险流分别设置刷新 SLA；当前阶段文件超时会自动降权并在顶部质量卡提示，阶段回看文件不再伪装成实时依据。 | 回滚到第56版可用 `git checkout v2026.07.07-m56-label-pct-audit`，或回滚到本版本 tag。 |

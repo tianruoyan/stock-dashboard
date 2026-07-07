@@ -60,6 +60,7 @@ def main() -> int:
     validate_postmarket(files.get("postmarket.json"), issues)
     validate_evening(files.get("evening-sentiment.json"), issues, current_date)
     validate_source_health(files.get("source-health.json"), issues)
+    validate_automation_health(files.get("automation-health.json"), issues, current_date)
     validate_theme_shifts(files.get("theme-shifts.json"), issues, current_date)
     validate_decision_feed(files.get("decision-feed.json"), issues, current_date)
     validate_data_trust(files.get("data-trust.json"), issues, current_date)
@@ -280,6 +281,31 @@ def validate_theme_shifts(data: Any, issues: list[dict[str, Any]], current_date:
                 issues.append(issue("warning", "theme-shifts.json", "missing_shift_field", f"shifts[{index}].{key} 缺失", f"shifts[{index}]"))
         if item.get("state") not in (None, "warming", "emerging", "crowded", "fading", "risk", "watch"):
             issues.append(issue("warning", "theme-shifts.json", "bad_shift_state", f"shifts[{index}].state 非法", f"shifts[{index}]"))
+
+
+def validate_automation_health(data: Any, issues: list[dict[str, Any]], current_date: str) -> None:
+    if data in (None, {}):
+        issues.append(issue("warning", "automation-health.json", "missing_automation_health", "automation-health 缺失，无法确认自动化是否按时产出"))
+        return
+    if not isinstance(data, dict):
+        issues.append(issue("critical", "automation-health.json", "bad_automation_health", "automation-health 根节点必须是对象"))
+        return
+    health_date = data.get("current_signal_date") or signal_date(data.get("timestamp"))
+    if health_date != current_date:
+        issues.append(issue("warning", "automation-health.json", "stale_automation_health", f"automation-health 日期不是当前交易日：{health_date}"))
+    rows = data.get("processes")
+    if not isinstance(rows, list) or not rows:
+        issues.append(issue("warning", "automation-health.json", "missing_processes", "processes 缺失或为空"))
+        return
+    for index, item in enumerate(rows):
+        if not isinstance(item, dict):
+            issues.append(issue("warning", "automation-health.json", "bad_process_item", f"processes[{index}] 不是对象", f"processes[{index}]"))
+            continue
+        for key in ("id", "label", "file", "due", "status", "action", "reason"):
+            if item.get(key) in (None, "", []):
+                issues.append(issue("warning", "automation-health.json", "missing_process_field", f"processes[{index}].{key} 缺失", f"processes[{index}]"))
+        if item.get("status") not in (None, "ok", "waiting", "late", "missing", "invalidated"):
+            issues.append(issue("warning", "automation-health.json", "bad_process_status", f"processes[{index}].status 非法", f"processes[{index}]"))
 
 
 def validate_data_trust(data: Any, issues: list[dict[str, Any]], current_date: str) -> None:

@@ -7,7 +7,7 @@ cd "$ROOT" || exit 1
 python3 scripts/build_dashboard_reports.py
 build_status=$?
 
-git add data/build-report.json data/quality-report.json data/theme-shifts.json data/decision-feed.json data/data-trust.json data/monitoring-coverage.json data/section-health.json data/smoke-report.json data/runtime-smoke-report.json >/dev/null 2>&1 || true
+git add data/build-report.json data/quality-report.json data/automation-health.json data/theme-shifts.json data/decision-feed.json data/data-trust.json data/monitoring-coverage.json data/section-health.json data/smoke-report.json data/runtime-smoke-report.json >/dev/null 2>&1 || true
 
 if [ "$build_status" -ne 0 ]; then
   echo "dashboard audit/smoke found critical issues; skip push"

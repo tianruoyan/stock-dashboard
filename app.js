@@ -11,6 +11,7 @@ const FILES = [
   "data/monitoring-coverage.json",
   "data/decision-feed.json",
   "data/theme-shifts.json",
+  "data/automation-health.json",
   "data/signal-review.json",
   "config/watchlist.json",
   "config/alert-config.json",
@@ -48,7 +49,7 @@ async function updateAll() {
         render(file, data);
       }
     } catch (e) {
-      if (file.includes("signal-review") || file.includes("quality-report") || file.includes("data-trust") || file.includes("monitoring-coverage") || file.includes("decision-feed") || file.includes("theme-shifts") || file.includes("section-health")) {
+      if (file.includes("signal-review") || file.includes("quality-report") || file.includes("data-trust") || file.includes("monitoring-coverage") || file.includes("decision-feed") || file.includes("theme-shifts") || file.includes("automation-health") || file.includes("section-health")) {
         cache[file] = null;
         if (file.includes("signal-review")) renderSignalReview(null);
         if (file.includes("quality-report")) renderDataQualityGate();
@@ -56,6 +57,7 @@ async function updateAll() {
         if (file.includes("monitoring-coverage")) renderDataQualityGate();
         if (file.includes("decision-feed")) renderOpportunityRiskRadar();
         if (file.includes("theme-shifts")) renderOpportunityRiskRadar();
+        if (file.includes("automation-health")) renderDataQualityGate();
         if (file.includes("section-health")) renderDataQualityGate();
       } else {
         console.error("load failed:", file);
@@ -82,6 +84,7 @@ function render(file, data) {
   else if (file === "data/monitoring-coverage.json") renderDataQualityGate();
   else if (file === "data/decision-feed.json") renderOpportunityRiskRadar();
   else if (file === "data/theme-shifts.json") renderOpportunityRiskRadar();
+  else if (file === "data/automation-health.json") renderDataQualityGate();
   else if (file === "data/signal-review.json") renderSignalReview(data);
   else if (file === "config/watchlist.json") renderWatchlistDecision();
   else if (file === "config/alert-config.json") renderPortfolioRisk();
@@ -281,6 +284,12 @@ function renderDataQualityGate() {
       title: report.coverageTitle || "待接入",
       detail: report.coverageDetail || "监测盲区待生成",
       cls: report.coverageCls || "neutral"
+    },
+    {
+      label: "自动化心跳",
+      title: report.automationTitle || "待接入",
+      detail: report.automationDetail || "产出心跳待生成",
+      cls: report.automationCls || "neutral"
     }
   ];
   el.innerHTML = `<div class="decision-strip quality-strip">${cards.map(card => `
@@ -297,6 +306,7 @@ function buildDataQualityReport() {
   const sectionHealth = cached("data/section-health.json");
   const dataTrust = cached("data/data-trust.json");
   const coverage = cached("data/monitoring-coverage.json");
+  const automation = cached("data/automation-health.json");
   if (audited?.status && audited.current_signal_date === currentSignalDate()) {
     const latest = latestTimestamp([
       cached("data/intraday.json"),
@@ -320,12 +330,13 @@ function buildDataQualityReport() {
     const sectionSummary = summarizeSectionHealth(sectionHealth);
     const trustSummary = summarizeDataTrust(dataTrust);
     const coverageSummary = summarizeMonitoringCoverage(coverage);
+    const automationSummary = summarizeAutomationHealth(automation);
     return {
       level: mapped.level,
       cls: mapped.cls,
       latest,
       degraded,
-      issues: [...coverageSummary.issues, ...trustSummary.issues, ...sectionSummary.issues, ...issues],
+      issues: [...automationSummary.issues, ...coverageSummary.issues, ...trustSummary.issues, ...sectionSummary.issues, ...issues],
       summary: audited.summary || "数据审计报告已接入",
       sectionTitle: sectionSummary.title,
       sectionDetail: sectionSummary.detail,
@@ -335,7 +346,10 @@ function buildDataQualityReport() {
       fileTrustCls: trustSummary.cls,
       coverageTitle: coverageSummary.title,
       coverageDetail: coverageSummary.detail,
-      coverageCls: coverageSummary.cls
+      coverageCls: coverageSummary.cls,
+      automationTitle: automationSummary.title,
+      automationDetail: automationSummary.detail,
+      automationCls: automationSummary.cls
     };
   }
   const files = [
@@ -373,6 +387,27 @@ function buildDataQualityReport() {
   if (critical) return { level: "谨慎使用", cls: "warn", latest, degraded, issues, summary: "存在污染/异常字段，信号需二次确认" };
   if (stale || degraded.length) return { level: "降级可用", cls: "neutral", latest, degraded, issues, summary: "核心数据可用，但部分来源需降权" };
   return { level: "可用", cls: "good", latest, degraded, issues, summary: "核心数据结构正常" };
+}
+
+function summarizeAutomationHealth(report) {
+  if (!report || !Array.isArray(report.processes)) {
+    return { title: "待接入", detail: "自动化产出心跳待生成", cls: "neutral", issues: [] };
+  }
+  const bad = report.processes.filter(item => ["missing", "invalidated", "late"].includes(item.status));
+  const blocking = bad.filter(item => item.blocking);
+  const waiting = report.processes.filter(item => item.status === "waiting");
+  const focus = [...blocking, ...bad, ...waiting].slice(0, 4);
+  const title = blocking.length
+    ? `${blocking.length} 个阻断`
+    : (bad.length ? `${bad.length} 个异常` : (waiting.length ? `${waiting.length} 个等待` : "产出正常"));
+  const detail = report.summary || (focus.length ? focus.map(item => item.label).join(" / ") : "关键自动化产出均已到位");
+  const issues = focus.map(item => `${item.label}：${item.action || item.status}，${item.reason || ""}`);
+  return {
+    title,
+    detail: truncateText(detail, 90),
+    cls: blocking.length ? "warn" : (bad.length || waiting.length ? "neutral" : "good"),
+    issues
+  };
 }
 
 function summarizeMonitoringCoverage(report) {

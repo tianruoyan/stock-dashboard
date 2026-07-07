@@ -46,6 +46,7 @@ def main() -> int:
     check_app_files(app, issues)
     check_bad_literals(issues)
     check_build_report(issues)
+    check_automation_health(issues)
     check_theme_shifts(issues)
     check_decision_feed(issues)
     check_data_trust(issues)
@@ -121,6 +122,8 @@ def check_app_files(app: str, issues: list[dict[str, Any]]) -> None:
         issues.append(issue("warning", "app.js", "decision_feed_not_loaded", "FILES 未加载 data/decision-feed.json"))
     if "data/theme-shifts.json" not in paths:
         issues.append(issue("warning", "app.js", "theme_shifts_not_loaded", "FILES 未加载 data/theme-shifts.json"))
+    if "data/automation-health.json" not in paths:
+        issues.append(issue("warning", "app.js", "automation_health_not_loaded", "FILES 未加载 data/automation-health.json"))
 
 
 def check_bad_literals(issues: list[dict[str, Any]]) -> None:
@@ -203,7 +206,7 @@ def check_build_report(issues: list[dict[str, Any]]) -> None:
     if data.get("status") == "running":
         return
     names = {item.get("name") for item in rows if isinstance(item, dict)}
-    required = {"theme-shifts:pre", "decision-feed:pre", "audit", "data-trust", "monitoring-coverage", "section-health", "static-smoke", "runtime-smoke"}
+    required = {"theme-shifts:pre", "decision-feed:pre", "automation-health:pre", "audit", "automation-health:post-audit", "data-trust", "monitoring-coverage", "section-health", "static-smoke", "runtime-smoke"}
     missing = sorted(required - names)
     if missing:
         issues.append(issue("warning", "data/build-report.json", "missing_build_steps", f"统一构建缺少步骤：{', '.join(missing)}"))
@@ -231,6 +234,28 @@ def check_theme_shifts(issues: list[dict[str, Any]]) -> None:
                 issues.append(issue("warning", "data/theme-shifts.json", "missing_shift_field", f"shifts[{index}].{key} 缺失"))
         if item.get("state") not in {"warming", "emerging", "crowded", "fading", "risk", "watch"}:
             issues.append(issue("warning", "data/theme-shifts.json", "bad_shift_state", f"shifts[{index}].state 非法"))
+
+
+def check_automation_health(issues: list[dict[str, Any]]) -> None:
+    path = ROOT / "data" / "automation-health.json"
+    try:
+        data = json.loads(path.read_text(encoding="utf-8"))
+    except Exception as exc:
+        issues.append(issue("warning", "data/automation-health.json", "automation_health_missing", f"自动化心跳报告不可读：{exc}"))
+        return
+    rows = data.get("processes")
+    if not isinstance(rows, list) or not rows:
+        issues.append(issue("warning", "data/automation-health.json", "bad_automation_health", "processes 缺失或为空"))
+        return
+    for index, item in enumerate(rows):
+        if not isinstance(item, dict):
+            issues.append(issue("warning", "data/automation-health.json", "bad_process_item", f"processes[{index}] 不是对象"))
+            continue
+        for key in ("id", "label", "file", "due", "status", "action", "reason"):
+            if item.get(key) in (None, "", []):
+                issues.append(issue("warning", "data/automation-health.json", "missing_process_field", f"processes[{index}].{key} 缺失"))
+        if item.get("status") not in {"ok", "waiting", "late", "missing", "invalidated"}:
+            issues.append(issue("warning", "data/automation-health.json", "bad_process_status", f"processes[{index}].status 非法"))
 
 
 def check_data_trust(issues: list[dict[str, Any]]) -> None:
