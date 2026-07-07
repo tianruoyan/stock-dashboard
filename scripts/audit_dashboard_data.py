@@ -321,7 +321,7 @@ def validate_decision_feed(data: Any, issues: list[dict[str, Any]], current_date
             if not isinstance(item, dict):
                 issues.append(issue("critical", "decision-feed.json", "bad_decision_item", f"{section}[{index}] 不是对象", section))
                 continue
-            for key in ("title", "conclusion", "confidence", "source_files"):
+            for key in ("title", "trigger_reason", "conclusion", "confidence", "source_files"):
                 if not item.get(key):
                     issues.append(issue("warning", "decision-feed.json", "missing_decision_field", f"{section}[{index}].{key} 缺失", f"{section}[{index}]"))
             for key in ("signal_grade", "signal_score", "use_action", "use_reasons", "discovery_type", "evidence_score"):

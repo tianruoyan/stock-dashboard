@@ -369,6 +369,7 @@ async function main() {
   if (/(?:C|D)级/.test(opportunityColumn)) {
     issues.push(issue("critical", "downgraded_opportunity_rendered", "C/D级降权机会进入了机会候选栏，应转入下一步验证", "opportunity-risk-radar"));
   }
+  checkDecisionTriggerRendering(radarHtml, issues);
   for (const literal of BAD_LITERALS) {
     if (wholePage.includes(literal)) {
       issues.push(issue("critical", "bad_literal_rendered", `页面运行后出现异常文本：${badLiteralLabel(literal)}`));
@@ -404,6 +405,7 @@ async function main() {
       "拦截 console error、JS ERROR、对象直出、未定义值、非数字值和疑似乱码。",
       "critical 监测盲区必须进入机会/风险雷达的风险栏。",
       "C/D级降权机会不得进入机会候选栏，只能进入下一步验证。",
+      "机会/风险雷达必须渲染 decision-feed 的触发原因。",
       "核心 JSON 字段有数据时，页面对应区块必须渲染关键结论或代表项。",
       "确认区块健康贴条能在运行时生成。"
     ]
@@ -458,6 +460,27 @@ function checkDataRenderCoverage(document, issues) {
     const rendered = normalizeRenderedText(html);
     if (check.snippet && !rendered.includes(check.snippet)) {
       issues.push(issue("critical", "key_data_not_rendered", check.message, check.target));
+    }
+  }
+}
+
+function checkDecisionTriggerRendering(radarHtml, issues) {
+  const feed = readJsonIfExists("data/decision-feed.json");
+  const items = [
+    ...(Array.isArray(feed.opportunities) ? feed.opportunities : []),
+    ...(Array.isArray(feed.risks) ? feed.risks : []),
+    ...(Array.isArray(feed.verifications) ? feed.verifications : [])
+  ].filter(item => item && item.trigger_reason);
+  if (!items.length) return;
+  const rendered = normalizeRenderedText(radarHtml);
+  if (!rendered.includes("触发")) {
+    issues.push(issue("critical", "trigger_reason_not_rendered", "机会/风险雷达未显示触发原因", "opportunity-risk-radar"));
+    return;
+  }
+  const mustRender = items.slice(0, 3).map(item => stableSnippet(item.trigger_reason)).filter(Boolean);
+  for (const snippet of mustRender) {
+    if (!rendered.includes(snippet)) {
+      issues.push(issue("critical", "trigger_reason_not_rendered", `触发原因未渲染：${snippet}`, "opportunity-risk-radar"));
     }
   }
 }

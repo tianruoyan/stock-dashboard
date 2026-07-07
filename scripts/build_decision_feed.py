@@ -43,6 +43,7 @@ def main() -> int:
             "quality-report 为 degraded/critical 时，所有机会必须带 quality_flags 并自动降权。",
             "每条信号必须输出 signal_grade/use_action/use_reasons，前端按可用性而不是标题强弱展示。",
             "每条信号必须输出 discovery_type/evidence_score/missing_evidence，用于区分主动发现、继承专题、风险兜底和证据缺口。",
+            "每条信号必须输出 trigger_reason，用一句话解释为什么系统把它推到雷达。",
             "theme-shifts 用于识别升温、新线、抱团、降温和风险变化，并进入机会/风险/验证栏。",
         ],
     }
@@ -317,6 +318,7 @@ def decision_item(**kwargs: Any) -> dict[str, Any]:
     item = {
         "title": trim(kwargs.get("title") or "未命名信号", 40),
         "type": kwargs.get("item_type") or "signal",
+        "trigger_reason": trim(kwargs.get("trigger_reason") or trigger_reason_for(kwargs, evidence, watch_next), 120),
         "conclusion": trim(kwargs.get("conclusion") or "", 180),
         "confidence": confidence,
         "evidence": evidence[:5],
@@ -332,6 +334,37 @@ def decision_item(**kwargs: Any) -> dict[str, Any]:
     }
     item.update(signal_usability(item))
     return item
+
+
+def trigger_reason_for(kwargs: dict[str, Any], evidence: list[str], watch_next: list[str]) -> str:
+    discovery = kwargs.get("discovery_type") or "derived_signal"
+    item_type = kwargs.get("item_type") or "signal"
+    confidence = kwargs.get("confidence") or ""
+    evidence_text = " ".join(evidence)
+    watch_text = " ".join(watch_next)
+    if discovery == "risk_guardrail":
+        return "风控兜底触发：市场宽度、数据质量或回撤条件触发风险优先。"
+    if discovery == "theme_shift_scan":
+        return "主线变化扫描触发：升温/降温/抱团/风险状态出现边际变化。"
+    if discovery == "active_market_scan":
+        return "主动盘面扫描触发：涨跌停、炸板、尾盘承接或板块扩散出现可验证变化。"
+    if discovery == "active_stock_scan":
+        return "主动个股扫描触发：观察池或热点代表股出现强弱变化。"
+    if discovery == "postmarket_risk_scan":
+        return "盘后风险扫描触发：收盘复盘出现持续性、尾盘或次日风险线。"
+    if discovery == "postmarket_theme_scan":
+        return "盘后主线扫描触发：热点持续性、代表股和尾盘校验进入次日观察。"
+    if discovery == "topic_watch_scan":
+        if re.search(r"涨停|跌停|炸板|封板|放量|尾盘|竞价|\d", evidence_text):
+            return "专题观察触发：既有专题出现新的量价证据或代表股变化。"
+        return "专题观察触发：既有重点方向出现状态更新，需等待盘口量化验证。"
+    if discovery == "verification_queue":
+        return "验证队列触发：前序结论需要用下一交易窗口确认或证伪。"
+    if item_type == "verification" or watch_text:
+        return "待验证信号触发：存在明确下一步观察条件。"
+    if confidence == "high":
+        return "高置信信号触发：证据链较完整，优先进入雷达。"
+    return "模型派生触发：多源结论汇总后形成候选信号。"
 
 
 def signal_usability(item: dict[str, Any]) -> dict[str, Any]:

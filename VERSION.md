@@ -2,6 +2,7 @@
 
 | Display Version | Date | Edition | Tag / Commit | Summary | Rollback Note |
 |---|---:|---:|---|---|---|
+| 2026-07-07 第65版｜雷达触发原因 | 2026-07-07 | 第65版 | tag: `v2026.07.07-m65-radar-trigger-reason` | `decision-feed` 每条机会、风险和验证新增 `trigger_reason`，用一句话解释系统为什么把该信号推入雷达；前端雷达卡片新增“触发”详情行。数据审计、静态烟雾和运行时烟雾测试同步要求触发原因存在并渲染，避免主动提示只有结论、缺少触发逻辑。 | 回滚到第64版可用 `git checkout v2026.07.07-m64-render-coverage`，或回滚到本版本 tag。 |
 | 2026-07-07 第64版｜关键字段渲染门禁 | 2026-07-07 | 第64版 | tag: `v2026.07.07-m64-render-coverage` | 运行时烟雾测试新增“核心 JSON 字段必须渲染”检查：盘中 summary/主线/行动建议/港股快照、早盘 summary、午盘复盘和下午信号、盘后收盘竞价补丁和热点、专题首项都必须出现在对应页面区块。盘中全景补渲染 `summary`，并兼容 `index.HK_close_window_snapshot`，同时主线卡显示整合名和原始细分名，减少漏显和颗粒度误读。 | 回滚到第63版可用 `git checkout v2026.07.07-m63-alert-source-gate`，或回滚到本版本 tag。 |
 | 2026-07-07 第63版｜异动可信源门禁 | 2026-07-07 | 第63版 | tag: `v2026.07.07-m63-alert-source-gate` | 数据审计新增 `validate_alert`：盘中异动非空时必须具备可信行情源证明；若污染源仍降级且 active alerts 缺少腾讯/mootdx/通达信/已审计源等证明，直接标为 critical 阻断发布。同时校验 alerts 基础字段、leaders 涨跌幅数值和异常 3 分钟涨跌幅。 | 回滚到第62版可用 `git checkout v2026.07.07-m62-opportunity-gating`，或回滚到本版本 tag。 |
 | 2026-07-07 第62版｜降权机会转验证 | 2026-07-07 | 第62版 | tag: `v2026.07.07-m62-opportunity-gating` | 机会/风险雷达只把 A/B 级且非“降权/仅复核/等待确认”的信号放入机会候选栏；C/D 级机会自动转入“下一步验证”，保留证据、缺口和证伪条件。运行时烟雾测试新增门禁，防止 C/D 级降权机会再次进入机会栏。 | 回滚到第61版可用 `git checkout v2026.07.07-m61-automation-diagnosis`，或回滚到本版本 tag。 |

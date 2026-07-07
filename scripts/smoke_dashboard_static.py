@@ -181,6 +181,8 @@ def check_decision_feed(issues: list[dict[str, Any]]) -> None:
                 issues.append(issue("warning", "data/decision-feed.json", "high_confidence_without_evidence", f"{title} 高置信但缺少证据"))
             if section in {"opportunities", "risks"} and not item.get("source_files"):
                 issues.append(issue("warning", "data/decision-feed.json", "missing_source", f"{title} 缺少来源文件"))
+            if not item.get("trigger_reason"):
+                issues.append(issue("warning", "data/decision-feed.json", "missing_trigger_reason", f"{title} 缺少触发原因"))
             for key in ("signal_grade", "signal_score", "use_action", "use_reasons", "discovery_type", "evidence_score"):
                 if item.get(key) in (None, "", []):
                     issues.append(issue("warning", "data/decision-feed.json", "missing_usability_field", f"{title} 缺少 {key}"))

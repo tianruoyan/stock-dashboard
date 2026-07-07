@@ -534,6 +534,7 @@ function renderRadarItem(item) {
   const tags = (item.tags || []).slice(0, 4).map(tag => `<span>${escapeHtml(tag)}</span>`).join("");
   const gradeClass = `grade-${String(item.signalGrade || "C").toLowerCase()}`;
   const details = [
+    item.triggerReason ? ["触发", item.triggerReason] : null,
     item.discoveryType ? ["发现", discoveryTypeLabel(item.discoveryType)] : null,
     item.evidenceScore !== undefined ? ["证据分", `${item.evidenceScore}分`] : null,
     item.missingEvidence?.length ? ["缺口", item.missingEvidence.slice(0, 2)] : null,
@@ -716,6 +717,7 @@ function decisionFeedToRadarItem(item, fallbackTone) {
     invalidation: item.invalidation,
     sources: sources.map(sourceShortName),
     qualityFlags: (item.quality_flags || []).slice(0, 3),
+    triggerReason: item.trigger_reason,
     signalGrade: item.signal_grade,
     signalScore: item.signal_score,
     useAction: item.use_action,
@@ -741,6 +743,7 @@ function downgradedOpportunityToVerification(item) {
     tone: "neutral",
     confidence: item.confidence || "候选待验证",
     reason: item.reason || "机会证据不足，先转入验证队列。",
+    triggerReason: item.triggerReason || "降权候选触发：证据或数据质量不足，先转入验证队列。",
     watchNext: item.watchNext?.length ? item.watchNext : ["等待板块扩散、核心承接和数据质量恢复后再升级。"],
     invalidation: item.invalidation || "风险项不收敛或核心股不放量承接，则不升级为机会。",
     useAction: "等待确认",
