@@ -1,6 +1,7 @@
 {
-  "timestamp": "2026-07-08T00:20:05+08:00",
+  "timestamp": "2026-07-08T00:24:13+08:00",
   "current_signal_date": "2026-07-07",
+  "target_trade_date": "2026-07-08",
   "overall_status": "blocked",
   "summary": "1 个自动化产出异常：盘中异动。",
   "counts": {
@@ -143,11 +144,106 @@
       "related_sources": []
     }
   ],
+  "next_session_readiness": {
+    "target_trade_date": "2026-07-08",
+    "status": "pending",
+    "summary": "2026-07-08 开盘链路待产出：盘前简报 09:25。",
+    "pending_count": 7,
+    "ready_count": 0,
+    "overdue_count": 0,
+    "items": [
+      {
+        "id": "premarket",
+        "label": "盘前简报",
+        "file": "data/premarket.json",
+        "due": "09:25",
+        "deadline": "2026-07-08T09:45:00+08:00",
+        "timestamp": "2026-07-07T09:25:30+08:00",
+        "file_date": "2026-07-07",
+        "status": "pending",
+        "action": "等待产出",
+        "reason": "计划 09:25 后产出"
+      },
+      {
+        "id": "intraday",
+        "label": "盘中全景",
+        "file": "data/intraday.json",
+        "due": "15:05",
+        "deadline": "2026-07-08T16:35:00+08:00",
+        "timestamp": "2026-07-07T16:01:14+08:00",
+        "file_date": "2026-07-07",
+        "status": "pending",
+        "action": "等待产出",
+        "reason": "计划 15:05 后产出"
+      },
+      {
+        "id": "alerts",
+        "label": "盘中异动",
+        "file": "data/alert.json",
+        "due": "15:00",
+        "deadline": "2026-07-08T15:05:00+08:00",
+        "timestamp": "2026-07-07T15:42:12+08:00",
+        "file_date": "2026-07-07",
+        "status": "pending",
+        "action": "等待产出",
+        "reason": "计划 15:00 后产出"
+      },
+      {
+        "id": "midday",
+        "label": "午盘分析",
+        "file": "data/midday.json",
+        "due": "11:30",
+        "deadline": "2026-07-08T12:00:00+08:00",
+        "timestamp": "2026-07-07T11:32:30+08:00",
+        "file_date": "2026-07-07",
+        "status": "pending",
+        "action": "等待产出",
+        "reason": "计划 11:30 后产出"
+      },
+      {
+        "id": "postmarket",
+        "label": "盘后复盘",
+        "file": "data/postmarket.json",
+        "due": "15:30",
+        "deadline": "2026-07-08T16:30:00+08:00",
+        "timestamp": "2026-07-07T15:16:39+08:00",
+        "file_date": "2026-07-07",
+        "status": "pending",
+        "action": "等待产出",
+        "reason": "计划 15:30 后产出"
+      },
+      {
+        "id": "evening",
+        "label": "晚间舆情",
+        "file": "data/evening-sentiment.json",
+        "due": "20:00",
+        "deadline": "2026-07-08T21:30:00+08:00",
+        "timestamp": "2026-07-07T20:01:42+08:00",
+        "file_date": "2026-07-07",
+        "status": "pending",
+        "action": "等待产出",
+        "reason": "计划 20:00 后产出"
+      },
+      {
+        "id": "topics",
+        "label": "专题跟踪",
+        "file": "data/topics.json",
+        "due": "15:30",
+        "deadline": "2026-07-08T18:30:00+08:00",
+        "timestamp": "2026-07-07T15:16:39+08:00",
+        "file_date": "2026-07-07",
+        "status": "pending",
+        "action": "等待产出",
+        "reason": "计划 15:30 后产出"
+      }
+    ]
+  },
   "rules": [
     "ok：当日文件已产出且未撤下。",
     "waiting：当前时间尚未到该自动化应产出窗口。",
     "late/missing：到点后仍未产出或时间戳非当日。",
     "invalidated：文件存在但 source_status=invalidated，不得作为交易依据。",
-    "failure_type/diagnosis/next_actions 用于区分数据源污染、产出缺失、时间戳异常和等待窗口。"
+    "failure_type/diagnosis/next_actions 用于区分数据源污染、产出缺失、时间戳异常和等待窗口。",
+    "next_session_readiness 用于跨日/开盘前提示下一交易日必须产出的文件，不替代当前信号日期状态。"
   ]
 }

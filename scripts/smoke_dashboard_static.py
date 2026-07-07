@@ -474,6 +474,17 @@ def check_automation_health(issues: list[dict[str, Any]]) -> None:
     if not isinstance(rows, list) or not rows:
         issues.append(issue("warning", "data/automation-health.json", "bad_automation_health", "processes 缺失或为空"))
         return
+    readiness = data.get("next_session_readiness")
+    if not isinstance(readiness, dict):
+        issues.append(issue("warning", "data/automation-health.json", "missing_next_session_readiness", "自动化心跳缺少 next_session_readiness"))
+    else:
+        for key in ("target_trade_date", "status", "summary", "items"):
+            if readiness.get(key) in (None, "", []):
+                issues.append(issue("warning", "data/automation-health.json", "missing_next_session_readiness_field", f"next_session_readiness.{key} 缺失"))
+        if readiness.get("status") not in {"ready", "pending", "overdue"}:
+            issues.append(issue("warning", "data/automation-health.json", "bad_next_session_status", "next_session_readiness.status 非法"))
+        if not isinstance(readiness.get("items"), list):
+            issues.append(issue("warning", "data/automation-health.json", "bad_next_session_items", "next_session_readiness.items 不是数组"))
     for index, item in enumerate(rows):
         if not isinstance(item, dict):
             issues.append(issue("warning", "data/automation-health.json", "bad_process_item", f"processes[{index}] 不是对象"))

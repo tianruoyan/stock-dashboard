@@ -368,6 +368,11 @@ async function main() {
   if (!qualityHtml.includes("自动化心跳")) {
     issues.push(issue("critical", "automation_health_not_rendered", "自动化心跳未进入顶部质量卡", "data-quality-gate"));
   }
+  const automation = readJsonIfExists("data/automation-health.json");
+  const readinessSummary = stableSnippet(automation.next_session_readiness?.summary);
+  if (readinessSummary && !normalizeRenderedText(qualityHtml).includes(readinessSummary)) {
+    issues.push(issue("critical", "next_session_readiness_not_rendered", `下一交易日准备度未进入顶部质量卡：${readinessSummary}`, "data-quality-gate"));
+  }
   checkQualityImpactRendering(qualityHtml, issues);
   checkQualityActionPlanRendering(qualityHtml, issues);
   if (/(?:C|D)级/.test(opportunityColumn)) {

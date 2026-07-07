@@ -28,9 +28,11 @@ EXPECTED = [
 def main() -> int:
     now = datetime.now(TZ)
     current_date = current_signal_date()
+    target_date = now.date().isoformat()
     source_health = load_json(DATA_DIR / "source-health.json")
     quality = load_json(DATA_DIR / "quality-report.json")
     rows = [check_expected(item, now, current_date, source_health, quality) for item in EXPECTED]
+    next_session = build_next_session_readiness(now, target_date)
     counts = {
         "ok": sum(1 for row in rows if row["status"] == "ok"),
         "late": sum(1 for row in rows if row["status"] == "late"),
@@ -41,21 +43,85 @@ def main() -> int:
     report = {
         "timestamp": now_iso(now),
         "current_signal_date": current_date,
+        "target_trade_date": target_date,
         "overall_status": overall_status(rows),
         "summary": summarize(rows),
         "counts": counts,
         "processes": rows,
+        "next_session_readiness": next_session,
         "rules": [
             "ok：当日文件已产出且未撤下。",
             "waiting：当前时间尚未到该自动化应产出窗口。",
             "late/missing：到点后仍未产出或时间戳非当日。",
             "invalidated：文件存在但 source_status=invalidated，不得作为交易依据。",
             "failure_type/diagnosis/next_actions 用于区分数据源污染、产出缺失、时间戳异常和等待窗口。",
+            "next_session_readiness 用于跨日/开盘前提示下一交易日必须产出的文件，不替代当前信号日期状态。",
         ],
     }
     OUT.write_text(json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     print(f"automation-health: {report['overall_status']} - {report['summary']}")
     return 0
+
+
+def build_next_session_readiness(now: datetime, target_date: str) -> dict[str, Any]:
+    rows = [next_session_row(spec, now, target_date) for spec in EXPECTED]
+    pending = [row for row in rows if row["status"] == "pending"]
+    ready = [row for row in rows if row["status"] == "ready"]
+    overdue = [row for row in rows if row["status"] == "overdue"]
+    status = "overdue" if overdue else ("pending" if pending else "ready")
+    if overdue:
+        summary = f"{target_date} 有 {len(overdue)} 个产出已过窗口未更新。"
+    elif pending:
+        first = pending[0]
+        summary = f"{target_date} 开盘链路待产出：{first['label']} {first['due']}。"
+    else:
+        summary = f"{target_date} 关键产出已就绪。"
+    return {
+        "target_trade_date": target_date,
+        "status": status,
+        "summary": summary,
+        "pending_count": len(pending),
+        "ready_count": len(ready),
+        "overdue_count": len(overdue),
+        "items": rows,
+    }
+
+
+def next_session_row(spec: dict[str, Any], now: datetime, target_date: str) -> dict[str, Any]:
+    path = DATA_DIR / spec["file"]
+    data = load_json(path)
+    ts = data.get("timestamp") if isinstance(data, dict) else ""
+    file_date = signal_date(ts)
+    due_at = due_datetime(target_date, spec["due"])
+    deadline = due_at + timedelta(minutes=int(spec["grace_minutes"]))
+    if file_date == target_date and isinstance(data, dict) and data.get("source_status") != "invalidated":
+        status = "ready"
+        action = "已产出"
+        reason = "目标交易日文件已更新"
+    elif now < due_at:
+        status = "pending"
+        action = "等待产出"
+        reason = f"计划 {spec['due']} 后产出"
+    elif now < deadline:
+        status = "pending"
+        action = "等待宽限"
+        reason = f"已到计划时间，宽限至 {deadline.strftime('%H:%M')}"
+    else:
+        status = "overdue"
+        action = "需要重跑"
+        reason = f"目标交易日尚未产出：当前文件日期 {file_date or '无'}"
+    return {
+        "id": spec["id"],
+        "label": spec["label"],
+        "file": f"data/{spec['file']}",
+        "due": spec["due"],
+        "deadline": now_iso(deadline),
+        "timestamp": ts or "",
+        "file_date": file_date or "",
+        "status": status,
+        "action": action,
+        "reason": reason,
+    }
 
 
 def check_expected(spec: dict[str, Any], now: datetime, current_date: str, source_health: dict[str, Any], quality: dict[str, Any]) -> dict[str, Any]:

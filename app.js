@@ -549,23 +549,33 @@ function summarizeAutomationHealth(report) {
   if (!report || !Array.isArray(report.processes)) {
     return { title: "待接入", detail: "自动化产出心跳待生成", cls: "neutral", issues: [] };
   }
+  const readiness = report.next_session_readiness;
   const bad = report.processes.filter(item => ["missing", "invalidated", "late"].includes(item.status));
   const blocking = bad.filter(item => item.blocking);
   const waiting = report.processes.filter(item => item.status === "waiting");
   const focus = [...blocking, ...bad, ...waiting].slice(0, 4);
-  const title = blocking.length
+  const readinessTitle = readiness?.status === "overdue"
+    ? `${readiness.overdue_count || 0} 个跨日逾期`
+    : (readiness?.status === "pending" ? "次日待产出" : "");
+  const title = readinessTitle || (blocking.length
     ? `${blocking.length} 个阻断`
-    : (bad.length ? `${bad.length} 个异常` : (waiting.length ? `${waiting.length} 个等待` : "产出正常"));
-  const detail = report.summary || (focus.length ? focus.map(item => item.label).join(" / ") : "关键自动化产出均已到位");
+    : (bad.length ? `${bad.length} 个异常` : (waiting.length ? `${waiting.length} 个等待` : "产出正常")));
+  const detail = readiness?.summary || report.summary || (focus.length ? focus.map(item => item.label).join(" / ") : "关键自动化产出均已到位");
   const issues = focus.map(item => {
     const action = Array.isArray(item.next_actions) && item.next_actions.length ? item.next_actions[0] : (item.action || item.status);
     return `${item.label}：${item.failure_type || item.status}，${action}`;
   });
+  const readinessIssues = Array.isArray(readiness?.items)
+    ? readiness.items
+      .filter(item => ["pending", "overdue"].includes(item.status))
+      .slice(0, 3)
+      .map(item => `${item.label}：${item.action}，${item.reason}`)
+    : [];
   return {
     title,
     detail: truncateText(detail, 90),
-    cls: blocking.length ? "warn" : (bad.length || waiting.length ? "neutral" : "good"),
-    issues
+    cls: readiness?.status === "overdue" || blocking.length ? "warn" : (readiness?.status === "pending" || bad.length || waiting.length ? "neutral" : "good"),
+    issues: [...readinessIssues, ...issues]
   };
 }
 
