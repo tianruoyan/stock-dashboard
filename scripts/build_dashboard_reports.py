@@ -66,7 +66,20 @@ def write_report(status: str, summary: str, results: list[dict[str, object]]) ->
 
 
 def run_step(name: str, command: list[str]) -> dict[str, object]:
-    proc = subprocess.run(command, cwd=ROOT, text=True, capture_output=True)
+    try:
+        proc = subprocess.run(command, cwd=ROOT, text=True, capture_output=True)
+    except Exception as exc:
+        message = f"{type(exc).__name__}: {exc}"
+        print(message, file=sys.stderr)
+        return {
+            "name": name,
+            "command": " ".join(command),
+            "returncode": 127,
+            "status": "script_error",
+            "blocking": True,
+            "stdout_tail": "",
+            "stderr_tail": tail(message),
+        }
     stdout = proc.stdout.strip()
     stderr = proc.stderr.strip()
     status = infer_status(name, proc.returncode)
@@ -87,6 +100,8 @@ def run_step(name: str, command: list[str]) -> dict[str, object]:
 
 
 def infer_status(name: str, returncode: int) -> str:
+    if returncode != 0:
+        return "script_error"
     if name.startswith("automation-health"):
         data = load_json(DATA_DIR / "automation-health.json")
         return data.get("overall_status") or ("error" if returncode else "ok")
@@ -103,6 +118,8 @@ def infer_status(name: str, returncode: int) -> str:
 
 
 def is_blocking(name: str, status: str, returncode: int) -> bool:
+    if returncode != 0 or status == "script_error":
+        return True
     if name == "audit":
         return status == "critical"
     if name in {"static-smoke", "runtime-smoke"}:

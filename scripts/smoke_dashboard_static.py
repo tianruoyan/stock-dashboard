@@ -322,6 +322,12 @@ def check_build_report(issues: list[dict[str, Any]]) -> None:
     missing = sorted(required - names)
     if missing:
         issues.append(issue("warning", "data/build-report.json", "missing_build_steps", f"统一构建缺少步骤：{', '.join(missing)}"))
+    for item in rows:
+        if not isinstance(item, dict):
+            continue
+        if item.get("returncode") not in (0, None) or item.get("status") == "script_error":
+            message = item.get("stderr_tail") or item.get("stdout_tail") or "构建步骤异常"
+            issues.append(issue("critical", "data/build-report.json", "build_step_error", f"{item.get('name')} 执行异常：{message}"))
     if data.get("status") == "blocked":
         issues.append(issue("critical", "data/build-report.json", "build_blocked", data.get("summary") or "统一构建阻断发布"))
 
