@@ -2,6 +2,7 @@
 
 | Display Version | Date | Edition | Tag / Commit | Summary | Rollback Note |
 |---|---:|---:|---|---|---|
+| 2026-07-08 第137版｜验证重点口径 | 2026-07-08 | 第137版 | tag: `v2026.07.08-m137-verification-focus` | 今日结论在“风险优先，只做验证”状态下，不再把个人观察池强势股塞进“强势验证”；卡片改名为“验证重点 · 只验证”，数据来源改为 `decision-feed.signal_queue.verification_queue / decision_brief.upgrade_watch / verification_focus`，只展示需要验证的方向和条件。 | 回滚到第136版可用 `git checkout v2026.07.08-m136-watchlist-premarket-sync`，或回滚到本版本 tag。 |
 | 2026-07-08 第136版｜观察池早盘同步 | 2026-07-08 | 第136版 | tag: `v2026.07.08-m136-watchlist-premarket-sync` | “我的观察池”接入今天早盘 `premarket.watchlist_auction` 竞价报价和信号，早盘阶段即可按浪潮信息、中科曙光、有研硅、沪硅产业等当日涨跌更新强势股/弱势股分类；区块健康同步把早盘文件纳入观察池依赖。 | 回滚到第135版可用 `git checkout v2026.07.08-m135-premarket-status-sync`，或回滚到本版本 tag。 |
 | 2026-07-08 第135版｜早盘状态同步 | 2026-07-08 | 第135版 | tag: `v2026.07.08-m135-premarket-status-sync` | 早盘数据更新后同步刷新配套状态报告，避免页面仍显示“今日待更新”；早盘“核心结论”卡改为整行展示完整摘要，不再截断到短句。 | 回滚到第134版可用 `git checkout v2026.07.08-m134-intraday-facts-only`，或回滚到本版本 tag。 |
 | 2026-07-08 第134版｜盘中全景去重 | 2026-07-08 | 第134版 | tag: `v2026.07.08-m134-intraday-facts-only` | “盘中全景”移除顶部重复事实卡，只保留“盘中事实速读”、A股指数行和强弱证据榜；盘中观察改为分条列表，不再用中文分号拼接，避免出现“。；”这类断句。 | 回滚到第133版可用 `git checkout v2026.07.08-m133-intraday-evidence-boundary`，或回滚到本版本 tag。 |

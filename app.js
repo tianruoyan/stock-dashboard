@@ -250,7 +250,9 @@ function renderDashboardControl() {
   const alertStocks = (alert.alerts || []).flatMap(a => (a.leaders || []).map(l => l.name)).filter(Boolean);
   const eventWatch = uniqueList(p0.map(p => p.title || p.text || p.event)).slice(0, 5);
   const decisionGate = dashboardDecisionGate();
-  const strongWatch = buildDashboardStockPicks(strong, risks, "strong", alertStocks);
+  const strongWatch = decisionGate?.riskFirst
+    ? buildRiskFirstVerificationPicks()
+    : buildDashboardStockPicks(strong, risks, "strong", alertStocks);
   const riskWatch = buildDashboardStockPicks(strong, risks, "risk", []);
   let style = inferMarketStyle(intraday, postmarket, evening);
   if (decisionGate) {
@@ -280,7 +282,7 @@ function renderDashboardControl() {
   <div class="decision-strip control-strip">
     <div class="decision-card ${decisionGate?.riskFirst ? "neutral" : "primary"}"><span class="decision-label">优先方向</span><b>${escapeHtml(dashboardThemeMain(priority, "等待盘面确认"))}</b><span>${escapeHtml(dashboardThemeHint(priority, "按当日强弱排序，不等同于追高"))}</span></div>
     <div class="decision-card risk"><span class="decision-label">暂不参与</span><b>${escapeHtml(dashboardThemeMain(avoid, "暂无明确"))}</b><span>${escapeHtml(dashboardThemeHint(avoid, eventWatch[0] || "看弱线和P0是否扩散"))}</span></div>
-    <div class="decision-card ${decisionGate?.riskFirst ? "neutral" : "primary"}"><span class="decision-label">强势验证 · ${escapeHtml(decisionGate?.riskFirst ? "只验证" : strongWatch.source)}</span><b>${escapeHtml(dashboardPickMain(strongWatch, "暂无强势验证"))}</b><span>${escapeHtml(decisionGate?.riskFirst ? dashboardRiskFirstPickDetail(strongWatch) : dashboardPickDetail(strongWatch, "等待强主线和个股强信号同时出现"))}</span></div>
+    <div class="decision-card ${decisionGate?.riskFirst ? "neutral" : "primary"}"><span class="decision-label">${escapeHtml(decisionGate?.riskFirst ? "验证重点 · 只验证" : `强势验证 · ${strongWatch.source}`)}</span><b>${escapeHtml(dashboardPickMain(strongWatch, decisionGate?.riskFirst ? "暂无验证重点" : "暂无强势验证"))}</b><span>${escapeHtml(decisionGate?.riskFirst ? dashboardRiskFirstPickDetail(strongWatch) : dashboardPickDetail(strongWatch, "等待强主线和个股强信号同时出现"))}</span></div>
     <div class="decision-card risk"><span class="decision-label">风险/失效 · ${escapeHtml(riskWatch.source)}</span><b>${escapeHtml(dashboardPickMain(riskWatch, "暂无硬风险"))}</b><span>${escapeHtml(dashboardPickDetail(riskWatch, "普通下跌不列入，等事件或放量破位信号"))}</span></div>
   </div>`;
 }
@@ -1644,6 +1646,46 @@ function buildDashboardStockPicks(strongThemes, riskThemes, mode, alertStocks = 
   }
 
   return { rows: [], source: mode === "risk" ? "个人池" : "待确认" };
+}
+
+function buildRiskFirstVerificationPicks() {
+  const feed = currentDecisionFeed() || {};
+  const brief = feed.decision_brief || {};
+  const queue = feed.signal_queue || {};
+  const candidates = [
+    ...arrayTextItems((queue.verification_queue || []).map(item => `${item.title || item.name || ""}：${item.reason || item.next_action || item.use_action || ""}`)),
+    ...arrayTextItems(brief.upgrade_watch),
+    ...arrayTextItems(brief.verification_focus)
+  ];
+  const seen = new Set();
+  const rows = candidates
+    .map(text => verificationRowFromText(text))
+    .filter(row => {
+      if (!row.name || !row.reason || seen.has(row.name)) return false;
+      seen.add(row.name);
+      return true;
+    })
+    .slice(0, 4);
+  return { rows, source: "验证清单" };
+}
+
+function verificationRowFromText(text) {
+  const cleaned = String(text || "")
+    .replace(/^#\d+\s*/, "")
+    .replace(/^主线变化[：:]/, "")
+    .replace(/^新线观察[：:]/, "")
+    .trim();
+  const [namePart, ...rest] = cleaned.split(/[：:]/);
+  const name = normalizeThemeName(namePart || "验证条件");
+  const reason = cleanVerificationReason(rest.join("：") || cleaned);
+  return { name, reason };
+}
+
+function cleanVerificationReason(text) {
+  return String(text || "")
+    .replace(/数据质量恢复或二次行情源确认前，不升级为可用机会。?/g, "")
+    .replace(/[；;\s]+$/g, "")
+    .trim() || "只验证，不直接追高";
 }
 
 function isDashboardStrongPick(row) {

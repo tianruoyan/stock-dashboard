@@ -724,10 +724,11 @@ function checkDashboardThemeCards(document, issues) {
   if (/进攻盯|风险盯/.test(rendered)) {
     issues.push(issue("critical", "dashboard_watch_old_labels", "今日结论第一屏不应继续展示旧的进攻盯/风险盯口径", "dashboard-control"));
   }
-  for (const label of ["强势验证", "风险/失效"]) {
-    if (!rendered.includes(label)) {
-      issues.push(issue("critical", "dashboard_watch_new_labels_missing", `今日结论第一屏缺少${label}卡片`, "dashboard-control"));
-    }
+  if (!/强势验证|验证重点/.test(rendered)) {
+    issues.push(issue("critical", "dashboard_watch_new_labels_missing", "今日结论第一屏缺少强势验证/验证重点卡片", "dashboard-control"));
+  }
+  if (!rendered.includes("风险/失效")) {
+    issues.push(issue("critical", "dashboard_watch_new_labels_missing", "今日结论第一屏缺少风险/失效卡片", "dashboard-control"));
   }
   if (/甬矽电子[｜|]\s*半导体材料/.test(rendered)) {
     issues.push(issue("critical", "dashboard_packaging_stock_mislabeled", "甬矽电子属于封装/封测链，不应在今日结论中标成半导体材料", "dashboard-control"));
@@ -740,9 +741,14 @@ function checkDashboardThemeCards(document, issues) {
       issues.push(issue("critical", "dashboard_conclusion_meta_missing", `今日结论缺少${label}说明`, "dashboard-control"));
     }
   }
-  const order = ["优先方向", "暂不参与", "强势验证", "风险/失效"].map(label => rendered.indexOf(label));
+  const order = [
+    rendered.indexOf("优先方向"),
+    rendered.indexOf("暂不参与"),
+    Math.max(rendered.indexOf("强势验证"), rendered.indexOf("验证重点")),
+    rendered.indexOf("风险/失效")
+  ];
   if (order.some(index => index < 0) || order.some((index, i) => i > 0 && index < order[i - 1])) {
-    issues.push(issue("critical", "dashboard_card_order_wrong", "今日结论卡片顺序应为：优先方向、暂不参与、强势验证、风险/失效", "dashboard-control"));
+    issues.push(issue("critical", "dashboard_card_order_wrong", "今日结论卡片顺序应为：优先方向、暂不参与、验证重点/强势验证、风险/失效", "dashboard-control"));
   }
   if (/医药修复链|老登风格切换/.test(rendered)) {
     issues.push(issue("critical", "dashboard_theme_mixed_dimension", "今日结论不应直接展示混合交易状态或风格词，应显示统一交易分支", "dashboard-control"));
