@@ -4218,30 +4218,54 @@ function renderPostmarketDecision(data) {
   const limitDown = mb.limit_down ?? data.index?.["跌停"];
   const broken = mb.broken_board ?? data.index?.["炸板"];
   const tone = /负反馈|不支持|风险|分歧/.test([patch.summary, patch.impact, reviewText].join(" ")) ? "warn" : /强|支持|扩散/.test([patch.summary, patch.impact, reviewText].join(" ")) ? "good" : "neutral";
-  const relatedTags = positiveRelatedTopicTags(hotspots.map(h => [trendName(h), h.status, h.continuity, h.risk].join(" ")).join(" "), reviewText, patch.summary, patch.impact);
+  const strongDetail = postmarketStrongDetail(strong, reviewText);
+  const riskDetail = postmarketRiskDetail(riskLine);
+  const watchItems = postmarketWatchItems(watch, limitUp, limitDown, broken);
 
   return `<div class="decision-strip postmarket-decision">
     <div class="decision-card primary">
-      <span class="decision-label">核心结论</span>
-      <b>${escapeHtml(strong ? themeDisplayName(strong) : "等待主线确认")}</b>
-      <span>${escapeHtml(strong?.status || reviewText || "暂无")}</span>
+      <span class="decision-label">收盘结论</span>
+      <b>${escapeHtml(truncateText(reviewText || "等待收盘复盘", 34))}</b>
+      <span>${escapeHtml(patch.impact || "等待尾盘校验")}</span>
     </div>
     <div class="decision-card ${tone}">
-      <span class="decision-label">关联题材</span>
-      <b>${escapeHtml(relatedTags[0] || (patch.impact ? "尾盘已校验" : "待校验"))}</b>
-      <span>${escapeHtml(relatedTags.slice(1).join(" / ") || truncateText(patch.summary || patch.impact || reviewText, 62))}</span>
+      <span class="decision-label">强线</span>
+      <b>${escapeHtml(strong ? trendName(strong) : "等待主线确认")}</b>
+      <span>${escapeHtml(strongDetail)}</span>
     </div>
     <div class="decision-card risk">
-      <span class="decision-label">回避/降级</span>
-      <b>${escapeHtml(riskLine ? themeDisplayName(riskLine) : "暂无明确风险线")}</b>
-      <span>${escapeHtml(truncateText(riskLine?.risk || "看炸板/跌停是否继续扩大", 62))}</span>
+      <span class="decision-label">风险线</span>
+      <b>${escapeHtml(riskLine ? trendName(riskLine) : "暂无明确风险线")}</b>
+      <span>${escapeHtml(riskDetail)}</span>
     </div>
     <div class="decision-card action">
-      <span class="decision-label">下一步验证</span>
-      <b>${escapeHtml(watch.length ? `看${Math.min(watch.length, 3)}个条件` : "等待确认")}</b>
-      <span>${escapeHtml(truncateText(watch.slice(0, 2).join("；") || `涨停${limitUp || "-"} / 跌停${limitDown || "-"} / 炸板${broken || "-"}`, 62))}</span>
+      <span class="decision-label">明日看点</span>
+      <b>${escapeHtml(watchItems.length ? `看${Math.min(watchItems.length, 4)}个条件` : "等待确认")}</b>
+      <ul class="decision-mini-list">${watchItems.slice(0, 4).map(item => `<li>${escapeHtml(item)}</li>`).join("")}</ul>
     </div>
   </div>`;
+}
+
+function postmarketStrongDetail(strong, fallback) {
+  if (!strong) return fallback || "暂无强线";
+  const evidence = Array.isArray(strong.evidence) ? strong.evidence[0] : "";
+  const parts = [
+    strong.status,
+    evidence || strong.continuity
+  ].filter(Boolean);
+  return truncateText(parts.join("；"), 92);
+}
+
+function postmarketRiskDetail(riskLine) {
+  if (!riskLine) return "看炸板/跌停是否继续扩大";
+  const evidence = Array.isArray(riskLine.evidence) ? riskLine.evidence[0] : "";
+  return truncateText(riskLine.risk || evidence || riskLine.status || "风险线待确认", 92);
+}
+
+function postmarketWatchItems(watch, limitUp, limitDown, broken) {
+  const rows = Array.isArray(watch) ? watch : [];
+  if (rows.length) return rows.map(item => typeof item === "string" ? item : (item.text || item.title || item.name || "")).filter(Boolean);
+  return [`涨停${limitUp || "-"} / 跌停${limitDown || "-"} / 炸板${broken || "-"}`];
 }
 
 /* =========================
