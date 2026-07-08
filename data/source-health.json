@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-07-08T09:15:36+08:00",
+  "timestamp": "2026-07-08T09:27:36+08:00",
   "sources": {
     "tencent_http": {
       "status": "ok",
@@ -74,9 +74,9 @@
     },
     "tencent_hk_auction_http": {
       "status": "ok",
-      "last_check": "2026-07-08T09:15:36+08:00",
+      "last_check": "2026-07-08T09:27:36+08:00",
       "usage": "9:15港股竞价/盘前快照",
-      "detail": "成功获取恒指、恒科、互联网、半导体H、创新药、汽车等港股竞价快照；部分股票成交额为0，按竞价参考使用。",
+      "detail": "9:14前后继续取得港股竞价/盘前快照；指数字段仍未进入连续竞价，个股用于映射参考。",
       "sample_count": 15,
       "errors": []
     },
@@ -105,6 +105,22 @@
       "usage": "隔夜美股三大指数、核心美股、日韩科技链背景交叉验证",
       "detail": "使用新闻/行情搜索结果交叉外盘方向，未用于生成A50实时数值。",
       "errors": []
+    },
+    "eastmoney_limit_pool_auction": {
+      "status": "ok",
+      "last_check": "2026-07-08T09:27:36+08:00",
+      "usage": "9:25 A股涨停/跌停/炸板结构池",
+      "detail": "akshare/Eastmoney 返回涨停5、跌停1、炸板0；按当前结构池和首次封板时间092500附近作为集合竞价参考。",
+      "sample_count": 6,
+      "errors": []
+    },
+    "tencent_a_quote_auction": {
+      "status": "ok",
+      "last_check": "2026-07-08T09:27:36+08:00",
+      "usage": "9:25-9:28 指数、ETF、观察池竞价报价",
+      "detail": "成功获取指数、ETF和半导体/算力/电子布/老登风格观察样本报价；用于观察池强弱映射。",
+      "sample_count": 60,
+      "errors": []
     }
   },
   "rules": [
@@ -114,15 +130,12 @@
     "任一数据源失败时保留上一版 JSON，并在source-health.json标注降级或异常。"
   ],
   "last_effective_run": {
-    "timestamp": "2026-07-08T09:15:36+08:00",
-    "type": "premarket_0915",
-    "result": "updated_premarket_json",
-    "degraded_sources": [
-      "yahoo_finance_quote_api",
-      "stooq_quote_csv"
-    ]
+    "timestamp": "2026-07-08T09:27:36+08:00",
+    "type": "auction_0925",
+    "result": "updated_premarket_auction_summary",
+    "degraded_sources": []
   },
   "status": "degraded",
-  "notes": "9:15盘前综合：腾讯港股竞价源可用；Yahoo/Stooq外盘接口失败，外盘使用新闻/行情搜索交叉，不编造A50实时数。",
+  "notes": "9:25集合竞价：东财结构池和腾讯A股/港股报价可用；全市场竞价成交额未取得统一可靠口径，未编造。",
   "overall_status": "degraded"
 }
