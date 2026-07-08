@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-07-07T20:01:42+08:00",
+  "timestamp": "2026-07-08T09:15:36+08:00",
   "sources": {
     "tencent_http": {
       "status": "ok",
@@ -71,6 +71,40 @@
       "errors": [
         "generic web search returned limited actionable results"
       ]
+    },
+    "tencent_hk_auction_http": {
+      "status": "ok",
+      "last_check": "2026-07-08T09:15:36+08:00",
+      "usage": "9:15港股竞价/盘前快照",
+      "detail": "成功获取恒指、恒科、互联网、半导体H、创新药、汽车等港股竞价快照；部分股票成交额为0，按竞价参考使用。",
+      "sample_count": 15,
+      "errors": []
+    },
+    "yahoo_finance_quote_api": {
+      "status": "failed",
+      "last_check": "2026-07-08T09:15:36+08:00",
+      "usage": "外盘指数和日韩科技股补充行情",
+      "detail": "query1.finance.yahoo.com/v7/finance/quote 返回401 Unauthorized，未采用其数据。",
+      "errors": [
+        "401 Unauthorized"
+      ]
+    },
+    "stooq_quote_csv": {
+      "status": "failed",
+      "last_check": "2026-07-08T09:15:36+08:00",
+      "usage": "外盘指数和个股补充行情",
+      "detail": "Stooq CSV多次返回页面不存在或SSL EOF，未采用其数据。",
+      "errors": [
+        "page moved/not exist",
+        "SSL unexpected EOF"
+      ]
+    },
+    "web_news_finance_search": {
+      "status": "ok",
+      "last_check": "2026-07-08T09:15:36+08:00",
+      "usage": "隔夜美股三大指数、核心美股、日韩科技链背景交叉验证",
+      "detail": "使用新闻/行情搜索结果交叉外盘方向，未用于生成A50实时数值。",
+      "errors": []
     }
   },
   "rules": [
@@ -80,14 +114,15 @@
     "任一数据源失败时保留上一版 JSON，并在source-health.json标注降级或异常。"
   ],
   "last_effective_run": {
-    "timestamp": "2026-07-07T20:01:42+08:00",
-    "type": "evening_full_matrix_scan",
-    "result": "updated_evening_sentiment_with_p0_and_coverage",
+    "timestamp": "2026-07-08T09:15:36+08:00",
+    "type": "premarket_0915",
+    "result": "updated_premarket_json",
     "degraded_sources": [
-      "official_policy_global_web_scan"
+      "yahoo_finance_quote_api",
+      "stooq_quote_csv"
     ]
   },
   "status": "degraded",
-  "notes": "20:00晚间扫描：巨潮观察池公告源正常但无命中；通用网页检索信息有限，未基于不可验证消息升级结论。",
+  "notes": "9:15盘前综合：腾讯港股竞价源可用；Yahoo/Stooq外盘接口失败，外盘使用新闻/行情搜索交叉，不编造A50实时数。",
   "overall_status": "degraded"
 }
