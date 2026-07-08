@@ -1,6 +1,65 @@
 {
   "_ref": "七月半导体扩产可交易组合报告 2026-06-30",
   "_note": "阈值沿用6月规则，新增7月组合风控规则",
+  "style_universe": {
+    "_说明": "小登/老登按全市场通用行业和概念题材扫描，不局限于 config/watchlist.json 的 small_deng/old_deng 股票池；股票池只作为增强样本和代表股。",
+    "source_priority": [
+      "同花顺/东方财富行业与概念涨跌幅榜",
+      "涨停池/跌停池/炸板池行业分布",
+      "全A实时行情批量扫描",
+      "config/watchlist.json 仅作重点样本补充"
+    ],
+    "small_deng_themes": [
+      "半导体",
+      "芯片",
+      "存储/HBM",
+      "半导体设备",
+      "半导体材料",
+      "先进封装",
+      "AI算力",
+      "CPO/光模块",
+      "PCB/电子元件",
+      "消费电子",
+      "机器人/工业自动化",
+      "智能驾驶/汽车电子",
+      "低空经济",
+      "军工",
+      "创新药/CRO",
+      "数据中心/云计算/信创",
+      "新能源链高弹性分支"
+    ],
+    "old_deng_themes": [
+      "银行",
+      "券商",
+      "保险",
+      "地产",
+      "基建",
+      "中字头",
+      "煤炭",
+      "石油石化",
+      "电力",
+      "公用事业",
+      "钢铁",
+      "有色资源",
+      "白酒",
+      "食品饮料",
+      "家电",
+      "畜牧养殖",
+      "旅游酒店",
+      "航运/港口"
+    ],
+    "classification_rules": {
+      "small_deng": "高弹性成长、科技硬件、TMT、新兴产业、主题投机和小中盘活跃题材；以概念/行业整体强弱、涨跌停扩散和成交放大确认。",
+      "old_deng": "低估值权重、传统周期、金融地产、消费防御、资源公用事业和指数贡献型板块；需要指数贡献或多个老登板块共振才升级。",
+      "style_rotation": "同一风格下不少于3个通用板块在5分钟内同向急拉/急跌，才标注风格切换；单个股票或单个池内样本不得代表风格切换。"
+    },
+    "freshness_policy": {
+      "alert_as_event": "alert.json 只代表触发当时的异动事件，不代表当前盘面结论。",
+      "current_state_source": "当前盘面状态优先以最新 intraday.json / midday.json / decision-feed.json 为准。",
+      "resolved_risk_rule": "若后续 intraday 显示相关题材已修复、转强或风险收敛，旧风险 alert 必须在前台标注为历史触发/已修复，不得继续显示为当前风险。",
+      "sync_after_write": "任一盘中自动化写入 alert.json、intraday.json 或 midday.json 后，必须重建 decision-feed、data-trust、section-health、runtime-smoke-report，并 touch .push-now。"
+    }
+  },
   "small_deng": {
     "momentum": {
       "window_minutes": 3,

@@ -1,15 +1,15 @@
 {
-  "timestamp": "2026-07-08T11:26:19+08:00",
+  "timestamp": "2026-07-08T11:46:31+08:00",
   "current_signal_date": "2026-07-08",
   "target_trade_date": "2026-07-08",
   "overall_status": "waiting",
-  "summary": "6 个自动化尚未到产出窗口：盘中全景、盘中异动、午盘分析、盘后复盘。",
+  "summary": "5 个自动化尚未到产出窗口：盘中全景、盘中异动、盘后复盘、晚间舆情。",
   "counts": {
-    "ok": 1,
+    "ok": 2,
     "late": 0,
     "missing": 0,
     "invalidated": 0,
-    "waiting": 6
+    "waiting": 5
   },
   "processes": [
     {
@@ -36,7 +36,7 @@
       "file": "data/intraday.json",
       "due": "15:05",
       "deadline": "2026-07-08T16:35:00+08:00",
-      "timestamp": "2026-07-08T11:02:21+08:00",
+      "timestamp": "2026-07-08T11:32:24+08:00",
       "status": "waiting",
       "blocking": false,
       "action": "等待产出",
@@ -54,7 +54,7 @@
       "file": "data/alert.json",
       "due": "15:00",
       "deadline": "2026-07-08T15:05:00+08:00",
-      "timestamp": "2026-07-08T11:14:19+08:00",
+      "timestamp": "2026-07-08T11:25:49+08:00",
       "status": "waiting",
       "blocking": false,
       "action": "等待产出",
@@ -72,15 +72,15 @@
       "file": "data/midday.json",
       "due": "11:30",
       "deadline": "2026-07-08T12:00:00+08:00",
-      "timestamp": "2026-07-07T11:32:30+08:00",
-      "status": "waiting",
+      "timestamp": "2026-07-08T11:32:24+08:00",
+      "status": "ok",
       "blocking": false,
-      "action": "等待产出",
-      "reason": "计划 11:30 后产出",
-      "failure_type": "not_due",
-      "diagnosis": "尚未到该自动化的计划产出窗口。",
+      "action": "正常使用",
+      "reason": "当日产出已到位",
+      "failure_type": "none",
+      "diagnosis": "产出正常，未发现自动化层异常。",
       "next_actions": [
-        "到 11:30 后再检查是否产出。"
+        "正常读取；仍需结合数据质量卡判断是否降权。"
       ],
       "related_sources": []
     },
@@ -126,7 +126,7 @@
       "file": "data/topics.json",
       "due": "15:30",
       "deadline": "2026-07-08T18:30:00+08:00",
-      "timestamp": "2026-07-08T11:02:21+08:00",
+      "timestamp": "2026-07-08T11:32:24+08:00",
       "status": "waiting",
       "blocking": false,
       "action": "等待产出",
@@ -142,9 +142,9 @@
   "next_session_readiness": {
     "target_trade_date": "2026-07-08",
     "status": "pending",
-    "summary": "2026-07-08 开盘链路待产出：午盘分析 11:30。",
-    "pending_count": 3,
-    "ready_count": 4,
+    "summary": "2026-07-08 开盘链路待产出：盘后复盘 15:30。",
+    "pending_count": 2,
+    "ready_count": 5,
     "overdue_count": 0,
     "items": [
       {
@@ -165,7 +165,7 @@
         "file": "data/intraday.json",
         "due": "15:05",
         "deadline": "2026-07-08T16:35:00+08:00",
-        "timestamp": "2026-07-08T11:02:21+08:00",
+        "timestamp": "2026-07-08T11:32:24+08:00",
         "file_date": "2026-07-08",
         "status": "ready",
         "action": "已产出",
@@ -177,7 +177,7 @@
         "file": "data/alert.json",
         "due": "15:00",
         "deadline": "2026-07-08T15:05:00+08:00",
-        "timestamp": "2026-07-08T11:14:19+08:00",
+        "timestamp": "2026-07-08T11:25:49+08:00",
         "file_date": "2026-07-08",
         "status": "ready",
         "action": "已产出",
@@ -189,11 +189,11 @@
         "file": "data/midday.json",
         "due": "11:30",
         "deadline": "2026-07-08T12:00:00+08:00",
-        "timestamp": "2026-07-07T11:32:30+08:00",
-        "file_date": "2026-07-07",
-        "status": "pending",
-        "action": "等待产出",
-        "reason": "计划 11:30 后产出"
+        "timestamp": "2026-07-08T11:32:24+08:00",
+        "file_date": "2026-07-08",
+        "status": "ready",
+        "action": "已产出",
+        "reason": "目标交易日文件已更新"
       },
       {
         "id": "postmarket",
@@ -225,7 +225,7 @@
         "file": "data/topics.json",
         "due": "15:30",
         "deadline": "2026-07-08T18:30:00+08:00",
-        "timestamp": "2026-07-08T11:02:21+08:00",
+        "timestamp": "2026-07-08T11:32:24+08:00",
         "file_date": "2026-07-08",
         "status": "ready",
         "action": "已产出",

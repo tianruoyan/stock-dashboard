@@ -2619,13 +2619,17 @@ function renderAlerts(data) {
     const isStale = ageMin > 60;
 
     const purpose = alertPurpose(a);
-    const cls = purpose === "style" ? "card sentiment" :
+    const resolution = alertResolutionState(a);
+    const isResolved = resolution?.cls === "resolved";
+    const cls = isResolved ? "card alert-resolved-card" :
+                purpose === "style" ? "card sentiment" :
                 purpose === "trade" ? "card hot" :
                 purpose === "risk" ? "card risk-card" : "card";
     const fadeCls = isStale ? " faded" : isOld ? " dim" : "";
     const ageLabel = ageMin < 1 ? "刚刚" : ageMin < 60 ? `${ageMin}分钟前` : `${Math.floor(ageMin / 60)}小时前`;
 
-    const badge = purpose === "style" ? `<span class="badge old">${escapeHtml(alertStyleLabel(a))}</span>` :
+    const badge = isResolved ? '<span class="badge watch">历史风险</span>' :
+                  purpose === "style" ? `<span class="badge old">${escapeHtml(alertStyleLabel(a))}</span>` :
                   purpose === "trade" ? '<span class="badge signal">交易异动</span>' :
                   purpose === "risk" ? '<span class="badge risk">风险异动</span>' :
                   a.signal_type?.includes("观察") ? '<span class="badge watch">观察</span>' :
@@ -2647,16 +2651,52 @@ function renderAlerts(data) {
       .flatMap(l => Array.isArray(l.factors) ? l.factors.slice(0, 2).map(f => `${l.name}：${f}`) : [])
       .slice(0, 4);
     const factorHtml = factors.length ? `<div class="alert-factors">${factors.map(f => `<span>${escapeHtml(f)}</span>`).join("")}</div>` : "";
+    const resolutionHtml = resolution
+      ? `<div class="alert-resolution ${resolution.cls}"><b>${escapeHtml(resolution.label)}</b><span>${escapeHtml(resolution.detail)}</span></div>`
+      : "";
 
     return `<div class="${cls}${fadeCls}">
       <div class="card-head">${badge}<b>${a.sector}</b><span class="time">${displayAlertTime(a)} · ${ageLabel}</span></div>
       <div class="card-body"><b>${escapeHtml(a.type || "异动")}</b>${shortReason ? ` · ${escapeHtml(shortReason)}` : ""}</div>
       ${purpose === "style" ? '<div class="alert-style-note">用于判断盘面风格，不直接作为买卖触发</div>' : ""}
+      ${resolutionHtml}
       ${leaders ? `<div class="card-leaders">${leaders}</div>` : ""}
       ${factorHtml}
       ${reasonDetail}
     </div>`;
   }).join("");
+}
+
+function alertResolutionState(alert) {
+  if (alertPurpose(alert) !== "risk") return null;
+  const intraday = cached("data/intraday.json") || {};
+  if (!intraday.timestamp || Date.parse(intraday.timestamp) <= (alert._eventTime || 0)) return null;
+  const alertText = [alert?.sector, alert?.type, alert?.reason, ...(alert?.leaders || []).map(l => l?.name)].join(" ");
+  const intradayText = JSON.stringify({
+    summary: intraday.summary,
+    main_trends: intraday.main_trends,
+    actions: intraday.actions,
+    market_snapshot: intraday.market_snapshot
+  });
+  if (/机器人|工业自动化|绿的谐波|埃斯顿|步科/.test(alertText) && /机器人仍是主要风险源|机器人\/工业自动化.*风险线|跌停未打开/.test(intradayText)) {
+    return null;
+  }
+  if (/半导体|科技硬件|CMP|靶材|封装|设备|材料|硅片|长鑫|存储|CPO|光模块/.test(alertText)
+      && /科技进攻修复|半导体设备材料进入观察偏强|观察线偏强|午后准主线验证|CPO回流|科创芯片ETF\+/.test(intradayText)) {
+    return {
+      cls: "resolved",
+      label: "最新盘面已修复",
+      detail: `${formatUpdateTime(intraday.timestamp)} 盘中全景显示科技线修复；本卡只表示当时触发的历史风险。`
+    };
+  }
+  if (/电子布|玻纤|PCB|覆铜板/.test(alertText) && /资金博弈增强|反抽|跌幅收敛/.test(intradayText)) {
+    return {
+      cls: "watch",
+      label: "风险收敛",
+      detail: `${formatUpdateTime(intraday.timestamp)} 已从风格杀转为资金博弈观察。`
+    };
+  }
+  return null;
 }
 
 function alertInvalidationState(data) {
@@ -2748,6 +2788,13 @@ function renderAlertsSummary(alerts, timestamp, invalidatedState = null, sourceD
   const styleText = styleAlerts.length
     ? `${styleAlerts.slice(0, 2).map(a => alertStyleLabel(a)).join(" / ")} ${styleAlerts.length}条`
     : "暂无";
+  const context = latestAlertContextNotice(timestamp);
+  const contextCard = context ? `
+    <div class="decision-card ${context.cls}">
+      <span class="decision-label">当前复核</span>
+      <b>${escapeHtml(context.title)}</b>
+      <span>${escapeHtml(context.detail)}</span>
+    </div>` : "";
   el.innerHTML = `
     <div class="decision-strip alerts-decision">
     <div class="decision-card ${tone === "hot" ? "primary" : "risk"}">
@@ -2775,8 +2822,28 @@ function renderAlertsSummary(alerts, timestamp, invalidatedState = null, sourceD
       <b>${escapeHtml(riskCount ? `风险 ${riskCount}` : "暂无明确")}</b>
       <span>${escapeHtml(riskCount ? "看是否从单点扩散成板块压力" : "无风险信号前不预设降级")}</span>
     </div>
+    ${contextCard}
     </div>
   `;
+}
+
+function latestAlertContextNotice(alertTimestamp) {
+  const intraday = cached("data/intraday.json") || {};
+  if (!intraday.timestamp || !alertTimestamp) return null;
+  if (Date.parse(intraday.timestamp) <= Date.parse(alertTimestamp)) return null;
+  const text = [intraday.summary, JSON.stringify(intraday.main_trends || []), JSON.stringify(intraday.actions || [])].join(" ");
+  if (/科技进攻修复|强主线|观察偏强|风险.*收敛|涨停\+|跌停-/.test(text)) {
+    return {
+      cls: "neutral",
+      title: "以全景为准",
+      detail: `${formatUpdateTime(intraday.timestamp)} 全景晚于异动，旧风险需看是否已修复。`
+    };
+  }
+  return {
+    cls: "neutral",
+    title: "全景较新",
+    detail: `${formatUpdateTime(intraday.timestamp)} 已有后续盘面复核。`
+  };
 }
 
 function alertPurpose(alert) {
