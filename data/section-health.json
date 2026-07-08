@@ -1,12 +1,12 @@
 {
-  "timestamp": "2026-07-08T09:35:22+08:00",
-  "current_signal_date": "2026-07-07",
+  "timestamp": "2026-07-08T09:43:44+08:00",
+  "current_signal_date": "2026-07-08",
   "overall_status": "degraded",
-  "summary": "1 个区块不可直接使用，6 个区块需降权。",
+  "summary": "1 个区块不可直接使用，8 个区块需降权。",
   "counts": {
-    "ok": 2,
-    "degraded": 3,
-    "stale": 3,
+    "ok": 0,
+    "degraded": 4,
+    "stale": 4,
     "invalidated": 1,
     "missing": 0
   },
@@ -14,50 +14,50 @@
     {
       "id": "control",
       "label": "今日总控",
-      "status": "degraded",
+      "status": "stale",
       "usable": true,
-      "reason": "data/quality-report.json 发现 11 个降级/需复核项（2 个交易阻断，6 个价格/行情复核，3 个背景复核），核心结论可看但必须按影响分层使用。",
-      "action": "可看但降权",
+      "reason": "data/postmarket.json 非当前交易日：2026-07-07；data/quality-report.json 发现 15 个降级/需复核项（2 个交易阻断，7 个价格/行情复核，2 个信号复核，5 个背景复核），核心结论可看但必须按影响分层使用。",
+      "action": "仅作历史背景",
       "files": [
         {
           "file": "data/intraday.json",
           "status": "ok",
-          "timestamp": "2026-07-07T16:01:14+08:00",
-          "signal_date": "2026-07-07"
+          "timestamp": "2026-07-08T09:34:39+08:00",
+          "signal_date": "2026-07-08"
         },
         {
           "file": "data/postmarket.json",
-          "status": "ok",
+          "status": "stale",
           "timestamp": "2026-07-07T15:16:39+08:00",
           "signal_date": "2026-07-07"
         },
         {
           "file": "data/quality-report.json",
           "status": "degraded",
-          "timestamp": "2026-07-08T09:35:22+08:00",
-          "signal_date": "2026-07-07"
+          "timestamp": "2026-07-08T09:43:44+08:00",
+          "signal_date": "2026-07-08"
         },
         {
           "file": "data/theme-shifts.json",
           "status": "ok",
-          "timestamp": "2026-07-08T09:35:22+08:00",
-          "signal_date": "2026-07-07"
+          "timestamp": "2026-07-08T09:43:44+08:00",
+          "signal_date": "2026-07-08"
         },
         {
           "file": "data/decision-feed.json",
           "status": "ok",
-          "timestamp": "2026-07-08T09:35:22+08:00",
-          "signal_date": "2026-07-07"
+          "timestamp": "2026-07-08T09:43:44+08:00",
+          "signal_date": "2026-07-08"
         }
       ],
-      "latest_timestamp": "2026-07-08T09:35:22+08:00"
+      "latest_timestamp": "2026-07-08T09:43:44+08:00"
     },
     {
       "id": "watchlist",
       "label": "我的观察池",
       "status": "degraded",
       "usable": true,
-      "reason": "data/quality-report.json 发现 11 个降级/需复核项（2 个交易阻断，6 个价格/行情复核，3 个背景复核），核心结论可看但必须按影响分层使用。",
+      "reason": "data/quality-report.json 发现 15 个降级/需复核项（2 个交易阻断，7 个价格/行情复核，2 个信号复核，5 个背景复核），核心结论可看但必须按影响分层使用。",
       "action": "可看但降权",
       "files": [
         {
@@ -67,38 +67,44 @@
           "signal_date": ""
         },
         {
+          "file": "data/premarket.json",
+          "status": "ok",
+          "timestamp": "2026-07-08T09:15:36+08:00",
+          "signal_date": "2026-07-08"
+        },
+        {
           "file": "data/intraday.json",
           "status": "ok",
-          "timestamp": "2026-07-07T16:01:14+08:00",
-          "signal_date": "2026-07-07"
+          "timestamp": "2026-07-08T09:34:39+08:00",
+          "signal_date": "2026-07-08"
         },
         {
           "file": "data/postmarket.json",
-          "status": "ok",
+          "status": "stale",
           "timestamp": "2026-07-07T15:16:39+08:00",
           "signal_date": "2026-07-07"
         },
         {
           "file": "data/topics.json",
           "status": "ok",
-          "timestamp": "2026-07-07T15:16:39+08:00",
-          "signal_date": "2026-07-07"
+          "timestamp": "2026-07-08T09:34:39+08:00",
+          "signal_date": "2026-07-08"
         },
         {
           "file": "data/quality-report.json",
           "status": "degraded",
-          "timestamp": "2026-07-08T09:35:22+08:00",
-          "signal_date": "2026-07-07"
+          "timestamp": "2026-07-08T09:43:44+08:00",
+          "signal_date": "2026-07-08"
         }
       ],
-      "latest_timestamp": "2026-07-08T09:35:22+08:00"
+      "latest_timestamp": "2026-07-08T09:43:44+08:00"
     },
     {
       "id": "alerts",
       "label": "盘中异动",
       "status": "invalidated",
       "usable": false,
-      "reason": "2026-07-07 14:13:52 批次的盘中异动使用了异常行情源数据，北方华创/中微公司等日内涨跌幅失真，已撤下该批 alert，等待修复后的盘中提醒进程重新产出。；data/source-health.json 非当前交易日：2026-07-08；A股补充行情源解码异常，盘中异动和个股涨跌幅需以已审计源复核。；tencent_hk_http: 接口…",
+      "reason": "2026-07-07 14:13:52 批次的盘中异动使用了异常行情源数据，北方华创/中微公司等日内涨跌幅失真，已撤下该批 alert，等待修复后的盘中提醒进程重新产出。；data/source-health.json degraded；A股补充行情源解码异常，盘中异动和个股涨跌幅需以已审计源复核。；tencent_hk_http: 接口可用，最新quot…",
       "action": "等待重新产出",
       "files": [
         {
@@ -109,70 +115,70 @@
         },
         {
           "file": "data/source-health.json",
-          "status": "stale",
-          "timestamp": "2026-07-08T09:34:13+08:00",
+          "status": "degraded",
+          "timestamp": "2026-07-08T09:40:07+08:00",
           "signal_date": "2026-07-08"
         }
       ],
-      "latest_timestamp": "2026-07-08T09:34:13+08:00"
+      "latest_timestamp": "2026-07-08T09:40:07+08:00"
     },
     {
       "id": "intraday",
       "label": "盘中全景",
-      "status": "stale",
+      "status": "degraded",
       "usable": true,
-      "reason": "data/source-health.json 非当前交易日：2026-07-08；A股补充行情源解码异常，盘中异动和个股涨跌幅需以已审计源复核。；tencent_hk_http: 接口可用，最新quote_time=2026/07/07 15:57:50；16:00后可能仍非收市竞价终值，按收盘窗口快照使用。",
-      "action": "仅作历史背景",
+      "reason": "data/source-health.json degraded；A股补充行情源解码异常，盘中异动和个股涨跌幅需以已审计源复核。；tencent_hk_http: 接口可用，最新quote_time=2026/07/07 15:57:50；16:00后可能仍非收市竞价终值，按收盘窗口快照使用。",
+      "action": "可看但降权",
       "files": [
         {
           "file": "data/intraday.json",
           "status": "ok",
-          "timestamp": "2026-07-07T16:01:14+08:00",
-          "signal_date": "2026-07-07"
+          "timestamp": "2026-07-08T09:34:39+08:00",
+          "signal_date": "2026-07-08"
         },
         {
           "file": "data/source-health.json",
-          "status": "stale",
-          "timestamp": "2026-07-08T09:34:13+08:00",
+          "status": "degraded",
+          "timestamp": "2026-07-08T09:40:07+08:00",
           "signal_date": "2026-07-08"
         }
       ],
-      "latest_timestamp": "2026-07-08T09:34:13+08:00"
+      "latest_timestamp": "2026-07-08T09:40:07+08:00"
     },
     {
       "id": "premarket",
       "label": "早盘盘前",
-      "status": "stale",
+      "status": "degraded",
       "usable": true,
-      "reason": "data/premarket.json 非当前交易日：2026-07-08；data/source-health.json 非当前交易日：2026-07-08；A股补充行情源解码异常，盘中异动和个股涨跌幅需以已审计源复核。；tencent_hk_http: 接口可用，最新quote_time=2026/07/07 15:57:50；16:00后可能仍非收市…",
-      "action": "仅作历史背景",
+      "reason": "data/source-health.json degraded；A股补充行情源解码异常，盘中异动和个股涨跌幅需以已审计源复核。；tencent_hk_http: 接口可用，最新quote_time=2026/07/07 15:57:50；16:00后可能仍非收市竞价终值，按收盘窗口快照使用。",
+      "action": "可看但降权",
       "files": [
         {
           "file": "data/premarket.json",
-          "status": "stale",
+          "status": "ok",
           "timestamp": "2026-07-08T09:15:36+08:00",
           "signal_date": "2026-07-08"
         },
         {
           "file": "data/source-health.json",
-          "status": "stale",
-          "timestamp": "2026-07-08T09:34:13+08:00",
+          "status": "degraded",
+          "timestamp": "2026-07-08T09:40:07+08:00",
           "signal_date": "2026-07-08"
         }
       ],
-      "latest_timestamp": "2026-07-08T09:34:13+08:00"
+      "latest_timestamp": "2026-07-08T09:40:07+08:00"
     },
     {
       "id": "midday",
       "label": "午盘盘前",
-      "status": "ok",
+      "status": "stale",
       "usable": true,
-      "reason": "区块数据可用",
-      "action": "正常使用",
+      "reason": "data/midday.json 非当前交易日：2026-07-07",
+      "action": "仅作历史背景",
       "files": [
         {
           "file": "data/midday.json",
-          "status": "ok",
+          "status": "stale",
           "timestamp": "2026-07-07T11:32:30+08:00",
           "signal_date": "2026-07-07"
         }
@@ -184,35 +190,35 @@
       "label": "午盘盘后",
       "status": "stale",
       "usable": true,
-      "reason": "data/source-health.json 非当前交易日：2026-07-08；A股补充行情源解码异常，盘中异动和个股涨跌幅需以已审计源复核。；tencent_hk_http: 接口可用，最新quote_time=2026/07/07 15:57:50；16:00后可能仍非收市竞价终值，按收盘窗口快照使用。",
+      "reason": "data/postmarket.json 非当前交易日：2026-07-07；data/source-health.json degraded；A股补充行情源解码异常，盘中异动和个股涨跌幅需以已审计源复核。；tencent_hk_http: 接口可用，最新quote_time=2026/07/07 15:57:50；16:00后可能仍非收市竞价终值，按收盘…",
       "action": "仅作历史背景",
       "files": [
         {
           "file": "data/postmarket.json",
-          "status": "ok",
+          "status": "stale",
           "timestamp": "2026-07-07T15:16:39+08:00",
           "signal_date": "2026-07-07"
         },
         {
           "file": "data/source-health.json",
-          "status": "stale",
-          "timestamp": "2026-07-08T09:34:13+08:00",
+          "status": "degraded",
+          "timestamp": "2026-07-08T09:40:07+08:00",
           "signal_date": "2026-07-08"
         }
       ],
-      "latest_timestamp": "2026-07-08T09:34:13+08:00"
+      "latest_timestamp": "2026-07-08T09:40:07+08:00"
     },
     {
       "id": "evening",
       "label": "晚间舆情",
-      "status": "ok",
+      "status": "stale",
       "usable": true,
-      "reason": "区块数据可用",
-      "action": "正常使用",
+      "reason": "data/evening-sentiment.json 非当前交易日：2026-07-07",
+      "action": "仅作历史背景",
       "files": [
         {
           "file": "data/evening-sentiment.json",
-          "status": "ok",
+          "status": "stale",
           "timestamp": "2026-07-07T20:01:42+08:00",
           "signal_date": "2026-07-07"
         }
@@ -224,14 +230,14 @@
       "label": "专题跟踪",
       "status": "degraded",
       "usable": true,
-      "reason": "data/quality-report.json 发现 11 个降级/需复核项（2 个交易阻断，6 个价格/行情复核，3 个背景复核），核心结论可看但必须按影响分层使用。",
+      "reason": "data/quality-report.json 发现 15 个降级/需复核项（2 个交易阻断，7 个价格/行情复核，2 个信号复核，5 个背景复核），核心结论可看但必须按影响分层使用。",
       "action": "可看但降权",
       "files": [
         {
           "file": "data/topics.json",
           "status": "ok",
-          "timestamp": "2026-07-07T15:16:39+08:00",
-          "signal_date": "2026-07-07"
+          "timestamp": "2026-07-08T09:34:39+08:00",
+          "signal_date": "2026-07-08"
         },
         {
           "file": "config/topics-list.json",
@@ -242,11 +248,11 @@
         {
           "file": "data/quality-report.json",
           "status": "degraded",
-          "timestamp": "2026-07-08T09:35:22+08:00",
-          "signal_date": "2026-07-07"
+          "timestamp": "2026-07-08T09:43:44+08:00",
+          "signal_date": "2026-07-08"
         }
       ],
-      "latest_timestamp": "2026-07-08T09:35:22+08:00"
+      "latest_timestamp": "2026-07-08T09:43:44+08:00"
     }
   ],
   "rules": [

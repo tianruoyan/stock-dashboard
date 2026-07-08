@@ -1911,6 +1911,7 @@ function currentDayDataTexts() {
   return [
     ["data/intraday.json", cached("data/intraday.json")],
     ...(hasCurrentPostmarket() ? [] : [["data/alert.json", cached("data/alert.json")]]),
+    ["data/premarket.json", cached("data/premarket.json")],
     ["data/midday.json", cached("data/midday.json")],
     ["data/postmarket.json", cached("data/postmarket.json")]
   ]
@@ -1924,6 +1925,7 @@ function latestStockChangePct(name) {
     cached("data/postmarket.json"),
     cached("data/intraday.json"),
     cached("data/midday.json"),
+    cached("data/premarket.json"),
     ...(hasCurrentPostmarket() ? [] : [cached("data/alert.json")])
   ];
   for (const data of sources) {
@@ -1941,6 +1943,7 @@ function latestStockDataTimestamp(name) {
     cached("data/postmarket.json"),
     cached("data/intraday.json"),
     cached("data/midday.json"),
+    cached("data/premarket.json"),
     ...(hasCurrentPostmarket() ? [] : [cached("data/alert.json")])
   ];
   return latestTimestamp(sources
@@ -2280,12 +2283,15 @@ function isConditionalSignal(text) {
 }
 
 function collectSignalText() {
+  const premarket = cached("data/premarket.json") || {};
   const intraday = cached("data/intraday.json") || {};
   const postmarket = cached("data/postmarket.json") || {};
   const evening = cached("data/evening-sentiment.json") || {};
   const topics = cached("data/topics.json") || {};
   const alert = cached("data/alert.json") || {};
   return [
+    ...signalsFromItems(premarket.auction_summary?.watchlist_auction, premarket.timestamp, "premarket"),
+    ...signalsFromItems(premarket.watchlist_auction, premarket.timestamp, "premarket"),
     ...signalsFromItems(alert.alerts, alert.timestamp, "alert"),
     ...signalsFromItems(intraday.main_trends, intraday.timestamp, "intraday"),
     ...signalsFromItems(themeGroupsToItems(intraday.themes), intraday.timestamp, "intraday"),
@@ -2309,6 +2315,7 @@ function signalsFromItems(items, fallbackTimestamp, source) {
 
 function currentSignalDate() {
   const dates = [
+    cached("data/premarket.json")?.timestamp,
     cached("data/alert.json")?.timestamp,
     cached("data/intraday.json")?.timestamp,
     cached("data/midday.json")?.timestamp,

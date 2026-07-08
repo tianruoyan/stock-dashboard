@@ -17,7 +17,7 @@ BAD_LITERALS = ("[object Object]", "undefined", "None%", "NaN", "Infinity")
 
 SECTIONS = [
     {"id": "control", "label": "今日总控", "files": ["data/intraday.json", "data/postmarket.json", "data/quality-report.json", "data/theme-shifts.json", "data/decision-feed.json"]},
-    {"id": "watchlist", "label": "我的观察池", "files": ["config/watchlist.json", "data/intraday.json", "data/postmarket.json", "data/topics.json", "data/quality-report.json"]},
+    {"id": "watchlist", "label": "我的观察池", "files": ["config/watchlist.json", "data/premarket.json", "data/intraday.json", "data/postmarket.json", "data/topics.json", "data/quality-report.json"]},
     {"id": "alerts", "label": "盘中异动", "files": ["data/alert.json", "data/source-health.json"]},
     {"id": "intraday", "label": "盘中全景", "files": ["data/intraday.json", "data/source-health.json"]},
     {"id": "premarket", "label": "早盘盘前", "files": ["data/premarket.json", "data/source-health.json"]},
@@ -57,31 +57,43 @@ def build_section(spec: dict[str, Any], payloads: dict[str, Any], current_date: 
     reasons: list[str] = []
     file_rows: list[dict[str, Any]] = []
     status_rank = 0
+    has_current_watch_context = spec["id"] == "watchlist" and any(
+        payload_signal_date(payloads.get(rel) or {}) == current_date
+        for rel in ("data/premarket.json", "data/intraday.json", "data/midday.json", "data/topics.json")
+    )
     for rel in spec["files"]:
         path = ROOT / rel
         data = payloads.get(rel)
         file_status = "ok"
+        status_for_rank = "ok"
         ts = data.get("timestamp") if isinstance(data, dict) else ""
         row_date = payload_signal_date(data) if isinstance(data, dict) else ""
         if not path.exists() or data in (None, {}):
             file_status = "missing"
+            status_for_rank = file_status
             reasons.append(f"{rel} 缺失或不可读")
         elif isinstance(data, dict) and data.get("source_status") == "invalidated":
             file_status = "invalidated"
+            status_for_rank = file_status
             reasons.append(data.get("note") or f"{rel} 已撤下污染批次")
         elif row_date and current_date and row_date != current_date:
             file_status = "stale"
-            reasons.append(f"{rel} 非当前交易日：{row_date}")
+            if not (has_current_watch_context and rel == "data/postmarket.json"):
+                status_for_rank = file_status
+                reasons.append(f"{rel} 非当前交易日：{row_date}")
         elif contains_bad_literal(path):
             file_status = "missing"
+            status_for_rank = file_status
             reasons.append(f"{rel} 含异常文本")
         elif isinstance(data, dict) and data.get("status") in {"degraded", "critical"}:
             file_status = "degraded"
+            status_for_rank = file_status
             reasons.append(f"{rel} {data.get('summary') or data.get('status')}")
         elif isinstance(data, dict) and data.get("overall_status") == "degraded":
             file_status = "degraded"
+            status_for_rank = file_status
             reasons.append(f"{rel} 数据源整体降级")
-        status_rank = max(status_rank, rank(file_status))
+        status_rank = max(status_rank, rank(status_for_rank))
         file_rows.append({"file": rel, "status": file_status, "timestamp": ts or "", "signal_date": row_date})
 
     if "data/source-health.json" in spec["files"] and source_flags:
@@ -133,7 +145,7 @@ def source_flag_message(name: str, source: dict[str, Any]) -> str:
 
 def latest_signal_date(payloads: dict[str, Any]) -> str:
     dates = []
-    for rel in ("data/alert.json", "data/intraday.json", "data/midday.json", "data/postmarket.json", "data/topics.json"):
+    for rel in ("data/premarket.json", "data/alert.json", "data/intraday.json", "data/midday.json", "data/postmarket.json", "data/topics.json"):
         data = payloads.get(rel)
         date = signal_date(data.get("timestamp") if isinstance(data, dict) else "")
         if date:
