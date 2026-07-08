@@ -9,6 +9,25 @@
       "全A实时行情批量扫描",
       "config/watchlist.json 仅作重点样本补充"
     ],
+    "alert_sector_policy": {
+      "_说明": "盘中异动的 sector 必须是盘面真实题材/行业/概念分支，不得使用本地组合、观察池、专题报告或持仓分组名称。",
+      "allowed_examples": [
+        "半导体设备",
+        "半导体材料",
+        "先进封装",
+        "CPO/光模块",
+        "国产算力/国资云",
+        "机器人/工业自动化",
+        "券商/保险"
+      ],
+      "forbidden_examples": [
+        "7月半导体扩产组合",
+        "我的观察池",
+        "专题跟踪",
+        "持仓组合"
+      ],
+      "mapping_rule": "先扫描全市场板块/概念/涨跌停宽度得出异动题材，再映射到 watchlist/topics；不得由 watchlist/topics 反推异动题材。"
+    },
     "small_deng_themes": [
       "半导体",
       "芯片",

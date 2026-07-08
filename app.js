@@ -2607,12 +2607,16 @@ function renderAlerts(data) {
       .map(a => normalizeAlertTime({ ...a, _received: alertEventTime(a, data.timestamp, now) }, data.timestamp, now))
       .filter(a => !a._eventTime || a._eventTime <= now + FUTURE_ALERT_TOLERANCE)
   ).slice(0, MAX_ALERTS);
+  const displayAlerts = sortAlertsByEventTime([
+    ...intradayOpportunityAlerts(data.timestamp),
+    ...saved
+  ]).slice(0, MAX_ALERTS);
 
-  renderAlertsSummary(saved, data.timestamp, null, data);
+  renderAlertsSummary(displayAlerts, data.timestamp, null, data);
 
-  if (!saved.length) { el.innerHTML = '<div class="empty">暂无盘中异动</div>'; return; }
+  if (!displayAlerts.length) { el.innerHTML = '<div class="empty">暂无盘中异动</div>'; return; }
 
-  el.innerHTML = saved.map((a, i) => {
+  el.innerHTML = displayAlerts.map((a, i) => {
     const age = now - (a._eventTime || a._received || now);
     const ageMin = Math.floor(age / 60000);
     const isOld = ageMin > 30;
@@ -2628,7 +2632,8 @@ function renderAlerts(data) {
     const fadeCls = isStale ? " faded" : isOld ? " dim" : "";
     const ageLabel = ageMin < 1 ? "刚刚" : ageMin < 60 ? `${ageMin}分钟前` : `${Math.floor(ageMin / 60)}小时前`;
 
-    const badge = isResolved ? '<span class="badge watch">历史风险</span>' :
+    const badge = a._syntheticOpportunity ? '<span class="badge signal">全景机会</span>' :
+                  isResolved ? '<span class="badge watch">历史风险</span>' :
                   purpose === "style" ? `<span class="badge old">${escapeHtml(alertStyleLabel(a))}</span>` :
                   purpose === "trade" ? '<span class="badge signal">交易异动</span>' :
                   purpose === "risk" ? '<span class="badge risk">风险异动</span>' :
@@ -2655,9 +2660,11 @@ function renderAlerts(data) {
       ? `<div class="alert-resolution ${resolution.cls}"><b>${escapeHtml(resolution.label)}</b><span>${escapeHtml(resolution.detail)}</span></div>`
       : "";
 
+    const sectorName = displayAlertSector(a);
     return `<div class="${cls}${fadeCls}">
-      <div class="card-head">${badge}<b>${a.sector}</b><span class="time">${displayAlertTime(a)} · ${ageLabel}</span></div>
+      <div class="card-head">${badge}<b>${escapeHtml(sectorName)}</b><span class="time">${displayAlertTime(a)} · ${ageLabel}</span></div>
       <div class="card-body"><b>${escapeHtml(a.type || "异动")}</b>${shortReason ? ` · ${escapeHtml(shortReason)}` : ""}</div>
+      ${a._syntheticOpportunity ? '<div class="alert-style-note">来自最新盘中全景，用于补充机会观察；是否交易仍看承接和扩散</div>' : ""}
       ${purpose === "style" ? '<div class="alert-style-note">用于判断盘面风格，不直接作为买卖触发</div>' : ""}
       ${resolutionHtml}
       ${leaders ? `<div class="card-leaders">${leaders}</div>` : ""}
@@ -2665,6 +2672,90 @@ function renderAlerts(data) {
       ${reasonDetail}
     </div>`;
   }).join("");
+}
+
+function intradayOpportunityAlerts(alertTimestamp) {
+  const intraday = cached("data/intraday.json") || {};
+  if (!intraday.timestamp || signalDate(intraday.timestamp) !== currentSignalDate()) return [];
+  if (alertTimestamp && Date.parse(intraday.timestamp) <= Date.parse(alertTimestamp)) return [];
+  const trends = Array.isArray(intraday.main_trends) ? intraday.main_trends : [];
+  return trends
+    .filter(item => {
+      const text = [item?.name, item?.status, item?.risk, ...(item?.evidence || [])].join(" ");
+      if (/风险线|主要风险源|跌停未|负反馈|不升级|只.*验证|不是强主线/.test(text)) return false;
+      return /强主线|观察线偏强|资金回流|进攻修复|涨停|封板|扩散/.test(text);
+    })
+    .slice(0, 4)
+    .map((item, index) => {
+      const evidence = Array.isArray(item.evidence) ? item.evidence : [];
+      const leaders = extractOpportunityLeaders(evidence.join("；")).slice(0, 3);
+      return normalizeAlertTime({
+        id: `intraday-opportunity-${signalDate(intraday.timestamp)}-${index}`,
+        time: intraday.timestamp,
+        sector: item.name || "盘中机会",
+        type: "盘中全景 / 机会观察",
+        reason: evidence[0] || item.status || intraday.summary || "盘中全景显示方向转强",
+        leaders,
+        signal_type: "交易机会观察",
+        _syntheticOpportunity: true,
+        _purpose: "trade",
+        _received: Date.parse(intraday.timestamp) || Date.now()
+      }, intraday.timestamp, Date.parse(intraday.timestamp) || Date.now());
+    });
+}
+
+function extractOpportunityLeaders(text) {
+  const seen = new Set();
+  const rows = [];
+  const re = /([\u4e00-\u9fa5A-Za-z0-9]{2,12})(?:A|H)?([+＋-]\d+(?:\.\d+)?)%?/g;
+  let match;
+  while ((match = re.exec(String(text || ""))) && rows.length < 6) {
+    const name = match[1].replace(/^(但|和|与|且|其中|港股|A股|美股|核心股)/, "");
+    if (!name || seen.has(name) || /ETF|指数|涨停|成交|半导体|人工智能|科创芯片|科创50|上证|深证|创业板|中证|恒生|明显强于/.test(name)) continue;
+    seen.add(name);
+    rows.push({ name, change_pct: Number(String(match[2]).replace("＋", "+")), factors: ["盘中全景强势样本"] });
+  }
+  return rows;
+}
+
+function displayAlertSector(alert) {
+  const raw = String(alert?.sector || "").trim();
+  if (!isLocalAlertBucket(raw)) return raw || "盘中异动";
+  return deriveMarketSectorFromAlert(alert) || "盘面多分支异动";
+}
+
+function isLocalAlertBucket(sector) {
+  return /组合|观察池|专题|持仓|自选|portfolio|扩产/.test(String(sector || ""));
+}
+
+function deriveMarketSectorFromAlert(alert) {
+  const leaders = (alert?.leaders || [])
+    .map(item => String(item?.name || "").trim())
+    .filter(name => name && !/组合|观察池|专题|持仓|自选/.test(name));
+  const reason = String(alert?.reason || "");
+  const fromReason = [];
+  const re = /([\u4e00-\u9fa5A-Za-z0-9/]{2,18})(?=[+＋-]\d+(?:\.\d+)?%)/g;
+  let match;
+  while ((match = re.exec(reason)) && fromReason.length < 6) {
+    const name = match[1].replace(/^(本轮|关联板块|板块|其中|以及|同向急跌|同向急拉)/, "");
+    if (!name || /分钟|成交|上涨|下跌/.test(name)) continue;
+    fromReason.push(name);
+  }
+  const names = uniqueClean([...fromReason, ...leaders]).slice(0, 3);
+  if (names.length >= 2) return names.join(" / ");
+  if (/半导体|封装|硅片|靶材|CMP|光刻胶|存储|电子布|覆铜板/.test(reason)) return "半导体链多分支";
+  return names[0] || "";
+}
+
+function uniqueClean(items) {
+  const seen = new Set();
+  return items
+    .map(item => String(item || "").trim())
+    .filter(item => {
+      if (!item || seen.has(item)) return false;
+      seen.add(item);
+      return true;
+    });
 }
 
 function alertResolutionState(alert) {
@@ -2777,14 +2868,17 @@ function renderAlertsSummary(alerts, timestamp, invalidatedState = null, sourceD
   const riskAlerts = alerts.filter(a => alertPurpose(a) === "risk");
   const styleAlerts = alerts.filter(a => alertPurpose(a) === "style");
   const actionable = [...tradeAlerts, ...riskAlerts].sort((a, b) => (b._eventTime || 0) - (a._eventTime || 0));
-  const latest = actionable[0] || alerts[0];
+  const latestOpportunity = tradeAlerts.slice().sort((a, b) => (b._eventTime || 0) - (a._eventTime || 0))[0];
+  const latestRisk = riskAlerts.slice().sort((a, b) => (b._eventTime || 0) - (a._eventTime || 0))[0];
+  const latest = latestOpportunity || latestRisk || actionable[0] || alerts[0];
   const riskCount = riskAlerts.length;
   const tradeCount = tradeAlerts.length;
   const volumeCount = alerts.filter(a => /放量|成交/.test([a.signal_type, a.type, a.reason].join(" "))).length;
-  const leaders = Array.from(new Set(actionable.flatMap(a => (a.leaders || []).map(l => l.name)).filter(Boolean))).slice(0, 4);
+  const opportunityBasis = tradeAlerts.length ? tradeAlerts : actionable;
+  const leaders = Array.from(new Set(opportunityBasis.flatMap(a => (a.leaders || []).map(l => l.name)).filter(Boolean))).slice(0, 4);
   const tone = riskCount >= tradeCount ? "risk" : "hot";
   const timeText = formatUpdateTime(timestamp);
-  const relatedTags = positiveRelatedTopicTags(actionable.map(a => [a.sector, a.type, a.reason].join(" ")).join(" "), leaders.join(" "));
+  const relatedTags = positiveRelatedTopicTags(opportunityBasis.map(a => [displayAlertSector(a), a.type, a.reason].join(" ")).join(" "), leaders.join(" "));
   const styleText = styleAlerts.length
     ? `${styleAlerts.slice(0, 2).map(a => alertStyleLabel(a)).join(" / ")} ${styleAlerts.length}条`
     : "暂无";
@@ -2797,10 +2891,10 @@ function renderAlertsSummary(alerts, timestamp, invalidatedState = null, sourceD
     </div>` : "";
   el.innerHTML = `
     <div class="decision-strip alerts-decision">
-    <div class="decision-card ${tone === "hot" ? "primary" : "risk"}">
-      <span class="decision-label">核心结论</span>
-      <b>${escapeHtml(actionable.length ? (latest.sector || "盘中异动") : "暂无交易异动")}</b>
-      <span>${escapeHtml(actionable.length ? `${latest.type || latest.signal_type || "等待分类"} · ${displayAlertTime(latest) || timeText || ""}` : "小登/老登只用于风格判断")}</span>
+    <div class="decision-card ${latestOpportunity ? "primary" : "neutral"}">
+      <span class="decision-label">机会异动</span>
+      <b>${escapeHtml(latestOpportunity ? displayAlertSector(latestOpportunity) : "等待机会触发")}</b>
+      <span>${escapeHtml(latestOpportunity ? `${latestOpportunity.type || latestOpportunity.signal_type || "机会观察"} · ${displayAlertTime(latestOpportunity) || timeText || ""}` : "无机会信号时不强行给机会")}</span>
     </div>
     <div class="decision-card action">
       <span class="decision-label">关联题材</span>
@@ -2818,9 +2912,9 @@ function renderAlertsSummary(alerts, timestamp, invalidatedState = null, sourceD
       <span>小登/老登用于判断盘面风格</span>
     </div>
     <div class="decision-card risk">
-      <span class="decision-label">回避/降级</span>
-      <b>${escapeHtml(riskCount ? `风险 ${riskCount}` : "暂无明确")}</b>
-      <span>${escapeHtml(riskCount ? "看是否从单点扩散成板块压力" : "无风险信号前不预设降级")}</span>
+      <span class="decision-label">风险提示</span>
+      <b>${escapeHtml(latestRisk ? displayAlertSector(latestRisk) : (riskCount ? `风险 ${riskCount}` : "暂无明确"))}</b>
+      <span>${escapeHtml(latestRisk ? `${latestRisk.type || "风险异动"} · ${displayAlertTime(latestRisk)}` : (riskCount ? "看是否从单点扩散成板块压力" : "无风险信号前不预设降级"))}</span>
     </div>
     ${contextCard}
     </div>
@@ -2847,6 +2941,7 @@ function latestAlertContextNotice(alertTimestamp) {
 }
 
 function alertPurpose(alert) {
+  if (alert?._purpose) return alert._purpose;
   const text = [alert?.signal_type, alert?.type, alert?.reason, alert?.sector, alert?.trigger_rule, alert?.rule, alert?.rule_id]
     .filter(Boolean)
     .join(" ");
