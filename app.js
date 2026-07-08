@@ -808,7 +808,7 @@ function summarizeAutomationHealth(report) {
     : [];
   return {
     title,
-    detail: truncateText(detail, 90),
+    detail,
     cls: readiness?.status === "overdue" || blocking.length ? "warn" : (readiness?.status === "pending" || bad.length || waiting.length ? "neutral" : "good"),
     issues: [...readinessIssues, ...issues]
   };
@@ -871,7 +871,7 @@ function summarizeMonitoringCoverage(report) {
   const issues = focus.map(item => `${item.title}：${item.fallback_action || item.conclusion}`);
   return {
     title,
-    detail: truncateText(detail, 90),
+    detail,
     cls: critical.length ? "warn" : (warning.length || info.length ? "neutral" : "good"),
     issues
   };
@@ -905,7 +905,7 @@ function summarizeDataTrust(report) {
   });
   return {
     title,
-    detail: truncateText(detail, 90),
+    detail,
     cls: blocked.length || freshnessFuture.length || freshnessBad.length ? "warn" : (degraded.length || stale.length || freshnessAging.length ? "neutral" : "good"),
     issues
   };
@@ -924,7 +924,7 @@ function summarizeSectionHealth(report) {
   const issues = focus.map(item => `${item.label}：${item.action}，${item.reason || item.status}`);
   return {
     title,
-    detail: truncateText(detail, 90),
+    detail,
     cls: bad.length ? "warn" : (stale.length || degraded.length ? "neutral" : "good"),
     issues
   };
@@ -952,7 +952,7 @@ function renderSectionHealthBadges() {
     }
     const cls = sectionHealthClass(view.status);
     badge.className = `section-health-badge ${cls}`;
-    badge.innerHTML = `<span>${escapeHtml(view.action)}</span><b>${escapeHtml(truncateText(userFacingText(view.reason), 120))}</b>`;
+    badge.innerHTML = `<span>${escapeHtml(view.action)}</span><b>${escapeHtml(userFacingText(view.reason))}</b>`;
   });
 }
 
@@ -1295,7 +1295,7 @@ function monitoringCoverageRadarItems() {
     : (item.impact || item.title || "实时信号需确认");
   const risks = important.map(item => ({
     title: traderCoverageTitle(item),
-    reason: truncateText(item.conclusion || "", 108),
+    reason: item.conclusion || "",
     confidence: item.severity === "critical" ? "风险" : "待确认",
     tone: "risk",
     tags: uniqueList(["信号待确认", ...(item.impacted_decisions || []).slice(0, 2)]).slice(0, 5),
@@ -1310,7 +1310,7 @@ function monitoringCoverageRadarItems() {
   }));
   const verifications = important.slice(0, 3).map(item => ({
     title: `${traderCoverageTitle(item)}的替代观察`,
-    reason: truncateText(item.fallback_action || item.conclusion || "", 108),
+    reason: item.fallback_action || item.conclusion || "",
     confidence: "替代验证",
     tone: "neutral",
     tags: uniqueList(["替代观察", ...(item.impacted_decisions || []).slice(0, 2)]).slice(0, 5),
@@ -1345,7 +1345,7 @@ function decisionFeedToRadarItem(item, fallbackTone) {
   const sources = (item.source_files || []).filter(Boolean);
   return {
     title: item.title || "未命名信号",
-    reason: truncateText(item.conclusion || "", 108),
+    reason: item.conclusion || "",
     confidence: confidenceLabel(item.confidence),
     tone: item.tone || fallbackTone || "neutral",
     tags: uniqueList([...(item.tags || []), ...sources.map(sourceShortName)]).slice(0, 5),
@@ -1509,7 +1509,7 @@ function radarThemeReason(theme) {
     ...(Array.isArray(theme.evidence) ? theme.evidence : []),
     theme.note
   ].filter(Boolean);
-  return truncateText(parts.join("；") || "主线强度有待盘中继续确认", 108);
+  return parts.join("；") || "主线强度有待盘中继续确认";
 }
 
 function radarThemeRisk(theme) {
@@ -1520,7 +1520,7 @@ function radarThemeRisk(theme) {
     theme.note,
     ...(Array.isArray(theme.evidence) ? theme.evidence : [])
   ].filter(Boolean);
-  return truncateText(parts.join("；") || "风险线需观察是否扩散", 108);
+  return parts.join("；") || "风险线需观察是否扩散";
 }
 
 function radarConfidence(theme, mode) {
@@ -1556,7 +1556,7 @@ function verificationItems(intraday, midday, postmarket) {
     ...arrayTextItems(postmarket.closing_auction_patch?.watch_next_day)
   ]).slice(0, 5).map(text => ({
     title: "验证条件",
-    reason: truncateText(text, 108),
+    reason: text,
     confidence: "可证伪",
     tone: /风险|跌停|弱|回落|低开/.test(text) ? "risk" : "neutral",
     tags: positiveRelatedTopicTags(text)
@@ -3652,10 +3652,10 @@ function renderBulletList(items, className = "news-list") {
   return `<ul class="${className}">${list.map(item => `<li>${escapeHtml(item)}</li>`).join("")}</ul>`;
 }
 
-function takePremarketPoints(text, limit = 2, maxLength = 140) {
+function takePremarketPoints(text, limit = 2, maxLength = null) {
   return splitPremarketText(text)
     .slice(0, limit)
-    .map(item => truncateText(item, maxLength));
+    .map(item => maxLength ? truncateText(item, maxLength) : item);
 }
 
 function summarizePremarketStrategy(text) {
@@ -3675,7 +3675,7 @@ function summarizePremarketStrategy(text) {
     core.replace(/^1）一句话结论[:：]?/, "核心结论："),
     upgrade.replace(/^3）板块升降级[:：]?/, "板块判断："),
     verify.replace(/^5）今日重点验证指标和失效条件[:：]?/, "验证条件：")
-  ].filter(Boolean).map(item => truncateText(item, 120));
+  ].filter(Boolean);
 }
 
 function truncateText(text, maxLength = 140) {
@@ -3692,7 +3692,7 @@ function renderMappingChain(items) {
     const reason = item.reason ? `：${escapeHtml(item.reason)}` : "";
     const target = item.a_share_mapping || item.target || item.mapping || "";
     const logic = item.mapping_logic || item.logic || "";
-    return `<li><b>${escapeHtml(source)}${escapeHtml(pct)}</b>${reason}${target ? `<br><span class="muted">→ ${escapeHtml(truncateText(target, 80))}</span>` : ""}${logic ? `<br><span class="muted">逻辑：${escapeHtml(truncateText(logic, 90))}</span>` : ""}</li>`;
+    return `<li><b>${escapeHtml(source)}${escapeHtml(pct)}</b>${reason}${target ? `<br><span class="muted">→ ${escapeHtml(target)}</span>` : ""}${logic ? `<br><span class="muted">逻辑：${escapeHtml(logic)}</span>` : ""}</li>`;
   }).join("") + '</ul>';
 }
 
@@ -3721,7 +3721,7 @@ function renderPremarket(data) {
       if (ctx.open_style || ctx.sentiment_judgement) {
         html += `<div class="theme-item premarket-lead"><b>${escapeHtml(ctx.open_style || "待判断")}</b></div>`;
         if (ctx.sentiment_judgement) {
-          html += renderBulletList(takePremarketPoints(ctx.sentiment_judgement, 2, 140), "premarket-points");
+          html += renderBulletList(takePremarketPoints(ctx.sentiment_judgement, 4), "premarket-points");
         }
       }
       if (ctx.benefit_themes) {
@@ -3738,20 +3738,20 @@ function renderPremarket(data) {
       html += `<div class="subsection"><h3>📋 盘前研判</h3>${renderBulletList(summarizePremarketStrategy(data.strategy), "premarket-points")}</div>`;
     }
     if (data.summary) {
-      html += `<div class="subsection"><h3>💡 操作思路</h3>${renderBulletList(takePremarketPoints(data.summary, 2, 150), "premarket-points")}</div>`;
+      html += `<div class="subsection"><h3>💡 操作思路</h3>${renderBulletList(takePremarketPoints(data.summary, 4), "premarket-points")}</div>`;
     }
 
     // 强主线/观察线/风险线 三栏
     if (data.strong_lines || data.watch_lines || data.risk_lines) {
       html += '<div class="subsection"><div class="line-grid">';
       if (data.strong_lines) {
-        html += '<div><h3>🔥 强主线</h3>' + renderBulletList(data.strong_lines.slice(0, 1).map(s => truncateText(s, 80)), "news-list strong") + '</div>';
+        html += '<div><h3>🔥 强主线</h3>' + renderBulletList(data.strong_lines.slice(0, 3), "news-list strong") + '</div>';
       }
       if (data.watch_lines) {
-        html += '<div><h3>👀 观察线</h3>' + renderBulletList(data.watch_lines.slice(0, 3).map(s => truncateText(s, 50)), "news-list") + '</div>';
+        html += '<div><h3>👀 观察线</h3>' + renderBulletList(data.watch_lines.slice(0, 5), "news-list") + '</div>';
       }
       if (data.risk_lines) {
-        html += '<div><h3>⚠️ 风险线</h3>' + renderBulletList(data.risk_lines.slice(0, 3).map(s => truncateText(s, 50)), "news-list risk") + '</div>';
+        html += '<div><h3>⚠️ 风险线</h3>' + renderBulletList(data.risk_lines.slice(0, 5), "news-list risk") + '</div>';
       }
       html += '</div></div>';
     }
@@ -3772,13 +3772,13 @@ function renderPremarket(data) {
   if (data.us_overnight) {
     html += '<div class="subsection"><h3>🇺🇸 隔夜外部环境</h3>';
     if (data.us_overnight.conclusion) {
-      html += renderBulletList(takePremarketPoints(data.us_overnight.conclusion, 2, 150), "premarket-points");
+      html += renderBulletList(takePremarketPoints(data.us_overnight.conclusion, 4), "premarket-points");
     }
     if (data.us_overnight.indices) {
       html += '<div class="index-row">' + renderIndexRow(data.us_overnight.indices) + '</div>';
     }
     if (data.us_overnight.reason) {
-      html += renderBulletList(takePremarketPoints(data.us_overnight.reason, 1, 150), "premarket-points compact");
+      html += renderBulletList(takePremarketPoints(data.us_overnight.reason, 3), "premarket-points compact");
     }
     if (data.us_overnight.tech_stocks) {
       html += '<div class="tag-row">重点科技股：' + data.us_overnight.tech_stocks.map(s => `<span class="tag">${escapeHtml(formatMarketTag(s))}</span>`).join(" ") + '</div>';
@@ -3793,7 +3793,7 @@ function renderPremarket(data) {
       html += '<div class="tag-row">弱势：' + data.us_overnight.weak_sectors.map(s => `<span class="tag">${escapeHtml(s)}</span>`).join(" ") + '</div>';
     }
     if (data.us_overnight.impact_to_a_share) {
-      html += `<h3>A股影响</h3>${renderBulletList(takePremarketPoints(data.us_overnight.impact_to_a_share, 2, 130), "premarket-points")}`;
+      html += `<h3>A股影响</h3>${renderBulletList(takePremarketPoints(data.us_overnight.impact_to_a_share, 4), "premarket-points")}`;
     }
     if (data.us_overnight.mapping_chain && !concisePremarket) {
       html += '<h3>科技映射链</h3>' + renderMappingChain(data.us_overnight.mapping_chain);
@@ -3812,7 +3812,7 @@ function renderPremarket(data) {
       html += '<div class="tag-row">代表股：' + data.hk_auction.stocks.slice(0, 6).map(s => `<span class="tag">${escapeHtml(formatMarketTag(s))}</span>`).join(" ") + '</div>';
     }
     if (data.hk_auction.sentiment) {
-      html += renderBulletList(takePremarketPoints(data.hk_auction.sentiment, 2, 140), "premarket-points");
+      html += renderBulletList(takePremarketPoints(data.hk_auction.sentiment, 4), "premarket-points");
     }
     if (data.hk_auction.mapping_chain && !concisePremarket) {
       html += '<h3>港股映射</h3>' + renderMappingChain(data.hk_auction.mapping_chain);
@@ -3821,7 +3821,7 @@ function renderPremarket(data) {
   }
   if (data.overnight_news && !concisePremarket) {
     html += '<div class="subsection"><h3>📰 隔夜要闻</h3>';
-    html += renderBulletList(data.overnight_news.slice(0, 4).map(n => truncateText(typeof n === "string" ? n : n.text || n.title || "", 120)), "news-list");
+    html += renderBulletList(data.overnight_news.slice(0, 6).map(n => typeof n === "string" ? n : n.text || n.title || ""), "news-list");
     html += '</div>';
   }
   if (data.strategy && Array.isArray(data.strategy)) {
@@ -4662,7 +4662,7 @@ function renderTopicCard(t, fallbackTimestamp) {
       <div class="card-body">${statusBadge} ${escapeHtml(t.status || "观察")}</div>
       ${conclusion ? `<div class="topic-conclusion">${escapeHtml(conclusion)}</div>` : ""}
       ${related.length ? `<div class="topic-related">${related.slice(0, 6).map(v => `<span>${escapeHtml(v)}</span>`).join("")}</div>` : ""}
-      ${t.action ? `<div class="card-body">${escapeHtml(truncateText(t.action, 92))}</div>` : ""}
+      ${t.action ? `<div class="card-body">${escapeHtml(t.action)}</div>` : ""}
       ${t.note ? `<details class="alert-detail"><summary>更新依据</summary><div>${escapeHtml(t.note)}</div></details>` : ""}
     </div>`;
 }
