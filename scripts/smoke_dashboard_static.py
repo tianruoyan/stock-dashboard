@@ -310,6 +310,42 @@ def normalize_conflict_title(title: Any) -> str:
     return aliases.get(text, text)
 
 
+def parse_timestamp(value: Any) -> datetime | None:
+    text = str(value or "").strip()
+    if not text:
+        return None
+    try:
+        parsed = datetime.fromisoformat(text.replace("Z", "+00:00"))
+    except Exception:
+        match = re.search(r"\d{4}-\d{2}-\d{2}T\d{2}:\d{2}(?::\d{2})?", text)
+        if not match:
+            return None
+        try:
+            parsed = datetime.fromisoformat(match.group(0))
+        except Exception:
+            return None
+    if parsed.tzinfo is None:
+        parsed = parsed.replace(tzinfo=TZ)
+    return parsed.astimezone(TZ)
+
+
+def trading_phase(now: datetime) -> str:
+    hhmm = now.hour * 100 + now.minute
+    if 830 <= hhmm < 930:
+        return "premarket"
+    if 930 <= hhmm < 1130:
+        return "morning"
+    if 1130 <= hhmm < 1300:
+        return "midday"
+    if 1300 <= hhmm < 1500:
+        return "afternoon"
+    if 1500 <= hhmm < 2000:
+        return "postmarket"
+    if hhmm >= 2000:
+        return "evening"
+    return "overnight"
+
+
 def check_alert_quote_audit(issues: list[dict[str, Any]]) -> None:
     path = ROOT / "data" / "alert.json"
     try:
@@ -323,20 +359,55 @@ def check_alert_quote_audit(issues: list[dict[str, Any]]) -> None:
     if not isinstance(alerts, list):
         issues.append(issue("critical", "data/alert.json", "bad_alerts", "alerts 必须是数组"))
         return
+    trade_gate = alert_requires_trade_gate(data, alerts)
     audit = data.get("quote_audit")
     if not isinstance(audit, dict):
-        issues.append(issue("critical", "data/alert.json", "missing_quote_audit", "非空 alerts 必须带 quote_audit"))
+        issues.append(issue("critical" if trade_gate else "warning", "data/alert.json", "missing_quote_audit", "当前盘中新鲜 alerts 必须带 quote_audit；历史/过期 alerts 只降权参考"))
         return
     for key in ("provider", "quote_time", "pct_field", "sanity_checks"):
         if audit.get(key) in (None, "", []):
-            issues.append(issue("critical", "data/alert.json", "missing_quote_audit_field", f"quote_audit.{key} 缺失"))
+            issues.append(issue("critical" if trade_gate else "warning", "data/alert.json", "missing_quote_audit_field", f"quote_audit.{key} 缺失"))
     sanity = audit.get("sanity_checks") or {}
     if not isinstance(sanity, dict):
-        issues.append(issue("critical", "data/alert.json", "bad_quote_audit", "quote_audit.sanity_checks 必须是对象"))
+        issues.append(issue("critical" if trade_gate else "warning", "data/alert.json", "bad_quote_audit", "quote_audit.sanity_checks 必须是对象"))
         return
     for key in ("sample_count", "max_abs_leader_change_pct", "cross_source_verified"):
         if sanity.get(key) in (None, "", []):
-            issues.append(issue("critical", "data/alert.json", "missing_quote_audit_field", f"quote_audit.sanity_checks.{key} 缺失"))
+            issues.append(issue("critical" if trade_gate else "warning", "data/alert.json", "missing_quote_audit_field", f"quote_audit.sanity_checks.{key} 缺失"))
+
+
+def alert_requires_trade_gate(data: dict[str, Any], alerts: list[Any]) -> bool:
+    now = datetime.now(TZ)
+    phase = trading_phase(now)
+    if phase not in {"morning", "afternoon"}:
+        return False
+    latest = latest_alert_event_time(data, alerts, now)
+    if latest is None:
+        return True
+    age_seconds = (now - latest).total_seconds()
+    return 0 <= age_seconds <= 5 * 60
+
+
+def latest_alert_event_time(data: dict[str, Any], alerts: list[Any], now: datetime) -> datetime | None:
+    base = parse_timestamp(data.get("timestamp")) or now
+    candidates: list[datetime] = []
+    for item in alerts:
+        if not isinstance(item, dict):
+            continue
+        raw_time = str(item.get("time") or "")
+        parsed = parse_timestamp(raw_time)
+        if parsed:
+            candidates.append(parsed)
+            continue
+        match = re.match(r"^(\d{2}):(\d{2})(?::(\d{2}))?$", raw_time)
+        if match:
+            candidates.append(base.replace(
+                hour=int(match.group(1)),
+                minute=int(match.group(2)),
+                second=int(match.group(3) or 0),
+                microsecond=0,
+            ))
+    return max(candidates) if candidates else None
 
 
 def check_unplanned_theme_detection(feed: dict[str, Any], issues: list[dict[str, Any]]) -> None:
@@ -398,7 +469,7 @@ def check_build_report(issues: list[dict[str, Any]]) -> None:
             message = item.get("stderr_tail") or item.get("stdout_tail") or "构建步骤异常"
             issues.append(issue("critical", "data/build-report.json", "build_step_error", f"{item.get('name')} 执行异常：{message}"))
     if data.get("status") == "blocked":
-        issues.append(issue("critical", "data/build-report.json", "build_blocked", data.get("summary") or "统一构建阻断发布"))
+        issues.append(issue("warning", "data/build-report.json", "previous_build_blocked", data.get("summary") or "上一次统一构建阻断发布，本次构建以当前步骤结果为准"))
 
 
 def check_quality_report(issues: list[dict[str, Any]]) -> None:

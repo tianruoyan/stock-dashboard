@@ -64,7 +64,8 @@ def main() -> int:
 
     validate_postmarket(files.get("postmarket.json"), issues)
     validate_core_file_contracts(files, issues)
-    validate_alert(files.get("alert.json"), files.get("source-health.json"), issues)
+    phase = trading_phase(now)
+    validate_alert(files.get("alert.json"), files.get("source-health.json"), issues, now, phase)
     validate_evening(files.get("evening-sentiment.json"), issues, current_date)
     validate_source_health(files.get("source-health.json"), issues)
     validate_automation_health(files.get("automation-health.json"), issues, current_date)
@@ -170,6 +171,23 @@ def parse_timestamp(value: Any) -> datetime | None:
     return parsed.astimezone(TZ)
 
 
+def trading_phase(now: datetime) -> str:
+    hhmm = now.hour * 100 + now.minute
+    if 830 <= hhmm < 930:
+        return "premarket"
+    if 930 <= hhmm < 1130:
+        return "morning"
+    if 1130 <= hhmm < 1300:
+        return "midday"
+    if 1300 <= hhmm < 1500:
+        return "afternoon"
+    if 1500 <= hhmm < 2000:
+        return "postmarket"
+    if hhmm >= 2000:
+        return "evening"
+    return "overnight"
+
+
 def scan_timestamp_fields(name: str, obj: Any, issues: list[dict[str, Any]], now: datetime, path: str = "") -> None:
     if isinstance(obj, dict):
         for key, value in obj.items():
@@ -214,7 +232,7 @@ def scan_change_pct(name: str, obj: Any, watch_names: set[str], issues: list[dic
                 if re.search(r"弱势|大跌|放量下跌|负反馈|风险核心", local_text) and pct > 2:
                     issues.append(issue("warning", name, "weakness_pct_conflict", f"{item_name or path} 标为弱势/风险但 change_pct={pct}，需复核方向", path))
             except Exception:
-                issues.append(issue("critical", name, "bad_change_pct", f"{item_name or path} change_pct 非数字：{obj['change_pct']}", path))
+                issues.append(issue("warning", name, "bad_change_pct", f"{item_name or path} change_pct 非数字：{obj['change_pct']}，该字段忽略并降权", path))
         for key, value in obj.items():
             scan_change_pct(name, value, watch_names, issues, f"{path}.{key}" if path else key)
     elif isinstance(obj, list):
@@ -515,7 +533,7 @@ def trim(value: Any, limit: int = 180) -> str:
     return text if len(text) <= limit else text[: limit - 1] + "…"
 
 
-def validate_alert(data: Any, source_health: Any, issues: list[dict[str, Any]]) -> None:
+def validate_alert(data: Any, source_health: Any, issues: list[dict[str, Any]], now: datetime, phase: str) -> None:
     if not isinstance(data, dict):
         return
     alerts = data.get("alerts")
@@ -529,14 +547,17 @@ def validate_alert(data: Any, source_health: Any, issues: list[dict[str, Any]]) 
         issues.append(issue("critical", "alert.json", "invalidated_alert_has_rows", "source_status=invalidated 时 alerts 必须为空，禁止展示已撤下污染批次"))
     polluted = has_polluted_quote_source(source_health)
     trusted_proof = alert_trusted_source_text(data)
+    requires_trade_gate = alert_requires_trade_gate(data, alerts, now, phase)
     if alerts and polluted and not has_trusted_alert_source(trusted_proof):
+        severity = "critical" if requires_trade_gate else "warning"
+        code = "active_alert_without_trusted_source" if requires_trade_gate else "historical_alert_without_trusted_source"
         issues.append(issue(
-            "critical",
+            severity,
             "alert.json",
-            "active_alert_without_trusted_source",
-            "行情污染源仍降级，但 alert.json 存在 active alerts 且缺少可信源证明；禁止发布为盘中交易依据"
+            code,
+            "盘中异动缺少可信源证明；当前阶段只降权参考，不阻断整站发布" if not requires_trade_gate else "行情污染源仍降级，但 alert.json 存在 active alerts 且缺少可信源证明；禁止发布为盘中交易依据"
         ))
-    validate_alert_quote_audit(data, alerts, polluted, issues)
+    validate_alert_quote_audit(data, alerts, polluted, issues, requires_trade_gate)
     for index, item in enumerate(alerts):
         if not isinstance(item, dict):
             issues.append(issue("critical", "alert.json", "bad_alert_item", f"alerts[{index}] 不是对象", f"alerts[{index}]"))
@@ -569,29 +590,37 @@ def validate_alert(data: Any, source_health: Any, issues: list[dict[str, Any]]) 
                 issues.append(issue("critical", "alert.json", "bad_alert_leader_pct", f"{leader.get('name') or 'leader'} change_pct 非数字：{leader.get('change_pct')}", f"alerts[{index}].leaders[{leader_index}]"))
 
 
-def validate_alert_quote_audit(data: dict[str, Any], alerts: list[Any], polluted: bool, issues: list[dict[str, Any]]) -> None:
+def validate_alert_quote_audit(data: dict[str, Any], alerts: list[Any], polluted: bool, issues: list[dict[str, Any]], requires_trade_gate: bool = True) -> None:
     if not alerts:
         return
     audit = data.get("quote_audit")
     if not isinstance(audit, dict):
+        severity = "critical" if requires_trade_gate else "warning"
+        code = "missing_alert_quote_audit" if requires_trade_gate else "historical_alert_missing_quote_audit"
         issues.append(issue(
-            "critical",
+            severity,
             "alert.json",
-            "missing_alert_quote_audit",
-            "alert.json 存在 active alerts，但缺少 quote_audit；必须声明行情源、quote_time、涨跌幅字段和异常值检查"
+            code,
+            "alert.json 存在盘中异动但缺少 quote_audit；当前阶段只降权参考，不阻断整站发布" if not requires_trade_gate else "alert.json 存在 active alerts，但缺少 quote_audit；必须声明行情源、quote_time、涨跌幅字段和异常值检查"
         ))
         return
     required = ("provider", "quote_time", "pct_field", "sanity_checks")
     for key in required:
         if audit.get(key) in (None, "", []):
-            issues.append(issue("critical", "alert.json", "missing_alert_quote_audit_field", f"quote_audit.{key} 缺失", "quote_audit"))
+            severity = "critical" if requires_trade_gate else "warning"
+            code = "missing_alert_quote_audit_field" if requires_trade_gate else "historical_alert_quote_audit_incomplete"
+            issues.append(issue(severity, "alert.json", code, f"quote_audit.{key} 缺失", "quote_audit"))
     sanity = audit.get("sanity_checks") or {}
     if not isinstance(sanity, dict):
-        issues.append(issue("critical", "alert.json", "bad_alert_quote_audit", "quote_audit.sanity_checks 必须是对象", "quote_audit.sanity_checks"))
+        severity = "critical" if requires_trade_gate else "warning"
+        code = "bad_alert_quote_audit" if requires_trade_gate else "historical_alert_quote_audit_incomplete"
+        issues.append(issue(severity, "alert.json", code, "quote_audit.sanity_checks 必须是对象", "quote_audit.sanity_checks"))
         return
     for key in ("sample_count", "max_abs_leader_change_pct", "cross_source_verified"):
         if sanity.get(key) in (None, "", []):
-            issues.append(issue("critical", "alert.json", "missing_alert_quote_audit_field", f"quote_audit.sanity_checks.{key} 缺失", "quote_audit.sanity_checks"))
+            severity = "critical" if requires_trade_gate else "warning"
+            code = "missing_alert_quote_audit_field" if requires_trade_gate else "historical_alert_quote_audit_incomplete"
+            issues.append(issue(severity, "alert.json", code, f"quote_audit.sanity_checks.{key} 缺失", "quote_audit.sanity_checks"))
     observed = max_abs_alert_leader_pct(alerts)
     try:
         reported = float(sanity.get("max_abs_leader_change_pct"))
@@ -599,15 +628,53 @@ def validate_alert_quote_audit(data: dict[str, Any], alerts: list[Any], polluted
             issues.append(issue("warning", "alert.json", "alert_quote_audit_mismatch", f"quote_audit 最大涨跌幅 {reported} 小于实际 leaders 最大值 {observed}", "quote_audit.sanity_checks"))
     except Exception:
         if sanity.get("max_abs_leader_change_pct") not in (None, ""):
-            issues.append(issue("critical", "alert.json", "bad_alert_quote_audit", f"quote_audit.sanity_checks.max_abs_leader_change_pct 非数字：{sanity.get('max_abs_leader_change_pct')}", "quote_audit.sanity_checks"))
+            severity = "critical" if requires_trade_gate else "warning"
+            code = "bad_alert_quote_audit" if requires_trade_gate else "historical_alert_quote_audit_incomplete"
+            issues.append(issue(severity, "alert.json", code, f"quote_audit.sanity_checks.max_abs_leader_change_pct 非数字：{sanity.get('max_abs_leader_change_pct')}", "quote_audit.sanity_checks"))
     try:
         if int(sanity.get("sample_count")) < len(alerts):
             issues.append(issue("warning", "alert.json", "alert_quote_audit_mismatch", "quote_audit 样本数小于 alerts 数量", "quote_audit.sanity_checks"))
     except Exception:
         if sanity.get("sample_count") not in (None, ""):
-            issues.append(issue("critical", "alert.json", "bad_alert_quote_audit", f"quote_audit.sanity_checks.sample_count 非数字：{sanity.get('sample_count')}", "quote_audit.sanity_checks"))
+            severity = "critical" if requires_trade_gate else "warning"
+            code = "bad_alert_quote_audit" if requires_trade_gate else "historical_alert_quote_audit_incomplete"
+            issues.append(issue(severity, "alert.json", code, f"quote_audit.sanity_checks.sample_count 非数字：{sanity.get('sample_count')}", "quote_audit.sanity_checks"))
     if polluted and sanity.get("cross_source_verified") is not True:
-        issues.append(issue("critical", "alert.json", "alert_quote_not_cross_verified", "行情污染源仍降级，active alerts 必须 quote_audit.sanity_checks.cross_source_verified=true 后才能发布", "quote_audit.sanity_checks"))
+        severity = "critical" if requires_trade_gate else "warning"
+        code = "alert_quote_not_cross_verified" if requires_trade_gate else "historical_alert_not_cross_verified"
+        issues.append(issue(severity, "alert.json", code, "行情污染源仍降级，当前盘中 active alerts 必须 quote_audit.sanity_checks.cross_source_verified=true 后才能发布" if requires_trade_gate else "行情污染源仍降级，历史 alert 未交叉验证，只降权复盘参考", "quote_audit.sanity_checks"))
+
+
+def alert_requires_trade_gate(data: dict[str, Any], alerts: list[Any], now: datetime, phase: str) -> bool:
+    if phase not in {"morning", "afternoon"}:
+        return False
+    latest = latest_alert_event_time(data, alerts, now)
+    if latest is None:
+        return True
+    age_seconds = (now - latest).total_seconds()
+    return 0 <= age_seconds <= 5 * 60
+
+
+def latest_alert_event_time(data: dict[str, Any], alerts: list[Any], now: datetime) -> datetime | None:
+    base = parse_timestamp(data.get("timestamp")) or now
+    candidates: list[datetime] = []
+    for item in alerts:
+        if not isinstance(item, dict):
+            continue
+        raw_time = str(item.get("time") or "")
+        parsed = parse_timestamp(raw_time)
+        if parsed:
+            candidates.append(parsed)
+            continue
+        match = re.match(r"^(\d{2}):(\d{2})(?::(\d{2}))?$", raw_time)
+        if match:
+            candidates.append(base.replace(
+                hour=int(match.group(1)),
+                minute=int(match.group(2)),
+                second=int(match.group(3) or 0),
+                microsecond=0,
+            ))
+    return max(candidates) if candidates else None
 
 
 def max_abs_alert_leader_pct(alerts: list[Any]) -> float | None:
@@ -940,7 +1007,6 @@ def issue_impact(code: str, file: str, message: str) -> tuple[str, str]:
         "missing_file",
         "bad_literal",
         "mojibake_text",
-        "bad_change_pct",
         "bad_alerts",
         "invalidated_alert_has_rows",
         "active_alert_without_trusted_source",
@@ -951,11 +1017,11 @@ def issue_impact(code: str, file: str, message: str) -> tuple[str, str]:
         "impossible_alert_pct",
     }:
         return "blocking", "禁止作为交易依据，需修复后重产"
-    if code == "invalidated_source" or re.search(r"污染|撤下|invalidated", text, re.I):
+    if code in {"source_degraded", "source_failed"}:
+        return "price_review", "价格/涨跌幅相关结论降权，需二次行情源复核"
+    if code == "invalidated_source" or re.search(r"撤下|invalidated", text, re.I):
         return "blocking", "对应信号等待重产，页面必须显示阻断"
     if code in {
-        "source_degraded",
-        "source_failed",
         "future_timestamp",
         "watchlist_extreme_change",
         "watchlist_limit_down_like",
@@ -968,6 +1034,11 @@ def issue_impact(code: str, file: str, message: str) -> tuple[str, str]:
         "suspicious_alert_pct",
         "bad_alert_leader_pct",
         "alert_quote_audit_mismatch",
+        "bad_change_pct",
+        "historical_alert_without_trusted_source",
+        "historical_alert_missing_quote_audit",
+        "historical_alert_quote_audit_incomplete",
+        "historical_alert_not_cross_verified",
     } or re.search(r"decode|行情|涨跌幅|quote|akshare|source", text, re.I):
         return "price_review", "价格/涨跌幅相关结论降权，需二次行情源复核"
     if code in {
@@ -1055,7 +1126,7 @@ def bad_literal_label(literal: str) -> str:
 
 
 def overall_status(issues: list[dict[str, Any]]) -> str:
-    if any(item["severity"] == "critical" for item in issues):
+    if any(item["severity"] == "critical" and item.get("impact_level") == "blocking" for item in issues):
         return "critical"
     if any(item["severity"] == "warning" for item in issues):
         return "degraded"

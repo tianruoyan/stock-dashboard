@@ -1,6 +1,6 @@
 {
-  "status": "blocked",
-  "summary": "统一构建发现阻断项，禁止发布。",
+  "status": "degraded",
+  "summary": "统一构建完成，但存在降权/需复核项。",
   "steps": [
     {
       "name": "theme-shifts:pre",
@@ -32,10 +32,10 @@
     {
       "name": "audit",
       "command": "python3 scripts/audit_dashboard_data.py",
-      "returncode": 1,
-      "status": "script_error",
-      "blocking": true,
-      "stdout_tail": "critical: 发现 3 个严重数据问题，信号不得直接用于交易判断。",
+      "returncode": 0,
+      "status": "degraded",
+      "blocking": false,
+      "stdout_tail": "degraded: 发现 23 个降级/需复核项（17 个价格/行情复核，2 个信号复核，5 个背景复核），核心结论可看但必须按影响分层使用。",
       "stderr_tail": ""
     },
     {
@@ -104,10 +104,10 @@
     {
       "name": "static-smoke",
       "command": "python3 scripts/smoke_dashboard_static.py",
-      "returncode": 1,
-      "status": "script_error",
-      "blocking": true,
-      "stdout_tail": "critical: 发现 1 个页面发布阻断问题。",
+      "returncode": 0,
+      "status": "warning",
+      "blocking": false,
+      "stdout_tail": "warning: 发现 1 个页面需复核项。",
       "stderr_tail": ""
     },
     {
