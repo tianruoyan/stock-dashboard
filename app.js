@@ -401,9 +401,12 @@ function dashboardThemeHint(items, fallback) {
 function collectDashboardThemeRows(intraday, postmarket) {
   const feed = currentDecisionFeed();
   const shifts = cached("data/theme-shifts.json");
+  const phase = inferSessionPhaseByTime();
+  const intradayIsCurrent = signalDate(intraday?.timestamp) === currentSignalDate();
+  const usePostmarketThemes = !intradayIsCurrent || ["postmarket", "evening", "overnight"].includes(phase);
   const raw = [
     ...getIntradayThemes(intraday).map(item => ({ item, source: "盘中", base: 90 })),
-    ...(Array.isArray(postmarket.hotspots) ? postmarket.hotspots : []).map(item => ({ item, source: "盘后", base: 75 })),
+    ...(usePostmarketThemes && Array.isArray(postmarket.hotspots) ? postmarket.hotspots : []).map(item => ({ item, source: "盘后", base: 75 })),
     ...(Array.isArray(feed?.opportunities) ? feed.opportunities : []).map(item => ({ item, source: "机会", base: 70 })),
     ...(Array.isArray(feed?.risks) ? feed.risks : []).map(item => ({ item, source: "风险", base: 64 })),
     ...(Array.isArray(shifts?.shifts) ? shifts.shifts : []).map(item => ({ item, source: "变化", base: 58 }))
@@ -418,13 +421,17 @@ function collectDashboardThemeRows(intraday, postmarket) {
     const positive = /观察线偏强|核心抱团|轮动增强|偏强|强|强化|主线|涨停|封板|扩散|承接/.test(text);
     const negative = /风险线|风险\/|弱化|退潮|压制|负反馈|反抽失败|证伪|明显弱/.test(text);
     const explicitStatusRisk = /风险线|弱化|退潮/.test(status);
+    const riskConstrained = /不升级强主线|不能.*升级|风险.*未解除|只能.*观察线|不是强主线|未解除/.test(text);
     const bucket = source === "风险" || explicitStatusRisk || (negative && !positive) ? "risk" : "watch";
     let score = base;
-    if (/强|强化|主线|抱团|涨停|封板|扩散|轮动增强|偏强/.test(text)) score += 20;
-    if (/观察|资金博弈|分歧/.test(text)) score += 8;
+    if (/强主线候选|强主线|核心抱团/.test(text)) score += 35;
+    else if (/观察线偏强|轮动增强|偏强/.test(text)) score += 16;
+    else if (/强|强化|主线|涨停|封板|扩散/.test(text)) score += 20;
+    if (/观察|资金博弈|分歧/.test(text)) score += 4;
+    if (riskConstrained) score -= 35;
     if (bucket === "risk") score += 6;
     const grade = String(item?.signal_grade || "").toUpperCase();
-    const priorityEligible = ["盘中", "盘后"].includes(source) || (source === "机会" && !["D"].includes(grade) && !/^主线变化/.test(String(item?.title || "")));
+    const priorityEligible = !riskConstrained && bucket !== "risk" && (["盘中", "盘后"].includes(source) || (source === "机会" && !["D"].includes(grade) && !/^主线变化/.test(String(item?.title || ""))));
     const baseRow = {
       display: name,
       bucket,
@@ -2776,9 +2783,9 @@ function alertPurpose(alert) {
   const text = [alert?.signal_type, alert?.type, alert?.reason, alert?.sector, alert?.trigger_rule, alert?.rule, alert?.rule_id]
     .filter(Boolean)
     .join(" ");
-  if (alert?.is_old_economy || /小登|老登|风格|style_rotation|small_deng|old_deng|resonance|共振/.test(text)) return "style";
   if (/风险|急跌|跌停|下跌|回落|走弱|杀|破位|补跌/.test(text)) return "risk";
-  if (/交易|急拉|拉升|突破|强化|涨停|大涨|放量|成交/.test(text)) return "trade";
+  if (/交易|急拉|拉升|突破|强化|上涨攻势|领涨|涨停|大涨|放量|成交/.test(text)) return "trade";
+  if (alert?.is_old_economy || /老登|风格|style_rotation|old_deng|resonance|共振/.test(text)) return "style";
   return "watch";
 }
 
