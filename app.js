@@ -3945,6 +3945,7 @@ function renderMiddayDecision(data) {
   const review = data.morning_review || {};
   const trends = Array.isArray(review.main_trends) ? review.main_trends : [];
   const strong = trends.find(t => /强/.test(t.status || "")) || trends[0];
+  const groups = middayTrendGroups(trends);
   const watch = Array.isArray(data.afternoon_watch) ? data.afternoon_watch : [];
   const risks = data.risk || data.risks || [];
   const sentiment = data.morning_snapshot?.sentiment || {};
@@ -3952,9 +3953,11 @@ function renderMiddayDecision(data) {
   const limitDown = Number(sentiment.limit_down_count || sentiment.limit_down || 0);
   const broken = Number(sentiment.break_board_count || sentiment.broken_limit_count || 0);
   const mood = broken >= 30 || limitDown >= 15 ? "分歧警戒" : limitUp >= 60 && limitDown <= 10 ? "午后可攻可守" : "等待确认";
-  const moodCls = mood.includes("警戒") ? "warn" : mood.includes("攻") ? "good" : "neutral";
   const riskText = Array.isArray(risks) && risks.length ? (typeof risks[0] === "string" ? risks[0] : risks[0].text) : "暂未给出风险阈值";
-  const relatedTags = positiveRelatedTopicTags(trends.map(t => [trendName(t), t.status, t.reason].join(" ")).join(" "), watch.join(" "), riskText);
+  const strongTitle = groups.strong[0] || "等待强方向确认";
+  const strongDetail = groups.strong.slice(1, 4).join(" / ") || `涨停${limitUp || "-"} / 跌停${limitDown || "-"} / 炸板${broken || "-"}`;
+  const riskTitle = groups.risk[0] || (risks.length ? "先盯分歧" : "暂无明确");
+  const riskDetail = groups.riskDetails[0] || groups.risk.slice(1, 3).join(" / ") || truncateText(riskText, 62);
   return `<div class="decision-strip midday-decision">
     <div class="decision-card primary">
       <span class="decision-label">核心结论</span>
@@ -3962,21 +3965,49 @@ function renderMiddayDecision(data) {
       <span>${escapeHtml(strong?.status || review.one_sentence || "暂无")}</span>
     </div>
     <div class="decision-card action">
-      <span class="decision-label">关联题材</span>
-      <b>${escapeHtml(relatedTags[0] || mood)}</b>
-      <span>${escapeHtml(relatedTags.slice(1).join(" / ") || `涨停${limitUp || "-"} / 跌停${limitDown || "-"} / 炸板${broken || "-"}`)}</span>
+      <span class="decision-label">上午强方向</span>
+      <b>${escapeHtml(strongTitle)}</b>
+      <span>${escapeHtml(strongDetail)}</span>
     </div>
     <div class="decision-card action">
-      <span class="decision-label">下一步验证</span>
+      <span class="decision-label">下午验证</span>
       <b>${escapeHtml(watch.length ? `看${Math.min(watch.length, 3)}个信号` : "等待信号")}</b>
       <span>${escapeHtml(truncateText(watch.slice(0, 2).join("；"), 62) || "无")}</span>
     </div>
     <div class="decision-card risk">
-      <span class="decision-label">回避/降级</span>
-      <b>${escapeHtml(risks.length ? "先盯分歧" : "暂无")}</b>
-      <span>${escapeHtml(truncateText(riskText, 62))}</span>
+      <span class="decision-label">风险方向</span>
+      <b>${escapeHtml(riskTitle)}</b>
+      <span>${escapeHtml(riskDetail)}</span>
     </div>
   </div>`;
+}
+
+function middayTrendGroups(trends) {
+  const strong = [];
+  const risk = [];
+  const riskDetails = [];
+  const verify = [];
+  for (const trend of trends || []) {
+    const name = themeDisplayName(trend);
+    const text = [trendName(trend), trend?.status, trend?.reason, ...(trend?.evidence || [])].join(" ");
+    if (/未触发/.test(text)) {
+      continue;
+    }
+    if (/风险线|主要风险|负反馈|跌停|不参与|回避|走弱/.test(text)) {
+      risk.push(name);
+      if (Array.isArray(trend?.evidence) && trend.evidence[0]) riskDetails.push(truncateText(trend.evidence[0], 62));
+    } else if (/强主线|确认|观察线偏强|资金回流|修复|扩散/.test(text) && !/不是强主线/.test(text)) {
+      strong.push(name);
+    } else if (/验证|观察|博弈|反抽/.test(text)) {
+      verify.push(name);
+    }
+  }
+  return {
+    strong: uniqueClean(strong),
+    risk: uniqueClean(risk),
+    riskDetails: uniqueClean(riskDetails),
+    verify: uniqueClean(verify)
+  };
 }
 
 /* =========================
