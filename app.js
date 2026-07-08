@@ -2657,7 +2657,9 @@ function renderAlerts(data) {
       ? `<details class="alert-detail"><summary>触发说明</summary><div>${escapeHtml(reason)}</div></details>`
       : "";
     const factors = (a.leaders || []).slice(0, 3)
-      .flatMap(l => Array.isArray(l.factors) ? l.factors.slice(0, 2).map(f => `${l.name}：${f}`) : [])
+      .flatMap(l => Array.isArray(l.factors)
+        ? l.factors.filter(f => !/日内涨幅|日内涨跌幅|当日涨幅/.test(String(f))).slice(0, 2).map(f => `${l.name}：${f}`)
+        : [])
       .slice(0, 4);
     const factorHtml = factors.length ? `<div class="alert-factors">${factors.map(f => `<span>${escapeHtml(f)}</span>`).join("")}</div>` : "";
     const resolutionHtml = resolution
@@ -3010,9 +3012,65 @@ function alertPurpose(alert) {
     .filter(Boolean)
     .join(" ");
   if (/风险|急跌|跌停|下跌|回落|走弱|杀|破位|补跌/.test(text)) return "risk";
-  if (/交易|急拉|拉升|突破|强化|上涨攻势|领涨|涨停|大涨|放量|成交/.test(text)) return "trade";
+  if (isWeakObservationPull(alert)) return "watch";
+  if (/交易|急拉|拉升|突破|强化|上涨攻势|领涨|涨停|封板|大涨|放量/.test(text)) {
+    return hasActionableTradeEvidence(alert) ? "trade" : "watch";
+  }
   if (alert?.is_old_economy || /老登|风格|style_rotation|old_deng|resonance|共振/.test(text)) return "style";
   return "watch";
+}
+
+function hasActionableTradeEvidence(alert) {
+  const text = [
+    alert?.type,
+    alert?.reason,
+    alert?.signal_type,
+    ...(alert?.leaders || []).flatMap(l => Array.isArray(l.factors) ? l.factors : [])
+  ].filter(Boolean).join(" ");
+  const maxLeaderMove = Math.max(
+    0,
+    ...(alert?.leaders || []).map(l => Math.abs(Number(l.change_pct))).filter(Number.isFinite)
+  );
+  const avgMove = Math.abs(numberFromText(text, /(?:底池|板块整体|板块|平均)?3分钟(?:平均)?涨跌幅\s*([+-]?\d+(?:\.\d+)?)%/));
+  const volume = Math.max(
+    numberFromText(text, /3分钟成交(?:放大)?\s*([0-9]+(?:\.\d+)?)x/),
+    numberFromText(text, /成交放大\s*([0-9]+(?:\.\d+)?)x/)
+  );
+  const directionRatio = Math.max(
+    numberFromText(text, /上涨占比\s*([0-9]+(?:\.\d+)?)%/),
+    numberFromText(text, /下跌占比\s*([0-9]+(?:\.\d+)?)%/)
+  );
+  const hasLimitEvidence = /涨停|封板/.test(text);
+  const hasFastText = /急拉|拉升|快速上攻|快速拉涨|放量拉升|突破/.test(text);
+  const boardConfirmed = avgMove >= 1.5 && directionRatio >= 70 && volume >= 5;
+  const volumeConfirmed = volume >= 10 && directionRatio >= 80;
+  const singleFastConfirmed = maxLeaderMove >= 1.5 && (hasFastText || volume >= 5);
+  return hasLimitEvidence || boardConfirmed || volumeConfirmed || singleFastConfirmed;
+}
+
+function isWeakObservationPull(alert) {
+  const text = [alert?.type, alert?.reason, alert?.signal_type].filter(Boolean).join(" ");
+  if (!/观察拉动|\[watch\]|观察性拉动/.test(text)) return false;
+  const maxLeaderMove = Math.max(
+    0,
+    ...(alert?.leaders || []).map(l => Math.abs(Number(l.change_pct))).filter(Number.isFinite)
+  );
+  const avgMove = Math.abs(numberFromText(text, /(?:底池|板块整体|平均)?3分钟(?:平均)?涨跌幅\s*([+-]?\d+(?:\.\d+)?)%/));
+  const volume = Math.max(
+    numberFromText(text, /3分钟成交(?:放大)?\s*([0-9]+(?:\.\d+)?)x/),
+    numberFromText(text, /成交(?:放大)?\s*([0-9]+(?:\.\d+)?)x/)
+  );
+  const directionRatio = numberFromText(text, /上涨占比\s*([0-9]+(?:\.\d+)?)%/);
+  const hasHardTrigger = /涨停|封板|急拉|突破|放量拉升|成交放大(?:1[0-9]|[2-9][0-9])/.test(text);
+  if (hasHardTrigger) return false;
+  return maxLeaderMove < 1 && avgMove < 1.5 && volume < 5 && directionRatio < 70;
+}
+
+function numberFromText(text, regex) {
+  const match = String(text || "").match(regex);
+  if (!match) return 0;
+  const value = Number(match[1]);
+  return Number.isFinite(value) ? value : 0;
 }
 
 function alertStyleLabel(alert) {

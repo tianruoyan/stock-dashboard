@@ -79,6 +79,12 @@
       "current_alert_rule": "前台摘要只使用5分钟内的盘中异动；超过5分钟的异动只能标为历史触发，不得作为当前交易或风险触发。",
       "resolved_risk_rule": "若后续 intraday 显示相关题材已修复、转强或风险收敛，旧风险 alert 必须在前台标注为历史触发/已修复，不得继续显示为当前风险。",
       "sync_after_write": "任一盘中自动化写入 alert.json、intraday.json 或 midday.json 后，必须重建 decision-feed、data-trust、section-health、runtime-smoke-report，并 touch .push-now。"
+    },
+    "frontend_classification_guard": {
+      "_说明": "前台必须二次校验异动强度，防止后端把观察拉动误写成交易信号。",
+      "weak_observation_pull": "若 type/reason 包含观察拉动或[watch]，且前排最大3分钟涨跌幅<1%、板块3分钟涨跌幅<1.5%、成交放大<5x、上涨占比<70%，只能显示为观察，不得进入交易异动/机会异动。",
+      "daily_gain_not_enough": "日内涨幅高只能说明位置或前排强度，不能单独构成盘中异动；必须同时有3分钟价格/成交/扩散证据。",
+      "trade_alert_gate": "交易异动必须满足至少一类短周期证据：涨停/封板；或板块3分钟涨跌幅>=1.5%且方向占比>=70%且成交放大>=5x；或成交放大>=10x且方向占比>=80%；或单股3分钟涨跌幅>=1.5%且伴随急拉/突破/放量。"
     }
   },
   "small_deng": {
