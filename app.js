@@ -2519,6 +2519,7 @@ const ALERT_KEY = "stock_alerts_history";
 const MAX_ALERTS = 10;
 const ALERT_TTL = 6 * 60 * 60 * 1000; // 6小时过期
 const FUTURE_ALERT_TOLERANCE = 60 * 1000; // 行情源/浏览器轻微时间差容忍1分钟
+const ALERT_CURRENT_MS = 5 * 60 * 1000; // 盘中异动超过5分钟只当历史触发
 
 function loadAlertHistory() {
   try {
@@ -2619,20 +2620,23 @@ function renderAlerts(data) {
   el.innerHTML = displayAlerts.map((a, i) => {
     const age = now - (a._eventTime || a._received || now);
     const ageMin = Math.floor(age / 60000);
-    const isOld = ageMin > 30;
-    const isStale = ageMin > 60;
+    const isFresh = isAlertFresh(a, now);
+    const isOld = !isFresh || ageMin > 30;
+    const isStale = !isFresh || ageMin > 60;
 
     const purpose = alertPurpose(a);
     const resolution = alertResolutionState(a);
     const isResolved = resolution?.cls === "resolved";
-    const cls = isResolved ? "card alert-resolved-card" :
+    const cls = !isFresh ? "card alert-stale-card" :
+                isResolved ? "card alert-resolved-card" :
                 purpose === "style" ? "card sentiment" :
                 purpose === "trade" ? "card hot" :
                 purpose === "risk" ? "card risk-card" : "card";
     const fadeCls = isStale ? " faded" : isOld ? " dim" : "";
     const ageLabel = ageMin < 1 ? "刚刚" : ageMin < 60 ? `${ageMin}分钟前` : `${Math.floor(ageMin / 60)}小时前`;
 
-    const badge = a._syntheticOpportunity ? '<span class="badge signal">全景机会</span>' :
+    const badge = !isFresh ? '<span class="badge watch">历史触发</span>' :
+                  a._syntheticOpportunity ? '<span class="badge signal">全景机会</span>' :
                   isResolved ? '<span class="badge watch">历史风险</span>' :
                   purpose === "style" ? `<span class="badge old">${escapeHtml(alertStyleLabel(a))}</span>` :
                   purpose === "trade" ? '<span class="badge signal">交易异动</span>' :
@@ -2659,6 +2663,9 @@ function renderAlerts(data) {
     const resolutionHtml = resolution
       ? `<div class="alert-resolution ${resolution.cls}"><b>${escapeHtml(resolution.label)}</b><span>${escapeHtml(resolution.detail)}</span></div>`
       : "";
+    const staleHtml = !isFresh
+      ? `<div class="alert-resolution stale"><b>已超过5分钟</b><span>只作为历史触发参考，不作为当前交易/风险触发。</span></div>`
+      : "";
 
     const sectorName = displayAlertSector(a);
     return `<div class="${cls}${fadeCls}">
@@ -2666,12 +2673,33 @@ function renderAlerts(data) {
       <div class="card-body"><b>${escapeHtml(a.type || "异动")}</b>${shortReason ? ` · ${escapeHtml(shortReason)}` : ""}</div>
       ${a._syntheticOpportunity ? '<div class="alert-style-note">来自最新盘中全景，用于补充机会观察；是否交易仍看承接和扩散</div>' : ""}
       ${purpose === "style" ? '<div class="alert-style-note">用于判断盘面风格，不直接作为买卖触发</div>' : ""}
+      ${staleHtml}
       ${resolutionHtml}
       ${leaders ? `<div class="card-leaders">${leaders}</div>` : ""}
       ${factorHtml}
       ${reasonDetail}
     </div>`;
   }).join("");
+}
+
+function isAlertFresh(alert, now = Date.now()) {
+  const eventTime = alert?._eventTime || alert?._received || 0;
+  return !!eventTime && now - eventTime <= ALERT_CURRENT_MS && eventTime <= now + FUTURE_ALERT_TOLERANCE;
+}
+
+function freshestAlertAgeMs(alerts, now = Date.now()) {
+  const latest = alerts
+    .map(a => a?._eventTime || a?._received || 0)
+    .filter(Boolean)
+    .sort((a, b) => b - a)[0];
+  return latest ? now - latest : null;
+}
+
+function formatAgeText(ms) {
+  const minutes = Math.max(0, Math.floor(ms / 60000));
+  if (minutes < 1) return "刚刚";
+  if (minutes < 60) return `${minutes}分钟前`;
+  return `${Math.floor(minutes / 60)}小时前`;
 }
 
 function intradayOpportunityAlerts(alertTimestamp) {
@@ -2864,16 +2892,46 @@ function renderAlertsSummary(alerts, timestamp, invalidatedState = null, sourceD
     el.innerHTML = '<div class="alert-summary-empty">暂无新异动，等待触发</div>';
     return;
   }
-  const tradeAlerts = alerts.filter(a => alertPurpose(a) === "trade");
-  const riskAlerts = alerts.filter(a => alertPurpose(a) === "risk");
-  const styleAlerts = alerts.filter(a => alertPurpose(a) === "style");
+  const now = Date.now();
+  const currentAlerts = alerts.filter(a => isAlertFresh(a, now));
+  if (!currentAlerts.length) {
+    const age = freshestAlertAgeMs(alerts, now);
+    const ageText = age == null ? "暂无" : formatAgeText(age);
+    el.innerHTML = `
+      <div class="decision-strip alerts-decision">
+        <div class="decision-card neutral">
+          <span class="decision-label">机会异动</span>
+          <b>等待新触发</b>
+          <span>5分钟内没有新的机会异动</span>
+        </div>
+        <div class="decision-card risk">
+          <span class="decision-label">风险提示</span>
+          <b>等待新触发</b>
+          <span>5分钟内没有新的风险异动</span>
+        </div>
+        <div class="decision-card neutral">
+          <span class="decision-label">最新触发</span>
+          <b>${escapeHtml(ageText)}</b>
+          <span>下方卡片只作历史回看</span>
+        </div>
+        <div class="decision-card action">
+          <span class="decision-label">现在看什么</span>
+          <b>全景 / 宽度 / 观察池</b>
+          <span>等下一次异动确认再行动</span>
+        </div>
+      </div>`;
+    return;
+  }
+  const tradeAlerts = currentAlerts.filter(a => alertPurpose(a) === "trade");
+  const riskAlerts = currentAlerts.filter(a => alertPurpose(a) === "risk");
+  const styleAlerts = currentAlerts.filter(a => alertPurpose(a) === "style");
   const actionable = [...tradeAlerts, ...riskAlerts].sort((a, b) => (b._eventTime || 0) - (a._eventTime || 0));
   const latestOpportunity = tradeAlerts.slice().sort((a, b) => (b._eventTime || 0) - (a._eventTime || 0))[0];
   const latestRisk = riskAlerts.slice().sort((a, b) => (b._eventTime || 0) - (a._eventTime || 0))[0];
   const latest = latestOpportunity || latestRisk || actionable[0] || alerts[0];
   const riskCount = riskAlerts.length;
   const tradeCount = tradeAlerts.length;
-  const volumeCount = alerts.filter(a => /放量|成交/.test([a.signal_type, a.type, a.reason].join(" "))).length;
+  const volumeCount = currentAlerts.filter(a => /放量|成交/.test([a.signal_type, a.type, a.reason].join(" "))).length;
   const opportunityBasis = tradeAlerts.length ? tradeAlerts : actionable;
   const leaders = Array.from(new Set(opportunityBasis.flatMap(a => (a.leaders || []).map(l => l.name)).filter(Boolean))).slice(0, 4);
   const tone = riskCount >= tradeCount ? "risk" : "hot";
