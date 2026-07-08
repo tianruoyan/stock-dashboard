@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-07-08T14:39:16+08:00",
+  "timestamp": "2026-07-08T15:06:00+08:00",
   "sources": {
     "tencent_http": {
       "status": "ok",
@@ -398,6 +398,38 @@
       "errors": [
         "ProxyError HTTPSConnectionPool(host='17.push2.eastmoney.com', port=443): Max retries exceeded with url: /api/qt/clist/get?pn=1&pz=100&po=1&np=1&ut=bd1d9ddb04089700cf9c27f6f7426281&fltt=2&invt=2&fid=f3&fs=m%3A90+t%3A2+f%3A%2150&fiel"
       ]
+    },
+    "eastmoney_limit_pool_postmarket_1500": {
+      "status": "ok",
+      "last_check": "2026-07-08T15:06:00+08:00",
+      "usage": "A股收盘涨停/跌停/炸板结构池",
+      "detail": "返回涨停48、跌停36、炸板13。",
+      "sample_count": 97,
+      "errors": []
+    },
+    "sina_all_a_width_postmarket_1500": {
+      "status": "ok",
+      "last_check": "2026-07-08T15:06:00+08:00",
+      "usage": "全A 5%/8%/跌5%宽度统计",
+      "detail": "手工分页取得raw 5527、clean 5309；默认剔除ST/退和N/C前缀新股，但无法完全核验上市前5日无涨跌幅限制新股。",
+      "sample_count": 5527,
+      "errors": []
+    },
+    "tencent_minute_postmarket_1455_1500": {
+      "status": "ok",
+      "last_check": "2026-07-08T15:06:00+08:00",
+      "usage": "14:55-15:00尾盘分钟样本校验",
+      "detail": "成功获取紫光、浪潮、中芯、沪硅、中国巨石等关键样本分钟线。",
+      "sample_count": 10,
+      "errors": []
+    },
+    "tencent_a_quote_postmarket_1500": {
+      "status": "ok",
+      "last_check": "2026-07-08T15:06:00+08:00",
+      "usage": "收盘指数、ETF、观察池样本报价",
+      "detail": "成功获取主要指数、ETF和核心样本收盘快照。",
+      "sample_count": 73,
+      "errors": []
     }
   },
   "rules": [
@@ -407,15 +439,15 @@
     "任一数据源失败时保留上一版 JSON，并在source-health.json标注降级或异常。"
   ],
   "last_effective_run": {
-    "timestamp": "2026-07-08T14:34:00+08:00",
-    "type": "intraday_1430",
+    "timestamp": "2026-07-08T15:06:00+08:00",
+    "type": "postmarket_a_close",
     "files": [
-      "data/intraday.json",
+      "data/postmarket.json",
       "data/topics.json",
       "data/source-health.json"
     ]
   },
   "status": "degraded",
   "notes": "14:58巡检：monitor进程存活且日志更新；新增1条正式提醒已同步，补充行情源仍连续解析失败。",
-  "overall_status": "degraded"
+  "overall_status": "ok"
 }
