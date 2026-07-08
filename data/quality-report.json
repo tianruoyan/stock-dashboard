@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-07-08T13:31:28+08:00",
+  "timestamp": "2026-07-08T13:44:15+08:00",
   "current_signal_date": "2026-07-08",
   "status": "critical",
   "summary": "发现 3 个严重数据问题，信号不得直接用于交易判断。",
@@ -150,10 +150,10 @@
     },
     {
       "severity": "warning",
-      "file": "cross-file",
-      "path": "安集科技",
-      "code": "stock_pct_cross_file_conflict",
-      "message": "安集科技 跨文件涨跌幅差异过大：alert.json -1.28% vs intraday.json 6.82%",
+      "file": "source-health.json",
+      "path": "",
+      "code": "source_failed",
+      "message": "eastmoney_board_rank_intraday_1330: 东方财富行业/概念排行接口代理断开，本轮未采用板块排行；主线判断使用涨跌停池、腾讯报价和上一可用行业样本。",
       "impact_level": "price_review",
       "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
     },
@@ -162,7 +162,16 @@
       "file": "cross-file",
       "path": "沪硅产业",
       "code": "stock_pct_cross_file_conflict",
-      "message": "沪硅产业 跨文件涨跌幅差异过大：intraday.json -8.32% vs alert.json 1.96%",
+      "message": "沪硅产业 跨文件涨跌幅差异过大：intraday.json -9.07% vs alert.json 1.96%",
+      "impact_level": "price_review",
+      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
+    },
+    {
+      "severity": "warning",
+      "file": "cross-file",
+      "path": "富创精密",
+      "code": "stock_pct_cross_file_conflict",
+      "message": "富创精密 跨文件涨跌幅差异过大：alert.json -0.71% vs midday.json 7.49%",
       "impact_level": "price_review",
       "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
     }
@@ -207,7 +216,7 @@
       "label": "二次行情复核",
       "file": "cross-file",
       "code": "stock_pct_cross_file_conflict",
-      "problem": "安集科技 跨文件涨跌幅差异过大：alert.json -1.28% vs intraday.json 6.82%",
+      "problem": "沪硅产业 跨文件涨跌幅差异过大：intraday.json -9.07% vs alert.json 1.96%",
       "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核",
       "next_step": "用第二行情源复核涨跌幅、quote_time 和代表股方向；未确认前只做验证。",
       "unblock_condition": "price_review=0 或相关来源标记 trusted/cross verified。"
@@ -237,10 +246,10 @@
   ],
   "counts": {
     "critical": 3,
-    "warning": 14,
+    "warning": 15,
     "info": 1,
     "blocking": 4,
-    "price_review": 10,
+    "price_review": 11,
     "signal_review": 1,
     "background_review": 3
   },

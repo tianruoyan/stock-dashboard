@@ -2897,22 +2897,28 @@ function renderAlertsSummary(alerts, timestamp, invalidatedState = null, sourceD
   if (!currentAlerts.length) {
     const age = freshestAlertAgeMs(alerts, now);
     const ageText = age == null ? "暂无" : formatAgeText(age);
+    const latestOpportunity = alerts
+      .filter(a => alertPurpose(a) === "trade")
+      .sort((a, b) => (b._eventTime || 0) - (a._eventTime || 0))[0];
+    const latestRisk = alerts
+      .filter(a => alertPurpose(a) === "risk")
+      .sort((a, b) => (b._eventTime || 0) - (a._eventTime || 0))[0];
     el.innerHTML = `
       <div class="decision-strip alerts-decision">
         <div class="decision-card neutral">
-          <span class="decision-label">机会异动</span>
-          <b>等待新触发</b>
-          <span>5分钟内没有新的机会异动</span>
+          <span class="decision-label">当前状态</span>
+          <b>无5分钟内新触发</b>
+          <span>最近一次 ${escapeHtml(ageText)}，下方只作历史回看</span>
+        </div>
+        <div class="decision-card action">
+          <span class="decision-label">最近机会</span>
+          <b>${escapeHtml(latestOpportunity ? displayAlertSector(latestOpportunity) : "暂无")}</b>
+          <span>${escapeHtml(latestOpportunity ? `${displayAlertTime(latestOpportunity)} · 已过当前窗口` : "等待机会触发")}</span>
         </div>
         <div class="decision-card risk">
-          <span class="decision-label">风险提示</span>
-          <b>等待新触发</b>
-          <span>5分钟内没有新的风险异动</span>
-        </div>
-        <div class="decision-card neutral">
-          <span class="decision-label">最新触发</span>
-          <b>${escapeHtml(ageText)}</b>
-          <span>下方卡片只作历史回看</span>
+          <span class="decision-label">最近风险</span>
+          <b>${escapeHtml(latestRisk ? displayAlertSector(latestRisk) : "暂无")}</b>
+          <span>${escapeHtml(latestRisk ? `${displayAlertTime(latestRisk)} · 已过当前窗口` : "等待风险触发")}</span>
         </div>
         <div class="decision-card action">
           <span class="decision-label">现在看什么</span>
@@ -3193,11 +3199,18 @@ function renderCodexIntraday(data) {
   const strongText = strong.map(t => themeDisplayName(t)).join(" / ") || "暂无明确强度证据";
   const riskText = risks.map(t => themeDisplayName(t)).join(" / ") || "暂无明确风险证据";
   const adviceItems = intradayObservationItems(afternoonAdvice, action);
+  const mainLine = themes[0] ? trendName(themes[0]) : "等待主线确认";
+  const mainLineStatus = themes[0]?.status || data.summary || "看强方向是否继续扩散";
 
   let html = `
     <div class="subsection intraday-snapshot">
       <h3>盘中事实速读</h3>
       <div class="snapshot-grid">
+        <div class="snapshot-item snapshot-wide">
+          <span>当前主线</span>
+          <b>${escapeHtml(mainLine)}</b>
+          <em>${escapeHtml(truncateText(mainLineStatus, 76))}</em>
+        </div>
         <div class="snapshot-item">
           <span>指数</span>
           <b>${escapeHtml(indexSignal.title)}</b>
