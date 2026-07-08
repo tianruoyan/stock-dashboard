@@ -352,7 +352,14 @@ def upgrade_condition_for(item: dict[str, Any]) -> str:
         parts.append("至少2-3只核心股强于板块ETF或指数。")
     if item.get("quality_flags"):
         parts.append("数据质量恢复或二次行情源确认前，不升级为可用机会。")
-    return trim("；".join(unique_keep_order(parts)), 220)
+    return trim(" ".join(ensure_sentence(part) for part in unique_keep_order(parts) if part), 220)
+
+
+def ensure_sentence(text: str) -> str:
+    value = str(text or "").strip().rstrip("；;")
+    if not value:
+        return ""
+    return value if value.endswith(("。", "！", "？")) else f"{value}。"
 
 
 def risk_theme_candidates(files: dict[str, Any]) -> list[tuple[dict[str, Any], str]]:

@@ -207,6 +207,11 @@ function userFacingText(value) {
     .replace(/文件可信度/g, "数据状态")
     .replace(/自动化心跳/g, "更新时间")
     .replace(/区块健康/g, "区块状态");
+  text = text
+    .replace(/。+[；;]+/g, "。")
+    .replace(/[；;]{2,}/g, "；")
+    .replace(/[；;]\s*$/g, "")
+    .trim();
   if (/Can not decode value starting with|JSON decode failed|proxy disconnect|decode failed|failed with/i.test(text)) {
     if (/hk|港股|Eastmoney|stock_hk/i.test(text)) {
       return "港股行情源连接/解码异常，港股与日韩映射需人工复核。";
@@ -1664,16 +1669,41 @@ function buildRiskFirstVerificationPicks() {
     ...arrayTextItems(brief.upgrade_watch),
     ...arrayTextItems(brief.verification_focus)
   ];
-  const seen = new Set();
-  const rows = candidates
-    .map(text => verificationRowFromText(text))
-    .filter(row => {
-      if (!row.name || !row.reason || seen.has(row.name)) return false;
-      seen.add(row.name);
-      return true;
-    })
-    .slice(0, 4);
+  const rows = groupedVerificationRows(candidates.map(text => verificationRowFromText(text))).slice(0, 4);
   return { rows, source: "验证清单" };
+}
+
+function groupedVerificationRows(rows) {
+  const byReason = new Map();
+  const seenName = new Set();
+  rows
+    .filter(row => row.name && row.reason)
+    .forEach(row => {
+      const reasonKey = verificationReasonKey(row.reason);
+      if (!reasonKey) return;
+      if (!byReason.has(reasonKey)) {
+        byReason.set(reasonKey, { names: [], reason: row.reason });
+      }
+      const group = byReason.get(reasonKey);
+      if (!seenName.has(row.name)) {
+        group.names.push(row.name);
+        seenName.add(row.name);
+      }
+      if (row.reason.length < group.reason.length) group.reason = row.reason;
+    });
+  return Array.from(byReason.values())
+    .map(group => ({
+      name: group.names.slice(0, 3).join(" / "),
+      reason: group.reason
+    }))
+    .filter(row => row.name && row.reason);
+}
+
+function verificationReasonKey(reason) {
+  return String(reason || "")
+    .replace(/数据质量恢复或二次行情源确认前，不升级为可用机会。?/g, "")
+    .replace(/[。；;\s]/g, "")
+    .trim();
 }
 
 function verificationRowFromText(text) {
@@ -1691,6 +1721,8 @@ function verificationRowFromText(text) {
 function cleanVerificationReason(text) {
   return String(text || "")
     .replace(/数据质量恢复或二次行情源确认前，不升级为可用机会。?/g, "")
+    .replace(/。+[；;]+/g, "。")
+    .replace(/[；;]{2,}/g, "；")
     .replace(/医药修复链/g, "创新药/CRO")
     .replace(/老登风格切换/g, "金融/消费权重")
     .replace(/[；;\s]+$/g, "")
@@ -1769,8 +1801,10 @@ function dashboardPickDetail(picks, fallback) {
 }
 
 function dashboardRiskFirstPickDetail(picks) {
-  const detail = dashboardPickDetail(picks, "");
-  return detail ? `不追高，只验证：${detail}` : "不追高，只看承接和扩散";
+  const rows = (picks?.rows || []).slice(1);
+  if (!rows.length) return "不追高，只看承接和扩散";
+  const names = rows.map(row => row.name).filter(Boolean).join(" / ");
+  return names ? `另看：${names}；同样只看承接、扩散和风险收敛，不追高` : "不追高，只看承接和扩散";
 }
 
 function isPriorityTheme(item) {
