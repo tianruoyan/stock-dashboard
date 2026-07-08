@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-07-08T14:09:46+08:00",
+  "timestamp": "2026-07-08T14:13:16+08:00",
   "sources": {
     "tencent_http": {
       "status": "ok",
@@ -123,13 +123,14 @@
       "errors": []
     },
     "akshare_a_spot_watch_decode": {
-      "status": "failed",
-      "last_check": "2026-07-08T14:09:46+08:00",
-      "usage": "monitor.log盘中观察池/专题行情补充链路",
-      "detail": "14:02-14:09 monitor.log继续出现 Can not decode value starting with character \"<\"；14:02:13-14:08:04新增正式提醒已同步alert.json。",
+      "status": "degraded",
+      "usage": "盘中观察池/题材强度刷新补充行情源",
+      "checked_at": "2026-07-08T14:13:16+08:00",
       "errors": [
-        "Can not decode value starting with character \"<\""
-      ]
+        "monitor.log 14:11:06、14:11:34、14:11:51、14:12:26、14:13:11、14:13:28 连续出现 Can not decode value starting with character \"<\"；已保留上一版可用行情并等待下一轮自动重试。"
+      ],
+      "last_error": "Can not decode value starting with character \"<\"",
+      "action": "保留上一版 alert.json 的既有数据，仅追加日志中已由正式提醒生成的候选信号；未编造行情。"
     },
     "eastmoney_limit_pool_intraday_0930": {
       "status": "ok",
