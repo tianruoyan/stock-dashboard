@@ -1,9 +1,18 @@
 {
-  "timestamp": "2026-07-08T13:44:15+08:00",
+  "timestamp": "2026-07-08T14:43:23+08:00",
   "current_signal_date": "2026-07-08",
   "status": "critical",
   "summary": "发现 3 个严重数据问题，信号不得直接用于交易判断。",
   "issues": [
+    {
+      "severity": "warning",
+      "file": "intraday.json",
+      "path": "market_snapshot.robotics_key[0]",
+      "code": "watchlist_limit_down_like",
+      "message": "埃斯顿 接近跌停 -10.0，需确认是否真实",
+      "impact_level": "price_review",
+      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
+    },
     {
       "severity": "critical",
       "file": "midday.json",
@@ -32,6 +41,15 @@
       "decision_action": "机会信号必须降权并转入验证"
     },
     {
+      "severity": "warning",
+      "file": "intraday.json",
+      "path": "themes",
+      "code": "schema_contract_missing",
+      "message": "themes 缺失",
+      "impact_level": "signal_review",
+      "decision_action": "机会信号必须降权并转入验证"
+    },
+    {
       "severity": "critical",
       "file": "alert.json",
       "path": "",
@@ -48,6 +66,33 @@
       "message": "alert.json 存在 active alerts，但缺少 quote_audit；必须声明行情源、quote_time、涨跌幅字段和异常值检查",
       "impact_level": "blocking",
       "decision_action": "禁止作为交易依据，需修复后重产"
+    },
+    {
+      "severity": "warning",
+      "file": "alert.json",
+      "path": "alerts[81].leaders[0]",
+      "code": "missing_alert_leader_pct",
+      "message": "alerts[81].leaders[0].change_pct 缺失",
+      "impact_level": "background_review",
+      "decision_action": "仅作背景复核，不单独阻断交易判断"
+    },
+    {
+      "severity": "warning",
+      "file": "alert.json",
+      "path": "alerts[81].leaders[1]",
+      "code": "missing_alert_leader_pct",
+      "message": "alerts[81].leaders[1].change_pct 缺失",
+      "impact_level": "background_review",
+      "decision_action": "仅作背景复核，不单独阻断交易判断"
+    },
+    {
+      "severity": "warning",
+      "file": "alert.json",
+      "path": "alerts[81].leaders[2]",
+      "code": "missing_alert_leader_pct",
+      "message": "alerts[81].leaders[2].change_pct 缺失",
+      "impact_level": "background_review",
+      "decision_action": "仅作背景复核，不单独阻断交易判断"
     },
     {
       "severity": "info",
@@ -116,8 +161,8 @@
       "severity": "warning",
       "file": "source-health.json",
       "path": "",
-      "code": "source_failed",
-      "message": "A股补充行情源解码异常，盘中异动和个股涨跌幅需以已审计源复核。",
+      "code": "source_degraded",
+      "message": "akshare_a_spot_watch_decode: 盘中观察池/题材强度刷新补充行情源",
       "impact_level": "price_review",
       "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
     },
@@ -159,10 +204,46 @@
     },
     {
       "severity": "warning",
+      "file": "source-health.json",
+      "path": "",
+      "code": "source_failed",
+      "message": "eastmoney_board_rank_intraday_1400: 东方财富行业/概念排行接口代理断开，本轮未采用板块排行；主线判断改用涨跌停结构池、腾讯样本和指数联动。",
+      "impact_level": "price_review",
+      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
+    },
+    {
+      "severity": "warning",
+      "file": "source-health.json",
+      "path": "",
+      "code": "source_failed",
+      "message": "eastmoney_board_rank_intraday_1430: 东方财富行业/概念排行接口仍不可用，本轮不采用板块排行；以涨跌停结构池、腾讯报价、指数/ETF/港股映射交叉判断。",
+      "impact_level": "price_review",
+      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
+    },
+    {
+      "severity": "warning",
+      "file": "cross-file",
+      "path": "埃斯顿",
+      "code": "stock_pct_cross_file_conflict",
+      "message": "埃斯顿 跨文件涨跌幅差异过大：intraday.json -10.0% vs alert.json 0.0%",
+      "impact_level": "price_review",
+      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
+    },
+    {
+      "severity": "warning",
+      "file": "cross-file",
+      "path": "华海清科",
+      "code": "stock_pct_cross_file_conflict",
+      "message": "华海清科 跨文件涨跌幅差异过大：alert.json -2.11% vs intraday.json 7.61%",
+      "impact_level": "price_review",
+      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
+    },
+    {
+      "severity": "warning",
       "file": "cross-file",
       "path": "沪硅产业",
       "code": "stock_pct_cross_file_conflict",
-      "message": "沪硅产业 跨文件涨跌幅差异过大：intraday.json -9.07% vs alert.json 1.96%",
+      "message": "沪硅产业 跨文件涨跌幅差异过大：intraday.json -8.52% vs alert.json 1.96%",
       "impact_level": "price_review",
       "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
     },
@@ -171,7 +252,25 @@
       "file": "cross-file",
       "path": "富创精密",
       "code": "stock_pct_cross_file_conflict",
-      "message": "富创精密 跨文件涨跌幅差异过大：alert.json -0.71% vs midday.json 7.49%",
+      "message": "富创精密 跨文件涨跌幅差异过大：alert.json -0.82% vs midday.json 7.49%",
+      "impact_level": "price_review",
+      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
+    },
+    {
+      "severity": "warning",
+      "file": "cross-file",
+      "path": "国际复材",
+      "code": "stock_pct_cross_file_conflict",
+      "message": "国际复材 跨文件涨跌幅差异过大：intraday.json -7.1% vs alert.json 1.5%",
+      "impact_level": "price_review",
+      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
+    },
+    {
+      "severity": "warning",
+      "file": "cross-file",
+      "path": "中国巨石",
+      "code": "stock_pct_cross_file_conflict",
+      "message": "中国巨石 跨文件涨跌幅差异过大：intraday.json -7.02% vs alert.json 1.86%",
       "impact_level": "price_review",
       "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
     }
@@ -216,7 +315,18 @@
       "label": "二次行情复核",
       "file": "cross-file",
       "code": "stock_pct_cross_file_conflict",
-      "problem": "沪硅产业 跨文件涨跌幅差异过大：intraday.json -9.07% vs alert.json 1.96%",
+      "problem": "埃斯顿 跨文件涨跌幅差异过大：intraday.json -10.0% vs alert.json 0.0%",
+      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核",
+      "next_step": "用第二行情源复核涨跌幅、quote_time 和代表股方向；未确认前只做验证。",
+      "unblock_condition": "price_review=0 或相关来源标记 trusted/cross verified。"
+    },
+    {
+      "priority": 2,
+      "impact_level": "price_review",
+      "label": "二次行情复核",
+      "file": "intraday.json",
+      "code": "watchlist_limit_down_like",
+      "problem": "埃斯顿 接近跌停 -10.0，需确认是否真实",
       "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核",
       "next_step": "用第二行情源复核涨跌幅、quote_time 和代表股方向；未确认前只做验证。",
       "unblock_condition": "price_review=0 或相关来源标记 trusted/cross verified。"
@@ -231,27 +341,16 @@
       "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核",
       "next_step": "用第二行情源复核涨跌幅、quote_time 和代表股方向；未确认前只做验证。",
       "unblock_condition": "price_review=0 或相关来源标记 trusted/cross verified。"
-    },
-    {
-      "priority": 3,
-      "impact_level": "signal_review",
-      "label": "信号结构复核",
-      "file": "intraday.json",
-      "code": "schema_contract_missing",
-      "problem": "index 缺失",
-      "decision_action": "机会信号必须降权并转入验证",
-      "next_step": "修正字段结构、证据、触发原因和升级条件；未通过前降权展示。",
-      "unblock_condition": "signal_review=0，decision-feed/核心 JSON 契约通过。"
     }
   ],
   "counts": {
     "critical": 3,
-    "warning": 15,
+    "warning": 26,
     "info": 1,
     "blocking": 4,
-    "price_review": 11,
-    "signal_review": 1,
-    "background_review": 3
+    "price_review": 18,
+    "signal_review": 2,
+    "background_review": 6
   },
   "rules": [
     "异常文本、JSON解析失败、必需文件缺失为 critical。",
