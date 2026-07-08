@@ -2,6 +2,7 @@
 
 | Display Version | Date | Edition | Tag / Commit | Summary | Rollback Note |
 |---|---:|---:|---|---|---|
+| 2026-07-08 第139版｜今日结论最新同步 | 2026-07-08 | 第139版 | tag: `v2026.07.08-m139-conclusion-latest-sync` | 重建 `decision-feed` 和配套状态文件，使今日结论四块同步到上午最新盘中数据；同时把“医药修复链/老登风格切换”等混合前台词统一映射为“创新药/CRO”“金融/消费权重”，避免验证重点维度混乱。 | 回滚到第138版可用 `git checkout v2026.07.08-m138-latest-intraday-pct`，或回滚到本版本 tag。 |
 | 2026-07-08 第138版｜最新日内跌幅优先 | 2026-07-08 | 第138版 | tag: `v2026.07.08-m138-latest-intraday-pct` | 修正观察池个股涨跌幅取数：同一股票在当日 JSON 里多次出现时取最新一条；alert 里同时存在 3 分钟涨跌幅和日内涨跌幅时，优先用日内涨跌幅。绿的谐波这类快速扩大的跌幅不再被旧的 3 分钟 `change_pct` 稀释。 | 回滚到第137版可用 `git checkout v2026.07.08-m137-verification-focus`，或回滚到本版本 tag。 |
 | 2026-07-08 第137版｜验证重点口径 | 2026-07-08 | 第137版 | tag: `v2026.07.08-m137-verification-focus` | 今日结论在“风险优先，只做验证”状态下，不再把个人观察池强势股塞进“强势验证”；卡片改名为“验证重点 · 只验证”，数据来源改为 `decision-feed.signal_queue.verification_queue / decision_brief.upgrade_watch / verification_focus`，只展示需要验证的方向和条件。 | 回滚到第136版可用 `git checkout v2026.07.08-m136-watchlist-premarket-sync`，或回滚到本版本 tag。 |
 | 2026-07-08 第136版｜观察池早盘同步 | 2026-07-08 | 第136版 | tag: `v2026.07.08-m136-watchlist-premarket-sync` | “我的观察池”接入今天早盘 `premarket.watchlist_auction` 竞价报价和信号，早盘阶段即可按浪潮信息、中科曙光、有研硅、沪硅产业等当日涨跌更新强势股/弱势股分类；区块健康同步把早盘文件纳入观察池依赖。 | 回滚到第135版可用 `git checkout v2026.07.08-m135-premarket-status-sync`，或回滚到本版本 tag。 |

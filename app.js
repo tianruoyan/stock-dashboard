@@ -1684,6 +1684,8 @@ function verificationRowFromText(text) {
 function cleanVerificationReason(text) {
   return String(text || "")
     .replace(/数据质量恢复或二次行情源确认前，不升级为可用机会。?/g, "")
+    .replace(/医药修复链/g, "创新药/CRO")
+    .replace(/老登风格切换/g, "金融/消费权重")
     .replace(/[；;\s]+$/g, "")
     .trim() || "只验证，不直接追高";
 }
@@ -3150,10 +3152,13 @@ function trendName(item) {
 }
 
 function normalizeThemeName(value) {
-  return String(value || "")
+  const cleaned = String(value || "")
     .replace(/^(主线变化|新线观察|替代观察|验证|机会|风险)\s*[：:]\s*/g, "")
     .replace(/\s+有升温迹象.*$/g, "")
-    .trim() || "未命名主线";
+    .trim();
+  if (/医药修复链|化学制药|创新药|CRO/.test(cleaned)) return "创新药/CRO";
+  if (/老登风格切换|券商|证券|保险|白酒|畜牧|权重/.test(cleaned)) return "金融/消费权重";
+  return cleaned || "未命名主线";
 }
 
 function themeDisplayName(item) {
