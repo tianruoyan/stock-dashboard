@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-07-08T14:31:46+08:00",
+  "timestamp": "2026-07-08T14:34:00+08:00",
   "sources": {
     "tencent_http": {
       "status": "ok",
@@ -365,6 +365,39 @@
       "errors": [
         "ProxyError HTTPSConnectionPool(host='17.push2.eastmoney.com', port=443): Max retries exceeded with url: /api/qt/clist/get?pn=1&pz=100&po=1&np=1&ut=bd1d9ddb04089700cf9c27f6f7426281&fltt=2&invt=2&fid=f3&fs=m%3A90+t%3A2+f%3A%2150&fiel"
       ]
+    },
+    "eastmoney_limit_pool_intraday_1430": {
+      "status": "ok",
+      "last_check": "2026-07-08T14:34:00+08:00",
+      "usage": "14:30半点涨停/跌停/炸板结构池",
+      "detail": "返回涨停48、跌停35、炸板10；用于全市场结构判断，不做高频轮询。",
+      "sample_count": 93,
+      "errors": []
+    },
+    "tencent_a_quote_intraday_1430": {
+      "status": "ok",
+      "last_check": "2026-07-08T14:34:00+08:00",
+      "usage": "14:30半点指数、ETF、观察池样本报价",
+      "detail": "成功获取A股指数、ETF、半导体/算力/CPO/电子布/风格雷达样本报价。",
+      "sample_count": 96,
+      "errors": []
+    },
+    "tencent_hk_http_intraday_1430": {
+      "status": "ok",
+      "last_check": "2026-07-08T14:34:00+08:00",
+      "usage": "14:30港股指数与科技/半导体/医药映射快照",
+      "detail": "成功获取恒指、恒科及港股科技/半导体/医药样本快照，quote_time约14:18。",
+      "sample_count": 13,
+      "errors": []
+    },
+    "eastmoney_board_rank_intraday_1430": {
+      "status": "failed",
+      "last_check": "2026-07-08T14:34:00+08:00",
+      "usage": "行业/概念板块排行补充",
+      "detail": "东方财富行业/概念排行接口仍不可用，本轮不采用板块排行；以涨跌停结构池、腾讯报价、指数/ETF/港股映射交叉判断。",
+      "errors": [
+        "ProxyError HTTPSConnectionPool(host='17.push2.eastmoney.com', port=443): Max retries exceeded with url: /api/qt/clist/get?pn=1&pz=100&po=1&np=1&ut=bd1d9ddb04089700cf9c27f6f7426281&fltt=2&invt=2&fid=f3&fs=m%3A90+t%3A2+f%3A%2150&fiel"
+      ]
     }
   },
   "rules": [
@@ -374,8 +407,8 @@
     "任一数据源失败时保留上一版 JSON，并在source-health.json标注降级或异常。"
   ],
   "last_effective_run": {
-    "timestamp": "2026-07-08T14:04:00+08:00",
-    "type": "intraday_1400",
+    "timestamp": "2026-07-08T14:34:00+08:00",
+    "type": "intraday_1430",
     "files": [
       "data/intraday.json",
       "data/topics.json",
