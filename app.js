@@ -3554,7 +3554,7 @@ function renderPremarketDecision(data) {
     <div class="decision-card ${tone}">
       <span class="decision-label">核心结论</span>
       <b>${escapeHtml(style)}</b>
-      <span>${escapeHtml(truncateText(data.summary || verify, 62))}</span>
+      <span>${escapeHtml(data.summary || verify || "等待早盘结论")}</span>
     </div>
     <div class="decision-card action">
       <span class="decision-label">关联题材</span>

@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-07-08T09:27:36+08:00",
+  "timestamp": "2026-07-08T09:34:13+08:00",
   "sources": {
     "tencent_http": {
       "status": "ok",
@@ -121,6 +121,15 @@
       "detail": "成功获取指数、ETF和半导体/算力/电子布/老登风格观察样本报价；用于观察池强弱映射。",
       "sample_count": 60,
       "errors": []
+    },
+    "akshare_a_spot_watch_decode": {
+      "status": "failed",
+      "last_check": "2026-07-08T09:34:13+08:00",
+      "usage": "monitor.log盘中观察池/专题行情补充链路",
+      "detail": "09:19-09:32 monitor.log连续出现 Can not decode value starting with character \"<\"，本轮未据此生成alert.json，等待下一轮自动重试或腾讯/通达信高频源恢复有效候选。",
+      "errors": [
+        "Can not decode value starting with character \"<\""
+      ]
     }
   },
   "rules": [
@@ -136,6 +145,6 @@
     "degraded_sources": []
   },
   "status": "degraded",
-  "notes": "9:25集合竞价：东财结构池和腾讯A股/港股报价可用；全市场竞价成交额未取得统一可靠口径，未编造。",
+  "notes": "09:32巡检：monitor进程存活且日志更新，但akshare/同花顺/新浪补充报价链路连续解析失败；保留上一版alert.json，未编造盘中异动。",
   "overall_status": "degraded"
 }
