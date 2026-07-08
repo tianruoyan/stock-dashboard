@@ -3209,7 +3209,7 @@ function renderCodexIntraday(data) {
         <div class="snapshot-item snapshot-wide">
           <span>当前主线</span>
           <b>${escapeHtml(mainLine)}</b>
-          <em>${escapeHtml(truncateText(mainLineStatus, 76))}</em>
+          <em>${escapeHtml(mainLineStatus)}</em>
         </div>
         <div class="snapshot-item">
           <span>指数</span>
@@ -3863,18 +3863,18 @@ function renderPremarketDecision(data) {
     </div>
     <div class="decision-card action">
       <span class="decision-label">关联题材</span>
-      <b>${escapeHtml(relatedTags[0] || truncateText(primary, 24))}</b>
+      <b>${escapeHtml(relatedTags[0] || primary)}</b>
       <span>${escapeHtml(relatedTags.slice(1).join(" / ") || watchLines.slice(0, 3).join(" / ") || "等集合竞价扩散")}</span>
     </div>
     <div class="decision-card risk">
       <span class="decision-label">回避/降级</span>
-      <b>${escapeHtml(truncateText(risk, 24))}</b>
-      <span>${escapeHtml(truncateText(riskPoints.slice(1, 3).join("；") || risk, 62))}</span>
+      <b>${escapeHtml(risk)}</b>
+      <span>${escapeHtml(riskPoints.slice(1, 3).join("；") || risk)}</span>
     </div>
     <div class="decision-card action">
       <span class="decision-label">下一步验证</span>
       <b>${escapeHtml(ctx.limit_up_count == null ? "等9:25数据" : "看竞价强弱")}</b>
-      <span>${escapeHtml(truncateText(newsText || verify || "看涨跌停、低开收敛和承接扩散", 62))}</span>
+      <span>${escapeHtml(newsText || verify || "看涨跌停、低开收敛和承接扩散")}</span>
     </div>
   </div>`;
 }
@@ -3970,7 +3970,7 @@ function renderMiddayDecision(data) {
   const strongTitle = groups.strong[0] || "等待强方向确认";
   const strongDetail = groups.strong.slice(1, 4).join(" / ") || `涨停${limitUp || "-"} / 跌停${limitDown || "-"} / 炸板${broken || "-"}`;
   const riskTitle = groups.risk[0] || (risks.length ? "先盯分歧" : "暂无明确");
-  const riskDetail = groups.riskDetails[0] || groups.risk.slice(1, 3).join(" / ") || truncateText(riskText, 62);
+  const riskDetail = groups.riskDetails[0] || groups.risk.slice(1, 3).join(" / ") || riskText;
   return `<div class="decision-strip midday-decision">
     <div class="decision-card primary">
       <span class="decision-label">核心结论</span>
@@ -3985,7 +3985,7 @@ function renderMiddayDecision(data) {
     <div class="decision-card action">
       <span class="decision-label">下午验证</span>
       <b>${escapeHtml(watch.length ? `看${Math.min(watch.length, 3)}个信号` : "等待信号")}</b>
-      <span>${escapeHtml(truncateText(watch.slice(0, 2).join("；"), 62) || "无")}</span>
+      <span>${escapeHtml(watch.slice(0, 2).join("；") || "无")}</span>
     </div>
     <div class="decision-card risk">
       <span class="decision-label">风险方向</span>
@@ -4008,7 +4008,7 @@ function middayTrendGroups(trends) {
     }
     if (/风险线|主要风险|负反馈|跌停|不参与|回避|走弱/.test(text)) {
       risk.push(name);
-      if (Array.isArray(trend?.evidence) && trend.evidence[0]) riskDetails.push(truncateText(trend.evidence[0], 62));
+      if (Array.isArray(trend?.evidence) && trend.evidence[0]) riskDetails.push(trend.evidence[0]);
     } else if (/强主线|确认|观察线偏强|资金回流|修复|扩散/.test(text) && !/不是强主线/.test(text)) {
       strong.push(name);
     } else if (/验证|观察|博弈|反抽/.test(text)) {
@@ -4225,7 +4225,7 @@ function renderPostmarketDecision(data) {
   return `<div class="decision-strip postmarket-decision">
     <div class="decision-card primary">
       <span class="decision-label">收盘结论</span>
-      <b>${escapeHtml(truncateText(reviewText || "等待收盘复盘", 34))}</b>
+      <b>${escapeHtml(reviewText || "等待收盘复盘")}</b>
       <span>${escapeHtml(patch.impact || "等待尾盘校验")}</span>
     </div>
     <div class="decision-card ${tone}">
@@ -4253,13 +4253,13 @@ function postmarketStrongDetail(strong, fallback) {
     strong.status,
     evidence || strong.continuity
   ].filter(Boolean);
-  return truncateText(parts.join("；"), 92);
+  return parts.join("；");
 }
 
 function postmarketRiskDetail(riskLine) {
   if (!riskLine) return "看炸板/跌停是否继续扩大";
   const evidence = Array.isArray(riskLine.evidence) ? riskLine.evidence[0] : "";
-  return truncateText(riskLine.risk || evidence || riskLine.status || "风险线待确认", 92);
+  return riskLine.risk || evidence || riskLine.status || "风险线待确认";
 }
 
 function postmarketWatchItems(watch, limitUp, limitDown, broken) {
@@ -4449,18 +4449,18 @@ function renderEveningDecision(data, news, p0Alerts, counts) {
     </div>
     <div class="decision-card primary">
       <span class="decision-label">关联题材</span>
-      <b>${escapeHtml(relatedTags[0] || truncateText(topP0?.title || "暂无P0", 24))}</b>
-      <span>${escapeHtml(relatedTags.slice(1).join(" / ") || truncateText(topP0?.why_p0 || "等待晚间新增舆情", 62))}</span>
+      <b>${escapeHtml(relatedTags[0] || topP0?.title || "暂无P0")}</b>
+      <span>${escapeHtml(relatedTags.slice(1).join(" / ") || topP0?.why_p0 || "等待晚间新增舆情")}</span>
     </div>
     <div class="decision-card risk">
       <span class="decision-label">回避/降级</span>
-      <b>${escapeHtml(truncateText(riskP0?.title || "暂无明确风险", 24))}</b>
-      <span>${escapeHtml(truncateText(riskP0?.why_p0 || "看核心观察池是否批量高低开", 62))}</span>
+      <b>${escapeHtml(riskP0?.title || "暂无明确风险")}</b>
+      <span>${escapeHtml(riskP0?.why_p0 || "看核心观察池是否批量高低开")}</span>
     </div>
     <div class="decision-card action">
       <span class="decision-label">下一步验证</span>
       <b>${escapeHtml(watch.length ? `看${Math.min(watch.length, 3)}个信号` : "等待验证")}</b>
-      <span>${escapeHtml(truncateText(watch.slice(0, 2).join("；") || "看9:25竞价、核心池高低开和风格切换", 62))}</span>
+      <span>${escapeHtml(watch.slice(0, 2).join("；") || "看9:25竞价、核心池高低开和风格切换")}</span>
     </div>
   </div>`;
 }
@@ -4607,13 +4607,13 @@ function renderTopicsDecision(topics) {
     </div>
     <div class="decision-card action">
       <span class="decision-label">有意义的结论</span>
-      <b>${escapeHtml(truncateText(focus?.conclusion || focus?.action || "等待盘面确认", 30))}</b>
-      <span>${escapeHtml(truncateText(watchText, 62))}</span>
+      <b>${escapeHtml(focus?.conclusion || focus?.action || "等待盘面确认")}</b>
+      <span>${escapeHtml(watchText)}</span>
     </div>
     <div class="decision-card risk">
       <span class="decision-label">回避/降级</span>
       <b>${escapeHtml(risk?.name || "暂无明确风险")}</b>
-      <span>${escapeHtml(truncateText(risk?.action || risk?.note || "继续观察是否扩散", 62))}</span>
+      <span>${escapeHtml(risk?.action || risk?.note || "继续观察是否扩散")}</span>
     </div>
     <div class="decision-card neutral">
       <span class="decision-label">关联题材</span>

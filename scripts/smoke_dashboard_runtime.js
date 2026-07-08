@@ -374,6 +374,7 @@ async function main() {
   checkDashboardConflictRendering(document, issues);
   checkDashboardThemeCards(document, issues);
   checkTraderViewLanguage(document, issues);
+  checkDecisionCardNoEllipsis(document, issues);
   checkDashboardEffectiveTimeRendering(document, issues);
   checkInvalidatedAlertRendering(document, issues);
   checkPremarketJapanKoreaGuard(document, issues);
@@ -476,6 +477,16 @@ function checkDataRenderCoverage(document, issues) {
       issues.push(issue("critical", "key_data_not_rendered", check.message, check.target));
     }
   }
+}
+
+function checkDecisionCardNoEllipsis(document, issues) {
+  const strips = document.querySelectorAll(".decision-strip") || [];
+  strips.forEach((strip, index) => {
+    const rendered = normalizeRenderedText(strip.collectHtml() || "");
+    if (rendered.includes("...")) {
+      issues.push(issue("critical", "decision_card_ellipsis_rendered", `交易决策卡出现省略号截断：第${index + 1}组`, "decision-strip"));
+    }
+  });
 }
 
 function checkDecisionTriggerRendering(radarHtml, issues) {
