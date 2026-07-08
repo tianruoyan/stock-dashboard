@@ -1,27 +1,9 @@
 {
-  "timestamp": "2026-07-08T09:43:44+08:00",
+  "timestamp": "2026-07-08T09:54:33+08:00",
   "current_signal_date": "2026-07-08",
-  "status": "degraded",
-  "summary": "发现 15 个降级/需复核项（2 个交易阻断，7 个价格/行情复核，2 个信号复核，5 个背景复核），核心结论可看但必须按影响分层使用。",
+  "status": "critical",
+  "summary": "发现 2 个严重数据问题，信号不得直接用于交易判断。",
   "issues": [
-    {
-      "severity": "warning",
-      "file": "alert.json",
-      "path": "",
-      "code": "stale_timestamp",
-      "message": "时间戳不是当前交易日：2026-07-07T15:42:12+08:00",
-      "impact_level": "background_review",
-      "decision_action": "仅作背景复核，不单独阻断交易判断"
-    },
-    {
-      "severity": "warning",
-      "file": "alert.json",
-      "path": "",
-      "code": "invalidated_source",
-      "message": "2026-07-07 14:13:52 批次的盘中异动使用了异常行情源数据，北方华创/中微公司等日内涨跌幅失真，已撤下该批 alert，等待修复后的盘中提醒进程重新产出。",
-      "impact_level": "blocking",
-      "decision_action": "对应信号等待重产，页面必须显示阻断"
-    },
     {
       "severity": "warning",
       "file": "midday.json",
@@ -57,6 +39,24 @@
       "message": "themes 缺失",
       "impact_level": "signal_review",
       "decision_action": "机会信号必须降权并转入验证"
+    },
+    {
+      "severity": "critical",
+      "file": "alert.json",
+      "path": "",
+      "code": "active_alert_without_trusted_source",
+      "message": "行情污染源仍降级，但 alert.json 存在 active alerts 且缺少可信源证明；禁止发布为盘中交易依据",
+      "impact_level": "blocking",
+      "decision_action": "禁止作为交易依据，需修复后重产"
+    },
+    {
+      "severity": "critical",
+      "file": "alert.json",
+      "path": "",
+      "code": "missing_alert_quote_audit",
+      "message": "alert.json 存在 active alerts，但缺少 quote_audit；必须声明行情源、quote_time、涨跌幅字段和异常值检查",
+      "impact_level": "blocking",
+      "decision_action": "禁止作为交易依据，需修复后重产"
     },
     {
       "severity": "info",
@@ -155,9 +155,9 @@
       "impact_level": "blocking",
       "label": "先修复阻断",
       "file": "alert.json",
-      "code": "invalidated_source",
-      "problem": "2026-07-07 14:13:52 批次的盘中异动使用了异常行情源数据，北方华创/中微公司等日内涨跌幅失真，已撤下该批 alert，等待修复后的盘中提醒进程重新产出。",
-      "decision_action": "对应信号等待重产，页面必须显示阻断",
+      "code": "active_alert_without_trusted_source",
+      "problem": "行情污染源仍降级，但 alert.json 存在 active alerts 且缺少可信源证明；禁止发布为盘中交易依据",
+      "decision_action": "禁止作为交易依据，需修复后重产",
       "next_step": "暂停对应交易触发；等待污染批次撤下、可信行情源恢复并重产 JSON。",
       "unblock_condition": "quality-report blocking=0，相关文件不再 invalidated/missing。"
     },
@@ -198,9 +198,9 @@
       "priority": 4,
       "impact_level": "background_review",
       "label": "背景来源复核",
-      "file": "alert.json",
+      "file": "midday.json",
       "code": "stale_timestamp",
-      "problem": "时间戳不是当前交易日：2026-07-07T15:42:12+08:00",
+      "problem": "时间戳不是当前交易日：2026-07-07T11:32:30+08:00",
       "decision_action": "仅作背景复核，不单独阻断交易判断",
       "next_step": "补官方/交易所/公司公告来源；未补齐前不升级为核心依据。",
       "unblock_condition": "官方来源补齐或确认不影响交易触发。"
@@ -209,22 +209,22 @@
       "priority": 4,
       "impact_level": "background_review",
       "label": "背景来源复核",
-      "file": "midday.json",
+      "file": "postmarket.json",
       "code": "stale_timestamp",
-      "problem": "时间戳不是当前交易日：2026-07-07T11:32:30+08:00",
+      "problem": "时间戳不是当前交易日：2026-07-07T15:16:39+08:00",
       "decision_action": "仅作背景复核，不单独阻断交易判断",
       "next_step": "补官方/交易所/公司公告来源；未补齐前不升级为核心依据。",
       "unblock_condition": "官方来源补齐或确认不影响交易触发。"
     }
   ],
   "counts": {
-    "critical": 0,
-    "warning": 15,
+    "critical": 2,
+    "warning": 13,
     "info": 1,
-    "blocking": 2,
+    "blocking": 3,
     "price_review": 7,
     "signal_review": 2,
-    "background_review": 5
+    "background_review": 4
   },
   "rules": [
     "异常文本、JSON解析失败、必需文件缺失为 critical。",

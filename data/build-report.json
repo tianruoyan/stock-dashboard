@@ -1,6 +1,6 @@
 {
-  "status": "degraded",
-  "summary": "统一构建完成，但存在降权/需复核项。",
+  "status": "blocked",
+  "summary": "统一构建发现阻断项，禁止发布。",
   "steps": [
     {
       "name": "theme-shifts:pre",
@@ -32,10 +32,10 @@
     {
       "name": "audit",
       "command": "python3 scripts/audit_dashboard_data.py",
-      "returncode": 0,
-      "status": "degraded",
-      "blocking": false,
-      "stdout_tail": "degraded: 发现 15 个降级/需复核项（2 个交易阻断，7 个价格/行情复核，2 个信号复核，5 个背景复核），核心结论可看但必须按影响分层使用。",
+      "returncode": 1,
+      "status": "script_error",
+      "blocking": true,
+      "stdout_tail": "critical: 发现 2 个严重数据问题，信号不得直接用于交易判断。",
       "stderr_tail": ""
     },
     {
@@ -44,7 +44,7 @@
       "returncode": 0,
       "status": "ok",
       "blocking": false,
-      "stdout_tail": "alert-recovery-readiness: ready_to_recover - 旧盘中异动批次已撤下；可信行情源可用于重产，但必须带交叉验证审计。",
+      "stdout_tail": "alert-recovery-readiness: active_needs_review - 盘中异动已有 active alerts，但 quote_audit 不完整或仍引用异常源，需复核后使用。",
       "stderr_tail": ""
     },
     {
@@ -80,7 +80,7 @@
       "returncode": 0,
       "status": "ok",
       "blocking": false,
-      "stdout_tail": "data-trust: degraded - 1 个数据文件不可用（盘中异动），3 个文件需降权。",
+      "stdout_tail": "data-trust: degraded - 4 个数据文件需降权，3 个文件仅作历史背景，2 个当前阶段文件超时。",
       "stderr_tail": ""
     },
     {
@@ -89,7 +89,7 @@
       "returncode": 0,
       "status": "ok",
       "blocking": false,
-      "stdout_tail": "monitoring-coverage: blind_spot - 1 个核心监测盲区（盘中异动触发盲区），4 个降权盲区。",
+      "stdout_tail": "monitoring-coverage: degraded - 5 个监测维度需降权，1 个背景维度需复核。",
       "stderr_tail": ""
     },
     {
@@ -98,16 +98,16 @@
       "returncode": 0,
       "status": "ok",
       "blocking": false,
-      "stdout_tail": "section-health: degraded - 1 个区块不可直接使用，8 个区块需降权。",
+      "stdout_tail": "section-health: degraded - 9 个区块需降权查看。",
       "stderr_tail": ""
     },
     {
       "name": "static-smoke",
       "command": "python3 scripts/smoke_dashboard_static.py",
-      "returncode": 0,
-      "status": "warning",
-      "blocking": false,
-      "stdout_tail": "warning: 发现 1 个页面需复核项。",
+      "returncode": 1,
+      "status": "script_error",
+      "blocking": true,
+      "stdout_tail": "critical: 发现 1 个页面发布阻断问题。",
       "stderr_tail": ""
     },
     {
