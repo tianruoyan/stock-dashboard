@@ -2002,10 +2002,21 @@ function latestStockSignalTimestamp(name, signals) {
 
 function stockChangePct(name, context) {
   const cleanName = escapeRegExp(displayStockName(name));
-  const exact = String(context || "").match(new RegExp(`\\{[^{}]{0,160}"name"\\s*:\\s*"[^"]*${cleanName}[^"]*"[^{}]{0,220}"change_pct"\\s*:\\s*(-?\\d+(?:\\.\\d+)?)`));
-  if (exact) return Number(exact[1]);
-  const percent = String(context || "").match(new RegExp(`${cleanName}\\s*[:：]?\\s*([+-]?\\d+(?:\\.\\d+)?)%`));
-  if (percent) return Number(percent[1]);
+  const text = String(context || "");
+  const objectMatches = [...text.matchAll(new RegExp(`\\{[^{}]{0,260}"name"\\s*:\\s*"[^"]*${cleanName}[^"]*"[^{}]{0,520}\\}`, "g"))];
+  const objectValues = objectMatches.map(match => {
+    const objectText = match[0] || "";
+    const dayPct = objectText.match(/日内(?:涨跌幅|涨幅|跌幅)\s*(-?\d+(?:\.\d+)?)%/);
+    if (dayPct) return Number(dayPct[1]);
+    const exact = objectText.match(/"change_pct"\s*:\s*(-?\d+(?:\.\d+)?)/);
+    return exact ? Number(exact[1]) : NaN;
+  }).filter(Number.isFinite);
+  if (objectValues.length) return objectValues[objectValues.length - 1];
+
+  const percentMatches = [...text.matchAll(new RegExp(`${cleanName}\\s*[:：]?\\s*([+-]?\\d+(?:\\.\\d+)?)%`, "g"))]
+    .map(match => Number(match[1]))
+    .filter(Number.isFinite);
+  if (percentMatches.length) return percentMatches[percentMatches.length - 1];
   return NaN;
 }
 
