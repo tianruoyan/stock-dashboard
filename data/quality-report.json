@@ -1,18 +1,9 @@
 {
-  "timestamp": "2026-07-08T12:10:24+08:00",
+  "timestamp": "2026-07-08T13:31:28+08:00",
   "current_signal_date": "2026-07-08",
   "status": "critical",
-  "summary": "发现 4 个严重数据问题，信号不得直接用于交易判断。",
+  "summary": "发现 3 个严重数据问题，信号不得直接用于交易判断。",
   "issues": [
-    {
-      "severity": "critical",
-      "file": "intraday.json",
-      "path": "special_sections.semiconductor_five_watch.strength_ranking[2]",
-      "code": "bad_change_pct",
-      "message": "士兰微 change_pct 非数字：None",
-      "impact_level": "blocking",
-      "decision_action": "禁止作为交易依据，需修复后重产"
-    },
     {
       "severity": "critical",
       "file": "midday.json",
@@ -156,6 +147,24 @@
       "message": "eastmoney_board_rank_midday_1130: 东方财富行业/概念排行接口代理断开，本轮未采用板块排行；主线判断使用涨跌停结构池、腾讯报价和港股联动。",
       "impact_level": "price_review",
       "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
+    },
+    {
+      "severity": "warning",
+      "file": "cross-file",
+      "path": "安集科技",
+      "code": "stock_pct_cross_file_conflict",
+      "message": "安集科技 跨文件涨跌幅差异过大：alert.json -1.28% vs intraday.json 6.82%",
+      "impact_level": "price_review",
+      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
+    },
+    {
+      "severity": "warning",
+      "file": "cross-file",
+      "path": "沪硅产业",
+      "code": "stock_pct_cross_file_conflict",
+      "message": "沪硅产业 跨文件涨跌幅差异过大：intraday.json -8.32% vs alert.json 1.96%",
+      "impact_level": "price_review",
+      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
     }
   ],
   "action_plan": [
@@ -166,17 +175,6 @@
       "file": "alert.json",
       "code": "active_alert_without_trusted_source",
       "problem": "行情污染源仍降级，但 alert.json 存在 active alerts 且缺少可信源证明；禁止发布为盘中交易依据",
-      "decision_action": "禁止作为交易依据，需修复后重产",
-      "next_step": "暂停对应交易触发；等待污染批次撤下、可信行情源恢复并重产 JSON。",
-      "unblock_condition": "quality-report blocking=0，相关文件不再 invalidated/missing。"
-    },
-    {
-      "priority": 1,
-      "impact_level": "blocking",
-      "label": "先修复阻断",
-      "file": "intraday.json",
-      "code": "bad_change_pct",
-      "problem": "士兰微 change_pct 非数字：None",
       "decision_action": "禁止作为交易依据，需修复后重产",
       "next_step": "暂停对应交易触发；等待污染批次撤下、可信行情源恢复并重产 JSON。",
       "unblock_condition": "quality-report blocking=0，相关文件不再 invalidated/missing。"
@@ -207,6 +205,17 @@
       "priority": 2,
       "impact_level": "price_review",
       "label": "二次行情复核",
+      "file": "cross-file",
+      "code": "stock_pct_cross_file_conflict",
+      "problem": "安集科技 跨文件涨跌幅差异过大：alert.json -1.28% vs intraday.json 6.82%",
+      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核",
+      "next_step": "用第二行情源复核涨跌幅、quote_time 和代表股方向；未确认前只做验证。",
+      "unblock_condition": "price_review=0 或相关来源标记 trusted/cross verified。"
+    },
+    {
+      "priority": 2,
+      "impact_level": "price_review",
+      "label": "二次行情复核",
       "file": "source-health.json",
       "code": "source_degraded",
       "problem": "tencent_hk_http: 接口可用，最新quote_time=2026/07/07 15:57:50；16:00后可能仍非收市竞价终值，按收盘窗口快照使用。",
@@ -227,11 +236,11 @@
     }
   ],
   "counts": {
-    "critical": 4,
-    "warning": 12,
+    "critical": 3,
+    "warning": 14,
     "info": 1,
-    "blocking": 5,
-    "price_review": 8,
+    "blocking": 4,
+    "price_review": 10,
     "signal_review": 1,
     "background_review": 3
   },
