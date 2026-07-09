@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-07-09T08:36:00+08:00",
+  "timestamp": "2026-07-09T09:18:45+08:00",
   "sources": {
     "tencent_http": {
       "status": "ok",
@@ -75,10 +75,10 @@
     },
     "tencent_hk_auction_http": {
       "status": "ok",
-      "last_check": "2026-07-08T09:27:36+08:00",
+      "last_check": "2026-07-09T09:18:45+08:00",
       "usage": "9:15港股竞价/盘前快照",
-      "detail": "9:14前后继续取得港股竞价/盘前快照；指数字段仍未进入连续竞价，个股用于映射参考。",
-      "sample_count": 15,
+      "detail": "腾讯港股HTTP 09:18快照可用；指数仍显示竞价阶段0涨跌，采用个股竞价涨跌幅做映射判断。",
+      "sample_count": 20,
       "errors": []
     },
     "yahoo_finance_quote_api": {
@@ -126,12 +126,13 @@
     "akshare_a_spot_watch_decode": {
       "status": "degraded",
       "usage": "盘中观察池/题材强度刷新补充行情源",
-      "checked_at": "2026-07-08T14:58:46+08:00",
+      "checked_at": "2026-07-09T09:47:37+08:00",
       "errors": [
-        "monitor.log 14:49-14:58 多次出现：行情源异常 / Can not decode value starting with character '<'"
+        "monitor.log 09:00-09:15 多次出现：行情源异常 / Can not decode value starting with character '<'",
+        "09:34重启后未恢复连续输出"
       ],
       "last_error": "Can not decode value starting with character '<'",
-      "action": "保留上一版可用 JSON；本轮正式提醒来自 monitor.log 已生成候选信号，行情源异常等待下一轮自动重试。"
+      "action": "保留上一版alert.json；不编造盘中异动，继续等待行情源/守护进程恢复。"
     },
     "eastmoney_limit_pool_intraday_0930": {
       "status": "ok",
@@ -442,11 +443,11 @@
     },
     "yahoo_finance_chart_api": {
       "status": "degraded",
-      "last_check": "2026-07-09T08:36:00+08:00",
+      "last_check": "2026-07-09T09:18:45+08:00",
       "usage": "隔夜美股指数、日韩科技链样本与部分海外科技股报价",
-      "detail": "分钟/日线样本返回可用：Dow -1.09%、S&P -0.28%、Nasdaq +0.20%、Nikkei样本+1.89%、KOSPI样本+3.69%；日线接口曾出现长时间无输出，已人工中断后取得部分结果。",
+      "detail": "延续8:30取得的美股/日韩样本数据；Yahoo部分接口有卡顿历史，因此与新闻/行情快照交叉使用。",
       "errors": [
-        "initial daily chart request stalled; interrupted after partial output"
+        "部分请求曾长时间无输出，已降级使用可返回样本"
       ]
     },
     "official_policy_incremental_scan": {
@@ -455,6 +456,16 @@
       "usage": "8:30前政策/官方增量核验",
       "detail": "未发现8:30前足以改变开盘判断的部委/交易所新增硬催化；沿用20:00晚间全维度扫描结论。",
       "errors": []
+    },
+    "monitor_log_freshness_intraday_0930": {
+      "status": "failed",
+      "last_check": "2026-07-09T09:47:37+08:00",
+      "usage": "交易时段监控日志活跃度巡检",
+      "detail": "2026-07-09 09:32巡检发现monitor.log停在09:15:12；09:34重启后日志仅推进到09:34:51，随后再次停更。已保留上一版alert.json并继续尝试强制重启。",
+      "errors": [
+        "monitor.log stale > 5 minutes during A股交易时段",
+        "restart did not restore continuous log updates"
+      ]
     }
   },
   "rules": [
