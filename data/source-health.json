@@ -1,12 +1,12 @@
 {
-  "timestamp": "2026-07-09T11:32:00+08:00",
+  "timestamp": "2026-07-09T13:14:13+08:00",
   "sources": {
     "tencent_http": {
       "status": "ok",
-      "last_check": "2026-07-09T11:32:00+08:00",
-      "usage": "11:30午盘指数、ETF、A股观察池、专项股、港股样本快照",
-      "detail": "腾讯HTTP 11:31批量报价可用；用于高频行情主源。",
-      "sample_count": 86,
+      "last_check": "2026-07-09T13:14:13+08:00",
+      "usage": "13:00午后指数、ETF、A股观察池、专项股、港股样本快照",
+      "detail": "腾讯HTTP批量报价可用；用于高频行情主源。",
+      "sample_count": 84,
       "errors": []
     },
     "eastmoney_push2_akshare": {
@@ -24,8 +24,7 @@
     "mootdx_tdx": {
       "status": "not_used",
       "usage": "腾讯HTTP可用，未启用通达信降级",
-      "checked_at": "2026-07-07T15:16:39+08:00",
-      "last_check": "2026-07-09T11:32:00+08:00",
+      "last_check": "2026-07-09T13:14:13+08:00",
       "errors": []
     },
     "ths_sina_or_akshare_quote_decode": {
@@ -486,32 +485,22 @@
       "errors": []
     },
     "eastmoney_board_rank_intraday": {
-      "status": "ok_with_retry",
-      "last_check": "2026-07-09T11:32:00+08:00",
-      "usage": "11:30午盘行业/概念排行、资金强弱结构",
-      "detail": "标准参数三次RemoteDisconnected，备用参数重试成功；用于半导体材料、封测、制造、先进封装等结构判断。",
-      "sample_count": 60,
+      "status": "failed",
+      "last_check": "2026-07-09T13:14:13+08:00",
+      "usage": "13:00行业/概念排行",
+      "detail": "push2行业/概念排行多次RemoteDisconnected，本次未使用板块排行作结论主证据。",
       "errors": [
-        "RemoteDisconnected x3 before fallback success"
+        "industry_top RemoteDisconnected",
+        "concept_top RemoteDisconnected"
       ]
+    },
+    "eastmoney_limit_pool_intraday": {
+      "status": "ok",
+      "last_check": "2026-07-09T13:14:13+08:00",
+      "usage": "13:00涨停池42、跌停池0、炸板池16",
+      "detail": "东方财富push2ex涨跌停结构池可用。",
+      "sample_count": 58,
+      "errors": []
     }
-  },
-  "rules": [
-    "高频盘中行情优先使用 mootdx / 腾讯，禁止用东财做全市场高频轮询。",
-    "东财只用于涨停池、炸板池、跌停池、资金流、龙虎榜等独有结构数据，并且必须限流。",
-    "收盘复盘必须先做14:55-15:00尾盘校验，再写postmarket.json。",
-    "任一数据源失败时保留上一版 JSON，并在source-health.json标注降级或异常。"
-  ],
-  "last_effective_run": {
-    "timestamp": "2026-07-08T15:06:00+08:00",
-    "type": "postmarket_a_close",
-    "files": [
-      "data/postmarket.json",
-      "data/topics.json",
-      "data/source-health.json"
-    ]
-  },
-  "status": "degraded",
-  "notes": "14:58巡检：monitor进程存活且日志更新；新增1条正式提醒已同步，补充行情源仍连续解析失败。",
-  "overall_status": "ok"
+  }
 }
