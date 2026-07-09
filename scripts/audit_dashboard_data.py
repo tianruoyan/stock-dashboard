@@ -24,6 +24,7 @@ REQUIRED_JSON = (
     "midday.json",
     "postmarket.json",
     "topics.json",
+    "opportunity-watch.json",
     "source-health.json",
 )
 
@@ -295,12 +296,12 @@ def stock_consistency_files(files: dict[str, Any], current_date: str) -> set[str
         if isinstance(data, dict) and signal_date(data.get("timestamp")) == current_date
     }
     if "postmarket.json" in current:
-        return current & {"postmarket.json", "evening-sentiment.json", "topics.json", "decision-feed.json", "theme-shifts.json"}
+        return current & {"postmarket.json", "evening-sentiment.json", "topics.json", "opportunity-watch.json", "decision-feed.json", "theme-shifts.json"}
     if "intraday.json" in current:
-        return current & {"alert.json", "intraday.json", "midday.json", "topics.json", "decision-feed.json", "theme-shifts.json"}
+        return current & {"alert.json", "intraday.json", "midday.json", "topics.json", "opportunity-watch.json", "decision-feed.json", "theme-shifts.json"}
     if "midday.json" in current:
-        return current & {"midday.json", "intraday.json", "topics.json", "decision-feed.json", "theme-shifts.json"}
-    return current & {"premarket.json", "topics.json", "decision-feed.json", "theme-shifts.json"}
+        return current & {"midday.json", "intraday.json", "topics.json", "opportunity-watch.json", "decision-feed.json", "theme-shifts.json"}
+    return current & {"premarket.json", "topics.json", "opportunity-watch.json", "decision-feed.json", "theme-shifts.json"}
 
 
 def collect_stock_signal_records(file_name: str, obj: Any, watch_names: set[str], records: dict[str, list[dict[str, Any]]], path: str = "") -> None:
@@ -421,6 +422,9 @@ CORE_CONTRACTS: dict[str, dict[str, type | tuple[type, ...]]] = {
     "topics.json": {
         "topics": list,
     },
+    "opportunity-watch.json": {
+        "items": list,
+    },
 }
 
 
@@ -461,6 +465,8 @@ def validate_contract_items(file_name: str, data: dict[str, Any], issues: list[d
         validate_array_objects(file_name, data.get("news"), "news", ("text",), issues)
     elif file_name == "topics.json":
         validate_array_objects(file_name, data.get("topics"), "topics", ("name", "status"), issues)
+    elif file_name == "opportunity-watch.json":
+        validate_array_objects(file_name, data.get("items"), "items", ("id", "theme", "confirm_rules", "invalidate_rules", "status"), issues)
 
 
 def validate_array_objects(file_name: str, value: Any, path: str, required_keys: tuple[str, ...], issues: list[dict[str, Any]]) -> None:

@@ -13,12 +13,14 @@ NODE_BIN = Path("/Users/sweet_orange/.cache/codex-runtimes/codex-primary-runtime
 
 
 STEPS = [
+    ("opportunity-watch:pre", ["python3", "scripts/build_opportunity_watch.py"], False),
     ("theme-shifts:pre", ["python3", "scripts/build_theme_shifts.py"], False),
     ("decision-feed:pre", ["python3", "scripts/build_decision_feed.py"], False),
     ("automation-health:pre", ["python3", "scripts/build_automation_health.py"], False),
     ("audit", ["python3", "scripts/audit_dashboard_data.py"], True),
     ("alert-recovery-readiness", ["python3", "scripts/build_alert_recovery_readiness.py"], False),
     ("automation-health:post-audit", ["python3", "scripts/build_automation_health.py"], False),
+    ("opportunity-watch:post-audit", ["python3", "scripts/build_opportunity_watch.py"], False),
     ("theme-shifts:post-audit", ["python3", "scripts/build_theme_shifts.py"], False),
     ("decision-feed:post-audit", ["python3", "scripts/build_decision_feed.py"], False),
     ("data-trust", ["python3", "scripts/build_data_trust.py"], False),
@@ -58,8 +60,9 @@ def write_report(status: str, summary: str, results: list[dict[str, object]]) ->
         "summary": summary,
         "steps": results,
         "rules": [
+            "先把盘前/晚间/专题线索生成 opportunity-watch，再生成 theme-shifts 和 decision-feed。",
             "先生成 theme-shifts 和 decision-feed，再审计。",
-            "审计会更新 quality-report，因此审计后必须重刷异动恢复就绪、automation-health、theme-shifts、decision-feed、data-trust、monitoring、section-health。",
+            "审计会更新 quality-report，因此审计后必须重刷异动恢复就绪、automation-health、opportunity-watch、theme-shifts、decision-feed、data-trust、monitoring、section-health。",
             "audit/static-smoke/runtime-smoke 出现 critical 才阻断发布；degraded 只作为看板降权提示。",
         ],
     }

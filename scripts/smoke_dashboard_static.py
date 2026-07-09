@@ -121,6 +121,8 @@ def check_app_files(app: str, issues: list[dict[str, Any]]) -> None:
         issues.append(issue("warning", "app.js", "decision_feed_not_loaded", "FILES 未加载 data/decision-feed.json"))
     if "data/theme-shifts.json" not in paths:
         issues.append(issue("warning", "app.js", "theme_shifts_not_loaded", "FILES 未加载 data/theme-shifts.json"))
+    if "data/opportunity-watch.json" not in paths:
+        issues.append(issue("warning", "app.js", "opportunity_watch_not_loaded", "FILES 未加载 data/opportunity-watch.json"))
     if "data/automation-health.json" not in paths:
         issues.append(issue("warning", "app.js", "automation_health_not_loaded", "FILES 未加载 data/automation-health.json"))
 
@@ -458,7 +460,7 @@ def check_build_report(issues: list[dict[str, Any]]) -> None:
     if data.get("status") == "running":
         return
     names = {item.get("name") for item in rows if isinstance(item, dict)}
-    required = {"theme-shifts:pre", "decision-feed:pre", "automation-health:pre", "audit", "automation-health:post-audit", "data-trust", "monitoring-coverage", "section-health", "static-smoke", "runtime-smoke"}
+    required = {"opportunity-watch:pre", "theme-shifts:pre", "decision-feed:pre", "automation-health:pre", "audit", "opportunity-watch:post-audit", "automation-health:post-audit", "data-trust", "monitoring-coverage", "section-health", "static-smoke", "runtime-smoke"}
     missing = sorted(required - names)
     if missing:
         issues.append(issue("warning", "data/build-report.json", "missing_build_steps", f"统一构建缺少步骤：{', '.join(missing)}"))
@@ -585,7 +587,7 @@ def check_data_trust(issues: list[dict[str, Any]]) -> None:
         other_date = other.get("current_signal_date")
         if trust_date and other_date and trust_date != other_date:
             issues.append(issue("warning", "data/data-trust.json", "signal_date_mismatch", f"data-trust 交易日 {trust_date} 与 {rel} {other_date} 不一致"))
-    required_files = {"data/alert.json", "data/intraday.json", "data/premarket.json", "data/midday.json", "data/postmarket.json", "data/topics.json", "data/theme-shifts.json", "data/decision-feed.json"}
+    required_files = {"data/alert.json", "data/intraday.json", "data/premarket.json", "data/midday.json", "data/postmarket.json", "data/topics.json", "data/opportunity-watch.json", "data/theme-shifts.json", "data/decision-feed.json"}
     present = {item.get("file") for item in rows if isinstance(item, dict)}
     missing = sorted(required_files - present)
     if missing:

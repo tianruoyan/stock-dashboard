@@ -11,6 +11,7 @@ const FILES = [
   "data/monitoring-coverage.json",
   "data/decision-feed.json",
   "data/theme-shifts.json",
+  "data/opportunity-watch.json",
   "data/automation-health.json",
   "data/signal-review.json",
   "config/watchlist.json",
@@ -49,7 +50,7 @@ async function updateAll(options = {}) {
         render(file, data);
       }
     } catch (e) {
-      if (file.includes("signal-review") || file.includes("quality-report") || file.includes("data-trust") || file.includes("monitoring-coverage") || file.includes("decision-feed") || file.includes("theme-shifts") || file.includes("automation-health") || file.includes("section-health")) {
+      if (file.includes("signal-review") || file.includes("quality-report") || file.includes("data-trust") || file.includes("monitoring-coverage") || file.includes("decision-feed") || file.includes("theme-shifts") || file.includes("opportunity-watch") || file.includes("automation-health") || file.includes("section-health")) {
         cache[file] = null;
         if (file.includes("signal-review")) renderSignalReview(null);
         if (file.includes("quality-report")) renderDataQualityGate();
@@ -57,6 +58,7 @@ async function updateAll(options = {}) {
         if (file.includes("monitoring-coverage")) renderDataQualityGate();
         if (file.includes("decision-feed")) renderOpportunityRiskRadar();
         if (file.includes("theme-shifts")) renderOpportunityRiskRadar();
+        if (file.includes("opportunity-watch")) rerenderAlertsIfLoaded();
         if (file.includes("automation-health")) renderDataQualityGate();
         if (file.includes("section-health")) renderDataQualityGate();
       } else {
@@ -111,6 +113,7 @@ function render(file, data) {
   }
   else if (file === "data/decision-feed.json") renderOpportunityRiskRadar();
   else if (file === "data/theme-shifts.json") renderOpportunityRiskRadar();
+  else if (file === "data/opportunity-watch.json") rerenderAlertsIfLoaded();
   else if (file === "data/automation-health.json") renderDataQualityGate();
   else if (file === "data/signal-review.json") renderSignalReview(data);
   else if (file === "config/watchlist.json") renderWatchlistDecision();
@@ -2672,11 +2675,15 @@ function renderAlerts(data) {
   const displayAlerts = sortAlertsByEventTime([
     ...intradayOpportunityAlerts(data.timestamp),
     ...saved
-  ]).slice(0, MAX_ALERTS);
+  ]).sort(alertDisplaySort).slice(0, MAX_ALERTS);
 
   renderAlertsSummary(displayAlerts, data.timestamp, null, data);
 
-  if (!displayAlerts.length) { el.innerHTML = '<div class="empty">暂无盘中异动</div>'; return; }
+  const watchQueue = renderOpportunityWatchQueue(displayAlerts);
+  if (!displayAlerts.length) {
+    el.innerHTML = watchQueue || '<div class="empty">暂无盘中异动，等待盘前线索触发</div>';
+    return;
+  }
 
   el.innerHTML = displayAlerts.map((a, i) => {
     const age = now - (a._eventTime || a._received || now);
@@ -2686,6 +2693,7 @@ function renderAlerts(data) {
     const isStale = !isFresh || ageMin > 60;
 
     const purpose = alertPurpose(a);
+    const confirmation = alertConfirmationLevel(a, isFresh);
     const resolution = alertResolutionState(a);
     const isResolved = resolution?.cls === "resolved";
     const cls = !isFresh ? "card alert-stale-card" :
@@ -2696,7 +2704,10 @@ function renderAlerts(data) {
     const fadeCls = isStale ? " faded" : isOld ? " dim" : "";
     const ageLabel = ageMin < 1 ? "刚刚" : ageMin < 60 ? `${ageMin}分钟前` : `${Math.floor(ageMin / 60)}小时前`;
 
-    const badge = !isFresh ? '<span class="badge watch">历史触发</span>' :
+    const badge = confirmation === "invalidated" ? '<span class="badge watch">已失效</span>' :
+                  !isFresh ? '<span class="badge watch">历史触发</span>' :
+                  confirmation === "confirmed" ? '<span class="badge signal">确认机会</span>' :
+                  confirmation === "candidate" && purpose === "trade" ? '<span class="badge volume">候选机会</span>' :
                   a._syntheticOpportunity ? '<span class="badge signal">全景机会</span>' :
                   isResolved ? '<span class="badge watch">历史风险</span>' :
                   purpose === "style" ? `<span class="badge old">${escapeHtml(alertStyleLabel(a))}</span>` :
@@ -2726,6 +2737,7 @@ function renderAlerts(data) {
     const resolutionHtml = resolution
       ? `<div class="alert-resolution ${resolution.cls}"><b>${escapeHtml(resolution.label)}</b><span>${escapeHtml(resolution.detail)}</span></div>`
       : "";
+    const confirmationHtml = renderAlertConfirmation(a, confirmation, purpose);
     const staleHtml = !isFresh
       ? `<div class="alert-resolution stale"><b>已超过5分钟</b><span>只作为历史触发参考，不作为当前交易/风险触发。</span></div>`
       : "";
@@ -2737,12 +2749,22 @@ function renderAlerts(data) {
       ${a._syntheticOpportunity ? '<div class="alert-style-note">来自最新盘中全景，用于补充机会观察；是否交易仍看承接和扩散</div>' : ""}
       ${purpose === "style" ? '<div class="alert-style-note">用于判断盘面风格，不直接作为买卖触发</div>' : ""}
       ${staleHtml}
+      ${confirmationHtml}
       ${resolutionHtml}
       ${leaders ? `<div class="card-leaders">${leaders}</div>` : ""}
       ${factorHtml}
       ${reasonDetail}
     </div>`;
-  }).join("");
+  }).join("") + watchQueue;
+}
+
+function alertDisplaySort(a, b) {
+  const rank = { confirmed: 4, candidate: 3, risk: 2, style: 1, invalidated: 0, historical: 0 };
+  const aLevel = !isAlertFresh(a) ? "historical" : (alertConfirmationLevel(a, true) || alertPurpose(a));
+  const bLevel = !isAlertFresh(b) ? "historical" : (alertConfirmationLevel(b, true) || alertPurpose(b));
+  return (rank[bLevel] || 0) - (rank[aLevel] || 0) ||
+    (b._eventTime || 0) - (a._eventTime || 0) ||
+    (b._received || 0) - (a._received || 0);
 }
 
 function isAlertFresh(alert, now = Date.now()) {
@@ -2794,6 +2816,40 @@ function intradayOpportunityAlerts(alertTimestamp) {
         _received: Date.parse(intraday.timestamp) || Date.now()
       }, intraday.timestamp, Date.parse(intraday.timestamp) || Date.now());
     });
+}
+
+function renderOpportunityWatchQueue(activeAlerts = []) {
+  const watch = cached("data/opportunity-watch.json") || {};
+  const items = Array.isArray(watch.items) ? watch.items : [];
+  if (!items.length) return "";
+  const activeText = activeAlerts.map(a => [displayAlertSector(a), a.reason, a.type].join(" ")).join(" ");
+  const waiting = items
+    .filter(item => !activeText.includes(item.theme))
+    .slice(0, 4);
+  if (!waiting.length) return "";
+  return `<div class="opportunity-watch-queue">
+    <div class="opportunity-watch-head">
+      <b>等待触发的盘前重点</b>
+      <span>${formatUpdateTime(watch.timestamp) || "待更新"}</span>
+    </div>
+    <div class="opportunity-watch-grid">
+      ${waiting.map(renderOpportunityWatchItem).join("")}
+    </div>
+  </div>`;
+}
+
+function renderOpportunityWatchItem(item) {
+  const stocks = Array.isArray(item.watch_stocks) ? item.watch_stocks.slice(0, 5) : [];
+  const rules = Array.isArray(item.confirm_rules) ? item.confirm_rules.slice(0, 2) : [];
+  const invalid = Array.isArray(item.invalidate_rules) ? item.invalidate_rules[0] : "";
+  const priority = item.priority === "high" ? "高优先" : item.priority === "medium" ? "中优先" : "观察";
+  return `<div class="opportunity-watch-card">
+    <div class="card-head"><span class="badge watch">${escapeHtml(priority)}</span><b>${escapeHtml(item.theme || "待跟踪")}</b></div>
+    <div class="card-body">${escapeHtml(item.source_phase || "线索")} · ${escapeHtml(item.source_reason || "等待盘中触发")}</div>
+    ${stocks.length ? `<div class="card-leaders">${stocks.map(name => `<span class="leader">${escapeHtml(name)}</span>`).join("")}</div>` : ""}
+    ${rules.length ? `<div class="alert-confirm"><b>触发看</b><span>${escapeHtml(rules.join("；"))}</span></div>` : ""}
+    ${invalid ? `<div class="alert-resolution stale"><b>失效看</b><span>${escapeHtml(invalid)}</span></div>` : ""}
+  </div>`;
 }
 
 function extractOpportunityLeaders(text) {
@@ -3069,6 +3125,9 @@ function latestAlertContextNotice(alertTimestamp) {
 }
 
 function alertPurpose(alert) {
+  if (alert?.alert_class === "opportunity") return "trade";
+  if (alert?.alert_class === "risk") return "risk";
+  if (alert?.alert_class === "style") return "style";
   if (alert?._purpose) return alert._purpose;
   const text = [alert?.signal_type, alert?.type, alert?.reason, alert?.sector, alert?.trigger_rule, alert?.rule, alert?.rule_id]
     .filter(Boolean)
@@ -3080,6 +3139,45 @@ function alertPurpose(alert) {
   }
   if (alert?.is_old_economy || /老登|风格|style_rotation|old_deng|resonance|共振/.test(text)) return "style";
   return "watch";
+}
+
+function alertConfirmationLevel(alert, isFresh = isAlertFresh(alert)) {
+  const explicit = alert?.confirmation_level;
+  if (explicit === "confirmed" || explicit === "candidate" || explicit === "invalidated") return explicit;
+  if (!isFresh) return "invalidated";
+  if (alertPurpose(alert) !== "trade") return "";
+  if (hasTrustedQuoteAudit(alert) && hasActionableTradeEvidence(alert)) return "confirmed";
+  return hasActionableTradeEvidence(alert) ? "candidate" : "invalidated";
+}
+
+function hasTrustedQuoteAudit(alert) {
+  const audit = alert?.quote_audit;
+  if (!audit || typeof audit !== "object") return false;
+  const sanity = audit.sanity_checks || {};
+  return Boolean(audit.provider || audit.source) &&
+    Boolean(audit.quote_time || alert.valid_until) &&
+    sanity.cross_source_verified === true;
+}
+
+function renderAlertConfirmation(alert, confirmation, purpose) {
+  if (purpose !== "trade") return "";
+  if (confirmation === "confirmed") {
+    return `<div class="alert-confirm"><b>为什么升级</b><span>${escapeHtml(alertConfirmReason(alert))}</span></div>`;
+  }
+  if (confirmation === "candidate") {
+    return `<div class="alert-confirm candidate"><b>还差确认</b><span>等待交叉行情源、封单/后排扩散或ETF同向确认。</span></div>`;
+  }
+  return `<div class="alert-resolution stale"><b>未达机会条件</b><span>缺少短周期价格、成交、扩散或 quote_audit 证明。</span></div>`;
+}
+
+function alertConfirmReason(alert) {
+  const text = [alert.reason, alert.type, alert.signal_type].join(" ");
+  const reasons = [];
+  if (/涨停|封板/.test(text)) reasons.push("出现涨停/封板");
+  if (/成交放大|放量/.test(text)) reasons.push("成交放大");
+  if (/扩散|后排/.test(text)) reasons.push("后排扩散");
+  if (/3分钟/.test(text)) reasons.push("短周期触发");
+  return reasons.join("，") || "短周期量价和行情审计同时满足";
 }
 
 function hasActionableTradeEvidence(alert) {

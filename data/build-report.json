@@ -3,6 +3,15 @@
   "summary": "统一构建完成，但存在降权/需复核项。",
   "steps": [
     {
+      "name": "opportunity-watch:pre",
+      "command": "python3 scripts/build_opportunity_watch.py",
+      "returncode": 0,
+      "status": "ok",
+      "blocking": false,
+      "stdout_tail": "opportunity-watch: 12 items",
+      "stderr_tail": ""
+    },
+    {
       "name": "theme-shifts:pre",
       "command": "python3 scripts/build_theme_shifts.py",
       "returncode": 0,
@@ -17,7 +26,7 @@
       "returncode": 0,
       "status": "ok",
       "blocking": false,
-      "stdout_tail": "decision-feed: 8 opportunities, 8 risks, 5 verifications",
+      "stdout_tail": "decision-feed: 8 opportunities, 8 risks, 8 verifications",
       "stderr_tail": ""
     },
     {
@@ -57,6 +66,15 @@
       "stderr_tail": ""
     },
     {
+      "name": "opportunity-watch:post-audit",
+      "command": "python3 scripts/build_opportunity_watch.py",
+      "returncode": 0,
+      "status": "ok",
+      "blocking": false,
+      "stdout_tail": "opportunity-watch: 12 items",
+      "stderr_tail": ""
+    },
+    {
       "name": "theme-shifts:post-audit",
       "command": "python3 scripts/build_theme_shifts.py",
       "returncode": 0,
@@ -71,7 +89,7 @@
       "returncode": 0,
       "status": "ok",
       "blocking": false,
-      "stdout_tail": "decision-feed: 8 opportunities, 8 risks, 5 verifications",
+      "stdout_tail": "decision-feed: 8 opportunities, 8 risks, 8 verifications",
       "stderr_tail": ""
     },
     {
@@ -121,8 +139,9 @@
     }
   ],
   "rules": [
+    "先把盘前/晚间/专题线索生成 opportunity-watch，再生成 theme-shifts 和 decision-feed。",
     "先生成 theme-shifts 和 decision-feed，再审计。",
-    "审计会更新 quality-report，因此审计后必须重刷异动恢复就绪、automation-health、theme-shifts、decision-feed、data-trust、monitoring、section-health。",
+    "审计会更新 quality-report，因此审计后必须重刷异动恢复就绪、automation-health、opportunity-watch、theme-shifts、decision-feed、data-trust、monitoring、section-health。",
     "audit/static-smoke/runtime-smoke 出现 critical 才阻断发布；degraded 只作为看板降权提示。"
   ]
 }

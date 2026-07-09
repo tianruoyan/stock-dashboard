@@ -26,6 +26,7 @@ def main() -> int:
             "quality-report.json",
             "source-health.json",
             "theme-shifts.json",
+            "opportunity-watch.json",
         )
     }
     signal_date = latest_signal_date(files)
@@ -298,7 +299,33 @@ def build_opportunities(files: dict[str, Any], current_date: str) -> list[dict[s
             discovery_type="active_stock_scan",
             quality_flags=gate["decision_flags"] if quality_degraded else [],
         ))
+
+    for watch in opportunity_watch_candidates(files):
+        text = compact_json(watch)
+        items.append(decision_item(
+            title=f"待触发：{watch.get('theme')}",
+            item_type="opportunity_watch",
+            conclusion=first_text(watch.get("source_reason"), "盘前/晚间线索等待盘中量价触发。"),
+            confidence="low",
+            evidence=watch.get("evidence") or [],
+            watch_next=watch.get("confirm_rules") or [],
+            invalidation=first_text(*(watch.get("invalidate_rules") or []), "未出现短周期量价、成交或扩散确认。"),
+            tags=related_tags(text) or [watch.get("theme")],
+            source_files=["opportunity-watch.json"],
+            tone="good",
+            discovery_type="premarket_watch_queue",
+            trigger_reason="盘前/晚间注意点已转为盘中追踪清单，等待实时行情触发。",
+            quality_flags=gate["decision_flags"] if quality_degraded else [],
+        ))
     return items
+
+
+def opportunity_watch_candidates(files: dict[str, Any]) -> list[dict[str, Any]]:
+    data = files.get("opportunity-watch.json") or {}
+    rows = data.get("items") if isinstance(data, dict) else []
+    if not isinstance(rows, list):
+        return []
+    return [row for row in rows[:8] if isinstance(row, dict) and row.get("theme")]
 
 
 def rank_upgrade_candidates(items: list[dict[str, Any]]) -> list[dict[str, Any]]:
@@ -476,6 +503,22 @@ def build_verifications(files: dict[str, Any]) -> list[dict[str, Any]]:
     ]
     for shift in theme_shift_candidates(files, {"warming", "emerging", "risk", "crowded", "fading"}):
         candidates.append(("theme-shifts.json", shift.get("watch_next")))
+    for watch in opportunity_watch_candidates(files)[:6]:
+        title = watch.get("theme") or "盘中机会追踪"
+        rows.append(decision_item(
+            title=f"盘中追踪：{title}",
+            item_type="opportunity_watch",
+            conclusion=trim(first_text(watch.get("source_reason"), "盘前/晚间线索等待盘中量价触发。"), 150),
+            confidence="low",
+            evidence=watch.get("evidence") or [],
+            watch_next=watch.get("confirm_rules") or [],
+            invalidation=first_text(*(watch.get("invalidate_rules") or []), "未出现短周期量价、成交或扩散确认。"),
+            tags=related_tags(compact_json(watch)) or [title],
+            source_files=["opportunity-watch.json"],
+            tone="neutral",
+            discovery_type="premarket_watch_queue",
+            trigger_reason="盘前/晚间注意点已转为盘中追踪清单，等待实时行情触发。",
+        ))
     for source, values in candidates:
         for text in text_items(values):
             rows.append(decision_item(
