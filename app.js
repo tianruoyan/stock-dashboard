@@ -420,7 +420,7 @@ function collectDashboardThemeRows(intraday, postmarket) {
   const rows = raw.flatMap(({ item, source, base }) => {
     const name = themeDisplayName(item);
     const status = trendStatus(item);
-    const evidence = Array.isArray(item?.evidence) ? item.evidence : [];
+    const evidence = arrayTextItems(item?.evidence);
     const text = [trendName(item), name, status, item?.conclusion, item?.continuity, item?.risk, item?.reason, ...evidence].join(" ");
     if (!name || systemNoise.test(name)) return null;
     const positive = /观察线偏强|核心抱团|轮动增强|偏强|强|强化|主线|涨停|封板|扩散|承接/.test(text);
@@ -2772,13 +2772,14 @@ function intradayOpportunityAlerts(alertTimestamp) {
   const trends = Array.isArray(intraday.main_trends) ? intraday.main_trends : [];
   return trends
     .filter(item => {
-      const text = [item?.name, item?.status, item?.risk, ...(item?.evidence || [])].join(" ");
+      const evidenceText = arrayTextItems(item?.evidence);
+      const text = [item?.name, item?.status, item?.risk, ...evidenceText].join(" ");
       if (/风险线|主要风险源|跌停未|负反馈|不升级|只.*验证|不是强主线/.test(text)) return false;
       return /强主线|观察线偏强|资金回流|进攻修复|涨停|封板|扩散/.test(text);
     })
     .slice(0, 4)
     .map((item, index) => {
-      const evidence = Array.isArray(item.evidence) ? item.evidence : [];
+      const evidence = arrayTextItems(item.evidence);
       const leaders = extractOpportunityLeaders(evidence.join("；")).slice(0, 3);
       return normalizeAlertTime({
         id: `intraday-opportunity-${signalDate(intraday.timestamp)}-${index}`,
@@ -4385,7 +4386,7 @@ function renderPostmarketDecision(data) {
 
 function postmarketStrongDetail(strong, fallback) {
   if (!strong) return fallback || "暂无强线";
-  const evidence = Array.isArray(strong.evidence) ? strong.evidence[0] : "";
+  const evidence = Array.isArray(strong.evidence) ? displaySignalText(strong.evidence[0]) : "";
   const parts = [
     strong.status,
     evidence || strong.continuity
@@ -4395,7 +4396,7 @@ function postmarketStrongDetail(strong, fallback) {
 
 function postmarketRiskDetail(riskLine) {
   if (!riskLine) return "看炸板/跌停是否继续扩大";
-  const evidence = Array.isArray(riskLine.evidence) ? riskLine.evidence[0] : "";
+  const evidence = Array.isArray(riskLine.evidence) ? displaySignalText(riskLine.evidence[0]) : "";
   return riskLine.risk || evidence || riskLine.status || "风险线待确认";
 }
 

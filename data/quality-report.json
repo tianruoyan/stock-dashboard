@@ -1,36 +1,9 @@
 {
-  "timestamp": "2026-07-09T13:40:17+08:00",
+  "timestamp": "2026-07-09T20:03:54+08:00",
   "current_signal_date": "2026-07-09",
   "status": "degraded",
-  "summary": "发现 76 个降级/需复核项（25 个价格/行情复核，2 个信号复核，50 个背景复核），核心结论可看但必须按影响分层使用。",
+  "summary": "发现 71 个降级/需复核项（21 个价格/行情复核，2 个信号复核，49 个背景复核），核心结论可看但必须按影响分层使用。",
   "issues": [
-    {
-      "severity": "warning",
-      "file": "postmarket.json",
-      "path": "",
-      "code": "stale_timestamp",
-      "message": "时间戳不是当前交易日：2026-07-08T16:08:00+08:00",
-      "impact_level": "background_review",
-      "decision_action": "仅作背景复核，不单独阻断交易判断"
-    },
-    {
-      "severity": "warning",
-      "file": "postmarket.json",
-      "path": "market_breadth.down5_examples[32]",
-      "code": "watchlist_limit_down_like",
-      "message": "沪硅产业 接近跌停 -10.419，需确认是否真实",
-      "impact_level": "price_review",
-      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
-    },
-    {
-      "severity": "warning",
-      "file": "postmarket.json",
-      "path": "market_breadth.down5_examples[57]",
-      "code": "watchlist_limit_down_like",
-      "message": "埃斯顿 接近跌停 -10.0，需确认是否真实",
-      "impact_level": "price_review",
-      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
-    },
     {
       "severity": "warning",
       "file": "premarket.json",
@@ -672,28 +645,10 @@
     },
     {
       "severity": "warning",
-      "file": "cross-file",
-      "path": "雅克科技",
-      "code": "stock_pct_cross_file_conflict",
-      "message": "雅克科技 跨文件涨跌幅差异过大：alert.json -2.78% vs intraday.json 9.43%",
-      "impact_level": "price_review",
-      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
-    },
-    {
-      "severity": "warning",
-      "file": "cross-file",
-      "path": "有研硅",
-      "code": "stock_pct_cross_file_conflict",
-      "message": "有研硅 跨文件涨跌幅差异过大：alert.json -0.28% vs intraday.json 19.19%",
-      "impact_level": "price_review",
-      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
-    },
-    {
-      "severity": "warning",
-      "file": "cross-file",
-      "path": "沪硅产业",
-      "code": "stock_pct_cross_file_conflict",
-      "message": "沪硅产业 跨文件涨跌幅差异过大：alert.json -0.83% vs intraday.json 8.46%",
+      "file": "source-health.json",
+      "path": "",
+      "code": "source_degraded",
+      "message": "eastmoney_limit_down_pool: rows=0 tc=12；DTPool总数tc可用但pool列表为空，postmarket采用tc=12作计数并用全A跌幅样本补风险个股。",
       "impact_level": "price_review",
       "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
     }
@@ -706,28 +661,6 @@
       "file": "alert.json",
       "code": "historical_alert_without_trusted_source",
       "problem": "盘中异动缺少可信源证明；当前阶段只降权参考，不阻断整站发布",
-      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核",
-      "next_step": "用第二行情源复核涨跌幅、quote_time 和代表股方向；未确认前只做验证。",
-      "unblock_condition": "price_review=0 或相关来源标记 trusted/cross verified。"
-    },
-    {
-      "priority": 2,
-      "impact_level": "price_review",
-      "label": "二次行情复核",
-      "file": "cross-file",
-      "code": "stock_pct_cross_file_conflict",
-      "problem": "雅克科技 跨文件涨跌幅差异过大：alert.json -2.78% vs intraday.json 9.43%",
-      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核",
-      "next_step": "用第二行情源复核涨跌幅、quote_time 和代表股方向；未确认前只做验证。",
-      "unblock_condition": "price_review=0 或相关来源标记 trusted/cross verified。"
-    },
-    {
-      "priority": 2,
-      "impact_level": "price_review",
-      "label": "二次行情复核",
-      "file": "postmarket.json",
-      "code": "watchlist_limit_down_like",
-      "problem": "沪硅产业 接近跌停 -10.419，需确认是否真实",
       "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核",
       "next_step": "用第二行情源复核涨跌幅、quote_time 和代表股方向；未确认前只做验证。",
       "unblock_condition": "price_review=0 或相关来源标记 trusted/cross verified。"
@@ -764,16 +697,38 @@
       "decision_action": "机会信号必须降权并转入验证",
       "next_step": "修正字段结构、证据、触发原因和升级条件；未通过前降权展示。",
       "unblock_condition": "signal_review=0，decision-feed/核心 JSON 契约通过。"
+    },
+    {
+      "priority": 4,
+      "impact_level": "background_review",
+      "label": "背景来源复核",
+      "file": "alert.json",
+      "code": "missing_alert_leader_pct",
+      "problem": "alerts[81].leaders[0].change_pct 缺失",
+      "decision_action": "仅作背景复核，不单独阻断交易判断",
+      "next_step": "补官方/交易所/公司公告来源；未补齐前不升级为核心依据。",
+      "unblock_condition": "官方来源补齐或确认不影响交易触发。"
+    },
+    {
+      "priority": 4,
+      "impact_level": "background_review",
+      "label": "背景来源复核",
+      "file": "evening-sentiment.json",
+      "code": "evening_not_current",
+      "problem": "晚间舆情不是当前交易日，不参与今日总控",
+      "decision_action": "仅作背景复核，不单独阻断交易判断",
+      "next_step": "补官方/交易所/公司公告来源；未补齐前不升级为核心依据。",
+      "unblock_condition": "官方来源补齐或确认不影响交易触发。"
     }
   ],
   "counts": {
     "critical": 0,
-    "warning": 76,
+    "warning": 71,
     "info": 1,
     "blocking": 0,
-    "price_review": 25,
+    "price_review": 21,
     "signal_review": 2,
-    "background_review": 50
+    "background_review": 49
   },
   "rules": [
     "异常文本、JSON解析失败、必需文件缺失为 critical。",
