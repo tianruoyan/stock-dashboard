@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-07-09T19:58:00+08:00",
+  "timestamp": "2026-07-09T20:12:00+08:00",
   "sources": {
     "tencent_http": {
       "status": "ok",
@@ -570,6 +570,37 @@
       "usage": "2026-07-09盘后复盘数据源",
       "detail": "ok=24 fail=[]",
       "latency_sec": null,
+      "errors": []
+    },
+    "cninfo_evening_watchlist_scan": {
+      "status": "degraded_empty",
+      "last_check": "2026-07-09T20:12:00+08:00",
+      "usage": "20:00晚间观察池107只A股公告扫描",
+      "detail": "巨潮2026-07-09逐票查询返回106/107只，公告命中0条；全量轮询错误1条，错误样本已在核心复核中交叉验证。",
+      "sample_count": 107,
+      "hit_count": 0,
+      "errors": [
+        {
+          "stock": {
+            "code": "sz002409",
+            "name": "雅克科技"
+          },
+          "error": "ReadTimeout: HTTPConnectionPool(host='127.0.0.1', port=7897): Read timed out. (read timeout=8"
+        }
+      ]
+    },
+    "official_policy_evening_scan": {
+      "status": "ok_empty",
+      "last_check": "2026-07-09T20:12:00+08:00",
+      "usage": "20:00晚间工信部/发改委/商务部政策P0扫描",
+      "detail": "未发现可直接升级半导体/AI/机器人/新材料的新增官方P0；政策结论不引用未核实传闻。",
+      "errors": []
+    },
+    "global_benchmark_evening_scan": {
+      "status": "watch_only",
+      "last_check": "2026-07-09T20:12:00+08:00",
+      "usage": "20:00晚间全球标杆企业与事件窗口扫描",
+      "detail": "ASML/NVIDIA/SK hynix/Samsung等仅形成8:30待复核观察项，未取得足以升级P0的新增官方硬公告。",
       "errors": []
     }
   }

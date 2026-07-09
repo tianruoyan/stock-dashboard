@@ -1,94 +1,203 @@
 {
-  "timestamp": "2026-07-08T20:03:00+08:00",
+  "timestamp": "2026-07-09T20:12:00+08:00",
   "p0_alerts": [
     {
-      "title": "明日9:25先验证“港股科技强共振”能否压过A股退潮结构",
+      "title": "半导体强修复进入次日9:25竞价优先验证",
       "severity": "P0",
-      "why_p0": "港股收盘科技线大幅反弹，会直接影响明日AI应用、云计算、半导体制造与观察池核心的竞价；但A股今日跌停和深跌宽度仍大，若只高开不扩散，容易形成高开兑现。",
+      "why_p0": "今日A股半导体材料、封测、制造、设备共振，港股中芯国际H/华虹宏力同步大涨，并且14:55-15:00尾盘没有否定科技硬件主线；这会直接影响次日核心观察池批量高开/低开、半导体ETF回撤应对和仓位风控优先级。",
       "evidence": [
-        "A股收盘结构仍偏退潮：涨停48、跌停36、炸板13，8%以上86只，跌5%以上720只。",
-        "港股收盘补丁显示：恒生科技+5.02%，恒指+2.96%，国企指数+4.04%。",
-        "港股AI/互联网强共振：阿里巴巴-W约+12.5%、小米集团-W约+9.6%、商汤-W约+9.6%、快手-W约+8.6%、百度-SW约+6.4%。",
-        "港股半导体制造红盘但冲高回落：中芯国际H约+3.3%、华虹宏力H约+3.2%，仍需A股中芯A/华虹A/设备中军承接验证。"
+        {
+          "type": "market_breadth",
+          "text": "A股收盘由科技硬件带动强修复：涨停75、跌停tc=12、炸板17，涨停:跌停约75:12≈6.25:1；清洁样本5311只中，5%-8%有274只、8%以上228只、跌5%以上93只。科创50+8.41%、半导体ETF+9.86%，主线集中在半导体材料/封测/制造/设备。"
+        },
+        {
+          "type": "limit_pool",
+          "limit_up_count": 75,
+          "limit_down_count": 12,
+          "broken_limit_count": 17,
+          "limit_ratio": "75:12≈6.25:1",
+          "source": "eastmoney_push2/push2ex + tencent_quote"
+        },
+        {
+          "type": "hotspot",
+          "name": "半导体设备/材料/制造/封测",
+          "status": "强主线",
+          "representatives": [
+            "有研硅",
+            "雅克科技",
+            "华海清科",
+            "沪硅产业",
+            "长电科技",
+            "华天科技",
+            "通富微电",
+            "中微公司"
+          ],
+          "source": "data/postmarket.json.hotspots"
+        },
+        {
+          "type": "hk_cross_market",
+          "text": "港股收盘分化：恒指-0.70%、恒生科技+0.01%，互联网多数回落，但港股半导体强共振，中芯国际H+10.22%、华虹宏力+8.44%；AI应用端智谱+11.34%。",
+          "source": "tencent_hk_http"
+        },
+        {
+          "type": "closing_auction",
+          "text": "14:55-15:00尾盘没有出现砸盘，指数、科创50和半导体ETF小幅抬升或持平；半导体强势核心封住，PCB/CPO高位略有分歧，尾盘资金支持“科技硬件主线继续强”，但不支持无差别追高。",
+          "source": "tencent_minute 14:55-15:00"
+        }
       ],
       "watch_next_day": [
-        "9:25统计涨停、跌停、炸板及差值：若跌停从36只明显收缩且AI软件/云计算/半导体有多股高开承接，港股共振确认。",
-        "看浪潮信息、紫光股份、深信服、网宿科技、昆仑万维、商汤/快手映射线是否扩散到低位补涨。",
-        "看中芯A、华虹A、中微公司、北方华创、华海清科是否强于半导体ETF；若仅单股高开，仍按分化处理。"
+        "9:25涨停/跌停差值是否继续大于50，跌停数是否低于今日东方财富tc=12。",
+        "有研硅、雅克科技、长电科技、华天科技、通富微电、中微公司、华海清科、北方华创是否批量高开后仍有成交承接。",
+        "半导体材料、封测、制造、设备是否继续同时位列行业涨幅/成交前排；若只剩单一高位股，强主线降为高位兑现观察。",
+        "港股中芯国际H、华虹宏力、恒生科技开盘是否继续共振；若港股先回落，A股半导体高开要防兑现。"
       ],
       "source": [
-        "local:data/postmarket.json#hk_close_review",
-        "腾讯财经港股16:06收盘快照"
-      ]
-    },
-    {
-      "title": "英伟达Rubin/Kyber延迟传闻扰动PCB背板、CPO和高端连接链预期",
-      "severity": "P0",
-      "why_p0": "该传闻直接指向AI服务器PCB midplane/orthogonal backplane、CPO成熟度和Rubin Ultra量产节奏，可能影响明日PCB、电子布、CPO、铜箔和连接器方向竞价；但英伟达回应口径为路线图仍完整，不能当作官方确认。",
-      "evidence": [
-        "Tom’s Hardware援引SemiAnalysis称Kyber NVL144 rack可能推迟至2028，原因涉及复杂PCB midplane、热/电源/信号完整性问题，并提到CPO成熟度可能限制部分配置。",
-        "同一报道披露英伟达回应为“roadmap is intact”；Wccftech也报道英伟达否认延迟传闻，强调芯片路线图未变。",
-        "NVIDIA官方Newsroom最近一周仍发布AI基础设施、LeRobot和Vera CPU相关内容，没有发布Rubin/Kyber延期公告。"
-      ],
-      "watch_next_day": [
-        "PCB/电子布：胜宏科技、沪电股份、生益科技、东山精密、中国巨石、国际复材若低开且不能收敛，按风险线处理。",
-        "CPO/光模块：新易盛、中际旭创、天孚通信、光迅科技若因传闻低开后放量收复开盘价，可视为传闻被资金消化；否则维持资金博弈/风险。",
-        "半导体设备材料：该事件不是扩产订单确认，不能直接升级设备/材料，只能作为AI硬件链风险或预期再定价观察。"
-      ],
-      "source": [
-        "https://www.tomshardware.com/pc-components/gpus/nvidias-kyber-rack-for-rubin-ultra-slips-to-2028",
-        "https://wccftech.com/nvidia-quashes-rubin-kyber-rack-delay-rumors-says-chip-roadmap-is-intact/",
-        "https://nvidianews.nvidia.com/news/latest"
+        "local:data/postmarket.json",
+        "腾讯财经A/H快照",
+        "东方财富push2/push2ex结构数据"
       ]
     }
   ],
   "sentiment_summary": {
-    "overall": "外部科技偏提振/内部A股仍需风控确认",
-    "one_sentence": "今晚没有公司公告级硬催化，明早核心矛盾是港股科技强共振能否带动A股AI与半导体扩散，同时防范英伟达Rubin/Kyber传闻对PCB/CPO高位链的扰动。",
-    "positive_signals": [
-      "港股恒生科技大涨，AI应用/互联网平台形成外部情绪共振。",
-      "中芯H、华虹H收红，对A股半导体制造/设备有次日情绪支撑。",
-      "NVIDIA官方未发布延期公告，AI基础设施与机器人官方内容仍在延续。"
-    ],
-    "negative_signals": [
-      "A股收盘跌5%以上样本仍达720只，跌停36只，风险宽度未解除。",
-      "Rubin/Kyber延迟传闻指向PCB背板、CPO和高密度机柜制造难度，可能压制PCB/CPO高位预期。",
-      "观察池107只A股今日巨潮公告命中0条，缺少订单/业绩/客户验证类硬证据。"
-    ]
+    "one_sentence": "今晚增量结论：没有抓到新的政策或公司公告硬催化，最需要次日验证的是“半导体强修复能否从盘面强延续为竞价强和成交强”。",
+    "risk_level": "分化偏进攻，但高开兑现风险上升",
+    "market_bias": "半导体设备/材料/封测优先，CPO/PCB为资金博弈，新能源/资源链只看风险收敛。",
+    "p0_count": 1
   },
   "news": [
     {
-      "text": "观察池个股公告覆盖完成：截至20:03，107只A股观察池在巨潮2026-07-08单日查询命中0条，未发现新增重大公告。",
-      "source": "巨潮资讯批量查询",
-      "tag": "company_announcements_coverage",
-      "impact": "没有业绩预告、订单合同、回购、减持、定增、问询等公司公告级事件为明日半导体设备/材料/AI硬件方向直接加分；明日仍以竞价、扩散和成交承接确认。",
+      "text": "A股/港股收盘后的最强可验证信号仍是半导体硬件链：A股科创50、半导体ETF和半导体四个细分分支共振，港股半导体制造同步强。",
+      "source": "local:data/postmarket.json; 腾讯财经; 东方财富push2/push2ex",
+      "tag": "market_structure_p0_context",
+      "impact": "正向影响半导体设备、半导体材料、半导体零部件、封测/HBM和晶圆制造映射；但属于盘面确认，不等于新增订单或政策确认。",
       "evidence": [
-        "巨潮按watchlist去重后107只A股、2026-07-08单日逐票查询：公告命中0条、错误0条。"
+        {
+          "type": "market_breadth",
+          "text": "A股收盘由科技硬件带动强修复：涨停75、跌停tc=12、炸板17，涨停:跌停约75:12≈6.25:1；清洁样本5311只中，5%-8%有274只、8%以上228只、跌5%以上93只。科创50+8.41%、半导体ETF+9.86%，主线集中在半导体材料/封测/制造/设备。"
+        },
+        {
+          "type": "limit_pool",
+          "limit_up_count": 75,
+          "limit_down_count": 12,
+          "broken_limit_count": 17,
+          "limit_ratio": "75:12≈6.25:1",
+          "source": "eastmoney_push2/push2ex + tencent_quote"
+        },
+        {
+          "type": "hotspot",
+          "name": "半导体设备/材料/制造/封测",
+          "status": "强主线",
+          "representatives": [
+            "有研硅",
+            "雅克科技",
+            "华海清科",
+            "沪硅产业",
+            "长电科技",
+            "华天科技",
+            "通富微电",
+            "中微公司"
+          ],
+          "source": "data/postmarket.json.hotspots"
+        },
+        {
+          "type": "hk_cross_market",
+          "text": "港股收盘分化：恒指-0.70%、恒生科技+0.01%，互联网多数回落，但港股半导体强共振，中芯国际H+10.22%、华虹宏力+8.44%；AI应用端智谱+11.34%。",
+          "source": "tencent_hk_http"
+        },
+        {
+          "type": "closing_auction",
+          "text": "14:55-15:00尾盘没有出现砸盘，指数、科创50和半导体ETF小幅抬升或持平；半导体强势核心封住，PCB/CPO高位略有分歧，尾盘资金支持“科技硬件主线继续强”，但不支持无差别追高。",
+          "source": "tencent_minute 14:55-15:00"
+        }
       ],
-      "mapping": "半导体设备、材料、零部件、PCB/电子布、AI应用、机器人、医药修复链均无新增观察池公司公告确认。",
+      "mapping": "港股中芯国际H/华虹宏力强势 + A股半导体ETF/科创50大涨 -> 映射中芯国际A、华虹公司、北方华创、中微公司、华海清科、雅克科技、有研硅、富创精密、长电科技等。",
       "a_share_targets": [
         "北方华创",
         "中微公司",
         "华海清科",
         "安集科技",
+        "江丰电子",
         "雅克科技",
         "沪硅产业",
         "有研硅",
         "富创精密",
-        "中国巨石",
-        "胜宏科技"
+        "长电科技",
+        "华天科技",
+        "通富微电",
+        "中芯国际",
+        "华虹公司"
       ],
-      "logic_chain": "无公司公告硬证据 -> 不提升官方/公司确认度 -> 次日主线级别由竞价和盘中扩散确认。",
-      "verify_next_day": "核心观察池若高开但成交不放大，防高开兑现；若低开后快速收敛且板块扩散，再按盘面自发修复观察。"
+      "logic_chain": "盘面扩散和尾盘承接确认 -> 次日竞价优先验证扩散持续性 -> 若高开不承接则从强主线转为兑现风险。",
+      "verify_next_day": "看9:25半导体分支是否批量高开且开盘后15分钟不快速回落；看半导体ETF/科创50ETF成交是否继续放大。"
     },
     {
-      "text": "工信部/发改委/商务部晚间政策入口扫描未发现半导体、AI算力、出口管制或新材料方向新增P0。",
-      "source": "工信部、发改委、商务部官网首页及关键词检索",
-      "tag": "official_policy_scan",
-      "impact": "官方确认度没有新增加分；半导体扩产、TGV/玻璃基/MicroLED、国产算力、电子布/玻纤仍按盘面和公告证据验证，不因政策传闻升级。",
+      "text": "观察池个股公告扫描未发现7月9日晚间重大新增；全池107只A股中106只巨潮接口返回，0条公告命中，雅克科技全量轮询超时但核心复核返回0命中。",
+      "source": "巨潮资讯 hisAnnouncement/query; local:data/.cninfo-evening-scan-20260709.json",
+      "tag": "company_announcements_coverage",
+      "impact": "没有发现业绩预告、订单合同、回购、减持、定增、问询、风险提示等公司公告级事件为明日直接加分；半导体强度仍主要来自盘面和A/H共振。",
       "evidence": [
-        "工信部首页7月8日可见事项主要为服务型制造培训、通信管理和标准征求意见；未见半导体/AI算力硬催化。",
-        "发改委首页关键词未检出“半导体”“人工智能”；商务部首页关键词未检出“半导体”“出口管制”。"
+        {
+          "checked": 106,
+          "total_watchlist": 107,
+          "hit_count": 0,
+          "error_count": 1,
+          "errors": [
+            {
+              "stock": {
+                "code": "sz002409",
+                "name": "雅克科技"
+              },
+              "error": "ReadTimeout: HTTPConnectionPool(host='127.0.0.1', port=7897): Read timed out. (read timeout=8"
+            }
+          ]
+        }
+      ],
+      "mapping": "半导体设备、材料、零部件、PCB/电子布、CPO、AI算力、机器人、医药修复链均未获得新增公司公告硬确认。",
+      "a_share_targets": [
+        "北方华创",
+        "中微公司",
+        "华海清科",
+        "安集科技",
+        "江丰电子",
+        "雅克科技",
+        "富创精密",
+        "新莱应材",
+        "南大光电",
+        "晶瑞电材",
+        "胜宏科技",
+        "沪电股份",
+        "中际旭创",
+        "新易盛"
+      ],
+      "logic_chain": "无公告硬证据 -> 不提升官方/公司确认度 -> 次日仍看竞价、扩散、成交承接和半年度业绩预告窗口。",
+      "verify_next_day": "若核心观察池高开但成交不放大，按情绪溢价处理；若公告端后续补出订单/业绩预告，再升级验证。",
+      "coverage_detail": {
+        "stock_count": 107,
+        "returned_count": 106,
+        "announcement_hits": [],
+        "errors": [
+          {
+            "stock": {
+              "code": "sz002409",
+              "name": "雅克科技"
+            },
+            "error": "ReadTimeout: HTTPConnectionPool(host='127.0.0.1', port=7897): Read timed out. (read timeout=8"
+          }
+        ]
+      }
+    },
+    {
+      "text": "工信部、发改委、商务部等官方政策入口截至20:00扫描未抓到半导体、AI算力、出口管制或新材料方向的新增P0硬催化。",
+      "source": "工信部/发改委/商务部官网关键词检索与公开入口扫描",
+      "tag": "official_policy_scan",
+      "impact": "官方确认度没有新增加分；扩产、玻璃基/TGV/MicroLED、国产算力、电子布/玻纤仍按订单、量产、客户验证、收入和毛利证据验证。",
+      "evidence": [
+        {
+          "type": "official_scan",
+          "result": "no_verified_p0_policy_found",
+          "time": "2026-07-09T20:12:00+08:00",
+          "note": "未使用无法核实的传闻作为政策结论。"
+        }
       ],
       "mapping": "设备平台 > CMP/靶材/耗材 > 零部件 > 光刻胶仍按config/topics-list.json优先级跟踪。",
       "a_share_targets": [
@@ -102,177 +211,174 @@
         "南大光电",
         "晶瑞电材"
       ],
-      "logic_chain": "无新增官方政策确认 -> 不提升H2/H3/H4/H5假设级别 -> 继续等待订单、量产、客户验证、收入或毛利证据。",
-      "verify_next_day": "若9:25半导体三分支不能批量高开承接，扩产+技术迭代假设维持部分确认/观察。"
+      "logic_chain": "无新增官方政策确认 -> H2/H3/H4/H5不因消息面升级 -> 继续等待订单、产能利用率、收入和毛利验证。",
+      "verify_next_day": "若半导体仍强但公告/政策无新增，盘中结论应标注为盘面强、基本面验证待跟进。"
     },
     {
-      "text": "NVIDIA官方Newsroom近一周继续发布AI基础设施、LeRobot开放机器人、Vera CPU等内容，但未发布Rubin/Kyber延期公告。",
-      "source": "NVIDIA Newsroom",
-      "tag": "global_leader_scan",
-      "impact": "AI算力与物理AI中期叙事仍在，但Rubin/Kyber延迟传闻需要按“媒体传闻+官方未确认”处理，不能直接证伪或确认CPO/PCB主线。",
+      "text": "CPO/光模块和PCB/电子布今晚不升级为强主线事件；盘后证据显示它们更多是科技硬件共振下的资金博弈和反抽。",
+      "source": "local:data/postmarket.json.hotspots; 腾讯分钟线14:55-15:00",
+      "tag": "risk_and_rotation_watch",
+      "impact": "对新易盛、中际旭创、天孚通信、胜宏科技、沪电股份、中国巨石、国际复材等只能按反抽/资金博弈观察，不能替代半导体设备材料主线。",
       "evidence": [
-        "NVIDIA Newsroom 7月7日有Vera CPU/agentic AI相关博客，7月6日有NVIDIA与Hugging Face LeRobot内容，7月1日有AI基础设施资本伙伴内容。",
-        "官方页面未见7月8日前后Rubin/Kyber延期公告。"
+        {
+          "type": "cpo_hotspot",
+          "status": "观察线偏强/资金博弈",
+          "risk": "新易盛尾盘回落约0.42%，若明日光模块前排不能继续放量并扩散到源杰、华工、天孚以外，仍按高位资金博弈处理。",
+          "stocks": [
+            "浪潮信息",
+            "新易盛",
+            "中际旭创",
+            "天孚通信",
+            "源杰科技",
+            "华工科技",
+            "光迅科技",
+            "工业富联"
+          ]
+        },
+        {
+          "type": "pcb_hotspot",
+          "status": "资金博弈线/板块弱修复",
+          "risk": "若中国巨石、国际复材不能继续缩量企稳，胜宏/沪电/生益只代表PCB核心强，不代表电子布/玻纤涨价链重新确认。",
+          "stocks": [
+            "胜宏科技",
+            "沪电股份",
+            "生益科技",
+            "东山精密",
+            "中国巨石",
+            "国际复材",
+            "宏和科技",
+            "山东玻纤"
+          ]
+        },
+        {
+          "type": "closing_signal",
+          "signals": [
+            "强势封板：有研硅、雅克科技尾盘维持涨停价。",
+            "承接确认：富创精密14:55-15:00上涨约1.115%，士兰微小幅抬升。",
+            "分歧提醒：新易盛尾盘约-0.422%，CPO虽强但有高位兑现压力。",
+            "玻纤/PCB不是主升核心：中国巨石、国际复材尾盘收敛但力度弱于半导体。"
+          ]
+        }
       ],
-      "mapping": "A股映射到AI算力、CPO/光模块、PCB/电子布、机器人/具身智能。",
+      "mapping": "CPO/光模块 -> 新易盛/中际旭创/天孚通信/光迅科技；PCB/电子布 -> 胜宏科技/沪电股份/生益科技/中国巨石/国际复材。",
       "a_share_targets": [
-        "浪潮信息",
-        "中际旭创",
         "新易盛",
+        "中际旭创",
         "天孚通信",
+        "光迅科技",
         "胜宏科技",
         "沪电股份",
         "生益科技",
-        "埃斯顿",
-        "绿的谐波"
+        "中国巨石",
+        "国际复材",
+        "宏和科技",
+        "山东玻纤"
       ],
-      "logic_chain": "官方AI基础设施叙事延续 -> 支撑中期需求假设；但媒体传闻指向高密度机柜执行风险 -> 次日盘面必须验证承接。",
-      "verify_next_day": "AI硬件链若低开后放量收复开盘价，视为传闻消化；若CPO/PCB继续放量下跌，降为风险线。"
+      "logic_chain": "高成交反抽但涨停/后排扩散弱于半导体 -> 资金博弈线 -> 只有核心放量翻红、跌停减少、板块扩散才可继续观察承接。",
+      "verify_next_day": "若新易盛/胜宏科技高开低走且后排不跟，降低博弈频率；若PCB和玻纤上游2-3只同步翻红并缩量企稳，再写为资金回流。"
     },
     {
-      "text": "ASML新闻页未见7月新增光刻机/订单/中国链直接催化，最新可见新闻仍停留在5月战略合作等事项。",
-      "source": "ASML Press Releases",
-      "tag": "global_leader_scan",
-      "impact": "光刻机/光刻胶方向今晚没有海外设备龙头新增硬催化；A股光刻胶只按低位观察和公司公告验证，不升级强线。",
+      "text": "海外标杆侧今晚只保留待复核观察：ASML财报窗口、NVIDIA/Rubin供应链传闻和HBM扩产信息需要8:30用官方/权威来源再确认。",
+      "source": "ASML investor calendar; NVIDIA Newsroom; public web search results",
+      "tag": "global_benchmark_watch_only",
+      "impact": "暂不作为A股强主线升级依据；若明早海外半导体设备、AI算力或HBM出现官方确认，再映射A股设备、材料、HBM/封测。",
       "evidence": [
-        "ASML press release页面最新可见为2026年5月16日Tata Electronics合作、5月5日CEO联名观点、4月22日AGM结果。"
+        {
+          "type": "global_scan",
+          "result": "watch_only_no_verified_p0",
+          "note": "未取得足以升级P0的官方新增公告；传闻仅列为次日复核项。"
+        }
       ],
-      "mapping": "A股光刻胶/光刻机映射：南大光电、晶瑞电材、彤程新材观察。",
+      "mapping": "ASML -> 光刻机/设备链；NVIDIA/AI服务器 -> CPO/PCB/算力硬件；SK海力士/三星HBM -> HBM材料和封测链。",
       "a_share_targets": [
+        "北方华创",
+        "中微公司",
+        "华海清科",
         "南大光电",
         "晶瑞电材",
-        "彤程新材"
+        "澜起科技",
+        "长电科技",
+        "通富微电",
+        "胜宏科技",
+        "新易盛"
       ],
-      "logic_chain": "无ASML新公告 -> 无海外设备龙头新增催化 -> A股光刻胶/设备只能等待自身订单、客户验证或资金扩散。",
-      "verify_next_day": "若光刻胶单股冲高但无板块扩散，仍列观察线，不升强主线。"
-    },
-    {
-      "text": "港股科技收盘强共振是明日最直接正向外部映射，但必须与A股自身退潮结构对冲判断。",
-      "source": "local:data/postmarket.json#hk_close_review",
-      "tag": "hk_mapping",
-      "impact": "明日A股AI应用、云计算、半导体制造可能被提振；但跌停和深跌样本若不收缩，仍属于分化型开盘。",
-      "evidence": [
-        "恒生科技+5.02%，阿里巴巴-W约+12.5%，小米集团-W约+9.6%，商汤-W约+9.6%，快手-W约+8.6%。",
-        "中芯国际H约+3.3%，华虹宏力H约+3.2%；港股创新药/CRO偏弱，药明生物、药明康德H、康方生物、三生制药收跌。"
-      ],
-      "mapping": "港股互联网/AI -> A股AI应用、云计算、信创；港股晶圆制造 -> A股半导体制造/设备；港股创新药弱 -> A股CRO/创新药不宜被动升级。",
-      "a_share_targets": [
-        "浪潮信息",
-        "紫光股份",
-        "深信服",
-        "网宿科技",
-        "昆仑万维",
-        "中芯国际",
-        "华虹公司",
-        "中微公司",
-        "北方华创",
-        "恒瑞医药",
-        "药明康德"
-      ],
-      "logic_chain": "港股强共振 -> 次日竞价情绪提振；A股退潮未解除 -> 需用涨停/跌停差和板块扩散确认。",
-      "verify_next_day": "9:25若涨停增加、跌停收缩且AI/半导体多点高开承接，确认外部共振；否则按高开兑现风险处理。"
+      "logic_chain": "海外信息未形成官方硬确认 -> 不进入P0 -> 8:30增量扫描再确认是否影响9:15盘前映射。",
+      "verify_next_day": "8:30复核ASML/NVIDIA/SK海力士/三星官网、交易所公告和权威媒体；若只有市场传闻，仍按观察线处理。"
     }
   ],
   "coverage": {
-    "watchlist_announcement_scan": {
-      "status": "completed_no_major_hit",
-      "total_unique_a_stocks_checked": 107,
-      "cninfo_date_window": "2026-07-08 to 2026-07-08",
-      "cninfo_hits": 0,
-      "cninfo_errors": 0,
-      "note": "已检查个股公告，未发现重大新增；无重大公告不代表未来无补发披露，后续仍以交易所/巨潮正式披露为准。"
+    "window": "2026-07-09 20:00 full-dimensional scan",
+    "policy_sources": [
+      "工信部",
+      "发改委",
+      "商务部",
+      "官方公开入口关键词检索"
+    ],
+    "global_benchmark_scope": [
+      "ASML",
+      "NVIDIA",
+      "SK hynix",
+      "Samsung",
+      "HBM/AI服务器/半导体设备公开信息"
+    ],
+    "announcement_scope": {
+      "watchlist_total": 107,
+      "cninfo_returned": 106,
+      "announcement_hits": 0,
+      "errors": [
+        {
+          "stock": {
+            "code": "sz002409",
+            "name": "雅克科技"
+          },
+          "error": "ReadTimeout: HTTPConnectionPool(host='127.0.0.1', port=7897): Read timed out. (read timeout=8"
+        }
+      ]
     },
-    "official_policy_scan": {
-      "status": "no_verified_p0_found",
-      "sources_checked": [
-        "工信部",
-        "发改委",
-        "商务部",
-        "上交所/深交所入口",
-        "巨潮资讯"
-      ],
-      "note": "未发现半导体、AI算力、机器人、新材料、出口管制方向足以进入P0的新增官方事件。"
-    },
-    "global_leader_scan": {
-      "status": "mixed_signal",
-      "leaders_by_topic": {
-        "AI算力/HBM/存储": [
-          "NVIDIA",
-          "AMD",
-          "Broadcom",
-          "Micron",
-          "Samsung",
-          "SK hynix"
-        ],
-        "光刻胶/光刻机": [
-          "ASML",
-          "TOK",
-          "JSR",
-          "Canon",
-          "Nikon"
-        ],
-        "CMP/靶材/材料耗材": [
-          "SUMCO",
-          "Shin-Etsu",
-          "Linde",
-          "Air Products",
-          "Entegris"
-        ],
-        "AI物理/机器人": [
-          "NVIDIA LeRobot",
-          "Hugging Face",
-          "World Robot Conference"
-        ]
-      },
-      "note": "NVIDIA官方叙事延续但Rubin/Kyber媒体传闻构成短期风险扰动；ASML无7月新增硬催化。"
-    }
+    "note": "已检查观察池公告和固定政策/全球标杆矩阵；未发现可直接影响明日开盘的新增公司公告或官方政策P0。公告接口有1只全量轮询超时，但雅克科技已在核心复核中返回0命中，因此结论写为“未发现重大新增”而非绝对无公告。"
   },
   "sources": [
     {
-      "name": "巨潮资讯",
-      "url": "http://www.cninfo.com.cn/new/index",
-      "usage": "观察池公告批量查询"
+      "name": "postmarket.json 2026-07-09",
+      "url": "local:/Users/sweet_orange/Documents/投资/stock-dashboard/data/postmarket.json"
+    },
+    {
+      "name": "巨潮资讯公告查询",
+      "url": "http://www.cninfo.com.cn/new/disclosure"
     },
     {
       "name": "工信部",
-      "url": "https://www.miit.gov.cn/",
-      "usage": "政策与官方确认度扫描"
+      "url": "https://www.miit.gov.cn/"
     },
     {
       "name": "发改委",
-      "url": "https://www.ndrc.gov.cn/",
-      "usage": "政策扫描"
+      "url": "https://www.ndrc.gov.cn/"
     },
     {
       "name": "商务部",
-      "url": "https://www.mofcom.gov.cn/",
-      "usage": "出口管制/制裁/不可靠实体扫描"
+      "url": "https://www.mofcom.gov.cn/"
     },
     {
       "name": "NVIDIA Newsroom",
-      "url": "https://nvidianews.nvidia.com/news/latest",
-      "usage": "全球AI算力与机器人标杆扫描"
+      "url": "https://nvidianews.nvidia.com/news/latest"
     },
     {
-      "name": "Tom’s Hardware",
-      "url": "https://www.tomshardware.com/pc-components/gpus/nvidias-kyber-rack-for-rubin-ultra-slips-to-2028",
-      "usage": "Rubin/Kyber延迟传闻及PCB/CPO风险映射"
-    },
-    {
-      "name": "Wccftech",
-      "url": "https://wccftech.com/nvidia-quashes-rubin-kyber-rack-delay-rumors-says-chip-roadmap-is-intact/",
-      "usage": "英伟达回应传闻交叉验证"
-    },
-    {
-      "name": "ASML Press Releases",
-      "url": "https://www.asml.com/en/news/press-releases",
-      "usage": "全球半导体设备标杆扫描"
-    },
-    {
-      "name": "local:data/postmarket.json",
-      "url": "local:data/postmarket.json",
-      "usage": "A股收盘和港股收盘补丁证据"
+      "name": "ASML Investors",
+      "url": "https://www.asml.com/en/investors"
     }
+  ],
+  "next_day_watch": [
+    "9:25先看涨停、跌停、炸板和涨停:跌停比例；半导体若批量高开但炸板扩大，视为高位分歧。",
+    "半导体设备/材料/封测/制造四分支必须至少2-3个继续位列涨幅和成交前排，才维持强主线。",
+    "雅克科技、有研硅、沪硅产业、富创精密、士兰微专项继续对照半导体材料/设备/功率半导体板块强弱，亏损或业绩不确定的只列观察。",
+    "PCB/电子布观察中国巨石、国际复材、山东玻纤、长海股份与胜宏/沪电/生益是否同步；单股强不构成板块修复。",
+    "若券商+保险或白酒+畜牧同步放量、科技回落，盘中标注风格切换风险。"
+  ],
+  "risk": [
+    "今日半导体热度高，明日最大风险是核心高开低走、涨停封单不足、炸板扩大。",
+    "今晚未发现新增官方政策/公司公告硬催化，若明早消息面仍空，不能把盘面强直接等同基本面确认。",
+    "CPO/PCB和电子布/玻纤仍属于资金博弈/反抽观察，低位未扩散前不升级。",
+    "东方财富DTPool今日跌停池列表曾降级为空，仅tc可用；次日情绪统计需继续交叉验证。"
   ],
   "disclaimer": "仅作研究跟踪，不构成投资建议。"
 }
