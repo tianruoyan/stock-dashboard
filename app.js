@@ -3222,7 +3222,7 @@ function intradayMood(data) {
 }
 
 function intradayActionText(data, strong, risks, sentiment) {
-  const actions = Array.isArray(data.actions) ? data.actions.filter(Boolean) : [];
+  const actions = arrayTextItems(data.actions);
   if (actions.length) {
     return {
       title: `看${Math.min(actions.length, 3)}个验证信号`,
@@ -3445,11 +3445,22 @@ function intradayAdviceItems(data) {
 
 function arrayTextItems(value) {
   if (!Array.isArray(value)) return [];
-  return value.map(item => {
-    if (typeof item === "string") return item;
-    if (!item || typeof item !== "object") return "";
-    return item.text || item.action || item.note || item.name || JSON.stringify(item);
-  }).filter(Boolean);
+  return value.map(displaySignalText).filter(Boolean);
+}
+
+function displaySignalText(item) {
+  if (typeof item === "string") return item;
+  if (!item || typeof item !== "object") return "";
+  const body = signalTextValue(item.strategy || item.text || item.action || item.note || item.reason || item.detail || item.watch_next || "");
+  const label = item.level || item.status || item.name || item.title || "";
+  if (label && body) return `${label}：${body}`;
+  return body || label;
+}
+
+function signalTextValue(value) {
+  if (Array.isArray(value)) return value.map(signalTextValue).filter(Boolean).join("；");
+  if (value && typeof value === "object") return displaySignalText(value);
+  return String(value || "");
 }
 
 function renderSectorList(elId, sectors, dir) {
@@ -4052,16 +4063,18 @@ function renderMidday(data) {
 
   // 下午信号
   if (data.afternoon_watch) {
+    const watchItems = arrayTextItems(data.afternoon_watch);
     html += '<div class="subsection"><h3>🔮 下午信号</h3><ul class="news-list">';
-    html += data.afternoon_watch.map(w => `<li>${w}</li>`).join('');
+    html += watchItems.map(w => `<li>${escapeHtml(w)}</li>`).join('');
     html += '</ul></div>';
   }
 
   // 风险提示
   const risks = data.risk || data.risks;
   if (risks) {
+    const riskItems = arrayTextItems(risks);
     html += '<div class="subsection"><h3>⚠️ 下午风险</h3><ul class="news-list risk">';
-    html += risks.map(r => `<li>${typeof r==="string"?r:r.text}</li>`).join('');
+    html += riskItems.map(r => `<li>${escapeHtml(r)}</li>`).join('');
     html += '</ul></div>';
   }
 
@@ -4078,7 +4091,7 @@ function renderMiddayDecision(data) {
   const trends = Array.isArray(review.main_trends) ? review.main_trends : [];
   const strong = trends.find(t => /强/.test(t.status || "")) || trends[0];
   const groups = middayTrendGroups(trends);
-  const watch = Array.isArray(data.afternoon_watch) ? data.afternoon_watch : [];
+  const watch = arrayTextItems(data.afternoon_watch);
   const risks = data.risk || data.risks || [];
   const sentiment = data.morning_snapshot?.sentiment || {};
   const limitUp = Number(sentiment.limit_up_count || sentiment.limit_up || 0);
