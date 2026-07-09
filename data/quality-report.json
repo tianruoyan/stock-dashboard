@@ -1,8 +1,8 @@
 {
-  "timestamp": "2026-07-09T13:15:02+08:00",
+  "timestamp": "2026-07-09T13:40:17+08:00",
   "current_signal_date": "2026-07-09",
   "status": "degraded",
-  "summary": "发现 71 个降级/需复核项（26 个价格/行情复核，2 个信号复核，44 个背景复核），核心结论可看但必须按影响分层使用。",
+  "summary": "发现 76 个降级/需复核项（25 个价格/行情复核，2 个信号复核，50 个背景复核），核心结论可看但必须按影响分层使用。",
   "issues": [
     {
       "severity": "warning",
@@ -491,6 +491,60 @@
       "decision_action": "仅作背景复核，不单独阻断交易判断"
     },
     {
+      "severity": "warning",
+      "file": "alert.json",
+      "path": "alerts[181].leaders[0]",
+      "code": "missing_alert_leader_pct",
+      "message": "alerts[181].leaders[0].change_pct 缺失",
+      "impact_level": "background_review",
+      "decision_action": "仅作背景复核，不单独阻断交易判断"
+    },
+    {
+      "severity": "warning",
+      "file": "alert.json",
+      "path": "alerts[181].leaders[1]",
+      "code": "missing_alert_leader_pct",
+      "message": "alerts[181].leaders[1].change_pct 缺失",
+      "impact_level": "background_review",
+      "decision_action": "仅作背景复核，不单独阻断交易判断"
+    },
+    {
+      "severity": "warning",
+      "file": "alert.json",
+      "path": "alerts[181].leaders[2]",
+      "code": "missing_alert_leader_pct",
+      "message": "alerts[181].leaders[2].change_pct 缺失",
+      "impact_level": "background_review",
+      "decision_action": "仅作背景复核，不单独阻断交易判断"
+    },
+    {
+      "severity": "warning",
+      "file": "alert.json",
+      "path": "alerts[182].leaders[0]",
+      "code": "missing_alert_leader_pct",
+      "message": "alerts[182].leaders[0].change_pct 缺失",
+      "impact_level": "background_review",
+      "decision_action": "仅作背景复核，不单独阻断交易判断"
+    },
+    {
+      "severity": "warning",
+      "file": "alert.json",
+      "path": "alerts[182].leaders[1]",
+      "code": "missing_alert_leader_pct",
+      "message": "alerts[182].leaders[1].change_pct 缺失",
+      "impact_level": "background_review",
+      "decision_action": "仅作背景复核，不单独阻断交易判断"
+    },
+    {
+      "severity": "warning",
+      "file": "alert.json",
+      "path": "alerts[182].leaders[2]",
+      "code": "missing_alert_leader_pct",
+      "message": "alerts[182].leaders[2].change_pct 缺失",
+      "impact_level": "background_review",
+      "decision_action": "仅作背景复核，不单独阻断交易判断"
+    },
+    {
       "severity": "info",
       "file": "evening-sentiment.json",
       "path": "",
@@ -618,19 +672,10 @@
     },
     {
       "severity": "warning",
-      "file": "source-health.json",
-      "path": "",
-      "code": "source_failed",
-      "message": "eastmoney_board_rank_intraday: push2行业/概念排行多次RemoteDisconnected，本次未使用板块排行作结论主证据。",
-      "impact_level": "price_review",
-      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
-    },
-    {
-      "severity": "warning",
       "file": "cross-file",
       "path": "雅克科技",
       "code": "stock_pct_cross_file_conflict",
-      "message": "雅克科技 跨文件涨跌幅差异过大：alert.json -2.78% vs intraday.json 7.25%",
+      "message": "雅克科技 跨文件涨跌幅差异过大：alert.json -2.78% vs intraday.json 9.43%",
       "impact_level": "price_review",
       "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
     },
@@ -639,7 +684,7 @@
       "file": "cross-file",
       "path": "有研硅",
       "code": "stock_pct_cross_file_conflict",
-      "message": "有研硅 跨文件涨跌幅差异过大：alert.json -0.28% vs intraday.json 17.63%",
+      "message": "有研硅 跨文件涨跌幅差异过大：alert.json -0.28% vs intraday.json 19.19%",
       "impact_level": "price_review",
       "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
     },
@@ -648,7 +693,7 @@
       "file": "cross-file",
       "path": "沪硅产业",
       "code": "stock_pct_cross_file_conflict",
-      "message": "沪硅产业 跨文件涨跌幅差异过大：alert.json -0.83% vs intraday.json 7.63%",
+      "message": "沪硅产业 跨文件涨跌幅差异过大：alert.json -0.83% vs intraday.json 8.46%",
       "impact_level": "price_review",
       "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
     }
@@ -671,7 +716,7 @@
       "label": "二次行情复核",
       "file": "cross-file",
       "code": "stock_pct_cross_file_conflict",
-      "problem": "雅克科技 跨文件涨跌幅差异过大：alert.json -2.78% vs intraday.json 7.25%",
+      "problem": "雅克科技 跨文件涨跌幅差异过大：alert.json -2.78% vs intraday.json 9.43%",
       "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核",
       "next_step": "用第二行情源复核涨跌幅、quote_time 和代表股方向；未确认前只做验证。",
       "unblock_condition": "price_review=0 或相关来源标记 trusted/cross verified。"
@@ -723,12 +768,12 @@
   ],
   "counts": {
     "critical": 0,
-    "warning": 71,
+    "warning": 76,
     "info": 1,
     "blocking": 0,
-    "price_review": 26,
+    "price_review": 25,
     "signal_review": 2,
-    "background_review": 44
+    "background_review": 50
   },
   "rules": [
     "异常文本、JSON解析失败、必需文件缺失为 critical。",
