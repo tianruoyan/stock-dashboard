@@ -4692,22 +4692,44 @@ function formatCompactDate(value) {
 function renderTopics(data) {
   updatePanelMeta("topics", data.timestamp);
   const el = document.getElementById("topics");
-  const topics = data.topics || [];
+  const topics = normalizeTopicsForDisplay(data.topics || []);
   if (!topics.length) { el.innerHTML = '<div class="empty">暂无专题跟踪</div>'; return; }
 
   const visible = pickVisibleTopics(topics);
   const hidden = topics.filter(t => !visible.includes(t));
-  el.innerHTML = renderTopicsDecision(topics) + '<div class="grid">' + visible.map(t => renderTopicCard(t, data.timestamp)).join("") + '</div>' +
-    (hidden.length ? `<details class="compact-details topics-all"><summary>展开全部专题（${topics.length}）</summary><div class="grid">${hidden.map(t => renderTopicCard(t, data.timestamp)).join("")}</div></details>` : "");
+  el.innerHTML = renderTopicsDecision(topics) + '<div class="grid">' + visible.map(t => renderTopicCard(t)).join("") + '</div>' +
+    (hidden.length ? `<details class="compact-details topics-all"><summary>展开全部专题（${topics.length}）</summary><div class="grid">${hidden.map(t => renderTopicCard(t)).join("")}</div></details>` : "");
 }
 
-function renderTopicCard(t, fallbackTimestamp) {
+function normalizeTopicsForDisplay(topics) {
+  return topics.slice().sort((a, b) => {
+    const freshDiff = Number(Boolean(b.updated_at || b.timestamp)) - Number(Boolean(a.updated_at || a.timestamp));
+    if (freshDiff) return freshDiff;
+    const timeDiff = new Date(b.updated_at || b.timestamp || 0).getTime() - new Date(a.updated_at || a.timestamp || 0).getTime();
+    if (timeDiff) return timeDiff;
+    const important = topicImportanceScore(b) - topicImportanceScore(a);
+    if (important) return important;
+    return String(a.name || "").localeCompare(String(b.name || ""), "zh-Hans-CN");
+  });
+}
+
+function topicImportanceScore(topic) {
+  const text = [topic?.name, topic?.status, topic?.conclusion, topic?.action].join(" ");
+  let score = 0;
+  if (topic?.display === "integrated" || topic?.level === "母题材") score += 20;
+  if (/强化|强主线|强分支/.test(text)) score += 12;
+  if (/风险|退潮|回避/.test(text)) score += 8;
+  if (/观察|资金博弈/.test(text)) score += 4;
+  return score;
+}
+
+function renderTopicCard(t) {
     const statusText = String(t.status || "");
     const statusCls = statusText.includes("强化") || statusText.includes("强主线") ? "strong" :
                       statusText.includes("弱化") || statusText.includes("退潮") || statusText.includes("风险") ? "sentiment" : "";
     const statusBadge = statusCls === "strong" ? "🔥" :
                         statusCls === "sentiment" ? "🔻" : "➖";
-    const updatedAt = formatUpdateTime(t.updated_at || t.timestamp || fallbackTimestamp);
+    const updatedAt = formatUpdateTime(t.updated_at || t.timestamp);
     const conclusion = t.conclusion || t.core_view || "";
     const related = Array.isArray(t.related_topics) ? t.related_topics : [];
     return `<div class="card ${statusCls}">
