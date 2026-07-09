@@ -4121,14 +4121,19 @@ function middayTrendGroups(trends) {
   const verify = [];
   for (const trend of trends || []) {
     const name = themeDisplayName(trend);
-    const text = [trendName(trend), trend?.status, trend?.reason, ...(trend?.evidence || [])].join(" ");
+    const statusText = [trendName(trend), trend?.status, trend?.reason].join(" ");
+    const evidenceText = arrayTextItems(trend?.evidence).join(" ");
+    const text = [statusText, evidenceText].join(" ");
     if (/未触发/.test(text)) {
       continue;
     }
-    if (/风险线|主要风险|负反馈|跌停|不参与|回避|走弱/.test(text)) {
+    if (/风险线|主要风险|负反馈|跌停|不参与|回避|反抽失败|退潮|走弱/.test(statusText)) {
       risk.push(name);
       if (Array.isArray(trend?.evidence) && trend.evidence[0]) riskDetails.push(trend.evidence[0]);
-    } else if (/强主线|确认|观察线偏强|资金回流|修复|扩散/.test(text) && !/不是强主线/.test(text)) {
+    } else if (
+      /强主线|确认|观察偏强|观察线偏强|资金回流|扩散/.test(statusText) &&
+      !/不扩散|扩散不足|不升级|不是强主线|轮动但不扩散/.test(statusText)
+    ) {
       strong.push(name);
     } else if (/验证|观察|博弈|反抽/.test(text)) {
       verify.push(name);
