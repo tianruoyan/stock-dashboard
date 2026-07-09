@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-07-08T20:03:00+08:00",
+  "timestamp": "2026-07-09T08:36:00+08:00",
   "sources": {
     "tencent_http": {
       "status": "ok",
@@ -49,12 +49,15 @@
       ]
     },
     "cninfo_watchlist_announcement_scan": {
-      "status": "ok_empty",
-      "last_check": "2026-07-08T20:03:00+08:00",
-      "usage": "20:00晚间观察池107只A股公告扫描",
-      "detail": "巨潮2026-07-08单日逐票查询命中0条、错误0条；无新增重大公告命中。",
+      "status": "degraded_empty",
+      "last_check": "2026-07-09T08:36:00+08:00",
+      "usage": "8:30盘前观察池107只A股公告增量扫描",
+      "detail": "巨潮2026-07-09逐票查询命中0条；601601、588170查询超时，未将空返回视为重大公告缺失的绝对事实。",
       "sample_count": 107,
-      "errors": []
+      "errors": [
+        "601601 timed out",
+        "588170 timed out"
+      ]
     },
     "sina_announcement_page_sample": {
       "status": "ok_empty",
@@ -435,6 +438,22 @@
       "usage": "港股16:00收盘后恒指/恒科/核心科技与医药样本快照",
       "detail": "腾讯港股HTTP返回quote_time约2026/07/08 16:06:18；取得恒指、国企、恒科及19只核心港股样本，用于港股收盘后映射补丁。",
       "sample_count": 19,
+      "errors": []
+    },
+    "yahoo_finance_chart_api": {
+      "status": "degraded",
+      "last_check": "2026-07-09T08:36:00+08:00",
+      "usage": "隔夜美股指数、日韩科技链样本与部分海外科技股报价",
+      "detail": "分钟/日线样本返回可用：Dow -1.09%、S&P -0.28%、Nasdaq +0.20%、Nikkei样本+1.89%、KOSPI样本+3.69%；日线接口曾出现长时间无输出，已人工中断后取得部分结果。",
+      "errors": [
+        "initial daily chart request stalled; interrupted after partial output"
+      ]
+    },
+    "official_policy_incremental_scan": {
+      "status": "ok_empty",
+      "last_check": "2026-07-09T08:36:00+08:00",
+      "usage": "8:30前政策/官方增量核验",
+      "detail": "未发现8:30前足以改变开盘判断的部委/交易所新增硬催化；沿用20:00晚间全维度扫描结论。",
       "errors": []
     }
   },
