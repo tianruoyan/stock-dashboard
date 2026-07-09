@@ -1946,7 +1946,7 @@ function stockSignal(stock, signals, pool) {
   const hardWeakMove = Number.isFinite(changePct) && changePct <= -7;
   const currentNamedStrong = directTrigger || contextStrong;
   const currentStrong = currentNamedStrong || strongMove;
-  const currentWeak = directRisk || contextRisk || hardWeakMove || (directPressure && (weakMove || !Number.isFinite(changePct))) || (contextPressure && weakMove);
+  const currentWeak = directRisk || contextRisk || hardWeakMove || (directPressure && weakMove) || (contextPressure && weakMove);
   if (directEventRisk) return watchTone("event", "待盘面确认", eventRiskBadge(directSegments) || "消息风险", changePct, volumeBadge, 82, updatedAt);
   if (currentStrong) {
     const badge = currentNamedStrong
@@ -1993,9 +1993,10 @@ function stockContextText(name, signals, options = {}) {
 
 function currentDayDataTexts() {
   const currentDate = currentSignalDate();
+  const currentAlert = currentDateAlertData(cached("data/alert.json"), currentDate);
   return [
     ["data/intraday.json", cached("data/intraday.json")],
-    ...(hasCurrentPostmarket() ? [] : [["data/alert.json", cached("data/alert.json")]]),
+    ...(hasCurrentPostmarket() ? [] : [["data/alert.json", currentAlert]]),
     ["data/premarket.json", cached("data/premarket.json")],
     ["data/midday.json", cached("data/midday.json")],
     ["data/postmarket.json", cached("data/postmarket.json")]
@@ -2006,12 +2007,13 @@ function currentDayDataTexts() {
 
 function latestStockChangePct(name) {
   const currentDate = currentSignalDate();
+  const currentAlert = currentDateAlertData(cached("data/alert.json"), currentDate);
   const sources = [
     cached("data/postmarket.json"),
     cached("data/intraday.json"),
     cached("data/midday.json"),
     cached("data/premarket.json"),
-    ...(hasCurrentPostmarket() ? [] : [cached("data/alert.json")])
+    ...(hasCurrentPostmarket() ? [] : [currentAlert])
   ];
   for (const data of sources) {
     if (signalDate(data?.timestamp) !== currentDate) continue;
@@ -2024,12 +2026,13 @@ function latestStockChangePct(name) {
 function latestStockDataTimestamp(name) {
   const currentDate = currentSignalDate();
   const cleanName = displayStockName(name);
+  const currentAlert = currentDateAlertData(cached("data/alert.json"), currentDate);
   const sources = [
     cached("data/postmarket.json"),
     cached("data/intraday.json"),
     cached("data/midday.json"),
     cached("data/premarket.json"),
-    ...(hasCurrentPostmarket() ? [] : [cached("data/alert.json")])
+    ...(hasCurrentPostmarket() ? [] : [currentAlert])
   ];
   return latestTimestamp(sources
     .filter(data => signalDate(data?.timestamp) === currentDate && JSON.stringify(data || {}).includes(cleanName))
@@ -2399,7 +2402,7 @@ function collectSignalText() {
 
 function signalsFromItems(items, fallbackTimestamp, source) {
   return asArray(items).map(item => {
-    const timestamp = item?.updated_at || item?.timestamp || fallbackTimestamp || "";
+    const timestamp = itemSignalTimestamp(item, fallbackTimestamp, source);
     return {
       text: JSON.stringify(item, null, 0),
       date: signalDate(timestamp),
@@ -2407,6 +2410,30 @@ function signalsFromItems(items, fallbackTimestamp, source) {
       source
     };
   });
+}
+
+function itemSignalTimestamp(item, fallbackTimestamp, source) {
+  const explicit = item?.updated_at || item?.timestamp || "";
+  if (explicit) return explicit;
+  if (source !== "alert") return fallbackTimestamp || "";
+
+  const rawTime = String(item?.time || "");
+  if (/^\d{4}-\d{2}-\d{2}T/.test(rawTime)) return rawTime;
+
+  const idDate = String(item?.id || "").match(/^(\d{4})(\d{2})(\d{2})/);
+  if (!idDate) return fallbackTimestamp || "";
+  const time = /^\d{2}:\d{2}:\d{2}$/.test(rawTime)
+    ? rawTime
+    : (/^\d{2}:\d{2}$/.test(rawTime) ? `${rawTime}:00` : "00:00:00");
+  return `${idDate[1]}-${idDate[2]}-${idDate[3]}T${time}+08:00`;
+}
+
+function currentDateAlertData(alert, currentDate = currentSignalDate()) {
+  if (!alert || typeof alert !== "object") return alert;
+  const alerts = asArray(alert.alerts).filter(item =>
+    signalDate(itemSignalTimestamp(item, alert.timestamp, "alert")) === currentDate
+  );
+  return { ...alert, alerts };
 }
 
 function currentSignalDate() {
