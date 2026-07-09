@@ -3453,15 +3453,23 @@ function displaySignalText(item) {
   if (typeof item === "string") return item;
   if (!item || typeof item !== "object") return "";
   const body = signalTextValue(item.strategy || item.text || item.action || item.note || item.reason || item.detail || item.watch_next || "");
-  const label = item.level || item.status || item.name || item.title || "";
+  const label = item.level || item.status || item.name || item.title || item.metric || item.type || "";
   if (label && body) return `${label}：${body}`;
-  return body || label;
+  return body || label || structuredSignalText(item);
 }
 
 function signalTextValue(value) {
   if (Array.isArray(value)) return value.map(signalTextValue).filter(Boolean).join("；");
   if (value && typeof value === "object") return displaySignalText(value);
   return String(value || "");
+}
+
+function structuredSignalText(item) {
+  if (!item || typeof item !== "object") return "";
+  const title = item.metric || item.label || item.name || item.title || item.type || item.source || "证据";
+  const value = item.value !== undefined ? ` ${formatDisplayValue(item.value)}` : "";
+  const detail = item.detail || item.text || item.reason || item.note || "";
+  return `${title}${value}${detail ? `：${detail}` : ""}`;
 }
 
 function renderSectorList(elId, sectors, dir) {
@@ -4616,7 +4624,7 @@ function renderEvidenceDetails(value) {
 
 function summarizeEvidence(value) {
   if (!value) return "";
-  if (typeof value === "object") return truncateText(value.detail || value.text || value.value || value.source || "", 42);
+  if (typeof value === "object") return truncateText(structuredSignalText(value), 42);
   const raw = String(value);
   if (raw.includes("近5日涨停池对照")) return "近5日涨停池对照";
   return truncateText(raw, 42);
@@ -4628,11 +4636,11 @@ function formatEvidenceList(value) {
       if (typeof v === "string") {
         return formatEvidenceString(v);
       }
-      return escapeHtml(`${v.label || v.name || v.title || "\u8bc1\u636e"}\uff1a${v.detail || v.text || v.value || v.source || ""}`);
+      return escapeHtml(structuredSignalText(v));
     }).join('<br>');
   }
   if (value && typeof value === "object") {
-    return escapeHtml(`${value.label || value.name || value.title || "证据"}：${value.detail || value.text || value.value || value.source || ""}`);
+    return escapeHtml(structuredSignalText(value));
   }
   return escapeHtml(value || "");
 }
