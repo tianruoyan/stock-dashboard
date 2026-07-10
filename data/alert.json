@@ -1,6 +1,45 @@
 {
-  "timestamp": "2026-07-10T14:42:32+08:00",
-  "source_status": "invalidated",
-  "note": "14:33-14:40 新增20条正式提醒，覆盖封装/功率半导体拉起，CMP/长鑫映射/CPO/HBM/光刻胶/电子布/机器人等回落，以及算力/存储/硅片等观察拉动。按2026-07-10候选异动门禁复核：机会类未达到3分钟涨幅>=1.5%且上涨占比>=70%且成交>=5x，或3分钟涨幅>=1.0%且上涨占比>=60%且成交>=8x；风险类虽有下跌占比和成交放大，但最新可审计快照多数3分钟跌幅不足1.0%，如CMP约-0.45%至-0.88%、CPO约-0.52%、科技硬件链约-0.51%，不满足risk candidate最低门槛。功率半导体缺少近端可审计板块快照。因此本轮不写 candidate/confirmed，alert 保持今日空列表。",
-  "alerts": []
+  "timestamp": "2026-07-10T14:26:41+08:00",
+  "source_status": "degraded_partial",
+  "note": "候选异动分级门禁已启用。本批次为单源短周期证据完整的 candidate；未通过双源核验，不得升级为 confirmed。",
+  "quote_audit": {
+    "provider": "本地盘中监控日志 monitor.log",
+    "quote_time": "2026-07-10T14:26:41+08:00",
+    "pct_field": "leaders.change_pct 为触发窗口3分钟涨跌幅",
+    "sanity_checks": {
+      "sample_count": 3,
+      "max_abs_leader_change_pct": 1.60,
+      "cross_source_verified": false
+    }
+  },
+  "alerts": [
+    {
+      "id": "20260710-142641-cmp-risk-candidate",
+      "time": "14:26:41",
+      "sector": "CMP/靶材/材料耗材",
+      "type": "题材快速回落",
+      "reason": "3分钟平均涨跌幅-1.10%，下跌占比100%，成交放大5.14x、较昨同期1.39x；安集科技、华海清科、江丰电子同步回落，风险向题材样本扩散。",
+      "leaders": [
+        { "name": "安集科技", "change_pct": -1.18, "score": 49.5, "factors": ["成交放大3.96x", "日内涨幅-5.18%"] },
+        { "name": "华海清科", "change_pct": -1.60, "score": 47.5, "factors": ["成交放大6.27x", "日内涨幅-1.02%"] },
+        { "name": "江丰电子", "change_pct": -0.51, "score": 41.9, "factors": ["成交放大5.19x", "日内涨幅-4.01%"] }
+      ],
+      "signal_type": "⚠️风险信号",
+      "is_old_economy": false,
+      "alert_class": "risk",
+      "confirmation_level": "candidate",
+      "source_watch_id": "半导体设备材料",
+      "valid_until": "2026-07-10T14:31:41+08:00",
+      "quote_audit": {
+        "provider": "本地盘中监控日志 monitor.log",
+        "quote_time": "2026-07-10T14:26:41+08:00",
+        "pct_field": "3分钟涨跌幅",
+        "sanity_checks": {
+          "sample_count": 3,
+          "max_abs_leader_change_pct": 1.60,
+          "cross_source_verified": false
+        }
+      }
+    }
+  ]
 }

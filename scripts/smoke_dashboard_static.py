@@ -383,7 +383,14 @@ def alert_requires_trade_gate(data: dict[str, Any], alerts: list[Any]) -> bool:
     phase = trading_phase(now)
     if phase not in {"morning", "afternoon"}:
         return False
-    latest = latest_alert_event_time(data, alerts, now)
+    confirmed = [
+        item for item in alerts
+        if isinstance(item, dict)
+        and item.get("confirmation_level") not in {"candidate", "invalidated"}
+    ]
+    if not confirmed:
+        return False
+    latest = latest_alert_event_time(data, confirmed, now)
     if latest is None:
         return True
     age_seconds = (now - latest).total_seconds()

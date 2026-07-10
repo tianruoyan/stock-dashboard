@@ -1,12 +1,12 @@
 {
-  "timestamp": "2026-07-10T14:43:50+08:00",
+  "timestamp": "2026-07-10T14:46:20+08:00",
   "current_signal_date": "2026-07-10",
-  "status": "ready_to_recover",
-  "summary": "旧盘中异动批次已撤下；可信行情源可用于重产，但必须带交叉验证审计。",
+  "status": "candidate_visible",
+  "summary": "盘中候选异动证据完整，可展示为待确认；未通过双源核验前不得升级为确认机会。",
   "alert_state": {
-    "source_status": "invalidated",
-    "active_count": 0,
-    "note": "14:33-14:40 新增20条正式提醒，覆盖封装/功率半导体拉起，CMP/长鑫映射/CPO/HBM/光刻胶/电子布/机器人等回落，以及算力/存储/硅片等观察拉动。按2026-07-10候选异动门禁复核：机会类未达到3分钟涨幅>=1.5%且上涨占比>=70%且成交>=5x，或3分钟涨幅>=1.0%且上涨占比>=60%且成交>=8x；风险类虽有下跌占比和成交放大，但最新可审计快照多数3分钟跌幅不足1.0%，如CMP约-0.45%至-0.88%、CPO约-0.52%、科技硬件链约-0.51%，不满足risk candidate最低门槛。功率半导体缺少近端可审计板块快照。因此本轮不写 candidate/confirmed，alert 保持今日空列表。"
+    "source_status": "degraded_partial",
+    "active_count": 1,
+    "note": "候选异动分级门禁已启用。本批次为单源短周期证据完整的 candidate；未通过双源核验，不得升级为 confirmed。"
   },
   "trusted_sources": [
     {
@@ -60,9 +60,8 @@
     ]
   },
   "next_actions": [
-    "用 tencent_http 作为 A股涨跌幅主源，重新生成 data/alert.json。",
-    "用 eastmoney_push2_akshare 只补涨停池/跌停池/炸板池结构，不做全市场高频轮询。",
-    "写入 quote_audit 并确认 cross_source_verified=true 后再触发推送。"
+    "前台按候选异动展示，并明确还差双源确认。",
+    "补齐第二行情源后，只有满足确认条件的条目才能升级为 confirmed。"
   ],
   "rules": [
     "该文件供自动化进程和构建门禁使用，不进入交易主页面。",

@@ -32,7 +32,7 @@ def main() -> int:
     quote_audit = alert.get("quote_audit") if isinstance(alert.get("quote_audit"), dict) else {}
 
     if active_alerts:
-      status, summary = active_alert_status(quote_audit, forbidden)
+      status, summary = active_alert_status(quote_audit, forbidden, active_alerts)
     elif invalidated and trusted:
       status = "ready_to_recover"
       summary = "旧盘中异动批次已撤下；可信行情源可用于重产，但必须带交叉验证审计。"
@@ -69,7 +69,8 @@ def main() -> int:
                 "sanity_checks.cross_source_verified",
             ],
             "hard_gates": [
-                "active alerts 必须带 quote_audit，且 cross_source_verified=true。",
+                "candidate 必须带单源 quote_audit 和完整短周期证据，可在未交叉验证时展示为待确认。",
+                "confirmed 必须带 quote_audit，且 cross_source_verified=true。",
                 "leaders.change_pct 不得超过 A股常规单日边界；异常值直接撤下。",
                 "污染源仍 degraded 时，禁止只用该源恢复 alert。",
                 "重产后必须执行 build_dashboard_reports.py，runtime-smoke 通过后再推送。",
@@ -87,15 +88,30 @@ def main() -> int:
     return 0
 
 
-def active_alert_status(quote_audit: dict[str, Any], forbidden: list[dict[str, Any]]) -> tuple[str, str]:
+def active_alert_status(quote_audit: dict[str, Any], forbidden: list[dict[str, Any]], alerts: list[Any]) -> tuple[str, str]:
     sanity = quote_audit.get("sanity_checks") if isinstance(quote_audit, dict) else {}
     sanity = sanity if isinstance(sanity, dict) else {}
     cross_verified = sanity.get("cross_source_verified") is True
     source_text = json.dumps(quote_audit, ensure_ascii=False)
     forbidden_used = any(row["id"] in source_text for row in forbidden)
-    if cross_verified and not forbidden_used:
+    confirmed = [item for item in alerts if isinstance(item, dict) and item.get("confirmation_level") == "confirmed"]
+    candidates = [item for item in alerts if isinstance(item, dict) and item.get("confirmation_level") == "candidate"]
+    if confirmed and cross_verified and not forbidden_used:
         return "active_verified", "盘中异动已带交叉验证审计，可作为提示但仍需看盘面承接。"
+    if not confirmed and candidates and quote_audit_complete(quote_audit):
+        return "candidate_visible", "盘中候选异动证据完整，可展示为待确认；未通过双源核验前不得升级为确认机会。"
     return "active_needs_review", "盘中异动已有 active alerts，但 quote_audit 不完整或仍引用异常源，需复核后使用。"
+
+
+def quote_audit_complete(quote_audit: dict[str, Any]) -> bool:
+    if not isinstance(quote_audit, dict):
+        return False
+    if any(quote_audit.get(key) in (None, "", []) for key in ("provider", "quote_time", "pct_field", "sanity_checks")):
+        return False
+    sanity = quote_audit.get("sanity_checks")
+    if not isinstance(sanity, dict):
+        return False
+    return all(key in sanity for key in ("sample_count", "max_abs_leader_change_pct", "cross_source_verified"))
 
 
 def trusted_source_rows(sources: dict[str, Any]) -> list[dict[str, Any]]:
@@ -145,6 +161,11 @@ def next_actions(status: str, trusted: list[dict[str, Any]], forbidden: list[dic
         return [
             "补齐 quote_audit 或撤下 active alerts。",
             "确认未使用 degraded 的同花顺/新浪/akshare 链路作为唯一报价源。",
+        ]
+    if status == "candidate_visible":
+        return [
+            "前台按候选异动展示，并明确还差双源确认。",
+            "补齐第二行情源后，只有满足确认条件的条目才能升级为 confirmed。",
         ]
     if active_alerts:
         return ["继续按当前 quote_audit 监控异常涨跌幅和源状态。"]

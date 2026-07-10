@@ -571,6 +571,7 @@ def validate_alert(data: Any, source_health: Any, issues: list[dict[str, Any]], 
         for key in ("id", "time", "sector", "type", "leaders", "signal_type"):
             if item.get(key) in (None, "", []):
                 issues.append(issue("warning", "alert.json", "missing_alert_field", f"alerts[{index}].{key} 缺失", f"alerts[{index}]"))
+        validate_candidate_alert_evidence(data, item, index, issues, now, phase)
         leaders = item.get("leaders") or []
         if not isinstance(leaders, list):
             issues.append(issue("warning", "alert.json", "bad_alert_leaders", f"alerts[{index}].leaders 不是数组", f"alerts[{index}].leaders"))
@@ -654,10 +655,94 @@ def validate_alert_quote_audit(data: dict[str, Any], alerts: list[Any], polluted
 def alert_requires_trade_gate(data: dict[str, Any], alerts: list[Any], now: datetime, phase: str) -> bool:
     if phase not in {"morning", "afternoon"}:
         return False
-    latest = latest_alert_event_time(data, alerts, now)
+    confirmed = [
+        item for item in alerts
+        if isinstance(item, dict)
+        and item.get("confirmation_level") not in {"candidate", "invalidated"}
+    ]
+    if not confirmed:
+        return False
+    latest = latest_alert_event_time(data, confirmed, now)
     if latest is None:
         return True
     age_seconds = (now - latest).total_seconds()
+    return 0 <= age_seconds <= 5 * 60
+
+
+def validate_candidate_alert_evidence(
+    data: dict[str, Any],
+    item: dict[str, Any],
+    index: int,
+    issues: list[dict[str, Any]],
+    now: datetime,
+    phase: str,
+) -> None:
+    if item.get("confirmation_level") != "candidate":
+        return
+    alert_class = str(item.get("alert_class") or "")
+    if alert_class not in {"opportunity", "risk", "style"}:
+        issues.append(issue("critical", "alert.json", "candidate_alert_class_invalid", f"alerts[{index}] candidate 缺少有效 alert_class", f"alerts[{index}].alert_class"))
+        return
+    text = " ".join(str(item.get(key) or "") for key in ("reason", "type", "trigger_rule", "signal_type"))
+    move = metric_value(text, r"3分钟(?:平均)?(?:涨跌幅|涨幅|跌幅)\s*([+-]?\d+(?:\.\d+)?)%")
+    up_ratio = metric_value(text, r"上涨(?:占比)?\s*([+-]?\d+(?:\.\d+)?)%")
+    down_ratio = metric_value(text, r"下跌(?:占比)?\s*([+-]?\d+(?:\.\d+)?)%")
+    volume = metric_value(text, r"成交(?:3分钟)?(?:放大)?\s*([+-]?\d+(?:\.\d+)?)x")
+    limit_up_count = numeric_value(item.get("limit_up_count"))
+    limit_down_count = numeric_value(item.get("limit_down_count"))
+    has_limit_up_structure = limit_up_count is not None and limit_up_count >= 2
+    has_limit_down_structure = limit_down_count is not None and limit_down_count >= 2
+    if alert_class == "style":
+        valid = bool(re.search(r"(?:至少|≥|>=?)\s*3\s*个.*(?:板块|方向)|风格(?:切换|共振)", text)) and move is not None
+    elif alert_class == "opportunity":
+        valid = has_limit_up_structure or (
+            move is not None and up_ratio is not None and volume is not None and (
+                (move >= 1.5 and up_ratio >= 70 and volume >= 5)
+                or (move >= 1.0 and up_ratio >= 60 and volume >= 8)
+            )
+        )
+    else:
+        valid = has_limit_down_structure or (
+            move is not None and down_ratio is not None and volume is not None
+            and move <= -1.0 and down_ratio >= 60 and volume >= 5
+        )
+    if valid:
+        return
+    severity = "critical" if alert_item_is_fresh(data, item, now, phase) else "warning"
+    issues.append(issue(
+        severity,
+        "alert.json",
+        "candidate_alert_evidence_weak",
+        f"alerts[{index}] 候选异动未达到最低短周期价格、方向占比和成交门槛，不得作为当前候选展示",
+        f"alerts[{index}]",
+    ))
+
+
+def metric_value(text: str, pattern: str) -> float | None:
+    match = re.search(pattern, text, re.I)
+    if not match:
+        return None
+    try:
+        return float(match.group(1))
+    except Exception:
+        return None
+
+
+def numeric_value(value: Any) -> float | None:
+    try:
+        number = float(value)
+        return number if math.isfinite(number) else None
+    except Exception:
+        return None
+
+
+def alert_item_is_fresh(data: dict[str, Any], item: dict[str, Any], now: datetime, phase: str) -> bool:
+    if phase not in {"morning", "afternoon"}:
+        return False
+    event_time = latest_alert_event_time(data, [item], now)
+    if event_time is None:
+        return True
+    age_seconds = (now - event_time).total_seconds()
     return 0 <= age_seconds <= 5 * 60
 
 
@@ -1021,6 +1106,8 @@ def issue_impact(code: str, file: str, message: str) -> tuple[str, str]:
         "bad_alert_quote_audit",
         "alert_quote_not_cross_verified",
         "impossible_alert_pct",
+        "candidate_alert_class_invalid",
+        "candidate_alert_evidence_weak",
     }:
         return "blocking", "禁止作为交易依据，需修复后重产"
     if code in {"source_degraded", "source_failed"}:
