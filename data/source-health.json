@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-07-10T09:16:00+08:00",
+  "timestamp": "2026-07-10T10:58:28+08:00",
   "sources": {
     "tencent_http": {
       "status": "ok",
@@ -177,20 +177,24 @@
       ]
     },
     "eastmoney_limit_pool_intraday_1000": {
-      "status": "ok",
-      "last_check": "2026-07-08T10:05:45+08:00",
-      "usage": "10:00整点涨停/跌停/炸板结构池",
-      "detail": "返回涨停23、跌停12、炸板5；用于全市场结构判断，不做高频轮询。",
-      "sample_count": 40,
-      "errors": []
+      "status": "failed",
+      "last_check": "2026-07-10T10:58:28+08:00",
+      "usage": "10:00涨停池、跌停池、炸板池和板块结构",
+      "detail": "当前运行环境无法解析东方财富结构行情域名，未取得今日涨停池和板块结构。",
+      "sample_count": 0,
+      "errors": [
+        "Could not resolve host: push2ex.eastmoney.com"
+      ]
     },
     "tencent_a_quote_intraday_1000": {
-      "status": "ok",
-      "last_check": "2026-07-08T10:05:45+08:00",
-      "usage": "10:00整点指数、ETF、观察池样本报价",
-      "detail": "成功获取A股指数、ETF、半导体/算力/CPO/电子布/风格雷达样本报价。",
-      "sample_count": 77,
-      "errors": []
+      "status": "failed",
+      "last_check": "2026-07-10T10:58:28+08:00",
+      "usage": "10:00盘中指数、ETF和观察池报价",
+      "detail": "当前运行环境无法解析腾讯行情域名，未生成任何今日指数或个股涨跌数据。",
+      "sample_count": 0,
+      "errors": [
+        "Could not resolve host: qt.gtimg.cn"
+      ]
     },
     "tencent_hk_http_intraday_1000": {
       "status": "ok",
@@ -627,6 +631,25 @@
       "sample_count": 0,
       "errors": [
         "page load timed out"
+      ]
+    },
+    "ths_watchlist_import": {
+      "status": "failed",
+      "last_check": "2026-07-10T10:58:28+08:00",
+      "usage": "本地观察池增量导入",
+      "detail": "当前进程无权限读取同花顺容器和iCloud自选股文件；保留config/watchlist.json既有监测池，不删除标的。",
+      "sample_count": 0,
+      "errors": [
+        "Operation not permitted: 同花顺容器/iCloud自选股文件"
+      ]
+    },
+    "intraday_current_publish": {
+      "status": "degraded_unavailable",
+      "last_check": "2026-07-10T10:58:28+08:00",
+      "usage": "今日盘中全景发布",
+      "detail": "已撤下7月9日旧盘面结论，发布今日时间戳和明确不可用状态；不编造指数、宽度、主线或个股数据。",
+      "errors": [
+        "primary and structure quote sources unavailable"
       ]
     }
   }
