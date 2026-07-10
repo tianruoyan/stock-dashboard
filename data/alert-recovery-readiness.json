@@ -1,31 +1,31 @@
 {
-  "timestamp": "2026-07-10T13:18:59+08:00",
+  "timestamp": "2026-07-10T13:43:48+08:00",
   "current_signal_date": "2026-07-10",
-  "status": "active_needs_review",
-  "summary": "盘中异动已有 active alerts，但 quote_audit 不完整或仍引用异常源，需复核后使用。",
+  "status": "ready_to_recover",
+  "summary": "旧盘中异动批次已撤下；可信行情源可用于重产，但必须带交叉验证审计。",
   "alert_state": {
-    "source_status": "degraded_partial",
-    "active_count": 2,
-    "note": "补执行上午盘中异动：仅收录 monitor.log 中具备短周期价格、成交和扩散证据的正式提醒。因第二行情源不可用，全部按 candidate 历史触发展示，不作为当前确认机会。"
+    "source_status": "invalidated",
+    "active_count": 0,
+    "note": "13:33-13:42 新增正式提醒较多：电子布、覆铜板、高带宽内存、封装有拉起/上涨攻势，半导体设备平台、存储芯片、CMP/靶材/材料耗材、长鑫存储IPO映射、光模块/CPO、光刻胶/光刻机催化、机器人等出现回落或观察提醒。最近快照显示多数方向高成交但领涨/领跌重叠、上涨占比不足，且缺少 quote_audit.cross_source_verified=true；按门禁保持今日空列表，不发布 active alerts。"
   },
   "trusted_sources": [
     {
       "id": "tencent_http",
       "status": "ok",
-      "checked_at": "2026-07-10T13:08:03+08:00",
-      "usage": "13:00指数、ETF、全观察池与专项样本批量报价"
+      "checked_at": "2026-07-10T13:36:18+08:00",
+      "usage": "13:30指数、全观察池与专项样本批量报价"
     },
     {
       "id": "eastmoney_push2_akshare",
       "status": "ok",
-      "checked_at": "2026-07-10T13:08:00+08:00",
-      "usage": "13:00涨停、跌停和炸板结构池"
+      "checked_at": "2026-07-10T13:34:00+08:00",
+      "usage": "13:30涨停、跌停和炸板结构池"
     },
     {
       "id": "tencent_minute",
       "status": "ok",
-      "checked_at": "2026-07-10T13:07:00+08:00",
-      "usage": "13:00指数与核心样本3分钟/午间以来变化"
+      "checked_at": "2026-07-10T13:37:00+08:00",
+      "usage": "13:30指数与关键样本3分钟变化"
     }
   ],
   "forbidden_sources": [
@@ -59,8 +59,9 @@
     ]
   },
   "next_actions": [
-    "补齐 quote_audit 或撤下 active alerts。",
-    "确认未使用 degraded 的同花顺/新浪/akshare 链路作为唯一报价源。"
+    "用 tencent_http 作为 A股涨跌幅主源，重新生成 data/alert.json。",
+    "用 eastmoney_push2_akshare 只补涨停池/跌停池/炸板池结构，不做全市场高频轮询。",
+    "写入 quote_audit 并确认 cross_source_verified=true 后再触发推送。"
   ],
   "rules": [
     "该文件供自动化进程和构建门禁使用，不进入交易主页面。",

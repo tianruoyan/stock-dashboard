@@ -1,28 +1,28 @@
 {
-  "timestamp": "2026-07-10T13:09:49+08:00",
+  "timestamp": "2026-07-10T13:42:31+08:00",
   "sources": {
     "tencent_http": {
       "status": "ok",
-      "last_check": "2026-07-10T13:08:03+08:00",
-      "usage": "13:00指数、ETF、全观察池与专项样本批量报价",
-      "detail": "腾讯HTTP已恢复，A股和港股报价字段通过时间与数值检查。",
-      "sample_count": 130,
+      "last_check": "2026-07-10T13:36:18+08:00",
+      "usage": "13:30指数、全观察池与专项样本批量报价",
+      "detail": "腾讯HTTP返回2026-07-10 13:36有效A股报价；指数、专项五只及题材样本通过时间和数值检查。",
+      "sample_count": 95,
       "errors": []
     },
     "eastmoney_push2_akshare": {
       "status": "ok",
-      "last_check": "2026-07-10T13:08:00+08:00",
-      "usage": "13:00涨停、跌停和炸板结构池",
-      "detail": "API总涨停98；剔除ST、退市及北交所后95，跌停0，炸板54。",
-      "sample_count": 152,
+      "last_check": "2026-07-10T13:34:00+08:00",
+      "usage": "13:30涨停、跌停和炸板结构池",
+      "detail": "API总涨停130；剔除ST、退市及北交所后126，跌停1，炸板50。",
+      "sample_count": 177,
       "errors": []
     },
     "tencent_minute": {
       "status": "ok",
-      "last_check": "2026-07-10T13:07:00+08:00",
-      "usage": "13:00指数与核心样本3分钟/午间以来变化",
-      "detail": "成功获取3个指数和约40只关键样本分钟线。",
-      "sample_count": 43,
+      "last_check": "2026-07-10T13:37:00+08:00",
+      "usage": "13:30指数与关键样本3分钟变化",
+      "detail": "上证、创业板、科创50及关键样本分钟线可用；个别代码分钟数组为空，未引用缺失值。",
+      "sample_count": 18,
       "errors": []
     },
     "mootdx_tdx": {
@@ -42,10 +42,10 @@
       "note": "akshare A股spot继续出现Can not decode value starting with character \"<\"；14:13:52 alert 批次已确认污染北方华创/中微公司等涨跌幅，已撤下该批 alert，并要求盘中提醒优先使用行情源原始涨跌幅字段。"
     },
     "tencent_hk_http": {
-      "status": "ok",
-      "last_check": "2026-07-10T11:59:59+08:00",
-      "usage": "港股午间指数、半导体、AI应用和创新药样本",
-      "detail": "恒指、恒科、中芯国际H、华虹宏力、智谱和百济神州返回有效午间快照。",
+      "status": "ok_delayed",
+      "last_check": "2026-07-10T13:36:18+08:00",
+      "usage": "港股午后指数、半导体、AI应用和创新药样本",
+      "detail": "返回约13:21的15分钟延迟快照，已在盘中全景标注延迟。",
       "sample_count": 7,
       "errors": []
     },
@@ -685,6 +685,59 @@
       "errors": [
         "Empty reply from server"
       ]
+    },
+    "monitor_alert_quote_audit_1323": {
+      "id": "monitor_alert_quote_audit_1323",
+      "name": "monitor.log 正式提醒 quote_audit 门禁",
+      "status": "failed",
+      "checked_at": "2026-07-10T13:26:00+08:00",
+      "usage": "13:13-13:23 正式提醒落盘前交叉验证",
+      "message": "发现小登正式提醒，但缺少腾讯/通达信或等价双源 quote_audit.cross_source_verified=true；已撤下 active alerts。",
+      "action": "保持 data/alert.json 今日 invalidated 空列表，不编造盘中异动。"
+    },
+    "monitor_alert_quote_audit_1327": {
+      "id": "monitor_alert_quote_audit_1327",
+      "name": "monitor.log 新增正式提醒 quote_audit 门禁",
+      "status": "failed",
+      "checked_at": "2026-07-10T13:27:01+08:00",
+      "usage": "13:24-13:26 新增正式提醒落盘前交叉验证",
+      "message": "封装、电子布出现小登正式提醒，但缺少双源交叉验证，且短周期快照显示扩散不足；未发布 active alerts。",
+      "action": "保持 data/alert.json 今日 invalidated 空列表。"
+    },
+    "monitor_alert_quote_audit_1328": {
+      "id": "monitor_alert_quote_audit_1328",
+      "name": "monitor.log 新增正式提醒 quote_audit 门禁",
+      "status": "failed",
+      "checked_at": "2026-07-10T13:28:31+08:00",
+      "usage": "13:27 后新增正式提醒落盘前交叉验证",
+      "message": "发现封装拉起与多条科技链回落提醒，但缺少双源交叉验证，且短周期扩散不足；未发布 active alerts。",
+      "action": "保持 data/alert.json 今日 invalidated 空列表。"
+    },
+    "monitor_alert_quote_audit_1332": {
+      "id": "monitor_alert_quote_audit_1332",
+      "name": "monitor.log 新增正式提醒 quote_audit 门禁",
+      "status": "failed",
+      "checked_at": "2026-07-10T13:32:01+08:00",
+      "usage": "13:30-13:31 新增正式提醒落盘前交叉验证",
+      "message": "发现封装与光刻胶/光刻机催化新增正式提醒，但缺少双源交叉验证；仅保留 invalidated 空列表。",
+      "action": "不发布 active/confirmed alerts，等待 cross_source_verified=true。"
+    },
+    "eastmoney_board_rank_intraday_1330_20260710": {
+      "status": "ok",
+      "last_check": "2026-07-10T13:38:00+08:00",
+      "usage": "13:30行业和概念涨幅排行交叉验证",
+      "detail": "行业与概念各返回前20；航天装备、国防军工、医疗研发外包、卫星互联网、CRO等与涨停结构一致。",
+      "sample_count": 40,
+      "errors": []
+    },
+    "monitor_alert_quote_audit_1342": {
+      "id": "monitor_alert_quote_audit_1342",
+      "name": "monitor.log 新增正式提醒 quote_audit 门禁",
+      "status": "failed",
+      "checked_at": "2026-07-10T13:42:31+08:00",
+      "usage": "13:33-13:42 新增正式提醒落盘前交叉验证",
+      "message": "发现电子布/覆铜板/HBM/封装拉起及多条科技链回落风险，但缺少双源交叉验证且扩散质量不足；未发布 active alerts。",
+      "action": "保持 data/alert.json 今日 invalidated 空列表，等待 cross_source_verified=true。"
     }
   }
 }
