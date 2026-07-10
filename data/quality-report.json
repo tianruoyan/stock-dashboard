@@ -1,17 +1,17 @@
 {
-  "timestamp": "2026-07-10T09:47:36+08:00",
+  "timestamp": "2026-07-10T10:10:14+08:00",
   "current_signal_date": "2026-07-10",
   "status": "degraded",
-  "summary": "发现 93 个降级/需复核项（36 个价格/行情复核，3 个信号复核，55 个背景复核），核心结论可看但必须按影响分层使用。",
+  "summary": "发现 53 个降级/需复核项（1 个交易阻断，44 个价格/行情复核，3 个信号复核，6 个背景复核），核心结论可看但必须按影响分层使用。",
   "issues": [
     {
       "severity": "warning",
       "file": "alert.json",
       "path": "",
-      "code": "stale_timestamp",
-      "message": "时间戳不是当前交易日：2026-07-09T13:41:34+08:00",
-      "impact_level": "background_review",
-      "decision_action": "仅作背景复核，不单独阻断交易判断"
+      "code": "invalidated_source",
+      "message": "2026-07-10 盘中扫描日志仍在更新，但看板 alert.json 未收到今日可审计异动；已撤下旧信号，等待自动化重产。",
+      "impact_level": "blocking",
+      "decision_action": "对应信号等待重产，页面必须显示阻断"
     },
     {
       "severity": "warning",
@@ -109,6 +109,96 @@
       "path": "board_ranks.concept_bottom5[4]",
       "code": "bad_change_pct",
       "message": "机场航运 change_pct 非数字：None，该字段忽略并降权",
+      "impact_level": "price_review",
+      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
+    },
+    {
+      "severity": "warning",
+      "file": "intraday.json",
+      "path": "concept_top5[0]",
+      "code": "bad_change_pct",
+      "message": "半导体及存储芯片 change_pct 非数字：None，该字段忽略并降权",
+      "impact_level": "price_review",
+      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
+    },
+    {
+      "severity": "warning",
+      "file": "intraday.json",
+      "path": "concept_top5[1]",
+      "code": "bad_change_pct",
+      "message": "CPO/光模块 change_pct 非数字：None，该字段忽略并降权",
+      "impact_level": "price_review",
+      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
+    },
+    {
+      "severity": "warning",
+      "file": "intraday.json",
+      "path": "concept_top5[2]",
+      "code": "bad_change_pct",
+      "message": "HBM(高带宽内存) change_pct 非数字：None，该字段忽略并降权",
+      "impact_level": "price_review",
+      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
+    },
+    {
+      "severity": "warning",
+      "file": "intraday.json",
+      "path": "concept_top5[3]",
+      "code": "bad_change_pct",
+      "message": "玻璃基板 change_pct 非数字：None，该字段忽略并降权",
+      "impact_level": "price_review",
+      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
+    },
+    {
+      "severity": "warning",
+      "file": "intraday.json",
+      "path": "concept_top5[4]",
+      "code": "bad_change_pct",
+      "message": "贵金属 change_pct 非数字：None，该字段忽略并降权",
+      "impact_level": "price_review",
+      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
+    },
+    {
+      "severity": "warning",
+      "file": "intraday.json",
+      "path": "concept_bottom5[0]",
+      "code": "bad_change_pct",
+      "message": "石油石化 change_pct 非数字：None，该字段忽略并降权",
+      "impact_level": "price_review",
+      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
+    },
+    {
+      "severity": "warning",
+      "file": "intraday.json",
+      "path": "concept_bottom5[1]",
+      "code": "bad_change_pct",
+      "message": "煤炭开采加工 change_pct 非数字：None，该字段忽略并降权",
+      "impact_level": "price_review",
+      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
+    },
+    {
+      "severity": "warning",
+      "file": "intraday.json",
+      "path": "concept_bottom5[2]",
+      "code": "bad_change_pct",
+      "message": "能源金属(锂矿/钴) change_pct 非数字：None，该字段忽略并降权",
+      "impact_level": "price_review",
+      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
+    },
+    {
+      "severity": "warning",
+      "file": "intraday.json",
+      "path": "concept_bottom5[3]",
+      "code": "bad_change_pct",
+      "message": "稀土 change_pct 非数字：None，该字段忽略并降权",
+      "impact_level": "price_review",
+      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
+    },
+    {
+      "severity": "warning",
+      "file": "intraday.json",
+      "path": "concept_bottom5[4]",
+      "code": "bad_change_pct",
+      "message": "旅游/游戏 change_pct 非数字：None，该字段忽略并降权",
       "impact_level": "price_review",
       "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
     },
@@ -237,456 +327,6 @@
       "message": "themes 缺失",
       "impact_level": "signal_review",
       "decision_action": "机会信号必须降权并转入验证"
-    },
-    {
-      "severity": "warning",
-      "file": "alert.json",
-      "path": "",
-      "code": "historical_alert_without_trusted_source",
-      "message": "盘中异动缺少可信源证明；当前阶段只降权参考，不阻断整站发布",
-      "impact_level": "price_review",
-      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
-    },
-    {
-      "severity": "warning",
-      "file": "alert.json",
-      "path": "",
-      "code": "historical_alert_missing_quote_audit",
-      "message": "alert.json 存在盘中异动但缺少 quote_audit；当前阶段只降权参考，不阻断整站发布",
-      "impact_level": "price_review",
-      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
-    },
-    {
-      "severity": "warning",
-      "file": "alert.json",
-      "path": "alerts[81].leaders[0]",
-      "code": "missing_alert_leader_pct",
-      "message": "alerts[81].leaders[0].change_pct 缺失",
-      "impact_level": "background_review",
-      "decision_action": "仅作背景复核，不单独阻断交易判断"
-    },
-    {
-      "severity": "warning",
-      "file": "alert.json",
-      "path": "alerts[81].leaders[1]",
-      "code": "missing_alert_leader_pct",
-      "message": "alerts[81].leaders[1].change_pct 缺失",
-      "impact_level": "background_review",
-      "decision_action": "仅作背景复核，不单独阻断交易判断"
-    },
-    {
-      "severity": "warning",
-      "file": "alert.json",
-      "path": "alerts[81].leaders[2]",
-      "code": "missing_alert_leader_pct",
-      "message": "alerts[81].leaders[2].change_pct 缺失",
-      "impact_level": "background_review",
-      "decision_action": "仅作背景复核，不单独阻断交易判断"
-    },
-    {
-      "severity": "warning",
-      "file": "alert.json",
-      "path": "alerts[168].leaders[0]",
-      "code": "missing_alert_leader_pct",
-      "message": "alerts[168].leaders[0].change_pct 缺失",
-      "impact_level": "background_review",
-      "decision_action": "仅作背景复核，不单独阻断交易判断"
-    },
-    {
-      "severity": "warning",
-      "file": "alert.json",
-      "path": "alerts[168].leaders[1]",
-      "code": "missing_alert_leader_pct",
-      "message": "alerts[168].leaders[1].change_pct 缺失",
-      "impact_level": "background_review",
-      "decision_action": "仅作背景复核，不单独阻断交易判断"
-    },
-    {
-      "severity": "warning",
-      "file": "alert.json",
-      "path": "alerts[168].leaders[2]",
-      "code": "missing_alert_leader_pct",
-      "message": "alerts[168].leaders[2].change_pct 缺失",
-      "impact_level": "background_review",
-      "decision_action": "仅作背景复核，不单独阻断交易判断"
-    },
-    {
-      "severity": "warning",
-      "file": "alert.json",
-      "path": "alerts[169].leaders[0]",
-      "code": "missing_alert_leader_pct",
-      "message": "alerts[169].leaders[0].change_pct 缺失",
-      "impact_level": "background_review",
-      "decision_action": "仅作背景复核，不单独阻断交易判断"
-    },
-    {
-      "severity": "warning",
-      "file": "alert.json",
-      "path": "alerts[169].leaders[1]",
-      "code": "missing_alert_leader_pct",
-      "message": "alerts[169].leaders[1].change_pct 缺失",
-      "impact_level": "background_review",
-      "decision_action": "仅作背景复核，不单独阻断交易判断"
-    },
-    {
-      "severity": "warning",
-      "file": "alert.json",
-      "path": "alerts[169].leaders[2]",
-      "code": "missing_alert_leader_pct",
-      "message": "alerts[169].leaders[2].change_pct 缺失",
-      "impact_level": "background_review",
-      "decision_action": "仅作背景复核，不单独阻断交易判断"
-    },
-    {
-      "severity": "warning",
-      "file": "alert.json",
-      "path": "alerts[170].leaders[0]",
-      "code": "missing_alert_leader_pct",
-      "message": "alerts[170].leaders[0].change_pct 缺失",
-      "impact_level": "background_review",
-      "decision_action": "仅作背景复核，不单独阻断交易判断"
-    },
-    {
-      "severity": "warning",
-      "file": "alert.json",
-      "path": "alerts[170].leaders[1]",
-      "code": "missing_alert_leader_pct",
-      "message": "alerts[170].leaders[1].change_pct 缺失",
-      "impact_level": "background_review",
-      "decision_action": "仅作背景复核，不单独阻断交易判断"
-    },
-    {
-      "severity": "warning",
-      "file": "alert.json",
-      "path": "alerts[170].leaders[2]",
-      "code": "missing_alert_leader_pct",
-      "message": "alerts[170].leaders[2].change_pct 缺失",
-      "impact_level": "background_review",
-      "decision_action": "仅作背景复核，不单独阻断交易判断"
-    },
-    {
-      "severity": "warning",
-      "file": "alert.json",
-      "path": "alerts[171].leaders[0]",
-      "code": "missing_alert_leader_pct",
-      "message": "alerts[171].leaders[0].change_pct 缺失",
-      "impact_level": "background_review",
-      "decision_action": "仅作背景复核，不单独阻断交易判断"
-    },
-    {
-      "severity": "warning",
-      "file": "alert.json",
-      "path": "alerts[171].leaders[1]",
-      "code": "missing_alert_leader_pct",
-      "message": "alerts[171].leaders[1].change_pct 缺失",
-      "impact_level": "background_review",
-      "decision_action": "仅作背景复核，不单独阻断交易判断"
-    },
-    {
-      "severity": "warning",
-      "file": "alert.json",
-      "path": "alerts[171].leaders[2]",
-      "code": "missing_alert_leader_pct",
-      "message": "alerts[171].leaders[2].change_pct 缺失",
-      "impact_level": "background_review",
-      "decision_action": "仅作背景复核，不单独阻断交易判断"
-    },
-    {
-      "severity": "warning",
-      "file": "alert.json",
-      "path": "alerts[172].leaders[0]",
-      "code": "missing_alert_leader_pct",
-      "message": "alerts[172].leaders[0].change_pct 缺失",
-      "impact_level": "background_review",
-      "decision_action": "仅作背景复核，不单独阻断交易判断"
-    },
-    {
-      "severity": "warning",
-      "file": "alert.json",
-      "path": "alerts[172].leaders[1]",
-      "code": "missing_alert_leader_pct",
-      "message": "alerts[172].leaders[1].change_pct 缺失",
-      "impact_level": "background_review",
-      "decision_action": "仅作背景复核，不单独阻断交易判断"
-    },
-    {
-      "severity": "warning",
-      "file": "alert.json",
-      "path": "alerts[172].leaders[2]",
-      "code": "missing_alert_leader_pct",
-      "message": "alerts[172].leaders[2].change_pct 缺失",
-      "impact_level": "background_review",
-      "decision_action": "仅作背景复核，不单独阻断交易判断"
-    },
-    {
-      "severity": "warning",
-      "file": "alert.json",
-      "path": "alerts[173].leaders[0]",
-      "code": "missing_alert_leader_pct",
-      "message": "alerts[173].leaders[0].change_pct 缺失",
-      "impact_level": "background_review",
-      "decision_action": "仅作背景复核，不单独阻断交易判断"
-    },
-    {
-      "severity": "warning",
-      "file": "alert.json",
-      "path": "alerts[173].leaders[1]",
-      "code": "missing_alert_leader_pct",
-      "message": "alerts[173].leaders[1].change_pct 缺失",
-      "impact_level": "background_review",
-      "decision_action": "仅作背景复核，不单独阻断交易判断"
-    },
-    {
-      "severity": "warning",
-      "file": "alert.json",
-      "path": "alerts[173].leaders[2]",
-      "code": "missing_alert_leader_pct",
-      "message": "alerts[173].leaders[2].change_pct 缺失",
-      "impact_level": "background_review",
-      "decision_action": "仅作背景复核，不单独阻断交易判断"
-    },
-    {
-      "severity": "warning",
-      "file": "alert.json",
-      "path": "alerts[174].leaders[0]",
-      "code": "missing_alert_leader_pct",
-      "message": "alerts[174].leaders[0].change_pct 缺失",
-      "impact_level": "background_review",
-      "decision_action": "仅作背景复核，不单独阻断交易判断"
-    },
-    {
-      "severity": "warning",
-      "file": "alert.json",
-      "path": "alerts[174].leaders[1]",
-      "code": "missing_alert_leader_pct",
-      "message": "alerts[174].leaders[1].change_pct 缺失",
-      "impact_level": "background_review",
-      "decision_action": "仅作背景复核，不单独阻断交易判断"
-    },
-    {
-      "severity": "warning",
-      "file": "alert.json",
-      "path": "alerts[174].leaders[2]",
-      "code": "missing_alert_leader_pct",
-      "message": "alerts[174].leaders[2].change_pct 缺失",
-      "impact_level": "background_review",
-      "decision_action": "仅作背景复核，不单独阻断交易判断"
-    },
-    {
-      "severity": "warning",
-      "file": "alert.json",
-      "path": "alerts[175].leaders[0]",
-      "code": "missing_alert_leader_pct",
-      "message": "alerts[175].leaders[0].change_pct 缺失",
-      "impact_level": "background_review",
-      "decision_action": "仅作背景复核，不单独阻断交易判断"
-    },
-    {
-      "severity": "warning",
-      "file": "alert.json",
-      "path": "alerts[175].leaders[1]",
-      "code": "missing_alert_leader_pct",
-      "message": "alerts[175].leaders[1].change_pct 缺失",
-      "impact_level": "background_review",
-      "decision_action": "仅作背景复核，不单独阻断交易判断"
-    },
-    {
-      "severity": "warning",
-      "file": "alert.json",
-      "path": "alerts[175].leaders[2]",
-      "code": "missing_alert_leader_pct",
-      "message": "alerts[175].leaders[2].change_pct 缺失",
-      "impact_level": "background_review",
-      "decision_action": "仅作背景复核，不单独阻断交易判断"
-    },
-    {
-      "severity": "warning",
-      "file": "alert.json",
-      "path": "alerts[176].leaders[0]",
-      "code": "missing_alert_leader_pct",
-      "message": "alerts[176].leaders[0].change_pct 缺失",
-      "impact_level": "background_review",
-      "decision_action": "仅作背景复核，不单独阻断交易判断"
-    },
-    {
-      "severity": "warning",
-      "file": "alert.json",
-      "path": "alerts[176].leaders[1]",
-      "code": "missing_alert_leader_pct",
-      "message": "alerts[176].leaders[1].change_pct 缺失",
-      "impact_level": "background_review",
-      "decision_action": "仅作背景复核，不单独阻断交易判断"
-    },
-    {
-      "severity": "warning",
-      "file": "alert.json",
-      "path": "alerts[176].leaders[2]",
-      "code": "missing_alert_leader_pct",
-      "message": "alerts[176].leaders[2].change_pct 缺失",
-      "impact_level": "background_review",
-      "decision_action": "仅作背景复核，不单独阻断交易判断"
-    },
-    {
-      "severity": "warning",
-      "file": "alert.json",
-      "path": "alerts[177].leaders[0]",
-      "code": "missing_alert_leader_pct",
-      "message": "alerts[177].leaders[0].change_pct 缺失",
-      "impact_level": "background_review",
-      "decision_action": "仅作背景复核，不单独阻断交易判断"
-    },
-    {
-      "severity": "warning",
-      "file": "alert.json",
-      "path": "alerts[177].leaders[1]",
-      "code": "missing_alert_leader_pct",
-      "message": "alerts[177].leaders[1].change_pct 缺失",
-      "impact_level": "background_review",
-      "decision_action": "仅作背景复核，不单独阻断交易判断"
-    },
-    {
-      "severity": "warning",
-      "file": "alert.json",
-      "path": "alerts[177].leaders[2]",
-      "code": "missing_alert_leader_pct",
-      "message": "alerts[177].leaders[2].change_pct 缺失",
-      "impact_level": "background_review",
-      "decision_action": "仅作背景复核，不单独阻断交易判断"
-    },
-    {
-      "severity": "warning",
-      "file": "alert.json",
-      "path": "alerts[178].leaders[0]",
-      "code": "missing_alert_leader_pct",
-      "message": "alerts[178].leaders[0].change_pct 缺失",
-      "impact_level": "background_review",
-      "decision_action": "仅作背景复核，不单独阻断交易判断"
-    },
-    {
-      "severity": "warning",
-      "file": "alert.json",
-      "path": "alerts[178].leaders[1]",
-      "code": "missing_alert_leader_pct",
-      "message": "alerts[178].leaders[1].change_pct 缺失",
-      "impact_level": "background_review",
-      "decision_action": "仅作背景复核，不单独阻断交易判断"
-    },
-    {
-      "severity": "warning",
-      "file": "alert.json",
-      "path": "alerts[178].leaders[2]",
-      "code": "missing_alert_leader_pct",
-      "message": "alerts[178].leaders[2].change_pct 缺失",
-      "impact_level": "background_review",
-      "decision_action": "仅作背景复核，不单独阻断交易判断"
-    },
-    {
-      "severity": "warning",
-      "file": "alert.json",
-      "path": "alerts[179].leaders[0]",
-      "code": "missing_alert_leader_pct",
-      "message": "alerts[179].leaders[0].change_pct 缺失",
-      "impact_level": "background_review",
-      "decision_action": "仅作背景复核，不单独阻断交易判断"
-    },
-    {
-      "severity": "warning",
-      "file": "alert.json",
-      "path": "alerts[179].leaders[1]",
-      "code": "missing_alert_leader_pct",
-      "message": "alerts[179].leaders[1].change_pct 缺失",
-      "impact_level": "background_review",
-      "decision_action": "仅作背景复核，不单独阻断交易判断"
-    },
-    {
-      "severity": "warning",
-      "file": "alert.json",
-      "path": "alerts[179].leaders[2]",
-      "code": "missing_alert_leader_pct",
-      "message": "alerts[179].leaders[2].change_pct 缺失",
-      "impact_level": "background_review",
-      "decision_action": "仅作背景复核，不单独阻断交易判断"
-    },
-    {
-      "severity": "warning",
-      "file": "alert.json",
-      "path": "alerts[180].leaders[0]",
-      "code": "missing_alert_leader_pct",
-      "message": "alerts[180].leaders[0].change_pct 缺失",
-      "impact_level": "background_review",
-      "decision_action": "仅作背景复核，不单独阻断交易判断"
-    },
-    {
-      "severity": "warning",
-      "file": "alert.json",
-      "path": "alerts[180].leaders[1]",
-      "code": "missing_alert_leader_pct",
-      "message": "alerts[180].leaders[1].change_pct 缺失",
-      "impact_level": "background_review",
-      "decision_action": "仅作背景复核，不单独阻断交易判断"
-    },
-    {
-      "severity": "warning",
-      "file": "alert.json",
-      "path": "alerts[180].leaders[2]",
-      "code": "missing_alert_leader_pct",
-      "message": "alerts[180].leaders[2].change_pct 缺失",
-      "impact_level": "background_review",
-      "decision_action": "仅作背景复核，不单独阻断交易判断"
-    },
-    {
-      "severity": "warning",
-      "file": "alert.json",
-      "path": "alerts[181].leaders[0]",
-      "code": "missing_alert_leader_pct",
-      "message": "alerts[181].leaders[0].change_pct 缺失",
-      "impact_level": "background_review",
-      "decision_action": "仅作背景复核，不单独阻断交易判断"
-    },
-    {
-      "severity": "warning",
-      "file": "alert.json",
-      "path": "alerts[181].leaders[1]",
-      "code": "missing_alert_leader_pct",
-      "message": "alerts[181].leaders[1].change_pct 缺失",
-      "impact_level": "background_review",
-      "decision_action": "仅作背景复核，不单独阻断交易判断"
-    },
-    {
-      "severity": "warning",
-      "file": "alert.json",
-      "path": "alerts[181].leaders[2]",
-      "code": "missing_alert_leader_pct",
-      "message": "alerts[181].leaders[2].change_pct 缺失",
-      "impact_level": "background_review",
-      "decision_action": "仅作背景复核，不单独阻断交易判断"
-    },
-    {
-      "severity": "warning",
-      "file": "alert.json",
-      "path": "alerts[182].leaders[0]",
-      "code": "missing_alert_leader_pct",
-      "message": "alerts[182].leaders[0].change_pct 缺失",
-      "impact_level": "background_review",
-      "decision_action": "仅作背景复核，不单独阻断交易判断"
-    },
-    {
-      "severity": "warning",
-      "file": "alert.json",
-      "path": "alerts[182].leaders[1]",
-      "code": "missing_alert_leader_pct",
-      "message": "alerts[182].leaders[1].change_pct 缺失",
-      "impact_level": "background_review",
-      "decision_action": "仅作背景复核，不单独阻断交易判断"
-    },
-    {
-      "severity": "warning",
-      "file": "alert.json",
-      "path": "alerts[182].leaders[2]",
-      "code": "missing_alert_leader_pct",
-      "message": "alerts[182].leaders[2].change_pct 缺失",
-      "impact_level": "background_review",
-      "decision_action": "仅作背景复核，不单独阻断交易判断"
     },
     {
       "severity": "info",
@@ -853,15 +493,15 @@
   ],
   "action_plan": [
     {
-      "priority": 2,
-      "impact_level": "price_review",
-      "label": "二次行情复核",
+      "priority": 1,
+      "impact_level": "blocking",
+      "label": "先修复阻断",
       "file": "alert.json",
-      "code": "historical_alert_without_trusted_source",
-      "problem": "盘中异动缺少可信源证明；当前阶段只降权参考，不阻断整站发布",
-      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核",
-      "next_step": "用第二行情源复核涨跌幅、quote_time 和代表股方向；未确认前只做验证。",
-      "unblock_condition": "price_review=0 或相关来源标记 trusted/cross verified。"
+      "code": "invalidated_source",
+      "problem": "2026-07-10 盘中扫描日志仍在更新，但看板 alert.json 未收到今日可审计异动；已撤下旧信号，等待自动化重产。",
+      "decision_action": "对应信号等待重产，页面必须显示阻断",
+      "next_step": "暂停对应交易触发；等待污染批次撤下、可信行情源恢复并重产 JSON。",
+      "unblock_condition": "quality-report blocking=0，相关文件不再 invalidated/missing。"
     },
     {
       "priority": 2,
@@ -921,12 +561,12 @@
   ],
   "counts": {
     "critical": 0,
-    "warning": 93,
+    "warning": 53,
     "info": 1,
-    "blocking": 0,
-    "price_review": 36,
+    "blocking": 1,
+    "price_review": 44,
     "signal_review": 3,
-    "background_review": 55
+    "background_review": 6
   },
   "rules": [
     "异常文本、JSON解析失败、必需文件缺失为 critical。",

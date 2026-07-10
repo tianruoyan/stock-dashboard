@@ -1,6 +1,6 @@
 {
-  "status": "degraded",
-  "summary": "统一构建完成，但存在降权/需复核项。",
+  "status": "blocked",
+  "summary": "统一构建发现阻断项，禁止发布。",
   "steps": [
     {
       "name": "opportunity-watch:pre",
@@ -44,7 +44,7 @@
       "returncode": 0,
       "status": "degraded",
       "blocking": false,
-      "stdout_tail": "degraded: 发现 93 个降级/需复核项（36 个价格/行情复核，3 个信号复核，55 个背景复核），核心结论可看但必须按影响分层使用。",
+      "stdout_tail": "degraded: 发现 53 个降级/需复核项（1 个交易阻断，44 个价格/行情复核，3 个信号复核，6 个背景复核），核心结论可看但必须按影响分层使用。",
       "stderr_tail": ""
     },
     {
@@ -53,7 +53,7 @@
       "returncode": 0,
       "status": "ok",
       "blocking": false,
-      "stdout_tail": "alert-recovery-readiness: active_needs_review - 盘中异动已有 active alerts，但 quote_audit 不完整或仍引用异常源，需复核后使用。",
+      "stdout_tail": "alert-recovery-readiness: ready_to_recover - 旧盘中异动批次已撤下；可信行情源可用于重产，但必须带交叉验证审计。",
       "stderr_tail": ""
     },
     {
@@ -98,7 +98,7 @@
       "returncode": 0,
       "status": "ok",
       "blocking": false,
-      "stdout_tail": "data-trust: degraded - 2 个数据文件需降权，7 个文件仅作历史背景。",
+      "stdout_tail": "data-trust: degraded - 1 个数据文件不可用（盘中异动），2 个文件需降权。",
       "stderr_tail": ""
     },
     {
@@ -107,7 +107,7 @@
       "returncode": 0,
       "status": "ok",
       "blocking": false,
-      "stdout_tail": "monitoring-coverage: degraded - 3 个监测维度需降权，1 个背景维度需复核。",
+      "stdout_tail": "monitoring-coverage: blind_spot - 1 个核心监测盲区（盘中异动触发盲区），3 个降权盲区。",
       "stderr_tail": ""
     },
     {
@@ -116,7 +116,7 @@
       "returncode": 0,
       "status": "ok",
       "blocking": false,
-      "stdout_tail": "section-health: degraded - 9 个区块需降权查看。",
+      "stdout_tail": "section-health: degraded - 1 个区块不可直接使用，8 个区块需降权。",
       "stderr_tail": ""
     },
     {
@@ -125,16 +125,16 @@
       "returncode": 0,
       "status": "warning",
       "blocking": false,
-      "stdout_tail": "warning: 发现 4 个页面需复核项。",
+      "stdout_tail": "warning: 发现 3 个页面需复核项。",
       "stderr_tail": ""
     },
     {
       "name": "runtime-smoke",
       "command": "/Users/sweet_orange/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node scripts/smoke_dashboard_runtime.js",
-      "returncode": 0,
-      "status": "ok",
-      "blocking": false,
-      "stdout_tail": "ok: 页面运行时渲染烟雾测试通过。",
+      "returncode": 1,
+      "status": "script_error",
+      "blocking": true,
+      "stdout_tail": "critical: 页面运行时发现 1 个问题。",
       "stderr_tail": ""
     }
   ],
