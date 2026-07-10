@@ -17,7 +17,7 @@ DRY_RUN_ARGS=()
 
 mkdir -p "$COOKIE_MIRROR_DIR" "$MIRROR_DIR"
 
-if /usr/bin/osascript - "$COOKIE_SOURCE" "$COOKIE_MIRROR_DIR" <<'APPLESCRIPT'
+if /usr/bin/osascript - "$COOKIE_SOURCE" "$COOKIE_MIRROR_DIR" >/dev/null <<'APPLESCRIPT'
 on run argv
   set sourcePath to item 1 of argv
   set targetPath to item 2 of argv
@@ -38,7 +38,7 @@ then
   fi
 fi
 
-/usr/bin/osascript - "$ICLOUD_SOURCE" "$MIRROR_DIR" <<'APPLESCRIPT'
+/usr/bin/osascript - "$ICLOUD_SOURCE" "$MIRROR_DIR" >/dev/null <<'APPLESCRIPT'
 on run argv
   set sourcePath to item 1 of argv
   set targetPath to item 2 of argv
