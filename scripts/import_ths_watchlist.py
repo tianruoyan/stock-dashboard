@@ -21,15 +21,20 @@ WATCHLIST_PATH = ROOT / "config" / "watchlist.json"
 PUBLISH_SCRIPT = ROOT / "scripts" / "publish_dashboard.sh"
 AUDIT_SCRIPT = ROOT / "scripts" / "audit_dashboard_data.py"
 DEFAULT_SOURCE = Path.home() / "Library" / "Mobile Documents" / "com~apple~CloudDocs" / "同花顺自选股.txt"
-THS_COOKIE_PATH = (
-    Path.home()
-    / "Library"
-    / "Containers"
-    / "cn.com.10jqka.macstockPro"
-    / "Data"
-    / "Library"
-    / "Cookies"
-    / "Cookies.binarycookies"
+THS_COOKIE_PATH = Path(
+    os.environ.get(
+        "THS_COOKIE_FILE",
+        str(
+            Path.home()
+            / "Library"
+            / "Containers"
+            / "cn.com.10jqka.macstockPro"
+            / "Data"
+            / "Library"
+            / "Cookies"
+            / "Cookies.binarycookies"
+        ),
+    )
 )
 THS_SELF_STOCK_URL = "https://t.10jqka.com.cn/newcircle/group/getSelfStockWithMarket/"
 EASTMONEY_TOKEN = "D43BF722C8E33E1B5FBF8EF4C0C8ECBE"
@@ -385,6 +390,11 @@ def main():
         help="auto 优先读取桌面同花顺，失败后回退到文本文件",
     )
     parser.add_argument("--dry-run", action="store_true")
+    parser.add_argument(
+        "--allow-large-removal",
+        action="store_true",
+        help="允许一次同步删除超过当前观察池40%的股票",
+    )
     args = parser.parse_args()
 
     import_source = ""
@@ -410,14 +420,31 @@ def main():
         print("no stocks found", file=sys.stderr)
         return 1
     watchlist = load_json(WATCHLIST_PATH)
+    old_count = len(watchlist.get("watch_only", {}).get("stocks", []))
+    if (
+        old_count >= 10
+        and len(imported) < old_count * 0.6
+        and not args.allow_large_removal
+    ):
+        print(
+            f"refuse suspicious shrink: imported {len(imported)}, existing {old_count}; "
+            "use --allow-large-removal only after manual confirmation",
+            file=sys.stderr,
+        )
+        return 3
+    before = json.dumps(watchlist, ensure_ascii=False, sort_keys=True)
     added, updated, removed = merge_watchlist(watchlist, imported)
+    changed = before != json.dumps(watchlist, ensure_ascii=False, sort_keys=True)
     if args.dry_run:
-        print(json.dumps({"source": import_source, "found": len(imported), "added": added, "updated": updated, "removed": removed, "mode": "mirror"}, ensure_ascii=False))
+        print(json.dumps({"source": import_source, "found": len(imported), "added": added, "updated": updated, "removed": removed, "changed": changed, "mode": "mirror"}, ensure_ascii=False))
+        return 0
+    if not changed:
+        print(json.dumps({"source": import_source, "found": len(imported), "added": 0, "updated": 0, "removed": 0, "changed": False, "mode": "mirror", "saved": str(WATCHLIST_PATH), "publish_status": "skipped_no_change"}, ensure_ascii=False))
         return 0
     save_json(WATCHLIST_PATH, watchlist)
     run_quality_audit()
     publish_status = publish_dashboard()
-    print(json.dumps({"source": import_source, "found": len(imported), "added": added, "updated": updated, "removed": removed, "mode": "mirror", "saved": str(WATCHLIST_PATH), "publish_status": publish_status}, ensure_ascii=False))
+    print(json.dumps({"source": import_source, "found": len(imported), "added": added, "updated": updated, "removed": removed, "changed": True, "mode": "mirror", "saved": str(WATCHLIST_PATH), "publish_status": publish_status}, ensure_ascii=False))
     return 0 if publish_status == 0 else 1
 
 

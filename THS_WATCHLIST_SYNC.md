@@ -56,7 +56,9 @@ launchctl unload ~/Library/LaunchAgents/com.stock-dashboard.ths-watchlist.plist 
 launchctl load ~/Library/LaunchAgents/com.stock-dashboard.ths-watchlist.plist
 ```
 
-默认每 30 分钟同步一次，开机后自动跑一次。后台任务优先读桌面同花顺；同步结果以同花顺自选股为准，有增有减。
+默认每 30 分钟同步一次，开机后自动跑一次。后台任务先通过 Finder 把桌面同花顺 Cookie 复制到 `logs/ths-cookie-source/`，再调用同花顺自选接口；桌面登录态失效时才回退到 iCloud 文本镜像。观察池没有变化时不会重复构建和推送。
+
+为避免旧文件误删当前观察池，系统有两层保护：iCloud 文本早于当前 `watchlist.json` 时拒绝覆盖；一次同步拟删除超过当前观察池40%时也拒绝覆盖，必须人工确认后才能使用 `--allow-large-removal`。
 
 ## macOS 权限
 
@@ -66,16 +68,7 @@ launchctl load ~/Library/LaunchAgents/com.stock-dashboard.ths-watchlist.plist
 Operation not permitted: .../Mobile Documents/com~apple~CloudDocs/同花顺自选股.txt
 ```
 
-说明 macOS 阻止后台任务读取 iCloud Drive。处理方式：
-
-1. 打开「系统设置」
-2. 进入「隐私与安全性」
-3. 打开「完全磁盘访问权限」
-4. 给下面任意一个加入并打开权限：
-   - `/usr/bin/python3`
-   - 或「终端」
-   - 或 Codex 所在应用
-5. 重新加载任务：
+说明仍在运行旧版“Python 直接读取受保护目录”任务。新版通过 Finder 中转桌面登录 Cookie 和 iCloud 备用文本，不需要给 `/usr/bin/python3` 完全磁盘访问权限。重新安装并加载任务：
 
 ```bash
 launchctl unload ~/Library/LaunchAgents/com.stock-dashboard.ths-watchlist.plist 2>/dev/null || true
