@@ -1,31 +1,31 @@
 {
-  "timestamp": "2026-07-10T14:11:49+08:00",
+  "timestamp": "2026-07-10T14:43:50+08:00",
   "current_signal_date": "2026-07-10",
   "status": "ready_to_recover",
   "summary": "旧盘中异动批次已撤下；可信行情源可用于重产，但必须带交叉验证审计。",
   "alert_state": {
     "source_status": "invalidated",
     "active_count": 0,
-    "note": "13:57-14:01 新增正式提醒：封装连续瞬间拉起，硅片、高带宽内存、封装、传说游资票走势关联观察拉动。最新快照显示封装/硅片/HBM/游资票3分钟涨跌幅均为负，封装、硅片、HBM下跌占比偏高，且缺少 quote_audit.cross_source_verified=true；按门禁保持今日空列表，不发布 active alerts。"
+    "note": "14:33-14:40 新增20条正式提醒，覆盖封装/功率半导体拉起，CMP/长鑫映射/CPO/HBM/光刻胶/电子布/机器人等回落，以及算力/存储/硅片等观察拉动。按2026-07-10候选异动门禁复核：机会类未达到3分钟涨幅>=1.5%且上涨占比>=70%且成交>=5x，或3分钟涨幅>=1.0%且上涨占比>=60%且成交>=8x；风险类虽有下跌占比和成交放大，但最新可审计快照多数3分钟跌幅不足1.0%，如CMP约-0.45%至-0.88%、CPO约-0.52%、科技硬件链约-0.51%，不满足risk candidate最低门槛。功率半导体缺少近端可审计板块快照。因此本轮不写 candidate/confirmed，alert 保持今日空列表。"
   },
   "trusted_sources": [
     {
       "id": "tencent_http",
       "status": "ok",
-      "checked_at": "2026-07-10T14:02:39+08:00",
-      "usage": "14:00指数、观察池与专项样本批量报价"
+      "checked_at": "2026-07-10T14:34:12+08:00",
+      "usage": "14:30指数、观察池与专项样本"
     },
     {
       "id": "eastmoney_push2_akshare",
       "status": "ok",
-      "checked_at": "2026-07-10T14:01:30+08:00",
-      "usage": "14:00涨停、跌停和炸板结构池"
+      "checked_at": "2026-07-10T14:32:00+08:00",
+      "usage": "14:30涨跌停与炸板结构"
     },
     {
       "id": "tencent_minute",
       "status": "ok",
-      "checked_at": "2026-07-10T14:03:00+08:00",
-      "usage": "14:00指数与关键样本3分钟变化"
+      "checked_at": "2026-07-10T14:35:00+08:00",
+      "usage": "14:30指数与关键样本3分钟变化"
     }
   ],
   "forbidden_sources": [
@@ -52,7 +52,8 @@
       "sanity_checks.cross_source_verified"
     ],
     "hard_gates": [
-      "active alerts 必须带 quote_audit，且 cross_source_verified=true。",
+      "candidate 必须带单源 quote_audit 和完整短周期证据，可在未交叉验证时展示为待确认。",
+      "confirmed 必须带 quote_audit，且 cross_source_verified=true。",
       "leaders.change_pct 不得超过 A股常规单日边界；异常值直接撤下。",
       "污染源仍 degraded 时，禁止只用该源恢复 alert。",
       "重产后必须执行 build_dashboard_reports.py，runtime-smoke 通过后再推送。"
