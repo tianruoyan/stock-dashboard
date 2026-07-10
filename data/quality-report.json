@@ -1,15 +1,15 @@
 {
-  "timestamp": "2026-07-10T13:43:48+08:00",
+  "timestamp": "2026-07-10T14:11:49+08:00",
   "current_signal_date": "2026-07-10",
   "status": "degraded",
-  "summary": "发现 37 个降级/需复核项（1 个交易阻断，34 个价格/行情复核，1 个信号复核，2 个背景复核），核心结论可看但必须按影响分层使用。",
+  "summary": "发现 42 个降级/需复核项（1 个交易阻断，39 个价格/行情复核，1 个信号复核，2 个背景复核），核心结论可看但必须按影响分层使用。",
   "issues": [
     {
       "severity": "warning",
       "file": "alert.json",
       "path": "",
       "code": "invalidated_source",
-      "message": "13:33-13:42 新增正式提醒较多：电子布、覆铜板、高带宽内存、封装有拉起/上涨攻势，半导体设备平台、存储芯片、CMP/靶材/材料耗材、长鑫存储IPO映射、光模块/CPO、光刻胶/光刻机催化、机器人等出现回落或观察提醒。最近快照显示多数方向高成交但领涨/领跌重叠、上涨占比不足，且缺少 quote_audit.cross_source_verified=true；按门禁保持今日空列表，不发布 active alerts。",
+      "message": "13:57-14:01 新增正式提醒：封装连续瞬间拉起，硅片、高带宽内存、封装、传说游资票走势关联观察拉动。最新快照显示封装/硅片/HBM/游资票3分钟涨跌幅均为负，封装、硅片、HBM下跌占比偏高，且缺少 quote_audit.cross_source_verified=true；按门禁保持今日空列表，不发布 active alerts。",
       "impact_level": "blocking",
       "decision_action": "对应信号等待重产，页面必须显示阻断"
     },
@@ -345,6 +345,51 @@
       "message": "monitor_alert_quote_audit_1342: 13:33-13:42 新增正式提醒落盘前交叉验证",
       "impact_level": "price_review",
       "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
+    },
+    {
+      "severity": "warning",
+      "file": "source-health.json",
+      "path": "",
+      "code": "source_failed",
+      "message": "monitor_alert_quote_audit_1345: 13:43-13:45 新增正式提醒落盘前交叉验证",
+      "impact_level": "price_review",
+      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
+    },
+    {
+      "severity": "warning",
+      "file": "source-health.json",
+      "path": "",
+      "code": "source_failed",
+      "message": "monitor_alert_quote_audit_1348: 13:46:52 新增封装提醒落盘前交叉验证",
+      "impact_level": "price_review",
+      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
+    },
+    {
+      "severity": "warning",
+      "file": "source-health.json",
+      "path": "",
+      "code": "source_failed",
+      "message": "monitor_alert_quote_audit_1351: 13:50 后新增正式提醒落盘前交叉验证",
+      "impact_level": "price_review",
+      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
+    },
+    {
+      "severity": "warning",
+      "file": "source-health.json",
+      "path": "",
+      "code": "source_failed",
+      "message": "monitor_alert_quote_audit_1357: 13:51 后新增正式提醒落盘前交叉验证",
+      "impact_level": "price_review",
+      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
+    },
+    {
+      "severity": "warning",
+      "file": "source-health.json",
+      "path": "",
+      "code": "source_failed",
+      "message": "monitor_alert_quote_audit_1401: 13:57-14:01 新增正式提醒落盘前交叉验证",
+      "impact_level": "price_review",
+      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
     }
   ],
   "action_plan": [
@@ -354,7 +399,7 @@
       "label": "先修复阻断",
       "file": "alert.json",
       "code": "invalidated_source",
-      "problem": "13:33-13:42 新增正式提醒较多：电子布、覆铜板、高带宽内存、封装有拉起/上涨攻势，半导体设备平台、存储芯片、CMP/靶材/材料耗材、长鑫存储IPO映射、光模块/CPO、光刻胶/光刻机催化、机器人等出现回落或观察提醒。最近快照显示多数方向高成交但领涨/领跌重叠、上涨占比…",
+      "problem": "13:57-14:01 新增正式提醒：封装连续瞬间拉起，硅片、高带宽内存、封装、传说游资票走势关联观察拉动。最新快照显示封装/硅片/HBM/游资票3分钟涨跌幅均为负，封装、硅片、HBM下跌占比偏高，且缺少 quote_audit.cross_source_verified=tr…",
       "decision_action": "对应信号等待重产，页面必须显示阻断",
       "next_step": "暂停对应交易触发；等待污染批次撤下、可信行情源恢复并重产 JSON。",
       "unblock_condition": "quality-report blocking=0，相关文件不再 invalidated/missing。"
@@ -417,10 +462,10 @@
   ],
   "counts": {
     "critical": 0,
-    "warning": 37,
+    "warning": 42,
     "info": 1,
     "blocking": 1,
-    "price_review": 34,
+    "price_review": 39,
     "signal_review": 1,
     "background_review": 2
   },
