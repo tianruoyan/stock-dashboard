@@ -1,8 +1,8 @@
 {
-  "timestamp": "2026-07-10T14:46:20+08:00",
+  "timestamp": "2026-07-10T15:23:28+08:00",
   "current_signal_date": "2026-07-10",
   "status": "degraded",
-  "summary": "发现 52 个降级/需复核项（50 个价格/行情复核，1 个信号复核，2 个背景复核），核心结论可看但必须按影响分层使用。",
+  "summary": "发现 52 个降级/需复核项（51 个价格/行情复核，1 个信号复核，1 个背景复核），核心结论可看但必须按影响分层使用。",
   "issues": [
     {
       "severity": "warning",
@@ -12,15 +12,6 @@
       "message": "沪深300 change_pct 非数字：None，该字段忽略并降权",
       "impact_level": "price_review",
       "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
-    },
-    {
-      "severity": "warning",
-      "file": "postmarket.json",
-      "path": "",
-      "code": "stale_timestamp",
-      "message": "时间戳不是当前交易日：2026-07-09T19:58:00+08:00",
-      "impact_level": "background_review",
-      "decision_action": "仅作背景复核，不单独阻断交易判断"
     },
     {
       "severity": "warning",
@@ -480,6 +471,15 @@
       "message": "monitor_alert_quote_audit_1432: 发现3条科技线正式风险提醒，具备短周期回落和扩散偏弱证据，但未取得 quote_audit.sanity_checks.cross_source_verified=true 的双源确认；按 m159 协议不发布 active/confirmed alert。",
       "impact_level": "price_review",
       "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
+    },
+    {
+      "severity": "warning",
+      "file": "source-health.json",
+      "path": "",
+      "code": "source_failed",
+      "message": "eastmoney_full_spot_postmarket_20260710: 全量单页、3个分页、强势股批量行业接口及板块排行均被远端断开；未使用空结果。",
+      "impact_level": "price_review",
+      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
     }
   ],
   "action_plan": [
@@ -542,9 +542,9 @@
       "priority": 4,
       "impact_level": "background_review",
       "label": "背景来源复核",
-      "file": "postmarket.json",
-      "code": "stale_timestamp",
-      "problem": "时间戳不是当前交易日：2026-07-09T19:58:00+08:00",
+      "file": "evening-sentiment.json",
+      "code": "evening_not_current",
+      "problem": "晚间舆情不是当前交易日，不参与今日总控",
       "decision_action": "仅作背景复核，不单独阻断交易判断",
       "next_step": "补官方/交易所/公司公告来源；未补齐前不升级为核心依据。",
       "unblock_condition": "官方来源补齐或确认不影响交易触发。"
@@ -555,9 +555,9 @@
     "warning": 52,
     "info": 1,
     "blocking": 0,
-    "price_review": 50,
+    "price_review": 51,
     "signal_review": 1,
-    "background_review": 2
+    "background_review": 1
   },
   "rules": [
     "异常文本、JSON解析失败、必需文件缺失为 critical。",

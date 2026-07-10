@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-07-10T14:42:32+08:00",
+  "timestamp": "2026-07-10T15:19:44+08:00",
   "sources": {
     "tencent_http": {
       "status": "ok",
@@ -894,6 +894,72 @@
       "detail": "发现20条正式提醒；按新候选门禁逐项复核后，机会类涨幅/扩散不足，风险类3分钟跌幅不足1.0%或缺可审计快照，未写入 candidate。confirmed 仍需双源交叉验证。",
       "sample_count": 20,
       "errors": []
+    },
+    "monitor_alert_candidate_gate_1445": {
+      "status": "degraded_partial",
+      "checked_at": "2026-07-10T14:45:15+08:00",
+      "usage": "14:45 monitor.log 半导体零部件弹性 risk candidate 发布门禁",
+      "detail": "单源本地监控日志显示3分钟跌幅-1.19%、下跌100%、成交14.36x，满足risk candidate；cross_source_verified=false，未升级confirmed。",
+      "sample_count": 2,
+      "errors": []
+    },
+    "monitor_alert_candidate_gate_1456": {
+      "status": "degraded_partial",
+      "checked_at": "2026-07-10T14:56:49+08:00",
+      "usage": "14:56 monitor.log 多方向risk candidate发布门禁",
+      "detail": "CMP/材料、科技硬件链、长鑫映射、封装均满足单源risk candidate门槛；cross_source_verified=false，仅待确认。",
+      "sample_count": 4,
+      "errors": []
+    },
+    "tencent_close_postmarket_20260710": {
+      "status": "ok",
+      "last_check": "2026-07-10T15:19:44+08:00",
+      "usage": "A股收盘指数、专项样本和14:55-15:00尾盘校验",
+      "detail": "指数和代表股收盘有效；分钟线明确取14:55与15:00。",
+      "sample_count": 90,
+      "errors": []
+    },
+    "eastmoney_limit_pool_postmarket_20260710": {
+      "status": "ok",
+      "last_check": "2026-07-10T15:04:00+08:00",
+      "usage": "收盘涨停、跌停和炸板结构",
+      "detail": "清洗后涨停88、跌停4、炸板91。",
+      "sample_count": 183,
+      "errors": []
+    },
+    "sina_up5_postmarket_20260710": {
+      "status": "ok",
+      "last_check": "2026-07-10T15:09:00+08:00",
+      "usage": "收盘5%至不足8%与8%以上宽度",
+      "detail": "逐页读取排序至涨幅低于5%；清洗后5%-8%为200只，8%以上163只。",
+      "sample_count": 363,
+      "errors": []
+    },
+    "sw_official_industry_postmarket_20260710": {
+      "status": "ok",
+      "last_check": "2026-07-10T15:13:00+08:00",
+      "usage": "强势股申万一级行业映射",
+      "detail": "申万宏源官方分类文件返回12870条历史，363只强势样本全部映射。",
+      "sample_count": 363,
+      "errors": []
+    },
+    "eastmoney_history_limit_pool_5d_20260710": {
+      "status": "ok",
+      "last_check": "2026-07-10T15:15:00+08:00",
+      "usage": "前5交易日热点连续性",
+      "detail": "20260703、06、07、08、09五日涨停结构均返回有效。",
+      "sample_count": 321,
+      "errors": []
+    },
+    "eastmoney_full_spot_postmarket_20260710": {
+      "status": "failed",
+      "last_check": "2026-07-10T15:06:00+08:00",
+      "usage": "全A收盘列表和板块排行",
+      "detail": "全量单页、3个分页、强势股批量行业接口及板块排行均被远端断开；未使用空结果。",
+      "sample_count": 0,
+      "errors": [
+        "RemoteDisconnected: Remote end closed connection without response"
+      ]
     }
   }
 }
