@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-07-10T08:34:00+08:00",
+  "timestamp": "2026-07-10T09:16:00+08:00",
   "sources": {
     "tencent_http": {
       "status": "ok",
@@ -76,12 +76,14 @@
       "errors": []
     },
     "tencent_hk_auction_http": {
-      "status": "ok",
-      "last_check": "2026-07-09T09:18:45+08:00",
+      "status": "failed",
+      "last_check": "2026-07-10T09:16:00+08:00",
       "usage": "9:15港股竞价/盘前快照",
-      "detail": "腾讯港股HTTP 09:18快照可用；指数仍显示竞价阶段0涨跌，采用个股竞价涨跌幅做映射判断。",
-      "sample_count": 20,
-      "errors": []
+      "detail": "当前运行环境无法解析qt.gtimg.cn，未采用港股竞价实时数值；保留昨日收盘作为背景并等待9:30开盘后复核。",
+      "sample_count": 0,
+      "errors": [
+        "Could not resolve host: qt.gtimg.cn"
+      ]
     },
     "yahoo_finance_quote_api": {
       "status": "failed",
@@ -103,11 +105,16 @@
       ]
     },
     "web_news_finance_search": {
-      "status": "ok",
-      "last_check": "2026-07-08T09:15:36+08:00",
-      "usage": "隔夜美股三大指数、核心美股、日韩科技链背景交叉验证",
-      "detail": "使用新闻/行情搜索结果交叉外盘方向，未用于生成A50实时数值。",
-      "errors": []
+      "status": "degraded_partial",
+      "last_check": "2026-07-10T09:16:00+08:00",
+      "usage": "隔夜美股三大指数、Micron、日韩科技链与港股期货背景核验",
+      "detail": "AP核实标普+0.8%、道指+0.3%、纳指+1.3%、Micron+4.5%；未取得NVDA/AVGO/AMD可靠精确涨幅，也未取得日韩早盘、A50/恒生期货夜盘可交叉验证实时数值，相关字段为空。",
+      "errors": [
+        "live Japan/Korea quotes unavailable",
+        "A50/HSI futures real-time values unavailable",
+        "exact NVDA/AVGO/AMD changes unavailable"
+      ],
+      "sample_count": 4
     },
     "eastmoney_limit_pool_auction": {
       "status": "ok",
@@ -610,6 +617,16 @@
       "detail": "已通过web搜索核验AP/MarketWatch/Barron's等隔夜行情与海外半导体扩产信息；国内部委/公告搜索未发现新增硬催化，因当前shell网络受限未重跑巨潮全量接口，沿用20:00公告扫描并标注为无重大新增。",
       "errors": [
         "shell network restricted; cninfo full incremental scan not rerun at 08:30"
+      ]
+    },
+    "in_app_browser_hk_quote": {
+      "status": "failed",
+      "last_check": "2026-07-10T09:16:00+08:00",
+      "usage": "Yahoo Finance恒生指数网页补充核验",
+      "detail": "网页行情加载超时，未取得可验证港股竞价快照。",
+      "sample_count": 0,
+      "errors": [
+        "page load timed out"
       ]
     }
   }
