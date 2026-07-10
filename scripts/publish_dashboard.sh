@@ -62,7 +62,7 @@ if [ "$build_status" -ne 0 ]; then
   exit 1
 fi
 
-stage_paths=(data config index.html style.css app.js RULES.md VERSION.md scripts settings.html settings.js rules.html topics THS_WATCHLIST_SYNC.md)
+stage_paths=(.gitignore data config index.html style.css app.js RULES.md VERSION.md scripts settings.html settings.js rules.html topics THS_WATCHLIST_SYNC.md)
 existing_paths=()
 for stage_path in "${stage_paths[@]}"; do
   [ -e "$stage_path" ] && existing_paths+=("$stage_path")
