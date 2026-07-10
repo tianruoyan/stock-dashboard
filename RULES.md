@@ -44,7 +44,7 @@ title: 分析模型说明书
 
 **更新频率:** 每 30 分钟 (交易日 9:00-14:50)
 
-**推送:** Cola cron → intraday.json → git push
+**更新与发布:** 本地无模型行情采集服务每15分钟刷新指数和行业排行；Codex 负责盘中结论与概念研判，统一调用 `scripts/publish_dashboard.sh` 发布。
 
 ---
 
@@ -62,7 +62,7 @@ title: 分析模型说明书
 
 **更新频率:** 9:15 + 9:25 各一次
 
-**推送:** Codex 写本地 → Cola 9:16/9:26 准点推送 → GitHub Pages
+**推送:** Codex 在 9:15/9:25 产出后直接调用统一发布器，校验通过即推送 GitHub Pages，不再依赖二次转发。
 
 ---
 
@@ -181,7 +181,7 @@ title: 分析模型说明书
 - 前端按 P0 优先展示；即使普通 news 很多，P0 仍置顶。
 
 **更新频率:** 每个交易日 20:00-21:00 定时触发（cron），不得依赖手动"补跑"。周末和节假日跳过。
-- Cola cron: `0 20 * * 1-5` → 调用 Codex 产出 evening-sentiment.json → git push
+- Codex 20:00 产出 `evening-sentiment.json`；21:00 由 Codex 健康核验任务检查当日文件和发布状态。
 - 如 cron 失败，次日 8:30 前手动补跑。
 
 ---
@@ -205,64 +205,61 @@ title: 分析模型说明书
 
 ## 🔧 技术架构
 
-### Codex ↔ Cola 同步协议（唯一真相源）
+### Codex 单智能体发布协议（唯一真相源）
 
-**Codex 职责（写 + 可选推）：**
-1. 产出 JSON 时先写临时文件，写完后 `mv` 覆盖正式文件
-2. 所有本轮 JSON 写完后，执行 `python3 scripts/build_dashboard_reports.py`，按固定顺序更新 `theme-shifts`、`decision-feed`、`quality-report`、`data-trust`、`monitoring-coverage`、`section-health`、`smoke-report` 和 `runtime-smoke-report`
-3. 若统一构建报告 `data/build-report.json` 为 blocked：不得发布，保留本地报告并修数据/页面
-4. 若统一构建不是 blocked：创建 `.push-now` 信号文件
-5. 尝试 `scripts/push_with_audit.sh`（内部会再次调用统一构建入口并静默 push）：成功最好，不成功 Cola 会补推
+**唯一智能体:**
+1. Codex 负责盘前、盘中、午盘、盘后、晚间、专题的分析与编排。
+2. 本地网页、行情采集和发布重试是无模型系统服务，只执行固定程序，不生成主观结论。
+3. 任一数据生产者不得自行 `git add/commit/push`，不得再通过第二智能体扫描仓库。
 
-**Cola 职责（推 + 兜底）：**
-1. 每 2 分钟扫描一次仓库
-2. 若发现 `.push-now`：调用 `scripts/push_with_audit.sh`，审计和烟雾测试通过才 push，成功后删信号
-3. 若 `.push-now` 不存在但有变更：也先调用 `scripts/push_with_audit.sh`（兜底）
-4. 盘前 9:16/9:26 定点推送
+**统一发布入口:**
+1. JSON 先写临时文件，校验后原子覆盖正式文件。
+2. 所有本轮文件写完后调用 `scripts/publish_dashboard.sh`。
+3. 发布器使用原子目录锁串行执行，先运行 `scripts/build_dashboard_reports.py`，统一更新衍生报告和前端烟雾测试。
+4. `data/build-report.json` 为 blocked 时停止提交和推送，并在 `logs/publisher-status.json` 记录原因。
+5. 校验通过后，发布器只提交白名单目录；推送前检查远端变化，必要时安全 rebase；网络失败最多重试3次。
+6. 最终失败不再静默吞掉，保留 `.publish-pending`；本机 `com.stock-dashboard.publisher` 每2分钟重试，成功后清除标记。
+7. `scripts/push_with_audit.sh` 仅作为历史兼容入口，实际转交统一发布器。
 
-**双保险设计：**
-- Codex push 成功 → .push-now 还在，Cola 下次扫描时发现已是最新，跳过
-- Codex push 失败 → .push-now 触发 Cola 重试推送
-- Cola 掉线 → Codex 自己的 push 仍有机会成功
-
-**同步时序：**
+**同步时序:**
 ```
-Codex 写 JSON → audit_dashboard_data.py → 非 critical → 创建 .push-now
-                    ↓ （下次 Cola 扫描，最多 2 分钟）
-              Cola 检测到 → push_with_audit.sh → git push
-                    ↓ （GitHub Pages 构建，1-2 分钟）
-              线上更新
+Codex/本地采集写 JSON → publish_dashboard.sh → 统一构建与门禁
+                                      ↓ 通过
+                              串行 commit + push
+                                      ↓ 失败
+                        .publish-pending → 本机重试服务
+                                      ↓
+                              GitHub Pages 更新
 ```
-最坏延迟：2 分钟扫描 + push + Pages 构建 ≈ 4 分钟
-盘前窗口：9:16/9:26 定点推送 ≈ 2 分钟
 
-**责任边界：**
-- 数据写了但看板没更新 → 查 `.push-now` 是否存在（Codex 写了 Cola 没推 / Codex 没写）
-- push 失败 → 查守护 cron 日志（网络超时 vs 权限问题）
-- 数据内容不对 → Codex 分析逻辑问题
+**责任边界:**
+- 数据内容或结论不对：检查 Codex 产出和数据源证据。
+- 构建被阻断：检查 `data/build-report.json` 与 `data/runtime-smoke-report.json`。
+- 推送失败：检查 `logs/publisher-status.json` 和 `logs/publisher.err.log`。
+- 本地页面不可用：检查 `com.tianruoyan.stock-dashboard.local`；它不是智能体。
 
 ---
 
 ### 数据管道
 ```
-Codex (分析引擎)              Cola (稳定管道)
-    │                              │
-    ├─ 盘前/盘后/晚间/专题 ──→ 写 JSON ──┐
-    ├─ 老登小登异动 ──→ alert.json ──┤
-    │                              │     │
-    │              盘中数据 cron ──→ intraday.json
-    │                              │     │
-    │              推送守护 cron ──→ git push → GitHub Pages
-    │                         (每5分钟+盘前定点)
+Codex（唯一分析智能体）
+    ├─ 盘前/盘中/午盘/盘后/晚间/专题 → 原子写 JSON
+    ├─ 老登小登异动 → alert.json
+    └─ 统一发布器 → 构建/审计/提交/推送 → GitHub Pages
+
+无模型本地服务
+    ├─ 盘中指数与行业采集 → 合并 intraday.json（不改分析时间）
+    ├─ 发布失败重试 → 仅处理 .publish-pending
+    ├─ 同花顺观察池同步 → config/watchlist.json
+    └─ 本地网页服务 → 127.0.0.1:8877
 ```
 
-**Cron 任务:**
+**本地任务:**
 | 任务 | 频率 | 功能 |
 |------|------|------|
-| 盘中全景数据 | 每30分钟 | 指数+板块排名 |
-| 看板推送守护 | 每5分钟 | 全量变更推送 |
-| 盘前推送 9:16 | 定点 | 盘前简报准点推送 |
-| 盘前推送 9:26 | 定点 | 竞价总结准点推送 |
+| 盘中行情快照 | 每15分钟，仅交易时段 | 指数+行业排行，不生成分析结论 |
+| 发布失败重试 | 每2分钟，仅有待发布标记时工作 | 统一构建、提交和推送 |
+| Codex 运行环境 | 登录时启动 | 确保本地定时任务可读取项目文件 |
 
 ---
 
@@ -453,6 +450,7 @@ Codex (分析引擎)              Cola (稳定管道)
 | 2026-07-10 | 盘中异动失效时，替代观察前三项固定覆盖宽度替代、主线替代和新线替代；实时宽度缺失时必须明确等待恢复 | 盘中提醒不可用时，交易者仍需同时知道市场情绪、既有主线和首次扩散方向该看什么，避免只剩昨日主线观察 |
 | 2026-07-10 | 今日结论在同一交易日按 timestamp 选择最新的午盘、盘中或盘后盘面摘要，不再固定让午盘摘要压过午后盘中更新 | 午后全景已更新时继续展示午盘旧结论会遗漏新主线和风格切换风险；各阶段应按业务时间自然接力 |
 | 2026-07-10 | 盘中异动门禁拆分 candidate 与 confirmed：达到短周期价格、方向占比和成交硬阈值的单源候选可展示“待确认”；只有 confirmed 必须双源核验；文本声称涨停/跌停但无结构计数、幅度不足、方向矛盾或成交不足的信号继续拦截 | 原门禁把 candidate 也强制要求双源验证，导致真实候选全部清空；放宽时必须同时防止封装、设备等错误涨跌停文本和弱幅度噪声进入前台 |
+| 2026-07-10 | 股票平台改为 Codex 单智能体：分析、编排和发布统一由 Codex 负责；本机无模型服务仅承担行情采集、网页服务和失败重试；所有写入统一调用 `scripts/publish_dashboard.sh`，不再依赖第二智能体或静默 push | 双智能体同时提交同一仓库会产生重复提交、局部提交和时序竞态；统一锁、门禁、失败状态和重试后可明确区分数据问题、构建阻断和网络失败 |
 ---
 
 ## 🐍 Python 环境
@@ -465,4 +463,4 @@ Codex (分析引擎)              Cola (稳定管道)
 
 ---
 
-*最后更新: 2026-07-04 22:30 +08:00*
+*最后更新: 2026-07-10 +08:00*

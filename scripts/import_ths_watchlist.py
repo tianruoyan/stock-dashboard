@@ -18,7 +18,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 WATCHLIST_PATH = ROOT / "config" / "watchlist.json"
-PUSH_MARKER = ROOT / ".push-now"
+PUBLISH_SCRIPT = ROOT / "scripts" / "publish_dashboard.sh"
 AUDIT_SCRIPT = ROOT / "scripts" / "audit_dashboard_data.py"
 DEFAULT_SOURCE = Path.home() / "Library" / "Mobile Documents" / "com~apple~CloudDocs" / "同花顺自选股.txt"
 THS_COOKIE_PATH = (
@@ -290,6 +290,12 @@ def run_quality_audit():
     subprocess.run([sys.executable, str(AUDIT_SCRIPT)], cwd=str(ROOT), check=False)
 
 
+def publish_dashboard():
+    if not PUBLISH_SCRIPT.exists():
+        raise FileNotFoundError(f"发布脚本不存在: {PUBLISH_SCRIPT}")
+    return subprocess.run([str(PUBLISH_SCRIPT)], cwd=str(ROOT), check=False).returncode
+
+
 def enrich(item):
     if item.get("code") and item.get("name"):
         code = normalize_code(item["code"])
@@ -410,9 +416,9 @@ def main():
         return 0
     save_json(WATCHLIST_PATH, watchlist)
     run_quality_audit()
-    PUSH_MARKER.touch()
-    print(json.dumps({"source": import_source, "found": len(imported), "added": added, "updated": updated, "removed": removed, "mode": "mirror", "saved": str(WATCHLIST_PATH)}, ensure_ascii=False))
-    return 0
+    publish_status = publish_dashboard()
+    print(json.dumps({"source": import_source, "found": len(imported), "added": added, "updated": updated, "removed": removed, "mode": "mirror", "saved": str(WATCHLIST_PATH), "publish_status": publish_status}, ensure_ascii=False))
+    return 0 if publish_status == 0 else 1
 
 
 if __name__ == "__main__":

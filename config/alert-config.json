@@ -78,7 +78,7 @@
       "current_alert_sla_minutes": 5,
       "current_alert_rule": "前台摘要只使用5分钟内的盘中异动；超过5分钟的异动只能标为历史触发，不得作为当前交易或风险触发。",
       "resolved_risk_rule": "若后续 intraday 显示相关题材已修复、转强或风险收敛，旧风险 alert 必须在前台标注为历史触发/已修复，不得继续显示为当前风险。",
-      "sync_after_write": "任一盘中自动化写入 alert.json、intraday.json 或 midday.json 后，必须重建 decision-feed、data-trust、section-health、runtime-smoke-report，并 touch .push-now。"
+      "sync_after_write": "任一盘中自动化写入 alert.json、intraday.json 或 midday.json 后，必须调用 scripts/publish_dashboard.sh；发布器统一重建 decision-feed、data-trust、section-health、runtime-smoke-report，校验通过后提交并推送。"
     },
     "frontend_classification_guard": {
       "_说明": "前台必须二次校验异动强度，防止后端把观察拉动误写成交易信号。",

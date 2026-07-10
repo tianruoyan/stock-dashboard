@@ -18,7 +18,7 @@ async function loadSettings() {
     renderSettingsForms();
   } catch (e) {
     console.log('config load failed, using localStorage');
-    const cached = localStorage.getItem('cola-settings');
+    const cached = localStorage.getItem('stock-dashboard-settings') || localStorage.getItem('cola-settings');
     if (cached) { settingsData = JSON.parse(cached); renderSettingsForms(); }
   }
 }
@@ -279,7 +279,7 @@ async function saveSettings() {
   const enrichedCount = await enrichWatchlistBeforeSave();
   collectSettingsFromForms();
   document.getElementById('cfg-status').textContent = enrichedCount ? `已补全 ${enrichedCount} 项，保存中...` : '保存中...';
-  localStorage.setItem('cola-settings', JSON.stringify(settingsData));
+  localStorage.setItem('stock-dashboard-settings', JSON.stringify(settingsData));
 
   try {
     const resp = await fetch(CONFIG_HOST + '/_save-config', {
@@ -306,7 +306,7 @@ async function saveSettings() {
   }, null, 2);
   try {
     await navigator.clipboard.writeText(cfgJson);
-    document.getElementById('cfg-status').textContent = '📋 配置已复制到剪贴板，请粘贴给 Cola 写入文件';
+    document.getElementById('cfg-status').textContent = '📋 配置已复制到剪贴板，请交给 Codex 写入文件';
   } catch {
     document.getElementById('cfg-status').textContent = '⚠️ 无法保存，请检查网络';
   }

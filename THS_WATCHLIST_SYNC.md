@@ -17,7 +17,7 @@ cd /Users/sweet_orange/stock-dashboard
 python3 scripts/import_ths_watchlist.py --mode ths
 ```
 
-脚本会把 `config/watchlist.json` 里的 `watch_only` 镜像为同花顺当前自选股：同花顺新增则新增，同花顺删除则删除。`small_deng` 和 `old_deng` 仍是独立风格监测池，不跟随同花顺删除。同步成功后会 `touch .push-now`，由现有推送守护负责发布。
+脚本会把 `config/watchlist.json` 里的 `watch_only` 镜像为同花顺当前自选股：同花顺新增则新增，同花顺删除则删除。`small_deng` 和 `old_deng` 仍是独立风格监测池，不跟随同花顺删除。同步成功后直接调用 Codex 单智能体发布器完成校验、提交和推送；网络失败时由本机发布重试服务继续处理。
 
 ## 备用方式：iCloud 文本
 
