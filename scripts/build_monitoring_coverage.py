@@ -188,14 +188,18 @@ def blind_spot(
 
 
 def alert_fallback_checks(postmarket: dict[str, Any], intraday: dict[str, Any], decision_feed: dict[str, Any]) -> list[str]:
-    checks: list[str] = []
     breadth = market_breadth_text(postmarket, intraday)
-    if breadth:
-        checks.append(breadth)
-    checks.extend(theme_checks(postmarket))
+    theme_rows = theme_checks(postmarket)
+    main_line = next((row for row in theme_rows if row.startswith("主线替代：")), None)
+    new_line = next((row for row in theme_rows if row.startswith("新线替代：")), None)
+
+    checks = [
+        breadth or "宽度替代：实时涨停、跌停和炸板数据暂不可用；恢复前不判断情绪扩散。",
+        main_line or "主线替代：先看半导体设备/材料/制造/封测能否同步扩散；单点强不升级。",
+        new_line or "新线替代：从行业与题材涨幅、成交和涨停新增中寻找首次扩散方向；没有宽度不升级。",
+    ]
+    checks.extend(row for row in theme_rows if row not in {main_line, new_line})
     checks.extend(decision_checks(decision_feed))
-    if not checks:
-        checks.append("替代观察：先看涨停/跌停/炸板是否收敛，再看核心主线代表股是否同步高开承接。")
     return checks
 
 

@@ -16,11 +16,17 @@ TZ = timezone(timedelta(hours=8))
 
 def main() -> int:
     intraday = load_json(DATA_DIR / "intraday.json")
+    midday = load_json(DATA_DIR / "midday.json")
     postmarket = load_json(DATA_DIR / "postmarket.json")
     topics = load_json(DATA_DIR / "topics.json")
     quality = load_json(DATA_DIR / "quality-report.json")
-    current_date = latest_signal_date([intraday, postmarket, topics])
-    candidates = collect_candidates(intraday, postmarket, topics)
+    current_date = latest_signal_date([intraday, midday, postmarket, topics])
+    candidates = collect_candidates(
+        current_only(intraday, current_date),
+        current_only(midday, current_date),
+        current_only(postmarket, current_date),
+        current_only(topics, current_date),
+    )
     shifts = classify_shifts(candidates, quality, current_date)
     report = {
         "timestamp": now_iso(),
@@ -39,11 +45,12 @@ def main() -> int:
     return 0
 
 
-def collect_candidates(intraday: dict[str, Any], postmarket: dict[str, Any], topics: dict[str, Any]) -> list[dict[str, Any]]:
+def collect_candidates(intraday: dict[str, Any], midday: dict[str, Any], postmarket: dict[str, Any], topics: dict[str, Any]) -> list[dict[str, Any]]:
     rows: list[dict[str, Any]] = []
     for source, values in (
         ("intraday.json", as_list(intraday.get("main_trends"))),
         ("intraday.json", as_list(intraday.get("themes"))),
+        ("midday.json", as_list(midday.get("morning_review", {}).get("main_trends"))),
         ("postmarket.json", as_list(postmarket.get("hotspots"))),
         ("topics.json", as_list(topics.get("topics"))),
     ):
@@ -160,7 +167,7 @@ def theme_key(text: str) -> str:
     mapping = [
         ("科技硬件链", r"半导体|硅片|封装|设备|零部件|材料|CPO|光模块|PCB|电子布|存储|HBM|元件|消费电子|低位硬件"),
         ("机器人/工业自动化", r"机器人|通用设备|自动化|减速器|伺服|控制器|机器视觉"),
-        ("医药修复链", r"医药|创新药|化学制药|CRO|原料药|制剂"),
+        ("创新药/CRO", r"医药|创新药|化学制药|CRO|CAR-T|减肥药|原料药|制剂"),
         ("AI应用/物理AI", r"AI应用|物理AI|传媒|游戏|商汤|快手|多模态"),
         ("化工/材料/资源轮动", r"化工|化学制品|材料|资源|锂电材料|雅化|佛塑|晨光新材|百合花|宝地矿业"),
         ("老登风格切换", r"券商|证券|保险|白酒|畜牧|银行|地产|权重"),
@@ -278,6 +285,12 @@ def latest_signal_date(payloads: list[dict[str, Any]]) -> str:
     dates = [signal_date(item.get("timestamp")) for item in payloads if isinstance(item, dict)]
     dates = [date for date in dates if date]
     return sorted(dates)[-1] if dates else now_iso()[:10]
+
+
+def current_only(payload: dict[str, Any], current_date: str) -> dict[str, Any]:
+    if not isinstance(payload, dict):
+        return {}
+    return payload if signal_date(payload.get("timestamp")) == current_date else {}
 
 
 def signal_date(value: Any) -> str:

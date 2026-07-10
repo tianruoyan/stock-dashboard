@@ -31,14 +31,14 @@ def main() -> int:
     }
     signal_date = latest_signal_date(files)
     opportunities = rank_upgrade_candidates(dedupe_items(build_opportunities(files, signal_date)))[:8]
-    risks = dedupe_items(build_risks(files))[:8]
-    verifications = dedupe_items(build_verifications(files))[:8]
+    risks = dedupe_items(build_risks(files, signal_date))[:8]
+    verifications = dedupe_items(build_verifications(files, signal_date))[:8]
     conflicts = build_signal_conflicts(opportunities, risks, verifications)
     feed = {
         "timestamp": now_iso(),
         "current_signal_date": signal_date,
         "quality_gate": quality_gate(files.get("quality-report.json") or {}),
-        "summary": build_summary(files),
+        "summary": build_summary(files, signal_date),
         "observation_coverage": build_observation_coverage(opportunities, risks, verifications),
         "decision_brief": build_decision_brief(opportunities, risks, verifications, conflicts, files),
         "signal_queue": build_signal_queue(opportunities, risks, verifications, conflicts),
@@ -74,11 +74,18 @@ def load_json(path: Path) -> Any:
         return {}
 
 
-def build_summary(files: dict[str, Any]) -> str:
-    post = files.get("postmarket.json") or {}
-    intraday = files.get("intraday.json") or {}
+def build_summary(files: dict[str, Any], current_date: str) -> str:
+    midday = current_payload(files, "midday.json", current_date)
+    intraday = current_payload(files, "intraday.json", current_date)
+    post = current_payload(files, "postmarket.json", current_date)
     quality = files.get("quality-report.json") or {}
-    base = first_text(post.get("review", {}).get("one_sentence"), post.get("index", {}).get("summary"), intraday.get("summary"))
+    base = first_text(
+        midday.get("morning_review", {}).get("one_sentence"),
+        intraday.get("summary"),
+        post.get("review", {}).get("one_sentence"),
+        post.get("index", {}).get("summary"),
+        "当前时段尚无可用盘面结论。",
+    )
     if quality.get("status") in {"degraded", "critical"}:
         return trim(f"{base} 数据质量：{quality.get('summary')}", 180)
     return trim(base, 180)
@@ -221,7 +228,7 @@ def build_opportunities(files: dict[str, Any], current_date: str) -> list[dict[s
     gate = quality_gate(quality)
     quality_degraded = gate["status"] in {"degraded", "critical"}
 
-    for theme, source in risk_theme_candidates(files):
+    for theme, source in risk_theme_candidates(files, current_date):
         if is_generic_bucket(theme):
             continue
         text = compact_json(theme)
@@ -247,7 +254,7 @@ def build_opportunities(files: dict[str, Any], current_date: str) -> list[dict[s
             quality_flags=gate["decision_flags"] if quality_degraded else [],
         ))
 
-    for shift in theme_shift_candidates(files, {"warming", "emerging"}):
+    for shift in theme_shift_candidates(files, {"warming", "emerging"}, current_date):
         shift_text = " ".join([shift.get("theme", ""), shift.get("conclusion", ""), shift.get("risk", "")])
         items.append(decision_item(
             title=f"主线变化：{shift.get('theme')}",
@@ -265,7 +272,7 @@ def build_opportunities(files: dict[str, Any], current_date: str) -> list[dict[s
         ))
 
     existing_titles = {item.get("title") for item in items}
-    for theme in unplanned_theme_candidates(files, existing_titles):
+    for theme in unplanned_theme_candidates(files, existing_titles, current_date):
         text = compact_json(theme)
         items.append(decision_item(
             title=f"新线观察：{theme_name(theme)}",
@@ -283,7 +290,7 @@ def build_opportunities(files: dict[str, Any], current_date: str) -> list[dict[s
             quality_flags=gate["decision_flags"] if quality_degraded else [],
         ))
 
-    post = files.get("postmarket.json") or {}
+    post = current_payload(files, "postmarket.json", current_date)
     for stock in strong_stock_candidates(post):
         items.append(decision_item(
             title=stock["title"],
@@ -389,23 +396,28 @@ def ensure_sentence(text: str) -> str:
     return value if value.endswith(("。", "！", "？")) else f"{value}。"
 
 
-def risk_theme_candidates(files: dict[str, Any]) -> list[tuple[dict[str, Any], str]]:
+def risk_theme_candidates(files: dict[str, Any], current_date: str) -> list[tuple[dict[str, Any], str]]:
     rows: list[tuple[dict[str, Any], str]] = []
-    for item in as_list(files.get("postmarket.json", {}).get("hotspots")):
+    for item in as_list(current_payload(files, "postmarket.json", current_date).get("hotspots")):
         if isinstance(item, dict):
             rows.append((item, "postmarket.json"))
-    for item in as_list(files.get("intraday.json", {}).get("main_trends")) + as_list(files.get("intraday.json", {}).get("themes")):
+    intraday = current_payload(files, "intraday.json", current_date)
+    for item in as_list(intraday.get("main_trends")) + as_list(intraday.get("themes")):
         if isinstance(item, dict):
             rows.append((item, "intraday.json"))
-    for item in as_list(files.get("topics.json", {}).get("topics")):
+    midday = current_payload(files, "midday.json", current_date)
+    for item in as_list(midday.get("morning_review", {}).get("main_trends")):
+        if isinstance(item, dict):
+            rows.append((item, "midday.json"))
+    for item in as_list(current_payload(files, "topics.json", current_date).get("topics")):
         if isinstance(item, dict):
             rows.append((item, "topics.json"))
     return rows
 
 
-def unplanned_theme_candidates(files: dict[str, Any], existing_titles: set[str]) -> list[dict[str, Any]]:
+def unplanned_theme_candidates(files: dict[str, Any], existing_titles: set[str], current_date: str) -> list[dict[str, Any]]:
     topics = files.get("topics.json") or {}
-    post = files.get("postmarket.json") or {}
+    post = current_payload(files, "postmarket.json", current_date)
     known = {theme_name(item) for item in as_list(topics.get("topics")) if isinstance(item, dict)}
     rows: list[dict[str, Any]] = []
     for item in as_list(post.get("hotspots")):
@@ -428,10 +440,10 @@ def unplanned_theme_candidates(files: dict[str, Any], existing_titles: set[str])
     return rows[:3]
 
 
-def build_risks(files: dict[str, Any]) -> list[dict[str, Any]]:
+def build_risks(files: dict[str, Any], current_date: str) -> list[dict[str, Any]]:
     items: list[dict[str, Any]] = []
-    post = files.get("postmarket.json") or {}
-    intraday = files.get("intraday.json") or {}
+    post = current_payload(files, "postmarket.json", current_date)
+    intraday = current_payload(files, "intraday.json", current_date)
     quality = files.get("quality-report.json") or {}
 
     breadth = market_breadth_risk(post, intraday)
@@ -453,7 +465,7 @@ def build_risks(files: dict[str, Any]) -> list[dict[str, Any]]:
             discovery_type="risk_guardrail",
         ))
 
-    for theme, source in risk_theme_candidates(files):
+    for theme, source in risk_theme_candidates(files, current_date):
         if is_generic_bucket(theme):
             continue
         text = compact_json(theme)
@@ -474,7 +486,7 @@ def build_risks(files: dict[str, Any]) -> list[dict[str, Any]]:
             discovery_type=discovery_type_for(source, theme, "risk"),
         ))
 
-    for shift in theme_shift_candidates(files, {"risk", "crowded", "fading"}):
+    for shift in theme_shift_candidates(files, {"risk", "crowded", "fading"}, current_date):
         shift_text = " ".join([shift.get("theme", ""), shift.get("conclusion", ""), shift.get("risk", "")])
         items.append(decision_item(
             title=f"主线变化：{shift.get('theme')}",
@@ -493,15 +505,18 @@ def build_risks(files: dict[str, Any]) -> list[dict[str, Any]]:
     return items
 
 
-def build_verifications(files: dict[str, Any]) -> list[dict[str, Any]]:
+def build_verifications(files: dict[str, Any], current_date: str) -> list[dict[str, Any]]:
     rows: list[dict[str, Any]] = []
+    intraday = current_payload(files, "intraday.json", current_date)
+    midday = current_payload(files, "midday.json", current_date)
+    post = current_payload(files, "postmarket.json", current_date)
     candidates = [
-        ("intraday.json", files.get("intraday.json", {}).get("actions")),
-        ("midday.json", files.get("midday.json", {}).get("afternoon_watch")),
-        ("postmarket.json", files.get("postmarket.json", {}).get("next_day_watch")),
-        ("postmarket.json", files.get("postmarket.json", {}).get("closing_auction_patch", {}).get("watch_next_day")),
+        ("intraday.json", intraday.get("actions")),
+        ("midday.json", midday.get("afternoon_watch")),
+        ("postmarket.json", post.get("next_day_watch")),
+        ("postmarket.json", post.get("closing_auction_patch", {}).get("watch_next_day")),
     ]
-    for shift in theme_shift_candidates(files, {"warming", "emerging", "risk", "crowded", "fading"}):
+    for shift in theme_shift_candidates(files, {"warming", "emerging", "risk", "crowded", "fading"}, current_date):
         candidates.append(("theme-shifts.json", shift.get("watch_next")))
     for watch in opportunity_watch_candidates(files)[:6]:
         title = watch.get("theme") or "盘中机会追踪"
@@ -537,11 +552,16 @@ def build_verifications(files: dict[str, Any]) -> list[dict[str, Any]]:
     return rows
 
 
-def theme_shift_candidates(files: dict[str, Any], states: set[str]) -> list[dict[str, Any]]:
+def theme_shift_candidates(files: dict[str, Any], states: set[str], current_date: str) -> list[dict[str, Any]]:
     rows = files.get("theme-shifts.json", {}).get("shifts") if isinstance(files.get("theme-shifts.json"), dict) else []
     if not isinstance(rows, list):
         return []
-    return [row for row in rows if isinstance(row, dict) and row.get("state") in states]
+    return [
+        row for row in rows
+        if isinstance(row, dict)
+        and row.get("state") in states
+        and derived_sources_current(files, row, current_date)
+    ]
 
 
 def theme_candidates(files: dict[str, Any]) -> list[tuple[dict[str, Any], str]]:
@@ -613,26 +633,32 @@ def market_breadth_risk(post: dict[str, Any], intraday: dict[str, Any]) -> dict[
     return None
 
 
+def trader_text(value: Any) -> str:
+    text = str(value or "")
+    return text.replace("医药修复链", "创新药/CRO").replace("老登风格切换", "金融/消费防御")
+
+
 def decision_item(**kwargs: Any) -> dict[str, Any]:
-    evidence = clean_list(kwargs.get("evidence") or [])
-    watch_next = clean_list(kwargs.get("watch_next") or [])
+    evidence = clean_list([trader_text(value) for value in (kwargs.get("evidence") or [])])
+    watch_next = clean_list([trader_text(value) for value in (kwargs.get("watch_next") or [])])
     sources = clean_list(kwargs.get("source_files") or [])
+    invalidation = trader_text(kwargs.get("invalidation") or "等待反向量价信号确认。")
     missing = missing_evidence_for(kwargs.get("item_type") or "signal", evidence, watch_next, sources, kwargs.get("quality_flags") or [])
-    evidence_score = evidence_score_for(evidence, watch_next, sources, kwargs.get("invalidation"), missing)
+    evidence_score = evidence_score_for(evidence, watch_next, sources, invalidation, missing)
     confidence = kwargs.get("confidence") or ("medium" if evidence else "low")
     if not evidence and confidence == "high":
         confidence = "medium"
     item = {
-        "title": trim(kwargs.get("title") or "未命名信号", 40),
+        "title": trim(trader_text(kwargs.get("title") or "未命名信号"), 40),
         "type": kwargs.get("item_type") or "signal",
         "trigger_reason": trim(kwargs.get("trigger_reason") or trigger_reason_for(kwargs, evidence, watch_next), 120),
-        "conclusion": trim(kwargs.get("conclusion") or "", 180),
+        "conclusion": trim(trader_text(kwargs.get("conclusion") or ""), 180),
         "confidence": confidence,
         "evidence": evidence[:5],
         "source_files": sources[:4],
         "watch_next": watch_next[:4],
-        "invalidation": trim(kwargs.get("invalidation") or "等待反向量价信号确认。", 140),
-        "tags": clean_list(kwargs.get("tags") or [])[:5],
+        "invalidation": trim(invalidation, 140),
+        "tags": clean_list([trader_text(value) for value in (kwargs.get("tags") or [])])[:5],
         "quality_flags": clean_list(kwargs.get("quality_flags") or [])[:4],
         "tone": kwargs.get("tone") or "neutral",
         "discovery_type": kwargs.get("discovery_type") or "derived_signal",
@@ -918,7 +944,7 @@ def evidence_score_for(evidence: list[str], watch_next: list[str], sources: list
 
 def latest_signal_date(files: dict[str, Any]) -> str:
     dates = []
-    for name in ("alert.json", "intraday.json", "midday.json", "postmarket.json", "topics.json"):
+    for name in ("premarket.json", "opportunity-watch.json", "alert.json", "intraday.json", "midday.json", "postmarket.json", "topics.json"):
         date = signal_date((files.get(name) or {}).get("timestamp"))
         if date:
             dates.append(date)
@@ -928,6 +954,28 @@ def latest_signal_date(files: dict[str, Any]) -> str:
 def signal_date(value: Any) -> str:
     match = re.search(r"\d{4}-\d{2}-\d{2}", str(value or ""))
     return match.group(0) if match else ""
+
+
+def current_payload(files: dict[str, Any], name: str, current_date: str) -> dict[str, Any]:
+    payload = files.get(name) or {}
+    if not isinstance(payload, dict):
+        return {}
+    return payload if signal_date(payload.get("timestamp")) == current_date else {}
+
+
+def derived_sources_current(files: dict[str, Any], item: dict[str, Any], current_date: str) -> bool:
+    source_names = [
+        Path(str(source)).name
+        for source in as_list(item.get("source_files"))
+        if str(source).endswith(".json")
+    ]
+    primary = [
+        name for name in source_names
+        if name in {"alert.json", "intraday.json", "midday.json", "postmarket.json", "topics.json"}
+    ]
+    if not primary:
+        return True
+    return any(current_payload(files, name, current_date) for name in primary)
 
 
 def now_iso() -> str:

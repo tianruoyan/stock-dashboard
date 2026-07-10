@@ -426,7 +426,7 @@ def latest_signal_date(payloads: dict[str, Any]) -> str:
         data = payloads.get(rel)
         if isinstance(data, dict) and data.get("current_signal_date"):
             dates.append(str(data.get("current_signal_date")))
-    for rel in ("data/alert.json", "data/intraday.json", "data/midday.json", "data/postmarket.json", "data/topics.json"):
+    for rel in ("data/premarket.json", "data/opportunity-watch.json", "data/alert.json", "data/intraday.json", "data/midday.json", "data/postmarket.json", "data/topics.json"):
         data = payloads.get(rel)
         date = signal_date(data.get("timestamp") if isinstance(data, dict) else "")
         if date:

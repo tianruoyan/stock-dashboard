@@ -140,7 +140,7 @@ def load_watchlist_names() -> set[str]:
 
 def latest_signal_date(files: dict[str, Any]) -> str:
     dates = []
-    for name in ("alert.json", "intraday.json", "midday.json", "postmarket.json", "topics.json"):
+    for name in ("premarket.json", "opportunity-watch.json", "alert.json", "intraday.json", "midday.json", "postmarket.json", "topics.json"):
         ts = files.get(name, {}).get("timestamp") if isinstance(files.get(name), dict) else None
         date = signal_date(ts)
         if date:
