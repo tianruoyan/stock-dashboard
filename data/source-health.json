@@ -1,31 +1,39 @@
 {
-  "timestamp": "2026-07-10T10:58:28+08:00",
+  "timestamp": "2026-07-10T13:09:49+08:00",
   "sources": {
     "tencent_http": {
       "status": "ok",
-      "last_check": "2026-07-09T13:38:07+08:00",
-      "usage": "13:30午后指数、ETF、A股观察池、专项股、港股样本快照",
-      "detail": "腾讯HTTP批量报价可用；用于高频行情主源。",
-      "sample_count": 90,
+      "last_check": "2026-07-10T13:08:03+08:00",
+      "usage": "13:00指数、ETF、全观察池与专项样本批量报价",
+      "detail": "腾讯HTTP已恢复，A股和港股报价字段通过时间与数值检查。",
+      "sample_count": 130,
       "errors": []
     },
     "eastmoney_push2_akshare": {
       "status": "ok",
-      "usage": "涨停池33、跌停池23、炸板池23",
-      "checked_at": "2026-07-07T15:16:39+08:00",
-      "errors": {}
+      "last_check": "2026-07-10T13:08:00+08:00",
+      "usage": "13:00涨停、跌停和炸板结构池",
+      "detail": "API总涨停98；剔除ST、退市及北交所后95，跌停0，炸板54。",
+      "sample_count": 152,
+      "errors": []
     },
     "tencent_minute": {
       "status": "ok",
-      "usage": "14:55-15:00尾盘关键样本分钟线",
-      "checked_at": "2026-07-07T15:16:39+08:00",
-      "sample_errors": {}
+      "last_check": "2026-07-10T13:07:00+08:00",
+      "usage": "13:00指数与核心样本3分钟/午间以来变化",
+      "detail": "成功获取3个指数和约40只关键样本分钟线。",
+      "sample_count": 43,
+      "errors": []
     },
     "mootdx_tdx": {
-      "status": "not_used",
-      "usage": "腾讯HTTP可用，未启用通达信降级",
-      "last_check": "2026-07-09T13:38:07+08:00",
-      "errors": []
+      "status": "failed_not_installed",
+      "last_check": "2026-07-10T13:03:00+08:00",
+      "usage": "通达信TCP高频行情备用",
+      "detail": "当前Python环境未安装mootdx；本轮由腾讯HTTP完成高频报价，不影响已取得行情事实。",
+      "sample_count": 0,
+      "errors": [
+        "ModuleNotFoundError: mootdx"
+      ]
     },
     "ths_sina_or_akshare_quote_decode": {
       "status": "degraded",
@@ -35,10 +43,10 @@
     },
     "tencent_hk_http": {
       "status": "ok",
-      "last_check": "2026-07-08T16:08:00+08:00",
-      "usage": "港股16:00收盘窗口快照",
-      "detail": "16:06港股收盘后快照可用，已用于postmarket.hk_close_review。",
-      "sample_count": 19,
+      "last_check": "2026-07-10T11:59:59+08:00",
+      "usage": "港股午间指数、半导体、AI应用和创新药样本",
+      "detail": "恒指、恒科、中芯国际H、华虹宏力、智谱和百济神州返回有效午间快照。",
+      "sample_count": 7,
       "errors": []
     },
     "eastmoney_hk_akshare": {
@@ -650,6 +658,32 @@
       "detail": "已撤下7月9日旧盘面结论，发布今日时间戳和明确不可用状态；不编造指数、宽度、主线或个股数据。",
       "errors": [
         "primary and structure quote sources unavailable"
+      ]
+    },
+    "tencent_a_quote_intraday_1300_20260710": {
+      "status": "ok",
+      "last_check": "2026-07-10T13:08:03+08:00",
+      "usage": "13:00 A股指数、ETF、观察池和专项报价",
+      "detail": "成功取得上证、深成、创业板、科创50、沪深300及观察池/同业样本。",
+      "sample_count": 130,
+      "errors": []
+    },
+    "eastmoney_limit_pool_intraday_1300_20260710": {
+      "status": "ok",
+      "last_check": "2026-07-10T13:08:00+08:00",
+      "usage": "13:00涨停/跌停/炸板行业题材分布",
+      "detail": "用于全市场主线识别；单次串行读取，不用于全市场高频轮询。",
+      "sample_count": 152,
+      "errors": []
+    },
+    "eastmoney_board_rank_intraday_1300_20260710": {
+      "status": "failed",
+      "last_check": "2026-07-10T13:06:00+08:00",
+      "usage": "13:00行业/概念涨跌幅排行补充",
+      "detail": "行业和概念排行接口空返回，本轮未采用板块涨跌幅排行。",
+      "sample_count": 0,
+      "errors": [
+        "Empty reply from server"
       ]
     }
   }

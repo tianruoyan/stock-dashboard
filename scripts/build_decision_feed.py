@@ -79,13 +79,25 @@ def build_summary(files: dict[str, Any], current_date: str) -> str:
     intraday = current_payload(files, "intraday.json", current_date)
     post = current_payload(files, "postmarket.json", current_date)
     quality = files.get("quality-report.json") or {}
-    base = first_text(
-        midday.get("morning_review", {}).get("one_sentence"),
-        intraday.get("summary"),
-        post.get("review", {}).get("one_sentence"),
-        post.get("index", {}).get("summary"),
-        "当前时段尚无可用盘面结论。",
-    )
+    candidates = [
+        (
+            str(midday.get("timestamp") or ""),
+            first_text(midday.get("morning_review", {}).get("one_sentence")),
+        ),
+        (
+            str(intraday.get("timestamp") or ""),
+            first_text(intraday.get("summary")),
+        ),
+        (
+            str(post.get("timestamp") or ""),
+            first_text(
+                post.get("review", {}).get("one_sentence"),
+                post.get("index", {}).get("summary"),
+            ),
+        ),
+    ]
+    current_summaries = [item for item in candidates if item[0] and item[1]]
+    base = max(current_summaries, key=lambda item: item[0])[1] if current_summaries else "当前时段尚无可用盘面结论。"
     if quality.get("status") in {"degraded", "critical"}:
         return trim(f"{base} 数据质量：{quality.get('summary')}", 180)
     return trim(base, 180)
