@@ -54,6 +54,16 @@ def lookup_stock(query):
     }
 
 class DashboardServer(SimpleHTTPRequestHandler):
+    def log_request(self, code="-", size="-"):
+        """Keep routine local traffic off disk.
+
+        launchd redirects stderr to a persistent file.  The default handler
+        logs every successful static-file request and every health probe, which
+        creates an unbounded access log without adding diagnostic value.
+        Actual uncaught server exceptions still go to stderr via socketserver.
+        """
+        return
+
     def send_json(self, status, payload):
         body = json.dumps(payload, ensure_ascii=False).encode("utf-8")
         self.send_response(status)

@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-07-10T16:35:02+08:00",
+  "timestamp": "2026-07-11T20:19:06+08:00",
   "sources": {
     "tencent_http": {
       "status": "ok",
@@ -592,21 +592,14 @@
       "errors": []
     },
     "cninfo_evening_watchlist_scan": {
-      "status": "degraded_empty",
-      "last_check": "2026-07-09T20:12:00+08:00",
-      "usage": "20:00晚间观察池107只A股公告扫描",
-      "detail": "巨潮2026-07-09逐票查询返回106/107只，公告命中0条；全量轮询错误1条，错误样本已在核心复核中交叉验证。",
-      "sample_count": 107,
-      "hit_count": 0,
-      "errors": [
-        {
-          "stock": {
-            "code": "sz002409",
-            "name": "雅克科技"
-          },
-          "error": "ReadTimeout: HTTPConnectionPool(host='127.0.0.1', port=7897): Read timed out. (read timeout=8"
-        }
-      ]
+      "status": "ok",
+      "last_check": "2026-07-11T20:19:06+08:00",
+      "usage": "20:00晚间观察池A股公告全市场交叉扫描",
+      "detail": "巨潮2026-07-10至2026-07-11沪深两市共2531份公告完整翻页，观察池108只A股命中53份，接口错误0；重大公告已提取，例行公告保留在原始扫描文件。",
+      "sample_count": 108,
+      "market_announcement_count": 2531,
+      "hit_count": 53,
+      "errors": []
     },
     "official_policy_evening_scan": {
       "status": "ok_empty",
@@ -968,6 +961,39 @@
       "detail": "取得恒指、恒生科技及半导体、AI应用、创新药、互联网、汽车共14个收盘样本；时间戳16:08-16:09。",
       "sample_count": 14,
       "errors": []
+    },
+    "hkex_evening_watchlist_scan": {
+      "status": "degraded",
+      "last_check": "2026-07-11T20:19:06+08:00",
+      "usage": "20:00晚间观察池5只港股公告扫描",
+      "detail": "港交所官方活跃证券表曾成功返回，但后续批量标题页请求出现间歇性SSL EOF；已用港交所官方站内标题检索和域名搜索交叉核查，未发现7月10日至11日重大新增，不将降级结果表述为绝对无公告。",
+      "sample_count": 5,
+      "errors": [
+        "HKEX batch title search intermittent SSLError: EOF occurred in violation of protocol"
+      ]
+    },
+    "official_policy_weekend_scan": {
+      "status": "ok_empty",
+      "last_check": "2026-07-11T20:19:06+08:00",
+      "usage": "20:00工信部/商务部/发改委/政府网固定政策扫描",
+      "detail": "未核验到2026-07-11新增的半导体、AI、机器人、新材料或出口管制P0文件；既有工信部机器人实景实训和WAIC信息作为日历/政策背景保留。",
+      "errors": []
+    },
+    "global_benchmark_weekend_scan": {
+      "status": "ok",
+      "last_check": "2026-07-11T20:19:06+08:00",
+      "usage": "20:00全球设备/材料/AI算力/HBM标杆与事件日历扫描",
+      "detail": "核验周五美股、SK海力士ADR首日交易、台积电7月16日业绩会、AMD 7月23日活动；未发现7月11日设备材料龙头新增公司级P0公告。",
+      "errors": []
+    },
+    "watchlist_code_quality": {
+      "status": "degraded",
+      "last_check": "2026-07-11T20:19:06+08:00",
+      "usage": "观察池代码规范检查",
+      "detail": "config/watchlist.json存在无市场前缀代码3986，名称bBreak Systems，无法可靠映射到交易所证券；按只增强不删减保留监测，但不编造行情或公告。",
+      "errors": [
+        "unmapped code: 3986 bBreak Systems"
+      ]
     }
   }
 }

@@ -1,8 +1,8 @@
 {
-  "timestamp": "2026-07-11T14:08:04+08:00",
+  "timestamp": "2026-07-11T20:19:18+08:00",
   "current_signal_date": "2026-07-11",
   "status": "degraded",
-  "summary": "发现 61 个降级/需复核项（52 个价格/行情复核，1 个信号复核，9 个背景复核），核心结论可看但必须按影响分层使用。",
+  "summary": "发现 66 个降级/需复核项（53 个价格/行情复核，2 个信号复核，11 个背景复核），核心结论可看但必须按影响分层使用。",
   "issues": [
     {
       "severity": "warning",
@@ -132,15 +132,6 @@
     },
     {
       "severity": "warning",
-      "file": "source-health.json",
-      "path": "",
-      "code": "stale_timestamp",
-      "message": "时间戳不是当前交易日：2026-07-10T16:35:02+08:00",
-      "impact_level": "price_review",
-      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
-    },
-    {
-      "severity": "warning",
       "file": "topics.json",
       "path": "",
       "code": "stale_timestamp",
@@ -154,6 +145,15 @@
       "path": "summary",
       "code": "schema_contract_missing",
       "message": "summary 缺失",
+      "impact_level": "signal_review",
+      "decision_action": "机会信号必须降权并转入验证"
+    },
+    {
+      "severity": "warning",
+      "file": "evening-sentiment.json",
+      "path": "sentiment_summary",
+      "code": "schema_contract_type",
+      "message": "sentiment_summary 类型错误：期望 dict，实际 str",
       "impact_level": "signal_review",
       "decision_action": "机会信号必须降权并转入验证"
     },
@@ -174,15 +174,6 @@
       "message": "行情污染源仍降级，历史 alert 未交叉验证，只降权复盘参考",
       "impact_level": "price_review",
       "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
-    },
-    {
-      "severity": "info",
-      "file": "evening-sentiment.json",
-      "path": "",
-      "code": "evening_not_current",
-      "message": "晚间舆情不是当前交易日，不参与今日总控",
-      "impact_level": "background_review",
-      "decision_action": "仅作背景复核，不单独阻断交易判断"
     },
     {
       "severity": "warning",
@@ -546,6 +537,24 @@
     },
     {
       "severity": "warning",
+      "file": "source-health.json",
+      "path": "",
+      "code": "source_degraded",
+      "message": "hkex_evening_watchlist_scan: 港交所官方活跃证券表曾成功返回，但后续批量标题页请求出现间歇性SSL EOF；已用港交所官方站内标题检索和域名搜索交叉核查，未发现7月10日至11日重大新增，不将降级结果表述为绝对无公告。",
+      "impact_level": "price_review",
+      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
+    },
+    {
+      "severity": "warning",
+      "file": "source-health.json",
+      "path": "",
+      "code": "source_degraded",
+      "message": "watchlist_code_quality: config/watchlist.json存在无市场前缀代码3986，名称bBreak Systems，无法可靠映射到交易所证券；按只增强不删减保留监测，但不编造行情或公告。",
+      "impact_level": "price_review",
+      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
+    },
+    {
+      "severity": "warning",
       "file": "automation-health.json",
       "path": "",
       "code": "stale_automation_health",
@@ -559,6 +568,33 @@
       "path": "",
       "code": "stale_theme_shifts",
       "message": "theme-shifts 日期不是当前交易日：2026-07-10",
+      "impact_level": "background_review",
+      "decision_action": "仅作背景复核，不单独阻断交易判断"
+    },
+    {
+      "severity": "warning",
+      "file": "decision-feed.json",
+      "path": "opportunities[5]",
+      "code": "stale_relative_time",
+      "message": "opportunities[5] 含过期相对日期",
+      "impact_level": "background_review",
+      "decision_action": "仅作背景复核，不单独阻断交易判断"
+    },
+    {
+      "severity": "warning",
+      "file": "decision-feed.json",
+      "path": "opportunities[6]",
+      "code": "stale_relative_time",
+      "message": "opportunities[6] 含过期相对日期",
+      "impact_level": "background_review",
+      "decision_action": "仅作背景复核，不单独阻断交易判断"
+    },
+    {
+      "severity": "warning",
+      "file": "decision-feed.json",
+      "path": "opportunities[7]",
+      "code": "stale_relative_time",
+      "message": "opportunities[7] 含过期相对日期",
       "impact_level": "background_review",
       "decision_action": "仅作背景复核，不单独阻断交易判断"
     }
@@ -602,11 +638,22 @@
       "impact_level": "price_review",
       "label": "二次行情复核",
       "file": "source-health.json",
-      "code": "stale_timestamp",
-      "problem": "时间戳不是当前交易日：2026-07-10T16:35:02+08:00",
+      "code": "source_degraded",
+      "problem": "A股补充行情源解码异常，盘中异动和个股涨跌幅需以已审计源复核。",
       "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核",
       "next_step": "用第二行情源复核涨跌幅、quote_time 和代表股方向；未确认前只做验证。",
       "unblock_condition": "price_review=0 或相关来源标记 trusted/cross verified。"
+    },
+    {
+      "priority": 3,
+      "impact_level": "signal_review",
+      "label": "信号结构复核",
+      "file": "evening-sentiment.json",
+      "code": "schema_contract_type",
+      "problem": "sentiment_summary 类型错误：期望 dict，实际 str",
+      "decision_action": "机会信号必须降权并转入验证",
+      "next_step": "修正字段结构、证据、触发原因和升级条件；未通过前降权展示。",
+      "unblock_condition": "signal_review=0，decision-feed/核心 JSON 契约通过。"
     },
     {
       "priority": 3,
@@ -618,27 +665,16 @@
       "decision_action": "机会信号必须降权并转入验证",
       "next_step": "修正字段结构、证据、触发原因和升级条件；未通过前降权展示。",
       "unblock_condition": "signal_review=0，decision-feed/核心 JSON 契约通过。"
-    },
-    {
-      "priority": 4,
-      "impact_level": "background_review",
-      "label": "背景来源复核",
-      "file": "alert.json",
-      "code": "stale_timestamp",
-      "problem": "时间戳不是当前交易日：2026-07-10T14:56:49+08:00",
-      "decision_action": "仅作背景复核，不单独阻断交易判断",
-      "next_step": "补官方/交易所/公司公告来源；未补齐前不升级为核心依据。",
-      "unblock_condition": "官方来源补齐或确认不影响交易触发。"
     }
   ],
   "counts": {
     "critical": 0,
-    "warning": 61,
-    "info": 1,
+    "warning": 66,
+    "info": 0,
     "blocking": 0,
-    "price_review": 52,
-    "signal_review": 1,
-    "background_review": 9
+    "price_review": 53,
+    "signal_review": 2,
+    "background_review": 11
   },
   "rules": [
     "异常文本、JSON解析失败、必需文件缺失为 critical。",
