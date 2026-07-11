@@ -1,8 +1,8 @@
 {
-  "timestamp": "2026-07-11T20:19:18+08:00",
+  "timestamp": "2026-07-11T20:20:29+08:00",
   "current_signal_date": "2026-07-11",
   "status": "degraded",
-  "summary": "发现 66 个降级/需复核项（53 个价格/行情复核，2 个信号复核，11 个背景复核），核心结论可看但必须按影响分层使用。",
+  "summary": "发现 65 个降级/需复核项（53 个价格/行情复核，1 个信号复核，11 个背景复核），核心结论可看但必须按影响分层使用。",
   "issues": [
     {
       "severity": "warning",
@@ -145,15 +145,6 @@
       "path": "summary",
       "code": "schema_contract_missing",
       "message": "summary 缺失",
-      "impact_level": "signal_review",
-      "decision_action": "机会信号必须降权并转入验证"
-    },
-    {
-      "severity": "warning",
-      "file": "evening-sentiment.json",
-      "path": "sentiment_summary",
-      "code": "schema_contract_type",
-      "message": "sentiment_summary 类型错误：期望 dict，实际 str",
       "impact_level": "signal_review",
       "decision_action": "机会信号必须降权并转入验证"
     },
@@ -648,32 +639,32 @@
       "priority": 3,
       "impact_level": "signal_review",
       "label": "信号结构复核",
-      "file": "evening-sentiment.json",
-      "code": "schema_contract_type",
-      "problem": "sentiment_summary 类型错误：期望 dict，实际 str",
-      "decision_action": "机会信号必须降权并转入验证",
-      "next_step": "修正字段结构、证据、触发原因和升级条件；未通过前降权展示。",
-      "unblock_condition": "signal_review=0，decision-feed/核心 JSON 契约通过。"
-    },
-    {
-      "priority": 3,
-      "impact_level": "signal_review",
-      "label": "信号结构复核",
       "file": "premarket.json",
       "code": "schema_contract_missing",
       "problem": "summary 缺失",
       "decision_action": "机会信号必须降权并转入验证",
       "next_step": "修正字段结构、证据、触发原因和升级条件；未通过前降权展示。",
       "unblock_condition": "signal_review=0，decision-feed/核心 JSON 契约通过。"
+    },
+    {
+      "priority": 4,
+      "impact_level": "background_review",
+      "label": "背景来源复核",
+      "file": "alert.json",
+      "code": "stale_timestamp",
+      "problem": "时间戳不是当前交易日：2026-07-10T14:56:49+08:00",
+      "decision_action": "仅作背景复核，不单独阻断交易判断",
+      "next_step": "补官方/交易所/公司公告来源；未补齐前不升级为核心依据。",
+      "unblock_condition": "官方来源补齐或确认不影响交易触发。"
     }
   ],
   "counts": {
     "critical": 0,
-    "warning": 66,
+    "warning": 65,
     "info": 0,
     "blocking": 0,
     "price_review": 53,
-    "signal_review": 2,
+    "signal_review": 1,
     "background_review": 11
   },
   "rules": [
