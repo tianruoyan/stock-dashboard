@@ -96,6 +96,10 @@ class V2DecisionSystemBuilder:
         "topics": "topics.json",
         "signal_review": "signal-review.json",
         "v2_signal_review": "v2/signal-review.json",
+        "v2_sentiment_structure": "v2/inputs/sentiment-structure.json",
+        "v2_input_import": "v2/input-import-manifest.json",
+        "v2_model_evaluation": "v2/model-evaluation.json",
+        "v2_public_input_health": "v2/public-input-health.json",
     }
 
     def __init__(self, root: Path) -> None:
@@ -109,6 +113,7 @@ class V2DecisionSystemBuilder:
         self.alert_config = self._load_config("alert-config.json")
         self.topic_config = self._load_config("topics-list.json")
         self.style_taxonomy = self._load_config("v2-style-taxonomy.json")
+        self.model_registry = self._load_config("v2-model-registry.json")
 
     def build(self) -> dict[str, Any]:
         quality = self._quality_gate()
@@ -121,6 +126,8 @@ class V2DecisionSystemBuilder:
         governance = V2GovernanceBuilder(self.root).build()
         portfolio = self._portfolio_risk()
         signal_review = self._signal_review()
+        input_status = self._input_status()
+        model_evaluation = self._model_evaluation()
         timestamps = [source.timestamp for source in self.sources.values() if source.timestamp]
         critical_timestamps = [
             self.sources[name].timestamp
@@ -132,6 +139,7 @@ class V2DecisionSystemBuilder:
             "system": {
                 "name": "AI辅助投资决策系统",
                 "version": "V2.0-shadow",
+                "decision_model_version": text(as_dict(self.model_registry.get("baseline")).get("version"), "unversioned"),
                 "mode": "shadow_only",
                 "generated_at": now_iso(),
                 "latest_source_at": newest_time(timestamps),
@@ -151,6 +159,8 @@ class V2DecisionSystemBuilder:
             "stock_pool": stock_pool,
             "governance": governance,
             "signal_review": signal_review,
+            "input_status": input_status,
+            "model_evaluation": model_evaluation,
             "source_registry": [source.summary() for source in self.sources.values()],
         }
 
@@ -233,6 +243,8 @@ class V2DecisionSystemBuilder:
         premarket = self.sources["premarket"].data
         postmarket = self.sources["postmarket"].data
         sentiment = as_dict(intraday.get("sentiment"))
+        structure_source = self.sources["v2_sentiment_structure"]
+        structure_input = structure_source.data if structure_source.status == "loaded" and parse_time(structure_source.data.get("as_of")) else {}
         index_rows = []
         for item in as_list(intraday.get("indices")):
             if isinstance(item, dict):
@@ -279,8 +291,8 @@ class V2DecisionSystemBuilder:
                     "as_of": self.sources["premarket"].timestamp,
                 }
             )
-        limit_up_ladder = as_dict(sentiment.get("limit_up_ladder"))
-        limit_down_ladder = as_dict(sentiment.get("limit_down_ladder"))
+        limit_up_ladder = as_dict(structure_input.get("limit_up_ladder")) or as_dict(sentiment.get("limit_up_ladder"))
+        limit_down_ladder = as_dict(structure_input.get("limit_down_ladder")) or as_dict(sentiment.get("limit_down_ladder"))
         return {
             "state": text(brief.get("stance"), "无法判断"),
             "action": text(brief.get("action"), "等待数据确认"),
@@ -304,12 +316,14 @@ class V2DecisionSystemBuilder:
                     "items": [],
                     "note": "已有跌停总数，但缺少可审计的连续跌停、开板失败和风险扩散梯队。",
                 },
-                "promotion_rate": sentiment.get("promotion_rate"),
-                "high_level_loss_effect": sentiment.get("high_level_loss_effect") or {
+                "promotion_rate": structure_input.get("promotion_rate", sentiment.get("promotion_rate")),
+                "high_level_loss_effect": structure_input.get("high_level_loss_effect") or sentiment.get("high_level_loss_effect") or {
                     "state": "data_missing",
                     "note": "缺少昨日高位股/连板股次日收益与最大不利波动，暂不判断高位亏钱效应。",
                 },
-                "as_of": self.sources["intraday"].timestamp,
+                "as_of": structure_input.get("as_of") or self.sources["intraday"].timestamp,
+                "source": structure_input.get("source_url") or "intraday.json",
+                "ladder_input_state": "loaded" if structure_input else "pending",
             },
             "cross_market": global_evidence,
         }
@@ -607,4 +621,64 @@ class V2DecisionSystemBuilder:
             "hit_rate_state": text(source.data.get("hit_rate_state"), "unavailable"),
             "guardrail": text(source.data.get("guardrail"), "样本不足不展示命中率。"),
             "workflow": as_list(source.data.get("workflow")),
+        }
+
+    def _input_status(self) -> dict[str, Any]:
+        source = self.sources["v2_input_import"]
+        public_health = self.sources["v2_public_input_health"]
+        collectors = []
+        if public_health.status == "loaded":
+            for item in as_list(public_health.data.get("collectors")):
+                if isinstance(item, dict):
+                    collectors.append({"id": text(item.get("id"), "unknown"), "state": text(item.get("state"), "unknown"), "detail": text(item.get("detail"), "")})
+        if source.status != "loaded":
+            return {
+                "state": "not_run",
+                "contracts": [],
+                "public_collectors": collectors,
+                "updated_at": None,
+                "privacy_note": "持仓保存在本地私有区；原始输入和授权行情不进入公开发布提交。",
+            }
+        rows = []
+        for item in as_list(source.data.get("contracts")):
+            if not isinstance(item, dict):
+                continue
+            rows.append(
+                {
+                    "id": text(item.get("id"), "unknown"),
+                    "status": text(item.get("status"), "unknown"),
+                    "detail": text(item.get("detail"), ""),
+                    "target": text(item.get("target"), ""),
+                }
+            )
+        return {
+            "state": text(source.data.get("status"), "unknown"),
+            "contracts": rows,
+            "public_collectors": collectors,
+            "updated_at": source.data.get("imported_at"),
+            "privacy_note": "持仓保存在本地私有区；原始输入和授权行情不进入公开发布提交。",
+        }
+
+    def _model_evaluation(self) -> dict[str, Any]:
+        source = self.sources["v2_model_evaluation"]
+        baseline = text(as_dict(self.model_registry.get("baseline")).get("version"), "unversioned")
+        if source.status != "loaded":
+            return {
+                "state": "not_run",
+                "baseline_version": baseline,
+                "record_count": 0,
+                "recommendation": {"action": "keep_baseline", "reason": "尚未运行离线模型评估。", "requires_user_confirmation": True},
+                "automatic_live_promotion": False,
+            }
+        promotion = as_dict(source.data.get("promotion_policy"))
+        return {
+            "state": text(source.data.get("state"), "unknown"),
+            "baseline_version": text(source.data.get("baseline_version"), baseline),
+            "primary_window": source.data.get("primary_window"),
+            "record_count": int(source.data.get("record_count") or 0),
+            "version_summaries": as_list(source.data.get("version_summaries")),
+            "comparisons": as_list(source.data.get("comparisons")),
+            "recommendation": as_dict(source.data.get("recommendation")),
+            "data_gaps": as_list(source.data.get("data_gaps")),
+            "automatic_live_promotion": bool(promotion.get("automatic_live_promotion", False)),
         }

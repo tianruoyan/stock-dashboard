@@ -1,0 +1,30 @@
+{
+  "schema_version": 1,
+  "registry_version": "2026-07-13.1",
+  "baseline": {
+    "version": "decision-v2.0-baseline-1",
+    "status": "active_shadow",
+    "description": "规则筛选、质量门、AI证据解释、人工决策的首个冻结基线。"
+  },
+  "candidates": [],
+  "evaluation": {
+    "primary_window": "T+3",
+    "secondary_windows": ["T+1", "T+5", "T+10"],
+    "minimum_evaluated_signals": 50,
+    "minimum_distinct_decision_dates": 20,
+    "minimum_opportunity_signals": 15,
+    "minimum_risk_signals": 15,
+    "required_metrics": ["signal_support_rate", "median_absolute_return", "max_adverse_excursion_when_available", "excess_return_when_benchmark_available"],
+    "regime_dimensions": ["quality_state", "market_stance", "signal_kind", "theme"]
+  },
+  "promotion_policy": {
+    "automatic_live_promotion": false,
+    "required": [
+      "候选版本通过最低样本与时间跨度",
+      "相对基线改善不能只来自单一行情环境或单一主题",
+      "风险信号和机会信号分别评估",
+      "列出退化场景、反例和回滚版本",
+      "用户确认后才可改变生产决策逻辑"
+    ]
+  }
+}

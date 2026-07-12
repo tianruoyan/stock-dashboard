@@ -29,7 +29,10 @@ class V2CompletionAuditBuilder:
         research = as_dict(decision.get("research_library"))
         stock_pool = as_dict(decision.get("stock_pool"))
         governance = as_dict(decision.get("governance"))
+        event_registry = as_dict(governance.get("event_registry"))
         review = as_dict(decision.get("signal_review"))
+        model_evaluation = as_dict(decision.get("model_evaluation"))
+        input_status = as_dict(decision.get("input_status"))
         environment = as_dict(decision.get("market_environment"))
         style = as_dict(decision.get("style_map"))
         sentiment = as_dict(environment.get("sentiment_structure"))
@@ -43,6 +46,7 @@ class V2CompletionAuditBuilder:
             self._check("phased_route_and_visual", "proven" if self._doc("AI投资决策系统V2.0_分阶段改造路线与视觉方案.md") and (self.root / "v2.html").exists() else "missing", "分阶段路线与V2页面"),
             self._check("data_quality_gate", "proven" if decision.get("data_quality_gate") and not any(item.get("state") == "confirmed" for item in radar) else "failed", "降级时不生成已确认机会"),
             self._check("idempotent_data_publisher", "proven" if (self.root / "v2_platform" / "publishing.py").exists() and (self.root / "tests" / "test_v2_publishing.py").exists() else "missing", "生成/发布分离、allowlist与幂等"),
+            self._check("public_data_collectors", "proven" if input_status.get("public_collectors") and all(item.get("state") in {"current", "updated"} for item in as_list(input_status.get("public_collectors"))) else "data_pending", "微盘、情绪结构和官方事件公开采集器"),
             self._check("decision_cockpit_radar", "proven" if radar and all(self._radar_contract(item) for item in radar) else "failed", f"机会/风险雷达 {len(radar)} 条"),
             self._check("cross_market", self._cross_market_state(environment), "美股、港股、韩国市场显式覆盖；降级源只作背景"),
             self._check("style_dimensions", "proven" if {item.get("id") for item in as_list(style.get("dimensions"))} == {"old_deng", "middle_deng", "small_deng", "microcap"} else "failed", "老登/中登/小登/微盘独立"),
@@ -50,10 +54,12 @@ class V2CompletionAuditBuilder:
             self._check("two_sided_sentiment", self._sentiment_state(sentiment), "涨停与跌停梯队、高位亏钱效应均有字段；当前缺失项保持空"),
             self._check("research_room", "proven" if {item.get("id") for item in as_list(research.get("domains"))}.issuperset({"ai_hardware", "ai_software", "embodied_ai", "medicine", "fusion", "quantum"}) else "failed", "六大长期研究域及核聚变/量子模板"),
             self._check("stock_pool", "proven" if int(stock_pool.get("stock_count") or 0) > 0 else "failed", f"统一股票池 {stock_pool.get('stock_count') or 0} 只"),
-            self._check("event_source_governance", "proven" if as_dict(governance.get("event_registry")).get("blogger_policy", {}).get("may_support_fact") is False else "failed", "博主内容仅作预期/情绪，事实/推断/建议分层"),
-            self._check("event_input", "proven" if as_dict(governance.get("event_registry")).get("event_count") else "data_pending", "用户后续提供的博主账号和规范化事件输入尚未接入"),
+            self._check("event_source_governance", "proven" if event_registry.get("blogger_policy", {}).get("may_support_fact") is False else "failed", "博主内容仅作预期/情绪，事实/推断/建议分层"),
+            self._check("official_event_input", "proven" if int(event_registry.get("official_event_count") or 0) > 0 else "data_pending", f"已接入 {event_registry.get('official_event_count') or 0} 条可核验官方事件"),
+            self._check("blogger_accounts", "proven" if int(event_registry.get("blogger_event_count") or 0) > 0 else "data_pending", "博主账号尚未由用户提供；接口和事实隔离规则已完成"),
             self._check("automation_routing", "proven" if as_dict(governance.get("automation_routing")).get("state") == "valid" and int(as_dict(governance.get("automation_routing")).get("task_count") or 0) >= 6 else "failed", "实时决策/长期研究/后台采集/复盘学习/运维五类归属"),
             self._check("immutable_replay", "proven" if int(review.get("snapshot_count") or 0) > 0 and review.get("hit_rate") is None else "failed", f"判断快照 {review.get('snapshot_count') or 0} 个，样本不足不展示命中率"),
+            self._check("offline_model_evaluation", "proven" if model_evaluation.get("baseline_version") and model_evaluation.get("automatic_live_promotion") is False and as_dict(model_evaluation.get("recommendation")).get("requires_user_confirmation") else "failed", "模型版本、离线比较与人工晋级门槛已建立"),
             self._check("outcome_prices", "proven" if int(review.get("evaluated_signal_count") or 0) > 0 else "data_pending", "T+1/T+3/T+5/T+10结果价格尚未接入"),
             self._check("portfolio_authorization", "data_pending" if as_dict(decision.get("portfolio_risk")).get("state") == "rules_only" else "proven", "真实持仓、成本、现金和风险预算未接入"),
             self._check("no_automatic_trading", "proven" if decision.get("system", {}).get("mode") == "shadow_only" and load_json(self.root / "config" / "v2-learning-policy.json").get("model_change_policy", {}).get("automatic_live_weight_change") is False else "failed", "影子模式；不自动交易，不自动修改线上权重"),
@@ -95,6 +101,6 @@ class V2CompletionAuditBuilder:
         required = ("limit_up_ladder", "limit_down_ladder", "high_level_loss_effect")
         if not all(key in sentiment for key in required):
             return "failed"
-        if any(as_dict(sentiment.get(key)).get("state") == "data_missing" for key in required):
+        if any(as_dict(sentiment.get(key)).get("state") != "usable" for key in required):
             return "data_pending"
         return "proven"

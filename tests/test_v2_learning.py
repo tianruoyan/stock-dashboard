@@ -45,6 +45,7 @@ class V2LearningTests(unittest.TestCase):
             _, _, path = V2LearningBuilder(root).build(decision)
             snapshot = json.loads(path.read_text(encoding="utf-8"))
             self.assertEqual(snapshot["quality"]["state"], decision["data_quality_gate"]["state"])
+            self.assertEqual(snapshot["decision_model_version"], decision["system"]["decision_model_version"])
             for signal in snapshot["signals"]:
                 self.assertIn("evidence", signal)
                 self.assertIn("confirm_conditions", signal)

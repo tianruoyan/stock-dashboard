@@ -9,7 +9,10 @@ const STATE_LABELS = {
   invalidated: "已失效",
   usable: "可用",
   degraded: "降级",
-  blocked: "阻断"
+  blocked: "阻断",
+  partial: "部分可用",
+  data_missing: "数据缺失",
+  degraded_response_date_unverified: "降级：历史日期未获验证"
 };
 
 let v2State = null;
@@ -42,6 +45,17 @@ function compactTime(value) {
   }).format(parsed);
 }
 
+function sourceLink(value) {
+  if (!value) return "来源未知";
+  try {
+    const parsed = new URL(value);
+    if (parsed.protocol !== "https:" && parsed.protocol !== "http:") return escapeHtml(value);
+    return `<a href="${escapeHtml(parsed.href)}" target="_blank" rel="noreferrer">${escapeHtml(parsed.hostname)}</a>`;
+  } catch (_error) {
+    return escapeHtml(value);
+  }
+}
+
 function renderQuality(data) {
   const target = document.getElementById("data-quality-gate");
   const state = data?.state || "blocked";
@@ -60,13 +74,17 @@ function renderEnvironment(data) {
   const reasons = list(data?.supporting_reasons).slice(0, 2).map(item => `<li>${escapeHtml(item)}</li>`).join("");
   const sentiment = data?.sentiment_structure || {};
   const crossMarket = list(data?.cross_market);
+  const ladderRows = (ladder, suffix) => list(ladder?.items).map(item => `<div class="ladder-row"><b>${escapeHtml(item.height)}${escapeHtml(suffix)}</b><span>${escapeHtml(item.count)}只</span><p>${list(item.stocks).slice(0, 5).map(stock => escapeHtml(stock.name)).join(" / ") || "无代表股"}</p></div>`).join("");
   target.innerHTML = `
     <div class="state-row"><span class="eyebrow">市场环境</span><span class="pill ${escapeHtml(quality)}">${escapeHtml(data?.state || "无法判断")}</span></div>
     <h2>${escapeHtml(data?.action || "等待确认")}</h2>
     <p>${escapeHtml(data?.headline || "当前没有可用市场结论")}</p>
     <div class="market-stats"><span>涨停 ${escapeHtml(sentiment.limit_up_count ?? "缺失")}</span><span>跌停 ${escapeHtml(sentiment.limit_down_count ?? "缺失")}</span><span>炸板 ${escapeHtml(sentiment.broken_limit_count ?? "缺失")}</span></div>
-    ${reasons ? `<details class="evidence-details"><summary>查看支持依据</summary><ul>${reasons}</ul></details>` : ""}
-    ${crossMarket.length ? `<details class="evidence-details"><summary>查看跨市场传导与数据缺口</summary><div class="cross-market-grid">${crossMarket.map(item => `<div class="cross-market-item"><b>${escapeHtml(item.market)}</b><span>${escapeHtml(item.quality_state || "已读取")}</span><p>${escapeHtml(item.conclusion)}</p></div>`).join("")}</div></details>` : ""}`;
+    <details class="evidence-details market-evidence-bundle"><summary>展开市场证据、梯队与跨市场传导</summary>
+      ${reasons ? `<div class="market-detail-section"><strong>支持依据</strong><ul>${reasons}</ul></div>` : ""}
+      <div class="market-detail-section"><strong>涨停与跌停梯队</strong><p class="ladder-note">梯队为 ${escapeHtml(compactTime(sentiment.as_of))} 清洗口径 · ${sourceLink(sentiment.source)}；顶部总数来自盘中快照，时点或清洗规则不同，不直接比较。</p><div class="ladder-grid"><div><strong>涨停梯队</strong>${ladderRows(sentiment.limit_up_ladder, "板") || `<p>${escapeHtml(sentiment.limit_up_ladder?.note || "数据缺失")}</p>`}</div><div><strong>跌停梯队</strong>${ladderRows(sentiment.limit_down_ladder, "连跌停") || `<p>${escapeHtml(sentiment.limit_down_ladder?.note || "数据缺失")}</p>`}</div></div><p class="ladder-note">晋级率：${escapeHtml(stateLabel(sentiment.promotion_rate?.state || "data_missing"))} · 高位亏钱效应：${escapeHtml(stateLabel(sentiment.high_level_loss_effect?.state || "data_missing"))}</p></div>
+      ${crossMarket.length ? `<div class="market-detail-section"><strong>跨市场传导与数据缺口</strong><div class="cross-market-grid">${crossMarket.map(item => `<div class="cross-market-item"><b>${escapeHtml(item.market)}</b><span>${escapeHtml(item.quality_state || "已读取")}</span><p>${escapeHtml(item.conclusion)}</p></div>`).join("")}</div></div>` : ""}
+    </details>`;
 }
 
 function representativeStocks(items) {
@@ -218,9 +236,10 @@ function renderStockPool(data) {
   </article>`).join("") || '<div class="empty-state">没有匹配的股票。</div>';
 }
 
-function renderReview(data) {
+function renderReview(data, model) {
   const target = document.getElementById("signal-review");
   const workflow = list(data?.workflow);
+  const recommendation = model?.recommendation || {};
   target.innerHTML = `<div class="review-grid">
     <div class="review-empty"><strong>${escapeHtml(data?.headline || "复盘不可用")}</strong>
       <p>观察窗口：${list(data?.windows).map(escapeHtml).join(" / ")}</p>
@@ -228,19 +247,23 @@ function renderReview(data) {
       <p class="review-guardrail">${escapeHtml(data?.guardrail || "样本不足不展示命中率。")}</p>
     </div>
     <div class="workflow-flow">${workflow.map((item, index) => `<div class="workflow-step"><span>${escapeHtml(index + 1)}</span><div><b>${escapeHtml(item.stage)}</b><small>${escapeHtml(item.owner)}</small></div></div>`).join("")}</div>
+    <div class="model-evaluation-card"><strong>离线模型评估</strong><p>基线 ${escapeHtml(model?.baseline_version || "未配置")} · 主窗口 ${escapeHtml(model?.primary_window || "待定")} · 已评估 ${escapeHtml(model?.record_count ?? 0)}</p><p>${escapeHtml(recommendation.reason || "等待结果数据。")}</p><span>${model?.automatic_live_promotion ? "允许自动晋级" : "禁止自动晋级"}</span></div>
   </div>`;
 }
 
-function renderGovernance(data) {
+function renderGovernance(data, inputStatus) {
   const target = document.getElementById("governance-status");
   const layers = data?.fact_inference_action_layers || {};
   const events = data?.event_registry || {};
   const routing = data?.automation_routing || {};
   const blogger = events.blogger_policy || {};
+  const inputs = list(inputStatus?.contracts);
+  const publicCollectors = list(inputStatus?.public_collectors);
   target.innerHTML = `<div class="governance-grid">
     <div class="governance-card"><strong>结论分层</strong>${Object.entries(layers).map(([key, value]) => `<p><b>${escapeHtml(key)}</b>${escapeHtml(value)}</p>`).join("")}</div>
     <div class="governance-card"><strong>事件来源</strong><p>事件 ${escapeHtml(events.event_count ?? 0)} 条 · ${events.state === "input_pending" ? "输入待接入" : "已接入"}</p><p>博主内容：${escapeHtml(blogger.required_role || "仅作预期/情绪")}</p></div>
     <div class="governance-card"><strong>自动化归属</strong><p>已登记 ${escapeHtml(routing.task_count ?? 0)} 项 · ${escapeHtml(routing.state || "未知")}</p><p>${escapeHtml(routing.cutover_rule || "切换规则待配置")}</p></div>
+    <div class="governance-card"><strong>数据输入</strong><p>${escapeHtml(inputStatus?.privacy_note || "原始输入不进入公开发布。")}</p><div class="input-status-list">${publicCollectors.map(item => `<span class="${escapeHtml(item.state)}">${escapeHtml(item.id)} · ${escapeHtml(item.state)}</span>`).join("")}${inputs.map(item => `<span class="${escapeHtml(item.status)}">${escapeHtml(item.id)} · ${escapeHtml(item.status)}</span>`).join("") || "尚未运行导入检查"}</div></div>
   </div>`;
 }
 
@@ -289,8 +312,8 @@ function renderAll(data) {
   renderPortfolio(data.portfolio_risk || {});
   renderResearchLibrary(data.research_library || {});
   renderStockPool(data.stock_pool || {});
-  renderReview(data.signal_review || {});
-  renderGovernance(data.governance || {});
+  renderReview(data.signal_review || {}, data.model_evaluation || {});
+  renderGovernance(data.governance || {}, data.input_status || {});
   renderSources(list(data.source_registry));
 }
 

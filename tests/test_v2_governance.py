@@ -40,6 +40,11 @@ class V2GovernanceTests(unittest.TestCase):
         payload = V2GovernanceBuilder(ROOT).build()
         self.assertEqual(set(payload["fact_inference_action_layers"]), {"fact", "inference", "action"})
 
+    def test_workspace_has_usable_official_event_seed(self) -> None:
+        payload = V2GovernanceBuilder(ROOT).build()["event_registry"]
+        self.assertGreater(payload["official_event_count"], 0)
+        self.assertEqual(payload["blogger_event_count"], 0)
+
 
 if __name__ == "__main__":
     unittest.main()

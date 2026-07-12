@@ -62,6 +62,13 @@ class PublishPolicyTests(unittest.TestCase):
         self.assertFalse(value.allows("scripts/tool.py"))
         self.assertFalse(value.allows("data/archive/file.tmp"))
 
+    def test_workspace_policy_excludes_private_and_licensed_inputs(self) -> None:
+        workspace = PublishPolicy.load(Path(__file__).resolve().parents[1] / "config" / "v2-publish-policy.json")
+        self.assertFalse(workspace.allows("data/v2/inputs/microcap-observation.json"))
+        self.assertFalse(workspace.allows("data/v2/outcome-prices.json"))
+        self.assertFalse(workspace.allows("data/v2/input-import-manifest.json"))
+        self.assertTrue(workspace.allows("data/v2/decision-system.json"))
+
 
 class V2PublisherTests(unittest.TestCase):
     def test_shadow_mode_freezes_artifact_without_git_changes(self) -> None:

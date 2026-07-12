@@ -58,6 +58,21 @@ class V2PageContractTests(unittest.TestCase):
         self.assertIn("sentiment.limit_up_count", code)
         self.assertIn("sentiment.limit_down_count", code)
         self.assertIn("cross_market", code)
+        self.assertIn("涨停与跌停梯队", code)
+        self.assertIn("high_level_loss_effect", code)
+        self.assertIn("时点或清洗规则不同，不直接比较", code)
+        self.assertIn("sourceLink(sentiment.source)", code)
+
+    def test_local_input_privacy_status_is_visible(self) -> None:
+        code = (ROOT / "v2.js").read_text(encoding="utf-8")
+        self.assertIn("inputStatus?.privacy_note", code)
+        self.assertIn("renderGovernance(data.governance || {}, data.input_status || {})", code)
+
+    def test_model_evaluation_is_visible_and_non_automatic(self) -> None:
+        code = (ROOT / "v2.js").read_text(encoding="utf-8")
+        self.assertIn("model?.baseline_version", code)
+        self.assertIn("model?.automatic_live_promotion", code)
+        self.assertIn("renderReview(data.signal_review || {}, data.model_evaluation || {})", code)
 
 
 if __name__ == "__main__":

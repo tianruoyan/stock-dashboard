@@ -35,6 +35,8 @@ REQUIRED_DATA_KEYS = {
     "research_library",
     "stock_pool",
     "governance",
+    "input_status",
+    "model_evaluation",
     "signal_review",
     "source_registry",
 }

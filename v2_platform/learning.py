@@ -154,6 +154,7 @@ class V2LearningBuilder:
             "style_map": decision.get("style_map"),
             "signals": signals,
             "learning_policy_version": self.policy.get("version"),
+            "decision_model_version": system.get("decision_model_version"),
             "calendar_version": self.calendar.version,
         }
         digest = stable_hash(frozen)

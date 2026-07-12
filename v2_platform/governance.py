@@ -16,6 +16,9 @@ class V2GovernanceBuilder:
         path = self.root / str(self.sources.get("input_path") or "data/v2/inputs/events.json")
         event_payload = load_json(path)
         events = [self._validate_event(item) for item in as_list(event_payload.get("events")) if isinstance(item, dict)]
+        usable_events = [item for item in events if item.get("quality_state") == "usable"]
+        blogger_events = [item for item in events if item.get("source_type") == "blogger_social"]
+        official_events = [item for item in usable_events if item.get("source_type") in {"official_policy", "official_research", "exchange_filing", "company_filing"}]
         tasks = [item for item in as_list(self.automation.get("legacy_tasks")) if isinstance(item, dict)]
         categories = set(str(item) for item in as_list(self.automation.get("categories")))
         routing_issues = []
@@ -31,6 +34,9 @@ class V2GovernanceBuilder:
             "event_registry": {
                 "state": "available" if events else "input_pending",
                 "event_count": len(events),
+                "usable_event_count": len(usable_events),
+                "official_event_count": len(official_events),
+                "blogger_event_count": len(blogger_events),
                 "events": events,
                 "input_path": str(path.relative_to(self.root)),
                 "blogger_policy": as_dict(as_dict(self.sources.get("source_types")).get("blogger_social")),

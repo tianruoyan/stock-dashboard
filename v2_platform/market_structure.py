@@ -39,7 +39,7 @@ class V2MarketStructureBuilder:
         if selected:
             change = float(selected["change_pct"])
             direction = "up" if change > 0 else ("down" if change < 0 else "flat")
-            state = "usable_proxy" if selected["source_id"] == "csi2000_official_proxy" else "usable"
+            state = "usable_proxy" if "proxy" in str(selected.get("kind") or "") or "proxy" in selected["source_id"] else "usable"
             conclusion = f"{selected['name']}最近交易日涨跌幅 {change:.2f}%；仅描述市场结构，不推断小登题材。"
         else:
             direction = "unknown"
@@ -118,6 +118,7 @@ class V2MarketStructureBuilder:
             "close": item.get("close"),
             "change_pct": item.get("change_pct"),
             "source_url": item.get("source_url"),
+            "kind": source.get("kind"),
             "quality_state": quality,
             "missing_fields": missing,
             "quality_flags": sorted(set(flags)),

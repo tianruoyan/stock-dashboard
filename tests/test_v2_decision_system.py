@@ -28,12 +28,15 @@ class V2DecisionSystemTests(unittest.TestCase):
             "research_library",
             "stock_pool",
             "governance",
+            "input_status",
+            "model_evaluation",
             "signal_review",
             "source_registry",
         }
         self.assertTrue(required.issubset(self.payload))
         self.assertEqual(self.payload["system"]["mode"], "shadow_only")
         self.assertFalse(self.payload["system"]["production_behavior_changed"])
+        self.assertEqual(self.payload["system"]["decision_model_version"], "decision-v2.0-baseline-1")
 
     def test_governance_keeps_blogger_content_out_of_facts(self) -> None:
         policy = self.payload["governance"]["event_registry"]["blogger_policy"]
@@ -66,6 +69,14 @@ class V2DecisionSystemTests(unittest.TestCase):
         if sentiment["limit_up_ladder"].get("state") == "data_missing":
             self.assertEqual(sentiment["limit_up_ladder"]["items"], [])
 
+    def test_local_input_status_does_not_expose_absolute_paths(self) -> None:
+        status = self.payload["input_status"]
+        self.assertIn("privacy_note", status)
+        self.assertTrue(status["public_collectors"])
+        for item in status["contracts"]:
+            self.assertFalse(item["target"].startswith("/"))
+            self.assertNotIn("source", item)
+
     def test_every_radar_card_has_evidence_conditions_and_action(self) -> None:
         for item in self.payload["opportunity_radar"]:
             self.assertTrue(item["title"])
@@ -90,7 +101,7 @@ class V2DecisionSystemTests(unittest.TestCase):
         middle_sectors = " ".join(dimensions["middle_deng"]["representative_sectors"])
         for expected in ("光伏", "储能", "新能源汽车", "电力设备", "创新药", "军工", "有色", "新材料"):
             self.assertIn(expected, middle_sectors)
-        self.assertEqual(dimensions["microcap"]["direction"], "unknown")
+        self.assertEqual(dimensions["microcap"]["direction"], self.payload["market_structure"]["direction"])
         self.assertEqual(dimensions["microcap"]["proxy"]["code"], "932000")
         self.assertIn("不等于纯微盘", dimensions["microcap"]["proxy"]["scope_note"])
         self.assertTrue(self.payload["style_map"]["definition_version"])
@@ -105,6 +116,11 @@ class V2DecisionSystemTests(unittest.TestCase):
         review = self.payload["signal_review"]
         if review.get("evaluated_signal_count", 0) < 20:
             self.assertIsNone(review.get("hit_rate"))
+
+    def test_model_evaluation_cannot_auto_promote(self) -> None:
+        evaluation = self.payload["model_evaluation"]
+        self.assertFalse(evaluation["automatic_live_promotion"])
+        self.assertTrue(evaluation["recommendation"]["requires_user_confirmation"])
 
 
 if __name__ == "__main__":

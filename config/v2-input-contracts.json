@@ -1,0 +1,48 @@
+{
+  "schema_version": 1,
+  "version": "2026-07-13.1",
+  "default_input_dir": "local_inputs",
+  "manifest_path": "data/v2/input-import-manifest.json",
+  "contracts": [
+    {
+      "id": "microcap_observation",
+      "filename": "microcap-observation.json",
+      "target": "data/v2/inputs/microcap-observation.json",
+      "top_level_list": "observations",
+      "required_item_fields": ["source_id", "trade_date", "as_of", "close", "change_pct", "source_url"]
+    },
+    {
+      "id": "sentiment_structure",
+      "filename": "sentiment-structure.json",
+      "target": "data/v2/inputs/sentiment-structure.json",
+      "required_fields": ["trade_date", "as_of", "source_url", "limit_up_ladder", "limit_down_ladder", "high_level_loss_effect"]
+    },
+    {
+      "id": "outcome_prices",
+      "filename": "outcome-prices.json",
+      "target": "data/v2/outcome-prices.json",
+      "top_level_list": "observations",
+      "required_item_fields": ["snapshot_id", "signal_id", "code", "reference_price", "reference_at", "source", "windows"]
+    },
+    {
+      "id": "portfolio_context",
+      "filename": "portfolio.json",
+      "target": ".v2_private/portfolio.json",
+      "required_fields": ["as_of", "source", "holdings", "cash", "risk_budget"]
+    },
+    {
+      "id": "events",
+      "filename": "events.json",
+      "target": "data/v2/inputs/events.json",
+      "top_level_list": "events",
+      "required_item_fields": ["event_id", "source_id", "source_type", "published_at", "observed_at", "title", "url", "content_hash"]
+    }
+  ],
+  "safety_rules": [
+    "导入只接受JSON对象；校验失败时不覆盖上一次可用输入。",
+    "所有时间字段必须带时区，交易日使用YYYY-MM-DD。",
+    "导入文件保留内容哈希和导入时间，重复内容不重复写入。",
+    "导入持仓只提供风险上下文，不授权自动交易。",
+    "博主事件仍受来源治理约束，不能因导入成功而成为交易事实。"
+  ]
+}

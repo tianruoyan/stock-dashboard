@@ -65,8 +65,8 @@ class V2AcceptanceBuilder:
             },
             {
                 "id": "microcap_proxy",
-                "status": "proxy_configured_data_pending",
-                "question": "确认微盘独立于小登，并允许中证2000仅作为宽基代理；纯微盘口径后续接入授权数据源。"
+                "status": "secondary_proxy_active",
+                "question": "微盘独立于小登；当前使用新浪公开中证2000行情作为次级宽基代理，纯微盘口径仍等待授权数据源。"
             },
             {
                 "id": "research_gaps",
