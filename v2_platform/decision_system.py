@@ -100,6 +100,7 @@ class V2DecisionSystemBuilder:
         "v2_input_import": "v2/input-import-manifest.json",
         "v2_model_evaluation": "v2/model-evaluation.json",
         "v2_public_input_health": "v2/public-input-health.json",
+        "v2_parallel_comparison": "v2/parallel-comparison.json",
     }
 
     def __init__(self, root: Path) -> None:
@@ -129,6 +130,7 @@ class V2DecisionSystemBuilder:
         signal_review = self._signal_review()
         input_status = self._input_status()
         model_evaluation = self._model_evaluation()
+        parallel_comparison = as_dict(self.sources["v2_parallel_comparison"].data)
         timestamps = [source.timestamp for source in self.sources.values() if source.timestamp]
         critical_timestamps = [
             self.sources[name].timestamp
@@ -166,6 +168,7 @@ class V2DecisionSystemBuilder:
             "signal_review": signal_review,
             "input_status": input_status,
             "model_evaluation": model_evaluation,
+            "parallel_comparison": parallel_comparison,
             "source_registry": [source.summary() for source in self.sources.values()],
         }
 

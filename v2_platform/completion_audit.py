@@ -33,6 +33,7 @@ class V2CompletionAuditBuilder:
         event_registry = as_dict(governance.get("event_registry"))
         review = as_dict(decision.get("signal_review"))
         model_evaluation = as_dict(decision.get("model_evaluation"))
+        parallel_comparison = as_dict(decision.get("parallel_comparison"))
         input_status = as_dict(decision.get("input_status"))
         outcome_collector = next(
             (item for item in as_list(input_status.get("public_collectors")) if isinstance(item, dict) and item.get("id") == "outcome_prices"),
@@ -86,6 +87,7 @@ class V2CompletionAuditBuilder:
             self._check("portfolio_authorization", "data_pending" if as_dict(decision.get("portfolio_risk")).get("state") == "rules_only" else "proven", "真实持仓、成本、现金和风险预算未接入"),
             self._check("no_automatic_trading", "proven" if decision.get("system", {}).get("mode") == "shadow_only" and load_json(self.root / "config" / "v2-learning-policy.json").get("model_change_policy", {}).get("automatic_live_weight_change") is False else "failed", "影子模式；不自动交易，不自动修改线上权重"),
             self._check("parallel_v1_v2", "proven" if operation.get("mode") == "parallel_shadow" and operation.get("v1_role") == "production_primary" and operation.get("stop_v1_requires_new_user_confirmation") is True else "failed", "用户已确认V1生产、V2影子双轨并行；停用V1必须再次确认"),
+            self._check("parallel_comparison", "proven" if parallel_comparison.get("state") in {"comparable", "degraded"} and as_dict(parallel_comparison.get("cutover")).get("ready") is False else "failed", f"自动对照已生成，记录 {len(as_list(parallel_comparison.get('divergences')))} 类差异；禁止自动切换"),
             self._check("external_app_access_authorization", "proven" if user_authorizations.get("routine_external_app_access") == "preauthorized" else "missing", "本项目内其他App的常规读取、搜索和核验已预授权；高风险外部操作仍受保护"),
             self._check("v1_rollback", "proven" if v1_code["passed"] else "failed", "V1程序与入口保持冻结基线；原生产数据任务可继续更新"),
             self._check("production_cutover", "user_confirmation" if decision.get("system", {}).get("mode") == "shadow_only" else "proven", "用户已确认暂不切换；待V2稳定后，停用V1或切换主入口仍需再次确认"),

@@ -256,6 +256,14 @@ function renderReview(data, model) {
   </div>`;
 }
 
+function renderParallelComparison(data) {
+  const target = document.getElementById("parallel-comparison");
+  if (!target) return;
+  const sideCard = side => `<div class="parallel-side-card"><div class="state-row"><strong>${escapeHtml(side?.label || "未知")}</strong><span class="pill ${escapeHtml(side?.quality_state || "degraded")}">${escapeHtml(side?.role || "未知角色")}</span></div><p>市场日 ${escapeHtml(side?.market_date || "未知")} · 质量 ${escapeHtml(side?.quality_state || "缺失")} · 自动化 ${escapeHtml(side?.automation_state || "缺失")}</p><div class="pool-summary"><span>质量问题 ${escapeHtml(side?.quality_issue_count ?? 0)}</span><span>价格复核 ${escapeHtml(side?.price_review_count ?? 0)}</span><span>机会 ${escapeHtml(side?.opportunity_count ?? 0)}</span><span>风险 ${escapeHtml(side?.risk_count ?? 0)}</span></div><small>证据 ${escapeHtml(compactTime(side?.evidence_as_of))}</small></div>`;
+  const divergences = list(data?.divergences);
+  target.innerHTML = `<div class="parallel-summary"><strong>${escapeHtml(data?.headline || "双轨对照尚未生成")}</strong><span>${data?.cutover?.ready ? "达到切换条件" : "继续并行"}</span></div><div class="parallel-sides">${sideCard(data?.v1)}${sideCard(data?.v2)}</div><div class="parallel-divergences"><strong>需要解释的差异</strong>${divergences.length ? divergences.map(item => `<div class="parallel-diff"><b>${escapeHtml(item.conclusion)}</b><p>${escapeHtml(item.action)}</p>${list(item.only_v1).length ? `<small>仅V1：${list(item.only_v1).map(escapeHtml).join(" / ")}</small>` : ""}${list(item.only_v2).length ? `<small>仅V2：${list(item.only_v2).map(escapeHtml).join(" / ")}</small>` : ""}</div>`).join("") : '<p class="empty-state">当前没有结构性差异。</p>'}</div><p class="parallel-guardrail">${escapeHtml(data?.cutover?.reason || "停用V1仍需再次确认。")}</p>`;
+}
+
 function renderGovernance(data, inputStatus) {
   const target = document.getElementById("governance-status");
   const layers = data?.fact_inference_action_layers || {};
@@ -427,6 +435,7 @@ function renderAll(data) {
   renderResearchLibrary(data.research_library || {});
   renderStockPool(data.stock_pool || {});
   renderReview(data.signal_review || {}, data.model_evaluation || {});
+  renderParallelComparison(data.parallel_comparison || {});
   renderGovernance(data.governance || {}, data.input_status || {});
   renderSources(list(data.source_registry));
 }

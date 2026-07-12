@@ -36,6 +36,8 @@ STEPS = [
     ("v2-learning:outcomes", ["python3", "scripts/build_v2_learning.py"], False),
     ("v2-model-evaluation", ["python3", "scripts/build_v2_model_evaluation.py"], False),
     ("v2-decision-system", ["python3", "scripts/build_v2_decision_system.py"], False),
+    ("v2-parallel-comparison", ["python3", "scripts/build_v2_parallel_comparison.py"], False),
+    ("v2-decision-system:parallel", ["python3", "scripts/build_v2_decision_system.py"], False),
     ("v2-static-smoke", ["python3", "scripts/smoke_v2_static.py"], False),
     ("v2-completion-audit", ["python3", "scripts/audit_v2_completion.py"], False),
     ("static-smoke", ["python3", "scripts/smoke_dashboard_static.py"], True),

@@ -30,6 +30,7 @@ class V2DecisionSystemTests(unittest.TestCase):
             "governance",
             "input_status",
             "model_evaluation",
+            "parallel_comparison",
             "signal_review",
             "source_registry",
         }

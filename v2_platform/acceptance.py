@@ -52,6 +52,7 @@ class V2AcceptanceBuilder:
         build = load_json(self.root / "data" / "build-report.json")
         learning = load_json(self.root / "config" / "v2-learning-policy.json")
         completion = load_json(self.data / "completion-audit.json")
+        parallel = load_json(self.data / "parallel-comparison.json")
         production_config = self.rollout.get("production_v1") or {}
         operation = self.rollout.get("operation_strategy") or {}
         production = Path(str(production_config.get("path") or ""))
@@ -62,6 +63,7 @@ class V2AcceptanceBuilder:
         checks = [
             self._check("v2_shadow_mode", decision.get("system", {}).get("mode") == "shadow_only", "V2仍为影子模式，不触发生产交易或通知。"),
             self._check("parallel_operation", operation.get("mode") == "parallel_shadow" and operation.get("v1_role") == "production_primary" and operation.get("stop_v1_requires_new_user_confirmation") is True, "用户已确认V1/V2双轨并行；停用V1需要再次确认。"),
+            self._check("parallel_comparison", parallel.get("state") in {"comparable", "degraded"} and parallel.get("cutover", {}).get("ready") is False, f"双轨对照：{parallel.get('state') or 'missing'}，差异 {len(parallel.get('divergences') or [])} 类。"),
             self._check("static_smoke", smoke.get("status") == "ok", f"V2页面检查：{smoke.get('status') or 'missing'}"),
             self._check("unified_build_not_blocked", build.get("status") != "blocked" and bool(build), f"统一构建：{build.get('status') or 'missing'}"),
             self._check("research_domains", len(research.get("domains") or []) >= 6, f"产业领域：{len(research.get('domains') or [])}"),

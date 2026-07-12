@@ -26,6 +26,8 @@ class V2PageContractTests(unittest.TestCase):
             "source-manager",
             "blogger-source-form",
             "blogger-source-list",
+            "parallel-operation",
+            "parallel-comparison",
         }
         self.assertTrue(required.issubset(ids))
 
@@ -83,6 +85,12 @@ class V2PageContractTests(unittest.TestCase):
         self.assertIn('data-source-action="delete"', code)
         self.assertIn('data-source-action="toggle"', code)
         self.assertIn("bindBloggerManager()", code)
+
+    def test_parallel_comparison_is_visible_and_non_automatic(self) -> None:
+        code = (ROOT / "v2.js").read_text(encoding="utf-8")
+        self.assertIn("renderParallelComparison", code)
+        self.assertIn("继续并行", code)
+        self.assertIn("renderParallelComparison(data.parallel_comparison || {})", code)
 
 
 if __name__ == "__main__":
