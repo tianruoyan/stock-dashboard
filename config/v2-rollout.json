@@ -1,0 +1,25 @@
+{
+  "schema_version": 1,
+  "version": "2026-07-12.1",
+  "production_v1": {
+    "path": "/Users/sweet_orange/stock-dashboard",
+    "baseline_commit": "2e5f149",
+    "entry": "index.html"
+  },
+  "v2": {
+    "branch": "codex/v2-platform",
+    "entry": "v2.html",
+    "mode": "shadow_only"
+  },
+  "promotion_gates": [
+    "统一构建无阻断",
+    "V2静态与运行时页面检查通过",
+    "关键数据质量可用；降级期间不得将候选升级为已确认机会",
+    "至少完成一次从V2入口回退到V1入口的演练",
+    "用户集中确认风格口径、微盘代理、产业覆盖缺口和生产切换"
+  ],
+  "rollback": {
+    "before_promotion": "继续使用生产V1入口；V2分支不影响生产目录。",
+    "after_promotion": "恢复V1入口和上一版数据发布任务；保留V2快照与日志用于复盘，不删除历史。"
+  }
+}
