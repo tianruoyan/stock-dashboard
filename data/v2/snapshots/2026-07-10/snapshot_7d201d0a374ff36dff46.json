@@ -1,0 +1,2183 @@
+{
+  "schema_version": 1,
+  "snapshot_id": "snapshot_7d201d0a374ff36dff46",
+  "content_hash": "7d201d0a374ff36dff4679cd7ca67ae6a061176f71e0ccf25375d7afa5cae1e0",
+  "created_at": "2026-07-12T19:54:48+08:00",
+  "decision_as_of": "2026-07-10T14:43:40+08:00",
+  "decision_date": "2026-07-10",
+  "quality": {
+    "state": "degraded",
+    "headline": "发现 66 个降级/需复核项（54 个价格/行情复核，1 个信号复核，12 个背景复核），核心结论可看但必须按影响分层使用。",
+    "decision_rule": "数据降级：只允许候选和风险提示，已确认机会必须等待关键证据恢复。",
+    "blocking_count": 0,
+    "price_review_count": 54,
+    "signal_review_count": 1,
+    "background_review_count": 12,
+    "issues": [
+      {
+        "level": "price_review",
+        "problem": "盘中异动缺少可信源证明；当前阶段只降权参考，不阻断整站发布",
+        "next_step": "用第二行情源复核涨跌幅、quote_time 和代表股方向；未确认前只做验证。",
+        "source": "alert.json"
+      },
+      {
+        "level": "price_review",
+        "problem": "沪深300 change_pct 非数字：None，该字段忽略并降权",
+        "next_step": "用第二行情源复核涨跌幅、quote_time 和代表股方向；未确认前只做验证。",
+        "source": "midday.json"
+      },
+      {
+        "level": "price_review",
+        "problem": "us_overnight.mapping_chain[1] change_pct 非数字：None，该字段忽略并降权",
+        "next_step": "用第二行情源复核涨跌幅、quote_time 和代表股方向；未确认前只做验证。",
+        "source": "premarket.json"
+      },
+      {
+        "level": "price_review",
+        "problem": "时间戳不是当前交易日：2026-07-11T20:19:06+08:00",
+        "next_step": "用第二行情源复核涨跌幅、quote_time 和代表股方向；未确认前只做验证。",
+        "source": "source-health.json"
+      },
+      {
+        "level": "signal_review",
+        "problem": "summary 缺失",
+        "next_step": "修正字段结构、证据、触发原因和升级条件；未通过前降权展示。",
+        "source": "premarket.json"
+      },
+      {
+        "level": "background_review",
+        "problem": "时间戳不是当前交易日：2026-07-10T14:56:49+08:00",
+        "next_step": "补官方/交易所/公司公告来源；未补齐前不升级为核心依据。",
+        "source": "alert.json"
+      }
+    ],
+    "evidence": [
+      {
+        "label": "质量审计",
+        "source": "quality-report.json",
+        "as_of": "2026-07-12T19:54:37+08:00"
+      },
+      {
+        "label": "文件可信",
+        "source": "data-trust.json",
+        "as_of": "2026-07-12T19:54:37+08:00"
+      },
+      {
+        "label": "任务健康",
+        "source": "automation-health.json",
+        "as_of": "2026-07-12T19:54:37+08:00"
+      }
+    ]
+  },
+  "market_environment": {
+    "state": "风险优先，只做验证",
+    "action": "不把候选方向当交易机会；先看风险收敛、数据恢复和核心承接。",
+    "headline": "14:30尾盘前市场仍未修复：涨停91、跌停2、炸板87，创业板和科创50跌幅扩大至约3.6%-3.7%。军工航天保持最强，医药/CRO封板回升并成为另一条确认主线；算力核心仍红但扩散和动量继续减弱。半导体设备、零部件、功率、CPO高位核心及电子布风险加速，白酒、畜牧、保险的防御承接进一步确认。",
+    "quality_state": "degraded",
+    "supporting_reasons": [
+      "发现 66 个降级/需复核项（54 个价格/行情复核，1 个信号复核，12 个背景复核），核心结论可看但必须按影响分层使用。",
+      "A/B级风险 1 条",
+      "可用机会 0 条，降权候选 8 条",
+      "先处理：二次行情复核（alert.json）"
+    ],
+    "risk_constraints": [
+      "数据质量降级"
+    ],
+    "indices": [
+      {
+        "name": "上证指数",
+        "pct": -0.51,
+        "three_min_pct": -0.125,
+        "status": "交易中",
+        "as_of": "2026-07-10T14:43:40+08:00"
+      },
+      {
+        "name": "深证成指",
+        "pct": -1.65,
+        "three_min_pct": null,
+        "status": "交易中",
+        "as_of": "2026-07-10T14:43:40+08:00"
+      },
+      {
+        "name": "创业板指",
+        "pct": -3.63,
+        "three_min_pct": -0.295,
+        "status": "交易中",
+        "as_of": "2026-07-10T14:43:40+08:00"
+      },
+      {
+        "name": "科创50",
+        "pct": -3.71,
+        "three_min_pct": -0.304,
+        "status": "交易中",
+        "as_of": "2026-07-10T14:43:40+08:00"
+      },
+      {
+        "name": "沪深300",
+        "pct": -1.49,
+        "three_min_pct": null,
+        "status": "交易中",
+        "as_of": "2026-07-10T14:43:40+08:00"
+      }
+    ],
+    "sentiment_structure": {
+      "limit_up_count": 91,
+      "limit_down_count": 2,
+      "broken_limit_count": 87,
+      "judgement": "高分歧且成长指数继续下探；军工与医药保持强势，算力扩散继续收缩。",
+      "limit_up_ladder": {
+        "state": "usable",
+        "items": [
+          {
+            "height": 2,
+            "count": 9,
+            "stocks": [
+              {
+                "code": "sz002414",
+                "name": "高德红外",
+                "change_pct": 9.992486953735352,
+                "industry": "军工电子",
+                "open_count": 5
+              },
+              {
+                "code": "sz002346",
+                "name": "柘中股份",
+                "change_pct": 9.984871864318848,
+                "industry": "电网设备",
+                "open_count": 1
+              },
+              {
+                "code": "sz001395",
+                "name": "亚联机械",
+                "change_pct": 9.98847484588623,
+                "industry": "专用设备",
+                "open_count": 2
+              },
+              {
+                "code": "sz000887",
+                "name": "中鼎股份",
+                "change_pct": 10.0,
+                "industry": "汽车零部",
+                "open_count": 24
+              },
+              {
+                "code": "sh603898",
+                "name": "好莱客",
+                "change_pct": 10.014410018920898,
+                "industry": "家居用品",
+                "open_count": 0
+              },
+              {
+                "code": "sz003020",
+                "name": "立方制药",
+                "change_pct": 9.97652530670166,
+                "industry": "化学制药",
+                "open_count": 2
+              },
+              {
+                "code": "sz002829",
+                "name": "星网宇达",
+                "change_pct": 9.98307991027832,
+                "industry": "航天装备",
+                "open_count": 0
+              },
+              {
+                "code": "sh600992",
+                "name": "贵绳股份",
+                "change_pct": 10.020661354064941,
+                "industry": "通用设备",
+                "open_count": 0
+              },
+              {
+                "code": "sz000892",
+                "name": "欢瑞世纪",
+                "change_pct": 9.947644233703613,
+                "industry": "影视院线",
+                "open_count": 1
+              }
+            ]
+          },
+          {
+            "height": 1,
+            "count": 81,
+            "stocks": [
+              {
+                "code": "sz002115",
+                "name": "三维通信",
+                "change_pct": 10.050251007080078,
+                "industry": "通信服务",
+                "open_count": 0
+              },
+              {
+                "code": "sz002606",
+                "name": "大连电瓷",
+                "change_pct": 10.0401611328125,
+                "industry": "电网设备",
+                "open_count": 0
+              },
+              {
+                "code": "sz002121",
+                "name": "科陆电子",
+                "change_pct": 10.103093147277832,
+                "industry": "电网设备",
+                "open_count": 0
+              },
+              {
+                "code": "sh600664",
+                "name": "哈药股份",
+                "change_pct": 10.130719184875488,
+                "industry": "化学制药",
+                "open_count": 2
+              },
+              {
+                "code": "sh600428",
+                "name": "中远海特",
+                "change_pct": 10.03671932220459,
+                "industry": "航运港口",
+                "open_count": 8
+              },
+              {
+                "code": "sh600293",
+                "name": "三峡新材",
+                "change_pct": 9.842519760131836,
+                "industry": "玻璃玻纤",
+                "open_count": 2
+              },
+              {
+                "code": "sz000920",
+                "name": "沃顿科技",
+                "change_pct": 10.008627891540527,
+                "industry": "塑料",
+                "open_count": 3
+              },
+              {
+                "code": "sz000048",
+                "name": "京基智农",
+                "change_pct": 9.99543571472168,
+                "industry": "养殖业",
+                "open_count": 3
+              },
+              {
+                "code": "sz002479",
+                "name": "富春环保",
+                "change_pct": 9.954751014709473,
+                "industry": "电力",
+                "open_count": 0
+              },
+              {
+                "code": "sh605178",
+                "name": "时空科技",
+                "change_pct": 9.997833251953125,
+                "industry": "专业工程",
+                "open_count": 1
+              },
+              {
+                "code": "sh603559",
+                "name": "中通国脉",
+                "change_pct": 10.025062561035156,
+                "industry": "通信服务",
+                "open_count": 3
+              },
+              {
+                "code": "sh603155",
+                "name": "新亚强",
+                "change_pct": 9.996109962463379,
+                "industry": "化学制品",
+                "open_count": 2
+              },
+              {
+                "code": "sz000810",
+                "name": "创维数字",
+                "change_pct": 10.025707244873047,
+                "industry": "黑色家电",
+                "open_count": 1
+              },
+              {
+                "code": "sz300786",
+                "name": "国林科技",
+                "change_pct": 19.97991943359375,
+                "industry": "环保设备",
+                "open_count": 0
+              },
+              {
+                "code": "sz002623",
+                "name": "亚玛顿",
+                "change_pct": 10.03389835357666,
+                "industry": "光伏设备",
+                "open_count": 0
+              },
+              {
+                "code": "sz000620",
+                "name": "盈新发展",
+                "change_pct": 10.0,
+                "industry": "房地产开",
+                "open_count": 16
+              },
+              {
+                "code": "sz920267",
+                "name": "鑫汇科",
+                "change_pct": 29.94269371032715,
+                "industry": "消费电子",
+                "open_count": 0
+              },
+              {
+                "code": "sh603322",
+                "name": "超讯科技",
+                "change_pct": 9.985836029052734,
+                "industry": "通信服务",
+                "open_count": 1
+              },
+              {
+                "code": "sh603223",
+                "name": "恒通股份",
+                "change_pct": 10.02405834197998,
+                "industry": "炼化及贸",
+                "open_count": 2
+              },
+              {
+                "code": "sz002989",
+                "name": "中天精装",
+                "change_pct": 9.992961883544922,
+                "industry": "装修装饰",
+                "open_count": 0
+              },
+              {
+                "code": "sh600410",
+                "name": "华胜天成",
+                "change_pct": 10.033222198486328,
+                "industry": "IT服务Ⅱ",
+                "open_count": 8
+              },
+              {
+                "code": "sh603110",
+                "name": "东方材料",
+                "change_pct": 10.009488105773926,
+                "industry": "化学制品",
+                "open_count": 2
+              },
+              {
+                "code": "sh603270",
+                "name": "金帝股份",
+                "change_pct": 9.992913246154785,
+                "industry": "通用设备",
+                "open_count": 0
+              },
+              {
+                "code": "sz000573",
+                "name": "粤宏远Ａ",
+                "change_pct": 10.149253845214844,
+                "industry": "房地产开",
+                "open_count": 1
+              },
+              {
+                "code": "sz002402",
+                "name": "和而泰",
+                "change_pct": 9.98746395111084,
+                "industry": "家电零部",
+                "open_count": 1
+              },
+              {
+                "code": "sh603578",
+                "name": "三星新材",
+                "change_pct": 10.041152000427246,
+                "industry": "家电零部",
+                "open_count": 0
+              },
+              {
+                "code": "sz002681",
+                "name": "奋达科技",
+                "change_pct": 9.933774948120117,
+                "industry": "消费电子",
+                "open_count": 0
+              },
+              {
+                "code": "sz002144",
+                "name": "宏达高科",
+                "change_pct": 10.010213851928711,
+                "industry": "纺织制造",
+                "open_count": 10
+              },
+              {
+                "code": "sz002038",
+                "name": "双鹭药业",
+                "change_pct": 10.0,
+                "industry": "化学制药",
+                "open_count": 2
+              },
+              {
+                "code": "sh603538",
+                "name": "美诺华",
+                "change_pct": 10.010686874389648,
+                "industry": "化学制药",
+                "open_count": 9
+              },
+              {
+                "code": "sh600800",
+                "name": "渤海化学",
+                "change_pct": 9.931507110595703,
+                "industry": "炼化及贸",
+                "open_count": 2
+              },
+              {
+                "code": "sz300255",
+                "name": "常山药业",
+                "change_pct": 20.0,
+                "industry": "化学制药",
+                "open_count": 11
+              },
+              {
+                "code": "sz002317",
+                "name": "众生药业",
+                "change_pct": 10.018622398376465,
+                "industry": "中药Ⅱ",
+                "open_count": 19
+              },
+              {
+                "code": "sz003001",
+                "name": "中岩大地",
+                "change_pct": 9.984519958496094,
+                "industry": "专业工程",
+                "open_count": 0
+              },
+              {
+                "code": "sh603127",
+                "name": "昭衍新药",
+                "change_pct": 10.002545356750488,
+                "industry": "医疗服务",
+                "open_count": 26
+              },
+              {
+                "code": "sz002693",
+                "name": "双成药业",
+                "change_pct": 10.0,
+                "industry": "化学制药",
+                "open_count": 15
+              },
+              {
+                "code": "sz002970",
+                "name": "锐明技术",
+                "change_pct": 9.99813175201416,
+                "industry": "计算机设",
+                "open_count": 0
+              },
+              {
+                "code": "sz002828",
+                "name": "贝肯能源",
+                "change_pct": 10.040816307067871,
+                "industry": "油服工程",
+                "open_count": 16
+              },
+              {
+                "code": "sh603211",
+                "name": "晋拓股份",
+                "change_pct": 9.988385200500488,
+                "industry": "汽车零部",
+                "open_count": 0
+              },
+              {
+                "code": "sh600821",
+                "name": "金开新能",
+                "change_pct": 10.09009075164795,
+                "industry": "电力",
+                "open_count": 1
+              },
+              {
+                "code": "sh600629",
+                "name": "华建集团",
+                "change_pct": 10.008627891540527,
+                "industry": "工程咨询",
+                "open_count": 1
+              },
+              {
+                "code": "sz002774",
+                "name": "快意电梯",
+                "change_pct": 10.034602165222168,
+                "industry": "专用设备",
+                "open_count": 0
+              },
+              {
+                "code": "sz002342",
+                "name": "巨力索具",
+                "change_pct": 10.039761543273926,
+                "industry": "通用设备",
+                "open_count": 1
+              },
+              {
+                "code": "sh603286",
+                "name": "日盈电子",
+                "change_pct": 10.002049446105957,
+                "industry": "汽车零部",
+                "open_count": 0
+              },
+              {
+                "code": "sz000933",
+                "name": "神火股份",
+                "change_pct": 10.023419380187988,
+                "industry": "工业金属",
+                "open_count": 17
+              },
+              {
+                "code": "sz002548",
+                "name": "金新农",
+                "change_pct": 9.973752975463867,
+                "industry": "饲料",
+                "open_count": 1
+              },
+              {
+                "code": "sh600376",
+                "name": "首开股份",
+                "change_pct": 9.909910202026367,
+                "industry": "房地产开",
+                "open_count": 1
+              },
+              {
+                "code": "sh603162",
+                "name": "海通发展",
+                "change_pct": 10.0,
+                "industry": "航运港口",
+                "open_count": 2
+              },
+              {
+                "code": "sh603151",
+                "name": "邦基科技",
+                "change_pct": 9.981515884399414,
+                "industry": "饲料",
+                "open_count": 0
+              },
+              {
+                "code": "sh601858",
+                "name": "中国科传",
+                "change_pct": 10.011778831481934,
+                "industry": "出版",
+                "open_count": 0
+              },
+              {
+                "code": "sh603236",
+                "name": "移远通信",
+                "change_pct": 9.997980117797852,
+                "industry": "通信设备",
+                "open_count": 1
+              },
+              {
+                "code": "sh603556",
+                "name": "海兴电力",
+                "change_pct": 9.990394592285156,
+                "industry": "电网设备",
+                "open_count": 0
+              },
+              {
+                "code": "sh600513",
+                "name": "联环药业",
+                "change_pct": 10.014204978942871,
+                "industry": "化学制药",
+                "open_count": 0
+              },
+              {
+                "code": "sz001208",
+                "name": "华菱线缆",
+                "change_pct": 9.972489356994629,
+                "industry": "电网设备",
+                "open_count": 0
+              },
+              {
+                "code": "sz002361",
+                "name": "神剑股份",
+                "change_pct": 10.025928497314453,
+                "industry": "塑料",
+                "open_count": 0
+              },
+              {
+                "code": "sh603698",
+                "name": "航天工程",
+                "change_pct": 10.004989624023438,
+                "industry": "专用设备",
+                "open_count": 0
+              },
+              {
+                "code": "sh600685",
+                "name": "中船防务",
+                "change_pct": 10.0,
+                "industry": "航海装备",
+                "open_count": 0
+              },
+              {
+                "code": "sh688710",
+                "name": "益诺思",
+                "change_pct": 20.003082275390625,
+                "industry": "医疗服务",
+                "open_count": 7
+              },
+              {
+                "code": "sz301117",
+                "name": "佳缘科技",
+                "change_pct": 19.98817253112793,
+                "industry": "计算机设",
+                "open_count": 3
+              },
+              {
+                "code": "sz300065",
+                "name": "海兰信",
+                "change_pct": 20.008337020874023,
+                "industry": "航海装备",
+                "open_count": 0
+              },
+              {
+                "code": "sh600343",
+                "name": "航天动力",
+                "change_pct": 10.0,
+                "industry": "通用设备",
+                "open_count": 0
+              },
+              {
+                "code": "sh688722",
+                "name": "同益中",
+                "change_pct": 19.986892700195312,
+                "industry": "化学纤维",
+                "open_count": 5
+              },
+              {
+                "code": "sh600118",
+                "name": "中国卫星",
+                "change_pct": 9.995112419128418,
+                "industry": "航天装备",
+                "open_count": 0
+              },
+              {
+                "code": "sh605090",
+                "name": "九丰能源",
+                "change_pct": 9.991312026977539,
+                "industry": "燃气Ⅱ",
+                "open_count": 25
+              },
+              {
+                "code": "sz003009",
+                "name": "中天火箭",
+                "change_pct": 9.994558334350586,
+                "industry": "航天装备",
+                "open_count": 1
+              },
+              {
+                "code": "sz000547",
+                "name": "航天发展",
+                "change_pct": 9.987894058227539,
+                "industry": "军工电子",
+                "open_count": 2
+              },
+              {
+                "code": "sz000901",
+                "name": "航天科技",
+                "change_pct": 10.0,
+                "industry": "汽车零部",
+                "open_count": 14
+              },
+              {
+                "code": "sz300069",
+                "name": "金利华电",
+                "change_pct": 19.986980438232422,
+                "industry": "电网设备",
+                "open_count": 8
+              },
+              {
+                "code": "sh601698",
+                "name": "中国卫通",
+                "change_pct": 10.003345489501953,
+                "industry": "航天装备",
+                "open_count": 2
+              },
+              {
+                "code": "sz002865",
+                "name": "钧达股份",
+                "change_pct": 10.009832382202148,
+                "industry": "光伏设备",
+                "open_count": 6
+              },
+              {
+                "code": "sh605598",
+                "name": "上海港湾",
+                "change_pct": 10.0,
+                "industry": "专业工程",
+                "open_count": 2
+              },
+              {
+                "code": "sh600879",
+                "name": "XD航天电",
+                "change_pct": 10.014171600341797,
+                "industry": "航天装备",
+                "open_count": 2
+              },
+              {
+                "code": "sh600113",
+                "name": "浙江东日",
+                "change_pct": 10.009976387023926,
+                "industry": "一般零售",
+                "open_count": 0
+              },
+              {
+                "code": "sz002524",
+                "name": "光正眼科",
+                "change_pct": 9.883721351623535,
+                "industry": "医疗服务",
+                "open_count": 0
+              },
+              {
+                "code": "sz920943",
+                "name": "优机股份",
+                "change_pct": 29.99178123474121,
+                "industry": "通用设备",
+                "open_count": 0
+              },
+              {
+                "code": "sh688523",
+                "name": "航天环宇",
+                "change_pct": 20.007844924926758,
+                "industry": "航天装备",
+                "open_count": 11
+              },
+              {
+                "code": "sz002202",
+                "name": "金风科技",
+                "change_pct": 9.985243797302246,
+                "industry": "风电设备",
+                "open_count": 19
+              },
+              {
+                "code": "sh600192",
+                "name": "长城电工",
+                "change_pct": 10.082645416259766,
+                "industry": "电网设备",
+                "open_count": 0
+              },
+              {
+                "code": "sh600072",
+                "name": "中船科技",
+                "change_pct": 10.0,
+                "industry": "风电设备",
+                "open_count": 0
+              },
+              {
+                "code": "sz002544",
+                "name": "普天科技",
+                "change_pct": 10.029153823852539,
+                "industry": "通信服务",
+                "open_count": 0
+              },
+              {
+                "code": "sh601608",
+                "name": "中信重工",
+                "change_pct": 10.043667793273926,
+                "industry": "专用设备",
+                "open_count": 1
+              }
+            ]
+          }
+        ],
+        "filtered_count": 90,
+        "excluded": [
+          {
+            "code": "000004",
+            "name": "国华退",
+            "reason": "risk_or_delisting_name"
+          },
+          {
+            "code": "002808",
+            "name": "恒久退",
+            "reason": "risk_or_delisting_name"
+          }
+        ]
+      },
+      "limit_down_ladder": {
+        "state": "usable",
+        "items": [
+          {
+            "height": 3,
+            "count": 1,
+            "stocks": [
+              {
+                "code": "sz002192",
+                "name": "融捷股份",
+                "change_pct": -10.005059242248535,
+                "industry": "能源金属",
+                "open_count": 5
+              }
+            ]
+          },
+          {
+            "height": 1,
+            "count": 3,
+            "stocks": [
+              {
+                "code": "sz002903",
+                "name": "宇环数控",
+                "change_pct": -10.008092880249023,
+                "industry": "通用设备",
+                "open_count": 0
+              },
+              {
+                "code": "sz003043",
+                "name": "华亚智能",
+                "change_pct": -10.0,
+                "industry": "半导体",
+                "open_count": 3
+              },
+              {
+                "code": "sz002617",
+                "name": "露笑科技",
+                "change_pct": -10.021322250366211,
+                "industry": "电力",
+                "open_count": 2
+              }
+            ]
+          }
+        ],
+        "filtered_count": 4,
+        "excluded": []
+      },
+      "promotion_rate": {
+        "state": "degraded_response_date_unverified",
+        "previous_trade_date": "2026-07-09",
+        "items": [
+          {
+            "from_height": 1,
+            "candidate_count": 68,
+            "promoted_count": 9,
+            "rate": 0.1324,
+            "promoted_stocks": [
+              "亚联机械",
+              "高德红外",
+              "星网宇达",
+              "贵绳股份",
+              "柘中股份",
+              "欢瑞世纪",
+              "立方制药",
+              "好莱客",
+              "中鼎股份"
+            ]
+          },
+          {
+            "from_height": 2,
+            "candidate_count": 4,
+            "promoted_count": 0,
+            "rate": 0.0,
+            "promoted_stocks": []
+          },
+          {
+            "from_height": 3,
+            "candidate_count": 1,
+            "promoted_count": 0,
+            "rate": 0.0,
+            "promoted_stocks": []
+          },
+          {
+            "from_height": 8,
+            "candidate_count": 1,
+            "promoted_count": 0,
+            "rate": 0.0,
+            "promoted_stocks": []
+          }
+        ],
+        "quality_flags": [
+          "response_qdate_20260710_differs_from_requested_20260709"
+        ]
+      },
+      "high_level_loss_effect": {
+        "state": "partial",
+        "sample_count": 5,
+        "candidate_count": 6,
+        "median_return_pct": 4.1051,
+        "negative_ratio": 0.0,
+        "max_adverse_excursion_pct": -5.5556,
+        "judgement": "样本未显示整体负收益，但仍需观察盘中最大不利波动",
+        "stocks": [
+          {
+            "code": "sh603137",
+            "name": "恒尚节能",
+            "previous_height": 8,
+            "trade_date": "2026-07-10",
+            "previous_close": 25.2,
+            "close": 26.75,
+            "low": 26.54,
+            "close_return_pct": 6.1508,
+            "low_return_pct": 5.3175,
+            "quote_as_of": "20260710161442"
+          },
+          {
+            "code": "sh603928",
+            "name": "兴业股份",
+            "previous_height": 2,
+            "trade_date": "2026-07-10",
+            "previous_close": 18.0,
+            "close": 18.8,
+            "low": 17.0,
+            "close_return_pct": 4.4444,
+            "low_return_pct": -5.5556,
+            "quote_as_of": "20260710161433"
+          },
+          {
+            "code": "sz000977",
+            "name": "浪潮信息",
+            "previous_height": 2,
+            "trade_date": "2026-07-10",
+            "previous_close": 85.99,
+            "close": 89.52,
+            "low": 89.0,
+            "close_return_pct": 4.1051,
+            "low_return_pct": 3.5004,
+            "quote_as_of": "20260710161430"
+          },
+          {
+            "code": "sz002841",
+            "name": "视源股份",
+            "previous_height": 3,
+            "trade_date": "2026-07-10",
+            "previous_close": 52.13,
+            "close": 52.45,
+            "low": 52.41,
+            "close_return_pct": 0.6138,
+            "low_return_pct": 0.5371,
+            "quote_as_of": "20260710161403"
+          },
+          {
+            "code": "sz002490",
+            "name": "山东墨龙",
+            "previous_height": 2,
+            "trade_date": "2026-07-10",
+            "previous_close": 7.67,
+            "close": 7.68,
+            "low": 7.31,
+            "close_return_pct": 0.1304,
+            "low_return_pct": -4.6936,
+            "quote_as_of": "20260710161436"
+          }
+        ],
+        "missing": [
+          {
+            "code": "002677",
+            "name": "浙江美大",
+            "reason": "quote_nonpositive_or_no_trade"
+          }
+        ],
+        "source": "https://qt.gtimg.cn/q="
+      },
+      "as_of": "2026-07-10T15:00:00+08:00",
+      "source": "https://push2ex.eastmoney.com/getTopicZTPool ; https://push2ex.eastmoney.com/getTopicDTPool",
+      "ladder_input_state": "loaded"
+    },
+    "cross_market": [
+      {
+        "market": "US",
+        "conclusion": "美股风险偏好修复，芯片与AI内存领涨对A股科技硬件温和提振；地缘不确定性仍在，且日韩实时科技链缺少可信终值，因此外部环境定义为情绪共振、不是确定性风险偏好扩张。",
+        "mapping": [
+          {
+            "source_asset": "Micron",
+            "change_pct": 4.5,
+            "reason": "AI内存需求与美国晶圆厂建设进展",
+            "a_share_mapping": [
+              "雅克科技",
+              "沪硅产业",
+              "有研硅",
+              "长电科技",
+              "通富微电",
+              "华天科技"
+            ],
+            "mapping_logic": "海外内存扩产和HBM需求 -> 硅片/材料/封测订单预期 -> A股竞价承接验证"
+          },
+          {
+            "source_asset": "NVIDIA",
+            "change_pct": null,
+            "reason": "随AI芯片组修复；可靠精确涨幅未取得",
+            "a_share_mapping": [
+              "中际旭创",
+              "新易盛",
+              "工业富联",
+              "浪潮信息"
+            ],
+            "mapping_logic": "AI算力情绪传导与产业链上下游映射；只作方向加分"
+          },
+          {
+            "source_asset": "Broadcom",
+            "change_pct": null,
+            "reason": "定制芯片/AI网络链随科技修复；可靠精确涨幅未取得",
+            "a_share_mapping": [
+              "中际旭创",
+              "沪电股份",
+              "胜宏科技"
+            ],
+            "mapping_logic": "定制ASIC与高速互连 -> CPO/高端PCB情绪映射"
+          },
+          {
+            "source_asset": "AMD",
+            "change_pct": null,
+            "reason": "AI加速器链随芯片组反弹；可靠精确涨幅未取得",
+            "a_share_mapping": [
+              "海光信息",
+              "浪潮信息",
+              "工业富联"
+            ],
+            "mapping_logic": "AI服务器与加速卡技术路线对标、情绪传导"
+          }
+        ],
+        "as_of": "2026-07-10T09:16:00+08:00"
+      },
+      {
+        "market": "HK",
+        "conclusion": "A/H医药共振好于半导体，智谱大跌使AI应用维持风险。",
+        "mapping": [],
+        "as_of": "2026-07-10T14:43:40+08:00"
+      },
+      {
+        "market": "KR",
+        "conclusion": "7月10日韩早盘实时行情未取得可交叉验证终值；昨日AP可核实韩国KOSPI+0.6%、SK hynix+5.3%，但这不是今早实时数据，故只作背景，不作为A股开盘加分项。",
+        "mapping": [],
+        "watch": [
+          "KOSPI与Samsung/SK hynix是否延续修复",
+          "日经225与东京电子/爱德万测试是否同向",
+          "若日韩科技转弱，A股半导体高开兑现风险上升"
+        ],
+        "quality_state": "degraded",
+        "actionability": "background_only",
+        "as_of": "2026-07-10T09:16:00+08:00"
+      }
+    ]
+  },
+  "style_map": {
+    "dimensions": [
+      {
+        "id": "old_deng",
+        "label": "老登",
+        "state": "observed_by_themes",
+        "direction": "mixed",
+        "definition": "处于成熟阶段、偏低估值/高股息/稳定现金流的传统价值与顺周期方向。",
+        "representative_sectors": [
+          "银行",
+          "保险",
+          "白酒",
+          "煤炭",
+          "石油石化",
+          "地产",
+          "基建",
+          "钢铁",
+          "公用事业",
+          "传统消费"
+        ],
+        "conclusion": "老登风格切换 有升温迹象，但仍需量价和后排扩散验证。",
+        "matched_themes": [
+          "老登风格切换"
+        ],
+        "definition_version": "2026-07-12.1"
+      },
+      {
+        "id": "middle_deng",
+        "label": "中登",
+        "state": "observed_by_themes",
+        "direction": "mixed",
+        "definition": "上一轮创新周期中已从前沿成长走向产业化、成熟化的过渡型成长方向；本系统按用户既有语义重点覆盖新能源及其设备链。",
+        "representative_sectors": [
+          "光伏",
+          "储能",
+          "新能源汽车",
+          "锂电池",
+          "新能源设备",
+          "电力设备",
+          "电网自动化",
+          "国防军工",
+          "创新药/CXO",
+          "有色战略金属",
+          "新材料"
+        ],
+        "conclusion": "创新药/CRO 强点集中但扩散不足，属于抱团/拥挤结构。；国防军工 有新出现或轮动增强迹象，需看次日扩散确认。",
+        "matched_themes": [
+          "创新药/CRO",
+          "国防军工"
+        ],
+        "definition_version": "2026-07-12.1"
+      },
+      {
+        "id": "small_deng",
+        "label": "小登",
+        "state": "observed_by_themes",
+        "direction": "mixed",
+        "definition": "当前创新周期中更前沿、成长弹性更高的新经济和科技题材方向。",
+        "representative_sectors": [
+          "AI算力",
+          "半导体",
+          "光模块/CPO",
+          "AI软件",
+          "机器人/具身智能",
+          "商业航天",
+          "低空经济",
+          "量子科技"
+        ],
+        "conclusion": "AI应用/物理AI 强点集中但扩散不足，属于抱团/拥挤结构。；算力 有升温迹象，但仍需量价和后排扩散验证。",
+        "matched_themes": [
+          "AI应用/物理AI",
+          "算力",
+          "AI算力"
+        ],
+        "definition_version": "2026-07-12.1"
+      },
+      {
+        "id": "microcap",
+        "label": "微盘",
+        "state": "usable_proxy",
+        "direction": "down",
+        "definition": "按市值和流动性刻画的独立市场结构维度，不等同于小登，也不能由题材风格推断。",
+        "representative_sectors": [],
+        "conclusion": "中证2000指数（新浪行情）最近交易日涨跌幅 -0.12%；仅描述市场结构，不推断小登题材。",
+        "proxy": {
+          "name": "中证2000指数",
+          "code": "932000",
+          "scope_note": "选取市值规模较小且流动性较好的2000只证券；只作为小微盘宽基代理，不等于纯微盘。"
+        },
+        "matched_themes": [],
+        "definition_version": "2026-07-12.1"
+      }
+    ],
+    "theme_shifts": [
+      {
+        "theme": "科技硬件链",
+        "state": "risk",
+        "conclusion": "科技硬件链 出现负反馈或风险信号，优先作为风险观察。",
+        "evidence": [
+          "电网与电力合计9只涨停，通用/专用设备合计7只涨停。",
+          "机械设备与航天映射重叠，电网多数为首板。",
+          "风电整机约+6.86%，但新能源扩散有限。",
+          "半导体/元件涨停仅华天科技1只。",
+          "材料平均约-1.18%，有研硅+7.20%、雅克+1.91%，安集/江丰/南大跌超4.8%。"
+        ],
+        "watch_next": [
+          "次日先看科创50与北方华创、中微公司止跌，未出现设备中军与港股半导体同步修复前不博弈。",
+          "只保留有研硅相对强势观察；等待雅克、沪硅、安集、江丰、南大至少3只同步止跌且港股半导体止跌。",
+          "执行Alpha风险优先，等待富创、正帆、新莱与设备中军、港股半导体同步止跌。",
+          "算力服务器仅作局部观察；半导体、CPO、PCB和电子布按风险处理，等待A/H同步止跌。"
+        ],
+        "risk": "科技硬件链 反抽不能直接当修复，先看负反馈是否收敛。",
+        "stocks": [
+          "金风科技",
+          "金利华电",
+          "华菱线缆",
+          "科陆电子",
+          "明阳智能",
+          "拉普拉斯",
+          "深科达",
+          "巨力索具"
+        ],
+        "quality_flags": [
+          "全局数据降级，主线变化需二次确认"
+        ]
+      },
+      {
+        "theme": "AI应用/物理AI",
+        "state": "crowded",
+        "conclusion": "AI应用/物理AI 强点集中但扩散不足，属于抱团/拥挤结构。",
+        "evidence": [
+          "申万计算机24只、通信11只涨幅不低于5%；算力通信约8只涨停。",
+          "紫光+7.65%、浪潮+4.11%、中科曙光+3.38%，但工业富联-4.69%、寒武纪-8.80%。",
+          "14:55-15:00紫光+0.47%、浪潮+0.42%，中科曙光-0.45%，尾盘仅部分支持。",
+          "港股AI应用正式收盘强分化：智谱-19.29%、商汤+2.17%，不构成应用端一致性共振。",
+          "持续活跃超过5个交易日但强度反复：前5日涨停4/6/3/11/2，今日回升至8只，属于轮动回流而非单边强化。"
+        ],
+        "watch_next": [
+          "次日只看A股是否出现多股涨停扩散与港股AI应用是否止跌共振；智谱大跌未收敛前不升级。"
+        ],
+        "risk": "AI应用/物理AI 若只有少数核心股强、后排不扩散，次日容易冲高回落。",
+        "stocks": [
+          "紫光股份",
+          "浪潮信息",
+          "中科曙光",
+          "华胜天成",
+          "移远通信",
+          "信科移动"
+        ],
+        "quality_flags": [
+          "全局数据降级，主线变化需二次确认"
+        ]
+      },
+      {
+        "theme": "创新药/CRO",
+        "state": "crowded",
+        "conclusion": "创新药/CRO 强点集中但扩散不足，属于抱团/拥挤结构。",
+        "evidence": [
+          "医药医疗合计10只涨停，较14:01的7只回升；常山药业、益诺思重回20cm封板。",
+          "医疗研发外包约+7.11%、CRO约+5.73%。",
+          "创新药六只样本全红、平均约+3.27%，恒瑞翻红，港股百济延迟快照+2.14%。",
+          "CRO +7.37%、CAR-T +6.33%、减肥药 +6.02%、创新医疗服务 +5.68%。",
+          "缺少涨停宽度和成交额审计，暂不升级为确定强主线。"
+        ],
+        "watch_next": [
+          "次日重点看A股高位核心竞价溢价，以及康方、百济、信达、诺诚健华能否延续。",
+          "按今天投资对话的筛选口径，优先跟踪恒瑞医药、科伦药业；若市值门槛放宽到200亿以上，普洛药业作为原料药弹性观察。华东医药、复星医药、上海医药估值空间好，但月线只反弹1个月，暂不作为当前主选。"
+        ],
+        "risk": "创新药/CRO 若只有少数核心股强、后排不扩散，次日容易冲高回落。",
+        "stocks": [
+          "昭衍新药",
+          "常山药业",
+          "益诺思",
+          "康龙化成",
+          "美诺华",
+          "百济神州"
+        ],
+        "quality_flags": [
+          "全局数据降级，主线变化需二次确认"
+        ]
+      },
+      {
+        "theme": "老登风格切换",
+        "state": "warming",
+        "conclusion": "老登风格切换 有升温迹象，但仍需量价和后排扩散验证。",
+        "evidence": [
+          "白酒约+3.10%、畜牧约+2.21%、保险四只全红且平均约+0.67%。",
+          "创业板-3.63%、科创50-3.71%，防御承接不再是单一板块。",
+          "券商平均约-1.37%，并非全面大金融主升。",
+          "白酒样本平均+3.49%、畜牧+2.21%、保险+0.61%，成长指数大跌，防御承接确认；券商仍弱。"
+        ],
+        "watch_next": [
+          "次日检查白酒、畜牧、保险延续及券商是否补涨；若成长止跌则降低权重。"
+        ],
+        "risk": "老登风格切换 需要次日竞价、量能和后排扩散共同确认。",
+        "stocks": [],
+        "quality_flags": [
+          "全局数据降级，主线变化需二次确认"
+        ]
+      },
+      {
+        "theme": "算力",
+        "state": "warming",
+        "conclusion": "算力 有升温迹象，但仍需量价和后排扩散验证。",
+        "evidence": [
+          "算力通信8只涨停；紫光、浪潮尾盘回升但中科曙光回落，分支仍不齐。"
+        ],
+        "watch_next": [
+          "看紫光、浪潮、中科曙光次日能否同向，且工业富联/寒武纪止跌。"
+        ],
+        "risk": "算力 需要次日竞价、量能和后排扩散共同确认。",
+        "stocks": [],
+        "quality_flags": [
+          "全局数据降级，主线变化需二次确认"
+        ]
+      },
+      {
+        "theme": "化工/材料/资源轮动",
+        "state": "warming",
+        "conclusion": "化工/材料/资源轮动 有升温迹象，但仍需量价和后排扩散验证。",
+        "evidence": [
+          "贵金属 +4.26%、工业金属 +3.18%、普钢 +3.06%。",
+          "上证 +0.76%，强于创业板 -0.65%和科创50 -0.41%，价值风格占优。"
+        ],
+        "watch_next": [
+          "看化工/材料/资源轮动核心股是否继续承接，并扩散到后排。"
+        ],
+        "risk": "化工/材料/资源轮动 需要次日竞价、量能和后排扩散共同确认。",
+        "stocks": [],
+        "quality_flags": [
+          "全局数据降级，主线变化需二次确认"
+        ]
+      },
+      {
+        "theme": "国防军工",
+        "state": "emerging",
+        "conclusion": "国防军工 有新出现或轮动增强迹象，需看次日扩散确认。",
+        "evidence": [
+          "军工电子及航天/航空/航海/地面装备合计13只涨停，较14:01增加1只。",
+          "航天装备约+11.01%，卫星互联网约+4.27%、北斗导航约+4.18%。",
+          "中国卫星涨停成交约49.9亿元、高德红外约29.3亿元；全市场炸板87只。",
+          "申万国防军工39只涨幅不低于5%，其中17只不低于8%。",
+          "军工电子、航天/航海装备合计10只涨停；中国卫星、航天电子成交均超过50亿元。"
+        ],
+        "watch_next": [
+          "看国防军工负反馈是否收敛，跌停/炸板是否减少。"
+        ],
+        "risk": "国防军工 需要次日竞价、量能和后排扩散共同确认。",
+        "stocks": [
+          "中国卫星",
+          "航天电子",
+          "高德红外",
+          "海兰信",
+          "中国卫通",
+          "航天发展"
+        ],
+        "quality_flags": [
+          "全局数据降级，主线变化需二次确认"
+        ]
+      },
+      {
+        "theme": "AI算力",
+        "state": "emerging",
+        "conclusion": "AI算力 有新出现或轮动增强迹象，需看次日扩散确认。",
+        "evidence": [
+          "算力通信约8只涨停，较14:01的9只继续减少；紫光开板至+8.21%。",
+          "浪潮+4.88%成交约233.4亿元、中科曙光+5.11%成交约154.0亿元，但3分钟动量为负。",
+          "工业富联-4.31%、寒武纪-5.88%，智谱延迟快照-14.37%。"
+        ],
+        "watch_next": [
+          "看AI算力核心股是否继续承接，并扩散到后排。"
+        ],
+        "risk": "AI算力 需要次日竞价、量能和后排扩散共同确认。",
+        "stocks": [],
+        "quality_flags": [
+          "全局数据降级，主线变化需二次确认"
+        ]
+      }
+    ],
+    "as_of": "2026-07-12T19:54:37+08:00",
+    "definition_version": "2026-07-12.1",
+    "governance_note": "老登/中登/小登属于市场俗称，没有官方统一分类标准。系统按产业周期与投资者风格建立可版本化口径，不按市值大小机械划分；具体公司可随主业、产业周期和市场叙事迁移。",
+    "source_refs": [
+      {
+        "type": "user_history",
+        "title": "既有对话口径：电网、新能源设备等被用户称为中登",
+        "url": null,
+        "retrieved_at": "2026-07-12"
+      },
+      {
+        "type": "mainstream_media",
+        "title": "新浪财经：中登包括新能源、光储、新能源车、医药、军工、有色等，且市场无统一官方定义",
+        "url": "https://finance.sina.com.cn/money/nmetal/hjfx/2026-07-01/doc-inifixkk6041634.shtml",
+        "retrieved_at": "2026-07-12"
+      },
+      {
+        "type": "mainstream_media",
+        "title": "东方财富：生物医药、新能源等从前沿成长进入中登语义",
+        "url": "https://finance.eastmoney.com/a/202509253523738311.html",
+        "retrieved_at": "2026-07-12"
+      },
+      {
+        "type": "official_methodology",
+        "title": "中证2000指数编制方案",
+        "url": "https://oss-ch.csindex.com.cn/static/html/csindex/public/uploads/indices/detail/files/zh_CN/20231208180041-932000_Index_Methodology_cn.pdf",
+        "retrieved_at": "2026-07-12"
+      },
+      {
+        "type": "official_factsheet",
+        "title": "中证2000指数事实表",
+        "url": "https://oss-ch.csindex.com.cn/static/html/csindex/public/uploads/indices/detail/files/zh_CN/932000factsheet.pdf",
+        "retrieved_at": "2026-07-12"
+      }
+    ]
+  },
+  "signals": [
+    {
+      "signal_id": "20260710-145620-cmp-risk-candidate",
+      "kind": "risk",
+      "state": "risk",
+      "title": "CMP/靶材/材料耗材",
+      "trigger": "题材快速回落",
+      "conclusion": "底池3分钟涨跌幅 -1.82%，上涨0%/下跌100%，成交放大7.12x至8.63x；安集科技、华海清科、江丰电子同步领跌，满足risk candidate硬阈值。还差双源交叉验证，不能升级confirmed。",
+      "action": "降低关注，等待风险收敛；未核验前不抄底。",
+      "evidence": [
+        {
+          "type": "trigger",
+          "summary": "底池3分钟涨跌幅 -1.82%，上涨0%/下跌100%，成交放大7.12x至8.63x；安集科技、华海清科、江丰电子同步领跌，满足risk candidate硬阈值。还差双源交叉验证，不能升级confirmed。",
+          "source": "alert.json",
+          "as_of": "14:56:20"
+        },
+        {
+          "type": "quote_audit",
+          "summary": "来源 本地盘中监控日志 monitor.log；样本 3；交叉验证 未通过",
+          "source": "本地盘中监控日志 monitor.log",
+          "as_of": "2026-07-10T14:56:20+08:00"
+        }
+      ],
+      "counter_evidence": [
+        "交叉行情验证未通过，不能升级为已确认机会。",
+        "全局数据状态为degraded，行动性结论降级。"
+      ],
+      "confirm_conditions": [
+        "关键行情交叉验证通过",
+        "代表股与板块扩散同向",
+        "在有效时间窗内保持触发"
+      ],
+      "invalidation_conditions": [
+        "超过有效期",
+        "代表股与板块背离",
+        "触发方向快速反转"
+      ],
+      "securities": [
+        {
+          "name": "华海清科",
+          "code": "sh688120",
+          "mapping_status": "mapped"
+        },
+        {
+          "name": "安集科技",
+          "code": "sh688019",
+          "mapping_status": "mapped"
+        },
+        {
+          "name": "江丰电子",
+          "code": "sz300666",
+          "mapping_status": "mapped"
+        }
+      ],
+      "outcome_windows": [
+        {
+          "window": "T+1",
+          "target_date": "2026-07-13",
+          "status": "pending_data",
+          "result": null
+        },
+        {
+          "window": "T+3",
+          "target_date": "2026-07-15",
+          "status": "pending_data",
+          "result": null
+        },
+        {
+          "window": "T+5",
+          "target_date": "2026-07-17",
+          "status": "pending_data",
+          "result": null
+        },
+        {
+          "window": "T+10",
+          "target_date": "2026-07-24",
+          "status": "pending_data",
+          "result": null
+        }
+      ]
+    },
+    {
+      "signal_id": "20260710-145649-packaging-risk-candidate",
+      "kind": "risk",
+      "state": "risk",
+      "title": "封装",
+      "trigger": "题材快速回落",
+      "conclusion": "底池3分钟涨跌幅-1.19%，上涨20%/下跌80%，成交放大9.34x、较昨同期1.39x；甬矽电子、富满微、长电科技领跌，满足risk candidate硬阈值。还差双源交叉验证，不能升级confirmed。",
+      "action": "降低关注，等待风险收敛；未核验前不抄底。",
+      "evidence": [
+        {
+          "type": "trigger",
+          "summary": "底池3分钟涨跌幅-1.19%，上涨20%/下跌80%，成交放大9.34x、较昨同期1.39x；甬矽电子、富满微、长电科技领跌，满足risk candidate硬阈值。还差双源交叉验证，不能升级confirmed。",
+          "source": "alert.json",
+          "as_of": "14:56:49"
+        },
+        {
+          "type": "quote_audit",
+          "summary": "来源 本地盘中监控日志 monitor.log；样本 5；交叉验证 未通过",
+          "source": "本地盘中监控日志 monitor.log",
+          "as_of": "2026-07-10T14:56:49+08:00"
+        }
+      ],
+      "counter_evidence": [
+        "交叉行情验证未通过，不能升级为已确认机会。",
+        "全局数据状态为degraded，行动性结论降级。"
+      ],
+      "confirm_conditions": [
+        "关键行情交叉验证通过",
+        "代表股与板块扩散同向",
+        "在有效时间窗内保持触发"
+      ],
+      "invalidation_conditions": [
+        "超过有效期",
+        "代表股与板块背离",
+        "触发方向快速反转"
+      ],
+      "securities": [
+        {
+          "name": "甬矽电子",
+          "code": "sh688362",
+          "mapping_status": "mapped"
+        },
+        {
+          "name": "富满微",
+          "code": "sz300671",
+          "mapping_status": "mapped"
+        },
+        {
+          "name": "长电科技",
+          "code": "sh600584",
+          "mapping_status": "mapped"
+        }
+      ],
+      "outcome_windows": [
+        {
+          "window": "T+1",
+          "target_date": "2026-07-13",
+          "status": "pending_data",
+          "result": null
+        },
+        {
+          "window": "T+3",
+          "target_date": "2026-07-15",
+          "status": "pending_data",
+          "result": null
+        },
+        {
+          "window": "T+5",
+          "target_date": "2026-07-17",
+          "status": "pending_data",
+          "result": null
+        },
+        {
+          "window": "T+10",
+          "target_date": "2026-07-24",
+          "status": "pending_data",
+          "result": null
+        }
+      ]
+    },
+    {
+      "signal_id": "decision_758e038f0ac093a34d1a",
+      "kind": "risk",
+      "state": "risk",
+      "title": "数据质量降级",
+      "trigger": "风控兜底触发：市场宽度、数据质量或回撤条件触发风险优先。",
+      "conclusion": "发现 66 个降级/需复核项（54 个价格/行情复核，1 个信号复核，12 个背景复核），核心结论可看但必须按影响分层使用。",
+      "action": "污染 alert 修复前，盘中异动信号必须降权；观察池个股涨跌幅以已审计源为准。",
+      "evidence": [
+        {
+          "type": "decision_evidence",
+          "summary": "时间戳不是当前交易日：2026-07-10T14:56:49+08:00",
+          "source": "quality-report.json, source-health.json",
+          "as_of": "2026-07-12T19:54:37+08:00"
+        },
+        {
+          "type": "decision_evidence",
+          "summary": "时间戳不是当前交易日：2026-07-10T14:43:40+08:00",
+          "source": "quality-report.json, source-health.json",
+          "as_of": "2026-07-12T19:54:37+08:00"
+        },
+        {
+          "type": "decision_evidence",
+          "summary": "时间戳不是当前交易日：2026-07-10T12:36:24+08:00",
+          "source": "quality-report.json, source-health.json",
+          "as_of": "2026-07-12T19:54:37+08:00"
+        },
+        {
+          "type": "decision_evidence",
+          "summary": "沪深300 change_pct 非数字：None，该字段忽略并降权",
+          "source": "quality-report.json, source-health.json",
+          "as_of": "2026-07-12T19:54:37+08:00"
+        }
+      ],
+      "counter_evidence": [],
+      "confirm_conditions": [
+        "污染 alert 修复前，盘中异动信号必须降权；观察池个股涨跌幅以已审计源为准。"
+      ],
+      "invalidation_conditions": [
+        "审计报告恢复 ok 且 source-health 不再提示关键行情源降级。"
+      ],
+      "securities": [],
+      "outcome_windows": [
+        {
+          "window": "T+1",
+          "target_date": "2026-07-13",
+          "status": "pending_data",
+          "result": null
+        },
+        {
+          "window": "T+3",
+          "target_date": "2026-07-15",
+          "status": "pending_data",
+          "result": null
+        },
+        {
+          "window": "T+5",
+          "target_date": "2026-07-17",
+          "status": "pending_data",
+          "result": null
+        },
+        {
+          "window": "T+10",
+          "target_date": "2026-07-24",
+          "status": "pending_data",
+          "result": null
+        }
+      ]
+    },
+    {
+      "signal_id": "20260710-145649-tech-hardware-risk-candidate",
+      "kind": "risk",
+      "state": "risk",
+      "title": "科技硬件链",
+      "trigger": "题材快速回落",
+      "conclusion": "底池3分钟涨跌幅-1.01%，上涨0%/下跌100%，成交放大7.17x、较昨同期1.49x；华海清科、安集科技、兆易创新等硬件链样本同步承压，满足risk candidate硬阈值。还差双源交叉验证，不能升级confirmed。",
+      "action": "降低关注，等待风险收敛；未核验前不抄底。",
+      "evidence": [
+        {
+          "type": "trigger",
+          "summary": "底池3分钟涨跌幅-1.01%，上涨0%/下跌100%，成交放大7.17x、较昨同期1.49x；华海清科、安集科技、兆易创新等硬件链样本同步承压，满足risk candidate硬阈值。还差双源交叉验证，不能升级confirmed。",
+          "source": "alert.json",
+          "as_of": "14:56:49"
+        },
+        {
+          "type": "quote_audit",
+          "summary": "来源 本地盘中监控日志 monitor.log；样本 9；交叉验证 未通过",
+          "source": "本地盘中监控日志 monitor.log",
+          "as_of": "2026-07-10T14:56:49+08:00"
+        }
+      ],
+      "counter_evidence": [
+        "交叉行情验证未通过，不能升级为已确认机会。",
+        "全局数据状态为degraded，行动性结论降级。"
+      ],
+      "confirm_conditions": [
+        "关键行情交叉验证通过",
+        "代表股与板块扩散同向",
+        "在有效时间窗内保持触发"
+      ],
+      "invalidation_conditions": [
+        "超过有效期",
+        "代表股与板块背离",
+        "触发方向快速反转"
+      ],
+      "securities": [
+        {
+          "name": "华海清科",
+          "code": "sh688120",
+          "mapping_status": "mapped"
+        },
+        {
+          "name": "安集科技",
+          "code": "sh688019",
+          "mapping_status": "mapped"
+        },
+        {
+          "name": "兆易创新",
+          "code": "sh603986",
+          "mapping_status": "mapped"
+        }
+      ],
+      "outcome_windows": [
+        {
+          "window": "T+1",
+          "target_date": "2026-07-13",
+          "status": "pending_data",
+          "result": null
+        },
+        {
+          "window": "T+3",
+          "target_date": "2026-07-15",
+          "status": "pending_data",
+          "result": null
+        },
+        {
+          "window": "T+5",
+          "target_date": "2026-07-17",
+          "status": "pending_data",
+          "result": null
+        },
+        {
+          "window": "T+10",
+          "target_date": "2026-07-24",
+          "status": "pending_data",
+          "result": null
+        }
+      ]
+    },
+    {
+      "signal_id": "20260710-145649-cxmt-map-risk-candidate",
+      "kind": "risk",
+      "state": "risk",
+      "title": "长鑫存储IPO映射",
+      "trigger": "题材快速回落",
+      "conclusion": "底池3分钟涨跌幅-1.05%，上涨0%/下跌100%，成交放大7.83x、较昨同期1.42x；富创精密、中微公司、江丰电子同步领跌，满足risk candidate硬阈值。还差双源交叉验证，不能升级confirmed。",
+      "action": "降低关注，等待风险收敛；未核验前不抄底。",
+      "evidence": [
+        {
+          "type": "trigger",
+          "summary": "底池3分钟涨跌幅-1.05%，上涨0%/下跌100%，成交放大7.83x、较昨同期1.42x；富创精密、中微公司、江丰电子同步领跌，满足risk candidate硬阈值。还差双源交叉验证，不能升级confirmed。",
+          "source": "alert.json",
+          "as_of": "14:56:49"
+        },
+        {
+          "type": "quote_audit",
+          "summary": "来源 本地盘中监控日志 monitor.log；样本 4；交叉验证 未通过",
+          "source": "本地盘中监控日志 monitor.log",
+          "as_of": "2026-07-10T14:56:49+08:00"
+        }
+      ],
+      "counter_evidence": [
+        "交叉行情验证未通过，不能升级为已确认机会。",
+        "全局数据状态为degraded，行动性结论降级。"
+      ],
+      "confirm_conditions": [
+        "关键行情交叉验证通过",
+        "代表股与板块扩散同向",
+        "在有效时间窗内保持触发"
+      ],
+      "invalidation_conditions": [
+        "超过有效期",
+        "代表股与板块背离",
+        "触发方向快速反转"
+      ],
+      "securities": [
+        {
+          "name": "富创精密",
+          "code": "sh688409",
+          "mapping_status": "mapped"
+        },
+        {
+          "name": "中微公司",
+          "code": "sh688012",
+          "mapping_status": "mapped"
+        },
+        {
+          "name": "江丰电子",
+          "code": "sz300666",
+          "mapping_status": "mapped"
+        }
+      ],
+      "outcome_windows": [
+        {
+          "window": "T+1",
+          "target_date": "2026-07-13",
+          "status": "pending_data",
+          "result": null
+        },
+        {
+          "window": "T+3",
+          "target_date": "2026-07-15",
+          "status": "pending_data",
+          "result": null
+        },
+        {
+          "window": "T+5",
+          "target_date": "2026-07-17",
+          "status": "pending_data",
+          "result": null
+        },
+        {
+          "window": "T+10",
+          "target_date": "2026-07-24",
+          "status": "pending_data",
+          "result": null
+        }
+      ]
+    },
+    {
+      "signal_id": "decision_f6dd89fa5069be1fdcde",
+      "kind": "opportunity",
+      "state": "waiting",
+      "title": "待触发：PCB/电子布",
+      "trigger": "盘前/晚间注意点已转为盘中追踪清单，等待实时行情触发。",
+      "conclusion": "Broadcom；定制芯片/AI网络链随科技修复；可靠精确涨幅未取得；[\"中际旭创\", \"沪电股份\", \"胜宏科技\"]；定制ASIC与高速互连 -> CPO/高端PCB情绪映射；工信部、商务部、发改委及政府官网截至20:00未检索到7月11日新增的半导体、AI、机器人、新材料或出口管制P0文件。；官方确认度没有周末新增加分；扩产、TGV/MicroLED、…",
+      "action": "题材3分钟涨跌幅>=1.5%，方向占比>=70%，成交放大>=5x",
+      "evidence": [],
+      "counter_evidence": [
+        "缺少可核验证据",
+        "数据源降级需二次确认",
+        "行情/涨跌幅需二次源复核",
+        "机会信号需降权转验证",
+        "盘中异动源降级，alert 类信号降权",
+        "港股收盘窗口可能非终值"
+      ],
+      "confirm_conditions": [
+        "题材3分钟涨跌幅>=1.5%，方向占比>=70%，成交放大>=5x",
+        "板块内出现批量涨停/封板或后排扩散",
+        "核心股、ETF、后排扩散同向确认",
+        "核心股低开后放量收复开盘价或跌幅明显收敛"
+      ],
+      "invalidation_conditions": [
+        "核心股高开低走或冲高回落"
+      ],
+      "securities": [],
+      "outcome_windows": [
+        {
+          "window": "T+1",
+          "target_date": "2026-07-13",
+          "status": "pending_data",
+          "result": null
+        },
+        {
+          "window": "T+3",
+          "target_date": "2026-07-15",
+          "status": "pending_data",
+          "result": null
+        },
+        {
+          "window": "T+5",
+          "target_date": "2026-07-17",
+          "status": "pending_data",
+          "result": null
+        },
+        {
+          "window": "T+10",
+          "target_date": "2026-07-24",
+          "status": "pending_data",
+          "result": null
+        }
+      ]
+    },
+    {
+      "signal_id": "decision_8f91b28241b1b622736d",
+      "kind": "opportunity",
+      "state": "waiting",
+      "title": "待触发：半导体制造",
+      "trigger": "盘前/晚间注意点已转为盘中追踪清单，等待实时行情触发。",
+      "conclusion": "9:15阶段外部情绪偏正，但A股尚未集合竞价；科技假设暂为部分确认，9:25以涨跌停差值、核心股批量高低开和板块扩散作最终开盘判断。；美股AI情绪回暖但存储内部背离，周一只作映射验证；周五美股三大指数温和上涨，英伟达和AMD走强、SK海力士ADR首日大涨，但美光下跌且SOXX近乎持平；这会改善A股AI开盘情绪，却不构成全球半导体板块一致确认。；[\"A股存储…",
+      "action": "题材3分钟涨跌幅>=1.5%，方向占比>=70%，成交放大>=5x",
+      "evidence": [],
+      "counter_evidence": [
+        "缺少可核验证据",
+        "数据源降级需二次确认",
+        "行情/涨跌幅需二次源复核",
+        "机会信号需降权转验证",
+        "盘中异动源降级，alert 类信号降权",
+        "港股收盘窗口可能非终值"
+      ],
+      "confirm_conditions": [
+        "题材3分钟涨跌幅>=1.5%，方向占比>=70%，成交放大>=5x",
+        "板块内出现批量涨停/封板或后排扩散",
+        "核心股、ETF、后排扩散同向确认",
+        "核心股低开后放量收复开盘价或跌幅明显收敛"
+      ],
+      "invalidation_conditions": [
+        "核心股高开低走或冲高回落"
+      ],
+      "securities": [],
+      "outcome_windows": [
+        {
+          "window": "T+1",
+          "target_date": "2026-07-13",
+          "status": "pending_data",
+          "result": null
+        },
+        {
+          "window": "T+3",
+          "target_date": "2026-07-15",
+          "status": "pending_data",
+          "result": null
+        },
+        {
+          "window": "T+5",
+          "target_date": "2026-07-17",
+          "status": "pending_data",
+          "result": null
+        },
+        {
+          "window": "T+10",
+          "target_date": "2026-07-24",
+          "status": "pending_data",
+          "result": null
+        }
+      ]
+    },
+    {
+      "signal_id": "decision_6c694ad1c7d531d303a0",
+      "kind": "opportunity",
+      "state": "waiting",
+      "title": "待触发：半导体材料",
+      "trigger": "盘前/晚间注意点已转为盘中追踪清单，等待实时行情触发。",
+      "conclusion": "9:15阶段外部情绪偏正，但A股尚未集合竞价；科技假设暂为部分确认，9:25以涨跌停差值、核心股批量高低开和板块扩散作最终开盘判断。；Micron围绕300mm硅片供应链、GlobalWafers融资和10年供应协议强化AI内存扩产叙事。；H2扩产解决紧缺部分确认；映射硅片、材料、设备、HBM/封测。；沪硅产业、有研硅、雅克科技、江丰电子、北方华创、中微公…",
+      "action": "题材3分钟涨跌幅>=1.5%，方向占比>=70%，成交放大>=5x",
+      "evidence": [],
+      "counter_evidence": [
+        "缺少可核验证据",
+        "数据源降级需二次确认",
+        "行情/涨跌幅需二次源复核",
+        "机会信号需降权转验证",
+        "盘中异动源降级，alert 类信号降权",
+        "港股收盘窗口可能非终值"
+      ],
+      "confirm_conditions": [
+        "题材3分钟涨跌幅>=1.5%，方向占比>=70%，成交放大>=5x",
+        "板块内出现批量涨停/封板或后排扩散",
+        "核心股、ETF、后排扩散同向确认",
+        "核心股低开后放量收复开盘价或跌幅明显收敛"
+      ],
+      "invalidation_conditions": [
+        "核心股高开低走或冲高回落"
+      ],
+      "securities": [],
+      "outcome_windows": [
+        {
+          "window": "T+1",
+          "target_date": "2026-07-13",
+          "status": "pending_data",
+          "result": null
+        },
+        {
+          "window": "T+3",
+          "target_date": "2026-07-15",
+          "status": "pending_data",
+          "result": null
+        },
+        {
+          "window": "T+5",
+          "target_date": "2026-07-17",
+          "status": "pending_data",
+          "result": null
+        },
+        {
+          "window": "T+10",
+          "target_date": "2026-07-24",
+          "status": "pending_data",
+          "result": null
+        }
+      ]
+    },
+    {
+      "signal_id": "decision_dade5a51988a75743f08",
+      "kind": "opportunity",
+      "state": "waiting",
+      "title": "待触发：半导体设备",
+      "trigger": "盘前/晚间注意点已转为盘中追踪清单，等待实时行情触发。",
+      "conclusion": "9:15阶段外部情绪偏正，但A股尚未集合竞价；科技假设暂为部分确认，9:25以涨跌停差值、核心股批量高低开和板块扩散作最终开盘判断。；美股7月9日三大指数反弹，纳指+1.3%、标普+0.8%、道指+0.3%，芯片股和油价回落是主要支撑。；对A股科技硬件和半导体开盘偏提振。；半导体设备、材料、HBM/封测、AI算力；美股芯片修复 -> A/H半导体情绪共振 …",
+      "action": "题材3分钟涨跌幅>=1.5%，方向占比>=70%，成交放大>=5x",
+      "evidence": [],
+      "counter_evidence": [
+        "缺少可核验证据",
+        "数据源降级需二次确认",
+        "行情/涨跌幅需二次源复核",
+        "机会信号需降权转验证",
+        "盘中异动源降级，alert 类信号降权",
+        "港股收盘窗口可能非终值"
+      ],
+      "confirm_conditions": [
+        "题材3分钟涨跌幅>=1.5%，方向占比>=70%，成交放大>=5x",
+        "板块内出现批量涨停/封板或后排扩散",
+        "核心股、ETF、后排扩散同向确认",
+        "核心股低开后放量收复开盘价或跌幅明显收敛"
+      ],
+      "invalidation_conditions": [
+        "核心股高开低走或冲高回落"
+      ],
+      "securities": [],
+      "outcome_windows": [
+        {
+          "window": "T+1",
+          "target_date": "2026-07-13",
+          "status": "pending_data",
+          "result": null
+        },
+        {
+          "window": "T+3",
+          "target_date": "2026-07-15",
+          "status": "pending_data",
+          "result": null
+        },
+        {
+          "window": "T+5",
+          "target_date": "2026-07-17",
+          "status": "pending_data",
+          "result": null
+        },
+        {
+          "window": "T+10",
+          "target_date": "2026-07-24",
+          "status": "pending_data",
+          "result": null
+        }
+      ]
+    },
+    {
+      "signal_id": "decision_fa1b4913e031cfca44cb",
+      "kind": "opportunity",
+      "state": "waiting",
+      "title": "待触发：半导体设备材料",
+      "trigger": "盘前/晚间注意点已转为盘中追踪清单，等待实时行情触发。",
+      "conclusion": "Micron围绕300mm硅片供应链、GlobalWafers融资和10年供应协议强化AI内存扩产叙事。；H2扩产解决紧缺部分确认；映射硅片、材料、设备、HBM/封测。；沪硅产业、有研硅、雅克科技、江丰电子、北方华创、中微公司、长电科技；海外内存扩产 -> 硅片/设备/材料订单预期 -> A股材料设备竞价验证。；半导体设备材料；风险；设备和材料拆分观察，先…",
+      "action": "题材3分钟涨跌幅>=1.5%，方向占比>=70%，成交放大>=5x",
+      "evidence": [],
+      "counter_evidence": [
+        "缺少可核验证据",
+        "数据源降级需二次确认",
+        "行情/涨跌幅需二次源复核",
+        "机会信号需降权转验证",
+        "盘中异动源降级，alert 类信号降权",
+        "港股收盘窗口可能非终值"
+      ],
+      "confirm_conditions": [
+        "题材3分钟涨跌幅>=1.5%，方向占比>=70%，成交放大>=5x",
+        "板块内出现批量涨停/封板或后排扩散",
+        "核心股、ETF、后排扩散同向确认",
+        "核心股低开后放量收复开盘价或跌幅明显收敛"
+      ],
+      "invalidation_conditions": [
+        "核心股高开低走或冲高回落"
+      ],
+      "securities": [],
+      "outcome_windows": [
+        {
+          "window": "T+1",
+          "target_date": "2026-07-13",
+          "status": "pending_data",
+          "result": null
+        },
+        {
+          "window": "T+3",
+          "target_date": "2026-07-15",
+          "status": "pending_data",
+          "result": null
+        },
+        {
+          "window": "T+5",
+          "target_date": "2026-07-17",
+          "status": "pending_data",
+          "result": null
+        },
+        {
+          "window": "T+10",
+          "target_date": "2026-07-24",
+          "status": "pending_data",
+          "result": null
+        }
+      ]
+    },
+    {
+      "signal_id": "decision_c1ccb83327ca7b5be7fb",
+      "kind": "opportunity",
+      "state": "waiting",
+      "title": "待触发：存储/HBM",
+      "trigger": "盘前/晚间注意点已转为盘中追踪清单，等待实时行情触发。",
+      "conclusion": "9:15阶段外部情绪偏正，但A股尚未集合竞价；科技假设暂为部分确认，9:25以涨跌停差值、核心股批量高低开和板块扩散作最终开盘判断。；美股7月9日三大指数反弹，纳指+1.3%、标普+0.8%、道指+0.3%，芯片股和油价回落是主要支撑。；对A股科技硬件和半导体开盘偏提振。；半导体设备、材料、HBM/封测、AI算力；美股芯片修复 -> A/H半导体情绪共振 …",
+      "action": "题材3分钟涨跌幅>=1.5%，方向占比>=70%，成交放大>=5x",
+      "evidence": [],
+      "counter_evidence": [
+        "缺少可核验证据",
+        "数据源降级需二次确认",
+        "行情/涨跌幅需二次源复核",
+        "机会信号需降权转验证",
+        "盘中异动源降级，alert 类信号降权",
+        "港股收盘窗口可能非终值"
+      ],
+      "confirm_conditions": [
+        "题材3分钟涨跌幅>=1.5%，方向占比>=70%，成交放大>=5x",
+        "板块内出现批量涨停/封板或后排扩散",
+        "核心股、ETF、后排扩散同向确认",
+        "核心股低开后放量收复开盘价或跌幅明显收敛"
+      ],
+      "invalidation_conditions": [
+        "核心股高开低走或冲高回落"
+      ],
+      "securities": [],
+      "outcome_windows": [
+        {
+          "window": "T+1",
+          "target_date": "2026-07-13",
+          "status": "pending_data",
+          "result": null
+        },
+        {
+          "window": "T+3",
+          "target_date": "2026-07-15",
+          "status": "pending_data",
+          "result": null
+        },
+        {
+          "window": "T+5",
+          "target_date": "2026-07-17",
+          "status": "pending_data",
+          "result": null
+        },
+        {
+          "window": "T+10",
+          "target_date": "2026-07-24",
+          "status": "pending_data",
+          "result": null
+        }
+      ]
+    },
+    {
+      "signal_id": "decision_ed78a6b6fc4e1fea8575",
+      "kind": "opportunity",
+      "state": "waiting",
+      "title": "待触发：机器人/工业自动化",
+      "trigger": "盘前/晚间注意点已转为盘中追踪清单，等待实时行情触发。",
+      "conclusion": "2026世界人工智能大会将于7月17日至20日在上海举行；新华社引述工信部称今年人形机器人整机产量有望突破10万台。工信部此前已发布人形机器人与具身智能实景实训专项行动。；机器人/工业自动化获得官媒和部委确认度，但大会与实训行动为既有催化，不是7月11日突发；周一仍需全市场扩散。；人形机器人整机与零部件 -> 机器人…；工信部、商务部、发改委及政府官网截至…",
+      "action": "题材3分钟涨跌幅>=1.5%，方向占比>=70%，成交放大>=5x",
+      "evidence": [],
+      "counter_evidence": [
+        "缺少可核验证据",
+        "数据源降级需二次确认",
+        "行情/涨跌幅需二次源复核",
+        "机会信号需降权转验证",
+        "盘中异动源降级，alert 类信号降权",
+        "港股收盘窗口可能非终值"
+      ],
+      "confirm_conditions": [
+        "题材3分钟涨跌幅>=1.5%，方向占比>=70%，成交放大>=5x",
+        "板块内出现批量涨停/封板或后排扩散",
+        "核心股、ETF、后排扩散同向确认",
+        "核心股低开后放量收复开盘价或跌幅明显收敛"
+      ],
+      "invalidation_conditions": [
+        "核心股高开低走或冲高回落"
+      ],
+      "securities": [],
+      "outcome_windows": [
+        {
+          "window": "T+1",
+          "target_date": "2026-07-13",
+          "status": "pending_data",
+          "result": null
+        },
+        {
+          "window": "T+3",
+          "target_date": "2026-07-15",
+          "status": "pending_data",
+          "result": null
+        },
+        {
+          "window": "T+5",
+          "target_date": "2026-07-17",
+          "status": "pending_data",
+          "result": null
+        },
+        {
+          "window": "T+10",
+          "target_date": "2026-07-24",
+          "status": "pending_data",
+          "result": null
+        }
+      ]
+    },
+    {
+      "signal_id": "decision_e774adcdd8dca35fbb36",
+      "kind": "opportunity",
+      "state": "waiting",
+      "title": "待触发：金融/消费防御",
+      "trigger": "盘前/晚间注意点已转为盘中追踪清单，等待实时行情触发。",
+      "conclusion": "金融与消费防御业绩分化，风格切换雷达不能一概而论；中信证券大幅预增与牧原股份巨额预亏方向相反，可能使周一老登风格从笼统的金融+消费防御切成券商偏强、畜牧承压，直接影响指数权重与防御仓位的优先级。；[\"中信证券、东方财富、华泰证券、中国银河是否至少2至3只同向放量，并与沪深300、上证指数共振。\", \"牧原股份低开是否…；中信证券上半年业绩预增，而牧原股份预…",
+      "action": "券商+保险或畜牧+白酒至少两个方向同步放量走强",
+      "evidence": [],
+      "counter_evidence": [
+        "缺少可核验证据",
+        "数据源降级需二次确认",
+        "行情/涨跌幅需二次源复核",
+        "机会信号需降权转验证",
+        "盘中异动源降级，alert 类信号降权",
+        "港股收盘窗口可能非终值"
+      ],
+      "confirm_conditions": [
+        "券商+保险或畜牧+白酒至少两个方向同步放量走强",
+        "科技主线或科创50走弱时老登板块对指数形成贡献",
+        "涨停/成交额向金融、消费防御或资源权重扩散",
+        "核心股低开后放量收复开盘价或跌幅明显收敛"
+      ],
+      "invalidation_conditions": [
+        "核心股高开低走或冲高回落"
+      ],
+      "securities": [],
+      "outcome_windows": [
+        {
+          "window": "T+1",
+          "target_date": "2026-07-13",
+          "status": "pending_data",
+          "result": null
+        },
+        {
+          "window": "T+3",
+          "target_date": "2026-07-15",
+          "status": "pending_data",
+          "result": null
+        },
+        {
+          "window": "T+5",
+          "target_date": "2026-07-17",
+          "status": "pending_data",
+          "result": null
+        },
+        {
+          "window": "T+10",
+          "target_date": "2026-07-24",
+          "status": "pending_data",
+          "result": null
+        }
+      ]
+    }
+  ],
+  "learning_policy_version": "2026-07-12.1",
+  "decision_model_version": "decision-v2.0-baseline-1",
+  "calendar_version": "cn-sse-2026-1"
+}
