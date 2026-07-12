@@ -35,6 +35,8 @@ class V2DecisionSystemTests(unittest.TestCase):
         }
         self.assertTrue(required.issubset(self.payload))
         self.assertEqual(self.payload["system"]["mode"], "shadow_only")
+        self.assertEqual(self.payload["system"]["operation_strategy"], "parallel_shadow")
+        self.assertTrue(self.payload["system"]["stop_v1_requires_new_user_confirmation"])
         self.assertFalse(self.payload["system"]["production_behavior_changed"])
         self.assertEqual(self.payload["system"]["decision_model_version"], "decision-v2.0-baseline-1")
 

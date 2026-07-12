@@ -43,6 +43,7 @@ class V2CompletionAuditBuilder:
         sentiment = as_dict(environment.get("sentiment_structure"))
         radar = as_list(decision.get("opportunity_radar"))
         rollout = load_json(self.root / "config" / "v2-rollout.json")
+        operation = as_dict(rollout.get("operation_strategy"))
         production = Path(str(as_dict(rollout.get("production_v1")).get("path") or ""))
         production_config = as_dict(rollout.get("production_v1"))
         v1_code = production_v1_code_state(
@@ -79,8 +80,9 @@ class V2CompletionAuditBuilder:
             ),
             self._check("portfolio_authorization", "data_pending" if as_dict(decision.get("portfolio_risk")).get("state") == "rules_only" else "proven", "真实持仓、成本、现金和风险预算未接入"),
             self._check("no_automatic_trading", "proven" if decision.get("system", {}).get("mode") == "shadow_only" and load_json(self.root / "config" / "v2-learning-policy.json").get("model_change_policy", {}).get("automatic_live_weight_change") is False else "failed", "影子模式；不自动交易，不自动修改线上权重"),
+            self._check("parallel_v1_v2", "proven" if operation.get("mode") == "parallel_shadow" and operation.get("v1_role") == "production_primary" and operation.get("stop_v1_requires_new_user_confirmation") is True else "failed", "用户已确认V1生产、V2影子双轨并行；停用V1必须再次确认"),
             self._check("v1_rollback", "proven" if v1_code["passed"] else "failed", "V1程序与入口保持冻结基线；原生产数据任务可继续更新"),
-            self._check("production_cutover", "user_confirmation" if decision.get("system", {}).get("mode") == "shadow_only" else "proven", "生产主入口切换属于重大产品选择，等待用户确认"),
+            self._check("production_cutover", "user_confirmation" if decision.get("system", {}).get("mode") == "shadow_only" else "proven", "用户已确认暂不切换；待V2稳定后，停用V1或切换主入口仍需再次确认"),
         ]
         counts = {state: sum(item["state"] == state for item in checks) for state in ("proven", "data_pending", "user_confirmation", "missing", "failed")}
         hard_fail = counts["missing"] + counts["failed"]

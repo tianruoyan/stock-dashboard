@@ -410,7 +410,7 @@ function bindStockSearch() {
 function renderAll(data) {
   v2State = data;
   const system = data.system || {};
-  document.getElementById("v2-mode").textContent = system.mode === "shadow_only" ? "影子模式" : system.mode || "未知模式";
+  document.getElementById("v2-mode").textContent = system.operation_strategy === "parallel_shadow" ? "双轨影子" : (system.mode === "shadow_only" ? "影子模式" : system.mode || "未知模式");
   document.getElementById("v2-updated").textContent = `证据 ${compactTime(system.decision_as_of)}`;
   const qualityState = data.data_quality_gate?.state || "blocked";
   const status = document.getElementById("v2-status");

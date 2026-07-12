@@ -18,6 +18,8 @@ class V2AcceptanceTests(unittest.TestCase):
         self.assertEqual(self.report["shadow_acceptance"], "passed")
         if self.report["quality_state"] != "usable":
             self.assertEqual(self.report["production_promotion"], "hold")
+        parallel = next(item for item in self.report["checks"] if item["id"] == "parallel_operation")
+        self.assertTrue(parallel["passed"])
 
     def test_rollback_keeps_production_v1_baseline(self) -> None:
         self.assertEqual(self.report["rollback_rehearsal"]["status"], "passed")

@@ -1,6 +1,15 @@
 {
   "schema_version": 1,
   "version": "2026-07-12.1",
+  "operation_strategy": {
+    "mode": "parallel_shadow",
+    "user_confirmed_at": "2026-07-12",
+    "v1_role": "production_primary",
+    "v2_role": "shadow_observer",
+    "shared_data_policy": "同批数据分别生成两套判断；V2不得反向修改V1产物。",
+    "stop_v1_requires_new_user_confirmation": true,
+    "stability_gate": ["连续交易日构建无阻断", "关键来源失败显著收敛", "T+1/T+3/T+5/T+10结果开始形成", "V1与V2差异可解释", "V1即时回滚继续通过"]
+  },
   "production_v1": {
     "path": "/Users/sweet_orange/stock-dashboard",
     "baseline_commit": "2e5f149",

@@ -53,6 +53,7 @@ class V2AcceptanceBuilder:
         learning = load_json(self.root / "config" / "v2-learning-policy.json")
         completion = load_json(self.data / "completion-audit.json")
         production_config = self.rollout.get("production_v1") or {}
+        operation = self.rollout.get("operation_strategy") or {}
         production = Path(str(production_config.get("path") or ""))
         production_head = git_output(production, "rev-parse", "HEAD") if production.exists() else ""
         baseline = str(production_config.get("baseline_commit") or "")
@@ -60,6 +61,7 @@ class V2AcceptanceBuilder:
         v1_code = production_v1_code_state(production, baseline, protected_paths)
         checks = [
             self._check("v2_shadow_mode", decision.get("system", {}).get("mode") == "shadow_only", "V2仍为影子模式，不触发生产交易或通知。"),
+            self._check("parallel_operation", operation.get("mode") == "parallel_shadow" and operation.get("v1_role") == "production_primary" and operation.get("stop_v1_requires_new_user_confirmation") is True, "用户已确认V1/V2双轨并行；停用V1需要再次确认。"),
             self._check("static_smoke", smoke.get("status") == "ok", f"V2页面检查：{smoke.get('status') or 'missing'}"),
             self._check("unified_build_not_blocked", build.get("status") != "blocked" and bool(build), f"统一构建：{build.get('status') or 'missing'}"),
             self._check("research_domains", len(research.get("domains") or []) >= 6, f"产业领域：{len(research.get('domains') or [])}"),
@@ -100,8 +102,8 @@ class V2AcceptanceBuilder:
             },
             {
                 "id": "production_promotion",
-                "status": promotion_state,
-                "question": "影子版验收后是否将V2设为生产主入口；切换前仍保持V1不变。"
+                "status": "parallel_run_confirmed_cutover_deferred",
+                "question": "已确认先双轨并行；只有V2稳定且您再次授权后，才切换主入口或停用V1。"
             },
         ]
         return {

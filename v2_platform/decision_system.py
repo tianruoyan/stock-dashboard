@@ -114,6 +114,7 @@ class V2DecisionSystemBuilder:
         self.topic_config = self._load_config("topics-list.json")
         self.style_taxonomy = self._load_config("v2-style-taxonomy.json")
         self.model_registry = self._load_config("v2-model-registry.json")
+        self.rollout = self._load_config("v2-rollout.json")
 
     def build(self) -> dict[str, Any]:
         quality = self._quality_gate()
@@ -141,6 +142,10 @@ class V2DecisionSystemBuilder:
                 "version": "V2.0-shadow",
                 "decision_model_version": text(as_dict(self.model_registry.get("baseline")).get("version"), "unversioned"),
                 "mode": "shadow_only",
+                "operation_strategy": text(as_dict(self.rollout.get("operation_strategy")).get("mode"), "parallel_shadow"),
+                "v1_role": text(as_dict(self.rollout.get("operation_strategy")).get("v1_role"), "production_primary"),
+                "v2_role": text(as_dict(self.rollout.get("operation_strategy")).get("v2_role"), "shadow_observer"),
+                "stop_v1_requires_new_user_confirmation": as_dict(self.rollout.get("operation_strategy")).get("stop_v1_requires_new_user_confirmation") is True,
                 "generated_at": now_iso(),
                 "latest_source_at": newest_time(timestamps),
                 "decision_as_of": oldest_time(critical_timestamps),
