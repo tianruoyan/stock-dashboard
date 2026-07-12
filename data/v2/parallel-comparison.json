@@ -1,0 +1,119 @@
+{
+  "schema_version": 1,
+  "generated_at": "2026-07-12T20:44:26+08:00",
+  "mode": "parallel_shadow",
+  "state": "comparable",
+  "headline": "V1继续生产，V2继续影子；差异只用于解释和回溯。",
+  "v1": {
+    "label": "V1",
+    "role": "production_primary",
+    "git_head": "cc847c9ace60664e627cebf297a889bbd2cc30e4",
+    "entry_ok": true,
+    "market_date": "2026-07-12",
+    "quality_state": "degraded",
+    "quality_issue_count": 53,
+    "price_review_count": 47,
+    "automation_state": "blocked",
+    "build_state": "degraded",
+    "runtime_state": "ok",
+    "opportunity_count": 8,
+    "risk_count": 8,
+    "evidence_as_of": "2026-07-12T20:15:16+08:00"
+  },
+  "v2": {
+    "label": "V2",
+    "role": "shadow_observer",
+    "git_head": "785a9adc4d96af7a4e3f3d4b92c52c11650dffa5",
+    "entry_ok": true,
+    "market_date": "2026-07-10",
+    "quality_state": "degraded",
+    "quality_issue_count": 9,
+    "price_review_count": 5,
+    "automation_state": "ok",
+    "build_state": "running",
+    "runtime_state": "ok",
+    "opportunity_count": 4,
+    "risk_count": 12,
+    "evidence_as_of": "2026-07-12T20:44:15+08:00"
+  },
+  "consensus": {
+    "signal_title_count": 8,
+    "titles": [
+      "主线变化：金融/消费防御",
+      "创新药/CRO验证",
+      "数据质量降级",
+      "盘中追踪：半导体材料",
+      "盘中追踪：半导体设备",
+      "盘中追踪：半导体设备材料",
+      "盘中追踪：存储/HBM",
+      "盘中追踪：金融/消费防御"
+    ],
+    "note": "标题相同不代表证据链、行动条件或质量状态相同。"
+  },
+  "divergences": [
+    {
+      "id": "market_date",
+      "level": "must_explain",
+      "conclusion": "V1市场日为 2026-07-12，V2为 2026-07-10。",
+      "action": "以交易所日历核验；日期未统一前不得比较命中率或切换主入口。"
+    },
+    {
+      "id": "automation_state",
+      "level": "must_explain",
+      "conclusion": "V1自动化状态 blocked，V2为 ok。",
+      "action": "展开两边任务诊断；不得把周末无产出误判成交易日故障。"
+    },
+    {
+      "id": "quality_issues",
+      "level": "observe",
+      "conclusion": "V1记录 53 个质量问题，V2记录 9 个。",
+      "action": "只比较问题分类与证据，不以问题更少直接证明判断更优。"
+    },
+    {
+      "id": "signal_titles",
+      "level": "observe",
+      "conclusion": "仅V1 14 条、仅V2 15 条。",
+      "action": "逐条核对触发原因、来源和失效条件。",
+      "only_v1": [
+        "主线变化：AI应用/物理AI",
+        "主线变化：创新药/CRO",
+        "半导体材料",
+        "半导体设备",
+        "半导体零部件",
+        "回避/降级集合",
+        "机器人",
+        "机器人/工业自动化",
+        "电力设备/电网",
+        "电子布/玻纤轮动",
+        "盘中追踪：机器人/工业自动化",
+        "科技硬件链"
+      ],
+      "only_v2": [
+        "AI算力/通信/计算机",
+        "CPO/PCB",
+        "PCB/电子布/玻纤",
+        "主线变化：AI算力",
+        "主线变化：国防军工",
+        "全市场亏钱效应",
+        "医药/CRO",
+        "半导体材料/先进封装",
+        "半导体设备/材料/零部件",
+        "国防军工/航天",
+        "机械设备",
+        "电子布/玻纤"
+      ]
+    }
+  ],
+  "cutover": {
+    "ready": false,
+    "state": "hold_parallel",
+    "reason": "用户已确认先并行；结果窗口、来源稳定性和差异解释尚未达到停用V1条件。",
+    "requires_new_user_confirmation": true
+  },
+  "guardrails": [
+    "不以问题数量替代投资判断质量",
+    "不自动停用V1",
+    "不自动交易",
+    "不同市场日的数据禁止直接比较命中率"
+  ]
+}
