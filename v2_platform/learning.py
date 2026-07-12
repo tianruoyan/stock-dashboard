@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+from copy import deepcopy
 from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
 from typing import Any
@@ -157,7 +158,7 @@ class V2LearningBuilder:
             "decision_model_version": system.get("decision_model_version"),
             "calendar_version": self.calendar.version,
         }
-        digest = stable_hash(frozen)
+        digest = stable_hash(self._semantic_snapshot(frozen))
         return {
             "schema_version": SCHEMA_VERSION,
             "snapshot_id": f"snapshot_{digest[:20]}",
@@ -165,6 +166,24 @@ class V2LearningBuilder:
             "created_at": now_iso(),
             **frozen,
         }
+
+    @staticmethod
+    def _semantic_snapshot(frozen: dict[str, Any]) -> dict[str, Any]:
+        """Exclude rebuild-clock metadata while retaining all decision facts and values."""
+        semantic = deepcopy(frozen)
+        quality = as_dict(semantic.get("quality"))
+        for item in as_list(quality.get("evidence")):
+            if isinstance(item, dict):
+                item.pop("as_of", None)
+        style = as_dict(semantic.get("style_map"))
+        style.pop("as_of", None)
+        for signal in as_list(semantic.get("signals")):
+            if not isinstance(signal, dict):
+                continue
+            for item in as_list(signal.get("evidence")):
+                if isinstance(item, dict) and (item.get("type") == "data_quality" or "quality-report.json" in str(item.get("source") or "")):
+                    item.pop("as_of", None)
+        return semantic
 
     def _index(self, snapshot: dict[str, Any], path: Path) -> dict[str, Any]:
         current = load_json(self.out_dir / "replay-index.json")
@@ -180,6 +199,18 @@ class V2LearningBuilder:
         }
         entries = [item for item in entries if item.get("snapshot_id") != ref["snapshot_id"]]
         entries.append(ref)
+        deduped: dict[str, dict[str, Any]] = {}
+        for item in entries:
+            candidate_snapshot = load_json(self.root / str(item.get("path") or ""))
+            semantic_hash = self._snapshot_semantic_hash(candidate_snapshot)
+            if not semantic_hash:
+                continue
+            candidate = {**item, "semantic_hash": semantic_hash}
+            previous = deduped.get(semantic_hash)
+            # Prefer snapshots written with the semantic-hash scheme over legacy rebuild-clock hashes.
+            if previous is None or candidate.get("content_hash") == semantic_hash:
+                deduped[semantic_hash] = candidate
+        entries = list(deduped.values())
         entries.sort(key=lambda item: str(item.get("decision_as_of") or ""), reverse=True)
         return {
             "schema_version": SCHEMA_VERSION,
@@ -189,6 +220,19 @@ class V2LearningBuilder:
             "calendar_version": self.calendar.version,
             "learning_policy_version": self.policy.get("version"),
         }
+
+    @classmethod
+    def _snapshot_semantic_hash(cls, snapshot: dict[str, Any]) -> str | None:
+        if not snapshot:
+            return None
+        frozen = {
+            key: snapshot.get(key)
+            for key in (
+                "decision_as_of", "decision_date", "quality", "market_environment", "style_map",
+                "signals", "learning_policy_version", "decision_model_version", "calendar_version",
+            )
+        }
+        return stable_hash(cls._semantic_snapshot(frozen))
 
     def _window_rows(self, decision_date: date | None, windows: list[int]) -> list[dict[str, Any]]:
         rows = []

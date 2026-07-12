@@ -6,13 +6,28 @@ import unittest
 from pathlib import Path
 
 from v2_platform.decision_system import V2DecisionSystemBuilder
-from v2_platform.learning import TradingCalendar, V2LearningBuilder
+from v2_platform.learning import TradingCalendar, V2LearningBuilder, stable_hash
 
 
 ROOT = Path(__file__).resolve().parents[1]
 
 
 class V2LearningTests(unittest.TestCase):
+    def test_snapshot_id_ignores_rebuild_clock_only(self) -> None:
+        base = {
+            "quality": {"state": "degraded", "evidence": [{"summary": "same", "as_of": "2026-07-12T10:00:00+08:00"}]},
+            "style_map": {"as_of": "2026-07-12T10:00:00+08:00", "dimensions": []},
+            "signals": [{"evidence": [{"type": "decision_evidence", "source": "quality-report.json, source-health.json", "summary": "same", "as_of": "2026-07-12T10:00:00+08:00"}]}],
+        }
+        later = json.loads(json.dumps(base))
+        later["quality"]["evidence"][0]["as_of"] = "2026-07-12T11:00:00+08:00"
+        later["style_map"]["as_of"] = "2026-07-12T11:00:00+08:00"
+        later["signals"][0]["evidence"][0]["as_of"] = "2026-07-12T11:00:00+08:00"
+        self.assertEqual(
+            stable_hash(V2LearningBuilder._semantic_snapshot(base)),
+            stable_hash(V2LearningBuilder._semantic_snapshot(later)),
+        )
+
     def test_verified_calendar_advances_across_weekend(self) -> None:
         config = json.loads((ROOT / "config" / "v2-market-calendar.json").read_text(encoding="utf-8"))
         calendar = TradingCalendar(config)

@@ -32,6 +32,8 @@ STEPS = [
     ("v2-research", ["python3", "scripts/build_v2_research.py"], False),
     ("v2-governance", ["python3", "scripts/build_v2_governance.py"], False),
     ("v2-learning", ["python3", "scripts/build_v2_learning.py"], False),
+    ("v2-outcome-price-backfill", ["python3", "scripts/collect_v2_outcome_prices.py"], False),
+    ("v2-learning:outcomes", ["python3", "scripts/build_v2_learning.py"], False),
     ("v2-model-evaluation", ["python3", "scripts/build_v2_model_evaluation.py"], False),
     ("v2-decision-system", ["python3", "scripts/build_v2_decision_system.py"], False),
     ("v2-static-smoke", ["python3", "scripts/smoke_v2_static.py"], False),
