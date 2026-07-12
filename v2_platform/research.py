@@ -117,14 +117,24 @@ class V2ResearchSystemBuilder:
         return rows
 
     @staticmethod
-    def _roles(tags: list[str]) -> list[str]:
+    def _roles(tags: list[str], topic_names: list[str]) -> tuple[list[str], list[str]]:
         joined = " ".join(tags)
         roles = []
+        evidence = []
         rules = (("leader", "龙头"), ("core", "中军"), ("high_beta", "弹性"), ("platform", "平台"))
         for role, keyword in rules:
             if keyword in joined:
                 roles.append(role)
-        return roles or ["unclassified"]
+                evidence.append(f"自选标签明确包含“{keyword}”")
+        if "core" not in roles and any(keyword in joined for keyword in ("指数权重", "核心资产", "大盘权重")):
+            roles.append("core")
+            evidence.append("自选标签明确标注指数/大盘权重，作为中军角色依据")
+        for topic_name in topic_names:
+            for role, keyword in rules:
+                if role not in roles and keyword in topic_name:
+                    roles.append(role)
+                    evidence.append(f"专题名称“{topic_name}”明确包含“{keyword}”")
+        return (roles or ["unclassified"], evidence or ["缺少显式角色标签，保持未分类"])
 
     def _stocks(self, topics: list[dict[str, Any]]) -> list[dict[str, Any]]:
         by_code: dict[str, dict[str, Any]] = {}
@@ -165,7 +175,7 @@ class V2ResearchSystemBuilder:
                 domain_map = {domain["id"]: domain for domain in self._domains_for(" ".join([row["name"], *row["tags"]]))}
             row["themes"] = [{"id": topic["id"], "name": topic["name"]} for topic in matched_topics]
             row["domains"] = list(domain_map.values())
-            row["roles"] = self._roles(row["tags"])
+            row["roles"], row["role_evidence"] = self._roles(row["tags"], [topic["name"] for topic in matched_topics])
             row["attention_reason"] = "；".join(filter(None, ["/".join(row["tags"][:5]), "/".join(row["source_notes"][:2])])) or "仅保留自股票池，关注原因待补。"
             focus = [value for topic in matched_topics for value in topic["focus"]]
             row["catalysts"] = [value for value in focus if any(k in value for k in ("订单", "公告", "政策", "IPO", "财报", "交付", "扩产", "催化"))][:6]
@@ -227,7 +237,7 @@ class V2ResearchSystemBuilder:
             "topic_count": len(topics),
             "role_unclassified_count": role_gaps,
             "governance": {
-                "role_policy": "仅从显式标签识别龙头/中军/弹性/平台；无证据时保持 unclassified。",
+                "role_policy": "仅从显式自选标签和专题名称识别龙头/中军/弹性/平台；每个角色同时保存 role_evidence，无证据时保持 unclassified。",
                 "position_policy": "股票池不代表持仓，不生成个性化买卖动作。",
                 "history_policy": "历史表现将在回溯阶段按快照与结果窗口写入，当前不得补造。",
             },

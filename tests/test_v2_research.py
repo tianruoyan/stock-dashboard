@@ -40,16 +40,17 @@ class V2ResearchTests(unittest.TestCase):
         overlapped = [item for item in stocks if len(item["source_pools"]) > 1]
         self.assertTrue(overlapped)
 
-    def test_roles_are_not_inferred_without_explicit_tags(self) -> None:
+    def test_roles_are_not_inferred_without_explicit_tags_or_topic_names(self) -> None:
         allowed = {"leader", "core", "high_beta", "platform", "unclassified"}
         for item in self.stock_pool["stocks"]:
             self.assertTrue(set(item["roles"]).issubset(allowed))
             if item["roles"] != ["unclassified"]:
-                joined = " ".join(item["tags"])
-                self.assertTrue(any(keyword in joined for keyword in ("龙头", "中军", "弹性", "平台")))
+                joined = " ".join([*item["tags"], *(theme["name"] for theme in item["themes"])])
+                self.assertTrue(any(keyword in joined for keyword in ("龙头", "中军", "弹性", "平台", "指数权重", "核心资产", "大盘权重")))
+            self.assertTrue(item["role_evidence"])
 
     def test_stock_contract_has_decision_bridge_fields(self) -> None:
-        required = {"themes", "roles", "attention_reason", "catalysts", "trigger_conditions", "invalidation_conditions", "history_status"}
+        required = {"themes", "roles", "role_evidence", "attention_reason", "catalysts", "trigger_conditions", "invalidation_conditions", "history_status"}
         for item in self.stock_pool["stocks"]:
             self.assertTrue(required.issubset(item))
 

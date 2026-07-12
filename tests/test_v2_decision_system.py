@@ -48,6 +48,7 @@ class V2DecisionSystemTests(unittest.TestCase):
         self.assertTrue(self.payload["research_library"]["domains"])
         mapped = sum(item["stock_count"] for item in self.payload["research_library"]["domains"])
         self.assertGreater(mapped, 0)
+        self.assertTrue(all(item.get("role_evidence") for item in self.payload["stock_pool"]["stocks"]))
 
     def test_quality_gate_prevents_false_confirmed_opportunities(self) -> None:
         quality = self.payload["data_quality_gate"]["state"]

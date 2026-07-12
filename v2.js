@@ -236,7 +236,7 @@ function renderStockPool(data) {
       <p>${escapeHtml(item.attention_reason)}</p>
       <p class="condition-copy">确认：${escapeHtml(list(item.trigger_conditions)[0] || "待补明确触发条件")}</p>
       <p class="condition-copy invalidation">失效：${escapeHtml(list(item.invalidation_conditions)[0] || "待补明确失效条件")}</p>
-      <p class="definition-version">角色：${escapeHtml(list(item.roles).join(" / "))} · 来源池：${escapeHtml(list(item.source_pools).join(" / "))}</p>
+      <p class="definition-version">角色：${escapeHtml(list(item.roles).join(" / "))} · 来源池：${escapeHtml(list(item.source_pools).join(" / "))}</p><p class="definition-version">角色依据：${escapeHtml(list(item.role_evidence)[0] || "缺少显式角色证据")}</p>
     </details>
   </article>`).join("") || '<div class="empty-state">没有匹配的股票。</div>';
 }
