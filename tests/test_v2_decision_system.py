@@ -24,12 +24,20 @@ class V2DecisionSystemTests(unittest.TestCase):
             "style_map",
             "portfolio_risk",
             "research_themes",
+            "research_library",
+            "stock_pool",
             "signal_review",
             "source_registry",
         }
         self.assertTrue(required.issubset(self.payload))
         self.assertEqual(self.payload["system"]["mode"], "shadow_only")
         self.assertFalse(self.payload["system"]["production_behavior_changed"])
+
+    def test_research_and_stock_pool_are_connected(self) -> None:
+        self.assertGreater(self.payload["stock_pool"]["stock_count"], 0)
+        self.assertTrue(self.payload["research_library"]["domains"])
+        mapped = sum(item["stock_count"] for item in self.payload["research_library"]["domains"])
+        self.assertGreater(mapped, 0)
 
     def test_quality_gate_prevents_false_confirmed_opportunities(self) -> None:
         quality = self.payload["data_quality_gate"]["state"]

@@ -20,6 +20,8 @@ class V2PageContractTests(unittest.TestCase):
             "validation-queue",
             "portfolio-risk",
             "signal-review",
+            "stock-pool",
+            "stock-pool-search",
         }
         self.assertTrue(required.issubset(ids))
 
@@ -38,6 +40,11 @@ class V2PageContractTests(unittest.TestCase):
         self.assertIn('data-radar-kind="${escapeHtml(kind)}"', code)
         self.assertIn('data-radar-state="${escapeHtml(card.state)}"', code)
         self.assertIn('activeRadarFilter === "waiting" && waiting', code)
+
+    def test_stock_pool_search_is_wired(self) -> None:
+        code = (ROOT / "v2.js").read_text(encoding="utf-8")
+        self.assertIn('id="stock-pool-search"', (ROOT / "v2.html").read_text(encoding="utf-8"))
+        self.assertIn('input.addEventListener("input"', code)
 
 
 if __name__ == "__main__":

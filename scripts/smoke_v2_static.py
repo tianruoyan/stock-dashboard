@@ -17,6 +17,8 @@ REQUIRED_IDS = {
     "portfolio-risk",
     "research-themes",
     "signal-review",
+    "stock-pool",
+    "stock-pool-search",
     "source-registry",
 }
 REQUIRED_DATA_KEYS = {
@@ -28,6 +30,8 @@ REQUIRED_DATA_KEYS = {
     "style_map",
     "portfolio_risk",
     "research_themes",
+    "research_library",
+    "stock_pool",
     "signal_review",
     "source_registry",
 }
@@ -74,4 +78,3 @@ def main() -> int:
 
 if __name__ == "__main__":
     raise SystemExit(main())
-

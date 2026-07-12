@@ -14,6 +14,7 @@ const STATE_LABELS = {
 
 let v2State = null;
 let activeRadarFilter = "all";
+let stockPoolQuery = "";
 
 function escapeHtml(value) {
   return String(value ?? "")
@@ -169,6 +170,40 @@ function renderThemes(items) {
   </article>`).join("") || '<div class="empty-state">产业研究数据尚未接入。</div>';
 }
 
+function renderResearchLibrary(data) {
+  const target = document.getElementById("research-themes");
+  const domains = list(data?.domains);
+  target.innerHTML = domains.map(domain => `<article class="theme-card ${escapeHtml(domain.coverage_state)}">
+    <div class="state-row"><h3>${escapeHtml(domain.name)}</h3><span class="state-text">${domain.coverage_state === "coverage_gap" ? "覆盖缺口" : "已映射"}</span></div>
+    <p>专题 ${escapeHtml(domain.topic_count)} · 股票 ${escapeHtml(domain.stock_count)}</p>
+    <div class="tag-list">${list(domain.topics).slice(0, 6).map(item => `<span class="tag">${escapeHtml(item.name)}</span>`).join("")}</div>
+    ${domain.coverage_state === "coverage_gap" ? '<p class="coverage-gap-note">尚未接入明确专题或股票映射，不补造研究结论。</p>' : ""}
+  </article>`).join("") || '<div class="empty-state">产业研究数据尚未接入。</div>';
+}
+
+function renderStockPool(data) {
+  const summary = document.getElementById("stock-pool-summary");
+  const target = document.getElementById("stock-pool-list");
+  const allStocks = list(data?.stocks);
+  const query = stockPoolQuery.trim().toLowerCase();
+  const matches = allStocks.filter(item => {
+    const haystack = [item.name, item.code, ...list(item.tags), ...list(item.domains).map(domain => domain.name), ...list(item.themes).map(theme => theme.name)].join(" ").toLowerCase();
+    return !query || haystack.includes(query);
+  });
+  summary.innerHTML = `<div class="pool-summary"><span>全量去重 ${escapeHtml(data?.stock_count ?? allStocks.length)} 只</span><span>角色待核验 ${escapeHtml(data?.role_unclassified_count ?? 0)} 只</span><span>当前显示 ${escapeHtml(Math.min(matches.length, 24))}/${escapeHtml(matches.length)} 只</span></div>`;
+  target.innerHTML = matches.slice(0, 24).map(item => `<article class="stock-pool-card">
+    <div class="state-row"><h3>${escapeHtml(item.name)}</h3><span class="stock-code">${escapeHtml(item.code)}</span></div>
+    <p>${escapeHtml(list(item.domains).map(domain => domain.name).join(" / ") || "待归类")}</p>
+    <div class="tag-list">${list(item.tags).slice(0, 5).map(tag => `<span class="tag">${escapeHtml(tag)}</span>`).join("")}</div>
+    <details class="evidence-details"><summary>关注依据与触发条件</summary>
+      <p>${escapeHtml(item.attention_reason)}</p>
+      <p class="condition-copy">确认：${escapeHtml(list(item.trigger_conditions)[0] || "待补明确触发条件")}</p>
+      <p class="condition-copy invalidation">失效：${escapeHtml(list(item.invalidation_conditions)[0] || "待补明确失效条件")}</p>
+      <p class="definition-version">角色：${escapeHtml(list(item.roles).join(" / "))} · 来源池：${escapeHtml(list(item.source_pools).join(" / "))}</p>
+    </details>
+  </article>`).join("") || '<div class="empty-state">没有匹配的股票。</div>';
+}
+
 function renderReview(data) {
   const target = document.getElementById("signal-review");
   target.innerHTML = `<div class="review-empty"><strong>${escapeHtml(data?.headline || "复盘不可用")}</strong><p>观察窗口：${list(data?.windows).map(escapeHtml).join(" / ")}</p></div>`;
@@ -193,6 +228,15 @@ function bindFilters() {
   });
 }
 
+function bindStockSearch() {
+  const input = document.getElementById("stock-pool-search");
+  if (!input) return;
+  input.addEventListener("input", () => {
+    stockPoolQuery = input.value || "";
+    renderStockPool(v2State?.stock_pool || {});
+  });
+}
+
 function renderAll(data) {
   v2State = data;
   const system = data.system || {};
@@ -208,7 +252,8 @@ function renderAll(data) {
   renderStyle(data.style_map || {});
   renderValidation(list(data.validation_queue));
   renderPortfolio(data.portfolio_risk || {});
-  renderThemes(list(data.research_themes));
+  renderResearchLibrary(data.research_library || {});
+  renderStockPool(data.stock_pool || {});
   renderReview(data.signal_review || {});
   renderSources(list(data.source_registry));
 }
@@ -227,6 +272,7 @@ async function loadV2() {
   }
 }
 
-window.V2App = { loadV2, renderAll, setFilter, escapeHtml };
+window.V2App = { loadV2, renderAll, setFilter, renderStockPool, escapeHtml };
 bindFilters();
+bindStockSearch();
 loadV2();

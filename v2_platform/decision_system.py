@@ -7,6 +7,8 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Iterable
 
+from v2_platform.research import V2ResearchSystemBuilder
+
 
 SCHEMA_VERSION = 1
 
@@ -111,6 +113,7 @@ class V2DecisionSystemBuilder:
         radar, validation = self._radar(quality)
         style = self._style_map()
         research = self._research_themes()
+        research_library, stock_pool = V2ResearchSystemBuilder(self.root).build()
         portfolio = self._portfolio_risk()
         signal_review = self._signal_review()
         timestamps = [source.timestamp for source in self.sources.values() if source.timestamp]
@@ -138,6 +141,8 @@ class V2DecisionSystemBuilder:
             "style_map": style,
             "portfolio_risk": portfolio,
             "research_themes": research,
+            "research_library": research_library,
+            "stock_pool": stock_pool,
             "signal_review": signal_review,
             "source_registry": [source.summary() for source in self.sources.values()],
         }
