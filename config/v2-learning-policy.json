@@ -1,0 +1,38 @@
+{
+  "schema_version": 1,
+  "version": "2026-07-12.1",
+  "workflow": [
+    {
+      "stage": "rule_screen",
+      "owner": "deterministic_rules",
+      "may_do": ["筛选异常", "检查数据质量", "匹配显式主题与股票池", "生成候选"],
+      "must_not_do": ["把缺失数据补成事实", "绕过质量门"]
+    },
+    {
+      "stage": "ai_explain",
+      "owner": "ai",
+      "may_do": ["组织证据链", "区分事实/推断/建议", "提出确认与失效条件", "归纳反向证据"],
+      "must_not_do": ["自动下单", "用抽象分数替代判断", "把博主观点当交易事实"]
+    },
+    {
+      "stage": "human_decide",
+      "owner": "user",
+      "may_do": ["接受或拒绝建议", "决定仓位与交易", "修订关注优先级"],
+      "must_not_do": []
+    }
+  ],
+  "outcome_windows": [1, 3, 5, 10],
+  "primary_market": "CN",
+  "outcome_policy": {
+    "entry_reference": "判断时点后首个可用收盘价；若缺失则该结果窗口保持 pending_data",
+    "metrics": ["absolute_return", "max_favorable_excursion", "max_adverse_excursion", "excess_return_if_benchmark_available"],
+    "benchmark": "000300.SH",
+    "classification": "仅在价格、时间和标的均可审计时输出有效/无效/风险兑现；否则保持待验证",
+    "aggregate_guardrail": "样本少于20条或跨越少于20个交易日，不展示命中率。"
+  },
+  "model_change_policy": {
+    "allowed_inputs": ["已冻结判断快照", "窗口结果", "当时数据质量", "适用市场环境", "人工反馈"],
+    "required_before_change": ["写明失败模式", "给出反例", "离线回放", "版本号", "可回滚基线"],
+    "automatic_live_weight_change": false
+  }
+}

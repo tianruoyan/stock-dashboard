@@ -93,6 +93,7 @@ class V2DecisionSystemBuilder:
         "source_health": "source-health.json",
         "topics": "topics.json",
         "signal_review": "signal-review.json",
+        "v2_signal_review": "v2/signal-review.json",
     }
 
     def __init__(self, root: Path) -> None:
@@ -549,7 +550,7 @@ class V2DecisionSystemBuilder:
         return rows
 
     def _signal_review(self) -> dict[str, Any]:
-        source = self.sources["signal_review"]
+        source = self.sources["v2_signal_review"] if self.sources["v2_signal_review"].status == "loaded" else self.sources["signal_review"]
         if source.status != "loaded":
             return {
                 "state": "unavailable",
@@ -562,4 +563,11 @@ class V2DecisionSystemBuilder:
             "headline": text(source.data.get("summary"), "信号复盘已加载"),
             "windows": as_list(source.data.get("windows")) or ["T+1", "T+3", "T+5", "T+10"],
             "items": as_list(source.data.get("items")),
+            "snapshot_count": int(source.data.get("snapshot_count") or 0),
+            "pending_signal_count": int(source.data.get("pending_signal_count") or 0),
+            "evaluated_signal_count": int(source.data.get("evaluated_signal_count") or 0),
+            "hit_rate": source.data.get("hit_rate"),
+            "hit_rate_state": text(source.data.get("hit_rate_state"), "unavailable"),
+            "guardrail": text(source.data.get("guardrail"), "样本不足不展示命中率。"),
+            "workflow": as_list(source.data.get("workflow")),
         }

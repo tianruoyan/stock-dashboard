@@ -206,7 +206,15 @@ function renderStockPool(data) {
 
 function renderReview(data) {
   const target = document.getElementById("signal-review");
-  target.innerHTML = `<div class="review-empty"><strong>${escapeHtml(data?.headline || "复盘不可用")}</strong><p>观察窗口：${list(data?.windows).map(escapeHtml).join(" / ")}</p></div>`;
+  const workflow = list(data?.workflow);
+  target.innerHTML = `<div class="review-grid">
+    <div class="review-empty"><strong>${escapeHtml(data?.headline || "复盘不可用")}</strong>
+      <p>观察窗口：${list(data?.windows).map(escapeHtml).join(" / ")}</p>
+      <div class="pool-summary"><span>快照 ${escapeHtml(data?.snapshot_count ?? 0)}</span><span>待验证信号 ${escapeHtml(data?.pending_signal_count ?? 0)}</span><span>已评估 ${escapeHtml(data?.evaluated_signal_count ?? 0)}</span></div>
+      <p class="review-guardrail">${escapeHtml(data?.guardrail || "样本不足不展示命中率。")}</p>
+    </div>
+    <div class="workflow-flow">${workflow.map((item, index) => `<div class="workflow-step"><span>${escapeHtml(index + 1)}</span><div><b>${escapeHtml(item.stage)}</b><small>${escapeHtml(item.owner)}</small></div></div>`).join("")}</div>
+  </div>`;
 }
 
 function renderSources(items) {

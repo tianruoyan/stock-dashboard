@@ -79,6 +79,11 @@ class V2DecisionSystemTests(unittest.TestCase):
         self.assertEqual(portfolio["state"], "rules_only")
         self.assertIn("真实持仓数量", portfolio["missing_inputs"])
 
+    def test_signal_review_withholds_unearned_hit_rate(self) -> None:
+        review = self.payload["signal_review"]
+        if review.get("evaluated_signal_count", 0) < 20:
+            self.assertIsNone(review.get("hit_rate"))
+
 
 if __name__ == "__main__":
     unittest.main()
