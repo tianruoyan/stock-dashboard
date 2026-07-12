@@ -1,0 +1,27 @@
+{
+  "schema_version": 1,
+  "version": "2026-07-12.1",
+  "input_path": "data/v2/inputs/events.json",
+  "required_fields": ["event_id", "source_id", "source_type", "published_at", "observed_at", "title", "url", "content_hash"],
+  "source_types": {
+    "official_policy": {"tier": "primary", "may_support_fact": true},
+    "exchange_filing": {"tier": "primary", "may_support_fact": true},
+    "company_filing": {"tier": "primary", "may_support_fact": true},
+    "licensed_market_data": {"tier": "primary_data", "may_support_fact": true},
+    "mainstream_media": {"tier": "secondary", "may_support_fact": true, "requires_attribution": true},
+    "industry_media": {"tier": "secondary", "may_support_fact": true, "requires_attribution": true},
+    "blogger_social": {"tier": "expectation", "may_support_fact": false, "required_role": "market_expectation_or_sentiment_only"},
+    "user_note": {"tier": "user_context", "may_support_fact": false, "required_role": "research_input_only"}
+  },
+  "conflict_policy": [
+    "同一事实出现数值、时间或主体冲突时标记 conflict，禁止AI择一补齐。",
+    "官方/交易所/公司原文优先于转述，但仍保留所有来源和抓取时间。",
+    "博主观点只记录来源、观点变化和后验结果，不能直接升级为交易事实。",
+    "任何缺少原始链接、发布时间或内容哈希的事件只能进入待核验队列。"
+  ],
+  "fact_inference_action_layers": {
+    "fact": "可定位来源、时间和原文的观察；数据缺失和冲突必须显式标记。",
+    "inference": "由事实推导的产业/市场解释，必须附反向证据和适用条件。",
+    "action": "人工决策参考，必须给出确认条件、失效点和风险边界。"
+  }
+}

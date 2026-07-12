@@ -27,12 +27,18 @@ class V2DecisionSystemTests(unittest.TestCase):
             "research_themes",
             "research_library",
             "stock_pool",
+            "governance",
             "signal_review",
             "source_registry",
         }
         self.assertTrue(required.issubset(self.payload))
         self.assertEqual(self.payload["system"]["mode"], "shadow_only")
         self.assertFalse(self.payload["system"]["production_behavior_changed"])
+
+    def test_governance_keeps_blogger_content_out_of_facts(self) -> None:
+        policy = self.payload["governance"]["event_registry"]["blogger_policy"]
+        self.assertFalse(policy["may_support_fact"])
+        self.assertEqual(policy["required_role"], "market_expectation_or_sentiment_only")
 
     def test_research_and_stock_pool_are_connected(self) -> None:
         self.assertGreater(self.payload["stock_pool"]["stock_count"], 0)
@@ -45,6 +51,20 @@ class V2DecisionSystemTests(unittest.TestCase):
         if quality != "usable":
             confirmed = [item for item in self.payload["opportunity_radar"] if item["state"] == "confirmed"]
             self.assertEqual(confirmed, [])
+
+    def test_cross_market_and_two_sided_sentiment_are_explicit(self) -> None:
+        environment = self.payload["market_environment"]
+        markets = {item["market"] for item in environment["cross_market"]}
+        self.assertTrue({"US", "HK", "KR"}.issubset(markets))
+        kr = next(item for item in environment["cross_market"] if item["market"] == "KR")
+        if kr["quality_state"] != "usable":
+            self.assertEqual(kr["actionability"], "background_only")
+        sentiment = environment["sentiment_structure"]
+        self.assertIn("limit_up_ladder", sentiment)
+        self.assertIn("limit_down_ladder", sentiment)
+        self.assertIn("high_level_loss_effect", sentiment)
+        if sentiment["limit_up_ladder"].get("state") == "data_missing":
+            self.assertEqual(sentiment["limit_up_ladder"]["items"], [])
 
     def test_every_radar_card_has_evidence_conditions_and_action(self) -> None:
         for item in self.payload["opportunity_radar"]:

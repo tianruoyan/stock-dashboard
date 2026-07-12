@@ -58,11 +58,15 @@ function renderEnvironment(data) {
   const quality = data?.quality_state || "blocked";
   target.className = `status-panel ${quality}`;
   const reasons = list(data?.supporting_reasons).slice(0, 2).map(item => `<li>${escapeHtml(item)}</li>`).join("");
+  const sentiment = data?.sentiment_structure || {};
+  const crossMarket = list(data?.cross_market);
   target.innerHTML = `
     <div class="state-row"><span class="eyebrow">市场环境</span><span class="pill ${escapeHtml(quality)}">${escapeHtml(data?.state || "无法判断")}</span></div>
     <h2>${escapeHtml(data?.action || "等待确认")}</h2>
     <p>${escapeHtml(data?.headline || "当前没有可用市场结论")}</p>
-    ${reasons ? `<details class="evidence-details"><summary>查看支持依据</summary><ul>${reasons}</ul></details>` : ""}`;
+    <div class="market-stats"><span>涨停 ${escapeHtml(sentiment.limit_up_count ?? "缺失")}</span><span>跌停 ${escapeHtml(sentiment.limit_down_count ?? "缺失")}</span><span>炸板 ${escapeHtml(sentiment.broken_limit_count ?? "缺失")}</span></div>
+    ${reasons ? `<details class="evidence-details"><summary>查看支持依据</summary><ul>${reasons}</ul></details>` : ""}
+    ${crossMarket.length ? `<details class="evidence-details"><summary>查看跨市场传导与数据缺口</summary><div class="cross-market-grid">${crossMarket.map(item => `<div class="cross-market-item"><b>${escapeHtml(item.market)}</b><span>${escapeHtml(item.quality_state || "已读取")}</span><p>${escapeHtml(item.conclusion)}</p></div>`).join("")}</div></details>` : ""}`;
 }
 
 function representativeStocks(items) {
@@ -227,6 +231,19 @@ function renderReview(data) {
   </div>`;
 }
 
+function renderGovernance(data) {
+  const target = document.getElementById("governance-status");
+  const layers = data?.fact_inference_action_layers || {};
+  const events = data?.event_registry || {};
+  const routing = data?.automation_routing || {};
+  const blogger = events.blogger_policy || {};
+  target.innerHTML = `<div class="governance-grid">
+    <div class="governance-card"><strong>结论分层</strong>${Object.entries(layers).map(([key, value]) => `<p><b>${escapeHtml(key)}</b>${escapeHtml(value)}</p>`).join("")}</div>
+    <div class="governance-card"><strong>事件来源</strong><p>事件 ${escapeHtml(events.event_count ?? 0)} 条 · ${events.state === "input_pending" ? "输入待接入" : "已接入"}</p><p>博主内容：${escapeHtml(blogger.required_role || "仅作预期/情绪")}</p></div>
+    <div class="governance-card"><strong>自动化归属</strong><p>已登记 ${escapeHtml(routing.task_count ?? 0)} 项 · ${escapeHtml(routing.state || "未知")}</p><p>${escapeHtml(routing.cutover_rule || "切换规则待配置")}</p></div>
+  </div>`;
+}
+
 function renderSources(items) {
   document.getElementById("source-registry").innerHTML = `<div class="source-list">${items.map(item => `<div class="source-item"><b>${escapeHtml(item.path)}</b><span>${escapeHtml(item.status)} · ${escapeHtml(compactTime(item.timestamp))}</span></div>`).join("")}</div>`;
 }
@@ -273,6 +290,7 @@ function renderAll(data) {
   renderResearchLibrary(data.research_library || {});
   renderStockPool(data.stock_pool || {});
   renderReview(data.signal_review || {});
+  renderGovernance(data.governance || {});
   renderSources(list(data.source_registry));
 }
 

@@ -9,6 +9,7 @@ from typing import Any, Iterable
 
 from v2_platform.research import V2ResearchSystemBuilder
 from v2_platform.market_structure import V2MarketStructureBuilder
+from v2_platform.governance import V2GovernanceBuilder
 
 
 SCHEMA_VERSION = 1
@@ -117,6 +118,7 @@ class V2DecisionSystemBuilder:
         style = self._style_map(market_structure)
         research = self._research_themes()
         research_library, stock_pool = V2ResearchSystemBuilder(self.root).build()
+        governance = V2GovernanceBuilder(self.root).build()
         portfolio = self._portfolio_risk()
         signal_review = self._signal_review()
         timestamps = [source.timestamp for source in self.sources.values() if source.timestamp]
@@ -147,6 +149,7 @@ class V2DecisionSystemBuilder:
             "research_themes": research,
             "research_library": research_library,
             "stock_pool": stock_pool,
+            "governance": governance,
             "signal_review": signal_review,
             "source_registry": [source.summary() for source in self.sources.values()],
         }
@@ -263,6 +266,21 @@ class V2DecisionSystemBuilder:
                     "as_of": self.sources["intraday"].timestamp or self.sources["postmarket"].timestamp,
                 }
             )
+        japan_korea = as_dict(us.get("japan_korea"))
+        if japan_korea:
+            global_evidence.append(
+                {
+                    "market": "KR",
+                    "conclusion": text(japan_korea.get("summary"), "韩国市场没有形成可用结论"),
+                    "mapping": [],
+                    "watch": [text(value) for value in as_list(japan_korea.get("watch")) if text(value)],
+                    "quality_state": text(japan_korea.get("source_status"), "missing"),
+                    "actionability": "background_only" if japan_korea.get("pending_confirmation") else "verify_mapping",
+                    "as_of": self.sources["premarket"].timestamp,
+                }
+            )
+        limit_up_ladder = as_dict(sentiment.get("limit_up_ladder"))
+        limit_down_ladder = as_dict(sentiment.get("limit_down_ladder"))
         return {
             "state": text(brief.get("stance"), "无法判断"),
             "action": text(brief.get("action"), "等待数据确认"),
@@ -276,6 +294,21 @@ class V2DecisionSystemBuilder:
                 "limit_down_count": sentiment.get("limit_down_count", intraday.get("limit_down_count")),
                 "broken_limit_count": sentiment.get("broken_limit_count"),
                 "judgement": text(sentiment.get("judgement"), "情绪结构待核验"),
+                "limit_up_ladder": limit_up_ladder or {
+                    "state": "data_missing",
+                    "items": [],
+                    "note": "已有涨停总数和炸板数，但缺少可审计的连板高度、梯队和晋级率。",
+                },
+                "limit_down_ladder": limit_down_ladder or {
+                    "state": "data_missing",
+                    "items": [],
+                    "note": "已有跌停总数，但缺少可审计的连续跌停、开板失败和风险扩散梯队。",
+                },
+                "promotion_rate": sentiment.get("promotion_rate"),
+                "high_level_loss_effect": sentiment.get("high_level_loss_effect") or {
+                    "state": "data_missing",
+                    "note": "缺少昨日高位股/连板股次日收益与最大不利波动，暂不判断高位亏钱效应。",
+                },
                 "as_of": self.sources["intraday"].timestamp,
             },
             "cross_market": global_evidence,

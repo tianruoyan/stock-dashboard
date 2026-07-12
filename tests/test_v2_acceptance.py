@@ -27,6 +27,10 @@ class V2AcceptanceTests(unittest.TestCase):
         ids = {item["id"] for item in self.report["confirmation_items"]}
         self.assertTrue({"style_taxonomy", "microcap_proxy", "research_gaps", "stock_roles", "portfolio_and_outcomes", "production_promotion"}.issubset(ids))
 
+    def test_completion_audit_has_no_internal_failure(self) -> None:
+        check = next(item for item in self.report["checks"] if item["id"] == "completion_audit_internal")
+        self.assertTrue(check["passed"])
+
 
 if __name__ == "__main__":
     unittest.main()

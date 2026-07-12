@@ -38,6 +38,7 @@ class V2AcceptanceBuilder:
         stock_pool = load_json(self.data / "stock-pool.json")
         build = load_json(self.root / "data" / "build-report.json")
         learning = load_json(self.root / "config" / "v2-learning-policy.json")
+        completion = load_json(self.data / "completion-audit.json")
         production_config = self.rollout.get("production_v1") or {}
         production = Path(str(production_config.get("path") or ""))
         production_head = git_output(production, "rev-parse", "HEAD") if production.exists() else ""
@@ -52,6 +53,7 @@ class V2AcceptanceBuilder:
             self._check("no_live_model_weight_change", learning.get("model_change_policy", {}).get("automatic_live_weight_change") is False, "禁止自动修改线上模型权重。"),
             self._check("production_v1_preserved", bool(production_head) and production_head.startswith(baseline), f"生产V1仍在基线 {production_head[:7] or 'missing'}。"),
             self._check("rollback_entry_exists", (production / str(production_config.get("entry") or "index.html")).exists(), "生产V1入口可作为即时回退入口。"),
+            self._check("completion_audit_internal", int(completion.get("counts", {}).get("missing") or 0) == 0 and int(completion.get("counts", {}).get("failed") or 0) == 0, f"完成度审计：{completion.get('completion_state') or 'missing'}"),
         ]
         quality_state = decision.get("data_quality_gate", {}).get("state") or "missing"
         promotion_state = "ready_for_user_confirmation" if all(item["passed"] for item in checks) and quality_state == "usable" else "hold"
@@ -68,8 +70,8 @@ class V2AcceptanceBuilder:
             },
             {
                 "id": "research_gaps",
-                "status": "coverage_gap",
-                "question": "核聚变等缺少现有专题/股票映射，是否按当前优先级继续补建研究模板。"
+                "status": "templates_ready_mapping_evidence_pending",
+                "question": "核聚变和量子研究模板已建立；上市公司映射继续要求公告、订单或收入证据，不按概念标签补齐。"
             },
             {
                 "id": "stock_roles",
@@ -79,7 +81,7 @@ class V2AcceptanceBuilder:
             {
                 "id": "portfolio_and_outcomes",
                 "status": "data_authorization_pending",
-                "question": "真实持仓、成本、微盘行情和回溯价格尚未授权接入；在接入前继续只给规则提示和待验证结果。"
+                "question": "真实持仓、成本、微盘行情、回溯价格及博主账号尚未授权/提供；接入前继续只给规则提示和待验证结果。"
             },
             {
                 "id": "production_promotion",

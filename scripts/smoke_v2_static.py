@@ -19,6 +19,7 @@ REQUIRED_IDS = {
     "signal-review",
     "stock-pool",
     "stock-pool-search",
+    "governance-status",
     "source-registry",
 }
 REQUIRED_DATA_KEYS = {
@@ -33,6 +34,7 @@ REQUIRED_DATA_KEYS = {
     "research_themes",
     "research_library",
     "stock_pool",
+    "governance",
     "signal_review",
     "source_registry",
 }

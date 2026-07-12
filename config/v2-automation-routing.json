@@ -1,0 +1,50 @@
+{
+  "schema_version": 1,
+  "version": "2026-07-12.1",
+  "categories": ["real_time_decision", "long_term_research", "background_collection", "replay_learning", "operations"],
+  "legacy_tasks": [
+    {
+      "name": "A股港股盘中监测与盘前综合推送",
+      "migration": "split",
+      "target_categories": ["real_time_decision", "background_collection"],
+      "reason": "原任务跨盘前、盘中、午盘、盘后和晚间，时段与职责过多；V2按数据采集和决策生成拆分。",
+      "production_state": "legacy_unchanged_until_cutover"
+    },
+    {
+      "name": "老登小登盘中提醒",
+      "migration": "merge",
+      "target_categories": ["real_time_decision"],
+      "reason": "风格轮巡并入驾驶舱；增加中登定义，并将微盘作为独立结构维度。",
+      "production_state": "legacy_unchanged_until_cutover"
+    },
+    {
+      "name": "智谱季度投资追踪",
+      "migration": "merge",
+      "target_categories": ["long_term_research", "replay_learning"],
+      "reason": "归入AI软件/国产模型生态，保留历史版本并按季度验证。",
+      "production_state": "legacy_unchanged_until_cutover"
+    },
+    {
+      "name": "周一科技消息盘前汇总",
+      "migration": "restructure",
+      "target_categories": ["background_collection", "real_time_decision"],
+      "reason": "周末收集与周一9:00后的竞价验证分开，避免周日晚输出冒充周一盘前终值。",
+      "production_state": "legacy_unchanged_until_cutover"
+    },
+    {
+      "name": "股票看板晚间发布核验",
+      "migration": "retain_as_operations",
+      "target_categories": ["operations"],
+      "reason": "只负责发布和健康核验，不计为投资分析模块。",
+      "production_state": "legacy_unchanged_until_cutover"
+    },
+    {
+      "name": "V2判断快照与结果回收",
+      "migration": "new",
+      "target_categories": ["replay_learning"],
+      "reason": "冻结当时判断并回收T+1/T+3/T+5/T+10结果，不自动修改线上权重。",
+      "production_state": "shadow_only"
+    }
+  ],
+  "cutover_rule": "生产切换前保留V1调度；V2任务只生成影子数据。切换时逐任务停旧启新，禁止一次性删除历史任务和日志。"
+}

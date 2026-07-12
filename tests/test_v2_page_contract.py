@@ -22,6 +22,7 @@ class V2PageContractTests(unittest.TestCase):
             "signal-review",
             "stock-pool",
             "stock-pool-search",
+            "governance-status",
         }
         self.assertTrue(required.issubset(ids))
 
@@ -51,6 +52,12 @@ class V2PageContractTests(unittest.TestCase):
         self.assertIn("template_ready_mapping_gap", code)
         self.assertIn("tracking_indicators", code)
         self.assertIn("invalidation_conditions", code)
+
+    def test_market_environment_renders_two_sided_counts_and_cross_market(self) -> None:
+        code = (ROOT / "v2.js").read_text(encoding="utf-8")
+        self.assertIn("sentiment.limit_up_count", code)
+        self.assertIn("sentiment.limit_down_count", code)
+        self.assertIn("cross_market", code)
 
 
 if __name__ == "__main__":

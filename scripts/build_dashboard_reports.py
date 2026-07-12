@@ -28,9 +28,11 @@ STEPS = [
     ("section-health", ["python3", "scripts/build_section_health.py"], False),
     ("v2-market-structure", ["python3", "scripts/build_v2_market_structure.py"], False),
     ("v2-research", ["python3", "scripts/build_v2_research.py"], False),
+    ("v2-governance", ["python3", "scripts/build_v2_governance.py"], False),
     ("v2-learning", ["python3", "scripts/build_v2_learning.py"], False),
     ("v2-decision-system", ["python3", "scripts/build_v2_decision_system.py"], False),
     ("v2-static-smoke", ["python3", "scripts/smoke_v2_static.py"], False),
+    ("v2-completion-audit", ["python3", "scripts/audit_v2_completion.py"], False),
     ("static-smoke", ["python3", "scripts/smoke_dashboard_static.py"], True),
     ("runtime-smoke", [str(NODE_BIN if NODE_BIN.exists() else "node"), "scripts/smoke_dashboard_runtime.js"], True),
 ]
