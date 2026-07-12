@@ -18,6 +18,7 @@ class V2GovernanceTests(unittest.TestCase):
         names = {item["name"] for item in payload["automation_routing"]["tasks"]}
         required = {"A股港股盘中监测与盘前综合推送", "老登小登盘中提醒", "智谱季度投资追踪", "周一科技消息盘前汇总", "股票看板晚间发布核验"}
         self.assertTrue(required.issubset(names))
+        self.assertIn("V2双轨收盘后验证", names)
 
     def test_blogger_content_can_never_become_fact(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
