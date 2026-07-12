@@ -33,6 +33,14 @@ class V2CompletionAuditTests(unittest.TestCase):
         self.assertEqual(self.report["counts"]["missing"], 0)
         self.assertEqual(self.report["counts"]["failed"], 0)
 
+    def test_partial_high_level_sample_is_covered_when_exclusions_are_explicit(self) -> None:
+        sentiment = {
+            "limit_up_ladder": {"state": "usable"},
+            "limit_down_ladder": {"state": "usable"},
+            "high_level_loss_effect": {"state": "partial", "sample_count": 5, "missing": [{"reason": "suspended"}]},
+        }
+        self.assertEqual(V2CompletionAuditBuilder._sentiment_state(sentiment), "proven")
+
 
 if __name__ == "__main__":
     unittest.main()

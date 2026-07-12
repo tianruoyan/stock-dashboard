@@ -64,7 +64,11 @@ class V2CompletionAuditBuilder:
             self._check("cross_market", self._cross_market_state(environment), "美股、港股、韩国市场显式覆盖；降级源只作背景"),
             self._check("style_dimensions", "proven" if {item.get("id") for item in as_list(style.get("dimensions"))} == {"old_deng", "middle_deng", "small_deng", "microcap"} else "failed", "老登/中登/小登/微盘独立"),
             self._check("microcap_data", "proven" if market.get("direction") != "unknown" else "data_pending", market.get("conclusion") or "微盘数据状态缺失"),
-            self._check("two_sided_sentiment", self._sentiment_state(sentiment), "涨停与跌停梯队、高位亏钱效应均有字段；当前缺失项保持空"),
+            self._check(
+                "two_sided_sentiment",
+                self._sentiment_state(sentiment),
+                f"涨停梯队 {as_dict(sentiment.get('limit_up_ladder')).get('filtered_count') or 0} 只、跌停梯队 {as_dict(sentiment.get('limit_down_ladder')).get('filtered_count') or 0} 只；高位亏钱效应有效样本 {as_dict(sentiment.get('high_level_loss_effect')).get('sample_count') or 0} 个，停牌/无成交样本显式排除。",
+            ),
             self._check("research_room", "proven" if {item.get("id") for item in as_list(research.get("domains"))}.issuperset({"ai_hardware", "ai_software", "embodied_ai", "medicine", "fusion", "quantum"}) else "failed", "六大长期研究域及核聚变/量子模板"),
             self._check("stock_pool", "proven" if int(stock_pool.get("stock_count") or 0) > 0 else "failed", f"统一股票池 {stock_pool.get('stock_count') or 0} 只"),
             self._check("event_source_governance", "proven" if event_registry.get("blogger_policy", {}).get("may_support_fact") is False else "failed", "博主内容仅作预期/情绪，事实/推断/建议分层"),
@@ -121,6 +125,11 @@ class V2CompletionAuditBuilder:
         required = ("limit_up_ladder", "limit_down_ladder", "high_level_loss_effect")
         if not all(key in sentiment for key in required):
             return "failed"
-        if any(as_dict(sentiment.get(key)).get("state") != "usable" for key in required):
+        if any(as_dict(sentiment.get(key)).get("state") != "usable" for key in ("limit_up_ladder", "limit_down_ladder")):
             return "data_pending"
-        return "proven"
+        loss = as_dict(sentiment.get("high_level_loss_effect"))
+        if loss.get("state") == "usable":
+            return "proven"
+        if loss.get("state") == "partial" and int(loss.get("sample_count") or 0) > 0 and isinstance(loss.get("missing"), list):
+            return "proven"
+        return "data_pending"
