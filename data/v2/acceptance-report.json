@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-07-12T19:57:57+08:00",
+  "generated_at": "2026-07-12T20:30:25+08:00",
   "shadow_acceptance": "passed",
   "production_promotion": "hold",
   "production_hold_reason": "关键数据仍为降级状态。",
@@ -34,7 +34,7 @@
     {
       "id": "immutable_replay",
       "passed": true,
-      "detail": "冻结快照：5个"
+      "detail": "冻结快照：6个"
     },
     {
       "id": "no_live_model_weight_change",
@@ -44,7 +44,7 @@
     {
       "id": "production_v1_preserved",
       "passed": true,
-      "detail": "生产V1仍在基线 2e5f149。"
+      "detail": "V1程序与入口保持基线 2e5f149；数据提交可继续前进，当前 cc847c9。"
     },
     {
       "id": "rollback_entry_exists",
@@ -59,9 +59,22 @@
   ],
   "rollback_rehearsal": {
     "status": "passed",
-    "method": "验证生产V1目录与入口保持在冻结基线；V2仅存在于隔离分支，未改变生产任务。",
-    "production_head": "2e5f14960510492cec267f7ba41b4bc60b8d4991",
-    "v2_head": "590661f329fdaacb2ccc309678b83613a30776ef"
+    "method": "验证V1程序、入口、脚本和配置相对冻结基线未改变；允许生产数据按原任务继续提交。",
+    "production_head": "cc847c9ace60664e627cebf297a889bbd2cc30e4",
+    "baseline_commit": "2e5f149",
+    "protected_paths": [
+      "index.html",
+      "style.css",
+      "app.js",
+      "server.py",
+      "settings.html",
+      "settings.js",
+      "rules.html",
+      "scripts",
+      "config"
+    ],
+    "changed_protected_paths": [],
+    "v2_head": "37dd5c3eb39c4ebc829f77427363e09b739bc790"
   },
   "confirmation_items": [
     {
