@@ -21,7 +21,7 @@ class V2CompletionAuditTests(unittest.TestCase):
             "data_quality_gate", "idempotent_data_publisher", "public_data_collectors", "decision_cockpit_radar", "cross_market",
             "style_dimensions", "microcap_data", "two_sided_sentiment", "research_room", "stock_pool",
             "event_source_governance", "official_event_input", "blogger_source_manager", "blogger_accounts", "automation_routing", "immutable_replay", "outcome_prices",
-            "offline_model_evaluation", "portfolio_authorization", "no_automatic_trading", "parallel_v1_v2", "parallel_comparison", "external_app_access_authorization", "v1_rollback", "production_cutover"
+            "offline_model_evaluation", "portfolio_source_manager", "portfolio_authorization", "no_automatic_trading", "parallel_v1_v2", "parallel_comparison", "external_app_access_authorization", "v1_rollback", "production_cutover"
         }
         self.assertTrue(required.issubset(ids))
 

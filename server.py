@@ -7,6 +7,7 @@ from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 CONFIG_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "config")
 PRIVATE_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), ".v2_private")
 BLOGGER_ACCOUNTS_PATH = os.path.join(PRIVATE_DIR, "blogger-accounts.json")
+PORTFOLIO_PATH = os.path.join(PRIVATE_DIR, "portfolio.json")
 EASTMONEY_TOKEN = "D43BF722C8E33E1B5FBF8EF4C0C8ECBE"
 MAX_CONFIG_BYTES = 2 * 1024 * 1024
 
@@ -53,6 +54,60 @@ def validate_blogger_payload(payload):
         "updated_at": datetime.now(timezone.utc).astimezone().isoformat(timespec="seconds"),
         "accounts": normalized,
         "privacy_note": "本文件只保存在本机，不进入V2公开发布。",
+    }
+
+
+def _number(value, field, *, minimum=0, maximum=None, allow_none=False):
+    if value in (None, "") and allow_none:
+        return None
+    try:
+        result = float(value)
+    except (TypeError, ValueError):
+        raise ValueError(f"{field} must be numeric")
+    if result < minimum or (maximum is not None and result > maximum):
+        raise ValueError(f"{field} out of range")
+    return result
+
+
+def validate_portfolio_payload(payload):
+    rows = payload.get("holdings") if isinstance(payload, dict) else None
+    if not isinstance(rows, list) or len(rows) > 200:
+        raise ValueError("holdings must be a list with at most 200 items")
+    holdings = []
+    seen = set()
+    for item in rows:
+        if not isinstance(item, dict):
+            raise ValueError("holding must be an object")
+        code = market_code(item.get("code")).lower()
+        name = str(item.get("name") or "").strip()
+        if not re.fullmatch(r"(?:sh|sz|bj)\d{6}|hk\d{4,5}|us[a-z0-9._-]{1,15}", code) or not name or len(name) > 80:
+            raise ValueError("invalid holding code or name")
+        if code in seen:
+            raise ValueError("duplicate holding code")
+        seen.add(code)
+        holdings.append({
+            "code": code,
+            "name": name,
+            "quantity": _number(item.get("quantity"), "quantity", minimum=0),
+            "cost": _number(item.get("cost"), "cost", minimum=0),
+        })
+    risk = payload.get("risk_budget") if isinstance(payload, dict) else {}
+    risk = risk if isinstance(risk, dict) else {}
+    normalized_risk = {
+        "max_single_position_pct": _number(risk.get("max_single_position_pct"), "max_single_position_pct", minimum=0, maximum=100, allow_none=True),
+        "max_theme_pct": _number(risk.get("max_theme_pct"), "max_theme_pct", minimum=0, maximum=100, allow_none=True),
+        "max_total_invested_pct": _number(risk.get("max_total_invested_pct"), "max_total_invested_pct", minimum=0, maximum=100, allow_none=True),
+        "max_drawdown_pct": _number(risk.get("max_drawdown_pct"), "max_drawdown_pct", minimum=0, maximum=100, allow_none=True),
+    }
+    return {
+        "schema_version": 1,
+        "as_of": datetime.now(timezone.utc).astimezone().isoformat(timespec="seconds"),
+        "source": "V2本机组合风险设置",
+        "holdings": holdings,
+        "cash": _number(payload.get("cash"), "cash", minimum=0, allow_none=True),
+        "risk_budget": normalized_risk,
+        "trade_authorization": False,
+        "privacy_note": "只保存在本机；不进入公开发布，不授权自动交易。",
     }
 
 def market_code(raw):
@@ -114,7 +169,7 @@ class DashboardServer(SimpleHTTPRequestHandler):
         self.wfile.write(body)
 
     def do_POST(self):
-        if self.path in {"/_save-config", "/_v2-blogger-accounts"}:
+        if self.path in {"/_save-config", "/_v2-blogger-accounts", "/_v2-portfolio"}:
             try:
                 length = int(self.headers.get("Content-Length", 0))
             except ValueError:
@@ -136,6 +191,15 @@ class DashboardServer(SimpleHTTPRequestHandler):
                     self.send_json(400, {"error": str(exc)})
                     return
                 self.send_json(200, {"saved": True, "account_count": len(normalized["accounts"]), "payload": normalized})
+                return
+            if self.path == "/_v2-portfolio":
+                try:
+                    normalized = validate_portfolio_payload(data)
+                    write_json_atomic(PORTFOLIO_PATH, normalized)
+                except ValueError as exc:
+                    self.send_json(400, {"error": str(exc)})
+                    return
+                self.send_json(200, {"saved": True, "holding_count": len(normalized["holdings"]), "payload": normalized})
                 return
             results = []
             # watchlist
@@ -167,6 +231,14 @@ class DashboardServer(SimpleHTTPRequestHandler):
                     payload = json.load(handle)
             except (FileNotFoundError, json.JSONDecodeError):
                 payload = {"schema_version": 1, "accounts": [], "privacy_note": "本文件只保存在本机，不进入V2公开发布。"}
+            self.send_json(200, payload)
+            return
+        if self.path == "/_v2-portfolio":
+            try:
+                with open(PORTFOLIO_PATH, "r", encoding="utf-8") as handle:
+                    payload = json.load(handle)
+            except (FileNotFoundError, json.JSONDecodeError):
+                payload = {"schema_version": 1, "holdings": [], "cash": None, "risk_budget": {}, "trade_authorization": False, "privacy_note": "只保存在本机；不进入公开发布，不授权自动交易。"}
             self.send_json(200, payload)
             return
         if self.path.startswith("/_stock-lookup"):

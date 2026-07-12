@@ -19,6 +19,7 @@ let v2State = null;
 let activeRadarFilter = "all";
 let stockPoolQuery = "";
 let bloggerAccounts = [];
+let privatePortfolio = { holdings: [], cash: null, risk_budget: {}, trade_authorization: false };
 
 const BLOGGER_PLATFORM_LABELS = {
   xiaohongshu: "小红书", weibo: "微博", wechat: "微信公众号", douyin: "抖音", bilibili: "哔哩哔哩", other: "其他"
@@ -185,6 +186,129 @@ function renderPortfolio(data) {
     ${keyValueBlock("仓位上限规则", data?.position_limits)}
     ${keyValueBlock("止损规则", data?.stop_loss)}
   </div>`;
+  renderPrivatePortfolio();
+}
+
+function optionalNumber(value) {
+  return value === "" || value == null ? null : Number(value);
+}
+
+function renderPrivatePortfolio() {
+  const listTarget = document.getElementById("portfolio-holding-list");
+  const analysisTarget = document.getElementById("portfolio-private-analysis");
+  if (!listTarget || !analysisTarget) return;
+  const holdings = list(privatePortfolio.holdings);
+  const invested = holdings.reduce((sum, item) => sum + Number(item.quantity || 0) * Number(item.cost || 0), 0);
+  const cashKnown = privatePortfolio.cash !== null && privatePortfolio.cash !== "" && Number.isFinite(Number(privatePortfolio.cash));
+  const cash = cashKnown ? Number(privatePortfolio.cash) : 0;
+  const basis = invested + cash;
+  const stockByCode = new Map(list(v2State?.stock_pool?.stocks).map(item => [String(item.code).toLowerCase(), item]));
+  const rows = holdings.map(item => {
+    const value = Number(item.quantity || 0) * Number(item.cost || 0);
+    const allocation = basis > 0 ? value / basis * 100 : null;
+    const stock = stockByCode.get(String(item.code).toLowerCase());
+    const domain = list(stock?.domains)[0]?.name || "其他/待归类";
+    return { ...item, cost_value: value, allocation_pct: allocation, domain };
+  });
+  const domainValues = {};
+  rows.forEach(item => { domainValues[item.domain] = (domainValues[item.domain] || 0) + item.cost_value; });
+  const risk = privatePortfolio.risk_budget || {};
+  const flags = [];
+  rows.forEach(item => {
+    if (risk.max_single_position_pct != null && item.allocation_pct != null && item.allocation_pct > Number(risk.max_single_position_pct)) flags.push(`${item.name} 成本占比 ${item.allocation_pct.toFixed(1)}%，高于单一持仓上限 ${Number(risk.max_single_position_pct).toFixed(1)}%。`);
+  });
+  Object.entries(domainValues).forEach(([domain, value]) => {
+    const pct = basis > 0 ? value / basis * 100 : null;
+    if (risk.max_theme_pct != null && pct != null && pct > Number(risk.max_theme_pct)) flags.push(`${domain} 成本占比 ${pct.toFixed(1)}%，高于单一主题上限 ${Number(risk.max_theme_pct).toFixed(1)}%。`);
+  });
+  const investedPct = basis > 0 ? invested / basis * 100 : null;
+  if (risk.max_total_invested_pct != null && investedPct != null && investedPct > Number(risk.max_total_invested_pct)) flags.push(`总投入成本占比 ${investedPct.toFixed(1)}%，高于设置上限 ${Number(risk.max_total_invested_pct).toFixed(1)}%。`);
+  analysisTarget.innerHTML = holdings.length ? `<div class="private-portfolio-summary"><span>持仓 ${holdings.length} 只</span><span>持仓成本 ¥${invested.toLocaleString("zh-CN", {maximumFractionDigits:2})}</span><span>${cashKnown ? `现金 ¥${cash.toLocaleString("zh-CN", {maximumFractionDigits:2})}` : "现金未填写"}</span><span>${investedPct == null ? "投入比例未知" : `成本投入 ${investedPct.toFixed(1)}%`}</span></div><p class="private-analysis-note">以下仅按数量×成本计算，不代表当前市值或盈亏；实时行情未核验前不生成个性化买卖动作。</p>${flags.length ? `<div class="private-risk-flags">${flags.map(item => `<p>${escapeHtml(item)} <b>需人工复核</b></p>`).join("")}</div>` : '<p class="private-no-flags">按已填写成本口径，暂未触发自设上限；这不代表组合没有市场风险。</p>'}` : '<div class="empty-state">尚未录入真实持仓。您可以只填写风险预算，也可以稍后再录入。</div>';
+  listTarget.innerHTML = rows.map(item => `<article class="private-holding-card"><div><strong>${escapeHtml(item.name)}</strong><span>${escapeHtml(item.code)}</span></div><p>数量 ${escapeHtml(item.quantity)} · 成本 ${escapeHtml(item.cost)} · ${escapeHtml(item.domain)}</p><small>${item.allocation_pct == null ? "占比待现金数据" : `成本占比 ${item.allocation_pct.toFixed(1)}%`}</small><div class="managed-source-actions"><button type="button" data-holding-action="edit" data-holding-code="${escapeHtml(item.code)}">编辑</button><button type="button" class="danger" data-holding-action="delete" data-holding-code="${escapeHtml(item.code)}">删除</button></div></article>`).join("");
+}
+
+function setPortfolioStatus(message, state = "") {
+  const target = document.getElementById("portfolio-private-status");
+  if (!target) return;
+  target.textContent = message;
+  target.className = `source-manager-status ${state}`.trim();
+}
+
+function hydratePortfolioSettings() {
+  const risk = privatePortfolio.risk_budget || {};
+  document.getElementById("portfolio-cash").value = privatePortfolio.cash ?? "";
+  document.getElementById("portfolio-max-single").value = risk.max_single_position_pct ?? "";
+  document.getElementById("portfolio-max-theme").value = risk.max_theme_pct ?? "";
+  document.getElementById("portfolio-max-invested").value = risk.max_total_invested_pct ?? "";
+  document.getElementById("portfolio-max-drawdown").value = risk.max_drawdown_pct ?? "";
+}
+
+async function persistPrivatePortfolio(next, message) {
+  const response = await fetch("/_v2-portfolio", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(next) });
+  const payload = await response.json().catch(() => ({}));
+  if (!response.ok) throw new Error(payload.error || `HTTP ${response.status}`);
+  privatePortfolio = payload.payload;
+  hydratePortfolioSettings();
+  renderPrivatePortfolio();
+  setPortfolioStatus(message, "success");
+}
+
+async function loadPrivatePortfolio() {
+  try {
+    const response = await fetch("/_v2-portfolio", { cache: "no-store" });
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    privatePortfolio = await response.json();
+    hydratePortfolioSettings();
+    renderPrivatePortfolio();
+    setPortfolioStatus(`本机组合已读取；持仓 ${list(privatePortfolio.holdings).length} 只，交易授权：否。`);
+  } catch (_error) {
+    renderPrivatePortfolio();
+    setPortfolioStatus("组合管理服务暂未连接；公开驾驶舱仍可正常使用。", "warning");
+  }
+}
+
+function resetHoldingForm() {
+  document.getElementById("portfolio-holding-form")?.reset();
+  document.getElementById("portfolio-holding-original-code").value = "";
+  document.getElementById("portfolio-holding-cancel").hidden = true;
+}
+
+function bindPortfolioManager() {
+  const settings = document.getElementById("portfolio-settings-form");
+  const holdingForm = document.getElementById("portfolio-holding-form");
+  const listTarget = document.getElementById("portfolio-holding-list");
+  if (!settings || !holdingForm || !listTarget) return;
+  settings.addEventListener("submit", async event => {
+    event.preventDefault();
+    const next = { holdings: list(privatePortfolio.holdings), cash: optionalNumber(document.getElementById("portfolio-cash").value), risk_budget: { max_single_position_pct: optionalNumber(document.getElementById("portfolio-max-single").value), max_theme_pct: optionalNumber(document.getElementById("portfolio-max-theme").value), max_total_invested_pct: optionalNumber(document.getElementById("portfolio-max-invested").value), max_drawdown_pct: optionalNumber(document.getElementById("portfolio-max-drawdown").value) } };
+    try { await persistPrivatePortfolio(next, "组合风险设置已保存。") } catch (error) { setPortfolioStatus(`保存失败：${error.message || error}`, "warning"); }
+  });
+  holdingForm.addEventListener("submit", async event => {
+    event.preventDefault();
+    const original = document.getElementById("portfolio-holding-original-code").value;
+    const row = { code: document.getElementById("portfolio-holding-code").value.trim(), name: document.getElementById("portfolio-holding-name").value.trim(), quantity: Number(document.getElementById("portfolio-holding-quantity").value), cost: Number(document.getElementById("portfolio-holding-cost").value) };
+    const nextHoldings = original ? list(privatePortfolio.holdings).map(item => item.code === original ? row : item) : [...list(privatePortfolio.holdings), row];
+    try { await persistPrivatePortfolio({ holdings: nextHoldings, cash: privatePortfolio.cash, risk_budget: privatePortfolio.risk_budget || {} }, original ? "持仓已更新。" : "持仓已添加。"); resetHoldingForm(); } catch (error) { setPortfolioStatus(`保存失败：${error.message || error}`, "warning"); }
+  });
+  document.getElementById("portfolio-holding-cancel").addEventListener("click", resetHoldingForm);
+  listTarget.addEventListener("click", async event => {
+    const button = event.target.closest("button[data-holding-action]");
+    if (!button) return;
+    const item = list(privatePortfolio.holdings).find(row => row.code === button.dataset.holdingCode);
+    if (!item) return;
+    if (button.dataset.holdingAction === "edit") {
+      document.getElementById("portfolio-holding-original-code").value = item.code;
+      document.getElementById("portfolio-holding-code").value = item.code;
+      document.getElementById("portfolio-holding-name").value = item.name;
+      document.getElementById("portfolio-holding-quantity").value = item.quantity;
+      document.getElementById("portfolio-holding-cost").value = item.cost;
+      document.getElementById("portfolio-holding-cancel").hidden = false;
+      holdingForm.scrollIntoView({ behavior: "smooth", block: "center" });
+      return;
+    }
+    if (!window.confirm(`删除持仓“${item.name}”？`)) return;
+    try { await persistPrivatePortfolio({ holdings: list(privatePortfolio.holdings).filter(row => row.code !== item.code), cash: privatePortfolio.cash, risk_budget: privatePortfolio.risk_budget || {} }, "持仓已删除。"); } catch (error) { setPortfolioStatus(`保存失败：${error.message || error}`, "warning"); }
+  });
 }
 
 function renderThemes(items) {
@@ -458,5 +582,7 @@ window.V2App = { loadV2, renderAll, setFilter, renderStockPool, escapeHtml };
 bindFilters();
 bindStockSearch();
 bindBloggerManager();
+bindPortfolioManager();
 loadBloggerSources();
+loadPrivatePortfolio();
 loadV2();

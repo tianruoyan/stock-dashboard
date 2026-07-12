@@ -17,6 +17,7 @@ class V2GovernanceBuilder:
         path = self.root / str(self.sources.get("input_path") or "data/v2/inputs/events.json")
         event_payload = load_json(path)
         blogger_accounts_payload = load_json(self.root / ".v2_private" / "blogger-accounts.json")
+        portfolio_payload = load_json(self.root / ".v2_private" / "portfolio.json")
         blogger_accounts = [item for item in as_list(blogger_accounts_payload.get("accounts")) if isinstance(item, dict)]
         enabled_accounts = [item for item in blogger_accounts if item.get("enabled") is not False]
         events = [self._validate_event(item) for item in as_list(event_payload.get("events")) if isinstance(item, dict)]
@@ -66,6 +67,12 @@ class V2GovernanceBuilder:
                 "allowed_without_reconfirmation": as_list(self.authorizations.get("allowed_without_reconfirmation")),
                 "still_requires_explicit_confirmation": as_list(self.authorizations.get("still_requires_explicit_confirmation")),
                 "privacy_rule": self.authorizations.get("privacy_rule"),
+            },
+            "private_portfolio_governance": {
+                "configuration_state": "available" if as_list(portfolio_payload.get("holdings")) or portfolio_payload.get("cash") is not None or any(value is not None for value in as_dict(portfolio_payload.get("risk_budget")).values()) else "input_pending",
+                "raw_values_published": False,
+                "trade_authorization": False,
+                "privacy_note": "原始持仓、成本、现金和风险预算只保存在本机私有区。",
             },
         }
 

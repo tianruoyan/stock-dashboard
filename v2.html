@@ -78,6 +78,29 @@
           <div><span class="eyebrow">规则与缺口</span><h2>组合风险</h2></div>
         </div>
         <div id="portfolio-risk"></div>
+        <details class="portfolio-manager" id="portfolio-manager">
+          <summary>管理本机组合数据</summary>
+          <p>只用于风险暴露分析，不授权下单；原始持仓不会进入公开发布。</p>
+          <form id="portfolio-settings-form" class="portfolio-settings-form">
+            <label><span>可用现金</span><input id="portfolio-cash" type="number" min="0" step="0.01" placeholder="可留空"></label>
+            <label><span>单一持仓上限 %</span><input id="portfolio-max-single" type="number" min="0" max="100" step="0.1" placeholder="例如 20"></label>
+            <label><span>单一主题上限 %</span><input id="portfolio-max-theme" type="number" min="0" max="100" step="0.1" placeholder="例如 35"></label>
+            <label><span>总投入上限 %</span><input id="portfolio-max-invested" type="number" min="0" max="100" step="0.1" placeholder="例如 80"></label>
+            <label><span>最大回撤容忍 %</span><input id="portfolio-max-drawdown" type="number" min="0" max="100" step="0.1" placeholder="例如 12"></label>
+            <button type="submit" class="source-primary-action">保存风险设置</button>
+          </form>
+          <form id="portfolio-holding-form" class="portfolio-holding-form">
+            <input id="portfolio-holding-original-code" type="hidden">
+            <label><span>股票代码</span><input id="portfolio-holding-code" required placeholder="600000 / sh600000"></label>
+            <label><span>名称</span><input id="portfolio-holding-name" required maxlength="80"></label>
+            <label><span>数量</span><input id="portfolio-holding-quantity" type="number" required min="0" step="0.01"></label>
+            <label><span>成本价</span><input id="portfolio-holding-cost" type="number" required min="0" step="0.0001"></label>
+            <div class="source-form-actions"><button type="submit" class="source-primary-action">保存持仓</button><button type="button" id="portfolio-holding-cancel" hidden>取消编辑</button></div>
+          </form>
+          <div id="portfolio-private-status" class="source-manager-status" aria-live="polite"></div>
+          <div id="portfolio-private-analysis"></div>
+          <div id="portfolio-holding-list" class="portfolio-holding-list"></div>
+        </details>
       </article>
 
       <article class="module-card wide">
@@ -150,6 +173,6 @@
     <a href="VERSION.md">版本记录</a>
   </footer>
 
-  <script src="v2.js?v=phase6-parallel-1"></script>
+  <script src="v2.js?v=phase7-portfolio-1"></script>
 </body>
 </html>

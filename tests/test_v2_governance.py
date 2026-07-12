@@ -50,6 +50,12 @@ class V2GovernanceTests(unittest.TestCase):
         self.assertIn("blogger_account_count", payload)
         self.assertIn("blogger_enabled_account_count", payload)
 
+    def test_private_portfolio_values_are_never_exposed(self) -> None:
+        payload = V2GovernanceBuilder(ROOT).build()["private_portfolio_governance"]
+        self.assertFalse(payload["raw_values_published"])
+        self.assertFalse(payload["trade_authorization"])
+        self.assertNotIn("holdings", payload)
+
 
 if __name__ == "__main__":
     unittest.main()

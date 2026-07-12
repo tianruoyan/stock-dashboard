@@ -46,6 +46,8 @@ class V2CompletionAuditBuilder:
         rollout = load_json(self.root / "config" / "v2-rollout.json")
         operation = as_dict(rollout.get("operation_strategy"))
         user_authorizations = load_json(self.root / "config" / "v2-user-authorizations.json")
+        private_portfolio = load_json(self.root / ".v2_private" / "portfolio.json")
+        portfolio_configured = bool(as_list(private_portfolio.get("holdings"))) or private_portfolio.get("cash") is not None or any(value is not None for value in as_dict(private_portfolio.get("risk_budget")).values())
         production = Path(str(as_dict(rollout.get("production_v1")).get("path") or ""))
         production_config = as_dict(rollout.get("production_v1"))
         v1_code = production_v1_code_state(
@@ -84,7 +86,8 @@ class V2CompletionAuditBuilder:
                 "proven" if int(review.get("evaluated_signal_count") or 0) > 0 else "data_pending",
                 f"公开行情自动回填器已接入，参考记录 {outcome_collector.get('observation_count') or 0} 条、到期窗口 {outcome_collector.get('evaluated_window_input_count') or 0} 个；尚待目标交易日收盘。",
             ),
-            self._check("portfolio_authorization", "data_pending" if as_dict(decision.get("portfolio_risk")).get("state") == "rules_only" else "proven", "真实持仓、成本、现金和风险预算未接入"),
+            self._check("portfolio_source_manager", "proven" if "_v2-portfolio" in (self.root / "server.py").read_text(encoding="utf-8") and "portfolio-settings-form" in (self.root / "v2.html").read_text(encoding="utf-8") else "missing", "页面支持本机私有的持仓、现金和风险预算增删改"),
+            self._check("portfolio_authorization", "proven" if portfolio_configured and private_portfolio.get("trade_authorization") is False else "data_pending", "组合数据尚未由用户录入；管理入口已完成，且不会产生交易授权" if not portfolio_configured else "组合风险上下文已在本机接入；原始数值不公开，交易授权仍为否"),
             self._check("no_automatic_trading", "proven" if decision.get("system", {}).get("mode") == "shadow_only" and load_json(self.root / "config" / "v2-learning-policy.json").get("model_change_policy", {}).get("automatic_live_weight_change") is False else "failed", "影子模式；不自动交易，不自动修改线上权重"),
             self._check("parallel_v1_v2", "proven" if operation.get("mode") == "parallel_shadow" and operation.get("v1_role") == "production_primary" and operation.get("stop_v1_requires_new_user_confirmation") is True else "failed", "用户已确认V1生产、V2影子双轨并行；停用V1必须再次确认"),
             self._check("parallel_comparison", "proven" if parallel_comparison.get("state") in {"comparable", "degraded"} and as_dict(parallel_comparison.get("cutover")).get("ready") is False else "failed", f"自动对照已生成，记录 {len(as_list(parallel_comparison.get('divergences')))} 类差异；禁止自动切换"),

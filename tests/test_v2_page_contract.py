@@ -28,6 +28,9 @@ class V2PageContractTests(unittest.TestCase):
             "blogger-source-list",
             "parallel-operation",
             "parallel-comparison",
+            "portfolio-manager",
+            "portfolio-settings-form",
+            "portfolio-holding-form",
         }
         self.assertTrue(required.issubset(ids))
 
@@ -91,6 +94,12 @@ class V2PageContractTests(unittest.TestCase):
         self.assertIn("renderParallelComparison", code)
         self.assertIn("继续并行", code)
         self.assertIn("renderParallelComparison(data.parallel_comparison || {})", code)
+
+    def test_private_portfolio_manager_does_not_grant_trading(self) -> None:
+        code = (ROOT / "v2.js").read_text(encoding="utf-8")
+        self.assertIn('/_v2-portfolio', code)
+        self.assertIn("不代表当前市值或盈亏", code)
+        self.assertIn("交易授权：否", code)
 
 
 if __name__ == "__main__":
