@@ -39,6 +39,8 @@ class V2GovernanceTests(unittest.TestCase):
     def test_fact_inference_action_layers_are_explicit(self) -> None:
         payload = V2GovernanceBuilder(ROOT).build()
         self.assertEqual(set(payload["fact_inference_action_layers"]), {"fact", "inference", "action"})
+        self.assertEqual(payload["user_authorizations"]["routine_external_app_access"], "preauthorized")
+        self.assertTrue(payload["user_authorizations"]["still_requires_explicit_confirmation"])
 
     def test_workspace_has_usable_official_event_seed(self) -> None:
         payload = V2GovernanceBuilder(ROOT).build()["event_registry"]

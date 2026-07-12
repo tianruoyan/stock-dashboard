@@ -11,6 +11,7 @@ class V2GovernanceBuilder:
         self.root = root.resolve()
         self.sources = load_json(self.root / "config" / "v2-source-governance.json")
         self.automation = load_json(self.root / "config" / "v2-automation-routing.json")
+        self.authorizations = load_json(self.root / "config" / "v2-user-authorizations.json")
 
     def build(self) -> dict[str, Any]:
         path = self.root / str(self.sources.get("input_path") or "data/v2/inputs/events.json")
@@ -58,6 +59,13 @@ class V2GovernanceBuilder:
                 "tasks": tasks,
                 "issues": routing_issues,
                 "cutover_rule": self.automation.get("cutover_rule"),
+            },
+            "user_authorizations": {
+                "routine_external_app_access": self.authorizations.get("routine_external_app_access"),
+                "scope": self.authorizations.get("scope"),
+                "allowed_without_reconfirmation": as_list(self.authorizations.get("allowed_without_reconfirmation")),
+                "still_requires_explicit_confirmation": as_list(self.authorizations.get("still_requires_explicit_confirmation")),
+                "privacy_rule": self.authorizations.get("privacy_rule"),
             },
         }
 

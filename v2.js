@@ -264,11 +264,13 @@ function renderGovernance(data, inputStatus) {
   const blogger = events.blogger_policy || {};
   const inputs = list(inputStatus?.contracts);
   const publicCollectors = list(inputStatus?.public_collectors);
+  const authorizations = data?.user_authorizations || {};
   target.innerHTML = `<div class="governance-grid">
     <div class="governance-card"><strong>结论分层</strong>${Object.entries(layers).map(([key, value]) => `<p><b>${escapeHtml(key)}</b>${escapeHtml(value)}</p>`).join("")}</div>
     <div class="governance-card"><strong>事件来源</strong><p>事件 ${escapeHtml(events.event_count ?? 0)} 条 · ${events.state === "input_pending" ? "输入待接入" : "已接入"}</p><p>已配置博主 ${escapeHtml(events.blogger_enabled_account_count ?? 0)} 个 · ${escapeHtml(blogger.required_role || "仅作预期/情绪")}</p></div>
     <div class="governance-card"><strong>自动化归属</strong><p>已登记 ${escapeHtml(routing.task_count ?? 0)} 项 · ${escapeHtml(routing.state || "未知")}</p><p>${escapeHtml(routing.cutover_rule || "切换规则待配置")}</p></div>
     <div class="governance-card"><strong>数据输入</strong><p>${escapeHtml(inputStatus?.privacy_note || "原始输入不进入公开发布。")}</p><div class="input-status-list">${publicCollectors.map(item => `<span class="${escapeHtml(item.state)}">${escapeHtml(item.id)} · ${escapeHtml(item.state)}</span>`).join("")}${inputs.map(item => `<span class="${escapeHtml(item.status)}">${escapeHtml(item.id)} · ${escapeHtml(item.status)}</span>`).join("") || "尚未运行导入检查"}</div></div>
+    <div class="governance-card"><strong>App访问授权</strong><p>${authorizations.routine_external_app_access === "preauthorized" ? "项目内常规读取与核验已授权，无需逐次确认。" : "尚未记录常规访问授权。"}</p><p>${escapeHtml(authorizations.privacy_rule || "只读取本项目所需的最小范围。")}</p></div>
   </div>`;
 }
 
