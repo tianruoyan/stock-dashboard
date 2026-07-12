@@ -120,12 +120,30 @@
       "stderr_tail": ""
     },
     {
+      "name": "v2-public-input-refresh",
+      "command": "python3 scripts/refresh_v2_public_inputs.py",
+      "returncode": 0,
+      "status": "ok",
+      "blocking": false,
+      "stdout_tail": "{\"state\": \"usable\", \"trade_date\": \"2026-07-10\", \"collectors\": {\"microcap\": \"current\", \"sentiment\": \"current\", \"official_events\": \"current\"}}",
+      "stderr_tail": ""
+    },
+    {
+      "name": "v2-input-import",
+      "command": "python3 scripts/import_v2_inputs.py",
+      "returncode": 0,
+      "status": "ok",
+      "blocking": false,
+      "stdout_tail": "{\"status\": \"no_change\", \"contracts\": {\"microcap_observation\": \"unchanged\", \"sentiment_structure\": \"unchanged\", \"outcome_prices\": \"pending\", \"portfolio_context\": \"pending\", \"events\": \"unchanged\"}}",
+      "stderr_tail": ""
+    },
+    {
       "name": "v2-market-structure",
       "command": "python3 scripts/build_v2_market_structure.py",
       "returncode": 0,
       "status": "ok",
       "blocking": false,
-      "stdout_tail": "v2-market-structure: state=proxy_configured_data_pending direction=unknown",
+      "stdout_tail": "v2-market-structure: state=usable_proxy direction=down",
       "stderr_tail": ""
     },
     {
@@ -143,7 +161,7 @@
       "returncode": 0,
       "status": "ok",
       "blocking": false,
-      "stdout_tail": "v2-governance: events=0 tasks=6",
+      "stdout_tail": "v2-governance: events=6 tasks=6",
       "stderr_tail": ""
     },
     {
@@ -152,7 +170,16 @@
       "returncode": 0,
       "status": "ok",
       "blocking": false,
-      "stdout_tail": "v2-learning: snapshots=3 pending=39 path=data/v2/snapshots/2026-07-10/snapshot_71f756f9ab8b8e74bcbd.json",
+      "stdout_tail": "v2-learning: snapshots=6 pending=78 path=data/v2/snapshots/2026-07-10/snapshot_53ba3a5a44a220d8bda3.json",
+      "stderr_tail": ""
+    },
+    {
+      "name": "v2-model-evaluation",
+      "command": "python3 scripts/build_v2_model_evaluation.py",
+      "returncode": 0,
+      "status": "ok",
+      "blocking": false,
+      "stdout_tail": "v2-model-evaluation: state=collecting records=0 recommendation=keep_baseline",
       "stderr_tail": ""
     },
     {
@@ -179,7 +206,7 @@
       "returncode": 0,
       "status": "ok",
       "blocking": false,
-      "stdout_tail": "v2-completion-audit: state=implemented_external_inputs_pending counts={'proven': 16, 'data_pending': 5, 'user_confirmation': 1, 'missing': 0, 'failed': 0}",
+      "stdout_tail": "v2-completion-audit: state=implemented_external_inputs_pending counts={'proven': 20, 'data_pending': 4, 'user_confirmation': 1, 'missing': 0, 'failed': 0}",
       "stderr_tail": ""
     },
     {

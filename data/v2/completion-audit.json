@@ -1,11 +1,11 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-07-12T14:23:07+08:00",
+  "generated_at": "2026-07-12T19:39:42+08:00",
   "objective": "AI辅助投资决策系统V2.0完整重构",
   "completion_state": "implemented_external_inputs_pending",
   "counts": {
-    "proven": 16,
-    "data_pending": 5,
+    "proven": 20,
+    "data_pending": 4,
     "user_confirmation": 1,
     "missing": 0,
     "failed": 0
@@ -42,6 +42,11 @@
       "evidence": "生成/发布分离、allowlist与幂等"
     },
     {
+      "id": "public_data_collectors",
+      "state": "proven",
+      "evidence": "微盘、情绪结构和官方事件公开采集器"
+    },
+    {
       "id": "decision_cockpit_radar",
       "state": "proven",
       "evidence": "机会/风险雷达 13 条"
@@ -58,8 +63,8 @@
     },
     {
       "id": "microcap_data",
-      "state": "data_pending",
-      "evidence": "已配置中证2000观察代理，但缺少最近交易日的完整可审计行情；暂不判断微盘方向。"
+      "state": "proven",
+      "evidence": "中证2000指数（新浪行情）最近交易日涨跌幅 -0.12%；仅描述市场结构，不推断小登题材。"
     },
     {
       "id": "two_sided_sentiment",
@@ -82,9 +87,14 @@
       "evidence": "博主内容仅作预期/情绪，事实/推断/建议分层"
     },
     {
-      "id": "event_input",
+      "id": "official_event_input",
+      "state": "proven",
+      "evidence": "已接入 5 条可核验官方事件"
+    },
+    {
+      "id": "blogger_accounts",
       "state": "data_pending",
-      "evidence": "用户后续提供的博主账号和规范化事件输入尚未接入"
+      "evidence": "博主账号尚未由用户提供；接口和事实隔离规则已完成"
     },
     {
       "id": "automation_routing",
@@ -94,7 +104,12 @@
     {
       "id": "immutable_replay",
       "state": "proven",
-      "evidence": "判断快照 3 个，样本不足不展示命中率"
+      "evidence": "判断快照 6 个，样本不足不展示命中率"
+    },
+    {
+      "id": "offline_model_evaluation",
+      "state": "proven",
+      "evidence": "模型版本、离线比较与人工晋级门槛已建立"
     },
     {
       "id": "outcome_prices",
@@ -124,19 +139,14 @@
   ],
   "remaining_external_inputs": [
     {
-      "id": "microcap_data",
-      "state": "data_pending",
-      "evidence": "已配置中证2000观察代理，但缺少最近交易日的完整可审计行情；暂不判断微盘方向。"
-    },
-    {
       "id": "two_sided_sentiment",
       "state": "data_pending",
       "evidence": "涨停与跌停梯队、高位亏钱效应均有字段；当前缺失项保持空"
     },
     {
-      "id": "event_input",
+      "id": "blogger_accounts",
       "state": "data_pending",
-      "evidence": "用户后续提供的博主账号和规范化事件输入尚未接入"
+      "evidence": "博主账号尚未由用户提供；接口和事实隔离规则已完成"
     },
     {
       "id": "outcome_prices",

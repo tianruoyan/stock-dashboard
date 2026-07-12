@@ -3,11 +3,23 @@
   "config_version": "2026-07-12.1",
   "dimension": "microcap",
   "definition": "按市值和流动性刻画的独立市场结构维度，不等同于小登题材风格。",
-  "state": "proxy_configured_data_pending",
-  "direction": "unknown",
+  "state": "usable_proxy",
+  "direction": "down",
   "expected_trade_date": "2026-07-10",
-  "selected_observation": null,
-  "conclusion": "已配置中证2000观察代理，但缺少最近交易日的完整可审计行情；暂不判断微盘方向。",
+  "selected_observation": {
+    "source_id": "sina_csi2000_secondary_proxy",
+    "name": "中证2000指数（新浪行情）",
+    "trade_date": "2026-07-10",
+    "as_of": "2026-07-10T16:09:58+08:00",
+    "close": 3272.9877,
+    "change_pct": -0.1247,
+    "source_url": "https://quotes.sina.cn/hs/company/quotes/view/si932000",
+    "kind": "mainstream_market_data_proxy",
+    "quality_state": "usable",
+    "missing_fields": [],
+    "quality_flags": []
+  },
+  "conclusion": "中证2000指数（新浪行情）最近交易日涨跌幅 -0.12%；仅描述市场结构，不推断小登题材。",
   "proxy": {
     "name": "中证2000指数",
     "code": "932000",
@@ -27,15 +39,34 @@
       "scope": "选取市值规模较小且流动性较好的2000只证券；只作为小微盘宽基代理，不等于纯微盘。"
     },
     {
+      "source_id": "sina_csi2000_secondary_proxy",
+      "status": "public_quote_available",
+      "scope": "使用新浪财经公开行情补充中证2000收盘数据；属于次级行情源，不替代中证官方授权数据，也不等于纯微盘指数。"
+    },
+    {
       "source_id": "custom_bottom_cap_basket",
       "status": "disabled_until_rule_confirmed",
       "scope": "只有在股票全集、市值字段、流动性过滤、ST/停牌处理和再平衡规则全部明确后才可启用。"
     }
   ],
-  "observation_checks": [],
+  "observation_checks": [
+    {
+      "source_id": "sina_csi2000_secondary_proxy",
+      "name": "中证2000指数（新浪行情）",
+      "trade_date": "2026-07-10",
+      "as_of": "2026-07-10T16:09:58+08:00",
+      "close": 3272.9877,
+      "change_pct": -0.1247,
+      "source_url": "https://quotes.sina.cn/hs/company/quotes/view/si932000",
+      "kind": "mainstream_market_data_proxy",
+      "quality_state": "usable",
+      "missing_fields": [],
+      "quality_flags": []
+    }
+  ],
   "conflicts": [],
   "quality_policy": [
-    "优先选择配置中更高优先级且字段完整的来源。",
+    "优先选择配置中更高优先级且字段完整的来源；官方行情缺失时可使用明确标注的主流媒体次级代理。",
     "交易日必须等于已验证日历推导的最近交易日；未来、过期或无时区时间戳均不可用。",
     "缺失、冲突或过期时不输出涨跌方向和数值。",
     "使用中证2000时必须同时显示代理边界。"
