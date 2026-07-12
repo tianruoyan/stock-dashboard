@@ -58,7 +58,13 @@ class V2DecisionSystemTests(unittest.TestCase):
         self.assertIn("small_deng", dimensions)
         self.assertIn("microcap", dimensions)
         self.assertNotEqual(dimensions["small_deng"]["definition"], dimensions["microcap"]["definition"])
-        self.assertEqual(dimensions["middle_deng"]["state"], "definition_missing")
+        middle_sectors = " ".join(dimensions["middle_deng"]["representative_sectors"])
+        for expected in ("光伏", "储能", "新能源汽车", "电力设备", "创新药", "军工", "有色", "新材料"):
+            self.assertIn(expected, middle_sectors)
+        self.assertEqual(dimensions["microcap"]["direction"], "unknown")
+        self.assertEqual(dimensions["microcap"]["proxy"]["code"], "932000")
+        self.assertIn("不等于纯微盘", dimensions["microcap"]["proxy"]["scope_note"])
+        self.assertTrue(self.payload["style_map"]["definition_version"])
 
     def test_portfolio_does_not_infer_positions(self) -> None:
         portfolio = self.payload["portfolio_risk"]

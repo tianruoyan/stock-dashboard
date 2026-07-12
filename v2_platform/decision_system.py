@@ -103,6 +103,7 @@ class V2DecisionSystemBuilder:
         self.watchlist = self._load_config("watchlist.json")
         self.alert_config = self._load_config("alert-config.json")
         self.topic_config = self._load_config("topics-list.json")
+        self.style_taxonomy = self._load_config("v2-style-taxonomy.json")
 
     def build(self) -> dict[str, Any]:
         quality = self._quality_gate()
@@ -446,41 +447,71 @@ class V2DecisionSystemBuilder:
                     "quality_flags": [text(value) for value in as_list(item.get("quality_flags")) if text(value)],
                 }
             )
-        old_shift = next((item for item in shifts if "老登" in item["theme"]), None)
-        style_config = as_dict(self.alert_config.get("style_universe"))
+        taxonomy = as_dict(self.style_taxonomy.get("dimensions"))
+        definition_version = text(self.style_taxonomy.get("definition_version"), "unversioned")
+        source_refs = [
+            {
+                "type": text(item.get("type"), "unknown"),
+                "title": text(item.get("title"), "未命名来源"),
+                "url": text(item.get("url"), "") or None,
+                "retrieved_at": text(item.get("retrieved_at"), "") or None,
+            }
+            for item in as_list(self.style_taxonomy.get("sources"))
+            if isinstance(item, dict)
+        ]
+
+        def dimension(style_id: str, default_label: str) -> dict[str, Any]:
+            config = as_dict(taxonomy.get(style_id))
+            keywords = [text(value).lower() for value in as_list(config.get("theme_keywords")) if text(value)]
+            matched = [
+                item for item in shifts
+                if any(keyword in f"{item['theme']} {item['conclusion']}".lower() for keyword in keywords)
+            ]
+            if style_id == "microcap":
+                proxy = as_dict(config.get("proxy"))
+                return {
+                    "id": style_id,
+                    "label": text(config.get("label"), default_label),
+                    "state": text(proxy.get("status"), "data_missing"),
+                    "direction": "unknown",
+                    "definition": text(config.get("definition"), "独立市值与流动性维度"),
+                    "representative_sectors": as_list(config.get("representative_sectors")),
+                    "conclusion": "已配置中证2000作为观察代理；当前缺少带时间戳的可审计行情，暂不判断方向。",
+                    "proxy": {
+                        "name": text(proxy.get("name"), "中证2000指数"),
+                        "code": text(proxy.get("code"), "932000"),
+                        "scope_note": text(proxy.get("scope_note"), "指数代理不等于纯微盘。"),
+                    },
+                    "matched_themes": [],
+                    "definition_version": definition_version,
+                }
+            return {
+                "id": style_id,
+                "label": text(config.get("label"), default_label),
+                "state": "observed_by_themes" if matched else "not_observed",
+                "direction": "mixed" if matched else "unknown",
+                "definition": text(config.get("definition"), "定义待核验"),
+                "representative_sectors": as_list(config.get("representative_sectors")),
+                "conclusion": (
+                    "；".join(item["conclusion"] for item in matched[:2])
+                    if matched else "当前主题变化数据未形成该风格的可审计结论。"
+                ),
+                "matched_themes": [item["theme"] for item in matched[:6]],
+                "definition_version": definition_version,
+            }
+
         return {
             "dimensions": [
-                {
-                    "id": "old_deng",
-                    "label": "老登",
-                    "state": old_shift["state"] if old_shift else "not_observed",
-                    "definition": text(as_dict(style_config.get("classification_rules")).get("old_deng"), "采用配置中的市场风格定义"),
-                    "conclusion": old_shift["conclusion"] if old_shift else "当前数据没有形成老登风格结论",
-                },
-                {
-                    "id": "middle_deng",
-                    "label": "中登",
-                    "state": "definition_missing",
-                    "definition": "现有配置没有经过确认的中登市场语义，系统不自行发明。",
-                    "conclusion": "等待补充市场通行定义和板块映射。",
-                },
-                {
-                    "id": "small_deng",
-                    "label": "小登",
-                    "state": "observed_by_themes" if shifts else "not_observed",
-                    "definition": text(as_dict(style_config.get("classification_rules")).get("small_deng"), "采用配置中的成长与题材风格定义"),
-                    "conclusion": "按科技、新兴产业和高弹性题材逐项展示，不把小登等同于微盘。",
-                },
-                {
-                    "id": "microcap",
-                    "label": "微盘",
-                    "state": "data_missing",
-                    "definition": "独立市场结构维度，不等同于小登。",
-                    "conclusion": "现有输入没有可审计的微盘指数/市值分层数据，暂不判断。",
-                },
+                dimension("old_deng", "老登"),
+                dimension("middle_deng", "中登"),
+                dimension("small_deng", "小登"),
+                dimension("microcap", "微盘"),
             ],
             "theme_shifts": shifts,
             "as_of": self.sources["theme_shifts"].timestamp,
+            "definition_version": definition_version,
+            "governance_note": text(self.style_taxonomy.get("governance_note"), "市场俗称，按版本管理。"),
+            "source_refs": source_refs,
         }
 
     def _portfolio_risk(self) -> dict[str, Any]:
@@ -527,4 +558,3 @@ class V2DecisionSystemBuilder:
             "windows": as_list(source.data.get("windows")) or ["T+1", "T+3", "T+5", "T+10"],
             "items": as_list(source.data.get("items")),
         }
-

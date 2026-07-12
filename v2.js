@@ -118,7 +118,12 @@ function renderStyle(data) {
     <article class="dimension-card">
       <div class="state-row"><h3>${escapeHtml(item.label)}</h3><span class="state-text">${escapeHtml(item.state)}</span></div>
       <p>${escapeHtml(item.conclusion)}</p>
-      <details class="evidence-details"><summary>定义口径</summary><p>${escapeHtml(item.definition)}</p></details>
+      <details class="evidence-details"><summary>定义口径</summary>
+        <p>${escapeHtml(item.definition)}</p>
+        ${list(item.representative_sectors).length ? `<p class="style-sectors">代表方向：${list(item.representative_sectors).map(escapeHtml).join(" / ")}</p>` : ""}
+        ${item.proxy ? `<p class="style-proxy">观察代理：${escapeHtml(item.proxy.name)}（${escapeHtml(item.proxy.code)}）<br>${escapeHtml(item.proxy.scope_note)}</p>` : ""}
+        <p class="definition-version">口径版本：${escapeHtml(item.definition_version || data?.definition_version || "未知")}</p>
+      </details>
     </article>`).join("")}</div>
     <div class="shift-list">${shifts.slice(0, 8).map(item => `
       <article class="shift-card"><h3>${escapeHtml(item.theme)} · ${escapeHtml(item.state)}</h3><p>${escapeHtml(item.conclusion)}</p>${representativeStocks(list(item.stocks))}</article>`).join("")}</div>`;
