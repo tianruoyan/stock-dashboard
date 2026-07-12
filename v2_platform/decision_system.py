@@ -459,6 +459,8 @@ class V2DecisionSystemBuilder:
             if kind == "risk"
             else text(item.get("next_action"), "等待确认，不追")
         )
+        source_files = as_list(item.get("source_files"))
+        evidence_as_of = self._source_files_timestamp(source_files) or self.sources["decision_feed"].timestamp
         return {
             "id": stable_id("decision", item.get("title"), section, item.get("discovery_type")),
             "kind": kind,
@@ -472,8 +474,8 @@ class V2DecisionSystemBuilder:
                 {
                     "type": "decision_evidence",
                     "summary": value,
-                    "source": ", ".join(str(source) for source in as_list(item.get("source_files"))),
-                    "as_of": self.sources["decision_feed"].timestamp,
+                    "source": ", ".join(str(source) for source in source_files),
+                    "as_of": evidence_as_of,
                 }
                 for value in evidence_values[:6]
             ],
@@ -482,8 +484,13 @@ class V2DecisionSystemBuilder:
             "invalidation_conditions": [text(item.get("invalidation"), "未提供失效条件")],
             "valid_until": None,
             "quality_state": "degraded" if quality["state"] != "usable" or missing else "usable",
-            "source": ", ".join(str(source) for source in as_list(item.get("source_files"))) or "decision-feed.json",
+            "source": ", ".join(str(source) for source in source_files) or "decision-feed.json",
         }
+
+    def _source_files_timestamp(self, source_files: list[Any]) -> str | None:
+        names = {Path(str(value)).name for value in source_files}
+        timestamps = [source.timestamp for source in self.sources.values() if source.path.name in names and source.timestamp]
+        return newest_time(timestamps)
 
     def _style_map(self, market_structure: dict[str, Any]) -> dict[str, Any]:
         shifts = []

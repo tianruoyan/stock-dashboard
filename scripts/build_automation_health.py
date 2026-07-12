@@ -3,12 +3,17 @@ from __future__ import annotations
 
 import json
 import re
+import sys
 from datetime import datetime, timezone, timedelta
 from pathlib import Path
 from typing import Any
 
-
 ROOT = Path(__file__).resolve().parents[1]
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
+
+from v2_platform.trading_context import resolve_cn_trading_context
+
 DATA_DIR = ROOT / "data"
 OUT = DATA_DIR / "automation-health.json"
 TZ = timezone(timedelta(hours=8))
@@ -28,10 +33,11 @@ EXPECTED = [
 def main() -> int:
     now = datetime.now(TZ)
     current_date = current_signal_date()
-    target_date = now.date().isoformat()
+    context = resolve_cn_trading_context(ROOT, now, [current_date])
+    target_date = context.target_trade_date.isoformat()
     source_health = load_json(DATA_DIR / "source-health.json")
     quality = load_json(DATA_DIR / "quality-report.json")
-    rows = [check_expected(item, now, current_date, source_health, quality) for item in EXPECTED]
+    rows = [check_expected(item, now, current_date, target_date, source_health, quality) for item in EXPECTED]
     next_session = build_next_session_readiness(now, target_date)
     counts = {
         "ok": sum(1 for row in rows if row["status"] == "ok"),
@@ -44,6 +50,8 @@ def main() -> int:
         "timestamp": now_iso(now),
         "current_signal_date": current_date,
         "target_trade_date": target_date,
+        "calendar_version": context.calendar_version,
+        "calendar_state": context.phase,
         "overall_status": overall_status(rows),
         "summary": summarize(rows),
         "counts": counts,
@@ -56,6 +64,7 @@ def main() -> int:
             "invalidated：文件存在但 source_status=invalidated，不得作为交易依据。",
             "failure_type/diagnosis/next_actions 用于区分数据源污染、产出缺失、时间戳异常和等待窗口。",
             "next_session_readiness 用于跨日/开盘前提示下一交易日必须产出的文件，不替代当前信号日期状态。",
+            "休市日以交易所日历定位上一市场日和下一交易日；周末/节假日不产生虚假逾期。",
         ],
     }
     OUT.write_text(json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
@@ -124,7 +133,7 @@ def next_session_row(spec: dict[str, Any], now: datetime, target_date: str) -> d
     }
 
 
-def check_expected(spec: dict[str, Any], now: datetime, current_date: str, source_health: dict[str, Any], quality: dict[str, Any]) -> dict[str, Any]:
+def check_expected(spec: dict[str, Any], now: datetime, current_date: str, target_date: str, source_health: dict[str, Any], quality: dict[str, Any]) -> dict[str, Any]:
     path = DATA_DIR / spec["file"]
     due_at = due_datetime(current_date, spec["due"])
     deadline = due_at + timedelta(minutes=int(spec["grace_minutes"]))
@@ -134,7 +143,12 @@ def check_expected(spec: dict[str, Any], now: datetime, current_date: str, sourc
     status = "ok"
     action = "正常使用"
     reason = "当日产出已到位"
-    if now < due_at:
+    weekend_evening_update = spec["id"] == "evening" and current_date < file_date < target_date
+    if weekend_evening_update:
+        status = "ok"
+        action = "用于下一交易日预案"
+        reason = f"休市期间增量已更新：{file_date}，目标交易日 {target_date}"
+    elif now < due_at:
         status = "waiting"
         action = "等待产出"
         reason = f"计划 {spec['due']} 后产出"

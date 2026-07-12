@@ -6,6 +6,7 @@ from pathlib import Path
 from typing import Any
 
 from v2_platform.learning import as_dict, as_list, load_json
+from v2_platform.acceptance import production_v1_code_state
 
 
 def now_iso() -> str:
@@ -43,6 +44,12 @@ class V2CompletionAuditBuilder:
         radar = as_list(decision.get("opportunity_radar"))
         rollout = load_json(self.root / "config" / "v2-rollout.json")
         production = Path(str(as_dict(rollout.get("production_v1")).get("path") or ""))
+        production_config = as_dict(rollout.get("production_v1"))
+        v1_code = production_v1_code_state(
+            production,
+            str(production_config.get("baseline_commit") or ""),
+            [str(item) for item in as_list(production_config.get("protected_paths"))],
+        )
         checks = [
             self._check("design_document", "proven" if self._doc("AI投资决策系统V2.0_总体设计文档.md") else "missing", "总体设计文档"),
             self._check("migration_audit", "proven" if self._doc("AI投资决策系统V2.0_现状迁移审计_第一批.md") and self._doc("AI投资决策系统V2.0_阶段0审计补充_运行与前端依赖.md") else "missing", "现有模块与运行证据审计"),
@@ -60,7 +67,8 @@ class V2CompletionAuditBuilder:
             self._check("stock_pool", "proven" if int(stock_pool.get("stock_count") or 0) > 0 else "failed", f"统一股票池 {stock_pool.get('stock_count') or 0} 只"),
             self._check("event_source_governance", "proven" if event_registry.get("blogger_policy", {}).get("may_support_fact") is False else "failed", "博主内容仅作预期/情绪，事实/推断/建议分层"),
             self._check("official_event_input", "proven" if int(event_registry.get("official_event_count") or 0) > 0 else "data_pending", f"已接入 {event_registry.get('official_event_count') or 0} 条可核验官方事件"),
-            self._check("blogger_accounts", "proven" if int(event_registry.get("blogger_event_count") or 0) > 0 else "data_pending", "博主账号尚未由用户提供；接口和事实隔离规则已完成"),
+            self._check("blogger_source_manager", "proven" if "_v2-blogger-accounts" in (self.root / "server.py").read_text(encoding="utf-8") and "blogger-source-form" in (self.root / "v2.html").read_text(encoding="utf-8") else "missing", "页面支持本机私有的添加、编辑、停用和删除"),
+            self._check("blogger_accounts", "proven" if int(event_registry.get("blogger_enabled_account_count") or 0) > 0 else "data_pending", f"管理入口已完成；当前启用账号 {event_registry.get('blogger_enabled_account_count') or 0} 个，等待用户添加"),
             self._check("automation_routing", "proven" if as_dict(governance.get("automation_routing")).get("state") == "valid" and int(as_dict(governance.get("automation_routing")).get("task_count") or 0) >= 6 else "failed", "实时决策/长期研究/后台采集/复盘学习/运维五类归属"),
             self._check("immutable_replay", "proven" if int(review.get("snapshot_count") or 0) > 0 and review.get("hit_rate") is None else "failed", f"判断快照 {review.get('snapshot_count') or 0} 个，样本不足不展示命中率"),
             self._check("offline_model_evaluation", "proven" if model_evaluation.get("baseline_version") and model_evaluation.get("automatic_live_promotion") is False and as_dict(model_evaluation.get("recommendation")).get("requires_user_confirmation") else "failed", "模型版本、离线比较与人工晋级门槛已建立"),
@@ -71,7 +79,7 @@ class V2CompletionAuditBuilder:
             ),
             self._check("portfolio_authorization", "data_pending" if as_dict(decision.get("portfolio_risk")).get("state") == "rules_only" else "proven", "真实持仓、成本、现金和风险预算未接入"),
             self._check("no_automatic_trading", "proven" if decision.get("system", {}).get("mode") == "shadow_only" and load_json(self.root / "config" / "v2-learning-policy.json").get("model_change_policy", {}).get("automatic_live_weight_change") is False else "failed", "影子模式；不自动交易，不自动修改线上权重"),
-            self._check("v1_rollback", "proven" if production.exists() and git_output(production, "rev-parse", "HEAD").startswith(str(as_dict(rollout.get("production_v1")).get("baseline_commit") or "")) else "failed", "生产V1保持冻结基线"),
+            self._check("v1_rollback", "proven" if v1_code["passed"] else "failed", "V1程序与入口保持冻结基线；原生产数据任务可继续更新"),
             self._check("production_cutover", "user_confirmation" if decision.get("system", {}).get("mode") == "shadow_only" else "proven", "生产主入口切换属于重大产品选择，等待用户确认"),
         ]
         counts = {state: sum(item["state"] == state for item in checks) for state in ("proven", "data_pending", "user_confirmation", "missing", "failed")}

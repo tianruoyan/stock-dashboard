@@ -3,12 +3,17 @@ from __future__ import annotations
 
 import json
 import re
+import sys
 from datetime import datetime, timezone, timedelta
 from pathlib import Path
 from typing import Any
 
-
 ROOT = Path(__file__).resolve().parents[1]
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
+
+from v2_platform.trading_context import resolve_cn_trading_context
+
 DATA_DIR = ROOT / "data"
 OUT = DATA_DIR / "decision-feed.json"
 TZ = timezone(timedelta(hours=8))
@@ -29,14 +34,18 @@ def main() -> int:
             "opportunity-watch.json",
         )
     }
-    signal_date = latest_signal_date(files)
+    now = datetime.now(TZ)
+    context = resolve_cn_trading_context(ROOT, now, [latest_signal_date(files)])
+    signal_date = context.market_date.isoformat()
     opportunities = rank_upgrade_candidates(dedupe_items(build_opportunities(files, signal_date)))[:8]
     risks = dedupe_items(build_risks(files, signal_date))[:8]
     verifications = dedupe_items(build_verifications(files, signal_date))[:8]
     conflicts = build_signal_conflicts(opportunities, risks, verifications)
     feed = {
-        "timestamp": now_iso(),
+        "timestamp": now.astimezone(TZ).replace(microsecond=0).isoformat(),
         "current_signal_date": signal_date,
+        "target_trade_date": context.target_trade_date.isoformat(),
+        "calendar_version": context.calendar_version,
         "quality_gate": quality_gate(files.get("quality-report.json") or {}),
         "summary": build_summary(files, signal_date),
         "observation_coverage": build_observation_coverage(opportunities, risks, verifications),
@@ -956,7 +965,7 @@ def evidence_score_for(evidence: list[str], watch_next: list[str], sources: list
 
 def latest_signal_date(files: dict[str, Any]) -> str:
     dates = []
-    for name in ("premarket.json", "opportunity-watch.json", "alert.json", "intraday.json", "midday.json", "postmarket.json", "topics.json"):
+    for name in ("premarket.json", "alert.json", "intraday.json", "midday.json", "postmarket.json", "topics.json"):
         date = signal_date((files.get(name) or {}).get("timestamp"))
         if date:
             dates.append(date)

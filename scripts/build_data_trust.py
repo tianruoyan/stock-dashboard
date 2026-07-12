@@ -3,12 +3,17 @@ from __future__ import annotations
 
 import json
 import re
+import sys
 from datetime import datetime, timezone, timedelta
 from pathlib import Path
 from typing import Any
 
-
 ROOT = Path(__file__).resolve().parents[1]
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
+
+from v2_platform.trading_context import resolve_cn_trading_context
+
 DATA_DIR = ROOT / "data"
 OUT = DATA_DIR / "data-trust.json"
 TZ = timezone(timedelta(hours=8))
@@ -32,11 +37,13 @@ CORE_FILES = [
 
 def main() -> int:
     now = datetime.now(TZ)
-    phase = trading_phase(now)
     payloads = {spec["file"]: load_json(ROOT / spec["file"]) for spec in CORE_FILES}
     quality = load_json(DATA_DIR / "quality-report.json")
     source_health = load_json(DATA_DIR / "source-health.json")
-    current_date = latest_signal_date(payloads)
+    primary_dates = primary_signal_dates(payloads)
+    context = resolve_cn_trading_context(ROOT, now, primary_dates)
+    phase = context.phase
+    current_date = context.market_date.isoformat()
     quality_issues = quality.get("issues") if isinstance(quality, dict) else []
     source_flags = degraded_source_flags(source_health)
     files = [
@@ -48,6 +55,8 @@ def main() -> int:
         "timestamp": now_iso(),
         "current_signal_date": current_date,
         "session_phase": phase,
+        "target_trade_date": context.target_trade_date.isoformat(),
+        "calendar_version": context.calendar_version,
         "overall_status": overall_status(files),
         "summary": summarize(files),
         "counts": counts,
@@ -365,18 +374,18 @@ def session_relevance(spec: dict[str, Any], status: str, phase: str) -> dict[str
             "reason": "专题/配置类结论不绑定单一盘中阶段",
         }
     if session == "decision":
-        current_phases = {"premarket", "morning", "midday", "afternoon", "postmarket", "evening", "overnight"}
+        current_phases = {"premarket", "morning", "midday", "afternoon", "postmarket", "evening", "overnight", "closed"}
         return {
             "relevance": "current" if phase in current_phases else "historical",
             "action": "当前决策流" if phase in current_phases else "隔夜前需重刷",
             "reason": "机会风险流随核心数据刷新，需结合文件可信度使用",
         }
     matrix = {
-        "premarket": {"current": {"premarket", "morning"}, "upcoming": {"overnight"}, "historical": {"midday", "afternoon", "postmarket", "evening"}},
-        "midday": {"current": {"midday", "afternoon"}, "upcoming": {"overnight", "premarket", "morning"}, "historical": {"postmarket", "evening"}},
-        "market": {"current": {"morning", "afternoon"}, "upcoming": {"overnight", "premarket"}, "historical": {"midday", "postmarket", "evening"}},
-        "postmarket": {"current": {"postmarket", "evening", "overnight", "premarket"}, "upcoming": {"morning", "midday", "afternoon"}, "historical": set()},
-        "evening": {"current": {"evening", "overnight", "premarket"}, "upcoming": {"morning", "midday", "afternoon", "postmarket"}, "historical": set()},
+        "premarket": {"current": {"premarket", "morning"}, "upcoming": {"overnight"}, "historical": {"midday", "afternoon", "postmarket", "evening", "closed"}},
+        "midday": {"current": {"midday", "afternoon"}, "upcoming": {"overnight", "premarket", "morning"}, "historical": {"postmarket", "evening", "closed"}},
+        "market": {"current": {"morning", "afternoon"}, "upcoming": {"overnight", "premarket"}, "historical": {"midday", "postmarket", "evening", "closed"}},
+        "postmarket": {"current": {"postmarket", "evening", "overnight", "premarket", "closed"}, "upcoming": {"morning", "midday", "afternoon"}, "historical": set()},
+        "evening": {"current": {"evening", "overnight", "premarket", "closed"}, "upcoming": {"morning", "midday", "afternoon", "postmarket"}, "historical": set()},
     }
     bucket = matrix.get(session, {})
     for relevance, phases in bucket.items():
@@ -420,18 +429,14 @@ def worse_status(left: str, right: str) -> str:
     return reverse[max(order.get(left, 1), order.get(right, 1))]
 
 
-def latest_signal_date(payloads: dict[str, Any]) -> str:
+def primary_signal_dates(payloads: dict[str, Any]) -> list[str]:
     dates = []
-    for rel in ("data/theme-shifts.json", "data/decision-feed.json"):
-        data = payloads.get(rel)
-        if isinstance(data, dict) and data.get("current_signal_date"):
-            dates.append(str(data.get("current_signal_date")))
-    for rel in ("data/premarket.json", "data/opportunity-watch.json", "data/alert.json", "data/intraday.json", "data/midday.json", "data/postmarket.json", "data/topics.json"):
+    for rel in ("data/premarket.json", "data/alert.json", "data/intraday.json", "data/midday.json", "data/postmarket.json", "data/topics.json"):
         data = payloads.get(rel)
         date = signal_date(data.get("timestamp") if isinstance(data, dict) else "")
         if date:
             dates.append(date)
-    return sorted(dates)[-1] if dates else now_iso()[:10]
+    return dates
 
 
 def signal_date_for_row(rel: str, data: Any, timestamp: Any) -> str:

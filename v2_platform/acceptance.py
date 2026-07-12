@@ -24,6 +24,19 @@ def git_output(path: Path, *args: str) -> str:
     return proc.stdout.strip() if proc.returncode == 0 else ""
 
 
+def production_v1_code_state(path: Path, baseline: str, protected_paths: list[str]) -> dict[str, Any]:
+    head = git_output(path, "rev-parse", "HEAD") if path.exists() else ""
+    if not head or not baseline or not protected_paths:
+        return {"passed": False, "head": head, "changed_paths": ["configuration_missing"]}
+    baseline_check = subprocess.run(["git", "-C", str(path), "cat-file", "-e", f"{baseline}^{{commit}}"], capture_output=True)
+    if baseline_check.returncode != 0:
+        return {"passed": False, "head": head, "changed_paths": ["baseline_commit_missing"]}
+    committed = git_output(path, "diff", "--name-only", f"{baseline}..HEAD", "--", *protected_paths).splitlines()
+    working = git_output(path, "status", "--porcelain", "--", *protected_paths).splitlines()
+    changed = sorted({line.strip() for line in [*committed, *working] if line.strip()})
+    return {"passed": not changed, "head": head, "changed_paths": changed}
+
+
 class V2AcceptanceBuilder:
     def __init__(self, root: Path) -> None:
         self.root = root.resolve()
@@ -43,6 +56,8 @@ class V2AcceptanceBuilder:
         production = Path(str(production_config.get("path") or ""))
         production_head = git_output(production, "rev-parse", "HEAD") if production.exists() else ""
         baseline = str(production_config.get("baseline_commit") or "")
+        protected_paths = [str(item) for item in production_config.get("protected_paths") or []]
+        v1_code = production_v1_code_state(production, baseline, protected_paths)
         checks = [
             self._check("v2_shadow_mode", decision.get("system", {}).get("mode") == "shadow_only", "V2仍为影子模式，不触发生产交易或通知。"),
             self._check("static_smoke", smoke.get("status") == "ok", f"V2页面检查：{smoke.get('status') or 'missing'}"),
@@ -51,7 +66,7 @@ class V2AcceptanceBuilder:
             self._check("stock_pool", int(stock_pool.get("stock_count") or 0) > 0, f"统一股票池：{stock_pool.get('stock_count') or 0}只"),
             self._check("immutable_replay", int(replay.get("snapshot_count") or 0) > 0, f"冻结快照：{replay.get('snapshot_count') or 0}个"),
             self._check("no_live_model_weight_change", learning.get("model_change_policy", {}).get("automatic_live_weight_change") is False, "禁止自动修改线上模型权重。"),
-            self._check("production_v1_preserved", bool(production_head) and production_head.startswith(baseline), f"生产V1仍在基线 {production_head[:7] or 'missing'}。"),
+            self._check("production_v1_preserved", v1_code["passed"], f"V1程序与入口保持基线 {baseline}；数据提交可继续前进，当前 {production_head[:7] or 'missing'}。"),
             self._check("rollback_entry_exists", (production / str(production_config.get("entry") or "index.html")).exists(), "生产V1入口可作为即时回退入口。"),
             self._check("completion_audit_internal", int(completion.get("counts", {}).get("missing") or 0) == 0 and int(completion.get("counts", {}).get("failed") or 0) == 0, f"完成度审计：{completion.get('completion_state') or 'missing'}"),
         ]
@@ -98,9 +113,12 @@ class V2AcceptanceBuilder:
             "quality_state": quality_state,
             "checks": checks,
             "rollback_rehearsal": {
-                "status": "passed" if bool(production_head) and production_head.startswith(baseline) else "failed",
-                "method": "验证生产V1目录与入口保持在冻结基线；V2仅存在于隔离分支，未改变生产任务。",
+                "status": "passed" if v1_code["passed"] else "failed",
+                "method": "验证V1程序、入口、脚本和配置相对冻结基线未改变；允许生产数据按原任务继续提交。",
                 "production_head": production_head,
+                "baseline_commit": baseline,
+                "protected_paths": protected_paths,
+                "changed_protected_paths": v1_code["changed_paths"],
                 "v2_head": git_output(self.root, "rev-parse", "HEAD"),
             },
             "confirmation_items": confirmation_items,

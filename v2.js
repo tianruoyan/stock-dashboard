@@ -18,6 +18,11 @@ const STATE_LABELS = {
 let v2State = null;
 let activeRadarFilter = "all";
 let stockPoolQuery = "";
+let bloggerAccounts = [];
+
+const BLOGGER_PLATFORM_LABELS = {
+  xiaohongshu: "小红书", weibo: "微博", wechat: "微信公众号", douyin: "抖音", bilibili: "哔哩哔哩", other: "其他"
+};
 
 function escapeHtml(value) {
   return String(value ?? "")
@@ -261,10 +266,117 @@ function renderGovernance(data, inputStatus) {
   const publicCollectors = list(inputStatus?.public_collectors);
   target.innerHTML = `<div class="governance-grid">
     <div class="governance-card"><strong>结论分层</strong>${Object.entries(layers).map(([key, value]) => `<p><b>${escapeHtml(key)}</b>${escapeHtml(value)}</p>`).join("")}</div>
-    <div class="governance-card"><strong>事件来源</strong><p>事件 ${escapeHtml(events.event_count ?? 0)} 条 · ${events.state === "input_pending" ? "输入待接入" : "已接入"}</p><p>博主内容：${escapeHtml(blogger.required_role || "仅作预期/情绪")}</p></div>
+    <div class="governance-card"><strong>事件来源</strong><p>事件 ${escapeHtml(events.event_count ?? 0)} 条 · ${events.state === "input_pending" ? "输入待接入" : "已接入"}</p><p>已配置博主 ${escapeHtml(events.blogger_enabled_account_count ?? 0)} 个 · ${escapeHtml(blogger.required_role || "仅作预期/情绪")}</p></div>
     <div class="governance-card"><strong>自动化归属</strong><p>已登记 ${escapeHtml(routing.task_count ?? 0)} 项 · ${escapeHtml(routing.state || "未知")}</p><p>${escapeHtml(routing.cutover_rule || "切换规则待配置")}</p></div>
     <div class="governance-card"><strong>数据输入</strong><p>${escapeHtml(inputStatus?.privacy_note || "原始输入不进入公开发布。")}</p><div class="input-status-list">${publicCollectors.map(item => `<span class="${escapeHtml(item.state)}">${escapeHtml(item.id)} · ${escapeHtml(item.state)}</span>`).join("")}${inputs.map(item => `<span class="${escapeHtml(item.status)}">${escapeHtml(item.id)} · ${escapeHtml(item.status)}</span>`).join("") || "尚未运行导入检查"}</div></div>
   </div>`;
+}
+
+function setBloggerStatus(message, state = "") {
+  const target = document.getElementById("blogger-source-status");
+  if (!target) return;
+  target.textContent = message;
+  target.className = `source-manager-status ${state}`.trim();
+}
+
+function renderBloggerSources() {
+  const target = document.getElementById("blogger-source-list");
+  if (!target) return;
+  if (!bloggerAccounts.length) {
+    target.innerHTML = '<div class="empty-state">尚未添加关注来源。添加后，采集任务会按平台能力读取公开内容。</div>';
+    return;
+  }
+  target.innerHTML = bloggerAccounts.map(item => `<article class="managed-source-card ${item.enabled === false ? "disabled" : ""}">
+    <div><span class="source-platform">${escapeHtml(BLOGGER_PLATFORM_LABELS[item.platform] || item.platform)}</span><strong>${escapeHtml(item.display_name)}</strong><small>${item.enabled === false ? "已停用" : "已启用"}</small></div>
+    <p>${escapeHtml(item.note || "未填写关注说明")}</p>
+    <a href="${escapeHtml(item.url)}" target="_blank" rel="noreferrer">核验原始链接</a>
+    <div class="managed-source-actions"><button type="button" data-source-action="edit" data-source-id="${escapeHtml(item.id)}">编辑</button><button type="button" data-source-action="toggle" data-source-id="${escapeHtml(item.id)}">${item.enabled === false ? "启用" : "停用"}</button><button type="button" class="danger" data-source-action="delete" data-source-id="${escapeHtml(item.id)}">删除</button></div>
+  </article>`).join("");
+}
+
+async function persistBloggerSources(nextAccounts, successMessage) {
+  const response = await fetch("/_v2-blogger-accounts", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ accounts: nextAccounts })
+  });
+  const payload = await response.json().catch(() => ({}));
+  if (!response.ok) throw new Error(payload.error || `HTTP ${response.status}`);
+  bloggerAccounts = list(payload.payload?.accounts);
+  renderBloggerSources();
+  setBloggerStatus(successMessage, "success");
+}
+
+async function loadBloggerSources() {
+  try {
+    const response = await fetch("/_v2-blogger-accounts", { cache: "no-store" });
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    const payload = await response.json();
+    bloggerAccounts = list(payload.accounts);
+    renderBloggerSources();
+    setBloggerStatus(`本机已保存 ${bloggerAccounts.length} 个来源；账号与链接不会进入公开发布。`);
+  } catch (_error) {
+    renderBloggerSources();
+    setBloggerStatus("来源管理服务暂未连接。请从本地投资看板入口打开本页，其他决策模块不受影响。", "warning");
+  }
+}
+
+function resetBloggerForm() {
+  document.getElementById("blogger-source-form")?.reset();
+  document.getElementById("blogger-source-id").value = "";
+  document.getElementById("blogger-source-cancel").hidden = true;
+}
+
+function bindBloggerManager() {
+  const form = document.getElementById("blogger-source-form");
+  const listTarget = document.getElementById("blogger-source-list");
+  if (!form || !listTarget) return;
+  form.addEventListener("submit", async event => {
+    event.preventDefault();
+    const id = document.getElementById("blogger-source-id").value;
+    const row = {
+      id,
+      platform: document.getElementById("blogger-source-platform").value,
+      display_name: document.getElementById("blogger-source-name").value.trim(),
+      url: document.getElementById("blogger-source-url").value.trim(),
+      note: document.getElementById("blogger-source-note").value.trim(),
+      enabled: id ? bloggerAccounts.find(item => item.id === id)?.enabled !== false : true
+    };
+    const next = id ? bloggerAccounts.map(item => item.id === id ? row : item) : [...bloggerAccounts, row];
+    try {
+      await persistBloggerSources(next, id ? "来源已更新。" : "来源已添加。");
+      resetBloggerForm();
+    } catch (error) {
+      setBloggerStatus(`保存失败：${error.message || error}`, "warning");
+    }
+  });
+  document.getElementById("blogger-source-cancel").addEventListener("click", resetBloggerForm);
+  listTarget.addEventListener("click", async event => {
+    const button = event.target.closest("button[data-source-action]");
+    if (!button) return;
+    const id = button.dataset.sourceId;
+    const item = bloggerAccounts.find(row => row.id === id);
+    if (!item) return;
+    if (button.dataset.sourceAction === "edit") {
+      document.getElementById("blogger-source-id").value = item.id;
+      document.getElementById("blogger-source-platform").value = item.platform;
+      document.getElementById("blogger-source-name").value = item.display_name;
+      document.getElementById("blogger-source-url").value = item.url;
+      document.getElementById("blogger-source-note").value = item.note || "";
+      document.getElementById("blogger-source-cancel").hidden = false;
+      form.scrollIntoView({ behavior: "smooth", block: "center" });
+      return;
+    }
+    if (button.dataset.sourceAction === "delete" && !window.confirm(`删除“${item.display_name}”？`)) return;
+    const next = button.dataset.sourceAction === "delete"
+      ? bloggerAccounts.filter(row => row.id !== id)
+      : bloggerAccounts.map(row => row.id === id ? { ...row, enabled: row.enabled === false } : row);
+    try {
+      await persistBloggerSources(next, button.dataset.sourceAction === "delete" ? "来源已删除。" : "来源状态已更新。");
+    } catch (error) {
+      setBloggerStatus(`保存失败：${error.message || error}`, "warning");
+    }
+  });
 }
 
 function renderSources(items) {
@@ -334,4 +446,6 @@ async function loadV2() {
 window.V2App = { loadV2, renderAll, setFilter, renderStockPool, escapeHtml };
 bindFilters();
 bindStockSearch();
+bindBloggerManager();
+loadBloggerSources();
 loadV2();

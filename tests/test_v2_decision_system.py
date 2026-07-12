@@ -87,6 +87,17 @@ class V2DecisionSystemTests(unittest.TestCase):
             self.assertIsInstance(item["confirm_conditions"], list)
             self.assertIsInstance(item["invalidation_conditions"], list)
 
+    def test_feed_evidence_uses_origin_timestamp_not_rebuild_time(self) -> None:
+        intraday_timestamp = next(item["timestamp"] for item in self.payload["source_registry"] if item["path"] == "intraday.json")
+        rows = [
+            evidence
+            for card in self.payload["opportunity_radar"]
+            for evidence in card["evidence"]
+            if evidence.get("source") == "intraday.json"
+        ]
+        self.assertTrue(rows)
+        self.assertTrue(all(item["as_of"] == intraday_timestamp for item in rows))
+
     def test_frontend_contract_does_not_expose_abstract_scores(self) -> None:
         for item in self.payload["opportunity_radar"]:
             self.assertNotIn("evidence_score", item)

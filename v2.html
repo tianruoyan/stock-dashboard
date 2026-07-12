@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="color-scheme" content="dark">
   <title>AI投资决策系统 V2</title>
-  <link rel="stylesheet" href="v2.css?v=phase4-inputs-3">
+  <link rel="stylesheet" href="v2.css?v=phase5-sources-1">
 </head>
 <body>
   <header class="v2-topbar">
@@ -30,6 +30,7 @@
     <a href="#validation-queue">验证队列</a>
     <a href="#research-themes">产业研究</a>
     <a href="#stock-pool">股票池</a>
+    <a href="#source-manager">关注来源</a>
     <a href="index.html">返回V1</a>
   </nav>
 
@@ -110,6 +111,24 @@
         </div>
         <div id="governance-status"></div>
       </article>
+
+      <article class="module-card wide" id="source-manager">
+        <div class="module-heading">
+          <div><span class="eyebrow">本机私有配置</span><h2>关注来源管理</h2></div>
+          <span class="subtle">小红书 · 微博 · 公众号 · 其他</span>
+        </div>
+        <p class="source-manager-intro">在这里直接添加、编辑、停用或删除博主来源。博主观点只进入“市场预期/情绪”层，不会被当作交易事实。</p>
+        <form id="blogger-source-form" class="source-manager-form">
+          <input id="blogger-source-id" type="hidden">
+          <label><span>平台</span><select id="blogger-source-platform" required><option value="xiaohongshu">小红书</option><option value="weibo">微博</option><option value="wechat">微信公众号</option><option value="douyin">抖音</option><option value="bilibili">哔哩哔哩</option><option value="other">其他</option></select></label>
+          <label><span>账号名称</span><input id="blogger-source-name" maxlength="80" required placeholder="例如：某产业研究员"></label>
+          <label class="source-url-field"><span>主页或文章链接</span><input id="blogger-source-url" type="url" required placeholder="https://..."></label>
+          <label class="source-note-field"><span>关注说明</span><input id="blogger-source-note" maxlength="500" placeholder="例如：跟踪半导体设备产业信息"></label>
+          <div class="source-form-actions"><button type="submit" class="source-primary-action">保存来源</button><button type="button" id="blogger-source-cancel" hidden>取消编辑</button></div>
+        </form>
+        <div id="blogger-source-status" class="source-manager-status" aria-live="polite"></div>
+        <div id="blogger-source-list" class="source-manager-list"></div>
+      </article>
     </section>
 
     <details class="source-drawer">
@@ -123,6 +142,6 @@
     <a href="VERSION.md">版本记录</a>
   </footer>
 
-  <script src="v2.js?v=phase4-inputs-3"></script>
+  <script src="v2.js?v=phase5-sources-1"></script>
 </body>
 </html>

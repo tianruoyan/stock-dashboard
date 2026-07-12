@@ -51,7 +51,7 @@ def main() -> int:
         if name in REQUIRED_JSON:
             if not ts:
                 issues.append(issue("warning", name, "missing_timestamp", "缺少 timestamp"))
-            elif signal_date(ts) != current_date:
+            elif effective_signal_date(name, data, ts) != current_date:
                 severity = "info" if name in {"evening-sentiment.json", "requirements.json"} else "warning"
                 issues.append(issue(severity, name, "stale_timestamp", f"时间戳不是当前交易日：{ts}"))
             else:
@@ -68,7 +68,7 @@ def main() -> int:
     phase = trading_phase(now)
     validate_alert(files.get("alert.json"), files.get("source-health.json"), issues, now, phase)
     validate_evening(files.get("evening-sentiment.json"), issues, current_date)
-    validate_source_health(files.get("source-health.json"), issues)
+    validate_source_health(files.get("source-health.json"), issues, current_date)
     validate_automation_health(files.get("automation-health.json"), issues, current_date)
     validate_theme_shifts(files.get("theme-shifts.json"), issues, current_date)
     validate_decision_feed(files.get("decision-feed.json"), issues, current_date)
@@ -140,7 +140,8 @@ def load_watchlist_names() -> set[str]:
 
 def latest_signal_date(files: dict[str, Any]) -> str:
     dates = []
-    for name in ("premarket.json", "opportunity-watch.json", "alert.json", "intraday.json", "midday.json", "postmarket.json", "topics.json"):
+    # Generated decision artifacts use build time; only primary market outputs define the market date.
+    for name in ("premarket.json", "alert.json", "intraday.json", "midday.json", "postmarket.json", "topics.json"):
         ts = files.get(name, {}).get("timestamp") if isinstance(files.get(name), dict) else None
         date = signal_date(ts)
         if date:
@@ -151,6 +152,12 @@ def latest_signal_date(files: dict[str, Any]) -> str:
 def signal_date(value: Any) -> str:
     match = re.search(r"\d{4}-\d{2}-\d{2}", str(value or ""))
     return match.group(0) if match else ""
+
+
+def effective_signal_date(name: str, data: Any, timestamp: Any) -> str:
+    if name == "opportunity-watch.json" and isinstance(data, dict) and data.get("current_signal_date"):
+        return str(data["current_signal_date"])
+    return signal_date(timestamp)
 
 
 def parse_timestamp(value: Any) -> datetime | None:
@@ -215,7 +222,10 @@ def scan_change_pct(name: str, obj: Any, watch_names: set[str], issues: list[dic
     if isinstance(obj, dict):
         item_name = str(obj.get("name") or obj.get("sector") or obj.get("title") or "").replace("XD", "")
         local_text = directional_label_text(obj)
-        if "change_pct" in obj:
+        explicit_gap = obj.get("change_pct") in {None, ""} and bool(
+            re.search(r"unavailable|待确认|未取得|缺失|不可用|无可靠|可靠精确涨幅未取得", local_text, re.I)
+        )
+        if "change_pct" in obj and not explicit_gap:
             try:
                 pct = float(obj["change_pct"])
                 if not math.isfinite(pct):
@@ -386,7 +396,7 @@ def validate_postmarket(data: Any, issues: list[dict[str, Any]]) -> None:
 
 CORE_CONTRACTS: dict[str, dict[str, type | tuple[type, ...]]] = {
     "premarket.json": {
-        "summary": str,
+        "strategy": str,
         "us_overnight": dict,
         "hk_auction": dict,
         "overnight_news": list,
@@ -827,7 +837,7 @@ def validate_evening(data: Any, issues: list[dict[str, Any]], current_date: str)
                 issues.append(issue("warning", "evening-sentiment.json", "missing_p0_field", f"p0_alerts[{index}].{key} 缺失"))
 
 
-def validate_source_health(data: Any, issues: list[dict[str, Any]]) -> None:
+def validate_source_health(data: Any, issues: list[dict[str, Any]], current_date: str) -> None:
     if not isinstance(data, dict):
         return
     sources = data.get("sources") or {}
@@ -835,11 +845,49 @@ def validate_source_health(data: Any, issues: list[dict[str, Any]]) -> None:
         iterator = sources.items()
     else:
         iterator = ((item.get("id") or item.get("name") or "unknown", item) for item in sources if isinstance(item, dict))
+    active: dict[str, tuple[str, dict[str, Any], datetime | None]] = {}
+    historical_bad = 0
     for name, source in iterator:
+        if not isinstance(source, dict):
+            continue
+        status = source.get("status")
+        checked = source.get("last_check") or source.get("checked_at") or source.get("timestamp")
+        checked_date = signal_date(checked)
+        if status in {"degraded", "bad", "failed"} and checked_date and checked_date < current_date:
+            historical_bad += 1
+            continue
+        family = source_family(str(name))
+        parsed = parse_timestamp(checked)
+        previous = active.get(family)
+        if previous is None or (parsed and (previous[2] is None or parsed > previous[2])):
+            active[family] = (str(name), source, parsed)
+    for name, source, _ in active.values():
         status = source.get("status")
         if status in {"degraded", "bad", "failed"}:
             code = "source_failed" if status == "failed" else "source_degraded"
             issues.append(issue("warning", "source-health.json", code, f"{name}: {source.get('note') or source.get('detail') or source.get('usage') or status}"))
+    if historical_bad:
+        issues.append(
+            issue(
+                "info",
+                "source-health.json",
+                "historical_source_failures",
+                f"保留 {historical_bad} 条历史来源失败记录供追溯；其检查日期早于当前市场日，不重复计入当前行情门禁。",
+            )
+        )
+
+
+def source_family(name: str) -> str:
+    for pattern, family in (
+        (r"^monitor_alert_quote_audit_\d+$", "monitor_alert_quote_audit"),
+        (r"^eastmoney_board_rank_", "eastmoney_board_rank"),
+        (r"^eastmoney_limit_pool_", "eastmoney_limit_pool"),
+        (r"^(tencent_http|tencent_a_quote_intraday_)", "tencent_a_quotes"),
+        (r"^(tencent_hk_auction_http|in_app_browser_hk_quote)$", "hk_auction_quotes"),
+    ):
+        if re.search(pattern, name):
+            return family
+    return name
 
 
 def validate_decision_feed(data: Any, issues: list[dict[str, Any]], current_date: str) -> None:
@@ -1092,6 +1140,12 @@ def user_facing_source_message(message: str) -> str:
 
 def issue_impact(code: str, file: str, message: str) -> tuple[str, str]:
     text = f"{code} {file} {message}"
+    if code == "historical_source_failures":
+        return "background_review", "保留历史来源审计记录，不重复影响当前价格门禁"
+    if code == "stale_timestamp" and file in {"source-health.json", "evening-sentiment.json"}:
+        return "background_review", "休市增量或来源巡检只作下一交易日背景，不改写最近市场日"
+    if re.search(r"ths_watchlist_import|hkex_evening_watchlist_scan|watchlist_code_quality|公告扫描|无权限读取", text, re.I):
+        return "background_review", "保留输入或公告覆盖缺口；不影响已取得的市场价格事实"
     if re.search(r"official_policy|政策|通用网页|官网|部委", text, re.I):
         return "background_review", "仅作政策/背景覆盖复核，不阻断盘中价格和交易触发"
     if code in {

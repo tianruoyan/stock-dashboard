@@ -44,6 +44,8 @@ class V2GovernanceTests(unittest.TestCase):
         payload = V2GovernanceBuilder(ROOT).build()["event_registry"]
         self.assertGreater(payload["official_event_count"], 0)
         self.assertEqual(payload["blogger_event_count"], 0)
+        self.assertIn("blogger_account_count", payload)
+        self.assertIn("blogger_enabled_account_count", payload)
 
 
 if __name__ == "__main__":

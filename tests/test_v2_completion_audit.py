@@ -20,7 +20,7 @@ class V2CompletionAuditTests(unittest.TestCase):
             "design_document", "migration_audit", "data_lineage_model", "phased_route_and_visual",
             "data_quality_gate", "idempotent_data_publisher", "public_data_collectors", "decision_cockpit_radar", "cross_market",
             "style_dimensions", "microcap_data", "two_sided_sentiment", "research_room", "stock_pool",
-            "event_source_governance", "official_event_input", "blogger_accounts", "automation_routing", "immutable_replay", "outcome_prices",
+            "event_source_governance", "official_event_input", "blogger_source_manager", "blogger_accounts", "automation_routing", "immutable_replay", "outcome_prices",
             "offline_model_evaluation", "portfolio_authorization", "no_automatic_trading", "v1_rollback", "production_cutover"
         }
         self.assertTrue(required.issubset(ids))

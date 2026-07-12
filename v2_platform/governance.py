@@ -15,6 +15,9 @@ class V2GovernanceBuilder:
     def build(self) -> dict[str, Any]:
         path = self.root / str(self.sources.get("input_path") or "data/v2/inputs/events.json")
         event_payload = load_json(path)
+        blogger_accounts_payload = load_json(self.root / ".v2_private" / "blogger-accounts.json")
+        blogger_accounts = [item for item in as_list(blogger_accounts_payload.get("accounts")) if isinstance(item, dict)]
+        enabled_accounts = [item for item in blogger_accounts if item.get("enabled") is not False]
         events = [self._validate_event(item) for item in as_list(event_payload.get("events")) if isinstance(item, dict)]
         usable_events = [item for item in events if item.get("quality_state") == "usable"]
         blogger_events = [item for item in events if item.get("source_type") == "blogger_social"]
@@ -37,6 +40,13 @@ class V2GovernanceBuilder:
                 "usable_event_count": len(usable_events),
                 "official_event_count": len(official_events),
                 "blogger_event_count": len(blogger_events),
+                "blogger_account_count": len(blogger_accounts),
+                "blogger_enabled_account_count": len(enabled_accounts),
+                "blogger_platform_counts": {
+                    platform: sum(str(item.get("platform")) == platform for item in enabled_accounts)
+                    for platform in sorted({str(item.get("platform")) for item in enabled_accounts if item.get("platform")})
+                },
+                "blogger_account_privacy": "本机私有配置；账号名称和链接不进入公开决策产物。",
                 "events": events,
                 "input_path": str(path.relative_to(self.root)),
                 "blogger_policy": as_dict(as_dict(self.sources.get("source_types")).get("blogger_social")),

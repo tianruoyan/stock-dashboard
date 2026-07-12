@@ -23,6 +23,9 @@ class V2PageContractTests(unittest.TestCase):
             "stock-pool",
             "stock-pool-search",
             "governance-status",
+            "source-manager",
+            "blogger-source-form",
+            "blogger-source-list",
         }
         self.assertTrue(required.issubset(ids))
 
@@ -73,6 +76,13 @@ class V2PageContractTests(unittest.TestCase):
         self.assertIn("model?.baseline_version", code)
         self.assertIn("model?.automatic_live_promotion", code)
         self.assertIn("renderReview(data.signal_review || {}, data.model_evaluation || {})", code)
+
+    def test_blogger_sources_are_managed_without_backend_commands(self) -> None:
+        code = (ROOT / "v2.js").read_text(encoding="utf-8")
+        self.assertIn('/_v2-blogger-accounts', code)
+        self.assertIn('data-source-action="delete"', code)
+        self.assertIn('data-source-action="toggle"', code)
+        self.assertIn("bindBloggerManager()", code)
 
 
 if __name__ == "__main__":

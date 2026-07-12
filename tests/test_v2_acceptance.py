@@ -21,7 +21,8 @@ class V2AcceptanceTests(unittest.TestCase):
 
     def test_rollback_keeps_production_v1_baseline(self) -> None:
         self.assertEqual(self.report["rollback_rehearsal"]["status"], "passed")
-        self.assertTrue(self.report["rollback_rehearsal"]["production_head"].startswith("2e5f149"))
+        self.assertEqual(self.report["rollback_rehearsal"]["baseline_commit"], "2e5f149")
+        self.assertEqual(self.report["rollback_rehearsal"]["changed_protected_paths"], [])
 
     def test_confirmation_list_covers_exposed_gaps(self) -> None:
         ids = {item["id"] for item in self.report["confirmation_items"]}

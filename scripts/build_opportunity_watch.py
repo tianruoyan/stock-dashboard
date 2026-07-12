@@ -3,12 +3,17 @@ from __future__ import annotations
 
 import json
 import re
+import sys
 from datetime import datetime, timezone, timedelta
 from pathlib import Path
 from typing import Any
 
-
 ROOT = Path(__file__).resolve().parents[1]
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
+
+from v2_platform.trading_context import resolve_cn_trading_context
+
 DATA_DIR = ROOT / "data"
 OUT = DATA_DIR / "opportunity-watch.json"
 TZ = timezone(timedelta(hours=8))
@@ -58,15 +63,20 @@ def main() -> int:
         *items_from_evening(evening),
         *items_from_topics(topics),
     ])
+    now = datetime.now(TZ)
+    context = resolve_cn_trading_context(ROOT, now, [latest_signal_date(premarket, topics)])
     report = {
-        "timestamp": now_iso(),
-        "current_signal_date": latest_signal_date(premarket, evening, topics),
+        "timestamp": now.astimezone(TZ).replace(microsecond=0).isoformat(),
+        "current_signal_date": context.market_date.isoformat(),
+        "target_trade_date": context.target_trade_date.isoformat(),
+        "calendar_version": context.calendar_version,
         "items": rank_items(items)[:12],
         "rules": [
             "盘前/晚间/专题只生成等待触发清单，不直接生成交易指令。",
             "盘中正式机会必须由 alert.json 的短周期价格、成交和扩散证据确认。",
             "候选机会可先提醒，但必须标注确认度和还差什么确认。",
             "超过5分钟未继续确认的盘中异动只能作为历史触发。",
+            "休市日新增晚间信息归入下一交易日预案，不改写最近市场交易日。",
         ],
     }
     OUT.write_text(json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
