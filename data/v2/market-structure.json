@@ -1,0 +1,43 @@
+{
+  "schema_version": 1,
+  "config_version": "2026-07-12.1",
+  "dimension": "microcap",
+  "definition": "按市值和流动性刻画的独立市场结构维度，不等同于小登题材风格。",
+  "state": "proxy_configured_data_pending",
+  "direction": "unknown",
+  "expected_trade_date": "2026-07-10",
+  "selected_observation": null,
+  "conclusion": "已配置中证2000观察代理，但缺少最近交易日的完整可审计行情；暂不判断微盘方向。",
+  "proxy": {
+    "name": "中证2000指数",
+    "code": "932000",
+    "scope_note": "选取市值规模较小且流动性较好的2000只证券；只作为小微盘宽基代理，不等于纯微盘。",
+    "factsheet_url": "https://oss-ch.csindex.com.cn/static/html/csindex/public/uploads/indices/detail/files/zh_CN/932000factsheet.pdf",
+    "methodology_url": "https://oss-ch.csindex.com.cn/static/html/csindex/public/uploads/indices/detail/files/zh_CN/20231208180041-932000_Index_Methodology_cn.pdf"
+  },
+  "source_states": [
+    {
+      "source_id": "wind_microcap_licensed",
+      "status": "credential_not_configured",
+      "scope": "纯微盘指数优先源；需要用户提供合法数据权限。"
+    },
+    {
+      "source_id": "csi2000_official_proxy",
+      "status": "definition_verified_quote_feed_pending",
+      "scope": "选取市值规模较小且流动性较好的2000只证券；只作为小微盘宽基代理，不等于纯微盘。"
+    },
+    {
+      "source_id": "custom_bottom_cap_basket",
+      "status": "disabled_until_rule_confirmed",
+      "scope": "只有在股票全集、市值字段、流动性过滤、ST/停牌处理和再平衡规则全部明确后才可启用。"
+    }
+  ],
+  "observation_checks": [],
+  "conflicts": [],
+  "quality_policy": [
+    "优先选择配置中更高优先级且字段完整的来源。",
+    "交易日必须等于已验证日历推导的最近交易日；未来、过期或无时区时间戳均不可用。",
+    "缺失、冲突或过期时不输出涨跌方向和数值。",
+    "使用中证2000时必须同时显示代理边界。"
+  ]
+}
