@@ -9,7 +9,7 @@
     "v1_role": "production_primary",
     "v2_role": "shadow_observer",
     "stop_v1_requires_new_user_confirmation": true,
-    "generated_at": "2026-07-12T20:44:26+08:00",
+    "generated_at": "2026-07-12T20:46:13+08:00",
     "latest_source_at": "2026-07-12T20:44:15+08:00",
     "decision_as_of": "2026-07-10T14:43:40+08:00",
     "production_behavior_changed": false,
@@ -2807,7 +2807,7 @@
   "research_library": {
     "schema_version": 1,
     "taxonomy_version": "2026-07-12.1",
-    "generated_at": "2026-07-12T20:44:26+08:00",
+    "generated_at": "2026-07-12T20:46:13+08:00",
     "mapping_policy": "只依据配置专题名称、关注要点、显式股票标签和显式股票清单映射；不因股价表现反推产业归属。多领域命中允许保留多个映射。",
     "research_governance": "研究模板描述产业逻辑和需要验证的指标，不等于交易结论。A股映射必须由公司公告、定期报告、订单/收入或可核验产品证据支持；仅有概念标签不得升级为受益标的。",
     "domains": [
@@ -4146,7 +4146,7 @@
   },
   "stock_pool": {
     "schema_version": 1,
-    "generated_at": "2026-07-12T20:44:26+08:00",
+    "generated_at": "2026-07-12T20:46:13+08:00",
     "stock_count": 114,
     "topic_count": 24,
     "role_unclassified_count": 104,
@@ -9179,12 +9179,15 @@
           "production_state": "legacy_unchanged_until_cutover"
         },
         {
-          "name": "V2判断快照与结果回收",
+          "name": "V2双轨收盘后验证",
+          "automation_id": "v2",
+          "schedule": "A股交易日16:10，先核验交易所日历",
           "migration": "new",
           "target_categories": [
-            "replay_learning"
+            "replay_learning",
+            "operations"
           ],
-          "reason": "冻结当时判断并回收T+1/T+3/T+5/T+10结果，不自动修改线上权重。",
+          "reason": "冻结当时判断、回收T+1/T+3/T+5/T+10结果、生成V1/V2对照并复跑验收；不自动修改线上权重或切换入口。",
           "production_state": "shadow_only"
         }
       ],

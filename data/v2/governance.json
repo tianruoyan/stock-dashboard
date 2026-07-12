@@ -205,12 +205,15 @@
         "production_state": "legacy_unchanged_until_cutover"
       },
       {
-        "name": "V2判断快照与结果回收",
+        "name": "V2双轨收盘后验证",
+        "automation_id": "v2",
+        "schedule": "A股交易日16:10，先核验交易所日历",
         "migration": "new",
         "target_categories": [
-          "replay_learning"
+          "replay_learning",
+          "operations"
         ],
-        "reason": "冻结当时判断并回收T+1/T+3/T+5/T+10结果，不自动修改线上权重。",
+        "reason": "冻结当时判断、回收T+1/T+3/T+5/T+10结果、生成V1/V2对照并复跑验收；不自动修改线上权重或切换入口。",
         "production_state": "shadow_only"
       }
     ],
