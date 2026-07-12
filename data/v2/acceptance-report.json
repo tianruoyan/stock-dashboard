@@ -1,0 +1,93 @@
+{
+  "schema_version": 1,
+  "generated_at": "2026-07-12T14:10:06+08:00",
+  "shadow_acceptance": "passed",
+  "production_promotion": "hold",
+  "production_hold_reason": "关键数据仍为降级状态。",
+  "quality_state": "degraded",
+  "checks": [
+    {
+      "id": "v2_shadow_mode",
+      "passed": true,
+      "detail": "V2仍为影子模式，不触发生产交易或通知。"
+    },
+    {
+      "id": "static_smoke",
+      "passed": true,
+      "detail": "V2页面检查：ok"
+    },
+    {
+      "id": "unified_build_not_blocked",
+      "passed": true,
+      "detail": "统一构建：degraded"
+    },
+    {
+      "id": "research_domains",
+      "passed": true,
+      "detail": "产业领域：6"
+    },
+    {
+      "id": "stock_pool",
+      "passed": true,
+      "detail": "统一股票池：114只"
+    },
+    {
+      "id": "immutable_replay",
+      "passed": true,
+      "detail": "冻结快照：2个"
+    },
+    {
+      "id": "no_live_model_weight_change",
+      "passed": true,
+      "detail": "禁止自动修改线上模型权重。"
+    },
+    {
+      "id": "production_v1_preserved",
+      "passed": true,
+      "detail": "生产V1仍在基线 2e5f149。"
+    },
+    {
+      "id": "rollback_entry_exists",
+      "passed": true,
+      "detail": "生产V1入口可作为即时回退入口。"
+    }
+  ],
+  "rollback_rehearsal": {
+    "status": "passed",
+    "method": "验证生产V1目录与入口保持在冻结基线；V2仅存在于隔离分支，未改变生产任务。",
+    "production_head": "2e5f14960510492cec267f7ba41b4bc60b8d4991",
+    "v2_head": "0bd5ed113e0ae795d718fd89e8eb1fd56eef3c74"
+  },
+  "confirmation_items": [
+    {
+      "id": "style_taxonomy",
+      "status": "implemented_needs_user_confirmation",
+      "question": "确认中登以新能源、电力设备、医药、军工、有色等上一轮成长产业为核心，小登以当前前沿科技为核心。"
+    },
+    {
+      "id": "microcap_proxy",
+      "status": "proxy_configured_data_pending",
+      "question": "确认微盘独立于小登，并允许中证2000仅作为宽基代理；纯微盘口径后续接入授权数据源。"
+    },
+    {
+      "id": "research_gaps",
+      "status": "coverage_gap",
+      "question": "核聚变等缺少现有专题/股票映射，是否按当前优先级继续补建研究模板。"
+    },
+    {
+      "id": "stock_roles",
+      "status": "evidence_pending",
+      "question": "股票池有 111 只缺少显式龙头/中军/弹性角色证据，确认继续保持未分类而非AI猜测。"
+    },
+    {
+      "id": "portfolio_and_outcomes",
+      "status": "data_authorization_pending",
+      "question": "真实持仓、成本、微盘行情和回溯价格尚未授权接入；在接入前继续只给规则提示和待验证结果。"
+    },
+    {
+      "id": "production_promotion",
+      "status": "hold",
+      "question": "影子版验收后是否将V2设为生产主入口；切换前仍保持V1不变。"
+    }
+  ]
+}
