@@ -1,10 +1,10 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-07-12T20:33:08+08:00",
+  "generated_at": "2026-07-12T20:35:05+08:00",
   "objective": "AI辅助投资决策系统V2.0完整重构",
   "completion_state": "implemented_external_inputs_pending",
   "counts": {
-    "proven": 21,
+    "proven": 22,
     "data_pending": 4,
     "user_confirmation": 1,
     "missing": 0,
@@ -132,6 +132,11 @@
       "evidence": "影子模式；不自动交易，不自动修改线上权重"
     },
     {
+      "id": "parallel_v1_v2",
+      "state": "proven",
+      "evidence": "用户已确认V1生产、V2影子双轨并行；停用V1必须再次确认"
+    },
+    {
       "id": "v1_rollback",
       "state": "proven",
       "evidence": "V1程序与入口保持冻结基线；原生产数据任务可继续更新"
@@ -139,7 +144,7 @@
     {
       "id": "production_cutover",
       "state": "user_confirmation",
-      "evidence": "生产主入口切换属于重大产品选择，等待用户确认"
+      "evidence": "用户已确认暂不切换；待V2稳定后，停用V1或切换主入口仍需再次确认"
     }
   ],
   "remaining_external_inputs": [
@@ -166,7 +171,7 @@
     {
       "id": "production_cutover",
       "state": "user_confirmation",
-      "evidence": "生产主入口切换属于重大产品选择，等待用户确认"
+      "evidence": "用户已确认暂不切换；待V2稳定后，停用V1或切换主入口仍需再次确认"
     }
   ],
   "claim_guardrail": "只有所有检查均为 proven，才允许声明平台目标完成。"

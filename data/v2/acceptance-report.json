@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-07-12T20:33:08+08:00",
+  "generated_at": "2026-07-12T20:35:05+08:00",
   "shadow_acceptance": "passed",
   "production_promotion": "hold",
   "production_hold_reason": "关键数据仍为降级状态。",
@@ -10,6 +10,11 @@
       "id": "v2_shadow_mode",
       "passed": true,
       "detail": "V2仍为影子模式，不触发生产交易或通知。"
+    },
+    {
+      "id": "parallel_operation",
+      "passed": true,
+      "detail": "用户已确认V1/V2双轨并行；停用V1需要再次确认。"
     },
     {
       "id": "static_smoke",
@@ -74,7 +79,7 @@
       "config"
     ],
     "changed_protected_paths": [],
-    "v2_head": "bcdf28f0455f692e1a2fbbcb4bc2d9e01bc68b5f"
+    "v2_head": "c2b2185004483b161000983e4429329a9af12277"
   },
   "confirmation_items": [
     {
@@ -104,8 +109,8 @@
     },
     {
       "id": "production_promotion",
-      "status": "hold",
-      "question": "影子版验收后是否将V2设为生产主入口；切换前仍保持V1不变。"
+      "status": "parallel_run_confirmed_cutover_deferred",
+      "question": "已确认先双轨并行；只有V2稳定且您再次授权后，才切换主入口或停用V1。"
     }
   ]
 }
