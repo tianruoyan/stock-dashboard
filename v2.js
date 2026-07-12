@@ -173,12 +173,22 @@ function renderThemes(items) {
 function renderResearchLibrary(data) {
   const target = document.getElementById("research-themes");
   const domains = list(data?.domains);
-  target.innerHTML = domains.map(domain => `<article class="theme-card ${escapeHtml(domain.coverage_state)}">
-    <div class="state-row"><h3>${escapeHtml(domain.name)}</h3><span class="state-text">${domain.coverage_state === "coverage_gap" ? "覆盖缺口" : "已映射"}</span></div>
+  const coverageLabel = value => ({coverage_gap: "覆盖缺口", template_ready_mapping_gap: "模板已建·映射待补", mapped: "已映射"}[value] || value || "未知");
+  target.innerHTML = domains.map(domain => {
+    const template = domain.research_template;
+    return `<article class="theme-card ${escapeHtml(domain.coverage_state)}">
+    <div class="state-row"><h3>${escapeHtml(domain.name)}</h3><span class="state-text">${escapeHtml(coverageLabel(domain.coverage_state))}</span></div>
     <p>专题 ${escapeHtml(domain.topic_count)} · 股票 ${escapeHtml(domain.stock_count)}</p>
     <div class="tag-list">${list(domain.topics).slice(0, 6).map(item => `<span class="tag">${escapeHtml(item.name)}</span>`).join("")}</div>
     ${domain.coverage_state === "coverage_gap" ? '<p class="coverage-gap-note">尚未接入明确专题或股票映射，不补造研究结论。</p>' : ""}
-  </article>`).join("") || '<div class="empty-state">产业研究数据尚未接入。</div>';
+    ${domain.coverage_state === "template_ready_mapping_gap" ? '<p class="coverage-gap-note">产业研究框架已建立；上市公司映射等待公告、订单或收入证据。</p>' : ""}
+    ${template ? `<details class="evidence-details"><summary>查看研究框架与核验指标</summary>
+      <p>${escapeHtml(template.theme_definition)}</p>
+      <p class="research-subtitle">跟踪指标</p><ul>${list(template.tracking_indicators).slice(0, 5).map(item => `<li>${escapeHtml(item)}</li>`).join("")}</ul>
+      <p class="research-subtitle">失效/降级</p><ul>${list(template.invalidation_conditions).slice(0, 4).map(item => `<li>${escapeHtml(item)}</li>`).join("")}</ul>
+      <div class="source-links">${list(template.source_refs).slice(0, 4).map(item => item.url ? `<a href="${escapeHtml(item.url)}" target="_blank" rel="noopener">${escapeHtml(item.title)}</a>` : "").join("")}</div>
+    </details>` : ""}
+  </article>`}).join("") || '<div class="empty-state">产业研究数据尚未接入。</div>';
 }
 
 function renderStockPool(data) {

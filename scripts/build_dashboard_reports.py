@@ -26,6 +26,7 @@ STEPS = [
     ("data-trust", ["python3", "scripts/build_data_trust.py"], False),
     ("monitoring-coverage", ["python3", "scripts/build_monitoring_coverage.py"], False),
     ("section-health", ["python3", "scripts/build_section_health.py"], False),
+    ("v2-market-structure", ["python3", "scripts/build_v2_market_structure.py"], False),
     ("v2-research", ["python3", "scripts/build_v2_research.py"], False),
     ("v2-learning", ["python3", "scripts/build_v2_learning.py"], False),
     ("v2-decision-system", ["python3", "scripts/build_v2_decision_system.py"], False),

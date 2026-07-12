@@ -22,6 +22,7 @@ class V2DecisionSystemTests(unittest.TestCase):
             "opportunity_radar",
             "validation_queue",
             "style_map",
+            "market_structure",
             "portfolio_risk",
             "research_themes",
             "research_library",
@@ -73,6 +74,7 @@ class V2DecisionSystemTests(unittest.TestCase):
         self.assertEqual(dimensions["microcap"]["proxy"]["code"], "932000")
         self.assertIn("不等于纯微盘", dimensions["microcap"]["proxy"]["scope_note"])
         self.assertTrue(self.payload["style_map"]["definition_version"])
+        self.assertEqual(dimensions["microcap"]["state"], self.payload["market_structure"]["state"])
 
     def test_portfolio_does_not_infer_positions(self) -> None:
         portfolio = self.payload["portfolio_risk"]

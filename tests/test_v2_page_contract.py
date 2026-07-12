@@ -46,6 +46,12 @@ class V2PageContractTests(unittest.TestCase):
         self.assertIn('id="stock-pool-search"', (ROOT / "v2.html").read_text(encoding="utf-8"))
         self.assertIn('input.addEventListener("input"', code)
 
+    def test_research_templates_render_evidence_and_mapping_gap(self) -> None:
+        code = (ROOT / "v2.js").read_text(encoding="utf-8")
+        self.assertIn("template_ready_mapping_gap", code)
+        self.assertIn("tracking_indicators", code)
+        self.assertIn("invalidation_conditions", code)
+
 
 if __name__ == "__main__":
     unittest.main()

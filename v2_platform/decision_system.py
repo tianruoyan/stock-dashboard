@@ -8,6 +8,7 @@ from pathlib import Path
 from typing import Any, Iterable
 
 from v2_platform.research import V2ResearchSystemBuilder
+from v2_platform.market_structure import V2MarketStructureBuilder
 
 
 SCHEMA_VERSION = 1
@@ -112,7 +113,8 @@ class V2DecisionSystemBuilder:
         quality = self._quality_gate()
         environment = self._market_environment(quality)
         radar, validation = self._radar(quality)
-        style = self._style_map()
+        market_structure = V2MarketStructureBuilder(self.root).build()
+        style = self._style_map(market_structure)
         research = self._research_themes()
         research_library, stock_pool = V2ResearchSystemBuilder(self.root).build()
         portfolio = self._portfolio_risk()
@@ -140,6 +142,7 @@ class V2DecisionSystemBuilder:
             "opportunity_radar": radar,
             "validation_queue": validation,
             "style_map": style,
+            "market_structure": market_structure,
             "portfolio_risk": portfolio,
             "research_themes": research,
             "research_library": research_library,
@@ -435,7 +438,7 @@ class V2DecisionSystemBuilder:
             "source": ", ".join(str(source) for source in as_list(item.get("source_files"))) or "decision-feed.json",
         }
 
-    def _style_map(self) -> dict[str, Any]:
+    def _style_map(self, market_structure: dict[str, Any]) -> dict[str, Any]:
         shifts = []
         raw_shifts = as_list(self.sources["theme_shifts"].data.get("shifts"))
         for item in raw_shifts:
@@ -475,18 +478,19 @@ class V2DecisionSystemBuilder:
             ]
             if style_id == "microcap":
                 proxy = as_dict(config.get("proxy"))
+                observed_proxy = as_dict(market_structure.get("proxy"))
                 return {
                     "id": style_id,
                     "label": text(config.get("label"), default_label),
-                    "state": text(proxy.get("status"), "data_missing"),
-                    "direction": "unknown",
+                    "state": text(market_structure.get("state"), text(proxy.get("status"), "data_missing")),
+                    "direction": text(market_structure.get("direction"), "unknown"),
                     "definition": text(config.get("definition"), "独立市值与流动性维度"),
                     "representative_sectors": as_list(config.get("representative_sectors")),
-                    "conclusion": "已配置中证2000作为观察代理；当前缺少带时间戳的可审计行情，暂不判断方向。",
+                    "conclusion": text(market_structure.get("conclusion"), "已配置中证2000作为观察代理；当前缺少带时间戳的可审计行情，暂不判断方向。"),
                     "proxy": {
-                        "name": text(proxy.get("name"), "中证2000指数"),
-                        "code": text(proxy.get("code"), "932000"),
-                        "scope_note": text(proxy.get("scope_note"), "指数代理不等于纯微盘。"),
+                        "name": text(observed_proxy.get("name"), text(proxy.get("name"), "中证2000指数")),
+                        "code": text(observed_proxy.get("code"), text(proxy.get("code"), "932000")),
+                        "scope_note": text(observed_proxy.get("scope_note"), text(proxy.get("scope_note"), "指数代理不等于纯微盘。")),
                     },
                     "matched_themes": [],
                     "definition_version": definition_version,

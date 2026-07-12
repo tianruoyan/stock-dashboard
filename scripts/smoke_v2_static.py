@@ -28,6 +28,7 @@ REQUIRED_DATA_KEYS = {
     "opportunity_radar",
     "validation_queue",
     "style_map",
+    "market_structure",
     "portfolio_risk",
     "research_themes",
     "research_library",

@@ -58,6 +58,7 @@ class V2ResearchSystemBuilder:
         self.topic_config = load_json(self.root / "config" / "topics-list.json")
         self.topic_state = load_json(self.root / "data" / "topics.json")
         self.taxonomy = load_json(self.root / "config" / "v2-theme-taxonomy.json")
+        self.templates = load_json(self.root / "config" / "v2-research-templates.json")
 
     def build(self) -> tuple[dict[str, Any], dict[str, Any]]:
         topics = self._topics()
@@ -177,19 +178,32 @@ class V2ResearchSystemBuilder:
     def _research_library(self, topics: list[dict[str, Any]], stocks: list[dict[str, Any]]) -> dict[str, Any]:
         domains = []
         configured = [item for item in as_list(self.taxonomy.get("domains")) if isinstance(item, dict)]
+        templates = {
+            clean_text(item.get("domain_id")): item
+            for item in as_list(self.templates.get("templates"))
+            if isinstance(item, dict) and clean_text(item.get("domain_id"))
+        }
         for domain in configured:
             domain_id = clean_text(domain.get("id"))
             domain_topics = [topic for topic in topics if any(item["id"] == domain_id for item in topic["domains"])]
             domain_stocks = [stock for stock in stocks if any(item["id"] == domain_id for item in stock["domains"])]
+            template = as_dict(templates.get(domain_id))
+            if domain_topics or domain_stocks:
+                coverage_state = "mapped"
+            elif template:
+                coverage_state = "template_ready_mapping_gap"
+            else:
+                coverage_state = "coverage_gap"
             domains.append(
                 {
                     "id": domain_id,
                     "name": clean_text(domain.get("name")),
-                    "coverage_state": "mapped" if domain_topics or domain_stocks else "coverage_gap",
+                    "coverage_state": coverage_state,
                     "topic_count": len(domain_topics),
                     "stock_count": len(domain_stocks),
                     "topics": domain_topics,
                     "stock_refs": [{"security_id": stock["security_id"], "code": stock["code"], "name": stock["name"]} for stock in domain_stocks],
+                    "research_template": template or None,
                 }
             )
         unmapped = [topic for topic in topics if any(item["id"] == "other" for item in topic["domains"])]
@@ -198,9 +212,10 @@ class V2ResearchSystemBuilder:
             "taxonomy_version": clean_text(self.taxonomy.get("taxonomy_version")),
             "generated_at": now_iso(),
             "mapping_policy": clean_text(self.taxonomy.get("mapping_policy")),
+            "research_governance": clean_text(self.templates.get("governance")),
             "domains": domains,
             "unmapped_topics": unmapped,
-            "source_files": ["config/topics-list.json", "data/topics.json", "config/watchlist.json", "config/v2-theme-taxonomy.json"],
+            "source_files": ["config/topics-list.json", "data/topics.json", "config/watchlist.json", "config/v2-theme-taxonomy.json", "config/v2-research-templates.json"],
         }
 
     def _stock_pool(self, stocks: list[dict[str, Any]], topics: list[dict[str, Any]]) -> dict[str, Any]:

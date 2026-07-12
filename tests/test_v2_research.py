@@ -20,9 +20,18 @@ class V2ResearchTests(unittest.TestCase):
 
     def test_uncovered_domains_are_explicit_gaps(self) -> None:
         domains = {item["id"]: item for item in self.research["domains"]}
+        self.assertEqual(domains["fusion"]["coverage_state"], "template_ready_mapping_gap")
+        self.assertEqual(domains["quantum"]["coverage_state"], "mapped")
+
+    def test_fusion_and_quantum_templates_have_evidence_and_invalidation(self) -> None:
+        domains = {item["id"]: item for item in self.research["domains"]}
         for domain_id in ("fusion", "quantum"):
-            if not domains[domain_id]["topic_count"] and not domains[domain_id]["stock_count"]:
-                self.assertEqual(domains[domain_id]["coverage_state"], "coverage_gap")
+            template = domains[domain_id]["research_template"]
+            self.assertTrue(template["logic_chain"])
+            self.assertTrue(template["tracking_indicators"])
+            self.assertTrue(template["confirmation_conditions"])
+            self.assertTrue(template["invalidation_conditions"])
+            self.assertTrue(all(item["type"].startswith("official") for item in template["source_refs"]))
 
     def test_stock_pool_deduplicates_codes_and_preserves_sources(self) -> None:
         stocks = self.stock_pool["stocks"]
