@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="dark">
+  <title>AI投资决策系统 V2</title>
+  <link rel="stylesheet" href="v2.css?v=phase2-shadow-1">
+</head>
+<body>
+  <header class="v2-topbar">
+    <div class="brand-block">
+      <span class="brand-mark">V2</span>
+      <div>
+        <strong>AI投资决策系统</strong>
+        <small>规则筛选 · AI解释 · 人工决策</small>
+      </div>
+    </div>
+    <div class="system-meta">
+      <span id="v2-mode" class="pill neutral">影子模式</span>
+      <span id="v2-status" class="pill">加载中</span>
+      <time id="v2-updated">--</time>
+    </div>
+  </header>
+
+  <nav class="v2-nav" aria-label="V2主要区域">
+    <a href="#opportunity-risk-radar">机会雷达</a>
+    <a href="#market-environment">市场环境</a>
+    <a href="#style-map">风格结构</a>
+    <a href="#validation-queue">验证队列</a>
+    <a href="#research-themes">产业研究</a>
+    <a href="index.html">返回V1</a>
+  </nav>
+
+  <main class="v2-shell">
+    <section class="status-grid" aria-label="决策前置状态">
+      <div id="data-quality-gate" class="status-panel" aria-live="polite"></div>
+      <div id="market-environment" class="status-panel" aria-live="polite"></div>
+    </section>
+
+    <section class="primary-section" aria-labelledby="radar-heading">
+      <div class="section-heading">
+        <div>
+          <span class="eyebrow">最高优先级</span>
+          <h1 id="radar-heading">交易机会与风险雷达</h1>
+          <p>先看发生了什么，再核验为什么，最后决定是否行动。</p>
+        </div>
+        <div id="radar-filters" class="filter-row" role="group" aria-label="筛选雷达卡片">
+          <button type="button" data-filter="all" class="active">全部</button>
+          <button type="button" data-filter="opportunity">机会</button>
+          <button type="button" data-filter="risk">风险</button>
+          <button type="button" data-filter="waiting">待确认</button>
+        </div>
+      </div>
+      <div id="opportunity-risk-radar" class="radar-grid"></div>
+    </section>
+
+    <section class="secondary-grid">
+      <article class="module-card wide">
+        <div class="module-heading">
+          <div><span class="eyebrow">市场结构</span><h2>风格与主线变化</h2></div>
+          <span class="subtle">微盘独立于小登</span>
+        </div>
+        <div id="style-map"></div>
+      </article>
+
+      <article class="module-card">
+        <div class="module-heading">
+          <div><span class="eyebrow">下一步核验</span><h2>验证队列</h2></div>
+        </div>
+        <div id="validation-queue"></div>
+      </article>
+
+      <article class="module-card">
+        <div class="module-heading">
+          <div><span class="eyebrow">规则与缺口</span><h2>组合风险</h2></div>
+        </div>
+        <div id="portfolio-risk"></div>
+      </article>
+
+      <article class="module-card wide">
+        <div class="module-heading">
+          <div><span class="eyebrow">长期映射</span><h2>产业研究室</h2></div>
+          <span class="subtle">研究结论 → 股票池 → 驾驶舱</span>
+        </div>
+        <div id="research-themes" class="theme-grid"></div>
+      </article>
+
+      <article class="module-card wide">
+        <div class="module-heading">
+          <div><span class="eyebrow">后验验证</span><h2>信号复盘</h2></div>
+        </div>
+        <div id="signal-review"></div>
+      </article>
+    </section>
+
+    <details class="source-drawer">
+      <summary>查看本页数据来源与时间</summary>
+      <div id="source-registry"></div>
+    </details>
+  </main>
+
+  <footer class="v2-footer">
+    <span>V2当前为影子入口，不触发生产通知或交易。</span>
+    <a href="VERSION.md">版本记录</a>
+  </footer>
+
+  <script src="v2.js?v=phase2-shadow-1"></script>
+</body>
+</html>
