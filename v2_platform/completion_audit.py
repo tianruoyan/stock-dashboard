@@ -33,6 +33,10 @@ class V2CompletionAuditBuilder:
         review = as_dict(decision.get("signal_review"))
         model_evaluation = as_dict(decision.get("model_evaluation"))
         input_status = as_dict(decision.get("input_status"))
+        outcome_collector = next(
+            (item for item in as_list(input_status.get("public_collectors")) if isinstance(item, dict) and item.get("id") == "outcome_prices"),
+            {},
+        )
         environment = as_dict(decision.get("market_environment"))
         style = as_dict(decision.get("style_map"))
         sentiment = as_dict(environment.get("sentiment_structure"))
@@ -60,7 +64,11 @@ class V2CompletionAuditBuilder:
             self._check("automation_routing", "proven" if as_dict(governance.get("automation_routing")).get("state") == "valid" and int(as_dict(governance.get("automation_routing")).get("task_count") or 0) >= 6 else "failed", "实时决策/长期研究/后台采集/复盘学习/运维五类归属"),
             self._check("immutable_replay", "proven" if int(review.get("snapshot_count") or 0) > 0 and review.get("hit_rate") is None else "failed", f"判断快照 {review.get('snapshot_count') or 0} 个，样本不足不展示命中率"),
             self._check("offline_model_evaluation", "proven" if model_evaluation.get("baseline_version") and model_evaluation.get("automatic_live_promotion") is False and as_dict(model_evaluation.get("recommendation")).get("requires_user_confirmation") else "failed", "模型版本、离线比较与人工晋级门槛已建立"),
-            self._check("outcome_prices", "proven" if int(review.get("evaluated_signal_count") or 0) > 0 else "data_pending", "T+1/T+3/T+5/T+10结果价格尚未接入"),
+            self._check(
+                "outcome_prices",
+                "proven" if int(review.get("evaluated_signal_count") or 0) > 0 else "data_pending",
+                f"公开行情自动回填器已接入，参考记录 {outcome_collector.get('observation_count') or 0} 条、到期窗口 {outcome_collector.get('evaluated_window_input_count') or 0} 个；尚待目标交易日收盘。",
+            ),
             self._check("portfolio_authorization", "data_pending" if as_dict(decision.get("portfolio_risk")).get("state") == "rules_only" else "proven", "真实持仓、成本、现金和风险预算未接入"),
             self._check("no_automatic_trading", "proven" if decision.get("system", {}).get("mode") == "shadow_only" and load_json(self.root / "config" / "v2-learning-policy.json").get("model_change_policy", {}).get("automatic_live_weight_change") is False else "failed", "影子模式；不自动交易，不自动修改线上权重"),
             self._check("v1_rollback", "proven" if production.exists() and git_output(production, "rev-parse", "HEAD").startswith(str(as_dict(rollout.get("production_v1")).get("baseline_commit") or "")) else "failed", "生产V1保持冻结基线"),
