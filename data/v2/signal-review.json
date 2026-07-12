@@ -1,0 +1,70 @@
+{
+  "schema_version": 1,
+  "status": "collecting",
+  "summary": "已冻结 1 个判断快照、13 条信号；结果窗口等待可审计价格数据。",
+  "windows": [
+    "T+1",
+    "T+3",
+    "T+5",
+    "T+10"
+  ],
+  "snapshot_count": 1,
+  "pending_signal_count": 13,
+  "evaluated_signal_count": 0,
+  "hit_rate": null,
+  "hit_rate_state": "withheld_insufficient_samples_or_time_span",
+  "guardrail": "样本少于20条或跨越少于20个交易日，不展示命中率。",
+  "workflow": [
+    {
+      "stage": "rule_screen",
+      "owner": "deterministic_rules",
+      "may_do": [
+        "筛选异常",
+        "检查数据质量",
+        "匹配显式主题与股票池",
+        "生成候选"
+      ],
+      "must_not_do": [
+        "把缺失数据补成事实",
+        "绕过质量门"
+      ]
+    },
+    {
+      "stage": "ai_explain",
+      "owner": "ai",
+      "may_do": [
+        "组织证据链",
+        "区分事实/推断/建议",
+        "提出确认与失效条件",
+        "归纳反向证据"
+      ],
+      "must_not_do": [
+        "自动下单",
+        "用抽象分数替代判断",
+        "把博主观点当交易事实"
+      ]
+    },
+    {
+      "stage": "human_decide",
+      "owner": "user",
+      "may_do": [
+        "接受或拒绝建议",
+        "决定仓位与交易",
+        "修订关注优先级"
+      ],
+      "must_not_do": []
+    }
+  ],
+  "items": [
+    {
+      "snapshot_id": "snapshot_77a326e23664d1f7963f",
+      "decision_as_of": "2026-07-10T14:43:40+08:00",
+      "decision_date": "2026-07-10",
+      "quality_state": "degraded",
+      "signal_count": 13,
+      "path": "data/v2/snapshots/2026-07-10/snapshot_77a326e23664d1f7963f.json",
+      "content_hash": "77a326e23664d1f7963f276813f01ac514a530e3403ae1d12dc7a23224dc463a"
+    }
+  ],
+  "updated_at": "2026-07-12T14:04:35+08:00"
+}
