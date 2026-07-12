@@ -1,0 +1,92 @@
+{
+  "schema_version": 1,
+  "source_governance_version": "2026-07-12.1",
+  "automation_routing_version": "2026-07-12.1",
+  "fact_inference_action_layers": {
+    "fact": "可定位来源、时间和原文的观察；数据缺失和冲突必须显式标记。",
+    "inference": "由事实推导的产业/市场解释，必须附反向证据和适用条件。",
+    "action": "人工决策参考，必须给出确认条件、失效点和风险边界。"
+  },
+  "event_registry": {
+    "state": "input_pending",
+    "event_count": 0,
+    "events": [],
+    "input_path": "data/v2/inputs/events.json",
+    "blogger_policy": {
+      "tier": "expectation",
+      "may_support_fact": false,
+      "required_role": "market_expectation_or_sentiment_only"
+    },
+    "conflict_policy": [
+      "同一事实出现数值、时间或主体冲突时标记 conflict，禁止AI择一补齐。",
+      "官方/交易所/公司原文优先于转述，但仍保留所有来源和抓取时间。",
+      "博主观点只记录来源、观点变化和后验结果，不能直接升级为交易事实。",
+      "任何缺少原始链接、发布时间或内容哈希的事件只能进入待核验队列。"
+    ]
+  },
+  "automation_routing": {
+    "state": "valid",
+    "task_count": 6,
+    "tasks": [
+      {
+        "name": "A股港股盘中监测与盘前综合推送",
+        "migration": "split",
+        "target_categories": [
+          "real_time_decision",
+          "background_collection"
+        ],
+        "reason": "原任务跨盘前、盘中、午盘、盘后和晚间，时段与职责过多；V2按数据采集和决策生成拆分。",
+        "production_state": "legacy_unchanged_until_cutover"
+      },
+      {
+        "name": "老登小登盘中提醒",
+        "migration": "merge",
+        "target_categories": [
+          "real_time_decision"
+        ],
+        "reason": "风格轮巡并入驾驶舱；增加中登定义，并将微盘作为独立结构维度。",
+        "production_state": "legacy_unchanged_until_cutover"
+      },
+      {
+        "name": "智谱季度投资追踪",
+        "migration": "merge",
+        "target_categories": [
+          "long_term_research",
+          "replay_learning"
+        ],
+        "reason": "归入AI软件/国产模型生态，保留历史版本并按季度验证。",
+        "production_state": "legacy_unchanged_until_cutover"
+      },
+      {
+        "name": "周一科技消息盘前汇总",
+        "migration": "restructure",
+        "target_categories": [
+          "background_collection",
+          "real_time_decision"
+        ],
+        "reason": "周末收集与周一9:00后的竞价验证分开，避免周日晚输出冒充周一盘前终值。",
+        "production_state": "legacy_unchanged_until_cutover"
+      },
+      {
+        "name": "股票看板晚间发布核验",
+        "migration": "retain_as_operations",
+        "target_categories": [
+          "operations"
+        ],
+        "reason": "只负责发布和健康核验，不计为投资分析模块。",
+        "production_state": "legacy_unchanged_until_cutover"
+      },
+      {
+        "name": "V2判断快照与结果回收",
+        "migration": "new",
+        "target_categories": [
+          "replay_learning"
+        ],
+        "reason": "冻结当时判断并回收T+1/T+3/T+5/T+10结果，不自动修改线上权重。",
+        "production_state": "shadow_only"
+      }
+    ],
+    "issues": [],
+    "cutover_rule": "生产切换前保留V1调度；V2任务只生成影子数据。切换时逐任务停旧启新，禁止一次性删除历史任务和日志。"
+  }
+}
