@@ -80,6 +80,9 @@ class V2DecisionSystemTests(unittest.TestCase):
         for item in status["contracts"]:
             self.assertFalse(item["target"].startswith("/"))
             self.assertNotIn("source", item)
+        outcome = next(item for item in status["public_collectors"] if item["id"] == "outcome_prices")
+        self.assertIn("observation_count", outcome)
+        self.assertIn("evaluated_window_input_count", outcome)
 
     def test_every_radar_card_has_evidence_conditions_and_action(self) -> None:
         for item in self.payload["opportunity_radar"]:

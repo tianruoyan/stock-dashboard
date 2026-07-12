@@ -645,7 +645,13 @@ class V2DecisionSystemBuilder:
         if public_health.status == "loaded":
             for item in as_list(public_health.data.get("collectors")):
                 if isinstance(item, dict):
-                    collectors.append({"id": text(item.get("id"), "unknown"), "state": text(item.get("state"), "unknown"), "detail": text(item.get("detail"), "")})
+                    collectors.append({
+                        "id": text(item.get("id"), "unknown"),
+                        "state": text(item.get("state"), "unknown"),
+                        "detail": text(item.get("detail"), ""),
+                        "observation_count": int(item.get("observation_count") or 0),
+                        "evaluated_window_input_count": int(item.get("evaluated_window_input_count") or 0),
+                    })
         if source.status != "loaded":
             return {
                 "state": "not_run",
