@@ -1,0 +1,405 @@
+#!/usr/bin/env python3
+import json
+from pathlib import Path
+
+
+ROOT = Path(__file__).resolve().parent.parent
+DATA = ROOT / "data"
+TS = "2026-07-13T10:37:03+08:00"
+
+
+def load(name):
+    return json.loads((DATA / name).read_text(encoding="utf-8"))
+
+
+def write_atomic(name, payload):
+    path = DATA / name
+    tmp = path.with_suffix(path.suffix + ".tmp")
+    tmp.write_text(json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    json.loads(tmp.read_text(encoding="utf-8"))
+    tmp.replace(path)
+
+
+indices = [
+    {"name": "上证指数", "code": "sh000001", "value": 3960.56, "change": -35.60, "pct": -0.89, "amount_yi": 6664.47, "status": "交易中", "quote_time": "20260713103703", "source": "腾讯财经HTTP"},
+    {"name": "深证成指", "code": "sz399001", "value": 14824.39, "change": -222.28, "pct": -1.48, "amount_yi": 7730.18, "status": "交易中", "quote_time": "20260713103700", "source": "腾讯财经HTTP"},
+    {"name": "创业板指", "code": "sz399006", "value": 3806.14, "change": -36.59, "pct": -0.95, "amount_yi": 3520.59, "status": "交易中", "quote_time": "20260713103700", "source": "腾讯财经HTTP"},
+    {"name": "科创50", "code": "sh000688", "value": 2079.19, "change": 14.21, "pct": 0.69, "amount_yi": 1035.04, "status": "交易中", "quote_time": "20260713103700", "source": "腾讯财经HTTP"},
+    {"name": "沪深300", "code": "sh000300", "value": 4760.06, "change": -20.73, "pct": -0.43, "amount_yi": 4438.73, "status": "交易中", "quote_time": "20260713103700", "source": "腾讯财经HTTP"},
+]
+
+industry_top5 = [
+    {"name": "中药", "change_pct": 3.45, "turnover_yi": 116.68, "main_net_inflow_yi": 7.10, "advance": 59, "decline": 7, "leader": "天目药业"},
+    {"name": "油气开采", "change_pct": 2.49, "turnover_yi": 16.77, "main_net_inflow_yi": 0.76, "advance": 4, "decline": 1, "leader": "新潮能源"},
+    {"name": "国有大型银行", "change_pct": 2.09, "turnover_yi": 70.75, "main_net_inflow_yi": 3.42, "advance": 6, "decline": 0, "leader": "建设银行"},
+    {"name": "银行", "change_pct": 1.39, "turnover_yi": 150.78, "main_net_inflow_yi": 7.11, "advance": 42, "decline": 0, "leader": "苏州银行"},
+    {"name": "辅料", "change_pct": 1.23, "turnover_yi": 10.70, "main_net_inflow_yi": 0.98, "advance": 2, "decline": 2, "leader": "兴业科技"},
+]
+
+industry_bottom5 = [
+    {"name": "卫浴电器", "change_pct": -1.07},
+    {"name": "白色家电", "change_pct": -1.02},
+    {"name": "板材", "change_pct": -1.02},
+    {"name": "饮料乳品", "change_pct": -0.99},
+    {"name": "半导体", "change_pct": -0.98, "turnover_yi": 2871.62, "main_net_inflow_yi": -141.67, "advance": 60, "decline": 120},
+]
+
+concept_top5 = [
+    {"name": "特色药", "change_pct": 3.24, "turnover_yi": 84.86, "main_net_inflow_yi": 3.59, "advance": 35, "decline": 5, "leader": "立方制药"},
+    {"name": "独家药品", "change_pct": 2.78, "turnover_yi": 73.82, "main_net_inflow_yi": 4.43, "advance": 35, "decline": 8, "leader": "立方制药"},
+    {"name": "第四代半导体", "change_pct": 2.17, "turnover_yi": 50.62, "main_net_inflow_yi": -0.71, "advance": 2, "decline": 2, "leader": "东微半导"},
+    {"name": "中药概念", "change_pct": 1.74, "turnover_yi": 229.37, "main_net_inflow_yi": 7.45, "advance": 98, "decline": 46, "leader": "立方制药"},
+    {"name": "肝炎概念", "change_pct": 1.47, "turnover_yi": 142.33, "main_net_inflow_yi": 0.05, "advance": 38, "decline": 19, "leader": "立方制药"},
+]
+
+concept_bottom5 = [
+    {"name": "新消费", "change_pct": -1.41},
+    {"name": "煤化工", "change_pct": -1.40},
+    {"name": "宁组合", "change_pct": -1.39},
+    {"name": "精准诊断", "change_pct": -1.37},
+    {"name": "小盘价值", "change_pct": -1.36},
+]
+
+intraday = load("intraday.json")
+intraday.update({
+    "timestamp": TS,
+    "session": "A股上午盘中/10:30常规更新（10:37快照）",
+    "summary": "医药仍是唯一满足宽度、涨停和资金承接的强主线，但全市场涨停维持23家、跌停由19家扩至35家、炸板增至12家，风险扩散明显。科创50靠中芯与少数设备股独强，半导体全板块仍净流出；银行提供防御承接，存储与电子布继续负反馈。",
+    "data_status": {
+        "status": "verified_partial",
+        "as_of": TS,
+        "summary": "腾讯A股实时行情、东方财富涨停/炸板池及行业概念排行有效；跌停池仅返回总数35、未返回明细，未据此编造行业分布。港股为约12分钟延迟行情。",
+        "confidence": "medium_high",
+        "stale_data_removed": True,
+    },
+    "indices": indices,
+    "index": {
+        "snapshot_time": TS,
+        "a_share_indices": indices,
+        "a_share_turnover_yi_estimate": 14394.65,
+        "interpretation": "科创50+0.69%独强，上证-0.89%、深证-1.48%、创业板-0.95%，成长内部结构分化而非全面修复。",
+    },
+    "market_snapshot": {
+        "as_of": "2026-07-13 10:37 CST",
+        "indices": [{"name": x["name"], "change_pct": x["pct"]} for x in indices],
+        "turnover_yi": 14394.65,
+        "turnover_note": "腾讯沪深指数10:37累计成交额字段合计。",
+        "hk_status": "腾讯港股约12分钟延迟快照，作为A/H方向验证，不作为实时成交终值。",
+        "hk": {"hang_seng_pct": 0.83, "hang_seng_tech_pct": 1.17, "smic_pct": 4.83, "hua_hong_pct": -0.65, "alibaba_pct": 2.36, "tencent_pct": 1.69, "akeso_pct": -0.93},
+    },
+    "market_breadth": {
+        "status": "partial",
+        "sample_size_estimate": 5300,
+        "advance_count": None,
+        "decline_count": None,
+        "flat_count": None,
+        "limit_up_count": 23,
+        "effective_limit_up_count_ex_delisting": 21,
+        "limit_down_count": 35,
+        "broken_limit_count": 12,
+        "up_5_count": None,
+        "up_8_count": None,
+        "down_5_count": None,
+        "turnover_yi_estimate": 14394.65,
+        "twenty_cm_limit_up_count": 2,
+        "note": "涨停原始23家，剔除国华退、云创退后有效21家；跌停池tc=35但明细为空。未取得可靠全A涨跌家数与5%/8%宽度。",
+    },
+    "limit_up_count": 23,
+    "limit_down_count": 35,
+    "sentiment": {
+        "limit_up_count": 23,
+        "effective_limit_up_count_ex_delisting": 21,
+        "limit_down_count": 35,
+        "broken_limit_count": 12,
+        "limit_diff": -12,
+        "limit_up_share_pct_est": 0.43,
+        "effective_limit_up_share_pct_est": 0.40,
+        "limit_down_share_pct_est": 0.66,
+        "limit_up_down_ratio": "23:35",
+        "effective_limit_ratio": "0.6:1",
+        "denominator": "按约5300只A股估算；原始涨停含国华退、云创退2只",
+        "twenty_cm_limit_up_count": 2,
+        "highest_board_ex_delisting": 3,
+        "broken_rate_est": 34.3,
+        "change_from_previous": "较10:16涨停23家不变，跌停由19家增至35家，炸板由9家增至12家；涨停不扩散而跌停快速增加，风险显著扩大。",
+        "judgement": "退潮型强分歧：局部医药和科创中芯仍有赚钱效应，但全市场负反馈扩张，上午应以防守和二次确认优先。",
+    },
+    "industry_top5": industry_top5,
+    "industry_bottom5": industry_bottom5,
+    "concept_top5": concept_top5,
+    "concept_bottom5": concept_bottom5,
+})
+
+intraday["main_trends"] = [
+    {
+        "name": "中药/特色药",
+        "category": "强主线",
+        "status": "宽度与封板继续确认，但分歧增加",
+        "evidence": [
+            "立方制药、哈药股份、天目药业、陇神戎发4只医药股封板，立方3板、陇神20cm；九芝堂和万邦医药炸板，主线内部已有高位分歧。",
+            "中药行业+3.45%，59涨7跌，成交约116.7亿元、主力净流入约7.10亿元；特色药+3.24%，35涨5跌。",
+            "广誉远+6.39%、佐力药业+4.98%、华润江中+3.95%，低位补涨仍在；港股康方-0.93%，本轮主要是A股内部扩散，未获港股创新药共振。",
+        ],
+        "judgement": "仍是当前唯一强主线；若立方/陇神开板且医药炸板继续增加，或中药资金流转负，需降为观察线。",
+    },
+    {
+        "name": "银行/国有大行",
+        "category": "观察线",
+        "status": "防御承接增强、但不是题材进攻主线",
+        "evidence": [
+            "银行板块+1.39%，42涨0跌，成交约150.8亿元、主力净流入约7.11亿元；国有大行+2.09%，6涨0跌。",
+            "没有涨停扩散，但在上证-0.89%、深证-1.48%背景下承担指数防御；券商、保险、畜牧、白酒样本仍普遍下跌。",
+            "未满足券商+保险或畜牧+白酒双方向共振，属于银行单线承接，不定义全面风格切换。",
+        ],
+        "judgement": "观察防御持续性和指数贡献；若银行缩量回落且科技继续走弱，市场承接会进一步下降。",
+    },
+    {
+        "name": "半导体设备/制造",
+        "category": "观察线",
+        "status": "中芯与少数设备股局部强，板块宽度仍弱",
+        "evidence": [
+            "中芯国际A+4.34%、芯源微+3.27%、华海清科+1.65%、北方华创+0.41%，科创50+0.69%；华峰测控+3.34%提供局部设备承接。",
+            "半导体行业整体-0.98%，60涨120跌，成交约2871.6亿元、主力净流出约141.7亿元；涨停池仍无设备/材料分支批量封板。",
+            "港股中芯+4.83%与A股中芯共振，但华虹-0.65%；A/H只有晶圆制造局部共振，日韩存储链弱势仍未反转。",
+        ],
+        "judgement": "仅观察线。中芯单核和少数设备股不构成主线，需2-3只设备/材料前排同步创新高并出现涨停扩散才升级。",
+    },
+    {
+        "name": "氦气/工业气体",
+        "category": "资金博弈线",
+        "status": "封板核心尚在、后排和资金继续走弱",
+        "evidence": [
+            "水发燃气、九丰能源仍封板；杭氧股份、凯美特气继续位于炸板池，九丰已有2次开板回封。",
+            "氦气概念+0.79%，8涨9跌，成交约175.1亿元、主力净流出约5.49亿元；宽度和资金均弱于医药。",
+            "后排未扩散到低位新涨停，属于核心承接博弈而非强主线。",
+        ],
+        "judgement": "反抽观察，不是强主线；只有杭氧/凯美特回封且概念资金转正，才可回到观察线偏强。",
+    },
+    {
+        "name": "CPO/光通信",
+        "category": "资金博弈线",
+        "status": "高成交承接仍在，核心继续降温",
+        "evidence": [
+            "星网锐捷涨停；中际旭创+3.02%成交约198.5亿元、新易盛+0.81%约99.0亿元，但天孚-1.33%、光迅-1.50%。",
+            "相较10:16，中际、新易盛和天孚均继续回落，只有星网1只封板，未扩散到低位补涨。",
+            "港股恒生科技+1.17%、阿里+2.36%、腾讯+1.69%提供情绪支撑，但无法替代A股板块宽度。",
+        ],
+        "judgement": "反抽观察，不是强主线；星网炸板、中际跌回开盘价或高成交核心转为普跌时放弃弱反弹。",
+    },
+    {
+        "name": "存储/HBM与AI服务器",
+        "category": "风险线",
+        "status": "业绩锚负反馈继续扩大",
+        "evidence": [
+            "兆易创新-5.90%成交约219.9亿元、香农芯创-17.27%约90.1亿元、澜起科技-1.56%、工业富联-2.66%。",
+            "香农跌幅较10:16继续扩大，兆易仍未收复580元开盘价；涨停池无存储/HBM扩散。",
+            "港股中芯走强只验证制造环节，不能抵消A/H存储与日韩存储链弱势。",
+        ],
+        "judgement": "H4交易验证继续证伪；在香农显著收窄、兆易站回580元且后排同步翻红前，维持风险。",
+    },
+    {
+        "name": "电子布/玻纤与PCB",
+        "category": "风险线",
+        "status": "上游退潮加速，PCB仅局部承接",
+        "evidence": [
+            "中国巨石-6.52%、国际复材-6.51%、山东玻纤-5.49%、长海-4.90%、宏和-6.43%、南玻A-5.28%，核心继续放量下探。",
+            "中国巨石成交约63.5亿元并跌近51.80日低，国际复材、山东玻纤同步扩大跌幅；二排卓郎、兴业股份、国风新材均跌逾5%。",
+            "PCB只有胜宏+1.80%、鹏鼎+2.23%、东山+1.54%承接，生益科技-4.90%、景旺-1.77%、世运-0.96%；上下游不共振且无涨停扩散。",
+        ],
+        "judgement": "中国巨石属于反抽失败，不构成板块修复；放量下跌且跌停扩张背景下不宜抢上游弱反弹。",
+    },
+]
+
+intraday["themes"] = [
+    {"name": "中药/特色药", "status": "强主线"},
+    {"name": "银行/国有大行", "status": "观察线/防御"},
+    {"name": "半导体设备/制造", "status": "观察线"},
+    {"name": "氦气/工业气体", "status": "资金博弈线"},
+    {"name": "CPO/光通信", "status": "资金博弈线"},
+    {"name": "存储/HBM与AI服务器", "status": "风险线"},
+    {"name": "电子布/玻纤与PCB", "status": "风险线"},
+]
+
+intraday["semiconductor_five_tracking"] = {
+    "section": "雅克/沪硅/有研硅/富创精密/士兰微专项",
+    "sector_context": "科创50+0.69%，但半导体行业-0.98%、60涨120跌、主力净流出约141.7亿元；先按板块分化评价五只，不把个股红盘等同主线。",
+    "ranking_basis": "量比源本轮未可靠取得，按涨跌幅、成交额、相对科创50/半导体、日内高低点综合排序。",
+    "strength_ranking": [
+        {"rank": 1, "name": "沪硅产业", "change_pct": 1.10, "amount_yi": 29.00, "volume_ratio": None, "intraday": "36.80元，强于科创50和半导体，但较37.85元日高回落", "role": "材料跟随扩散/补涨观察"},
+        {"rank": 2, "name": "富创精密", "change_pct": 0.95, "amount_yi": 13.20, "volume_ratio": None, "intraday": "262.48元守住昨收260元，低开修复但未突破268.58元日高", "role": "设备零部件跟随/情绪锚"},
+        {"rank": 3, "name": "士兰微", "change_pct": -1.64, "amount_yi": 26.05, "volume_ratio": None, "intraday": "43.78元回到开盘价，低于昨收且弱于科创50", "role": "功率半导体弱跟随"},
+        {"rank": 4, "name": "雅克科技", "change_pct": -3.32, "amount_yi": 36.29, "volume_ratio": None, "intraday": "200.30元从194.50元日低回拉，但仍低于205.01元开盘和207.17元昨收", "role": "材料弱跟随/反抽观察"},
+        {"rank": 5, "name": "有研硅", "change_pct": -11.75, "amount_yi": 19.30, "volume_ratio": None, "intraday": "49.95元，贴近48.11元日低且失守51.50元开盘", "role": "硅片高位风险样本"},
+    ],
+    "peer_comparison": "中芯+4.34%、华峰测控+3.34%、芯源微+3.27%、华海+1.65%较强；北方+0.41%、中微-0.77%、正帆-1.29%、新莱-0.77%、长川-2.17%。五只只有沪硅与富创强于科创50，未形成2-3只同步创新高。",
+    "earnings_constraint": [
+        "五只仍无新增2026半年报正式预告，盘面强弱不能替代收入、毛利和扩产利润验证。",
+        "沪硅、有研硅的扩产利润兑现不确定，不进入业绩优先；有研硅仅保留风险观察。",
+        "雅克、富创、士兰微保留盈利改善预期观察，需正式预告或中报数据确认。",
+    ],
+    "risk_levels": [
+        "沪硅守36.40并收复37.00维持观察，突破37.85才升级；失守35.50转风险。",
+        "富创守260并突破268.58才升级；失守251.08说明修复失败。",
+        "士兰微守43.45并收复44.51才摆脱弱跟随，跌破43.45降级。",
+        "雅克守200并依次收复205.01、207.17才确认承接；跌破194.50风险扩大。",
+        "有研硅守48.11，至少收复51.50才有止跌意义；未收复前不列优先。",
+    ],
+    "upgrade_downgrade": "五只仅沪硅、富创红盘且均冲高回落，未满足2-3只重新放量走强及前排不炸板条件，整体由观察转弱跟随。若沪硅、富创同步破日高且雅克或士兰收复昨收，可恢复观察；若有研硅破48.11且科创50转弱，降为风险。",
+}
+
+intraday["semiconductor_five_watch"] = {
+    "title": "雅克/沪硅/有研硅/富创精密/士兰微专项",
+    "source_status": "tencent_verified",
+    "sector_context": intraday["semiconductor_five_tracking"]["sector_context"],
+    "ranking": ["沪硅产业", "富创精密", "士兰微", "雅克科技", "有研硅"],
+    "stocks": intraday["semiconductor_five_tracking"]["strength_ranking"],
+    "upgrade_condition": "至少2-3只放量突破日内高点，同时科创50走强、设备/材料前排不炸板。",
+    "downgrade_condition": "五只普遍跌破开盘价且科创50转弱，或有研硅失守48.11元。",
+    "earnings_policy": "业绩不确定或扩产不能转化为利润者不进入优先候选。",
+}
+
+intraday["electron_cloth_rotation"] = {
+    "section": "电子布/玻纤轮动监视",
+    "conclusion": "反抽失败/退潮加速，维持风险线",
+    "china_jushi_classification": "反抽失败：中国巨石-6.52%，成交约63.5亿元，接近51.80元日低；国际复材、山东玻纤和宏和科技同步扩大跌幅。",
+    "evidence": [
+        "上游核心和修复样本无一翻红，二排卓郎、兴业股份、国风新材也全部跌逾5%，不存在二排补涨。",
+        "PCB仅胜宏、鹏鼎、东山红盘，生益科技跌4.90%，景旺和世运转弱；上下游没有形成有效反抽闭环。",
+        "玻纤无涨停/大涨扩散，且全市场跌停增至35家，风险反馈增加。",
+    ],
+    "upgrade_conditions": "中国巨石收复54.50、国际复材跌幅收窄至2%以内，且至少2-3只上游/电子布核心同步翻红，PCB高成交核心不跳水。",
+    "invalidate_conditions": "当前持续触发：上游放量下探、二排同步走弱、PCB仅局部承接。",
+}
+
+intraday["electronic_cloth_fiberglass_watch"] = {
+    "title": "电子布/玻纤轮动监视",
+    "source_status": "tencent_verified",
+    "conclusion": "反抽失败/退潮加速",
+    "china_jushi_assessment": "中国巨石-6.52%接近日低，属于反抽失败，不构成板块修复。",
+    "layers": {
+        "upstream_core": [{"name": "中国巨石", "change_pct": -6.52, "amount_yi": 63.51}, {"name": "国际复材", "change_pct": -6.51, "amount_yi": 36.25}],
+        "repair_samples": [{"name": "山东玻纤", "change_pct": -5.49}, {"name": "长海股份", "change_pct": -4.90}, {"name": "宏和科技", "change_pct": -6.43}, {"name": "中材科技", "change_pct": -1.17}, {"name": "南玻A", "change_pct": -5.28}],
+        "secondary": [{"name": "卓郎智能", "change_pct": -7.02}, {"name": "兴业股份", "change_pct": -6.91}, {"name": "国风新材", "change_pct": -5.57}],
+        "pcb_core": [{"name": "胜宏科技", "change_pct": 1.80}, {"name": "鹏鼎控股", "change_pct": 2.23}, {"name": "东山精密", "change_pct": 1.54}, {"name": "生益科技", "change_pct": -4.90}, {"name": "景旺电子", "change_pct": -1.77}, {"name": "世运电路", "change_pct": -0.96}],
+    },
+    "relative_strength": "显著弱于医药、银行防御及中芯/设备局部强势，不能列观察线。",
+    "confirm_rule": "上游至少3只同步止跌翻红，且PCB高成交核心2-3只放量转强。",
+    "invalidate_rule": "当前继续触发：上游、二排和部分PCB核心同步下探。",
+}
+
+intraday["style_rotation_radar"] = {
+    "conclusion": "银行防御增强，但未触发配置定义的全面风格切换风险",
+    "evidence": "银行+1.39%、42涨0跌，国有大行+2.09%；但券商4只约-0.2%至-0.8%、保险4只约-0.4%至-2.2%、畜牧和白酒样本普跌，没有券商+保险或畜牧+白酒双方向共振。",
+    "watch": "若银行继续放量而科创50转负，可视为防御进一步占优；当前仍是银行单线，不取消科技观察池。",
+}
+
+intraday["hk_market"] = {
+    "status": "delayed_intraday_snapshot",
+    "quote_delay": "约12分钟",
+    "quote_time": "2026-07-13 10:24:52",
+    "indices": [{"name": "恒生指数", "pct": 0.83}, {"name": "恒生科技", "pct": 1.17}],
+    "stocks": [{"name": "中芯国际H", "pct": 4.83}, {"name": "华虹宏力", "pct": -0.65}, {"name": "阿里巴巴-W", "pct": 2.36}, {"name": "腾讯控股", "pct": 1.69}, {"name": "康方生物", "pct": -0.93}],
+    "judgement": "港股互联网与中芯走强，对A股中芯/CPO提供情绪承接；华虹和康方未同步，不能升级为港股半导体或创新药全面共振。",
+}
+
+intraday["premarket_hypothesis"] = {
+    "status": "部分确认",
+    "change": "H2设备扩产映射仅由中芯与少数设备股局部确认；H4存储/AI服务器交易验证继续证伪，H5电子布资金承接继续证伪，H3仍暂未验证。",
+    "deviation_reason": "资金转向A股医药和银行防御，科技只认可晶圆制造局部核心；存储业绩锚、电子布涨价链以及港股半导体均未形成广泛共振。",
+}
+
+intraday["opportunity_watch_update"] = {
+    "status": "risk_expansion_with_local_strength",
+    "confirmed": ["中药/特色药宽度与资金承接", "中芯A/H局部共振"],
+    "weakened": ["半导体材料与零部件", "氦气/工业气体", "CPO核心动量"],
+    "invalidated": ["存储/HBM业绩映射", "电子布有效反抽", "全面科技修复"],
+    "pending": ["医药炸板是否继续增加", "银行防御能否扩散", "科创50能否保持红盘"],
+    "premarket_hypothesis": "盘前科技假设仅部分确认，且确认范围收窄到中芯与少数设备股。",
+}
+
+intraday["actions"] = [
+    "强主线：医药只跟踪立方、陇神、哈药、天目封板和低位补涨；九芝堂、万邦等炸板继续增加时等待二次确认，不追高。",
+    "观察线：半导体设备需中芯、芯源、华海维持强势并带出2-3只涨停/大涨扩散；单核中芯不升级主线。",
+    "观察线：银行属于防御承接，需成交继续放大且对指数贡献维持；未扩散到券商/保险前不定义全面风格切换。",
+    "资金博弈线：工业气体与CPO均是反抽观察，不是强主线；核心炸板、资金转出或高成交股跌破开盘价时放弃弱反弹。",
+    "风险线：存储与电子布放量走弱，跌停池扩至35家；降低博弈频率，避免抢反弹，等待核心收复开盘价和跌停/炸板收缩。",
+    "观察池仅作代表样本，结论以全市场涨跌停结构、行业宽度、资金和指数联动为准。仅作研究跟踪，不构成投资建议。",
+]
+
+intraday["risk"] = [
+    "涨停23家不扩散，跌停由19家快速增至35家，炸板增至12家，风险反馈明显扩大。",
+    "半导体行业净流出约141.7亿元，科创50红盘主要由中芯和少数设备股贡献，不能视为全面修复。",
+    "跌停池本轮仅取得总数、未取得明细，对跌停行业归因保持降权。",
+    "仅作研究跟踪，不构成投资建议。",
+]
+intraday["disclaimer"] = "仅作研究跟踪，不构成投资建议。"
+intraday["sources"] = [
+    {"name": "腾讯财经A/H实时行情", "url": "https://qt.gtimg.cn/", "as_of": "A股10:37、港股10:24"},
+    {"name": "东方财富涨停/跌停/炸板结构池", "url": "https://push2ex.eastmoney.com/", "as_of": "10:37"},
+    {"name": "东方财富行业与概念排行", "url": "https://push2.eastmoney.com/", "as_of": "10:37"},
+]
+intraday["market_data_as_of"] = TS
+intraday["market_data_refresh"] = {"owner": "Codex单智能体", "indices": "腾讯财经HTTP", "industry_ranking": "东方财富push2", "concept_ranking": "东方财富push2", "analysis_timestamp_unchanged": False}
+
+write_atomic("intraday.json", intraday)
+
+topics_payload = load("topics.json")
+topics_payload["timestamp"] = TS
+updates = {
+    "半导体设备": ("观察", "看中芯、芯源、华海能否维持强于科创50并带出2-3只涨停或大涨扩散。", "中芯A+4.34%、芯源+3.27%、华海+1.65%，但中微-0.77%；半导体行业-0.98%、净流出约141.7亿元且无设备涨停扩散，局部强不升级。"),
+    "半导体材料": ("弱化", "沪硅守36.40并突破37.85，同时雅克/安集/江丰至少2只翻红，才恢复观察。", "沪硅+1.10%单点较强，雅克-3.32%、有研硅-11.75%、安集-0.29%、江丰-0.37%、南大-1.90%；缺少扩散与业绩兑现。"),
+    "半导体零部件": ("弱化", "富创突破268.58并与正帆、新莱、长川至少2只同步走强才恢复观察。", "富创+0.95%守住昨收但冲高回落；正帆-1.29%、新莱-0.77%、长川-2.17%，零部件外溢不足。"),
+    "科技硬件链": ("风险", "区分中芯/设备局部强与存储、服务器、材料负反馈；只有跌停收缩和硬件宽度转强才解除。", "科创50+0.69%但半导体-0.98%、净流出141.7亿元；兆易-5.90%、香农-17.27%、工业富联-2.66%，科技硬件不是统一修复。"),
+    "电子布/玻纤轮动": ("风险", "等待中国巨石收复54.50、国际复材显著收窄且至少2-3只上游核心同步翻红。", "中国巨石-6.52%、国际复材-6.51%，山东/长海/宏和/二排同步走弱；PCB仅局部承接，反抽失败。"),
+    "老登风格切换": ("观察", "银行单线增强后，看是否扩散到券商/保险；未共振前只按指数防御。", "银行+1.39%、42涨0跌，但券商、保险、畜牧、白酒样本普跌，未触发全面风格切换。"),
+    "医药修复链": ("强化", "跟踪立方/陇神/哈药/天目封板与低位补涨；炸板继续增加或中药资金流转负则降级。", "中药+3.45%、59涨7跌、净流入约7.10亿元；4只医药封板，九芝堂和万邦炸板提示高位分歧。"),
+    "光模块/CPO": ("资金博弈", "星网不炸、中际守开盘价且天孚重新翻红才维持；无低位扩散不升级。", "星网涨停，中际+3.02%、新易盛+0.81%，天孚-1.33%、光迅-1.50%；高成交承接但动量继续下降。"),
+    "算力": ("风险", "等待工业富联、服务器与存储业绩锚止跌，并与CPO低位扩散同步。", "工业富联-2.66%，兆易-5.90%、香农-17.27%；中芯走强不能替代服务器/存储承接。"),
+    "电子布": ("风险", "等待上游至少3只同步止跌并带动PCB高成交核心转强。", "中国巨石、国际复材和修复样本全弱，二排也同步下跌。"),
+    "半导体设备材料": ("风险", "设备和材料拆分观察；设备局部强、材料弱化，先等行业资金流收敛。", "半导体行业-0.98%、净流出约141.7亿元；中芯/芯源局部强，材料仅沪硅红盘。"),
+    "存储/HBM": ("风险", "等待香农跌幅显著收窄、兆易站回580元且澜起/工业富联同步翻红。", "兆易-5.90%、香农-17.27%、澜起-1.56%、工业富联-2.66%，业绩利好继续未获承接。"),
+    "CPO/PCB/服务器": ("资金博弈", "区分CPO/PCB局部承接与服务器/存储风险，只有高成交核心同步放量翻红才升级。", "CPO和部分PCB红盘，但天孚/光迅、生益科技与服务器业绩锚偏弱，非统一主线。"),
+    "PCB/电子布": ("风险", "PCB局部承接不能替代上游止跌；上游未明显收窄前不升级。", "胜宏、鹏鼎、东山红盘，但生益科技-4.90%，玻纤核心和二排普跌，反抽闭环失效。"),
+}
+for item in topics_payload.get("topics", []):
+    if item.get("name") in updates:
+        status, action, note = updates[item["name"]]
+        item["status"] = status
+        item["action"] = action
+        item["note"] = note
+        item["updated_at"] = TS
+        if "conclusion" in item:
+            item["conclusion"] = note
+write_atomic("topics.json", topics_payload)
+
+health = load("source-health.json")
+health["timestamp"] = TS
+health.setdefault("sources", {})["eastmoney_structure_intraday_1030_20260713"] = {
+    "status": "degraded",
+    "last_check": TS,
+    "usage": "10:30涨停/跌停/炸板与行业概念排行",
+    "detail": "涨停池23条、炸板池12条，跌停总数35但明细为空；行业和概念排行各返回完整结果。使用跌停总数，不编造跌停名单或行业分布。",
+    "sample_count": 1026,
+    "errors": ["DTPool total count available but rows empty"],
+}
+health["sources"]["tencent_a_h_intraday_1030_20260713"] = {
+    "status": "ok",
+    "last_check": TS,
+    "usage": "A/H指数、科技、电子布、风格雷达实时行情",
+    "detail": "取得A股5个指数及70余只核心样本10:37快照；港股指数与核心股为10:24延迟快照，已明确降权。沪深累计成交约14394.65亿元。",
+    "sample_count": 82,
+    "errors": [],
+}
+write_atomic("source-health.json", health)
+
+snapshot = {
+    "timestamp": TS,
+    "structure": {"limit_up": 23, "effective_limit_up": 21, "limit_down": 35, "broken": 12, "twenty_cm": 2, "highest_board": 3},
+    "indices": {"shanghai_pct": -0.89, "shenzhen_pct": -1.48, "chinext_pct": -0.95, "star50_pct": 0.69, "csi300_pct": -0.43, "hang_seng_pct": 0.83, "hang_seng_tech_pct": 1.17},
+    "turnover_yi": 14394.65,
+    "top_industries": industry_top5,
+    "note": "跌停池仅有tc=35、无明细；未据此编造题材分布。",
+}
+write_atomic(".intraday-1030-market-snapshot-20260713.json", snapshot)
+
+print(json.dumps({"status": "ok", "timestamp": TS, "files": ["intraday.json", "topics.json", "source-health.json", ".intraday-1030-market-snapshot-20260713.json"]}, ensure_ascii=False))
