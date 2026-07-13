@@ -1,27 +1,9 @@
 {
-  "timestamp": "2026-07-13T12:33:23+08:00",
+  "timestamp": "2026-07-13T12:47:28+08:00",
   "current_signal_date": "2026-07-13",
   "status": "degraded",
-  "summary": "发现 63 个降级/需复核项（7 个交易阻断，54 个价格/行情复核，3 个背景复核），核心结论可看但必须按影响分层使用。",
+  "summary": "发现 62 个降级/需复核项（7 个交易阻断，54 个价格/行情复核，2 个背景复核），核心结论可看但必须按影响分层使用。",
   "issues": [
-    {
-      "severity": "warning",
-      "file": "midday.json",
-      "path": "",
-      "code": "stale_timestamp",
-      "message": "时间戳不是当前交易日：2026-07-10T12:36:24+08:00",
-      "impact_level": "background_review",
-      "decision_action": "仅作背景复核，不单独阻断交易判断"
-    },
-    {
-      "severity": "warning",
-      "file": "midday.json",
-      "path": "morning_snapshot.indices[4]",
-      "code": "bad_change_pct",
-      "message": "沪深300 change_pct 非数字：None，该字段忽略并降权",
-      "impact_level": "price_review",
-      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
-    },
     {
       "severity": "warning",
       "file": "postmarket.json",
@@ -216,7 +198,7 @@
       "file": "source-health.json",
       "path": "",
       "code": "source_failed",
-      "message": "eastmoney_board_rank_midday_1130: 东方财富行业/概念排行接口代理断开，本轮未采用板块排行；主线判断使用涨跌停结构池、腾讯报价和港股联动。",
+      "message": "eastmoney_board_rank_midday_1130: 东方财富行业和概念排行接口均被远端关闭连接；保留11:05最后有效排行并标记为stale_for_noon，未冒充午间数据。",
       "impact_level": "price_review",
       "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
     },
@@ -579,6 +561,15 @@
       "message": "eastmoney_structure_intraday_1100_20260713: 涨停池25条、炸板池12条、跌停总数50但明细为空；行业和概念排行完整返回。使用跌停总数，不编造跌停名单或行业分布。",
       "impact_level": "price_review",
       "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
+    },
+    {
+      "severity": "warning",
+      "file": "source-health.json",
+      "path": "",
+      "code": "source_degraded",
+      "message": "eastmoney_structure_midday_1130_20260713: 涨停池tc=24、炸板池tc=13并返回明细；跌停池tc=43但明细为空。行业和概念排行两次请求均被远端断开，本轮未采用午间排行。",
+      "impact_level": "price_review",
+      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
     }
   ],
   "action_plan": [
@@ -608,17 +599,6 @@
       "priority": 2,
       "impact_level": "price_review",
       "label": "二次行情复核",
-      "file": "midday.json",
-      "code": "bad_change_pct",
-      "problem": "沪深300 change_pct 非数字：None，该字段忽略并降权",
-      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核",
-      "next_step": "用第二行情源复核涨跌幅、quote_time 和代表股方向；未确认前只做验证。",
-      "unblock_condition": "price_review=0 或相关来源标记 trusted/cross verified。"
-    },
-    {
-      "priority": 2,
-      "impact_level": "price_review",
-      "label": "二次行情复核",
       "file": "source-health.json",
       "code": "source_degraded",
       "problem": "A股补充行情源解码异常，盘中异动和个股涨跌幅需以已审计源复核。",
@@ -630,9 +610,9 @@
       "priority": 4,
       "impact_level": "background_review",
       "label": "背景来源复核",
-      "file": "midday.json",
+      "file": "postmarket.json",
       "code": "stale_timestamp",
-      "problem": "时间戳不是当前交易日：2026-07-10T12:36:24+08:00",
+      "problem": "时间戳不是当前交易日：2026-07-10T16:35:02+08:00",
       "decision_action": "仅作背景复核，不单独阻断交易判断",
       "next_step": "补官方/交易所/公司公告来源；未补齐前不升级为核心依据。",
       "unblock_condition": "官方来源补齐或确认不影响交易触发。"
@@ -641,9 +621,9 @@
       "priority": 4,
       "impact_level": "background_review",
       "label": "背景来源复核",
-      "file": "postmarket.json",
-      "code": "stale_timestamp",
-      "problem": "时间戳不是当前交易日：2026-07-10T16:35:02+08:00",
+      "file": "evening-sentiment.json",
+      "code": "evening_not_current",
+      "problem": "晚间舆情不是当前交易日，不参与今日总控",
       "decision_action": "仅作背景复核，不单独阻断交易判断",
       "next_step": "补官方/交易所/公司公告来源；未补齐前不升级为核心依据。",
       "unblock_condition": "官方来源补齐或确认不影响交易触发。"
@@ -651,12 +631,12 @@
   ],
   "counts": {
     "critical": 0,
-    "warning": 63,
+    "warning": 62,
     "info": 1,
     "blocking": 7,
     "price_review": 54,
     "signal_review": 0,
-    "background_review": 3
+    "background_review": 2
   },
   "rules": [
     "异常文本、JSON解析失败、必需文件缺失为 critical。",

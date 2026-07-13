@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-07-13T11:05:12+08:00",
+  "timestamp": "2026-07-13T12:46:56+08:00",
   "sources": {
     "tencent_http": {
       "status": "ok",
@@ -266,27 +266,27 @@
     },
     "tencent_a_quote_midday_1130": {
       "status": "ok",
-      "last_check": "2026-07-08T11:32:24+08:00",
+      "last_check": "2026-07-13T12:46:56+08:00",
       "usage": "11:30午盘指数、ETF、观察池样本报价",
-      "detail": "成功获取A股指数、ETF、半导体/算力/CPO/电子布/风格雷达样本报价。",
-      "sample_count": 95,
+      "detail": "成功获取A股午间指数与半导体、算力、CPO、电子布和风格雷达样本报价；接口约12:05返回午间缓存值。",
+      "sample_count": 75,
       "errors": []
     },
     "tencent_hk_http_midday_1130": {
       "status": "ok",
-      "last_check": "2026-07-08T11:17:19+08:00",
-      "usage": "港股午前指数与重点样本快照",
-      "detail": "恒指、恒科和互联网/半导体/创新药样本返回有效快照；恒生科技与港股半导体强势，创新药偏弱。",
-      "sample_count": 15,
+      "last_check": "2026-07-13T12:46:56+08:00",
+      "usage": "11:30港股指数与映射样本",
+      "detail": "取得恒指、恒生科技、中芯H、华虹、阿里、腾讯、康方约11:59延迟行情。",
+      "sample_count": 7,
       "errors": []
     },
     "eastmoney_board_rank_midday_1130": {
       "status": "failed",
-      "last_check": "2026-07-08T11:32:24+08:00",
+      "last_check": "2026-07-13T12:46:56+08:00",
       "usage": "11:30行业/概念板块排行补充",
-      "detail": "东方财富行业/概念排行接口代理断开，本轮未采用板块排行；主线判断使用涨跌停结构池、腾讯报价和港股联动。",
+      "detail": "东方财富行业和概念排行接口均被远端关闭连接；保留11:05最后有效排行并标记为stale_for_noon，未冒充午间数据。",
       "errors": [
-        "ProxyError Remote end closed connection without response"
+        "Remote end closed connection without response"
       ]
     },
     "eastmoney_limit_pool_intraday_1300": {
@@ -1203,6 +1203,26 @@
       "last_check": "2026-07-13T11:05:12+08:00",
       "usage": "A/H指数、科技、电子布、风格雷达实时行情",
       "detail": "取得A股5个指数及70余只核心样本11:05快照；港股指数与核心股为10:50延迟快照。沪深累计成交约16598.04亿元。",
+      "sample_count": 82,
+      "errors": []
+    },
+    "eastmoney_structure_midday_1130_20260713": {
+      "status": "degraded",
+      "last_check": "2026-07-13T12:46:56+08:00",
+      "usage": "11:30涨停/跌停/炸板与行业概念排行",
+      "detail": "涨停池tc=24、炸板池tc=13并返回明细；跌停池tc=43但明细为空。行业和概念排行两次请求均被远端断开，本轮未采用午间排行。",
+      "sample_count": 37,
+      "errors": [
+        "DTPool total count available but rows empty",
+        "industry rank RemoteDisconnected",
+        "concept rank RemoteDisconnected"
+      ]
+    },
+    "tencent_a_h_midday_1130_20260713": {
+      "status": "ok",
+      "last_check": "2026-07-13T12:46:56+08:00",
+      "usage": "A股午间指数、观察池及港股延迟行情",
+      "detail": "取得A股5个指数及半导体、存储、CPO、电子布、风格雷达核心样本午间终值；港股为约11:59延迟快照。沪深累计成交约18528.36亿元。",
       "sample_count": 82,
       "errors": []
     }
