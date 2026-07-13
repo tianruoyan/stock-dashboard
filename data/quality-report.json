@@ -1,8 +1,8 @@
 {
-  "timestamp": "2026-07-13T10:45:40+08:00",
+  "timestamp": "2026-07-13T10:47:09+08:00",
   "current_signal_date": "2026-07-13",
   "status": "degraded",
-  "summary": "发现 63 个降级/需复核项（7 个交易阻断，54 个价格/行情复核，3 个背景复核），核心结论可看但必须按影响分层使用。",
+  "summary": "发现 62 个降级/需复核项（7 个交易阻断，53 个价格/行情复核，3 个背景复核），核心结论可看但必须按影响分层使用。",
   "issues": [
     {
       "severity": "warning",
@@ -564,19 +564,10 @@
     },
     {
       "severity": "warning",
-      "file": "cross-file",
-      "path": "有研硅",
-      "code": "stock_pct_cross_file_conflict",
-      "message": "有研硅 跨文件涨跌幅差异过大：intraday.json -8.41% vs intraday.json 7.2%",
-      "impact_level": "price_review",
-      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
-    },
-    {
-      "severity": "warning",
-      "file": "cross-file",
-      "path": "有研硅",
-      "code": "stock_direction_cross_file_conflict",
-      "message": "有研硅 跨文件强弱标签冲突：intraday.json 强势 vs intraday.json 弱势",
+      "file": "source-health.json",
+      "path": "",
+      "code": "source_degraded",
+      "message": "eastmoney_structure_intraday_1030_20260713: 涨停池23条、炸板池12条，跌停总数35但明细为空；行业和概念排行各返回完整结果。使用跌停总数，不编造跌停名单或行业分布。",
       "impact_level": "price_review",
       "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
     }
@@ -600,17 +591,6 @@
       "file": "alert.json",
       "code": "historical_alert_without_trusted_source",
       "problem": "盘中异动缺少可信源证明；当前阶段只降权参考，不阻断整站发布",
-      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核",
-      "next_step": "用第二行情源复核涨跌幅、quote_time 和代表股方向；未确认前只做验证。",
-      "unblock_condition": "price_review=0 或相关来源标记 trusted/cross verified。"
-    },
-    {
-      "priority": 2,
-      "impact_level": "price_review",
-      "label": "二次行情复核",
-      "file": "cross-file",
-      "code": "stock_pct_cross_file_conflict",
-      "problem": "有研硅 跨文件涨跌幅差异过大：intraday.json -8.41% vs intraday.json 7.2%",
       "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核",
       "next_step": "用第二行情源复核涨跌幅、quote_time 和代表股方向；未确认前只做验证。",
       "unblock_condition": "price_review=0 或相关来源标记 trusted/cross verified。"
@@ -647,14 +627,25 @@
       "decision_action": "仅作背景复核，不单独阻断交易判断",
       "next_step": "补官方/交易所/公司公告来源；未补齐前不升级为核心依据。",
       "unblock_condition": "官方来源补齐或确认不影响交易触发。"
+    },
+    {
+      "priority": 4,
+      "impact_level": "background_review",
+      "label": "背景来源复核",
+      "file": "postmarket.json",
+      "code": "stale_timestamp",
+      "problem": "时间戳不是当前交易日：2026-07-10T16:35:02+08:00",
+      "decision_action": "仅作背景复核，不单独阻断交易判断",
+      "next_step": "补官方/交易所/公司公告来源；未补齐前不升级为核心依据。",
+      "unblock_condition": "官方来源补齐或确认不影响交易触发。"
     }
   ],
   "counts": {
     "critical": 0,
-    "warning": 63,
+    "warning": 62,
     "info": 1,
     "blocking": 7,
-    "price_review": 54,
+    "price_review": 53,
     "signal_review": 0,
     "background_review": 3
   },
