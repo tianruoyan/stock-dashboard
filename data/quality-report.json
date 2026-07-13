@@ -1,8 +1,8 @@
 {
-  "timestamp": "2026-07-13T09:25:10+08:00",
+  "timestamp": "2026-07-13T09:31:39+08:00",
   "current_signal_date": "2026-07-13",
   "status": "degraded",
-  "summary": "发现 54 个降级/需复核项（48 个价格/行情复核，7 个背景复核），核心结论可看但必须按影响分层使用。",
+  "summary": "发现 55 个降级/需复核项（49 个价格/行情复核，7 个背景复核），核心结论可看但必须按影响分层使用。",
   "issues": [
     {
       "severity": "warning",
@@ -492,6 +492,15 @@
     },
     {
       "severity": "warning",
+      "file": "source-health.json",
+      "path": "",
+      "code": "source_degraded",
+      "message": "eastmoney_auction_limit_pool_20260713: 涨停池返回tc=6且6条明细，含国华退1只；跌停池返回tc=5但明细列表为空；炸板池tc=0。采用跌停总数5，不编造跌停名单。",
+      "impact_level": "price_review",
+      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
+    },
+    {
+      "severity": "warning",
       "file": "theme-shifts.json",
       "path": "",
       "code": "stale_theme_shifts",
@@ -570,10 +579,10 @@
   ],
   "counts": {
     "critical": 0,
-    "warning": 54,
+    "warning": 55,
     "info": 1,
     "blocking": 0,
-    "price_review": 48,
+    "price_review": 49,
     "signal_review": 0,
     "background_review": 7
   },
