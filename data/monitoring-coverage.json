@@ -1,14 +1,34 @@
 {
-  "timestamp": "2026-07-13T09:33:56+08:00",
+  "timestamp": "2026-07-13T09:39:37+08:00",
   "current_signal_date": "2026-07-13",
   "overall_status": "degraded",
-  "summary": "3 个监测维度需降权，1 个背景维度需复核。",
+  "summary": "4 个监测维度需降权，1 个背景维度需复核。",
   "counts": {
     "critical": 0,
-    "warning": 3,
+    "warning": 4,
     "info": 1
   },
   "blind_spots": [
+    {
+      "id": "intraday-structure-degraded",
+      "title": "盘中结构降权",
+      "severity": "warning",
+      "conclusion": "盘面宽度、行业/概念强弱和午后建议可看，但实时涨跌幅需复核。",
+      "impacted_decisions": [
+        "强主线不能直接外推为进攻",
+        "机会候选只能等待确认",
+        "风险项优先级高于机会项"
+      ],
+      "evidence": [
+        "A股补充行情源解码异常，盘中异动和个股涨跌幅需以已审计源复核。；港股结构行情源连接/解码异常，港股映射和收盘窗口价格需二次复核。"
+      ],
+      "fallback_action": "优先看涨跌停/炸板/尾盘承接等结构证据，不用单个涨跌幅做结论。",
+      "fallback_checks": [],
+      "source_files": [
+        "data/intraday.json",
+        "data/data-trust.json"
+      ]
+    },
     {
       "id": "premarket-cross-market-degraded",
       "title": "盘前外部映射降权",
@@ -56,7 +76,7 @@
         "风险栏优先级高于机会栏"
       ],
       "evidence": [
-        "发现 55 个降级/需复核项（49 个价格/行情复核，7 个背景复核），核心结论可看但必须按影响分层使用。"
+        "发现 55 个降级/需复核项（52 个价格/行情复核，4 个背景复核），核心结论可看但必须按影响分层使用。"
       ],
       "fallback_action": "只跟踪验证条件；若风险项不收敛，不升级任何机会。",
       "fallback_checks": [],
