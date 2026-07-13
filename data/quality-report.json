@@ -1,8 +1,8 @@
 {
-  "timestamp": "2026-07-13T09:49:19+08:00",
+  "timestamp": "2026-07-13T09:56:40+08:00",
   "current_signal_date": "2026-07-13",
   "status": "degraded",
-  "summary": "发现 54 个降级/需复核项（52 个价格/行情复核，3 个背景复核），核心结论可看但必须按影响分层使用。",
+  "summary": "发现 62 个降级/需复核项（7 个交易阻断，53 个价格/行情复核，3 个背景复核），核心结论可看但必须按影响分层使用。",
   "issues": [
     {
       "severity": "warning",
@@ -44,10 +44,82 @@
       "severity": "warning",
       "file": "alert.json",
       "path": "quote_audit.sanity_checks",
+      "code": "alert_quote_audit_mismatch",
+      "message": "quote_audit 样本数小于 alerts 数量",
+      "impact_level": "price_review",
+      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
+    },
+    {
+      "severity": "warning",
+      "file": "alert.json",
+      "path": "quote_audit.sanity_checks",
       "code": "historical_alert_not_cross_verified",
       "message": "行情污染源仍降级，历史 alert 未交叉验证，只降权复盘参考",
       "impact_level": "price_review",
       "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
+    },
+    {
+      "severity": "warning",
+      "file": "alert.json",
+      "path": "alerts[7]",
+      "code": "candidate_alert_evidence_weak",
+      "message": "alerts[7] 候选异动未达到最低短周期价格、方向占比和成交门槛，不得作为当前候选展示",
+      "impact_level": "blocking",
+      "decision_action": "禁止作为交易依据，需修复后重产"
+    },
+    {
+      "severity": "warning",
+      "file": "alert.json",
+      "path": "alerts[8]",
+      "code": "candidate_alert_evidence_weak",
+      "message": "alerts[8] 候选异动未达到最低短周期价格、方向占比和成交门槛，不得作为当前候选展示",
+      "impact_level": "blocking",
+      "decision_action": "禁止作为交易依据，需修复后重产"
+    },
+    {
+      "severity": "warning",
+      "file": "alert.json",
+      "path": "alerts[9]",
+      "code": "candidate_alert_evidence_weak",
+      "message": "alerts[9] 候选异动未达到最低短周期价格、方向占比和成交门槛，不得作为当前候选展示",
+      "impact_level": "blocking",
+      "decision_action": "禁止作为交易依据，需修复后重产"
+    },
+    {
+      "severity": "warning",
+      "file": "alert.json",
+      "path": "alerts[10]",
+      "code": "candidate_alert_evidence_weak",
+      "message": "alerts[10] 候选异动未达到最低短周期价格、方向占比和成交门槛，不得作为当前候选展示",
+      "impact_level": "blocking",
+      "decision_action": "禁止作为交易依据，需修复后重产"
+    },
+    {
+      "severity": "warning",
+      "file": "alert.json",
+      "path": "alerts[11]",
+      "code": "candidate_alert_evidence_weak",
+      "message": "alerts[11] 候选异动未达到最低短周期价格、方向占比和成交门槛，不得作为当前候选展示",
+      "impact_level": "blocking",
+      "decision_action": "禁止作为交易依据，需修复后重产"
+    },
+    {
+      "severity": "warning",
+      "file": "alert.json",
+      "path": "alerts[12]",
+      "code": "candidate_alert_evidence_weak",
+      "message": "alerts[12] 候选异动未达到最低短周期价格、方向占比和成交门槛，不得作为当前候选展示",
+      "impact_level": "blocking",
+      "decision_action": "禁止作为交易依据，需修复后重产"
+    },
+    {
+      "severity": "warning",
+      "file": "alert.json",
+      "path": "alerts[13]",
+      "code": "candidate_alert_evidence_weak",
+      "message": "alerts[13] 候选异动未达到最低短周期价格、方向占比和成交门槛，不得作为当前候选展示",
+      "impact_level": "blocking",
+      "decision_action": "禁止作为交易依据，需修复后重产"
     },
     {
       "severity": "info",
@@ -502,6 +574,17 @@
   ],
   "action_plan": [
     {
+      "priority": 1,
+      "impact_level": "blocking",
+      "label": "先修复阻断",
+      "file": "alert.json",
+      "code": "candidate_alert_evidence_weak",
+      "problem": "alerts[7] 候选异动未达到最低短周期价格、方向占比和成交门槛，不得作为当前候选展示",
+      "decision_action": "禁止作为交易依据，需修复后重产",
+      "next_step": "暂停对应交易触发；等待污染批次撤下、可信行情源恢复并重产 JSON。",
+      "unblock_condition": "quality-report blocking=0，相关文件不再 invalidated/missing。"
+    },
+    {
       "priority": 2,
       "impact_level": "price_review",
       "label": "二次行情复核",
@@ -555,25 +638,14 @@
       "decision_action": "仅作背景复核，不单独阻断交易判断",
       "next_step": "补官方/交易所/公司公告来源；未补齐前不升级为核心依据。",
       "unblock_condition": "官方来源补齐或确认不影响交易触发。"
-    },
-    {
-      "priority": 4,
-      "impact_level": "background_review",
-      "label": "背景来源复核",
-      "file": "postmarket.json",
-      "code": "stale_timestamp",
-      "problem": "时间戳不是当前交易日：2026-07-10T16:35:02+08:00",
-      "decision_action": "仅作背景复核，不单独阻断交易判断",
-      "next_step": "补官方/交易所/公司公告来源；未补齐前不升级为核心依据。",
-      "unblock_condition": "官方来源补齐或确认不影响交易触发。"
     }
   ],
   "counts": {
     "critical": 0,
-    "warning": 54,
+    "warning": 62,
     "info": 1,
-    "blocking": 0,
-    "price_review": 52,
+    "blocking": 7,
+    "price_review": 53,
     "signal_review": 0,
     "background_review": 3
   },
