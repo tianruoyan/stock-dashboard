@@ -1,8 +1,8 @@
 {
-  "timestamp": "2026-07-13T14:28:01+08:00",
+  "timestamp": "2026-07-13T14:40:56+08:00",
   "current_signal_date": "2026-07-13",
   "status": "degraded",
-  "summary": "发现 70 个降级/需复核项（7 个交易阻断，62 个价格/行情复核，2 个背景复核），核心结论可看但必须按影响分层使用。",
+  "summary": "发现 72 个降级/需复核项（7 个交易阻断，64 个价格/行情复核，2 个背景复核），核心结论可看但必须按影响分层使用。",
   "issues": [
     {
       "severity": "warning",
@@ -19,6 +19,15 @@
       "path": "electronic_cloth_fiberglass_watch.layers.secondary[0]",
       "code": "watchlist_limit_down_like",
       "message": "卓郎智能 接近跌停 -9.98，需确认是否真实",
+      "impact_level": "price_review",
+      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
+    },
+    {
+      "severity": "warning",
+      "file": "intraday.json",
+      "path": "electronic_cloth_fiberglass_watch.layers.pcb_core[2]",
+      "code": "watchlist_limit_down_like",
+      "message": "生益科技 接近跌停 -10.0，需确认是否真实",
       "impact_level": "price_review",
       "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
     },
@@ -618,10 +627,19 @@
     },
     {
       "severity": "warning",
+      "file": "source-health.json",
+      "path": "",
+      "code": "source_degraded",
+      "message": "eastmoney_structure_intraday_1430_20260713: 涨停池tc=25且返回25条，炸板池tc=17且返回17条；跌停池tc=153但明细为空。使用跌停总数，不编造跌停名单或行业分布。",
+      "impact_level": "price_review",
+      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
+    },
+    {
+      "severity": "warning",
       "file": "cross-file",
       "path": "国际复材",
       "code": "stock_pct_cross_file_conflict",
-      "message": "国际复材 跨文件涨跌幅差异过大：intraday.json -9.69% vs alert.json -1.34%",
+      "message": "国际复材 跨文件涨跌幅差异过大：intraday.json -10.91% vs alert.json -1.34%",
       "impact_level": "price_review",
       "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
     },
@@ -639,7 +657,7 @@
       "file": "cross-file",
       "path": "生益科技",
       "code": "stock_pct_cross_file_conflict",
-      "message": "生益科技 跨文件涨跌幅差异过大：intraday.json -9.74% vs alert.json -1.19%",
+      "message": "生益科技 跨文件涨跌幅差异过大：intraday.json -10.0% vs alert.json -1.19%",
       "impact_level": "price_review",
       "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
     }
@@ -673,7 +691,7 @@
       "label": "二次行情复核",
       "file": "cross-file",
       "code": "stock_pct_cross_file_conflict",
-      "problem": "国际复材 跨文件涨跌幅差异过大：intraday.json -9.69% vs alert.json -1.34%",
+      "problem": "国际复材 跨文件涨跌幅差异过大：intraday.json -10.91% vs alert.json -1.34%",
       "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核",
       "next_step": "用第二行情源复核涨跌幅、quote_time 和代表股方向；未确认前只做验证。",
       "unblock_condition": "price_review=0 或相关来源标记 trusted/cross verified。"
@@ -714,10 +732,10 @@
   ],
   "counts": {
     "critical": 0,
-    "warning": 70,
+    "warning": 72,
     "info": 1,
     "blocking": 7,
-    "price_review": 62,
+    "price_review": 64,
     "signal_review": 0,
     "background_review": 2
   },
