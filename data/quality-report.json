@@ -1,8 +1,8 @@
 {
-  "timestamp": "2026-07-13T09:18:34+08:00",
+  "timestamp": "2026-07-13T09:25:10+08:00",
   "current_signal_date": "2026-07-13",
   "status": "degraded",
-  "summary": "发现 56 个降级/需复核项（48 个价格/行情复核，2 个信号复核，7 个背景复核），核心结论可看但必须按影响分层使用。",
+  "summary": "发现 54 个降级/需复核项（48 个价格/行情复核，7 个背景复核），核心结论可看但必须按影响分层使用。",
   "issues": [
     {
       "severity": "warning",
@@ -51,39 +51,12 @@
     },
     {
       "severity": "warning",
-      "file": "premarket.json",
-      "path": "us_overnight.tech_stocks[4]",
-      "code": "bad_change_pct",
-      "message": "Meta Platforms change_pct 非数字：None，该字段忽略并降权",
-      "impact_level": "price_review",
-      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
-    },
-    {
-      "severity": "warning",
       "file": "topics.json",
       "path": "",
       "code": "stale_timestamp",
       "message": "时间戳不是当前交易日：2026-07-12T20:12:10+08:00",
       "impact_level": "background_review",
       "decision_action": "仅作背景复核，不单独阻断交易判断"
-    },
-    {
-      "severity": "warning",
-      "file": "premarket.json",
-      "path": "summary",
-      "code": "schema_contract_missing",
-      "message": "summary 缺失",
-      "impact_level": "signal_review",
-      "decision_action": "机会信号必须降权并转入验证"
-    },
-    {
-      "severity": "warning",
-      "file": "premarket.json",
-      "path": "market_context",
-      "code": "schema_contract_missing",
-      "message": "market_context 缺失",
-      "impact_level": "signal_review",
-      "decision_action": "机会信号必须降权并转入验证"
     },
     {
       "severity": "warning",
@@ -510,6 +483,15 @@
     },
     {
       "severity": "warning",
+      "file": "source-health.json",
+      "path": "",
+      "code": "source_degraded",
+      "message": "tencent_hk_auction_20260713: 取得中芯、华虹、澜起、兆易、智谱、商汤、五一视界、互联网、创新药、汽车等竞价指示价；时间戳主要为09:00-09:04，尚非09:30正式开盘成交，已明确标注不可当终值。",
+      "impact_level": "price_review",
+      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
+    },
+    {
+      "severity": "warning",
       "file": "theme-shifts.json",
       "path": "",
       "code": "stale_theme_shifts",
@@ -545,34 +527,12 @@
       "priority": 2,
       "impact_level": "price_review",
       "label": "二次行情复核",
-      "file": "premarket.json",
-      "code": "bad_change_pct",
-      "problem": "Meta Platforms change_pct 非数字：None，该字段忽略并降权",
-      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核",
-      "next_step": "用第二行情源复核涨跌幅、quote_time 和代表股方向；未确认前只做验证。",
-      "unblock_condition": "price_review=0 或相关来源标记 trusted/cross verified。"
-    },
-    {
-      "priority": 2,
-      "impact_level": "price_review",
-      "label": "二次行情复核",
       "file": "source-health.json",
       "code": "source_degraded",
       "problem": "A股补充行情源解码异常，盘中异动和个股涨跌幅需以已审计源复核。",
       "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核",
       "next_step": "用第二行情源复核涨跌幅、quote_time 和代表股方向；未确认前只做验证。",
       "unblock_condition": "price_review=0 或相关来源标记 trusted/cross verified。"
-    },
-    {
-      "priority": 3,
-      "impact_level": "signal_review",
-      "label": "信号结构复核",
-      "file": "premarket.json",
-      "code": "schema_contract_missing",
-      "problem": "summary 缺失",
-      "decision_action": "机会信号必须降权并转入验证",
-      "next_step": "修正字段结构、证据、触发原因和升级条件；未通过前降权展示。",
-      "unblock_condition": "signal_review=0，decision-feed/核心 JSON 契约通过。"
     },
     {
       "priority": 4,
@@ -584,15 +544,37 @@
       "decision_action": "仅作背景复核，不单独阻断交易判断",
       "next_step": "补官方/交易所/公司公告来源；未补齐前不升级为核心依据。",
       "unblock_condition": "官方来源补齐或确认不影响交易触发。"
+    },
+    {
+      "priority": 4,
+      "impact_level": "background_review",
+      "label": "背景来源复核",
+      "file": "intraday.json",
+      "code": "stale_timestamp",
+      "problem": "时间戳不是当前交易日：2026-07-10T14:43:40+08:00",
+      "decision_action": "仅作背景复核，不单独阻断交易判断",
+      "next_step": "补官方/交易所/公司公告来源；未补齐前不升级为核心依据。",
+      "unblock_condition": "官方来源补齐或确认不影响交易触发。"
+    },
+    {
+      "priority": 4,
+      "impact_level": "background_review",
+      "label": "背景来源复核",
+      "file": "midday.json",
+      "code": "stale_timestamp",
+      "problem": "时间戳不是当前交易日：2026-07-10T12:36:24+08:00",
+      "decision_action": "仅作背景复核，不单独阻断交易判断",
+      "next_step": "补官方/交易所/公司公告来源；未补齐前不升级为核心依据。",
+      "unblock_condition": "官方来源补齐或确认不影响交易触发。"
     }
   ],
   "counts": {
     "critical": 0,
-    "warning": 56,
+    "warning": 54,
     "info": 1,
     "blocking": 0,
     "price_review": 48,
-    "signal_review": 2,
+    "signal_review": 0,
     "background_review": 7
   },
   "rules": [
