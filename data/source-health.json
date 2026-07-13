@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-07-13T15:12:00+08:00",
+  "timestamp": "2026-07-13T16:10:00+08:00",
   "sources": {
     "tencent_http": {
       "status": "ok",
@@ -1371,6 +1371,24 @@
       "detail": "逐日结构池有效涨停64/33/47/74/90/27，用于热点连续性判断。",
       "sample_count": 335,
       "errors": []
+    },
+    "sina_hk_close_postmarket_20260713": {
+      "status": "ok",
+      "last_check": "2026-07-13T16:10:00+08:00",
+      "usage": "港股指数与重点样本正式收盘及16:00至16:09竞价校验",
+      "detail": "恒指、恒科及19只重点港股返回16:08至16:09终值；字段方向与腾讯15:57快照一致。",
+      "sample_count": 21,
+      "errors": []
+    },
+    "tencent_hk_close_postmarket_20260713": {
+      "status": "degraded_delayed",
+      "last_check": "2026-07-13T16:10:00+08:00",
+      "usage": "港股收盘方向交叉验证",
+      "detail": "腾讯接口在16:09查询时最新时间停在15:57，方向与新浪一致但未作为正式终值。",
+      "sample_count": 21,
+      "errors": [
+        "quote_time停在15:57，未覆盖收市竞价"
+      ]
     }
   }
 }
