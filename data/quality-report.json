@@ -1,9 +1,18 @@
 {
-  "timestamp": "2026-07-13T13:09:59+08:00",
+  "timestamp": "2026-07-13T13:17:46+08:00",
   "current_signal_date": "2026-07-13",
   "status": "degraded",
-  "summary": "发现 62 个降级/需复核项（7 个交易阻断，54 个价格/行情复核，2 个背景复核），核心结论可看但必须按影响分层使用。",
+  "summary": "发现 65 个降级/需复核项（7 个交易阻断，57 个价格/行情复核，2 个背景复核），核心结论可看但必须按影响分层使用。",
   "issues": [
+    {
+      "severity": "warning",
+      "file": "intraday.json",
+      "path": "electronic_cloth_fiberglass_watch.layers.upstream_core[0]",
+      "code": "watchlist_limit_down_like",
+      "message": "中国巨石 接近跌停 -9.96，需确认是否真实",
+      "impact_level": "price_review",
+      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
+    },
     {
       "severity": "warning",
       "file": "postmarket.json",
@@ -570,6 +579,24 @@
       "message": "eastmoney_structure_midday_1130_20260713: 涨停池tc=24、炸板池tc=13并返回明细；跌停池tc=43但明细为空。行业和概念排行两次请求均被远端断开，本轮未采用午间排行。",
       "impact_level": "price_review",
       "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
+    },
+    {
+      "severity": "warning",
+      "file": "source-health.json",
+      "path": "",
+      "code": "source_degraded",
+      "message": "eastmoney_structure_intraday_1300_20260713: 涨停池tc=23且返回23条，炸板池tc=14且返回14条；跌停池tc=60但明细为空。使用跌停总数，不编造跌停名单或行业分布。",
+      "impact_level": "price_review",
+      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
+    },
+    {
+      "severity": "warning",
+      "file": "cross-file",
+      "path": "中国巨石",
+      "code": "stock_pct_cross_file_conflict",
+      "message": "中国巨石 跨文件涨跌幅差异过大：intraday.json -9.96% vs alert.json -1.69%",
+      "impact_level": "price_review",
+      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
     }
   ],
   "action_plan": [
@@ -599,6 +626,28 @@
       "priority": 2,
       "impact_level": "price_review",
       "label": "二次行情复核",
+      "file": "cross-file",
+      "code": "stock_pct_cross_file_conflict",
+      "problem": "中国巨石 跨文件涨跌幅差异过大：intraday.json -9.96% vs alert.json -1.69%",
+      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核",
+      "next_step": "用第二行情源复核涨跌幅、quote_time 和代表股方向；未确认前只做验证。",
+      "unblock_condition": "price_review=0 或相关来源标记 trusted/cross verified。"
+    },
+    {
+      "priority": 2,
+      "impact_level": "price_review",
+      "label": "二次行情复核",
+      "file": "intraday.json",
+      "code": "watchlist_limit_down_like",
+      "problem": "中国巨石 接近跌停 -9.96，需确认是否真实",
+      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核",
+      "next_step": "用第二行情源复核涨跌幅、quote_time 和代表股方向；未确认前只做验证。",
+      "unblock_condition": "price_review=0 或相关来源标记 trusted/cross verified。"
+    },
+    {
+      "priority": 2,
+      "impact_level": "price_review",
+      "label": "二次行情复核",
       "file": "source-health.json",
       "code": "source_degraded",
       "problem": "A股补充行情源解码异常，盘中异动和个股涨跌幅需以已审计源复核。",
@@ -616,25 +665,14 @@
       "decision_action": "仅作背景复核，不单独阻断交易判断",
       "next_step": "补官方/交易所/公司公告来源；未补齐前不升级为核心依据。",
       "unblock_condition": "官方来源补齐或确认不影响交易触发。"
-    },
-    {
-      "priority": 4,
-      "impact_level": "background_review",
-      "label": "背景来源复核",
-      "file": "evening-sentiment.json",
-      "code": "evening_not_current",
-      "problem": "晚间舆情不是当前交易日，不参与今日总控",
-      "decision_action": "仅作背景复核，不单独阻断交易判断",
-      "next_step": "补官方/交易所/公司公告来源；未补齐前不升级为核心依据。",
-      "unblock_condition": "官方来源补齐或确认不影响交易触发。"
     }
   ],
   "counts": {
     "critical": 0,
-    "warning": 62,
+    "warning": 65,
     "info": 1,
     "blocking": 7,
-    "price_review": 54,
+    "price_review": 57,
     "signal_review": 0,
     "background_review": 2
   },
