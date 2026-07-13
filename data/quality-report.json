@@ -1,8 +1,8 @@
 {
-  "timestamp": "2026-07-13T10:15:11+08:00",
+  "timestamp": "2026-07-13T10:18:38+08:00",
   "current_signal_date": "2026-07-13",
   "status": "degraded",
-  "summary": "发现 65 个降级/需复核项（9 个交易阻断，54 个价格/行情复核，3 个背景复核），核心结论可看但必须按影响分层使用。",
+  "summary": "发现 67 个降级/需复核项（9 个交易阻断，56 个价格/行情复核，3 个背景复核），核心结论可看但必须按影响分层使用。",
   "issues": [
     {
       "severity": "warning",
@@ -591,10 +591,28 @@
     },
     {
       "severity": "warning",
+      "file": "source-health.json",
+      "path": "",
+      "code": "source_degraded",
+      "message": "eastmoney_structure_intraday_1000_20260713: 涨停池23条、炸板池9条、跌停总数19但明细为空；行业排行返回35条，概念排行请求被远端断开，保留上一版概念排行且不编造更新。",
+      "impact_level": "price_review",
+      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
+    },
+    {
+      "severity": "warning",
       "file": "cross-file",
       "path": "有研硅",
       "code": "stock_pct_cross_file_conflict",
-      "message": "有研硅 跨文件涨跌幅差异过大：intraday.json -3.92% vs intraday.json 7.2%",
+      "message": "有研硅 跨文件涨跌幅差异过大：intraday.json -8.41% vs intraday.json 7.2%",
+      "impact_level": "price_review",
+      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
+    },
+    {
+      "severity": "warning",
+      "file": "cross-file",
+      "path": "有研硅",
+      "code": "stock_direction_cross_file_conflict",
+      "message": "有研硅 跨文件强弱标签冲突：intraday.json 强势 vs intraday.json 弱势",
       "impact_level": "price_review",
       "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
     }
@@ -628,7 +646,7 @@
       "label": "二次行情复核",
       "file": "cross-file",
       "code": "stock_pct_cross_file_conflict",
-      "problem": "有研硅 跨文件涨跌幅差异过大：intraday.json -3.92% vs intraday.json 7.2%",
+      "problem": "有研硅 跨文件涨跌幅差异过大：intraday.json -8.41% vs intraday.json 7.2%",
       "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核",
       "next_step": "用第二行情源复核涨跌幅、quote_time 和代表股方向；未确认前只做验证。",
       "unblock_condition": "price_review=0 或相关来源标记 trusted/cross verified。"
@@ -669,10 +687,10 @@
   ],
   "counts": {
     "critical": 0,
-    "warning": 65,
+    "warning": 67,
     "info": 1,
     "blocking": 9,
-    "price_review": 54,
+    "price_review": 56,
     "signal_review": 0,
     "background_review": 3
   },
