@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-07-13T14:34:30+08:00",
+  "timestamp": "2026-07-13T15:12:00+08:00",
   "sources": {
     "tencent_http": {
       "status": "ok",
@@ -1329,6 +1329,48 @@
       "errors": [
         "DTPool total count available but rows empty"
       ]
+    },
+    "tencent_close_postmarket_20260713": {
+      "status": "ok",
+      "last_check": "2026-07-13T15:12:00+08:00",
+      "usage": "A股收盘指数、观察池、专项样本与14:55至15:00分钟线",
+      "detail": "5个指数、核心样本和31条尾盘分钟线返回有效收盘数据。",
+      "sample_count": 31,
+      "errors": []
+    },
+    "eastmoney_limit_pool_postmarket_20260713": {
+      "status": "degraded",
+      "last_check": "2026-07-13T15:12:00+08:00",
+      "usage": "收盘涨停、炸板、跌停总数及近5交易日结构",
+      "detail": "涨停池29条、炸板池14条有效；跌停接口返回总数161但明细为空，未据此编造跌停行业分布。",
+      "sample_count": 43,
+      "errors": [
+        "跌停池仅返回total=161，rows为空"
+      ]
+    },
+    "sina_up5_postmarket_20260713": {
+      "status": "ok",
+      "last_check": "2026-07-13T15:12:00+08:00",
+      "usage": "全市场涨幅不低于5%宽度统计",
+      "detail": "清洗后104只，其中5%至不足8%为55只、8%以上49只。",
+      "sample_count": 104,
+      "errors": []
+    },
+    "sw_official_industry_postmarket_20260713": {
+      "status": "ok",
+      "last_check": "2026-07-13T15:12:00+08:00",
+      "usage": "104只强势样本申万一级行业映射",
+      "detail": "通过申万官方分类数据的AKShare封装读取12873条历史分类，按股票最新生效记录完成104只全量映射，无未映射样本。",
+      "sample_count": 104,
+      "errors": []
+    },
+    "eastmoney_history_limit_pool_5d_20260713": {
+      "status": "ok",
+      "last_check": "2026-07-13T15:12:00+08:00",
+      "usage": "2026-07-06至07-13六个交易日涨停题材连续性",
+      "detail": "逐日结构池有效涨停64/33/47/74/90/27，用于热点连续性判断。",
+      "sample_count": 335,
+      "errors": []
     }
   }
 }
