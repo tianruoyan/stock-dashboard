@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-07-13T21:06:23+08:00",
+  "timestamp": "2026-07-14T08:37:52+08:00",
   "sources": {
     "tencent_http": {
       "status": "ok",
@@ -1431,13 +1431,71 @@
       "errors": []
     },
     "tsmc_monthly_revenue_20260713": {
-      "status": "degraded_delayed",
-      "last_check": "2026-07-13T21:06:23+08:00",
+      "status": "ok",
+      "last_check": "2026-07-14T08:37:52+08:00",
       "usage": "台积电2026年6月月度收入与7月事件日历",
-      "detail": "公司财务日历确认6月月度收入原定7月13日发布并确认7月16日二季报会，但官方月度收入页截至扫描仍未显示6月具体数值，因此未采用二手具体数字。",
-      "sample_count": 1,
+      "detail": "官方月度收入页已恢复并显示6月4426.8亿新台币、同比+67.9%；此前空值已消除。",
+      "sample_count": 2,
+      "errors": []
+    },
+    "sina_us_close_premarket_20260714": {
+      "status": "ok",
+      "last_check": "2026-07-14T08:37:52+08:00",
+      "usage": "隔夜美股三大指数、AI芯片、SOXX与中概ETF收盘",
+      "detail": "三大指数及NVDA/MU/AMD/AVGO/SOXX/TSM/KWEB/SKHY返回2026-07-13正式收盘与盘后快照。",
+      "sample_count": 12,
+      "errors": []
+    },
+    "sina_asia_early_premarket_20260714": {
+      "status": "degraded_partial",
+      "last_check": "2026-07-14T08:37:52+08:00",
+      "usage": "8:30附近日韩指数方向",
+      "detail": "日经225与KOSPI指数返回有效早盘方向；日韩个股实时双源不足，未编造东京电子、Disco、SK海力士、三星的精确早盘涨跌幅。",
+      "sample_count": 2,
       "errors": [
-        "官方monthly-revenue页面2026年6月字段为空"
+        "日韩个股实时双源不足"
+      ]
+    },
+    "cninfo_increment_premarket_20260714": {
+      "status": "ok",
+      "last_check": "2026-07-14T08:37:52+08:00",
+      "usage": "20:00至8:30观察池105只A股公告增量扫描",
+      "detail": "按配置105只A股匹配巨潮1350份公告，命中35份；开盘级增量包括生益/华正/金安国纪/新华保险业绩、安集H股计划、卓郎冻结等，普通治理与资金管理公告未进入overnight_news。",
+      "sample_count": 1350,
+      "errors": []
+    },
+    "official_tsmc_premarket_20260714": {
+      "status": "ok",
+      "last_check": "2026-07-14T08:37:52+08:00",
+      "usage": "台积电2026年6月及上半年营收验证",
+      "detail": "官方月度收入页已显示6月4426.8亿新台币、同比+67.9%，上半年累计2.404万亿新台币、同比+35.6%。",
+      "sample_count": 2,
+      "errors": []
+    },
+    "official_policy_increment_premarket_20260714": {
+      "status": "ok",
+      "last_check": "2026-07-14T08:37:52+08:00",
+      "usage": "工信部/商务部/发改委20:00至8:30政策增量",
+      "detail": "未核验到影响7月14日开盘的新增半导体、AI、机器人、新材料、出口管制或产业结构P0。",
+      "sample_count": 3,
+      "errors": []
+    },
+    "web_market_news_premarket_20260714": {
+      "status": "ok",
+      "last_check": "2026-07-14T08:37:52+08:00",
+      "usage": "隔夜美股收盘原因与地缘/油价风险交叉验证",
+      "detail": "AP收盘报道确认油价大涨、中东冲突及AI/芯片抛售为主要驱动；与新浪收盘涨跌方向一致。",
+      "sample_count": 2,
+      "errors": []
+    },
+    "yahoo_finance_chart_premarket_20260714": {
+      "status": "failed",
+      "last_check": "2026-07-14T08:37:52+08:00",
+      "usage": "隔夜美股与日韩行情备选接口",
+      "detail": "Yahoo chart接口返回限流/非JSON响应，未用于任何结论；已降级至新浪收盘和AP交叉验证。",
+      "sample_count": 0,
+      "errors": [
+        "chart API返回非JSON/限流响应"
       ]
     }
   }
