@@ -1,8 +1,8 @@
 {
-  "timestamp": "2026-07-14T10:40:51+08:00",
+  "timestamp": "2026-07-14T10:46:51+08:00",
   "current_signal_date": "2026-07-14",
   "status": "degraded",
-  "summary": "发现 78 个降级/需复核项（7 个交易阻断，65 个价格/行情复核，7 个背景复核），核心结论可看但必须按影响分层使用。",
+  "summary": "发现 76 个降级/需复核项（7 个交易阻断，65 个价格/行情复核，5 个背景复核），核心结论可看但必须按影响分层使用。",
   "issues": [
     {
       "severity": "warning",
@@ -696,24 +696,6 @@
       "message": "yahoo_finance_chart_premarket_20260714: Yahoo chart接口返回限流/非JSON响应，未用于任何结论；已降级至新浪收盘和AP交叉验证。",
       "impact_level": "price_review",
       "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
-    },
-    {
-      "severity": "warning",
-      "file": "data-trust.json",
-      "path": "",
-      "code": "stale_data_trust",
-      "message": "data-trust 日期不是当前交易日：2026-07-13",
-      "impact_level": "background_review",
-      "decision_action": "仅作背景复核，不单独阻断交易判断"
-    },
-    {
-      "severity": "warning",
-      "file": "monitoring-coverage.json",
-      "path": "",
-      "code": "stale_monitoring_coverage",
-      "message": "monitoring-coverage 日期不是当前交易日：2026-07-13",
-      "impact_level": "background_review",
-      "decision_action": "仅作背景复核，不单独阻断交易判断"
     }
   ],
   "action_plan": [
@@ -786,12 +768,12 @@
   ],
   "counts": {
     "critical": 0,
-    "warning": 78,
+    "warning": 76,
     "info": 1,
     "blocking": 7,
     "price_review": 65,
     "signal_review": 0,
-    "background_review": 7
+    "background_review": 5
   },
   "rules": [
     "异常文本、JSON解析失败、必需文件缺失为 critical。",
