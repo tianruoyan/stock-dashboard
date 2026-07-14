@@ -1,8 +1,8 @@
 {
-  "timestamp": "2026-07-14T17:50:13+08:00",
+  "timestamp": "2026-07-14T20:35:44+08:00",
   "current_signal_date": "2026-07-14",
   "status": "degraded",
-  "summary": "发现 75 个降级/需复核项（7 个交易阻断，65 个价格/行情复核，1 个信号复核，3 个背景复核），核心结论可看但必须按影响分层使用。",
+  "summary": "发现 76 个降级/需复核项（7 个交易阻断，65 个价格/行情复核，2 个信号复核，2 个背景复核），核心结论可看但必须按影响分层使用。",
   "issues": [
     {
       "severity": "warning",
@@ -55,6 +55,15 @@
       "path": "sentiment",
       "code": "schema_contract_type",
       "message": "sentiment 类型错误：期望 dict，实际 str",
+      "impact_level": "signal_review",
+      "decision_action": "机会信号必须降权并转入验证"
+    },
+    {
+      "severity": "warning",
+      "file": "evening-sentiment.json",
+      "path": "sentiment_summary",
+      "code": "schema_contract_missing",
+      "message": "sentiment_summary 缺失",
       "impact_level": "signal_review",
       "decision_action": "机会信号必须降权并转入验证"
     },
@@ -138,15 +147,6 @@
       "message": "alerts[13] 候选异动未达到最低短周期价格、方向占比和成交门槛，不得作为当前候选展示",
       "impact_level": "blocking",
       "decision_action": "禁止作为交易依据，需修复后重产"
-    },
-    {
-      "severity": "info",
-      "file": "evening-sentiment.json",
-      "path": "",
-      "code": "evening_not_current",
-      "message": "晚间舆情不是当前交易日，不参与今日总控",
-      "impact_level": "background_review",
-      "decision_action": "仅作背景复核，不单独阻断交易判断"
     },
     {
       "severity": "warning",
@@ -749,9 +749,9 @@
       "priority": 3,
       "impact_level": "signal_review",
       "label": "信号结构复核",
-      "file": "intraday.json",
-      "code": "schema_contract_type",
-      "problem": "sentiment 类型错误：期望 dict，实际 str",
+      "file": "evening-sentiment.json",
+      "code": "schema_contract_missing",
+      "problem": "sentiment_summary 缺失",
       "decision_action": "机会信号必须降权并转入验证",
       "next_step": "修正字段结构、证据、触发原因和升级条件；未通过前降权展示。",
       "unblock_condition": "signal_review=0，decision-feed/核心 JSON 契约通过。"
@@ -759,12 +759,12 @@
   ],
   "counts": {
     "critical": 0,
-    "warning": 75,
-    "info": 1,
+    "warning": 76,
+    "info": 0,
     "blocking": 7,
     "price_review": 65,
-    "signal_review": 1,
-    "background_review": 3
+    "signal_review": 2,
+    "background_review": 2
   },
   "rules": [
     "异常文本、JSON解析失败、必需文件缺失为 critical。",

@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-07-14T17:49:03+08:00",
+  "timestamp": "2026-07-14T20:35:31+08:00",
   "sources": {
     "tencent_http": {
       "status": "ok",
@@ -59,15 +59,14 @@
       ]
     },
     "cninfo_watchlist_announcement_scan": {
-      "status": "degraded_empty",
-      "last_check": "2026-07-09T08:36:00+08:00",
-      "usage": "8:30盘前观察池107只A股公告增量扫描",
-      "detail": "巨潮2026-07-09逐票查询命中0条；601601、588170查询超时，未将空返回视为重大公告缺失的绝对事实。",
-      "sample_count": 107,
-      "errors": [
-        "601601 timed out",
-        "588170 timed out"
-      ]
+      "status": "ok",
+      "last_check": "2026-07-14T20:35:31+08:00",
+      "usage": "20:00配置股票池+专题池公告全量扫描",
+      "detail": "检查102个唯一配置代码并补充专题池28个额外股票名，共128个唯一股票名；命中49份公告、20只股票。",
+      "sample_count": 128,
+      "announcement_count": 49,
+      "hit_stock_count": 20,
+      "errors": []
     },
     "sina_announcement_page_sample": {
       "status": "ok_empty",
@@ -78,9 +77,10 @@
     },
     "official_policy_global_web_scan": {
       "status": "ok",
-      "last_check": "2026-07-08T20:03:00+08:00",
-      "usage": "20:00晚间政策与全球标杆事件扫描",
-      "detail": "工信部/发改委/商务部/ASML/NVIDIA/Tom’s Hardware/Wccftech等扫描完成；未发现公司公告级硬催化，识别Rubin/Kyber传闻为待证伪风险扰动。",
+      "last_check": "2026-07-14T20:35:31+08:00",
+      "usage": "20:00全球标杆、政策、事件日历与突发扫描",
+      "detail": "发现Tower日本300mm硅光/SiGe/先进光封装扩产；确认美国CPI、ASML和TSMC日历；未发现7月14日新增中国部委级P0。",
+      "sample_count": 23,
       "errors": []
     },
     "tencent_hk_auction_http": {
@@ -1565,6 +1565,36 @@
       "detail": "巨潮新股数据返回424条，剔除301583、920081、920136、920189。",
       "sample_count": 424,
       "errors": []
+    },
+    "web_finance_premarket_2000": {
+      "status": "ok",
+      "last_check": "2026-07-14T20:35:31+08:00",
+      "usage": "20:00美股盘前交叉验证",
+      "detail": "取得TSEM、NVDA、MU、AVGO、AMD、SOXX盘前快照；用于判断Tower单点催化与海外芯片整体风险。",
+      "sample_count": 6,
+      "errors": []
+    },
+    "cninfo_pdf_text_extraction": {
+      "status": "degraded_fallback_ok",
+      "last_check": "2026-07-14T20:35:31+08:00",
+      "usage": "交易所公告PDF事实抽取",
+      "detail": "系统缺少pdftotext，改用PyPDF2 3.0.1成功抽取重大公告正文；数值均以PDF文本复核。",
+      "sample_count": 16,
+      "errors": [
+        "pdftotext not found; PyPDF2 fallback used successfully"
+      ]
+    },
+    "bls_cpi_release_2030": {
+      "status": "degraded_stale_or_timeout",
+      "last_check": "2026-07-14T20:35:31+08:00",
+      "usage": "20:30美国6月CPI正式结果核验",
+      "detail": "BLS发布页仍显示2026年5月，BLS官方时间序列API读取超时，FRED最新月值仍为5月；未采用未核实快讯，保留P0待8:30增量扫描。",
+      "sample_count": 0,
+      "errors": [
+        "BLS release page stale at May 2026",
+        "BLS public API timeout",
+        "FRED series not updated beyond May 2026"
+      ]
     }
   }
 }
