@@ -1,8 +1,8 @@
 {
-  "timestamp": "2026-07-15T14:57:29+08:00",
+  "timestamp": "2026-07-15T15:38:05+08:00",
   "current_signal_date": "2026-07-15",
   "status": "degraded",
-  "summary": "发现 84 个降级/需复核项（7 个交易阻断，71 个价格/行情复核，2 个信号复核，5 个背景复核），核心结论可看但必须按影响分层使用。",
+  "summary": "发现 83 个降级/需复核项（7 个交易阻断，72 个价格/行情复核，2 个信号复核，3 个背景复核），核心结论可看但必须按影响分层使用。",
   "issues": [
     {
       "severity": "warning",
@@ -43,18 +43,9 @@
     {
       "severity": "warning",
       "file": "postmarket.json",
-      "path": "",
-      "code": "stale_timestamp",
-      "message": "时间戳不是当前交易日：2026-07-14T17:49:03+08:00",
-      "impact_level": "background_review",
-      "decision_action": "仅作背景复核，不单独阻断交易判断"
-    },
-    {
-      "severity": "warning",
-      "file": "postmarket.json",
-      "path": "closing_auction_patch.snapshots",
-      "code": "bad_change_pct",
-      "message": "closing_auction_patch.snapshots change_pct 非数字：{'上证': 0.074, '深证': 0.121, '创业板': 0.102, '科创50': -0.377, '沪深300': 0.099}，该字段忽略并降权",
+      "path": "semiconductor_five_tracking.strength_ranking[3]",
+      "code": "watchlist_limit_down_like",
+      "message": "沪硅产业 接近跌停 -10.24，需确认是否真实",
       "impact_level": "price_review",
       "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
     },
@@ -111,15 +102,6 @@
       "message": "hk_auction.mapping_chain[4] change_pct 非数字：约+3.83%/+0.24%/-0.05%/-1.83%，该字段忽略并降权",
       "impact_level": "price_review",
       "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
-    },
-    {
-      "severity": "warning",
-      "file": "topics.json",
-      "path": "",
-      "code": "stale_timestamp",
-      "message": "时间戳不是当前交易日：2026-07-14T17:49:03+08:00",
-      "impact_level": "background_review",
-      "decision_action": "仅作背景复核，不单独阻断交易判断"
     },
     {
       "severity": "warning",
@@ -768,6 +750,15 @@
       "message": "japan_single_stock_premarket: 未取得可交叉验证的日本科技单股实时涨跌，仅引用已核验的日经225指数并明确缺口。",
       "impact_level": "price_review",
       "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
+    },
+    {
+      "severity": "warning",
+      "file": "source-health.json",
+      "path": "",
+      "code": "source_failed",
+      "message": "eastmoney_full_market_spot_postmarket_20260715: push2全市场快照被远端主动断开，未采用其任何数据；降级使用新浪全A收盘与申万官方分类，不影响已列事实。",
+      "impact_level": "price_review",
+      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
     }
   ],
   "action_plan": [
@@ -809,8 +800,8 @@
       "impact_level": "price_review",
       "label": "二次行情复核",
       "file": "postmarket.json",
-      "code": "bad_change_pct",
-      "problem": "closing_auction_patch.snapshots change_pct 非数字：{'上证': 0.074, '深证': 0.121, '创业板': 0.102, '科创50': -0.377, '沪深300': 0.099}，该字段忽略并降权",
+      "code": "watchlist_limit_down_like",
+      "problem": "沪硅产业 接近跌停 -10.24，需确认是否真实",
       "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核",
       "next_step": "用第二行情源复核涨跌幅、quote_time 和代表股方向；未确认前只做验证。",
       "unblock_condition": "price_review=0 或相关来源标记 trusted/cross verified。"
@@ -840,12 +831,12 @@
   ],
   "counts": {
     "critical": 0,
-    "warning": 84,
+    "warning": 83,
     "info": 1,
     "blocking": 7,
-    "price_review": 71,
+    "price_review": 72,
     "signal_review": 2,
-    "background_review": 5
+    "background_review": 3
   },
   "rules": [
     "异常文本、JSON解析失败、必需文件缺失为 critical。",
