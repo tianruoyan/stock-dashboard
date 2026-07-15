@@ -1,8 +1,8 @@
 {
-  "timestamp": "2026-07-15T13:34:57+08:00",
+  "timestamp": "2026-07-15T13:41:14+08:00",
   "current_signal_date": "2026-07-15",
   "status": "degraded",
-  "summary": "发现 82 个降级/需复核项（7 个交易阻断，69 个价格/行情复核，2 个信号复核，5 个背景复核），核心结论可看但必须按影响分层使用。",
+  "summary": "发现 84 个降级/需复核项（7 个交易阻断，71 个价格/行情复核，2 个信号复核，5 个背景复核），核心结论可看但必须按影响分层使用。",
   "issues": [
     {
       "severity": "warning",
@@ -12,6 +12,24 @@
       "message": "时间戳不是当前交易日：2026-07-13T10:37:36+08:00",
       "impact_level": "background_review",
       "decision_action": "仅作背景复核，不单独阻断交易判断"
+    },
+    {
+      "severity": "warning",
+      "file": "intraday.json",
+      "path": "semiconductor_five_watch.strength_ranking[4]",
+      "code": "watchlist_limit_down_like",
+      "message": "有研硅 接近跌停 -10.09，需确认是否真实",
+      "impact_level": "price_review",
+      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
+    },
+    {
+      "severity": "warning",
+      "file": "intraday.json",
+      "path": "semiconductor_five_tracking.strength_ranking[4]",
+      "code": "watchlist_limit_down_like",
+      "message": "有研硅 接近跌停 -10.09，需确认是否真实",
+      "impact_level": "price_review",
+      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
     },
     {
       "severity": "warning",
@@ -779,6 +797,17 @@
       "priority": 2,
       "impact_level": "price_review",
       "label": "二次行情复核",
+      "file": "intraday.json",
+      "code": "watchlist_limit_down_like",
+      "problem": "有研硅 接近跌停 -10.09，需确认是否真实",
+      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核",
+      "next_step": "用第二行情源复核涨跌幅、quote_time 和代表股方向；未确认前只做验证。",
+      "unblock_condition": "price_review=0 或相关来源标记 trusted/cross verified。"
+    },
+    {
+      "priority": 2,
+      "impact_level": "price_review",
+      "label": "二次行情复核",
       "file": "postmarket.json",
       "code": "bad_change_pct",
       "problem": "closing_auction_patch.snapshots change_pct 非数字：{'上证': 0.074, '深证': 0.121, '创业板': 0.102, '科创50': -0.377, '沪深300': 0.099}，该字段忽略并降权",
@@ -807,25 +836,14 @@
       "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核",
       "next_step": "用第二行情源复核涨跌幅、quote_time 和代表股方向；未确认前只做验证。",
       "unblock_condition": "price_review=0 或相关来源标记 trusted/cross verified。"
-    },
-    {
-      "priority": 3,
-      "impact_level": "signal_review",
-      "label": "信号结构复核",
-      "file": "evening-sentiment.json",
-      "code": "schema_contract_missing",
-      "problem": "sentiment_summary 缺失",
-      "decision_action": "机会信号必须降权并转入验证",
-      "next_step": "修正字段结构、证据、触发原因和升级条件；未通过前降权展示。",
-      "unblock_condition": "signal_review=0，decision-feed/核心 JSON 契约通过。"
     }
   ],
   "counts": {
     "critical": 0,
-    "warning": 82,
+    "warning": 84,
     "info": 1,
     "blocking": 7,
-    "price_review": 69,
+    "price_review": 71,
     "signal_review": 2,
     "background_review": 5
   },
