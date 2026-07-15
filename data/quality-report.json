@@ -1,8 +1,8 @@
 {
-  "timestamp": "2026-07-15T09:26:38+08:00",
+  "timestamp": "2026-07-15T09:34:17+08:00",
   "current_signal_date": "2026-07-15",
   "status": "degraded",
-  "summary": "发现 80 个降级/需复核项（7 个交易阻断，65 个价格/行情复核，2 个信号复核，7 个背景复核），核心结论可看但必须按影响分层使用。",
+  "summary": "发现 84 个降级/需复核项（7 个交易阻断，69 个价格/行情复核，2 个信号复核，7 个背景复核），核心结论可看但必须按影响分层使用。",
   "issues": [
     {
       "severity": "warning",
@@ -64,6 +64,42 @@
       "path": "us_overnight.mapping_chain[4]",
       "code": "bad_change_pct",
       "message": "us_overnight.mapping_chain[4] change_pct 非数字：约+27.29%/+10.06%，该字段忽略并降权",
+      "impact_level": "price_review",
+      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
+    },
+    {
+      "severity": "warning",
+      "file": "premarket.json",
+      "path": "hk_auction.mapping_chain[0]",
+      "code": "bad_change_pct",
+      "message": "hk_auction.mapping_chain[0] change_pct 非数字：约+7.33%/+3.12%，该字段忽略并降权",
+      "impact_level": "price_review",
+      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
+    },
+    {
+      "severity": "warning",
+      "file": "premarket.json",
+      "path": "hk_auction.mapping_chain[1]",
+      "code": "bad_change_pct",
+      "message": "hk_auction.mapping_chain[1] change_pct 非数字：约+2.49%/+2.57%，该字段忽略并降权",
+      "impact_level": "price_review",
+      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
+    },
+    {
+      "severity": "warning",
+      "file": "premarket.json",
+      "path": "hk_auction.mapping_chain[2]",
+      "code": "bad_change_pct",
+      "message": "hk_auction.mapping_chain[2] change_pct 非数字：约+6.25%/+0.76%，该字段忽略并降权",
+      "impact_level": "price_review",
+      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
+    },
+    {
+      "severity": "warning",
+      "file": "premarket.json",
+      "path": "hk_auction.mapping_chain[4]",
+      "code": "bad_change_pct",
+      "message": "hk_auction.mapping_chain[4] change_pct 非数字：约+3.83%/+0.24%/-0.05%/-1.83%，该字段忽略并降权",
       "impact_level": "price_review",
       "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
     },
@@ -804,10 +840,10 @@
   ],
   "counts": {
     "critical": 0,
-    "warning": 80,
+    "warning": 84,
     "info": 1,
     "blocking": 7,
-    "price_review": 65,
+    "price_review": 69,
     "signal_review": 2,
     "background_review": 7
   },
