@@ -1,8 +1,8 @@
 {
-  "timestamp": "2026-07-15T09:03:43+08:00",
+  "timestamp": "2026-07-15T09:19:26+08:00",
   "current_signal_date": "2026-07-15",
   "status": "degraded",
-  "summary": "发现 85 个降级/需复核项（7 个交易阻断，66 个价格/行情复核，2 个信号复核，11 个背景复核），核心结论可看但必须按影响分层使用。",
+  "summary": "发现 80 个降级/需复核项（7 个交易阻断，65 个价格/行情复核，2 个信号复核，7 个背景复核），核心结论可看但必须按影响分层使用。",
   "issues": [
     {
       "severity": "warning",
@@ -52,36 +52,18 @@
     {
       "severity": "warning",
       "file": "premarket.json",
-      "path": "",
-      "code": "stale_timestamp",
-      "message": "时间戳不是当前交易日：2026-07-14T08:37:52+08:00",
-      "impact_level": "background_review",
-      "decision_action": "仅作背景复核，不单独阻断交易判断"
-    },
-    {
-      "severity": "warning",
-      "file": "premarket.json",
-      "path": "us_overnight.mapping_chain[2]",
+      "path": "us_overnight.mapping_chain[1]",
       "code": "bad_change_pct",
-      "message": "us_overnight.mapping_chain[2] change_pct 非数字：-3.52%/-4.21%/-3.98%，该字段忽略并降权",
+      "message": "us_overnight.mapping_chain[1] change_pct 非数字：约+4.06%/+2.57%/+1.32%，该字段忽略并降权",
       "impact_level": "price_review",
       "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
     },
     {
       "severity": "warning",
       "file": "premarket.json",
-      "path": "us_overnight.mapping_chain[3]",
+      "path": "us_overnight.mapping_chain[4]",
       "code": "bad_change_pct",
-      "message": "us_overnight.mapping_chain[3] change_pct 非数字：ADR -2.89%；6月营收同比+67.9%，该字段忽略并降权",
-      "impact_level": "price_review",
-      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
-    },
-    {
-      "severity": "warning",
-      "file": "source-health.json",
-      "path": "",
-      "code": "stale_timestamp",
-      "message": "时间戳不是当前交易日：2026-07-14T20:35:31+08:00",
+      "message": "us_overnight.mapping_chain[4] change_pct 非数字：约+27.29%/+10.06%，该字段忽略并降权",
       "impact_level": "price_review",
       "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
     },
@@ -226,15 +208,6 @@
       "path": "",
       "code": "source_failed",
       "message": "tencent_hk_auction_http: 当前运行环境无法解析qt.gtimg.cn，未采用港股竞价实时数值；保留昨日收盘作为背景并等待9:30开盘后复核。",
-      "impact_level": "price_review",
-      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
-    },
-    {
-      "severity": "warning",
-      "file": "source-health.json",
-      "path": "",
-      "code": "source_failed",
-      "message": "yahoo_finance_quote_api: query1.finance.yahoo.com/v7/finance/quote 返回401 Unauthorized，未采用其数据。",
       "impact_level": "price_review",
       "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
     },
@@ -744,12 +717,12 @@
     },
     {
       "severity": "warning",
-      "file": "automation-health.json",
+      "file": "source-health.json",
       "path": "",
-      "code": "stale_automation_health",
-      "message": "automation-health 日期不是当前交易日：2026-07-14",
-      "impact_level": "background_review",
-      "decision_action": "仅作背景复核，不单独阻断交易判断"
+      "code": "source_degraded",
+      "message": "japan_single_stock_premarket: 未取得可交叉验证的日本科技单股实时涨跌，仅引用已核验的日经225指数并明确缺口。",
+      "impact_level": "price_review",
+      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
     },
     {
       "severity": "warning",
@@ -757,24 +730,6 @@
       "path": "",
       "code": "stale_theme_shifts",
       "message": "theme-shifts 日期不是当前交易日：2026-07-14",
-      "impact_level": "background_review",
-      "decision_action": "仅作背景复核，不单独阻断交易判断"
-    },
-    {
-      "severity": "warning",
-      "file": "data-trust.json",
-      "path": "",
-      "code": "stale_data_trust",
-      "message": "data-trust 日期不是当前交易日：2026-07-14",
-      "impact_level": "background_review",
-      "decision_action": "仅作背景复核，不单独阻断交易判断"
-    },
-    {
-      "severity": "warning",
-      "file": "monitoring-coverage.json",
-      "path": "",
-      "code": "stale_monitoring_coverage",
-      "message": "monitoring-coverage 日期不是当前交易日：2026-07-14",
       "impact_level": "background_review",
       "decision_action": "仅作背景复核，不单独阻断交易判断"
     }
@@ -819,7 +774,7 @@
       "label": "二次行情复核",
       "file": "premarket.json",
       "code": "bad_change_pct",
-      "problem": "us_overnight.mapping_chain[2] change_pct 非数字：-3.52%/-4.21%/-3.98%，该字段忽略并降权",
+      "problem": "us_overnight.mapping_chain[1] change_pct 非数字：约+4.06%/+2.57%/+1.32%，该字段忽略并降权",
       "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核",
       "next_step": "用第二行情源复核涨跌幅、quote_time 和代表股方向；未确认前只做验证。",
       "unblock_condition": "price_review=0 或相关来源标记 trusted/cross verified。"
@@ -829,8 +784,8 @@
       "impact_level": "price_review",
       "label": "二次行情复核",
       "file": "source-health.json",
-      "code": "stale_timestamp",
-      "problem": "时间戳不是当前交易日：2026-07-14T20:35:31+08:00",
+      "code": "source_degraded",
+      "problem": "A股补充行情源解码异常，盘中异动和个股涨跌幅需以已审计源复核。",
       "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核",
       "next_step": "用第二行情源复核涨跌幅、quote_time 和代表股方向；未确认前只做验证。",
       "unblock_condition": "price_review=0 或相关来源标记 trusted/cross verified。"
@@ -849,12 +804,12 @@
   ],
   "counts": {
     "critical": 0,
-    "warning": 85,
+    "warning": 80,
     "info": 1,
     "blocking": 7,
-    "price_review": 66,
+    "price_review": 65,
     "signal_review": 2,
-    "background_review": 11
+    "background_review": 7
   },
   "rules": [
     "异常文本、JSON解析失败、必需文件缺失为 critical。",

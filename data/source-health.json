@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-07-14T20:35:31+08:00",
+  "timestamp": "2026-07-15T09:18:56+08:00",
   "sources": {
     "tencent_http": {
       "status": "ok",
@@ -94,12 +94,13 @@
       ]
     },
     "yahoo_finance_quote_api": {
-      "status": "failed",
-      "last_check": "2026-07-08T09:15:36+08:00",
-      "usage": "外盘指数和日韩科技股补充行情",
-      "detail": "query1.finance.yahoo.com/v7/finance/quote 返回401 Unauthorized，未采用其数据。",
+      "status": "failed_rate_limited",
+      "last_check": "2026-07-15T09:18:56+08:00",
+      "usage": "日韩盘前个股补充行情",
+      "detail": "query1.finance.yahoo.com返回Edge: Too Many Requests；未采用其数据，日韩改用东财单指数、新浪与Naver。",
+      "sample_count": 0,
       "errors": [
-        "401 Unauthorized"
+        "429 Too Many Requests"
       ]
     },
     "stooq_quote_csv": {
@@ -113,16 +114,12 @@
       ]
     },
     "web_news_finance_search": {
-      "status": "degraded_partial",
-      "last_check": "2026-07-10T09:16:00+08:00",
-      "usage": "隔夜美股三大指数、Micron、日韩科技链与港股期货背景核验",
-      "detail": "AP核实标普+0.8%、道指+0.3%、纳指+1.3%、Micron+4.5%；未取得NVDA/AVGO/AMD可靠精确涨幅，也未取得日韩早盘、A50/恒生期货夜盘可交叉验证实时数值，相关字段为空。",
-      "errors": [
-        "live Japan/Korea quotes unavailable",
-        "A50/HSI futures real-time values unavailable",
-        "exact NVDA/AVGO/AMD changes unavailable"
-      ],
-      "sample_count": 4
+      "status": "ok",
+      "last_check": "2026-07-15T09:18:56+08:00",
+      "usage": "美国CPI、美股收盘与海外扩产事件核验",
+      "detail": "BLS确认CPI；AP确认三大指数收盘；Tower公司公告确认日本硅光/SiGe/先进光封装扩产。",
+      "sample_count": 3,
+      "errors": []
     },
     "eastmoney_limit_pool_auction": {
       "status": "ok",
@@ -1594,6 +1591,59 @@
         "BLS release page stale at May 2026",
         "BLS public API timeout",
         "FRED series not updated beyond May 2026"
+      ]
+    },
+    "tencent_us_http_premarket": {
+      "status": "ok",
+      "last_check": "2026-07-15T09:18:56+08:00",
+      "usage": "7月15日盘前美股指数、芯片与ETF收盘核验",
+      "detail": "取得道指、标普、纳指及NVDA/MU/AVGO/AMD/SOXX/TSEM/KWEB/SKHY有效终值。",
+      "sample_count": 11,
+      "errors": []
+    },
+    "eastmoney_nikkei_premarket": {
+      "status": "ok",
+      "last_check": "2026-07-15T09:18:56+08:00",
+      "usage": "7月15日日韩早盘指数核验",
+      "detail": "push2单指数接口取得日经225约+0.44%。",
+      "sample_count": 1,
+      "errors": []
+    },
+    "sina_naver_korea_premarket": {
+      "status": "ok",
+      "last_check": "2026-07-15T09:18:56+08:00",
+      "usage": "7月15日韩国指数与半导体样本",
+      "detail": "新浪取得KOSPI约+6.06%；Naver取得SK海力士约+10.06%、三星电子约+4.18%。",
+      "sample_count": 3,
+      "errors": []
+    },
+    "cninfo_overnight_increment": {
+      "status": "ok",
+      "last_check": "2026-07-15T09:18:56+08:00",
+      "usage": "20:00-8:30配置池公告增量扫描",
+      "detail": "巨潮当日全市场返回1984份公告；103只配置池股票命中34份，抽取并核验12份关键业绩PDF。",
+      "sample_count": 103,
+      "announcement_count": 34,
+      "errors": []
+    },
+    "tradingview_japan_scan": {
+      "status": "failed_timeout",
+      "last_check": "2026-07-15T09:18:56+08:00",
+      "usage": "日本半导体单股早盘补充",
+      "detail": "TradingView Japan scanner超时/空返回，未采用。",
+      "sample_count": 0,
+      "errors": [
+        "timeout or empty response"
+      ]
+    },
+    "japan_single_stock_premarket": {
+      "status": "degraded",
+      "last_check": "2026-07-15T09:18:56+08:00",
+      "usage": "东京电子、爱德万测试等日本科技单股",
+      "detail": "未取得可交叉验证的日本科技单股实时涨跌，仅引用已核验的日经225指数并明确缺口。",
+      "sample_count": 0,
+      "errors": [
+        "reliable Japan single-stock snapshot unavailable"
       ]
     }
   }
