@@ -1,8 +1,8 @@
 {
-  "timestamp": "2026-07-15T09:57:10+08:00",
+  "timestamp": "2026-07-15T10:11:17+08:00",
   "current_signal_date": "2026-07-15",
   "status": "degraded",
-  "summary": "发现 84 个降级/需复核项（7 个交易阻断，69 个价格/行情复核，2 个信号复核，7 个背景复核），核心结论可看但必须按影响分层使用。",
+  "summary": "发现 82 个降级/需复核项（7 个交易阻断，69 个价格/行情复核，2 个信号复核，5 个背景复核），核心结论可看但必须按影响分层使用。",
   "issues": [
     {
       "severity": "warning",
@@ -10,15 +10,6 @@
       "path": "",
       "code": "stale_timestamp",
       "message": "时间戳不是当前交易日：2026-07-13T10:37:36+08:00",
-      "impact_level": "background_review",
-      "decision_action": "仅作背景复核，不单独阻断交易判断"
-    },
-    {
-      "severity": "warning",
-      "file": "intraday.json",
-      "path": "",
-      "code": "stale_timestamp",
-      "message": "时间戳不是当前交易日：2026-07-14T17:49:03+08:00",
       "impact_level": "background_review",
       "decision_action": "仅作背景复核，不单独阻断交易判断"
     },
@@ -759,15 +750,6 @@
       "message": "japan_single_stock_premarket: 未取得可交叉验证的日本科技单股实时涨跌，仅引用已核验的日经225指数并明确缺口。",
       "impact_level": "price_review",
       "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
-    },
-    {
-      "severity": "warning",
-      "file": "theme-shifts.json",
-      "path": "",
-      "code": "stale_theme_shifts",
-      "message": "theme-shifts 日期不是当前交易日：2026-07-14",
-      "impact_level": "background_review",
-      "decision_action": "仅作背景复核，不单独阻断交易判断"
     }
   ],
   "action_plan": [
@@ -840,12 +822,12 @@
   ],
   "counts": {
     "critical": 0,
-    "warning": 84,
+    "warning": 82,
     "info": 1,
     "blocking": 7,
     "price_review": 69,
     "signal_review": 2,
-    "background_review": 7
+    "background_review": 5
   },
   "rules": [
     "异常文本、JSON解析失败、必需文件缺失为 critical。",
