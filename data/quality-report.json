@@ -1,8 +1,8 @@
 {
-  "timestamp": "2026-07-14T22:37:20+08:00",
-  "current_signal_date": "2026-07-14",
+  "timestamp": "2026-07-15T09:03:43+08:00",
+  "current_signal_date": "2026-07-15",
   "status": "degraded",
-  "summary": "发现 76 个降级/需复核项（7 个交易阻断，65 个价格/行情复核，2 个信号复核，2 个背景复核），核心结论可看但必须按影响分层使用。",
+  "summary": "发现 85 个降级/需复核项（7 个交易阻断，66 个价格/行情复核，2 个信号复核，11 个背景复核），核心结论可看但必须按影响分层使用。",
   "issues": [
     {
       "severity": "warning",
@@ -10,6 +10,15 @@
       "path": "",
       "code": "stale_timestamp",
       "message": "时间戳不是当前交易日：2026-07-13T10:37:36+08:00",
+      "impact_level": "background_review",
+      "decision_action": "仅作背景复核，不单独阻断交易判断"
+    },
+    {
+      "severity": "warning",
+      "file": "intraday.json",
+      "path": "",
+      "code": "stale_timestamp",
+      "message": "时间戳不是当前交易日：2026-07-14T17:49:03+08:00",
       "impact_level": "background_review",
       "decision_action": "仅作背景复核，不单独阻断交易判断"
     },
@@ -25,11 +34,29 @@
     {
       "severity": "warning",
       "file": "postmarket.json",
+      "path": "",
+      "code": "stale_timestamp",
+      "message": "时间戳不是当前交易日：2026-07-14T17:49:03+08:00",
+      "impact_level": "background_review",
+      "decision_action": "仅作背景复核，不单独阻断交易判断"
+    },
+    {
+      "severity": "warning",
+      "file": "postmarket.json",
       "path": "closing_auction_patch.snapshots",
       "code": "bad_change_pct",
       "message": "closing_auction_patch.snapshots change_pct 非数字：{'上证': 0.074, '深证': 0.121, '创业板': 0.102, '科创50': -0.377, '沪深300': 0.099}，该字段忽略并降权",
       "impact_level": "price_review",
       "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
+    },
+    {
+      "severity": "warning",
+      "file": "premarket.json",
+      "path": "",
+      "code": "stale_timestamp",
+      "message": "时间戳不是当前交易日：2026-07-14T08:37:52+08:00",
+      "impact_level": "background_review",
+      "decision_action": "仅作背景复核，不单独阻断交易判断"
     },
     {
       "severity": "warning",
@@ -48,6 +75,24 @@
       "message": "us_overnight.mapping_chain[3] change_pct 非数字：ADR -2.89%；6月营收同比+67.9%，该字段忽略并降权",
       "impact_level": "price_review",
       "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
+    },
+    {
+      "severity": "warning",
+      "file": "source-health.json",
+      "path": "",
+      "code": "stale_timestamp",
+      "message": "时间戳不是当前交易日：2026-07-14T20:35:31+08:00",
+      "impact_level": "price_review",
+      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
+    },
+    {
+      "severity": "warning",
+      "file": "topics.json",
+      "path": "",
+      "code": "stale_timestamp",
+      "message": "时间戳不是当前交易日：2026-07-14T17:49:03+08:00",
+      "impact_level": "background_review",
+      "decision_action": "仅作背景复核，不单独阻断交易判断"
     },
     {
       "severity": "warning",
@@ -147,6 +192,15 @@
       "message": "alerts[13] 候选异动未达到最低短周期价格、方向占比和成交门槛，不得作为当前候选展示",
       "impact_level": "blocking",
       "decision_action": "禁止作为交易依据，需修复后重产"
+    },
+    {
+      "severity": "info",
+      "file": "evening-sentiment.json",
+      "path": "",
+      "code": "evening_not_current",
+      "message": "晚间舆情不是当前交易日，不参与今日总控",
+      "impact_level": "background_review",
+      "decision_action": "仅作背景复核，不单独阻断交易判断"
     },
     {
       "severity": "warning",
@@ -687,6 +741,42 @@
       "message": "eastmoney_minute_secondary_20260714: 分钟接口被远端关闭；改用腾讯分钟线、腾讯正式收盘和新浪正式收盘交叉确认。",
       "impact_level": "price_review",
       "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
+    },
+    {
+      "severity": "warning",
+      "file": "automation-health.json",
+      "path": "",
+      "code": "stale_automation_health",
+      "message": "automation-health 日期不是当前交易日：2026-07-14",
+      "impact_level": "background_review",
+      "decision_action": "仅作背景复核，不单独阻断交易判断"
+    },
+    {
+      "severity": "warning",
+      "file": "theme-shifts.json",
+      "path": "",
+      "code": "stale_theme_shifts",
+      "message": "theme-shifts 日期不是当前交易日：2026-07-14",
+      "impact_level": "background_review",
+      "decision_action": "仅作背景复核，不单独阻断交易判断"
+    },
+    {
+      "severity": "warning",
+      "file": "data-trust.json",
+      "path": "",
+      "code": "stale_data_trust",
+      "message": "data-trust 日期不是当前交易日：2026-07-14",
+      "impact_level": "background_review",
+      "decision_action": "仅作背景复核，不单独阻断交易判断"
+    },
+    {
+      "severity": "warning",
+      "file": "monitoring-coverage.json",
+      "path": "",
+      "code": "stale_monitoring_coverage",
+      "message": "monitoring-coverage 日期不是当前交易日：2026-07-14",
+      "impact_level": "background_review",
+      "decision_action": "仅作背景复核，不单独阻断交易判断"
     }
   ],
   "action_plan": [
@@ -739,8 +829,8 @@
       "impact_level": "price_review",
       "label": "二次行情复核",
       "file": "source-health.json",
-      "code": "source_degraded",
-      "problem": "A股补充行情源解码异常，盘中异动和个股涨跌幅需以已审计源复核。",
+      "code": "stale_timestamp",
+      "problem": "时间戳不是当前交易日：2026-07-14T20:35:31+08:00",
       "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核",
       "next_step": "用第二行情源复核涨跌幅、quote_time 和代表股方向；未确认前只做验证。",
       "unblock_condition": "price_review=0 或相关来源标记 trusted/cross verified。"
@@ -759,12 +849,12 @@
   ],
   "counts": {
     "critical": 0,
-    "warning": 76,
-    "info": 0,
+    "warning": 85,
+    "info": 1,
     "blocking": 7,
-    "price_review": 65,
+    "price_review": 66,
     "signal_review": 2,
-    "background_review": 2
+    "background_review": 11
   },
   "rules": [
     "异常文本、JSON解析失败、必需文件缺失为 critical。",

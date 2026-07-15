@@ -1,70 +1,30 @@
 {
-  "timestamp": "2026-07-14T22:37:20+08:00",
-  "current_signal_date": "2026-07-14",
+  "timestamp": "2026-07-15T09:03:43+08:00",
+  "current_signal_date": "2026-07-15",
   "overall_status": "degraded",
-  "summary": "5 个监测维度需降权，0 个背景维度需复核。",
+  "summary": "2 个监测维度需降权，1 个背景维度需复核。",
   "counts": {
     "critical": 0,
-    "warning": 5,
-    "info": 0
+    "warning": 2,
+    "info": 1
   },
   "blind_spots": [
     {
-      "id": "intraday-structure-degraded",
-      "title": "盘中结构降权",
-      "severity": "warning",
-      "conclusion": "盘面宽度、行业/概念强弱和午后建议可看，但实时涨跌幅需复核。",
+      "id": "evening-sentiment-stale",
+      "title": "晚间舆情过期",
+      "severity": "info",
+      "conclusion": "晚间公告、P0 舆情和隔夜事件不是当前交易日，不能参与今日总控。",
       "impacted_decisions": [
-        "强主线不能直接外推为进攻",
-        "机会候选只能等待确认",
-        "风险项优先级高于机会项"
+        "次日竞价风险可能缺少最新公告校验",
+        "个股突发公告需要额外扫描"
       ],
       "evidence": [
-        "sentiment 类型错误：期望 dict，实际 str；A股补充行情源解码异常，盘中异动和个股涨跌幅需以已审计源复核。；港股结构行情源连接/解码异常，港股映射和收盘窗口价格需二次复核。"
+        "数据交易日不是当前交易日：2026-07-14；sentiment_summary 缺失"
       ],
-      "fallback_action": "优先看涨跌停/炸板/尾盘承接等结构证据，不用单个涨跌幅做结论。",
+      "fallback_action": "只作历史背景；盘前必须重新跑 8:30 增量扫描和个股公告检查。",
       "fallback_checks": [],
       "source_files": [
-        "data/intraday.json",
-        "data/data-trust.json"
-      ]
-    },
-    {
-      "id": "premarket-cross-market-degraded",
-      "title": "盘前外部映射降权",
-      "severity": "warning",
-      "conclusion": "美股/港股/日韩映射可以提供方向，但部分实时外部源非终值或需复核。",
-      "impacted_decisions": [
-        "盘前提振/压制判断不能单独作为开盘动作",
-        "科技映射链需要9:25竞价和9:30后承接确认"
-      ],
-      "evidence": [
-        "us_overnight.mapping_chain[2] change_pct 非数字：-3.52%/-4.21%/-3.98%，该字段忽略并降权；us_overnight.mapping_chain[3] change_pct 非数字：ADR -2.89%；6月营收同比+67.9%，该字段忽略并降权；A股补充行情源解码异常，盘中异动和个股涨跌幅需以已审计源复核。；港股结构行情源连接/解码异常，港股映射和收盘窗口价格需二次复核。"
-      ],
-      "fallback_action": "开盘只按竞价确认后的 A 股反馈升级，不把外盘映射直接升为强主线。",
-      "fallback_checks": [],
-      "source_files": [
-        "data/premarket.json",
-        "data/source-health.json"
-      ]
-    },
-    {
-      "id": "postmarket-close-degraded",
-      "title": "盘后复盘降权",
-      "severity": "warning",
-      "conclusion": "收盘复盘可参考，但港股收盘窗口和部分补充行情源需要复核。",
-      "impacted_decisions": [
-        "次日方向只作为预案",
-        "需等待次日竞价验证"
-      ],
-      "evidence": [
-        "closing_auction_patch.snapshots change_pct 非数字：{'上证': 0.074, '深证': 0.121, '创业板': 0.102, '科创50': -0.377, '沪深300': 0.099}，该字段忽略并降权；A股补充行情源解码异常，盘中异动和个股涨跌幅需以已审计源复核。；港股结构行情源连接/解码异常，港股映射和收盘窗口价格需二次复核。"
-      ],
-      "fallback_action": "把盘后结论拆成次日验证条件，不直接继承为次日交易方向。",
-      "fallback_checks": [],
-      "source_files": [
-        "data/postmarket.json",
-        "data/source-health.json"
+        "data/evening-sentiment.json"
       ]
     },
     {
@@ -77,7 +37,7 @@
         "风险栏优先级高于机会栏"
       ],
       "evidence": [
-        "发现 76 个降级/需复核项（7 个交易阻断，65 个价格/行情复核，2 个信号复核，2 个背景复核），核心结论可看但必须按影响分层使用。"
+        "发现 85 个降级/需复核项（7 个交易阻断，66 个价格/行情复核，2 个信号复核，11 个背景复核），核心结论可看但必须按影响分层使用。"
       ],
       "fallback_action": "只跟踪验证条件；若风险项不收敛，不升级任何机会。",
       "fallback_checks": [],
