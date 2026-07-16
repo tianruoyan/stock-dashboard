@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-07-16T09:19:00+08:00",
+  "timestamp": "2026-07-16T09:31:00+08:00",
   "sources": {
     "tencent_http": {
       "status": "ok",
@@ -1829,6 +1829,53 @@
       "status": "degraded",
       "updated_at": "2026-07-16T09:15:00+08:00",
       "detail": "巨潮当日公告接口可访问，但全量分页扫描未完成可靠覆盖；本次未声称观察池公告无重大新增，未核实公告不进入开盘结论。"
+    },
+    "official_exchange_universe_auction_20260716": {
+      "status": "recovered",
+      "last_check": "2026-07-16T09:29:00+08:00",
+      "usage": "9:25 A股全市场开盘涨跌停分母与股票清单",
+      "detail": "上交所主板/科创板、深交所A股、北交所列表合并去重取得5529只；深交所列表首次请求超时，重试成功。",
+      "sample_count": 5529,
+      "errors": [
+        "initial SZSE read timeout; retry succeeded"
+      ]
+    },
+    "tencent_a_quote_auction_20260716": {
+      "status": "ok",
+      "last_check": "2026-07-16T09:29:54+08:00",
+      "usage": "9:25开盘价、涨跌停价、指数与配置池报价",
+      "detail": "腾讯逐只报价完整返回5529/5529；按开盘价等于当日涨跌停价统计开盘涨停4、开盘跌停11。",
+      "sample_count": 5529,
+      "errors": []
+    },
+    "eastmoney_limit_pool_auction_20260716": {
+      "status": "failed",
+      "last_check": "2026-07-16T09:27:00+08:00",
+      "usage": "9:25涨停/跌停结构池交叉检查",
+      "detail": "涨停池和跌停池均返回rc=205、data=null；未使用该源补数，改以腾讯全市场开盘价逐股统计。",
+      "sample_count": 0,
+      "errors": [
+        "getTopicZTPool rc=205 data=null",
+        "getTopicDTPool rc=205 data=null"
+      ]
+    },
+    "auction_turnover_proxy_20260716": {
+      "status": "degraded_estimate",
+      "last_check": "2026-07-16T09:26:18+08:00",
+      "usage": "9:25集合竞价成交量能参考",
+      "detail": "腾讯09:26上证与深证成指成交额字段合计约223.96亿元，较昨日同口径约缩减20.9%；包含开盘初段成交，非交易所单列集合竞价终值。",
+      "sample_count": 2,
+      "errors": [
+        "未取得交易所单列的全市场集合竞价成交额"
+      ]
+    },
+    "tencent_hk_formal_open_20260716": {
+      "status": "ok",
+      "last_check": "2026-07-16T09:30:24+08:00",
+      "usage": "港股正式开盘与A/H映射复核",
+      "detail": "恒指+1.10%、恒科+0.90%；半导体澜起H-8.41%、兆易H-6.32%、华虹-5.79%、中芯-2.95%，互联网阿里+3.97%、腾讯+1.52%。",
+      "sample_count": 12,
+      "errors": []
     }
   }
 }

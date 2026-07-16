@@ -1,8 +1,8 @@
 {
-  "timestamp": "2026-07-16T09:20:57+08:00",
+  "timestamp": "2026-07-16T09:34:09+08:00",
   "current_signal_date": "2026-07-16",
   "status": "degraded",
-  "summary": "发现 93 个降级/需复核项（7 个交易阻断，78 个价格/行情复核，2 个信号复核，7 个背景复核），核心结论可看但必须按影响分层使用。",
+  "summary": "发现 97 个降级/需复核项（7 个交易阻断，82 个价格/行情复核，2 个信号复核，7 个背景复核），核心结论可看但必须按影响分层使用。",
   "issues": [
     {
       "severity": "warning",
@@ -154,6 +154,33 @@
       "path": "hk_auction.mapping_chain[4]",
       "code": "bad_change_pct",
       "message": "hk_auction.mapping_chain[4] change_pct 非数字：None，该字段忽略并降权",
+      "impact_level": "price_review",
+      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
+    },
+    {
+      "severity": "warning",
+      "file": "premarket.json",
+      "path": "auction_summary.open_limit_down_stocks[0]",
+      "code": "watchlist_limit_down_like",
+      "message": "德明利 接近跌停 -10.0，需确认是否真实",
+      "impact_level": "price_review",
+      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
+    },
+    {
+      "severity": "warning",
+      "file": "premarket.json",
+      "path": "auction_summary.open_limit_down_stocks[1]",
+      "code": "watchlist_limit_down_like",
+      "message": "华天科技 接近跌停 -10.0，需确认是否真实",
+      "impact_level": "price_review",
+      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
+    },
+    {
+      "severity": "warning",
+      "file": "premarket.json",
+      "path": "auction_summary.representative_stocks[4]",
+      "code": "watchlist_limit_down_like",
+      "message": "江丰电子 接近跌停 -10.06，需确认是否真实",
       "impact_level": "price_review",
       "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
     },
@@ -843,6 +870,15 @@
     },
     {
       "severity": "warning",
+      "file": "source-health.json",
+      "path": "",
+      "code": "source_failed",
+      "message": "eastmoney_limit_pool_auction_20260716: 涨停池和跌停池均返回rc=205、data=null；未使用该源补数，改以腾讯全市场开盘价逐股统计。",
+      "impact_level": "price_review",
+      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
+    },
+    {
+      "severity": "warning",
       "file": "theme-shifts.json",
       "path": "",
       "code": "stale_theme_shifts",
@@ -921,10 +957,10 @@
   ],
   "counts": {
     "critical": 0,
-    "warning": 93,
+    "warning": 97,
     "info": 1,
     "blocking": 7,
-    "price_review": 78,
+    "price_review": 82,
     "signal_review": 2,
     "background_review": 7
   },
