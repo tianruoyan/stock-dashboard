@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-07-16T10:25:36+08:00",
+  "timestamp": "2026-07-16T10:24:00+08:00",
   "sources": {
     "tencent_http": {
       "status": "ok",
@@ -1938,6 +1938,58 @@
       "retained_candidate_count": 170,
       "filtered_weak_candidate_count": 54,
       "note": "末尾54条候选未达到 alert-config 对短周期价格、方向占比和成交门槛的最低要求，已从当前展示批次撤下；保留候选仍仅作复核，不作为确定交易信号。"
+    },
+    "tencent_index_industry_intraday_1020_20260716": {
+      "status": "ok",
+      "provider": "腾讯财经HTTP",
+      "checked_at": "2026-07-16T10:20:42+08:00",
+      "usage": "A股5只指数、两市成交与98个行业排名",
+      "sample_count": 103,
+      "detail": "上证-0.61%、深证-0.22%、创业板-0.53%、科创50+0.85%；消费电子、IT服务、计算机设备、元件居前。",
+      "errors": []
+    },
+    "tencent_focus_quotes_intraday_1020_20260716": {
+      "status": "ok",
+      "provider": "腾讯财经HTTP",
+      "checked_at": "2026-07-16T10:20:32+08:00",
+      "usage": "配置池、半导体专项、电子布/玻纤、PCB/CPO、医药与风格雷达",
+      "sample_count": 74,
+      "detail": "重点样本报价、成交额、开高低和涨跌幅完整返回。",
+      "errors": []
+    },
+    "eastmoney_structure_intraday_1021_20260716": {
+      "status": "recovered",
+      "provider": "东方财富push2ex",
+      "checked_at": "2026-07-16T10:21:48+08:00",
+      "usage": "涨停/跌停/炸板池、行业分布、连板高度",
+      "sample_count": 48,
+      "detail": "09:36空返回后恢复；涨停37、跌停6、炸板5，哈药股份5连板。",
+      "errors": [
+        "09:36 rc=205 data=null; 10:21 recovered"
+      ]
+    },
+    "sina_full_market_crosscheck_1019_20260716": {
+      "status": "degraded",
+      "provider": "新浪全A分节点行情",
+      "checked_at": "2026-07-16T10:19:30+08:00",
+      "usage": "结构池交叉核对，不作为主结论源",
+      "sample_count": 5526,
+      "detail": "分节点取得5526只有效报价；节点列表含停牌/历史条目且涨跌停价需规则推断，因此只作东财结构池交叉核验。",
+      "errors": [
+        "首轮HTTPS分页出现SSLEOFError",
+        "分节点恢复后仅降级使用"
+      ]
+    },
+    "tencent_hk_delayed_intraday_1007_20260716": {
+      "status": "degraded",
+      "provider": "腾讯财经HTTP",
+      "checked_at": "2026-07-16T10:22:00+08:00",
+      "usage": "港股A/H情绪映射",
+      "sample_count": 7,
+      "detail": "行情约15分钟延迟：恒指+1.06%、恒科+2.09%、中芯+1.77%、华虹-1.00%。",
+      "errors": [
+        "quote_time around 10:07, delayed"
+      ]
     }
   },
   "last_publish_attempt": "pending_run_after_1024_alert_merge"
