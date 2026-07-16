@@ -1,8 +1,8 @@
 {
-  "timestamp": "2026-07-16T11:41:55+08:00",
+  "timestamp": "2026-07-16T13:01:58+08:00",
   "current_signal_date": "2026-07-16",
   "status": "degraded",
-  "summary": "发现 646 个降级/需复核项（358 个交易阻断，98 个价格/行情复核，1 个信号复核，190 个背景复核），核心结论可看但必须按影响分层使用。",
+  "summary": "发现 647 个降级/需复核项（358 个交易阻断，99 个价格/行情复核，1 个信号复核，190 个背景复核），核心结论可看但必须按影响分层使用。",
   "issues": [
     {
       "severity": "warning",
@@ -5793,6 +5793,15 @@
     },
     {
       "severity": "warning",
+      "file": "source-health.json",
+      "path": "",
+      "code": "source_degraded",
+      "message": "local_monitor_realtime_quote_1300: monitor.log 在12:57-13:00连续出现行情源异常；本轮未据此生成或确认任何盘中异动，保留上一版 alert.json。",
+      "impact_level": "price_review",
+      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
+    },
+    {
+      "severity": "warning",
       "file": "cross-file",
       "path": "有研硅",
       "code": "stock_pct_cross_file_conflict",
@@ -5898,10 +5907,10 @@
   ],
   "counts": {
     "critical": 0,
-    "warning": 646,
+    "warning": 647,
     "info": 1,
     "blocking": 358,
-    "price_review": 98,
+    "price_review": 99,
     "signal_review": 1,
     "background_review": 190
   },

@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-07-16T11:36:09+08:00",
+  "timestamp": "2026-07-16T13:01:51+08:00",
   "sources": {
     "tencent_http": {
       "status": "ok",
@@ -2157,6 +2157,20 @@
       "errors": [
         "免费港股快照未由第二行情源确认实时性，仅作情绪映射"
       ]
+    },
+    "local_monitor_realtime_quote_1300": {
+      "status": "degraded",
+      "last_check": "2026-07-16T13:01:51+08:00",
+      "usage": "13:00 午后开盘本地监控实时行情刷新",
+      "detail": "monitor.log 在12:57-13:00连续出现行情源异常；本轮未据此生成或确认任何盘中异动，保留上一版 alert.json。",
+      "sample_count": 0,
+      "errors": [
+        "12:57:54 Response ended prematurely",
+        "12:58:39 Response ended prematurely",
+        "12:59:23 Response ended prematurely",
+        "13:00:12 Can not decode value starting with character '<'"
+      ],
+      "action": "等待下一轮监控自动重试；若持续失败，继续保持 alert.json 不变并提示数据源降级。"
     }
   },
   "last_publish_attempt": "pending_10:30_intraday_publish",
