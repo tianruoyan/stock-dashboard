@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-07-16T11:01:06+08:00",
+  "timestamp": "2026-07-16T11:21:19+08:00",
   "sources": {
     "tencent_http": {
       "status": "ok",
@@ -2061,6 +2061,55 @@
       "status": "degraded",
       "updated_at": "2026-07-16T11:01:06+08:00",
       "error": "Can not decode value starting with character <"
+    },
+    "tencent_index_industry_intraday_1113_20260716": {
+      "status": "ok",
+      "provider": "腾讯财经HTTP",
+      "checked_at": "2026-07-16T11:13:36+08:00",
+      "usage": "A股5只指数、两市成交和98个行业排名",
+      "sample_count": 103,
+      "detail": "上证-0.75%、深证-0.72%、创业板-1.52%、科创50-0.85%；IT服务+2.80%，半导体-2.19%、电子化学品-3.25%。",
+      "errors": []
+    },
+    "tencent_focus_quotes_intraday_1110_20260716": {
+      "status": "ok",
+      "provider": "腾讯财经HTTP",
+      "checked_at": "2026-07-16T11:10:53+08:00",
+      "usage": "配置池、半导体专项、电子布/玻纤、PCB/CPO、医药与风格雷达",
+      "sample_count": 82,
+      "detail": "重点样本价格、涨跌幅、开高低、成交额和换手完整返回。",
+      "errors": []
+    },
+    "eastmoney_structure_intraday_1110_20260716": {
+      "status": "ok",
+      "provider": "东方财富push2ex",
+      "checked_at": "2026-07-16T11:10:27+08:00",
+      "usage": "涨停/跌停/炸板池、行业分布和连板高度",
+      "sample_count": 60,
+      "detail": "按60秒以上串行限流取得涨停46、跌停5、炸板9；哈药股份5连板，消费电子5只、元件3只、医药约6只封板。",
+      "errors": []
+    },
+    "tencent_hk_intraday_1111_20260716": {
+      "status": "degraded",
+      "provider": "腾讯财经HTTP",
+      "checked_at": "2026-07-16T11:11:52+08:00",
+      "usage": "港股A/H情绪映射",
+      "sample_count": 7,
+      "detail": "恒指+1.86%、恒科+3.30%、中芯H+0.98%、华虹-1.30%、腾讯+2.57%、阿里+5.03%、商汤+5.19%。",
+      "errors": [
+        "免费港股快照未由第二行情源确认实时性，仅作情绪映射"
+      ]
+    },
+    "alert_candidate_quality_gate_1121_20260716": {
+      "status": "degraded",
+      "provider": "无模型盘中异动服务 + Codex证据门禁",
+      "checked_at": "2026-07-16T11:21:19+08:00",
+      "raw_fresh_candidate_count": 16,
+      "invalidated_count": 16,
+      "detail": "11:10后16条候选均未完成腾讯/通达信双源复核且缺少可验证完整metrics，已标记invalidated；原始记录保留，禁止作为当前交易触发。",
+      "errors": [
+        "根源行情未完成双源交叉验证，候选层继续降级"
+      ]
     }
   },
   "last_publish_attempt": "pending_10:30_intraday_publish",
