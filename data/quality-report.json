@@ -1,8 +1,8 @@
 {
-  "timestamp": "2026-07-16T10:42:23+08:00",
+  "timestamp": "2026-07-16T11:02:36+08:00",
   "current_signal_date": "2026-07-16",
   "status": "degraded",
-  "summary": "发现 586 个降级/需复核项（313 个交易阻断，89 个价格/行情复核，1 个信号复核，184 个背景复核），核心结论可看但必须按影响分层使用。",
+  "summary": "发现 617 个降级/需复核项（338 个交易阻断，94 个价格/行情复核，1 个信号复核，185 个背景复核），核心结论可看但必须按影响分层使用。",
   "issues": [
     {
       "severity": "warning",
@@ -169,9 +169,27 @@
     {
       "severity": "warning",
       "file": "alert.json",
-      "path": "",
-      "code": "historical_alert_missing_quote_audit",
-      "message": "alert.json 存在盘中异动但缺少 quote_audit；当前阶段只降权参考，不阻断整站发布",
+      "path": "quote_audit.sanity_checks",
+      "code": "historical_alert_quote_audit_incomplete",
+      "message": "quote_audit.sanity_checks.sample_count 缺失",
+      "impact_level": "price_review",
+      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
+    },
+    {
+      "severity": "warning",
+      "file": "alert.json",
+      "path": "quote_audit.sanity_checks",
+      "code": "historical_alert_quote_audit_incomplete",
+      "message": "quote_audit.sanity_checks.max_abs_leader_change_pct 缺失",
+      "impact_level": "price_review",
+      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
+    },
+    {
+      "severity": "warning",
+      "file": "alert.json",
+      "path": "quote_audit.sanity_checks",
+      "code": "historical_alert_not_cross_verified",
+      "message": "行情污染源仍降级，历史 alert 未交叉验证，只降权复盘参考",
       "impact_level": "price_review",
       "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
     },
@@ -4631,6 +4649,240 @@
       "decision_action": "禁止作为交易依据，需修复后重产"
     },
     {
+      "severity": "warning",
+      "file": "alert.json",
+      "path": "alerts[316]",
+      "code": "candidate_alert_evidence_weak",
+      "message": "alerts[316] 候选异动未达到最低短周期价格、方向占比和成交门槛，不得作为当前候选展示",
+      "impact_level": "blocking",
+      "decision_action": "禁止作为交易依据，需修复后重产"
+    },
+    {
+      "severity": "warning",
+      "file": "alert.json",
+      "path": "alerts[317]",
+      "code": "candidate_alert_evidence_weak",
+      "message": "alerts[317] 候选异动未达到最低短周期价格、方向占比和成交门槛，不得作为当前候选展示",
+      "impact_level": "blocking",
+      "decision_action": "禁止作为交易依据，需修复后重产"
+    },
+    {
+      "severity": "warning",
+      "file": "alert.json",
+      "path": "alerts[318]",
+      "code": "candidate_alert_evidence_weak",
+      "message": "alerts[318] 候选异动未达到最低短周期价格、方向占比和成交门槛，不得作为当前候选展示",
+      "impact_level": "blocking",
+      "decision_action": "禁止作为交易依据，需修复后重产"
+    },
+    {
+      "severity": "warning",
+      "file": "alert.json",
+      "path": "alerts[319]",
+      "code": "candidate_alert_evidence_weak",
+      "message": "alerts[319] 候选异动未达到最低短周期价格、方向占比和成交门槛，不得作为当前候选展示",
+      "impact_level": "blocking",
+      "decision_action": "禁止作为交易依据，需修复后重产"
+    },
+    {
+      "severity": "warning",
+      "file": "alert.json",
+      "path": "alerts[320]",
+      "code": "candidate_alert_evidence_weak",
+      "message": "alerts[320] 候选异动未达到最低短周期价格、方向占比和成交门槛，不得作为当前候选展示",
+      "impact_level": "blocking",
+      "decision_action": "禁止作为交易依据，需修复后重产"
+    },
+    {
+      "severity": "warning",
+      "file": "alert.json",
+      "path": "alerts[320].leaders[0]",
+      "code": "missing_alert_leader_pct",
+      "message": "alerts[320].leaders[0].change_pct 缺失",
+      "impact_level": "background_review",
+      "decision_action": "仅作背景复核，不单独阻断交易判断"
+    },
+    {
+      "severity": "warning",
+      "file": "alert.json",
+      "path": "alerts[321]",
+      "code": "candidate_alert_evidence_weak",
+      "message": "alerts[321] 候选异动未达到最低短周期价格、方向占比和成交门槛，不得作为当前候选展示",
+      "impact_level": "blocking",
+      "decision_action": "禁止作为交易依据，需修复后重产"
+    },
+    {
+      "severity": "warning",
+      "file": "alert.json",
+      "path": "alerts[322]",
+      "code": "candidate_alert_evidence_weak",
+      "message": "alerts[322] 候选异动未达到最低短周期价格、方向占比和成交门槛，不得作为当前候选展示",
+      "impact_level": "blocking",
+      "decision_action": "禁止作为交易依据，需修复后重产"
+    },
+    {
+      "severity": "warning",
+      "file": "alert.json",
+      "path": "alerts[323]",
+      "code": "candidate_alert_evidence_weak",
+      "message": "alerts[323] 候选异动未达到最低短周期价格、方向占比和成交门槛，不得作为当前候选展示",
+      "impact_level": "blocking",
+      "decision_action": "禁止作为交易依据，需修复后重产"
+    },
+    {
+      "severity": "warning",
+      "file": "alert.json",
+      "path": "alerts[324]",
+      "code": "candidate_alert_evidence_weak",
+      "message": "alerts[324] 候选异动未达到最低短周期价格、方向占比和成交门槛，不得作为当前候选展示",
+      "impact_level": "blocking",
+      "decision_action": "禁止作为交易依据，需修复后重产"
+    },
+    {
+      "severity": "warning",
+      "file": "alert.json",
+      "path": "alerts[325]",
+      "code": "candidate_alert_evidence_weak",
+      "message": "alerts[325] 候选异动未达到最低短周期价格、方向占比和成交门槛，不得作为当前候选展示",
+      "impact_level": "blocking",
+      "decision_action": "禁止作为交易依据，需修复后重产"
+    },
+    {
+      "severity": "warning",
+      "file": "alert.json",
+      "path": "alerts[326]",
+      "code": "candidate_alert_evidence_weak",
+      "message": "alerts[326] 候选异动未达到最低短周期价格、方向占比和成交门槛，不得作为当前候选展示",
+      "impact_level": "blocking",
+      "decision_action": "禁止作为交易依据，需修复后重产"
+    },
+    {
+      "severity": "warning",
+      "file": "alert.json",
+      "path": "alerts[327]",
+      "code": "candidate_alert_evidence_weak",
+      "message": "alerts[327] 候选异动未达到最低短周期价格、方向占比和成交门槛，不得作为当前候选展示",
+      "impact_level": "blocking",
+      "decision_action": "禁止作为交易依据，需修复后重产"
+    },
+    {
+      "severity": "warning",
+      "file": "alert.json",
+      "path": "alerts[328]",
+      "code": "candidate_alert_evidence_weak",
+      "message": "alerts[328] 候选异动未达到最低短周期价格、方向占比和成交门槛，不得作为当前候选展示",
+      "impact_level": "blocking",
+      "decision_action": "禁止作为交易依据，需修复后重产"
+    },
+    {
+      "severity": "warning",
+      "file": "alert.json",
+      "path": "alerts[329]",
+      "code": "candidate_alert_evidence_weak",
+      "message": "alerts[329] 候选异动未达到最低短周期价格、方向占比和成交门槛，不得作为当前候选展示",
+      "impact_level": "blocking",
+      "decision_action": "禁止作为交易依据，需修复后重产"
+    },
+    {
+      "severity": "warning",
+      "file": "alert.json",
+      "path": "alerts[330]",
+      "code": "candidate_alert_evidence_weak",
+      "message": "alerts[330] 候选异动未达到最低短周期价格、方向占比和成交门槛，不得作为当前候选展示",
+      "impact_level": "blocking",
+      "decision_action": "禁止作为交易依据，需修复后重产"
+    },
+    {
+      "severity": "warning",
+      "file": "alert.json",
+      "path": "alerts[331]",
+      "code": "candidate_alert_evidence_weak",
+      "message": "alerts[331] 候选异动未达到最低短周期价格、方向占比和成交门槛，不得作为当前候选展示",
+      "impact_level": "blocking",
+      "decision_action": "禁止作为交易依据，需修复后重产"
+    },
+    {
+      "severity": "warning",
+      "file": "alert.json",
+      "path": "alerts[332]",
+      "code": "candidate_alert_evidence_weak",
+      "message": "alerts[332] 候选异动未达到最低短周期价格、方向占比和成交门槛，不得作为当前候选展示",
+      "impact_level": "blocking",
+      "decision_action": "禁止作为交易依据，需修复后重产"
+    },
+    {
+      "severity": "warning",
+      "file": "alert.json",
+      "path": "alerts[333]",
+      "code": "candidate_alert_evidence_weak",
+      "message": "alerts[333] 候选异动未达到最低短周期价格、方向占比和成交门槛，不得作为当前候选展示",
+      "impact_level": "blocking",
+      "decision_action": "禁止作为交易依据，需修复后重产"
+    },
+    {
+      "severity": "warning",
+      "file": "alert.json",
+      "path": "alerts[334]",
+      "code": "candidate_alert_evidence_weak",
+      "message": "alerts[334] 候选异动未达到最低短周期价格、方向占比和成交门槛，不得作为当前候选展示",
+      "impact_level": "blocking",
+      "decision_action": "禁止作为交易依据，需修复后重产"
+    },
+    {
+      "severity": "warning",
+      "file": "alert.json",
+      "path": "alerts[335]",
+      "code": "candidate_alert_evidence_weak",
+      "message": "alerts[335] 候选异动未达到最低短周期价格、方向占比和成交门槛，不得作为当前候选展示",
+      "impact_level": "blocking",
+      "decision_action": "禁止作为交易依据，需修复后重产"
+    },
+    {
+      "severity": "warning",
+      "file": "alert.json",
+      "path": "alerts[336]",
+      "code": "candidate_alert_evidence_weak",
+      "message": "alerts[336] 候选异动未达到最低短周期价格、方向占比和成交门槛，不得作为当前候选展示",
+      "impact_level": "blocking",
+      "decision_action": "禁止作为交易依据，需修复后重产"
+    },
+    {
+      "severity": "warning",
+      "file": "alert.json",
+      "path": "alerts[337]",
+      "code": "candidate_alert_evidence_weak",
+      "message": "alerts[337] 候选异动未达到最低短周期价格、方向占比和成交门槛，不得作为当前候选展示",
+      "impact_level": "blocking",
+      "decision_action": "禁止作为交易依据，需修复后重产"
+    },
+    {
+      "severity": "warning",
+      "file": "alert.json",
+      "path": "alerts[338]",
+      "code": "candidate_alert_evidence_weak",
+      "message": "alerts[338] 候选异动未达到最低短周期价格、方向占比和成交门槛，不得作为当前候选展示",
+      "impact_level": "blocking",
+      "decision_action": "禁止作为交易依据，需修复后重产"
+    },
+    {
+      "severity": "warning",
+      "file": "alert.json",
+      "path": "alerts[339]",
+      "code": "candidate_alert_evidence_weak",
+      "message": "alerts[339] 候选异动未达到最低短周期价格、方向占比和成交门槛，不得作为当前候选展示",
+      "impact_level": "blocking",
+      "decision_action": "禁止作为交易依据，需修复后重产"
+    },
+    {
+      "severity": "warning",
+      "file": "alert.json",
+      "path": "alerts[340]",
+      "code": "candidate_alert_evidence_weak",
+      "message": "alerts[340] 候选异动未达到最低短周期价格、方向占比和成交门槛，不得作为当前候选展示",
+      "impact_level": "blocking",
+      "decision_action": "禁止作为交易依据，需修复后重产"
+    },
+    {
       "severity": "info",
       "file": "evening-sentiment.json",
       "path": "",
@@ -5262,10 +5514,37 @@
     },
     {
       "severity": "warning",
+      "file": "source-health.json",
+      "path": "",
+      "code": "source_degraded",
+      "message": "tencent_hk_intraday_1040_20260716: 恒指+1.80%、恒科+3.07%、中芯H+0.72%、华虹-2.19%、腾讯+2.24%、阿里+4.94%、商汤+5.19%。",
+      "impact_level": "price_review",
+      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
+    },
+    {
+      "severity": "warning",
+      "file": "source-health.json",
+      "path": "",
+      "code": "source_degraded",
+      "message": "alert_candidate_quality_gate_1059_20260716: 两条仍在5分钟有效期内但未达到alert-config最低证据门槛、且未完成双源复核的候选已标记invalidated；原始记录保留，禁止作为当前交易触发。",
+      "impact_level": "price_review",
+      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
+    },
+    {
+      "severity": "warning",
+      "file": "source-health.json",
+      "path": "",
+      "code": "source_degraded",
+      "message": "quote_provider_decode: degraded",
+      "impact_level": "price_review",
+      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
+    },
+    {
+      "severity": "warning",
       "file": "cross-file",
       "path": "有研硅",
       "code": "stock_pct_cross_file_conflict",
-      "message": "有研硅 跨文件涨跌幅差异过大：intraday.json -6.75% vs alert.json 3.88%",
+      "message": "有研硅 跨文件涨跌幅差异过大：alert.json -6.63% vs alert.json 3.88%",
       "impact_level": "price_review",
       "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
     },
@@ -5317,7 +5596,7 @@
       "label": "二次行情复核",
       "file": "cross-file",
       "code": "stock_pct_cross_file_conflict",
-      "problem": "有研硅 跨文件涨跌幅差异过大：intraday.json -6.75% vs alert.json 3.88%",
+      "problem": "有研硅 跨文件涨跌幅差异过大：alert.json -6.63% vs alert.json 3.88%",
       "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核",
       "next_step": "用第二行情源复核涨跌幅、quote_time 和代表股方向；未确认前只做验证。",
       "unblock_condition": "price_review=0 或相关来源标记 trusted/cross verified。"
@@ -5358,12 +5637,12 @@
   ],
   "counts": {
     "critical": 0,
-    "warning": 586,
+    "warning": 617,
     "info": 1,
-    "blocking": 313,
-    "price_review": 89,
+    "blocking": 338,
+    "price_review": 94,
     "signal_review": 1,
-    "background_review": 184
+    "background_review": 185
   },
   "rules": [
     "异常文本、JSON解析失败、必需文件缺失为 critical。",

@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-07-16T10:37:06+08:00",
+  "timestamp": "2026-07-16T11:01:06+08:00",
   "sources": {
     "tencent_http": {
       "status": "ok",
@@ -1879,14 +1879,14 @@
     },
     "local_monitor_log": {
       "status": "ok",
-      "checked_at": "2026-07-16T10:37:06+08:00",
+      "checked_at": "2026-07-16T10:55:06+08:00",
       "path": "/Users/sweet_orange/Documents/投资/monitor.log",
       "pid": "76627",
-      "log_mtime": "2026-07-16T10:38:24.575550+08:00",
-      "freshness_seconds": -78.576,
-      "new_formal_alerts": 13,
-      "window_start": "2026-07-16T10:35:07+08:00",
-      "window_end": "2026-07-16T10:37:06+08:00"
+      "log_mtime": "2026-07-16T10:56:12.506378+08:00",
+      "freshness_seconds": -66.506,
+      "new_formal_alerts": 3,
+      "window_start": "2026-07-16T10:53:07+08:00",
+      "window_end": "2026-07-16T10:55:06+08:00"
     },
     "tencent_full_market_intraday_0939_20260716": {
       "status": "ok",
@@ -2002,7 +2002,73 @@
       "errors": [
         "根源行情尚未完成腾讯/通达信双源交叉验证，候选层继续降级"
       ]
+    },
+    "tencent_index_industry_intraday_1050_20260716": {
+      "status": "ok",
+      "provider": "腾讯财经HTTP",
+      "checked_at": "2026-07-16T10:50:09+08:00",
+      "usage": "A股指数、两市成交、98个行业与重点行业复核",
+      "sample_count": 111,
+      "detail": "上证-0.44%、深证-0.09%、创业板-0.59%、科创50+0.30%；IT服务+3.49%、计算机设备+2.70%、半导体-0.53%、电子化学品-1.44%。",
+      "errors": []
+    },
+    "tencent_focus_quotes_intraday_1046_20260716": {
+      "status": "ok",
+      "provider": "腾讯财经HTTP",
+      "checked_at": "2026-07-16T10:46:07+08:00",
+      "usage": "配置池、半导体专项、电子布/玻纤、PCB/CPO、医药与风格雷达",
+      "sample_count": 75,
+      "detail": "重点样本的价格、涨跌幅、开高低、成交额与quote_time完整返回。",
+      "errors": []
+    },
+    "eastmoney_structure_intraday_1049_20260716": {
+      "status": "ok",
+      "provider": "东方财富push2ex",
+      "checked_at": "2026-07-16T10:49:30+08:00",
+      "usage": "涨停/跌停/炸板池、行业分布、连板高度",
+      "sample_count": 54,
+      "detail": "串行限流取得涨停42、跌停5、当前炸板7；哈药股份5连板，消费电子5只、元件3只封板。",
+      "errors": []
+    },
+    "tencent_hk_intraday_1040_20260716": {
+      "status": "degraded",
+      "provider": "腾讯财经HTTP",
+      "checked_at": "2026-07-16T10:40:42+08:00",
+      "usage": "港股A/H情绪映射",
+      "sample_count": 7,
+      "detail": "恒指+1.80%、恒科+3.07%、中芯H+0.72%、华虹-2.19%、腾讯+2.24%、阿里+4.94%、商汤+5.19%。",
+      "errors": [
+        "免费港股快照未由第二行情源确认实时性，仅作情绪映射"
+      ]
+    },
+    "alert_candidate_quality_gate_1059_20260716": {
+      "status": "degraded",
+      "provider": "无模型盘中异动服务 + Codex证据门禁",
+      "checked_at": "2026-07-16T10:59:30+08:00",
+      "raw_alert_count": 346,
+      "invalidated_count": 2,
+      "detail": "两条仍在5分钟有效期内但未达到alert-config最低证据门槛、且未完成双源复核的候选已标记invalidated；原始记录保留，禁止作为当前交易触发。",
+      "errors": [
+        "监控日志含异常日涨幅/方向比例，根源行情尚未完成腾讯/通达信双源复核"
+      ]
+    },
+    "monitor_log": {
+      "status": "ok",
+      "updated_at": "2026-07-16T11:01:06+08:00",
+      "note": "monitor.pid alive; log fresh"
+    },
+    "quote_provider_decode": {
+      "status": "degraded",
+      "updated_at": "2026-07-16T11:01:06+08:00",
+      "error": "Can not decode value starting with character <"
     }
   },
-  "last_publish_attempt": "pending_run_after_1024_alert_merge"
+  "last_publish_attempt": "pending_10:30_intraday_publish",
+  "status": "degraded_partial",
+  "last_error": {
+    "time": "2026-07-16T11:01:06+08:00",
+    "provider": "行情源/本地监控",
+    "message": "Can not decode value starting with character <",
+    "action": "下一轮自动重试；本轮alert仅按本地监控源candidate处理"
+  }
 }
