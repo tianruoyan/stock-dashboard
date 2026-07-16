@@ -1,8 +1,8 @@
 {
-  "timestamp": "2026-07-15T16:12:41+08:00",
-  "current_signal_date": "2026-07-15",
+  "timestamp": "2026-07-16T09:06:50+08:00",
+  "current_signal_date": "2026-07-16",
   "status": "degraded",
-  "summary": "发现 83 个降级/需复核项（7 个交易阻断，72 个价格/行情复核，2 个信号复核，3 个背景复核），核心结论可看但必须按影响分层使用。",
+  "summary": "发现 92 个降级/需复核项（7 个交易阻断，73 个价格/行情复核，2 个信号复核，11 个背景复核），核心结论可看但必须按影响分层使用。",
   "issues": [
     {
       "severity": "warning",
@@ -10,6 +10,15 @@
       "path": "",
       "code": "stale_timestamp",
       "message": "时间戳不是当前交易日：2026-07-13T10:37:36+08:00",
+      "impact_level": "background_review",
+      "decision_action": "仅作背景复核，不单独阻断交易判断"
+    },
+    {
+      "severity": "warning",
+      "file": "intraday.json",
+      "path": "",
+      "code": "stale_timestamp",
+      "message": "时间戳不是当前交易日：2026-07-15T14:30:12+08:00",
       "impact_level": "background_review",
       "decision_action": "仅作背景复核，不单独阻断交易判断"
     },
@@ -43,11 +52,29 @@
     {
       "severity": "warning",
       "file": "postmarket.json",
+      "path": "",
+      "code": "stale_timestamp",
+      "message": "时间戳不是当前交易日：2026-07-15T16:09:00+08:00",
+      "impact_level": "background_review",
+      "decision_action": "仅作背景复核，不单独阻断交易判断"
+    },
+    {
+      "severity": "warning",
+      "file": "postmarket.json",
       "path": "semiconductor_five_tracking.strength_ranking[3]",
       "code": "watchlist_limit_down_like",
       "message": "沪硅产业 接近跌停 -10.24，需确认是否真实",
       "impact_level": "price_review",
       "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
+    },
+    {
+      "severity": "warning",
+      "file": "premarket.json",
+      "path": "",
+      "code": "stale_timestamp",
+      "message": "时间戳不是当前交易日：2026-07-15T09:45:13+08:00",
+      "impact_level": "background_review",
+      "decision_action": "仅作背景复核，不单独阻断交易判断"
     },
     {
       "severity": "warning",
@@ -102,6 +129,24 @@
       "message": "hk_auction.mapping_chain[4] change_pct 非数字：约+3.83%/+0.24%/-0.05%/-1.83%，该字段忽略并降权",
       "impact_level": "price_review",
       "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
+    },
+    {
+      "severity": "warning",
+      "file": "source-health.json",
+      "path": "",
+      "code": "stale_timestamp",
+      "message": "时间戳不是当前交易日：2026-07-15T16:09:00+08:00",
+      "impact_level": "price_review",
+      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
+    },
+    {
+      "severity": "warning",
+      "file": "topics.json",
+      "path": "",
+      "code": "stale_timestamp",
+      "message": "时间戳不是当前交易日：2026-07-15T16:09:00+08:00",
+      "impact_level": "background_review",
+      "decision_action": "仅作背景复核，不单独阻断交易判断"
     },
     {
       "severity": "warning",
@@ -759,6 +804,42 @@
       "message": "eastmoney_full_market_spot_postmarket_20260715: push2全市场快照被远端主动断开，未采用其任何数据；降级使用新浪全A收盘与申万官方分类，不影响已列事实。",
       "impact_level": "price_review",
       "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
+    },
+    {
+      "severity": "warning",
+      "file": "automation-health.json",
+      "path": "",
+      "code": "stale_automation_health",
+      "message": "automation-health 日期不是当前交易日：2026-07-15",
+      "impact_level": "background_review",
+      "decision_action": "仅作背景复核，不单独阻断交易判断"
+    },
+    {
+      "severity": "warning",
+      "file": "theme-shifts.json",
+      "path": "",
+      "code": "stale_theme_shifts",
+      "message": "theme-shifts 日期不是当前交易日：2026-07-15",
+      "impact_level": "background_review",
+      "decision_action": "仅作背景复核，不单独阻断交易判断"
+    },
+    {
+      "severity": "warning",
+      "file": "data-trust.json",
+      "path": "",
+      "code": "stale_data_trust",
+      "message": "data-trust 日期不是当前交易日：2026-07-15",
+      "impact_level": "background_review",
+      "decision_action": "仅作背景复核，不单独阻断交易判断"
+    },
+    {
+      "severity": "warning",
+      "file": "monitoring-coverage.json",
+      "path": "",
+      "code": "stale_monitoring_coverage",
+      "message": "monitoring-coverage 日期不是当前交易日：2026-07-15",
+      "impact_level": "background_review",
+      "decision_action": "仅作背景复核，不单独阻断交易判断"
     }
   ],
   "action_plan": [
@@ -822,8 +903,8 @@
       "impact_level": "price_review",
       "label": "二次行情复核",
       "file": "source-health.json",
-      "code": "source_degraded",
-      "problem": "A股补充行情源解码异常，盘中异动和个股涨跌幅需以已审计源复核。",
+      "code": "stale_timestamp",
+      "problem": "时间戳不是当前交易日：2026-07-15T16:09:00+08:00",
       "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核",
       "next_step": "用第二行情源复核涨跌幅、quote_time 和代表股方向；未确认前只做验证。",
       "unblock_condition": "price_review=0 或相关来源标记 trusted/cross verified。"
@@ -831,12 +912,12 @@
   ],
   "counts": {
     "critical": 0,
-    "warning": 83,
+    "warning": 92,
     "info": 1,
     "blocking": 7,
-    "price_review": 72,
+    "price_review": 73,
     "signal_review": 2,
-    "background_review": 3
+    "background_review": 11
   },
   "rules": [
     "异常文本、JSON解析失败、必需文件缺失为 critical。",
