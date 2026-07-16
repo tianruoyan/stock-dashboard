@@ -44,7 +44,7 @@
       "returncode": 0,
       "status": "degraded",
       "blocking": false,
-      "stdout_tail": "degraded: 发现 97 个降级/需复核项（7 个交易阻断，82 个价格/行情复核，2 个信号复核，7 个背景复核），核心结论可看但必须按影响分层使用。",
+      "stdout_tail": "degraded: 发现 161 个降级/需复核项（23 个交易阻断，84 个价格/行情复核，2 个信号复核，53 个背景复核），核心结论可看但必须按影响分层使用。",
       "stderr_tail": ""
     },
     {
@@ -53,7 +53,7 @@
       "returncode": 0,
       "status": "ok",
       "blocking": false,
-      "stdout_tail": "alert-recovery-readiness: candidate_visible - 盘中候选异动证据完整，可展示为待确认；未通过双源核验前不得升级为确认机会。",
+      "stdout_tail": "alert-recovery-readiness: active_needs_review - 盘中异动已有 active alerts，但 quote_audit 不完整或仍引用异常源，需复核后使用。",
       "stderr_tail": ""
     },
     {
@@ -98,17 +98,17 @@
       "returncode": 0,
       "status": "ok",
       "blocking": false,
-      "stdout_tail": "data-trust: degraded - 2 个数据文件需降权，7 个文件仅作历史背景。",
+      "stdout_tail": "data-trust: degraded - 3 个数据文件需降权，6 个文件仅作历史背景。",
       "stderr_tail": ""
     },
     {
       "name": "monitoring-coverage",
       "command": "python3 scripts/build_monitoring_coverage.py",
-      "returncode": 0,
-      "status": "ok",
-      "blocking": false,
-      "stdout_tail": "monitoring-coverage: degraded - 3 个监测维度需降权，1 个背景维度需复核。",
-      "stderr_tail": ""
+      "returncode": 1,
+      "status": "script_error",
+      "blocking": true,
+      "stdout_tail": "",
+      "stderr_tail": "              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/Users/sweet_orange/stock-dashboard/scripts/build_monitoring_coverage.py\", line 191, in alert_fallback_checks\n    breadth = market_breadth_text(postmarket, intraday)\n              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/Users/sweet_orange/stock-dashboard/scripts/build_monitoring_coverage.py\", line 209, in market_breadth_text\n    limit_up = mb.get(\"limit_up\") or sentiment.get(\"limit_up_count\")\n                                     ^^^^^^^^^^^^^\nAttributeError: 'str' object has no attribute 'get'"
     },
     {
       "name": "section-health",
@@ -125,7 +125,7 @@
       "returncode": 0,
       "status": "warning",
       "blocking": false,
-      "stdout_tail": "warning: 发现 10 个页面需复核项。",
+      "stdout_tail": "warning: 发现 12 个页面需复核项。",
       "stderr_tail": ""
     },
     {
