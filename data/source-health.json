@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-07-16T13:01:51+08:00",
+  "timestamp": "2026-07-16T13:09:52+08:00",
   "sources": {
     "tencent_http": {
       "status": "ok",
@@ -2160,17 +2160,53 @@
     },
     "local_monitor_realtime_quote_1300": {
       "status": "degraded",
-      "last_check": "2026-07-16T13:01:51+08:00",
-      "usage": "13:00 午后开盘本地监控实时行情刷新",
-      "detail": "monitor.log 在12:57-13:00连续出现行情源异常；本轮未据此生成或确认任何盘中异动，保留上一版 alert.json。",
+      "last_check": "2026-07-16T13:09:52+08:00",
+      "usage": "13:00本地无模型监控实时行情刷新",
+      "detail": "12:57至13:00连续出现连接中断和HTML解码异常；本轮未据此生成或确认盘中异动，分析改用腾讯与东方财富结构源。",
       "sample_count": 0,
       "errors": [
-        "12:57:54 Response ended prematurely",
-        "12:58:39 Response ended prematurely",
-        "12:59:23 Response ended prematurely",
-        "13:00:12 Can not decode value starting with character '<'"
+        "Response ended prematurely",
+        "Can not decode value starting with character '<'"
       ],
-      "action": "等待下一轮监控自动重试；若持续失败，继续保持 alert.json 不变并提示数据源降级。"
+      "action": "保留alert历史记录；未经当前有效行情证据确认的候选不得作为交易触发。"
+    },
+    "tencent_index_industry_intraday_1306_20260716": {
+      "status": "ok",
+      "provider": "腾讯财经HTTP",
+      "checked_at": "2026-07-16T13:06:00+08:00",
+      "usage": "A股5只指数、两市成交和98个行业排名",
+      "sample_count": 103,
+      "detail": "上证-0.87%、深证-0.73%、创业板-1.49%、科创50-0.98%；专业连锁、养殖、饲料居前，电子化学品、通信设备、半导体居后。",
+      "errors": []
+    },
+    "tencent_focus_quotes_intraday_1306_20260716": {
+      "status": "ok",
+      "provider": "腾讯财经HTTP",
+      "checked_at": "2026-07-16T13:06:42+08:00",
+      "usage": "配置池、半导体专项、电子布/玻纤、PCB/CPO、医药、算力和风格雷达",
+      "sample_count": 93,
+      "detail": "重点样本价格、涨跌幅、开高低、成交额和换手完整返回。",
+      "errors": []
+    },
+    "eastmoney_structure_intraday_1306_20260716": {
+      "status": "ok",
+      "provider": "东方财富push2ex",
+      "checked_at": "2026-07-16T13:08:34+08:00",
+      "usage": "涨停/跌停/炸板池、行业分布和连板高度",
+      "sample_count": 67,
+      "detail": "按60秒以上串行限流取得原始涨停50（含云创退1）、有效涨停49、跌停6、炸板11；哈药5连板，消费电子5只、元件3只、医药约8只封板。",
+      "errors": []
+    },
+    "tencent_hk_intraday_1306_20260716": {
+      "status": "degraded",
+      "provider": "腾讯财经HTTP",
+      "checked_at": "2026-07-16T13:06:42+08:00",
+      "usage": "港股A/H情绪映射",
+      "sample_count": 7,
+      "detail": "恒指+1.78%、恒科+2.82%、中芯H+1.18%、华虹-2.19%、腾讯+3.04%、阿里+4.59%、商汤+3.70%。",
+      "errors": [
+        "免费港股快照未由第二行情源确认实时性，仅作情绪映射"
+      ]
     }
   },
   "last_publish_attempt": "pending_10:30_intraday_publish",

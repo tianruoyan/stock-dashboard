@@ -1,8 +1,8 @@
 {
-  "timestamp": "2026-07-16T13:14:24+08:00",
+  "timestamp": "2026-07-16T13:17:06+08:00",
   "current_signal_date": "2026-07-16",
   "status": "degraded",
-  "summary": "发现 659 个降级/需复核项（358 个交易阻断，99 个价格/行情复核，1 个信号复核，202 个背景复核），核心结论可看但必须按影响分层使用。",
+  "summary": "发现 660 个降级/需复核项（358 个交易阻断，100 个价格/行情复核，1 个信号复核，202 个背景复核），核心结论可看但必须按影响分层使用。",
   "issues": [
     {
       "severity": "warning",
@@ -5904,7 +5904,16 @@
       "file": "source-health.json",
       "path": "",
       "code": "source_degraded",
-      "message": "local_monitor_realtime_quote_1300: monitor.log 在12:57-13:00连续出现行情源异常；本轮未据此生成或确认任何盘中异动，保留上一版 alert.json。",
+      "message": "local_monitor_realtime_quote_1300: 12:57至13:00连续出现连接中断和HTML解码异常；本轮未据此生成或确认盘中异动，分析改用腾讯与东方财富结构源。",
+      "impact_level": "price_review",
+      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
+    },
+    {
+      "severity": "warning",
+      "file": "source-health.json",
+      "path": "",
+      "code": "source_degraded",
+      "message": "tencent_hk_intraday_1306_20260716: 恒指+1.78%、恒科+2.82%、中芯H+1.18%、华虹-2.19%、腾讯+3.04%、阿里+4.59%、商汤+3.70%。",
       "impact_level": "price_review",
       "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
     },
@@ -6015,10 +6024,10 @@
   ],
   "counts": {
     "critical": 0,
-    "warning": 659,
+    "warning": 660,
     "info": 1,
     "blocking": 358,
-    "price_review": 99,
+    "price_review": 100,
     "signal_review": 1,
     "background_review": 202
   },
