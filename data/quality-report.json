@@ -1,8 +1,8 @@
 {
-  "timestamp": "2026-07-16T10:34:16+08:00",
+  "timestamp": "2026-07-16T10:35:14+08:00",
   "current_signal_date": "2026-07-16",
   "status": "degraded",
-  "summary": "发现 552 个降级/需复核项（281 个交易阻断，88 个价格/行情复核，1 个信号复核，183 个背景复核），核心结论可看但必须按影响分层使用。",
+  "summary": "发现 550 个降级/需复核项（278 个交易阻断，89 个价格/行情复核，1 个信号复核，183 个背景复核），核心结论可看但必须按影响分层使用。",
   "issues": [
     {
       "severity": "warning",
@@ -169,9 +169,9 @@
     {
       "severity": "warning",
       "file": "alert.json",
-      "path": "",
-      "code": "historical_alert_missing_quote_audit",
-      "message": "alert.json 存在盘中异动但缺少 quote_audit；当前阶段只降权参考，不阻断整站发布",
+      "path": "quote_audit.sanity_checks",
+      "code": "historical_alert_not_cross_verified",
+      "message": "行情污染源仍降级，历史 alert 未交叉验证，只降权复盘参考",
       "impact_level": "price_review",
       "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
     },
@@ -4282,15 +4282,6 @@
     {
       "severity": "warning",
       "file": "alert.json",
-      "path": "alerts[278]",
-      "code": "candidate_alert_evidence_weak",
-      "message": "alerts[278] 候选异动未达到最低短周期价格、方向占比和成交门槛，不得作为当前候选展示",
-      "impact_level": "blocking",
-      "decision_action": "禁止作为交易依据，需修复后重产"
-    },
-    {
-      "severity": "warning",
-      "file": "alert.json",
       "path": "alerts[278].leaders[2]",
       "code": "missing_alert_leader_pct",
       "message": "alerts[278].leaders[2].change_pct 缺失",
@@ -4300,29 +4291,11 @@
     {
       "severity": "warning",
       "file": "alert.json",
-      "path": "alerts[279]",
-      "code": "candidate_alert_evidence_weak",
-      "message": "alerts[279] 候选异动未达到最低短周期价格、方向占比和成交门槛，不得作为当前候选展示",
-      "impact_level": "blocking",
-      "decision_action": "禁止作为交易依据，需修复后重产"
-    },
-    {
-      "severity": "warning",
-      "file": "alert.json",
       "path": "alerts[279].leaders[2]",
       "code": "missing_alert_leader_pct",
       "message": "alerts[279].leaders[2].change_pct 缺失",
       "impact_level": "background_review",
       "decision_action": "仅作背景复核，不单独阻断交易判断"
-    },
-    {
-      "severity": "warning",
-      "file": "alert.json",
-      "path": "alerts[280]",
-      "code": "candidate_alert_evidence_weak",
-      "message": "alerts[280] 候选异动未达到最低短周期价格、方向占比和成交门槛，不得作为当前候选展示",
-      "impact_level": "blocking",
-      "decision_action": "禁止作为交易依据，需修复后重产"
     },
     {
       "severity": "warning",
@@ -4956,6 +4929,15 @@
     },
     {
       "severity": "warning",
+      "file": "source-health.json",
+      "path": "",
+      "code": "source_degraded",
+      "message": "alert_candidate_quality_gate_1033_20260716: 对仍在5分钟有效期内的新候选补齐3分钟涨跌、方向占比和成交放大；2条未达alert-config最低门槛的信号标记invalidated，记录保留但禁止展示为当前候选。",
+      "impact_level": "price_review",
+      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
+    },
+    {
+      "severity": "warning",
       "file": "cross-file",
       "path": "有研硅",
       "code": "stock_pct_cross_file_conflict",
@@ -5052,10 +5034,10 @@
   ],
   "counts": {
     "critical": 0,
-    "warning": 552,
+    "warning": 550,
     "info": 1,
-    "blocking": 281,
-    "price_review": 88,
+    "blocking": 278,
+    "price_review": 89,
     "signal_review": 1,
     "background_review": 183
   },
