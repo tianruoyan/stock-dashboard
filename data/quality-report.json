@@ -1,8 +1,8 @@
 {
-  "timestamp": "2026-07-16T15:02:59+08:00",
+  "timestamp": "2026-07-16T15:20:23+08:00",
   "current_signal_date": "2026-07-16",
   "status": "degraded",
-  "summary": "发现 971 个降级/需复核项（358 个交易阻断，108 个价格/行情复核，1 个信号复核，505 个背景复核），核心结论可看但必须按影响分层使用。",
+  "summary": "发现 965 个降级/需复核项（358 个交易阻断，103 个价格/行情复核，1 个信号复核，504 个背景复核），核心结论可看但必须按影响分层使用。",
   "issues": [
     {
       "severity": "warning",
@@ -16,18 +16,9 @@
     {
       "severity": "warning",
       "file": "postmarket.json",
-      "path": "",
-      "code": "stale_timestamp",
-      "message": "时间戳不是当前交易日：2026-07-15T16:09:00+08:00",
-      "impact_level": "background_review",
-      "decision_action": "仅作背景复核，不单独阻断交易判断"
-    },
-    {
-      "severity": "warning",
-      "file": "postmarket.json",
-      "path": "semiconductor_five_tracking.strength_ranking[3]",
+      "path": "semiconductor_five_tracking.strength_ranking[4]",
       "code": "watchlist_limit_down_like",
-      "message": "沪硅产业 接近跌停 -10.24，需确认是否真实",
+      "message": "有研硅 接近跌停 -10.85，需确认是否真实",
       "impact_level": "price_review",
       "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
     },
@@ -8706,51 +8697,6 @@
       "message": "local_monitor_realtime_quote_1430: alert.json分析时间更新到14:32，但quote_audit仍停留在11:21且cross_source_verified=false；当前active信号为0，本轮不采用其候选。",
       "impact_level": "price_review",
       "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
-    },
-    {
-      "severity": "warning",
-      "file": "cross-file",
-      "path": "有研硅",
-      "code": "stock_pct_cross_file_conflict",
-      "message": "有研硅 跨文件涨跌幅差异过大：intraday.json -10.71% vs alert.json 3.88%",
-      "impact_level": "price_review",
-      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
-    },
-    {
-      "severity": "warning",
-      "file": "cross-file",
-      "path": "雅克科技",
-      "code": "stock_pct_cross_file_conflict",
-      "message": "雅克科技 跨文件涨跌幅差异过大：intraday.json -9.22% vs alert.json 1.91%",
-      "impact_level": "price_review",
-      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
-    },
-    {
-      "severity": "warning",
-      "file": "cross-file",
-      "path": "山东玻纤",
-      "code": "stock_pct_cross_file_conflict",
-      "message": "山东玻纤 跨文件涨跌幅差异过大：alert.json -4.51% vs alert.json 3.49%",
-      "impact_level": "price_review",
-      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
-    },
-    {
-      "severity": "warning",
-      "file": "cross-file",
-      "path": "沪硅产业",
-      "code": "stock_pct_cross_file_conflict",
-      "message": "沪硅产业 跨文件涨跌幅差异过大：alert.json -11.49% vs alert.json 3.27%",
-      "impact_level": "price_review",
-      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
-    },
-    {
-      "severity": "warning",
-      "file": "cross-file",
-      "path": "华海诚科",
-      "code": "stock_pct_cross_file_conflict",
-      "message": "华海诚科 跨文件涨跌幅差异过大：alert.json -7.36% vs alert.json 2.14%",
-      "impact_level": "price_review",
-      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
     }
   ],
   "action_plan": [
@@ -8780,17 +8726,6 @@
       "priority": 2,
       "impact_level": "price_review",
       "label": "二次行情复核",
-      "file": "cross-file",
-      "code": "stock_pct_cross_file_conflict",
-      "problem": "有研硅 跨文件涨跌幅差异过大：intraday.json -10.71% vs alert.json 3.88%",
-      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核",
-      "next_step": "用第二行情源复核涨跌幅、quote_time 和代表股方向；未确认前只做验证。",
-      "unblock_condition": "price_review=0 或相关来源标记 trusted/cross verified。"
-    },
-    {
-      "priority": 2,
-      "impact_level": "price_review",
-      "label": "二次行情复核",
       "file": "intraday.json",
       "code": "watchlist_limit_down_like",
       "problem": "有研硅 接近跌停 -10.71，需确认是否真实",
@@ -8804,7 +8739,7 @@
       "label": "二次行情复核",
       "file": "postmarket.json",
       "code": "watchlist_limit_down_like",
-      "problem": "沪硅产业 接近跌停 -10.24，需确认是否真实",
+      "problem": "有研硅 接近跌停 -10.85，需确认是否真实",
       "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核",
       "next_step": "用第二行情源复核涨跌幅、quote_time 和代表股方向；未确认前只做验证。",
       "unblock_condition": "price_review=0 或相关来源标记 trusted/cross verified。"
@@ -8819,16 +8754,27 @@
       "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核",
       "next_step": "用第二行情源复核涨跌幅、quote_time 和代表股方向；未确认前只做验证。",
       "unblock_condition": "price_review=0 或相关来源标记 trusted/cross verified。"
+    },
+    {
+      "priority": 2,
+      "impact_level": "price_review",
+      "label": "二次行情复核",
+      "file": "source-health.json",
+      "code": "source_degraded",
+      "problem": "A股补充行情源解码异常，盘中异动和个股涨跌幅需以已审计源复核。",
+      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核",
+      "next_step": "用第二行情源复核涨跌幅、quote_time 和代表股方向；未确认前只做验证。",
+      "unblock_condition": "price_review=0 或相关来源标记 trusted/cross verified。"
     }
   ],
   "counts": {
     "critical": 0,
-    "warning": 971,
+    "warning": 965,
     "info": 1,
     "blocking": 358,
-    "price_review": 108,
+    "price_review": 103,
     "signal_review": 1,
-    "background_review": 505
+    "background_review": 504
   },
   "rules": [
     "异常文本、JSON解析失败、必需文件缺失为 critical。",

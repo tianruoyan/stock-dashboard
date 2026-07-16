@@ -642,6 +642,84 @@ body {
   grid-column: 1 / -1;
   min-height: 0;
 }
+.sentiment-temperature {
+  --temperature-color: #58A6FF;
+  border-left: 3px solid var(--temperature-color);
+}
+.sentiment-temperature.hot { --temperature-color: #FF3B30; }
+.sentiment-temperature.warm { --temperature-color: #F0B429; }
+.sentiment-temperature.mixed { --temperature-color: #58A6FF; }
+.sentiment-temperature.cool { --temperature-color: #00C853; }
+.sentiment-temperature.cold { --temperature-color: #6E7681; }
+.sentiment-temperature-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+.sentiment-temperature-head h3 {
+  margin: 0 0 3px;
+}
+.sentiment-temperature-head > div > span,
+.sentiment-temperature-direction {
+  color: #9DA7B3;
+  font-size: 12px;
+  line-height: 1.45;
+}
+.sentiment-temperature-score {
+  display: flex;
+  align-items: baseline;
+  flex: 0 0 auto;
+  color: var(--temperature-color);
+}
+.sentiment-temperature-score b {
+  font-size: 28px;
+  line-height: 1;
+}
+.sentiment-temperature-score span {
+  color: #6E7681;
+  font-size: 12px;
+}
+.sentiment-temperature-track {
+  height: 7px;
+  margin: 10px 0 8px;
+  overflow: hidden;
+  background: #1A2332;
+  border-radius: 4px;
+}
+.sentiment-temperature-track span {
+  display: block;
+  height: 100%;
+  background: var(--temperature-color);
+}
+.sentiment-components {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  gap: 1px;
+  margin-top: 10px;
+  background: #263241;
+  border: 1px solid #263241;
+}
+.sentiment-component {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 3px 10px;
+  padding: 9px 10px;
+  background: #0F1620;
+}
+.sentiment-component span,
+.sentiment-component b {
+  font-size: 12px;
+}
+.sentiment-component b {
+  color: var(--temperature-color);
+}
+.sentiment-component small {
+  grid-column: 1 / -1;
+  color: #6E7681;
+  font-size: 10px;
+  line-height: 1.4;
+}
 .quality-strip {
   grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
 }

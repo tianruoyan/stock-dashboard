@@ -378,6 +378,10 @@ def validate_postmarket(data: Any, issues: list[dict[str, Any]]) -> None:
             issues.append(issue("warning", "postmarket.json", "missing_closing_patch_field", f"closing_auction_patch.{key} 缺失"))
     if not (data.get("review") or {}).get("evidence"):
         issues.append(issue("warning", "postmarket.json", "missing_review_evidence", "review.evidence 缺失"))
+    sentiment = data.get("sentiment_indicator") or {}
+    for key in ("score", "level", "components", "method"):
+        if sentiment.get(key) in (None, "", []):
+            issues.append(issue("warning", "postmarket.json", "missing_sentiment_indicator_field", f"sentiment_indicator.{key} 缺失"))
     for index, item in enumerate(data.get("hotspots") or []):
         for key in ("evidence", "continuity", "risk"):
             if not item.get(key):
@@ -409,6 +413,7 @@ CORE_CONTRACTS: dict[str, dict[str, type | tuple[type, ...]]] = {
     "postmarket.json": {
         "index": dict,
         "market_breadth": dict,
+        "sentiment_indicator": dict,
         "review": dict,
         "closing_auction_patch": dict,
         "hotspots": list,

@@ -467,6 +467,7 @@ function checkDataRenderCoverage(document, issues) {
   addCoverageCheck(checks, "section-midday", midday.morning_review?.one_sentence, "午盘一句话复盘未渲染");
   addCoverageCheck(checks, "section-midday", firstActionText(midday.afternoon_watch), "午盘下午关注信号未渲染");
   addCoverageCheck(checks, "section-postmarket", postmarket.closing_auction_patch?.summary, "盘后收盘竞价补丁未渲染");
+  addCoverageCheck(checks, "section-postmarket", postmarket.sentiment_indicator?.score != null ? `${Number(postmarket.sentiment_indicator.score).toFixed(1)}分` : "", "盘后市场情绪温度未渲染");
   addCoverageCheck(checks, "section-postmarket", firstThemeName(postmarket.hotspots), "盘后热点主线未渲染");
   addCoverageCheck(checks, "section-topics", firstThemeName(topics.topics), "专题首项未渲染");
 

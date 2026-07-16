@@ -4275,6 +4275,7 @@ function renderPostmarket(data) {
   const el = document.getElementById("postmarket");
   let html = "";
   html += renderPostmarketDecision(data);
+  html += renderPostmarketSentimentIndicator(data.sentiment_indicator);
 
   // === Codex 格式: hotspots + review ===
   if (data.hotspots || data.review) {
@@ -4448,6 +4449,35 @@ function renderPostmarket(data) {
   }
 
   el.innerHTML = html || '<div class="empty">盘后数据待更新</div>';
+}
+
+function renderPostmarketSentimentIndicator(indicator) {
+  if (!indicator || !Number.isFinite(Number(indicator.score))) return "";
+  const score = Math.max(0, Math.min(100, Number(indicator.score)));
+  const level = indicator.level || "待分档";
+  const direction = indicator.direction || indicator.interpretation || "";
+  const components = Array.isArray(indicator.components) ? indicator.components : [];
+  const tone = score >= 75 ? "hot" : score >= 60 ? "warm" : score >= 45 ? "mixed" : score >= 30 ? "cool" : "cold";
+  const componentHtml = components.map(item => {
+    const componentScore = Number(item.score);
+    const scoreText = Number.isFinite(componentScore) ? componentScore.toFixed(1) : "--";
+    const weightText = Number.isFinite(Number(item.weight_pct)) ? ` · 权重${Number(item.weight_pct)}%` : "";
+    return `<div class="sentiment-component">
+      <span>${escapeHtml(item.name || "分项")}${escapeHtml(weightText)}</span>
+      <b>${escapeHtml(scoreText)}</b>
+      <small>${escapeHtml(item.evidence || item.detail || "")}</small>
+    </div>`;
+  }).join("");
+  return `<div class="subsection sentiment-temperature ${tone}">
+    <div class="sentiment-temperature-head">
+      <div><h3>${escapeHtml(indicator.name || "市场情绪温度")}</h3><span>${escapeHtml(level)}</span></div>
+      <div class="sentiment-temperature-score"><b>${score.toFixed(1)}分</b><span>/100</span></div>
+    </div>
+    <div class="sentiment-temperature-track" role="img" aria-label="${escapeHtml(`${indicator.name || "市场情绪温度"} ${score.toFixed(1)}分`)}"><span style="width:${score}%"></span></div>
+    ${direction ? `<div class="sentiment-temperature-direction">${escapeHtml(direction)}</div>` : ""}
+    ${componentHtml ? `<div class="sentiment-components">${componentHtml}</div>` : ""}
+    ${indicator.method ? `<details class="evidence-details"><summary>计算口径</summary><div class="evidence-line">${escapeHtml(indicator.method)}</div></details>` : ""}
+  </div>`;
 }
 
 function renderPostmarketDecision(data) {
