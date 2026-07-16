@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-07-16T13:09:52+08:00",
+  "timestamp": "2026-07-16T13:36:17+08:00",
   "sources": {
     "tencent_http": {
       "status": "ok",
@@ -2207,6 +2207,56 @@
       "errors": [
         "免费港股快照未由第二行情源确认实时性，仅作情绪映射"
       ]
+    },
+    "tencent_index_industry_intraday_1330_20260716": {
+      "status": "ok",
+      "provider": "腾讯财经HTTP",
+      "checked_at": "2026-07-16T13:30:53+08:00",
+      "usage": "A股5只指数、两市成交和98个行业排名",
+      "sample_count": 103,
+      "detail": "上证-1.07%、深证-1.26%、创业板-2.21%、科创50-2.62%；专业连锁、养殖、饲料居前，电子化学品、半导体、通信设备居后。",
+      "errors": []
+    },
+    "tencent_focus_quotes_intraday_1331_20260716": {
+      "status": "ok",
+      "provider": "腾讯财经HTTP",
+      "checked_at": "2026-07-16T13:31:49+08:00",
+      "usage": "配置池、半导体专项、电子布/玻纤、PCB/CPO、医药、算力和风格雷达",
+      "sample_count": 94,
+      "detail": "重点样本价格、涨跌幅、开高低、成交额和换手完整返回。",
+      "errors": []
+    },
+    "eastmoney_structure_intraday_1334_20260716": {
+      "status": "ok",
+      "provider": "东方财富push2ex",
+      "checked_at": "2026-07-16T13:34:45+08:00",
+      "usage": "涨停/跌停/炸板池、行业分布和连板高度",
+      "sample_count": 79,
+      "detail": "按60秒以上串行限流取得有效涨停47、跌停14、炸板18；哈药5连板，医药约9只、消费电子5只、元件3只封板。",
+      "errors": []
+    },
+    "tencent_hk_intraday_1331_20260716": {
+      "status": "degraded",
+      "provider": "腾讯财经HTTP",
+      "checked_at": "2026-07-16T13:31:49+08:00",
+      "usage": "港股A/H情绪映射",
+      "sample_count": 7,
+      "detail": "恒指+2.15%、恒科+3.34%、中芯H-0.26%、华虹-3.37%、腾讯+3.16%、阿里+4.76%、商汤+4.44%。",
+      "errors": [
+        "免费港股快照未由第二行情源确认实时性，仅作情绪映射"
+      ]
+    },
+    "local_monitor_realtime_quote_1330": {
+      "status": "degraded",
+      "last_check": "2026-07-16T13:36:17+08:00",
+      "usage": "13:30本地无模型监控异动候选",
+      "detail": "alert.json虽更新到13:24，但quote_audit仍停留在11:21且未完成腾讯/通达信双源交叉验证；本轮不采用其候选信号。",
+      "sample_count": 0,
+      "errors": [
+        "quote_audit stale",
+        "cross_source_verified=false"
+      ],
+      "action": "保留历史记录；未经当前有效行情证据确认的候选不得作为交易触发。"
     }
   },
   "last_publish_attempt": "pending_10:30_intraday_publish",
