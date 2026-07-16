@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-07-16T14:22:30+08:00",
+  "timestamp": "2026-07-16T14:38:09+08:00",
   "sources": {
     "tencent_http": {
       "status": "ok",
@@ -2317,6 +2317,56 @@
       "errors": [
         "Response ended prematurely"
       ]
+    },
+    "tencent_index_industry_intraday_1437_20260716": {
+      "status": "ok",
+      "provider": "腾讯财经HTTP",
+      "checked_at": "2026-07-16T14:37:13+08:00",
+      "usage": "A股5只指数、两市成交和98个行业排名",
+      "sample_count": 103,
+      "detail": "上证-2.08%、深证-2.37%、创业板-3.41%、科创50-4.33%；养殖、饲料、中药居前，电子化学品、半导体、通信设备居后。",
+      "errors": []
+    },
+    "tencent_focus_quotes_intraday_1437_20260716": {
+      "status": "ok",
+      "provider": "腾讯财经HTTP",
+      "checked_at": "2026-07-16T14:37:36+08:00",
+      "usage": "配置池、半导体专项、电子布/玻纤、PCB/CPO、医药、算力和风格雷达",
+      "sample_count": 82,
+      "detail": "重点样本价格、涨跌幅、开高低、成交额和换手完整返回。",
+      "errors": []
+    },
+    "eastmoney_structure_intraday_1435_20260716": {
+      "status": "ok",
+      "provider": "东方财富push2ex",
+      "checked_at": "2026-07-16T14:35:55+08:00",
+      "usage": "涨停/跌停/炸板池、行业分布和连板高度",
+      "sample_count": 97,
+      "detail": "按60秒以上串行限流取得原始涨停45（含云创退1）、有效涨停44、跌停29、炸板23；医药约9只、消费电子5只、元件2只封板。",
+      "errors": []
+    },
+    "tencent_hk_intraday_1437_20260716": {
+      "status": "degraded",
+      "provider": "腾讯财经HTTP",
+      "checked_at": "2026-07-16T14:37:36+08:00",
+      "usage": "港股A/H情绪映射",
+      "sample_count": 7,
+      "detail": "恒指+0.99%、恒科+1.44%、中芯H-2.56%、华虹-6.73%、腾讯+1.43%、阿里+2.29%、商汤+2.22%。",
+      "errors": [
+        "免费港股快照未由第二行情源确认实时性，仅作情绪映射"
+      ]
+    },
+    "local_monitor_realtime_quote_1430": {
+      "status": "degraded",
+      "last_check": "2026-07-16T14:38:09+08:00",
+      "usage": "14:30本地无模型监控异动候选",
+      "detail": "alert.json分析时间更新到14:32，但quote_audit仍停留在11:21且cross_source_verified=false；当前active信号为0，本轮不采用其候选。",
+      "sample_count": 0,
+      "errors": [
+        "quote_audit stale",
+        "cross_source_verified=false"
+      ],
+      "action": "保留历史记录；未经当前有效行情证据确认的候选不得作为交易触发。"
     }
   },
   "last_publish_attempt": "pending_10:30_intraday_publish",

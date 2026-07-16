@@ -1,9 +1,18 @@
 {
-  "timestamp": "2026-07-16T14:37:35+08:00",
+  "timestamp": "2026-07-16T14:41:31+08:00",
   "current_signal_date": "2026-07-16",
   "status": "degraded",
-  "summary": "发现 734 个降级/需复核项（358 个交易阻断，105 个价格/行情复核，1 个信号复核，271 个背景复核），核心结论可看但必须按影响分层使用。",
+  "summary": "发现 737 个降级/需复核项（358 个交易阻断，108 个价格/行情复核，1 个信号复核，271 个背景复核），核心结论可看但必须按影响分层使用。",
   "issues": [
+    {
+      "severity": "warning",
+      "file": "intraday.json",
+      "path": "semiconductor_five_tracking.strength_ranking[4]",
+      "code": "watchlist_limit_down_like",
+      "message": "有研硅 接近跌停 -10.71，需确认是否真实",
+      "impact_level": "price_review",
+      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
+    },
     {
       "severity": "warning",
       "file": "postmarket.json",
@@ -6576,10 +6585,28 @@
     },
     {
       "severity": "warning",
+      "file": "source-health.json",
+      "path": "",
+      "code": "source_degraded",
+      "message": "tencent_hk_intraday_1437_20260716: 恒指+0.99%、恒科+1.44%、中芯H-2.56%、华虹-6.73%、腾讯+1.43%、阿里+2.29%、商汤+2.22%。",
+      "impact_level": "price_review",
+      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
+    },
+    {
+      "severity": "warning",
+      "file": "source-health.json",
+      "path": "",
+      "code": "source_degraded",
+      "message": "local_monitor_realtime_quote_1430: alert.json分析时间更新到14:32，但quote_audit仍停留在11:21且cross_source_verified=false；当前active信号为0，本轮不采用其候选。",
+      "impact_level": "price_review",
+      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
+    },
+    {
+      "severity": "warning",
       "file": "cross-file",
       "path": "有研硅",
       "code": "stock_pct_cross_file_conflict",
-      "message": "有研硅 跨文件涨跌幅差异过大：intraday.json -7.45% vs alert.json 3.88%",
+      "message": "有研硅 跨文件涨跌幅差异过大：intraday.json -10.71% vs alert.json 3.88%",
       "impact_level": "price_review",
       "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
     },
@@ -6588,7 +6615,7 @@
       "file": "cross-file",
       "path": "雅克科技",
       "code": "stock_pct_cross_file_conflict",
-      "message": "雅克科技 跨文件涨跌幅差异过大：intraday.json -7.42% vs alert.json 1.91%",
+      "message": "雅克科技 跨文件涨跌幅差异过大：intraday.json -9.22% vs alert.json 1.91%",
       "impact_level": "price_review",
       "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
     },
@@ -6649,7 +6676,18 @@
       "label": "二次行情复核",
       "file": "cross-file",
       "code": "stock_pct_cross_file_conflict",
-      "problem": "有研硅 跨文件涨跌幅差异过大：intraday.json -7.45% vs alert.json 3.88%",
+      "problem": "有研硅 跨文件涨跌幅差异过大：intraday.json -10.71% vs alert.json 3.88%",
+      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核",
+      "next_step": "用第二行情源复核涨跌幅、quote_time 和代表股方向；未确认前只做验证。",
+      "unblock_condition": "price_review=0 或相关来源标记 trusted/cross verified。"
+    },
+    {
+      "priority": 2,
+      "impact_level": "price_review",
+      "label": "二次行情复核",
+      "file": "intraday.json",
+      "code": "watchlist_limit_down_like",
+      "problem": "有研硅 接近跌停 -10.71，需确认是否真实",
       "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核",
       "next_step": "用第二行情源复核涨跌幅、quote_time 和代表股方向；未确认前只做验证。",
       "unblock_condition": "price_review=0 或相关来源标记 trusted/cross verified。"
@@ -6675,25 +6713,14 @@
       "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核",
       "next_step": "用第二行情源复核涨跌幅、quote_time 和代表股方向；未确认前只做验证。",
       "unblock_condition": "price_review=0 或相关来源标记 trusted/cross verified。"
-    },
-    {
-      "priority": 2,
-      "impact_level": "price_review",
-      "label": "二次行情复核",
-      "file": "source-health.json",
-      "code": "source_degraded",
-      "problem": "A股补充行情源解码异常，盘中异动和个股涨跌幅需以已审计源复核。",
-      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核",
-      "next_step": "用第二行情源复核涨跌幅、quote_time 和代表股方向；未确认前只做验证。",
-      "unblock_condition": "price_review=0 或相关来源标记 trusted/cross verified。"
     }
   ],
   "counts": {
     "critical": 0,
-    "warning": 734,
+    "warning": 737,
     "info": 1,
     "blocking": 358,
-    "price_review": 105,
+    "price_review": 108,
     "signal_review": 1,
     "background_review": 271
   },
