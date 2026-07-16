@@ -1,47 +1,54 @@
 {
-  "timestamp": "2026-07-16T09:42:15+08:00",
+  "timestamp": "2026-07-16T09:57:49+08:00",
   "current_signal_date": "2026-07-16",
   "quality_gate": {
     "status": "degraded",
-    "summary": "发现 246 个降级/需复核项（86 个交易阻断，83 个价格/行情复核，2 个信号复核，76 个背景复核），核心结论可看但必须按影响分层使用。",
+    "summary": "发现 379 个降级/需复核项（170 个交易阻断，84 个价格/行情复核，1 个信号复核，125 个背景复核），核心结论可看但必须按影响分层使用。",
     "decision_flags": [
       "行情/涨跌幅需二次源复核",
       "机会信号需降权转验证",
       "盘中异动源降级，alert 类信号降权",
       "交易阻断项未修复，相关信号不可直接用"
     ],
-    "blocking_count": 86,
-    "price_review_count": 83,
-    "background_review_count": 76
+    "blocking_count": 170,
+    "price_review_count": 84,
+    "background_review_count": 125
   },
-  "summary": "当前时段尚无可用盘面结论。 数据质量：发现 246 个降级/需复核项（86 个交易阻断，83 个价格/行情复核，2 个信号复核，76 个背景复核），核心结论可看但必须按影响分层使用。",
+  "summary": "开盘后由竞价退潮转为强分歧：涨停快速扩散至20只，但跌停也增至12只；消费电子终端形成局部逆势主线，半导体、存储和电子布风险未解除。 数据质量：发现 379 个降级/需复核项（170 个交易阻断，84 个价格/行情复核，1 个信号复核，125 个背景复核），核心结论可看但必须按影响分层使用。",
   "observation_coverage": {
-    "summary": "独立盘面/盘后扫描 1 条，但缺少纯主动新线。",
-    "independent_count": 1,
-    "inherited_count": 14,
-    "active_market_count": 0,
+    "summary": "主动扫描捕捉 11 条：养殖/饲料/农林牧渔 / 消费电子终端 / 养殖/饲料 / CPO/PCB",
+    "independent_count": 16,
+    "inherited_count": 8,
+    "active_market_count": 11,
     "postmarket_scan_count": 0,
-    "topic_inherited_count": 0,
-    "verification_count": 0,
-    "active_titles": [],
-    "status": "independent"
+    "topic_inherited_count": 2,
+    "verification_count": 2,
+    "active_titles": [
+      "养殖/饲料/农林牧渔",
+      "消费电子终端",
+      "养殖/饲料",
+      "CPO/PCB"
+    ],
+    "status": "active"
   },
   "decision_brief": {
     "stance": "风险优先，只做验证",
     "action": "不把候选方向当交易机会；先看风险收敛、数据恢复和核心承接。",
     "reasons": [
-      "发现 246 个降级/需复核项（86 个交易阻断，83 个价格/行情复核，2 个信号复核，76 个背景复核），核心结论可看但必须按影响分层使用。",
-      "A/B级风险 1 条",
-      "可用机会 0 条，降权候选 8 条",
-      "先处理：先修复阻断（alert.json）"
+      "发现 379 个降级/需复核项（170 个交易阻断，84 个价格/行情复核，1 个信号复核，125 个背景复核），核心结论可看但必须按影响分层使用。",
+      "A/B级风险 8 条",
+      "风险优先冲突 1 条",
+      "可用机会 0 条，降权候选 8 条"
     ],
     "risk_focus": [
-      "数据质量降级"
+      "数据质量降级",
+      "消费电子终端/端侧硬件",
+      "养殖/饲料/农林牧渔"
     ],
     "upgrade_watch": [
-      "#1 待触发：暂无经竞价宽度确认的强主线：核心股低开后放量收复开盘价或跌幅明显收敛。 数据质量恢复或二次行情源确认前，不升级为可用机会。",
-      "#2 待触发：互联网平台港股强、A股应用未扩散：核心股低开后放量收复开盘价或跌幅明显收敛。 数据质量恢复或二次行情源确认前，不升级为可用机会。",
-      "#3 待触发：机器人/工业自动化：题材3分钟涨跌幅>=1.5%，方向占比>=70%，成交放大>=5x。 数据质量恢复或二次行情源确认前，不升级为可用机会。"
+      "#1 养殖/饲料/农林牧渔：看核心个股、ETF、后排扩散和尾盘承接是否同向确认。 数据质量恢复或二次行情源确认前，不升级为可用机会。",
+      "#2 主线变化：金融/消费防御：次日若券商+保险或白酒+食品/畜牧继续同向放量，且科创50仍弱，维持风格切换；否则按一日防御轮动。 数据质量恢复或二次行情源确认前，不升级为可用机会。",
+      "#3 半导体设备材料：分拆设备、材料、零部件评估；至少两个分支同步扩散才恢复观察。 数据质量恢复或二次行情源确认前，不升级为可用机会。"
     ],
     "verification_focus": [
       "核心股低开后放量收复开盘价或跌幅明显收敛",
@@ -63,7 +70,7 @@
     ]
   },
   "signal_queue": {
-    "summary": "无可用机会，1 条风险优先，5 条只做验证，3 条禁用直用。",
+    "summary": "无可用机会，4 条风险优先，5 条只做验证，4 条禁用直用。",
     "active_opportunities": [],
     "trackable_risks": [
       {
@@ -71,81 +78,106 @@
         "grade": "A",
         "use_action": "可跟踪",
         "reason": "污染 alert 修复前，盘中异动信号必须降权；观察池个股涨跌幅以已审计源为准。"
+      },
+      {
+        "title": "消费电子终端/端侧硬件",
+        "grade": "A",
+        "use_action": "可跟踪",
+        "reason": "看核心个股、ETF、后排扩散和尾盘承接是否同向确认。"
+      },
+      {
+        "title": "养殖/饲料/农林牧渔",
+        "grade": "A",
+        "use_action": "可跟踪",
+        "reason": "看核心个股、ETF、后排扩散和尾盘承接是否同向确认。"
+      },
+      {
+        "title": "创新药/CRO",
+        "grade": "A",
+        "use_action": "可跟踪",
+        "reason": "看核心个股、ETF、后排扩散和尾盘承接是否同向确认。"
       }
     ],
     "verification_queue": [
       {
-        "title": "待触发：暂无经竞价宽度确认的强主线",
-        "grade": "D",
-        "use_action": "仅复核",
-        "reason": "核心股低开后放量收复开盘价或跌幅明显收敛"
+        "title": "养殖/饲料/农林牧渔",
+        "grade": "C",
+        "use_action": "降权观察",
+        "reason": "看核心个股、ETF、后排扩散和尾盘承接是否同向确认。"
       },
       {
-        "title": "待触发：互联网平台港股强、A股应用未扩散",
-        "grade": "D",
-        "use_action": "仅复核",
-        "reason": "核心股低开后放量收复开盘价或跌幅明显收敛"
+        "title": "主线变化：金融/消费防御",
+        "grade": "C",
+        "use_action": "降权观察",
+        "reason": "次日若券商+保险或白酒+食品/畜牧继续同向放量，且科创50仍弱，维持风格切换；否则按一日防御轮动。"
       },
       {
-        "title": "待触发：机器人/工业自动化",
+        "title": "半导体设备材料",
         "grade": "D",
         "use_action": "仅复核",
-        "reason": "题材3分钟涨跌幅>=1.5%，方向占比>=70%，成交放大>=5x"
+        "reason": "分拆设备、材料、零部件评估；至少两个分支同步扩散才恢复观察。"
       },
       {
-        "title": "待触发：半导体材料",
+        "title": "消费电子终端",
         "grade": "D",
         "use_action": "仅复核",
-        "reason": "题材3分钟涨跌幅>=1.5%，方向占比>=70%，成交放大>=5x"
+        "reason": "看核心个股、ETF、后排扩散和尾盘承接是否同向确认。"
       },
       {
-        "title": "待触发：半导体设备材料",
+        "title": "养殖/饲料",
         "grade": "D",
         "use_action": "仅复核",
-        "reason": "核心股低开后放量收复开盘价或跌幅明显收敛"
+        "reason": "看核心个股、ETF、后排扩散和尾盘承接是否同向确认。"
       }
     ],
     "disabled_signals": [
       {
-        "title": "待触发：暂无经竞价宽度确认的强主线",
-        "grade": "D",
-        "use_action": "仅复核",
-        "reason": "核心股低开后放量收复开盘价或跌幅明显收敛"
+        "title": "冲突主线机会",
+        "use_action": "禁用追高",
+        "reason": "同一主线存在风险优先冲突，只保留验证条件，不作为交易触发。"
       },
       {
-        "title": "待触发：互联网平台港股强、A股应用未扩散",
+        "title": "半导体设备材料",
         "grade": "D",
         "use_action": "仅复核",
-        "reason": "核心股低开后放量收复开盘价或跌幅明显收敛"
+        "reason": "分拆设备、材料、零部件评估；至少两个分支同步扩散才恢复观察。"
       },
       {
-        "title": "待触发：机器人/工业自动化",
+        "title": "消费电子终端",
         "grade": "D",
         "use_action": "仅复核",
-        "reason": "题材3分钟涨跌幅>=1.5%，方向占比>=70%，成交放大>=5x"
+        "reason": "看核心个股、ETF、后排扩散和尾盘承接是否同向确认。"
+      },
+      {
+        "title": "养殖/饲料",
+        "grade": "D",
+        "use_action": "仅复核",
+        "reason": "看核心个股、ETF、后排扩散和尾盘承接是否同向确认。"
       }
     ]
   },
   "opportunities": [
     {
-      "title": "待触发：暂无经竞价宽度确认的强主线",
-      "type": "opportunity_watch",
-      "trigger_reason": "盘前/晚间注意点已转为盘中追踪清单，等待实时行情触发。",
-      "conclusion": "集合竞价判定为退潮：科技硬件风险扩散，医药与互联网的外部正映射没有形成A股板块宽度。",
+      "title": "养殖/饲料/农林牧渔",
+      "type": "theme",
+      "trigger_reason": "主动盘面扫描触发：涨跌停、炸板、尾盘承接或板块扩散出现可验证变化。",
+      "conclusion": "行业涨幅形成连续宽度，但封板集中度不足，暂不升级为强主线。",
       "confidence": "low",
-      "evidence": [],
+      "evidence": [
+        "养殖业+2.24%、饲料+1.68%、农林牧渔+1.31%，三条行业线同步进入前列。",
+        "温氏股份+3.23%、牧原股份+1.29%、新希望+0.84%、巨星农牧+0.70%，权重和弹性样本多数红盘。",
+        "安迪苏涨停提供饲料添加剂情绪锚，但牧原、温氏等中军尚未出现放量突破，低位涨停扩散有限。",
+        "白酒和金融多数走弱，尚未满足消费防御或金融权重的完整风格切换条件。"
+      ],
       "source_files": [
-        "opportunity-watch.json"
+        "intraday.json"
       ],
       "watch_next": [
-        "核心股低开后放量收复开盘价或跌幅明显收敛",
-        "同题材后排不再扩大负反馈，跌停/炸板数量下降",
-        "板块ETF或指数不再创新低并出现承接"
+        "看核心个股、ETF、后排扩散和尾盘承接是否同向确认。"
       ],
-      "invalidation": "核心股继续放量下跌",
+      "invalidation": "养殖/饲料/农林牧渔核心股冲高回落、ETF转弱或后排不扩散，则机会降级为观察。",
       "tags": [
-        "创新药/CRO",
-        "风控"
+        "金融/消费防御"
       ],
       "quality_flags": [
         "行情/涨跌幅需二次源复核",
@@ -154,49 +186,50 @@
         "交易阻断项未修复，相关信号不可直接用"
       ],
       "tone": "good",
-      "discovery_type": "premarket_watch_queue",
-      "evidence_score": 21,
+      "discovery_type": "active_market_scan",
+      "evidence_score": 83,
       "missing_evidence": [
-        "缺少可核验证据",
         "数据源降级需二次确认"
       ],
-      "next_action": "核心股低开后放量收复开盘价或跌幅明显收敛",
-      "observation_source": "数据派生",
-      "independent_observation": false,
-      "signal_score": 12,
-      "signal_grade": "D",
-      "use_action": "仅复核",
+      "next_action": "看核心个股、ETF、后排扩散和尾盘承接是否同向确认。",
+      "observation_source": "主动盘面扫描",
+      "independent_observation": true,
+      "signal_score": 57,
+      "signal_grade": "C",
+      "use_action": "降权观察",
       "use_reasons": [
-        "缺少证据",
+        "有可核验证据",
         "有下一步验证",
         "有证伪条件",
         "有来源文件",
         "数据质量降权"
       ],
       "upgrade_rank": 1,
-      "upgrade_priority": "仅复核",
-      "upgrade_condition": "核心股低开后放量收复开盘价或跌幅明显收敛。 数据质量恢复或二次行情源确认前，不升级为可用机会。"
+      "upgrade_priority": "优先验证",
+      "upgrade_condition": "看核心个股、ETF、后排扩散和尾盘承接是否同向确认。 数据质量恢复或二次行情源确认前，不升级为可用机会。"
     },
     {
-      "title": "待触发：互联网平台港股强、A股应用未扩散",
-      "type": "opportunity_watch",
-      "trigger_reason": "盘前/晚间注意点已转为盘中追踪清单，等待实时行情触发。",
-      "conclusion": "集合竞价判定为退潮：科技硬件风险扩散，医药与互联网的外部正映射没有形成A股板块宽度。",
+      "title": "主线变化：金融/消费防御",
+      "type": "theme_shift",
+      "trigger_reason": "主线变化扫描触发：升温/降温/抱团/风险状态出现边际变化。",
+      "conclusion": "金融/消费防御 有新出现或轮动增强迹象，需看次日扩散确认。",
       "confidence": "low",
-      "evidence": [],
+      "evidence": [
+        "养殖业+2.24%、饲料+1.68%、农林牧渔+1.31%，三条行业线同步进入前列。",
+        "温氏股份+3.23%、牧原股份+1.29%、新希望+0.84%、巨星农牧+0.70%，权重和弹性样本多数红盘。",
+        "安迪苏涨停提供饲料添加剂情绪锚，但牧原、温氏等中军尚未出现放量突破，低位涨停扩散有限。",
+        "白酒和金融多数走弱，尚未满足消费防御或金融权重的完整风格切换条件。",
+        "白酒+3.85%、食品加工+3.97%；泸州老窖+7.04%、山西汾酒+7.01%，中信证券+2.14%、东方财富+2.76%、中国平安+2.72%、中国太保+4.46%；沪深300-0.20%明显强于科创50-4.25%。"
+      ],
       "source_files": [
-        "opportunity-watch.json"
+        "intraday.json",
+        "topics.json"
       ],
       "watch_next": [
-        "核心股低开后放量收复开盘价或跌幅明显收敛",
-        "同题材后排不再扩大负反馈，跌停/炸板数量下降",
-        "板块ETF或指数不再创新低并出现承接"
+        "次日若券商+保险或白酒+食品/畜牧继续同向放量，且科创50仍弱，维持风格切换；否则按一日防御轮动。"
       ],
-      "invalidation": "核心股继续放量下跌",
-      "tags": [
-        "创新药/CRO",
-        "风控"
-      ],
+      "invalidation": "金融/消费防御 需要次日竞价、量能和后排扩散共同确认。",
+      "tags": [],
       "quality_flags": [
         "行情/涨跌幅需二次源复核",
         "机会信号需降权转验证",
@@ -204,49 +237,46 @@
         "交易阻断项未修复，相关信号不可直接用"
       ],
       "tone": "good",
-      "discovery_type": "premarket_watch_queue",
-      "evidence_score": 21,
+      "discovery_type": "theme_shift_scan",
+      "evidence_score": 83,
       "missing_evidence": [
-        "缺少可核验证据",
         "数据源降级需二次确认"
       ],
-      "next_action": "核心股低开后放量收复开盘价或跌幅明显收敛",
-      "observation_source": "数据派生",
-      "independent_observation": false,
-      "signal_score": 12,
-      "signal_grade": "D",
-      "use_action": "仅复核",
+      "next_action": "次日若券商+保险或白酒+食品/畜牧继续同向放量，且科创50仍弱，维持风格切换；否则按一日防御轮动。",
+      "observation_source": "主线变化扫描",
+      "independent_observation": true,
+      "signal_score": 57,
+      "signal_grade": "C",
+      "use_action": "降权观察",
       "use_reasons": [
-        "缺少证据",
+        "有可核验证据",
         "有下一步验证",
         "有证伪条件",
         "有来源文件",
         "数据质量降权"
       ],
       "upgrade_rank": 2,
-      "upgrade_priority": "仅复核",
-      "upgrade_condition": "核心股低开后放量收复开盘价或跌幅明显收敛。 数据质量恢复或二次行情源确认前，不升级为可用机会。"
+      "upgrade_priority": "优先验证",
+      "upgrade_condition": "次日若券商+保险或白酒+食品/畜牧继续同向放量，且科创50仍弱，维持风格切换；否则按一日防御轮动。 数据质量恢复或二次行情源确认前，不升级为可用机会。"
     },
     {
-      "title": "待触发：机器人/工业自动化",
-      "type": "opportunity_watch",
-      "trigger_reason": "盘前/晚间注意点已转为盘中追踪清单，等待实时行情触发。",
-      "conclusion": "机器人/工业自动化；观察；机器人和工业自动化今日属于低位装备修复，尚未回到强主线。；看埃斯顿、雷赛智能及机器人ETF能否放量维持，并检查通用设备涨停是否向机器人核心扩散。；机器人代表样本全部上涨、平均约+2.65%，但通用设备8只涨停并非都属于机器人，暂按低位扩散观察。；机器人；观察线/不单独升级；已并入机器人/工业自动化统一观察；明日看减速器、伺服、控制…",
+      "title": "半导体设备材料",
+      "type": "theme",
+      "trigger_reason": "专题观察触发：既有专题出现新的量价证据或代表股变化。",
+      "conclusion": "半导体-5.53%、科创50-4.25%，设备、材料和零部件没有两个分支同步承接；中微/北方相对少跌不能替代全板块结论。",
       "confidence": "low",
-      "evidence": [],
+      "evidence": [
+        "半导体-5.53%、科创50-4.25%，设备、材料和零部件没有两个分支同步承接；中微/北方相对少跌不能替代全板块结论。"
+      ],
       "source_files": [
-        "opportunity-watch.json"
+        "topics.json"
       ],
       "watch_next": [
-        "题材3分钟涨跌幅>=1.5%，方向占比>=70%，成交放大>=5x",
-        "板块内出现批量涨停/封板或后排扩散",
-        "核心股、ETF、后排扩散同向确认",
-        "核心股低开后放量收复开盘价或跌幅明显收敛"
+        "分拆设备、材料、零部件评估；至少两个分支同步扩散才恢复观察。"
       ],
-      "invalidation": "核心股高开低走或冲高回落",
+      "invalidation": "半导体设备材料核心股冲高回落、ETF转弱或后排不扩散，则机会降级为观察。",
       "tags": [
         "科技硬件链",
-        "机器人/工业自动化",
         "风控"
       ],
       "quality_flags": [
@@ -256,20 +286,19 @@
         "交易阻断项未修复，相关信号不可直接用"
       ],
       "tone": "good",
-      "discovery_type": "premarket_watch_queue",
-      "evidence_score": 21,
+      "discovery_type": "topic_watch_scan",
+      "evidence_score": 82,
       "missing_evidence": [
-        "缺少可核验证据",
         "数据源降级需二次确认"
       ],
-      "next_action": "题材3分钟涨跌幅>=1.5%，方向占比>=70%，成交放大>=5x",
-      "observation_source": "数据派生",
+      "next_action": "分拆设备、材料、零部件评估；至少两个分支同步扩散才恢复观察。",
+      "observation_source": "专题继承",
       "independent_observation": false,
-      "signal_score": 12,
+      "signal_score": 41,
       "signal_grade": "D",
       "use_action": "仅复核",
       "use_reasons": [
-        "缺少证据",
+        "有可核验证据",
         "有下一步验证",
         "有证伪条件",
         "有来源文件",
@@ -277,29 +306,25 @@
       ],
       "upgrade_rank": 3,
       "upgrade_priority": "仅复核",
-      "upgrade_condition": "题材3分钟涨跌幅>=1.5%，方向占比>=70%，成交放大>=5x。 数据质量恢复或二次行情源确认前，不升级为可用机会。"
+      "upgrade_condition": "分拆设备、材料、零部件评估；至少两个分支同步扩散才恢复观察。 数据质量恢复或二次行情源确认前，不升级为可用机会。"
     },
     {
-      "title": "待触发：半导体材料",
-      "type": "opportunity_watch",
-      "trigger_reason": "盘前/晚间注意点已转为盘中追踪清单，等待实时行情触发。",
-      "conclusion": "SK海力士/三星电子；韩国芯片链集中下跌；存储/HBM、半导体材料与先进封装；亚洲同业情绪传导；ASML上调全年收入预期，半导体设备材料需看订单映射能否扩散；海外半导体设备龙头上调预期会影响A股半导体设备、材料和存储链竞价情绪，且与当日科技修复预期同向；但A股映射必须由核心股承接和板块宽度确认。；[\"北方华创、中微公司、华海清科、安集科技是否强于指数并有成…",
+      "title": "消费电子终端",
+      "type": "theme",
+      "trigger_reason": "主动盘面扫描触发：涨跌停、炸板、尾盘承接或板块扩散出现可验证变化。",
+      "conclusion": "局部强主线",
       "confidence": "low",
-      "evidence": [],
+      "evidence": [
+        "4只核心封板+1只20cm，多个中军大涨"
+      ],
       "source_files": [
-        "opportunity-watch.json"
+        "intraday.json"
       ],
       "watch_next": [
-        "题材3分钟涨跌幅>=1.5%，方向占比>=70%，成交放大>=5x",
-        "板块内出现批量涨停/封板或后排扩散",
-        "核心股、ETF、后排扩散同向确认",
-        "核心股低开后放量收复开盘价或跌幅明显收敛"
+        "看核心个股、ETF、后排扩散和尾盘承接是否同向确认。"
       ],
-      "invalidation": "核心股高开低走或冲高回落",
-      "tags": [
-        "科技硬件链",
-        "风控"
-      ],
+      "invalidation": "消费电子终端核心股冲高回落、ETF转弱或后排不扩散，则机会降级为观察。",
+      "tags": [],
       "quality_flags": [
         "行情/涨跌幅需二次源复核",
         "机会信号需降权转验证",
@@ -307,20 +332,19 @@
         "交易阻断项未修复，相关信号不可直接用"
       ],
       "tone": "good",
-      "discovery_type": "premarket_watch_queue",
-      "evidence_score": 21,
+      "discovery_type": "active_market_scan",
+      "evidence_score": 67,
       "missing_evidence": [
-        "缺少可核验证据",
         "数据源降级需二次确认"
       ],
-      "next_action": "题材3分钟涨跌幅>=1.5%，方向占比>=70%，成交放大>=5x",
-      "observation_source": "数据派生",
-      "independent_observation": false,
-      "signal_score": 12,
+      "next_action": "看核心个股、ETF、后排扩散和尾盘承接是否同向确认。",
+      "observation_source": "主动盘面扫描",
+      "independent_observation": true,
+      "signal_score": 36,
       "signal_grade": "D",
       "use_action": "仅复核",
       "use_reasons": [
-        "缺少证据",
+        "有可核验证据",
         "有下一步验证",
         "有证伪条件",
         "有来源文件",
@@ -328,30 +352,25 @@
       ],
       "upgrade_rank": 4,
       "upgrade_priority": "仅复核",
-      "upgrade_condition": "题材3分钟涨跌幅>=1.5%，方向占比>=70%，成交放大>=5x。 数据质量恢复或二次行情源确认前，不升级为可用机会。"
+      "upgrade_condition": "看核心个股、ETF、后排扩散和尾盘承接是否同向确认。 数据质量恢复或二次行情源确认前，不升级为可用机会。"
     },
     {
-      "title": "待触发：半导体设备材料",
-      "type": "opportunity_watch",
-      "trigger_reason": "盘前/晚间注意点已转为盘中追踪清单，等待实时行情触发。",
-      "conclusion": "美国6月CPI低于预期后，A股科技硬件次日竞价转向修复验证；海外通胀读数低于市场预期会直接影响美债收益率、美元、纳指和费城半导体指数，从而改变7月16日A股半导体、CPO、AI硬件竞价的风险权重；但PPI和隔夜收盘尚需盘前复核，不能直接按全面进攻处理。；[\"8:30复核纳指、SOXX、10年期美债收益率和美元指数最终…；ASML上调全年收入预期，半导体设备…",
+      "title": "养殖/饲料",
+      "type": "theme",
+      "trigger_reason": "主动盘面扫描触发：涨跌停、炸板、尾盘承接或板块扩散出现可验证变化。",
+      "conclusion": "观察线偏强",
       "confidence": "low",
-      "evidence": [],
+      "evidence": [
+        "行业宽度强但封板不足"
+      ],
       "source_files": [
-        "opportunity-watch.json"
+        "intraday.json"
       ],
       "watch_next": [
-        "核心股低开后放量收复开盘价或跌幅明显收敛",
-        "同题材后排不再扩大负反馈，跌停/炸板数量下降",
-        "板块ETF或指数不再创新低并出现承接",
-        "题材3分钟涨跌幅>=1.5%，方向占比>=70%，成交放大>=5x"
+        "看核心个股、ETF、后排扩散和尾盘承接是否同向确认。"
       ],
-      "invalidation": "核心股继续放量下跌",
-      "tags": [
-        "科技硬件链",
-        "金融/消费防御",
-        "风控"
-      ],
+      "invalidation": "养殖/饲料核心股冲高回落、ETF转弱或后排不扩散，则机会降级为观察。",
+      "tags": [],
       "quality_flags": [
         "行情/涨跌幅需二次源复核",
         "机会信号需降权转验证",
@@ -359,20 +378,19 @@
         "交易阻断项未修复，相关信号不可直接用"
       ],
       "tone": "good",
-      "discovery_type": "premarket_watch_queue",
-      "evidence_score": 21,
+      "discovery_type": "active_market_scan",
+      "evidence_score": 67,
       "missing_evidence": [
-        "缺少可核验证据",
         "数据源降级需二次确认"
       ],
-      "next_action": "核心股低开后放量收复开盘价或跌幅明显收敛",
-      "observation_source": "数据派生",
-      "independent_observation": false,
-      "signal_score": 12,
+      "next_action": "看核心个股、ETF、后排扩散和尾盘承接是否同向确认。",
+      "observation_source": "主动盘面扫描",
+      "independent_observation": true,
+      "signal_score": 36,
       "signal_grade": "D",
       "use_action": "仅复核",
       "use_reasons": [
-        "缺少证据",
+        "有可核验证据",
         "有下一步验证",
         "有证伪条件",
         "有来源文件",
@@ -380,28 +398,26 @@
       ],
       "upgrade_rank": 5,
       "upgrade_priority": "仅复核",
-      "upgrade_condition": "核心股低开后放量收复开盘价或跌幅明显收敛。 数据质量恢复或二次行情源确认前，不升级为可用机会。"
+      "upgrade_condition": "看核心个股、ETF、后排扩散和尾盘承接是否同向确认。 数据质量恢复或二次行情源确认前，不升级为可用机会。"
     },
     {
-      "title": "待触发：半导体设备",
-      "type": "opportunity_watch",
-      "trigger_reason": "盘前/晚间注意点已转为盘中追踪清单，等待实时行情触发。",
-      "conclusion": "ASML披露2026年第二季度总销售额93亿欧元、净利润29亿欧元，并上调全年展望；设备需求得到基本面确认，但日韩设备股今早大跌，短线资金确认仍缺。；中长期利好设备扩产逻辑，短线只能列观察线；北方华创、中微公司、华海清科、芯源微、富创精密；AI晶圆需求上行→设备订单与扩产预期→A股国产设备映射→需9:25中军承接验证；ASML；二季度销售与净利润超预期并上…",
+      "title": "CPO/PCB",
+      "type": "theme",
+      "trigger_reason": "主动盘面扫描触发：涨跌停、炸板、尾盘承接或板块扩散出现可验证变化。",
+      "conclusion": "资金博弈/低开修复",
       "confidence": "low",
-      "evidence": [],
+      "evidence": [
+        "大成交核心修复但无封板扩散"
+      ],
       "source_files": [
-        "opportunity-watch.json"
+        "intraday.json"
       ],
       "watch_next": [
-        "题材3分钟涨跌幅>=1.5%，方向占比>=70%，成交放大>=5x",
-        "板块内出现批量涨停/封板或后排扩散",
-        "核心股、ETF、后排扩散同向确认",
-        "核心股低开后放量收复开盘价或跌幅明显收敛"
+        "看核心个股、ETF、后排扩散和尾盘承接是否同向确认。"
       ],
-      "invalidation": "核心股高开低走或冲高回落",
+      "invalidation": "CPO/PCB核心股冲高回落、ETF转弱或后排不扩散，则机会降级为观察。",
       "tags": [
-        "科技硬件链",
-        "风控"
+        "科技硬件链"
       ],
       "quality_flags": [
         "行情/涨跌幅需二次源复核",
@@ -410,20 +426,19 @@
         "交易阻断项未修复，相关信号不可直接用"
       ],
       "tone": "good",
-      "discovery_type": "premarket_watch_queue",
-      "evidence_score": 21,
+      "discovery_type": "active_market_scan",
+      "evidence_score": 67,
       "missing_evidence": [
-        "缺少可核验证据",
         "数据源降级需二次确认"
       ],
-      "next_action": "题材3分钟涨跌幅>=1.5%，方向占比>=70%，成交放大>=5x",
-      "observation_source": "数据派生",
-      "independent_observation": false,
-      "signal_score": 12,
+      "next_action": "看核心个股、ETF、后排扩散和尾盘承接是否同向确认。",
+      "observation_source": "主动盘面扫描",
+      "independent_observation": true,
+      "signal_score": 36,
       "signal_grade": "D",
       "use_action": "仅复核",
       "use_reasons": [
-        "缺少证据",
+        "有可核验证据",
         "有下一步验证",
         "有证伪条件",
         "有来源文件",
@@ -431,29 +446,25 @@
       ],
       "upgrade_rank": 6,
       "upgrade_priority": "仅复核",
-      "upgrade_condition": "题材3分钟涨跌幅>=1.5%，方向占比>=70%，成交放大>=5x。 数据质量恢复或二次行情源确认前，不升级为可用机会。"
+      "upgrade_condition": "看核心个股、ETF、后排扩散和尾盘承接是否同向确认。 数据质量恢复或二次行情源确认前，不升级为可用机会。"
     },
     {
-      "title": "待触发：存储/HBM",
-      "type": "opportunity_watch",
-      "trigger_reason": "盘前/晚间注意点已转为盘中追踪清单，等待实时行情触发。",
-      "conclusion": "美光下跌8.02%、SOXX下跌2.23%，今早SK海力士、三星电子及日本设备股同步大跌。；压制A股存储/HBM、设备材料和科创50开盘；海外芯片高位重定价→亚洲科技链共振下跌→A股硬件竞价承压→观察是否出现低开承接；美光；高位获利回吐与存储链风险重定价；兆易创新、澜起科技、北京君正、德明利、江波龙、HBM材料；存储周期对标与情绪传导；SK海力士/三星电子…",
+      "title": "主线变化：养殖",
+      "type": "theme_shift",
+      "trigger_reason": "主线变化扫描触发：升温/降温/抱团/风险状态出现边际变化。",
+      "conclusion": "养殖 有新出现或轮动增强迹象，需看次日扩散确认。",
       "confidence": "low",
-      "evidence": [],
+      "evidence": [
+        "行业宽度强但封板不足"
+      ],
       "source_files": [
-        "opportunity-watch.json"
+        "intraday.json"
       ],
       "watch_next": [
-        "核心股低开后放量收复开盘价或跌幅明显收敛",
-        "同题材后排不再扩大负反馈，跌停/炸板数量下降",
-        "板块ETF或指数不再创新低并出现承接",
-        "题材3分钟涨跌幅>=1.5%，方向占比>=70%，成交放大>=5x"
+        "看养殖核心股是否继续承接，并扩散到后排。"
       ],
-      "invalidation": "核心股继续放量下跌",
-      "tags": [
-        "科技硬件链",
-        "风控"
-      ],
+      "invalidation": "养殖 需要次日竞价、量能和后排扩散共同确认。",
+      "tags": [],
       "quality_flags": [
         "行情/涨跌幅需二次源复核",
         "机会信号需降权转验证",
@@ -461,20 +472,19 @@
         "交易阻断项未修复，相关信号不可直接用"
       ],
       "tone": "good",
-      "discovery_type": "premarket_watch_queue",
-      "evidence_score": 21,
+      "discovery_type": "theme_shift_scan",
+      "evidence_score": 67,
       "missing_evidence": [
-        "缺少可核验证据",
         "数据源降级需二次确认"
       ],
-      "next_action": "核心股低开后放量收复开盘价或跌幅明显收敛",
-      "observation_source": "数据派生",
-      "independent_observation": false,
-      "signal_score": 12,
+      "next_action": "看养殖核心股是否继续承接，并扩散到后排。",
+      "observation_source": "主线变化扫描",
+      "independent_observation": true,
+      "signal_score": 36,
       "signal_grade": "D",
       "use_action": "仅复核",
       "use_reasons": [
-        "缺少证据",
+        "有可核验证据",
         "有下一步验证",
         "有证伪条件",
         "有来源文件",
@@ -482,28 +492,26 @@
       ],
       "upgrade_rank": 7,
       "upgrade_priority": "仅复核",
-      "upgrade_condition": "核心股低开后放量收复开盘价或跌幅明显收敛。 数据质量恢复或二次行情源确认前，不升级为可用机会。"
+      "upgrade_condition": "看养殖核心股是否继续承接，并扩散到后排。 数据质量恢复或二次行情源确认前，不升级为可用机会。"
     },
     {
-      "title": "待触发：CPO/光模块",
-      "type": "opportunity_watch",
-      "trigger_reason": "盘前/晚间注意点已转为盘中追踪清单，等待实时行情触发。",
-      "conclusion": "英伟达/博通/AMD；AI芯片内部显著分化；AI算力、CPO、交换机、高端PCB；产业链上下游与风险偏好传导；美国6月CPI低于预期后，A股科技硬件次日竞价转向修复验证；海外通胀读数低于市场预期会直接影响美债收益率、美元、纳指和费城半导体指数，从而改变7月16日A股半导体、CPO、AI硬件竞价的风险权重；但PPI和隔夜收盘尚需盘前复核，不能直接按全面进攻处…",
+      "title": "半导体零部件",
+      "type": "theme",
+      "trigger_reason": "专题观察触发：既有专题出现新的量价证据或代表股变化。",
+      "conclusion": "富创-1.79%由低点修复但未站稳231元；新莱-2.85%、正帆-3.48%、长川-2.42%，没有设备主线外溢或低位封板。科创50-2.61%，零部件只能看相对承接，不能升级。",
       "confidence": "low",
-      "evidence": [],
+      "evidence": [
+        "富创-1.79%由低点修复但未站稳231元；新莱-2.85%、正帆-3.48%、长川-2.42%，没有设备主线外溢或低位封板。科创50-2.61%，零部件只能看相对承接，不能升级。"
+      ],
       "source_files": [
-        "opportunity-watch.json"
+        "topics.json"
       ],
       "watch_next": [
-        "核心股低开后放量收复开盘价或跌幅明显收敛",
-        "同题材后排不再扩大负反馈，跌停/炸板数量下降",
-        "板块ETF或指数不再创新低并出现承接",
-        "题材3分钟涨跌幅>=1.5%，方向占比>=70%，成交放大>=5x"
+        "富创先站稳231元，新莱、正帆至少1只同步翻红，且设备前排不破低，才恢复观察；继续核验订单与半年报利润。"
       ],
-      "invalidation": "核心股继续放量下跌",
+      "invalidation": "半导体零部件核心股冲高回落、ETF转弱或后排不扩散，则机会降级为观察。",
       "tags": [
         "科技硬件链",
-        "金融/消费防御",
         "风控"
       ],
       "quality_flags": [
@@ -513,20 +521,19 @@
         "交易阻断项未修复，相关信号不可直接用"
       ],
       "tone": "good",
-      "discovery_type": "premarket_watch_queue",
-      "evidence_score": 21,
+      "discovery_type": "topic_watch_scan",
+      "evidence_score": 67,
       "missing_evidence": [
-        "缺少可核验证据",
         "数据源降级需二次确认"
       ],
-      "next_action": "核心股低开后放量收复开盘价或跌幅明显收敛",
-      "observation_source": "数据派生",
+      "next_action": "富创先站稳231元，新莱、正帆至少1只同步翻红，且设备前排不破低，才恢复观察；继续核验订单与半年报利润。",
+      "observation_source": "专题继承",
       "independent_observation": false,
-      "signal_score": 12,
+      "signal_score": 36,
       "signal_grade": "D",
       "use_action": "仅复核",
       "use_reasons": [
-        "缺少证据",
+        "有可核验证据",
         "有下一步验证",
         "有证伪条件",
         "有来源文件",
@@ -534,7 +541,7 @@
       ],
       "upgrade_rank": 8,
       "upgrade_priority": "仅复核",
-      "upgrade_condition": "核心股低开后放量收复开盘价或跌幅明显收敛。 数据质量恢复或二次行情源确认前，不升级为可用机会。"
+      "upgrade_condition": "富创先站稳231元，新莱、正帆至少1只同步翻红，且设备前排不破低，才恢复观察；继续核验订单与半年报利润。 数据质量恢复或二次行情源确认前，不升级为可用机会。"
     }
   ],
   "risks": [
@@ -542,12 +549,13 @@
       "title": "数据质量降级",
       "type": "data_quality",
       "trigger_reason": "风控兜底触发：市场宽度、数据质量或回撤条件触发风险优先。",
-      "conclusion": "发现 246 个降级/需复核项（86 个交易阻断，83 个价格/行情复核，2 个信号复核，76 个背景复核），核心结论可看但必须按影响分层使用。",
+      "conclusion": "发现 379 个降级/需复核项（170 个交易阻断，84 个价格/行情复核，1 个信号复核，125 个背景复核），核心结论可看但必须按影响分层使用。",
       "confidence": "high",
       "evidence": [
-        "时间戳不是当前交易日：2026-07-15T14:30:12+08:00",
-        "沪硅产业 接近跌停 -10.18，需确认是否真实",
-        "时间戳不是当前交易日：2026-07-13T12:46:56+08:00"
+        "时间戳不是当前交易日：2026-07-13T12:46:56+08:00",
+        "时间戳不是当前交易日：2026-07-15T16:09:00+08:00",
+        "沪硅产业 接近跌停 -10.24，需确认是否真实",
+        "us_overnight.mapping_chain[1] change_pct 非数字：+0.33%/+1.33%/-3.46%，该字段忽略并降权"
       ],
       "source_files": [
         "quality-report.json",
@@ -564,7 +572,7 @@
       "quality_flags": [],
       "tone": "risk",
       "discovery_type": "risk_guardrail",
-      "evidence_score": 88,
+      "evidence_score": 90,
       "missing_evidence": [],
       "next_action": "污染 alert 修复前，盘中异动信号必须降权；观察池个股涨跌幅以已审计源为准。",
       "observation_source": "系统风控扫描",
@@ -578,6 +586,298 @@
         "有证伪条件",
         "有来源文件",
         "证据链较完整"
+      ]
+    },
+    {
+      "title": "消费电子终端/端侧硬件",
+      "type": "theme",
+      "trigger_reason": "主动盘面扫描触发：涨跌停、炸板、尾盘承接或板块扩散出现可验证变化。",
+      "conclusion": "开盘后最清晰的涨停扩散方向，但属于弱指数中的局部主线，尚未带动半导体和其他电子行业整体转强。",
+      "confidence": "high",
+      "evidence": [
+        "格林精密20cm涨停，道明光学、国光电器、福蓉科技3只10cm涨停，形成4只核心封板扩散。",
+        "豪声电子+21.44%、亿道信息+8.62%、龙旗科技+7.69%、传音控股+7.25%，20cm、北交所弹性和中军同步大涨。",
+        "格林精密换手约3.35%、国光电器约4.41%、福蓉科技约1.53%，均有开盘成交承接；低位补涨已出现。",
+        "其他电子Ⅱ行业仍-3.70%，科创50-2.61%，日韩科技链早盘大跌；该线没有指数和海外半导体共振，只是A股内部逆势抱团。",
+        "当前未见该方向大面积炸板，炸板池仅3只且不以消费电子核心为主。"
+      ],
+      "source_files": [
+        "intraday.json"
+      ],
+      "watch_next": [
+        "看核心个股、ETF、后排扩散和尾盘承接是否同向确认。"
+      ],
+      "invalidation": "消费电子终端/端侧硬件风险信号收敛、核心股重新放量承接，则风险降级。",
+      "tags": [
+        "科技硬件链",
+        "风控"
+      ],
+      "quality_flags": [],
+      "tone": "risk",
+      "discovery_type": "active_market_scan",
+      "evidence_score": 90,
+      "missing_evidence": [],
+      "next_action": "看核心个股、ETF、后排扩散和尾盘承接是否同向确认。",
+      "observation_source": "主动盘面扫描",
+      "independent_observation": true,
+      "signal_score": 100,
+      "signal_grade": "A",
+      "use_action": "可跟踪",
+      "use_reasons": [
+        "有可核验证据",
+        "有下一步验证",
+        "有证伪条件",
+        "有来源文件",
+        "证据链较完整"
+      ]
+    },
+    {
+      "title": "养殖/饲料/农林牧渔",
+      "type": "theme",
+      "trigger_reason": "主动盘面扫描触发：涨跌停、炸板、尾盘承接或板块扩散出现可验证变化。",
+      "conclusion": "行业涨幅形成连续宽度，但封板集中度不足，暂不升级为强主线。",
+      "confidence": "high",
+      "evidence": [
+        "养殖业+2.24%、饲料+1.68%、农林牧渔+1.31%，三条行业线同步进入前列。",
+        "温氏股份+3.23%、牧原股份+1.29%、新希望+0.84%、巨星农牧+0.70%，权重和弹性样本多数红盘。",
+        "安迪苏涨停提供饲料添加剂情绪锚，但牧原、温氏等中军尚未出现放量突破，低位涨停扩散有限。",
+        "白酒和金融多数走弱，尚未满足消费防御或金融权重的完整风格切换条件。"
+      ],
+      "source_files": [
+        "intraday.json"
+      ],
+      "watch_next": [
+        "看核心个股、ETF、后排扩散和尾盘承接是否同向确认。"
+      ],
+      "invalidation": "养殖/饲料/农林牧渔风险信号收敛、核心股重新放量承接，则风险降级。",
+      "tags": [
+        "金融/消费防御"
+      ],
+      "quality_flags": [],
+      "tone": "risk",
+      "discovery_type": "active_market_scan",
+      "evidence_score": 90,
+      "missing_evidence": [],
+      "next_action": "看核心个股、ETF、后排扩散和尾盘承接是否同向确认。",
+      "observation_source": "主动盘面扫描",
+      "independent_observation": true,
+      "signal_score": 100,
+      "signal_grade": "A",
+      "use_action": "可跟踪",
+      "use_reasons": [
+        "有可核验证据",
+        "有下一步验证",
+        "有证伪条件",
+        "有来源文件",
+        "证据链较完整"
+      ]
+    },
+    {
+      "title": "创新药/CRO",
+      "type": "theme",
+      "trigger_reason": "主动盘面扫描触发：涨跌停、炸板、尾盘承接或板块扩散出现可验证变化。",
+      "conclusion": "低位药股和创新药弹性仍有封板与大涨，但CXO及昨日中军普遍回落，板块由强主线降为强分歧。",
+      "confidence": "high",
+      "evidence": [
+        "哈药股份、永安药业、南华生物3只封板，博瑞医药+12.92%、海创药业+8.74%；哈药延续高度。",
+        "昭衍新药触板后回落至+7.72%，成交约22.98亿元，换手约6.76%，说明承接与兑现并存。",
+        "立方制药跌停；凯莱英-5.82%、科伦药业-3.02%、普洛药业-2.54%、百利天恒-1.88%，昨日核心负反馈明显。",
+        "医疗服务行业-2.92%，板块指数不共振；港股创新药正式开盘也从竞价高开回落至分化。"
+      ],
+      "source_files": [
+        "intraday.json"
+      ],
+      "watch_next": [
+        "看核心个股、ETF、后排扩散和尾盘承接是否同向确认。"
+      ],
+      "invalidation": "创新药/CRO风险信号收敛、核心股重新放量承接，则风险降级。",
+      "tags": [
+        "创新药/CRO",
+        "风控"
+      ],
+      "quality_flags": [],
+      "tone": "risk",
+      "discovery_type": "active_market_scan",
+      "evidence_score": 90,
+      "missing_evidence": [],
+      "next_action": "看核心个股、ETF、后排扩散和尾盘承接是否同向确认。",
+      "observation_source": "主动盘面扫描",
+      "independent_observation": true,
+      "signal_score": 100,
+      "signal_grade": "A",
+      "use_action": "可跟踪",
+      "use_reasons": [
+        "有可核验证据",
+        "有下一步验证",
+        "有证伪条件",
+        "有来源文件",
+        "证据链较完整"
+      ]
+    },
+    {
+      "title": "CPO/国产算力/PCB核心",
+      "type": "theme",
+      "trigger_reason": "主动盘面扫描触发：涨跌停、炸板、尾盘承接或板块扩散出现可验证变化。",
+      "conclusion": "成交额巨大的核心从低开中回拉，但没有涨停扩散，属于承接修复而非科技主线。",
+      "confidence": "high",
+      "evidence": [
+        "浪潮信息由低开约4.01%修复至+0.64%，成交18.49亿元；工业富联-0.63%。",
+        "中际旭创-2.03%、新易盛-2.52%，分别成交约56.31亿、41.39亿元，换手承接明显但仍未翻红。",
+        "PCB中景旺电子+3.69%、沪电股份+1.57%、鹏鼎+0.22%，但生益-0.58%、东山-1.11%、世运-1.25%、胜宏-2.45%，前排与后排分化。",
+        "通信设备行业-2.96%，没有涨停扩散；港股半导体与日韩科技链不共振。"
+      ],
+      "source_files": [
+        "intraday.json"
+      ],
+      "watch_next": [
+        "看核心个股、ETF、后排扩散和尾盘承接是否同向确认。"
+      ],
+      "invalidation": "CPO/国产算力/PCB核心风险信号收敛、核心股重新放量承接，则风险降级。",
+      "tags": [
+        "科技硬件链"
+      ],
+      "quality_flags": [],
+      "tone": "risk",
+      "discovery_type": "active_market_scan",
+      "evidence_score": 90,
+      "missing_evidence": [],
+      "next_action": "看核心个股、ETF、后排扩散和尾盘承接是否同向确认。",
+      "observation_source": "主动盘面扫描",
+      "independent_observation": true,
+      "signal_score": 100,
+      "signal_grade": "A",
+      "use_action": "可跟踪",
+      "use_reasons": [
+        "有可核验证据",
+        "有下一步验证",
+        "有证伪条件",
+        "有来源文件",
+        "证据链较完整"
+      ]
+    },
+    {
+      "title": "半导体设备/材料/零部件/存储",
+      "type": "theme",
+      "trigger_reason": "主动盘面扫描触发：涨跌停、炸板、尾盘承接或板块扩散出现可验证变化。",
+      "conclusion": "板块从竞价低点有局部回拉，但行业和A/H仍同步弱，跌停反馈未减少，扩产逻辑没有资金确认。",
+      "confidence": "high",
+      "evidence": [
+        "半导体行业-3.42%、电子化学品-2.87%、科创50-2.61%；德明利、华天科技、华微电子仍跌停。",
+        "江丰电子竞价-10.06%，澜起科技竞价-7.78%、兆易创新-4.99%，存储、封装和靶材负反馈集中。",
+        "设备相对样本：华润微-1.82%、斯达半导-2.10%、长川-2.42%、新洁能-2.49%、北方华创-2.61%、芯源微-2.61%；中微-3.15%、正帆-3.48%、华海清科-3.74%、安集-4.14%、中科飞测-4.36%、拓荆-4.72%。",
+        "港股澜起H-8.41%、兆易H-6.32%、华虹-5.79%、中芯-2.95%，日韩存储设备链早盘大跌，外部仍是风险共振。",
+        "没有半导体涨停和低位补涨扩散，设备中军只是相对少跌。"
+      ],
+      "source_files": [
+        "intraday.json"
+      ],
+      "watch_next": [
+        "看核心个股、ETF、后排扩散和尾盘承接是否同向确认。"
+      ],
+      "invalidation": "半导体设备/材料/零部件/存储风险信号收敛、核心股重新放量承接，则风险降级。",
+      "tags": [
+        "科技硬件链",
+        "风控"
+      ],
+      "quality_flags": [],
+      "tone": "risk",
+      "discovery_type": "active_market_scan",
+      "evidence_score": 100,
+      "missing_evidence": [],
+      "next_action": "看核心个股、ETF、后排扩散和尾盘承接是否同向确认。",
+      "observation_source": "主动盘面扫描",
+      "independent_observation": true,
+      "signal_score": 100,
+      "signal_grade": "A",
+      "use_action": "可跟踪",
+      "use_reasons": [
+        "有可核验证据",
+        "有下一步验证",
+        "有证伪条件",
+        "有来源文件",
+        "证据链较完整"
+      ]
+    },
+    {
+      "title": "电子布/玻纤",
+      "type": "theme",
+      "trigger_reason": "主动盘面扫描触发：涨跌停、炸板、尾盘承接或板块扩散出现可验证变化。",
+      "conclusion": "上游中军继续走弱，PCB仅少数核心修复，不满足板块有效反抽标准。",
+      "confidence": "high",
+      "evidence": [
+        "中国巨石-5.57%、国际复材-4.54%、中材科技-6.02%、宏和科技-4.68%，上游中军和电子布核心同步弱。",
+        "山东玻纤-2.33%、长海股份-2.26%、东材科技-0.95%、南玻A-1.29%，只有东材跌幅较小，未形成2至3只同步翻红。",
+        "兴业股份-5.25%、卓郎智能-2.89%、国风新材-1.52%，二排补涨没有确认。",
+        "下游PCB景旺+3.69%、沪电+1.57%，但胜宏-2.45%、东山-1.11%、生益-0.58%，只能说明部分核心承接。"
+      ],
+      "source_files": [
+        "intraday.json"
+      ],
+      "watch_next": [
+        "看核心个股、ETF、后排扩散和尾盘承接是否同向确认。"
+      ],
+      "invalidation": "电子布/玻纤风险信号收敛、核心股重新放量承接，则风险降级。",
+      "tags": [
+        "科技硬件链",
+        "风控"
+      ],
+      "quality_flags": [],
+      "tone": "risk",
+      "discovery_type": "active_market_scan",
+      "evidence_score": 83,
+      "missing_evidence": [
+        "缺少代表股验证"
+      ],
+      "next_action": "看核心个股、ETF、后排扩散和尾盘承接是否同向确认。",
+      "observation_source": "主动盘面扫描",
+      "independent_observation": true,
+      "signal_score": 100,
+      "signal_grade": "A",
+      "use_action": "可跟踪",
+      "use_reasons": [
+        "有可核验证据",
+        "有下一步验证",
+        "有证伪条件",
+        "有来源文件",
+        "有证据缺口"
+      ]
+    },
+    {
+      "title": "医药/CXO",
+      "type": "theme",
+      "trigger_reason": "主动盘面扫描触发：涨跌停、炸板、尾盘承接或板块扩散出现可验证变化。",
+      "conclusion": "资金博弈/强分歧",
+      "confidence": "high",
+      "evidence": [
+        "3只封板但1只跌停、CXO核心回落"
+      ],
+      "source_files": [
+        "intraday.json"
+      ],
+      "watch_next": [
+        "看核心个股、ETF、后排扩散和尾盘承接是否同向确认。"
+      ],
+      "invalidation": "医药/CXO风险信号收敛、核心股重新放量承接，则风险降级。",
+      "tags": [
+        "创新药/CRO",
+        "风控"
+      ],
+      "quality_flags": [],
+      "tone": "risk",
+      "discovery_type": "active_market_scan",
+      "evidence_score": 74,
+      "missing_evidence": [],
+      "next_action": "看核心个股、ETF、后排扩散和尾盘承接是否同向确认。",
+      "observation_source": "主动盘面扫描",
+      "independent_observation": true,
+      "signal_score": 84,
+      "signal_grade": "A",
+      "use_action": "可跟踪",
+      "use_reasons": [
+        "有可核验证据",
+        "有下一步验证",
+        "有证伪条件",
+        "有来源文件"
       ]
     }
   ],
@@ -833,9 +1133,108 @@
         "有来源文件",
         "有证据缺口"
       ]
+    },
+    {
+      "title": "风控验证",
+      "type": "verification",
+      "trigger_reason": "验证队列触发：前序结论需要用下一交易窗口确认或证伪。",
+      "conclusion": "强主线：只跟踪消费电子终端已封板的格林精密、国光电器、福蓉科技、道明光学及亿道/龙旗/传音的承接；若20cm开板、10cm炸板增加或行业跌幅扩大，等待二次确认，不追高。",
+      "confidence": "actionable",
+      "evidence": [],
+      "source_files": [
+        "intraday.json"
+      ],
+      "watch_next": [
+        "强主线：只跟踪消费电子终端已封板的格林精密、国光电器、福蓉科技、道明光学及亿道/龙旗/传音的承接；若20cm开板、10cm炸板增加或行业跌幅扩大，等待二次确认，不追高。"
+      ],
+      "invalidation": "条件不出现或反向出现，即撤销对应方向判断。",
+      "tags": [
+        "风控"
+      ],
+      "quality_flags": [],
+      "tone": "neutral",
+      "discovery_type": "verification_queue",
+      "evidence_score": 35,
+      "missing_evidence": [],
+      "next_action": "强主线：只跟踪消费电子终端已封板的格林精密、国光电器、福蓉科技、道明光学及亿道/龙旗/传音的承接；若20cm开板、10cm炸板增加或行业跌幅扩大，等待二次确认，不追高。",
+      "observation_source": "验证队列",
+      "independent_observation": true,
+      "signal_score": 60,
+      "signal_grade": "B",
+      "use_action": "等待确认",
+      "use_reasons": [
+        "缺少证据",
+        "有下一步验证",
+        "有证伪条件",
+        "有来源文件"
+      ]
+    },
+    {
+      "title": "金融/消费防御验证",
+      "type": "verification",
+      "trigger_reason": "验证队列触发：前序结论需要用下一交易窗口确认或证伪。",
+      "conclusion": "观察线：养殖/饲料需增加2只以上封板并由牧原、温氏持续带量，未扩散前不升级；安迪苏只是情绪锚。",
+      "confidence": "actionable",
+      "evidence": [],
+      "source_files": [
+        "intraday.json"
+      ],
+      "watch_next": [
+        "观察线：养殖/饲料需增加2只以上封板并由牧原、温氏持续带量，未扩散前不升级；安迪苏只是情绪锚。"
+      ],
+      "invalidation": "条件不出现或反向出现，即撤销对应方向判断。",
+      "tags": [
+        "金融/消费防御"
+      ],
+      "quality_flags": [],
+      "tone": "neutral",
+      "discovery_type": "verification_queue",
+      "evidence_score": 35,
+      "missing_evidence": [],
+      "next_action": "观察线：养殖/饲料需增加2只以上封板并由牧原、温氏持续带量，未扩散前不升级；安迪苏只是情绪锚。",
+      "observation_source": "验证队列",
+      "independent_observation": true,
+      "signal_score": 60,
+      "signal_grade": "B",
+      "use_action": "等待确认",
+      "use_reasons": [
+        "缺少证据",
+        "有下一步验证",
+        "有证伪条件",
+        "有来源文件"
+      ]
     }
   ],
-  "conflicts": [],
+  "conflicts": [
+    {
+      "theme": "养殖/饲料/农林牧渔",
+      "sections": [
+        "opportunities",
+        "risks"
+      ],
+      "verdict": "风险优先，只做验证",
+      "severity": "risk_first",
+      "action": "先按风险栏处理；只有风险收敛、核心股承接和数据质量恢复后，才允许从验证栏升级。",
+      "evidence": [
+        "机会：C级/降权观察，行业涨幅形成连续宽度，但封板集中度不足，暂不升级为强主线。",
+        "风险：A级/可跟踪，行业涨幅形成连续宽度，但封板集中度不足，暂不升级为强主线。"
+      ]
+    },
+    {
+      "theme": "金融/消费防御",
+      "sections": [
+        "opportunities",
+        "verifications"
+      ],
+      "verdict": "候选分歧，观察验证",
+      "severity": "watch",
+      "action": "保留验证，不升级为交易机会。",
+      "evidence": [
+        "机会：C级/降权观察，金融/消费防御 有新出现或轮动增强迹象，需看次日扩散确认。",
+        "验证：B级/等待确认，观察线：养殖/饲料需增加2只以上封板并由牧原、温氏持续带量，未扩散前不升级；安迪苏只是情绪锚。"
+      ]
+    }
+  ],
   "rules": [
     "每条机会/风险必须带 source_files；没有证据时置信度不得高于 low。",
     "机会只代表候选方向，必须经过下一步验证，不生成交易指令。",
