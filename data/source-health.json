@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-07-17T11:11:47+08:00",
+  "timestamp": "2026-07-17T11:13:18+08:00",
   "sources": {
     "tencent_http": {
       "status": "ok",
@@ -140,7 +140,7 @@
     "akshare_a_spot_watch_decode": {
       "status": "degraded",
       "usage": "盘中观察池/题材强度刷新补充行情源",
-      "checked_at": "2026-07-17T11:11:47+08:00",
+      "checked_at": "2026-07-17T11:13:18+08:00",
       "errors": [
         "本轮仍按本地监控单源输出，未取得可信行情源交叉验证；发布门禁要求撤下active candidate"
       ],
@@ -1878,14 +1878,13 @@
     },
     "local_monitor_log": {
       "status": "degraded_partial",
-      "last_check": "2026-07-17T11:11:47+08:00",
-      "usage": "盘中正式提醒解析与看板需复核观察",
-      "detail": "monitor.pid进程存活且monitor.log新鲜；11:10:11出现8192超节点/昇腾算力风险提醒，但未取得可信行情源交叉验证，且结构计数不可审计，alert.json按invalidated/需复核观察发布。",
-      "sample_count": 1,
+      "last_check": "2026-07-17T11:13:18+08:00",
+      "usage": "交易时段监控日志正式提醒扫描",
+      "detail": "monitor.pid=76627存活，monitor.log刷新正常；11:13:03发现存储芯片、封装、机器人/工业自动化三条小登risk提醒。因仅有本地监控单源证据且部分结构计数不可审计，alert.json写为invalidated/需复核观察。",
+      "sample_count": 3,
       "errors": [
-        "trusted cross-source quote verification unavailable",
-        "limit_down_count unavailable for structure trigger",
-        "risk candidate threshold not fully met"
+        "no trusted cross-source quote audit for 11:13:03 alerts",
+        "limit_down_count not auditable for structure-triggered alerts"
       ]
     },
     "tencent_full_market_intraday_0939_20260716": {
@@ -2390,10 +2389,10 @@
   "last_publish_attempt": "pending_20260717_0830_premarket_publish",
   "status": "degraded_partial",
   "last_error": {
-    "time": "2026-07-17T11:02:17+08:00",
-    "provider": "concept_ranking",
-    "message": "未取得可靠概念指数全榜。",
-    "action": "保留概念排行空数组，以结构池行业分布、申万行业和代表股成交完成归因。"
+    "time": "2026-07-17T11:13:18+08:00",
+    "provider": "local_monitor_log",
+    "message": "11:13:03三条risk提醒缺少可信交叉验证或可审计结构计数。",
+    "action": "保留本地产出并以invalidated状态发布到看板。"
   },
   "tencent_a_close_postmarket_20260716": {
     "status": "ok",
