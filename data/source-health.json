@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-07-17T11:27:45+08:00",
+  "timestamp": "2026-07-17T11:55:00+08:00",
   "sources": {
     "tencent_http": {
       "status": "ok",
@@ -2575,7 +2575,7 @@
     "errors": []
   },
   "overall_status": "degraded",
-  "last_codex_note": "11:00有效更新采用腾讯A/H行情与东方财富结构池；概念全榜及港股第二实时源缺失继续显式降级。",
+  "last_codex_note": "11:30午盘采用腾讯历史分钟线还原指数、98行业和重点样本；东方财富结构池精确家数停留在11:03，已显式降级，不用收盘池倒推午间总数。",
   "eastmoney_structure_pools_intraday_1000_20260717": {
     "status": "ok",
     "last_check": "2026-07-17T10:02:40+08:00",
@@ -2683,5 +2683,59 @@
     "errors": [
       "概念排行空返回/未通过可靠性校验"
     ]
+  },
+  "tencent_minute_midday_20260717": {
+    "status": "ok",
+    "last_check": "2026-07-17T11:55:00+08:00",
+    "usage": "11:30午间5个指数、重点股票与A/H样本历史分钟线",
+    "detail": "成功取得11:30分钟价、累计成交额、上午高低点和前收价；用于还原午间快照。",
+    "sample_count": 83,
+    "errors": []
+  },
+  "tencent_industry_minute_midday_20260717": {
+    "status": "ok",
+    "last_check": "2026-07-17T11:55:00+08:00",
+    "usage": "11:30全市场98个行业排名",
+    "detail": "批量取得98个有效行业代码，并用11:30分钟价相对前收计算行业涨跌幅；电力、公用事业领先，通信设备、元件、医疗服务垫底。",
+    "sample_count": 98,
+    "errors": []
+  },
+  "eastmoney_structure_pools_midday_20260717": {
+    "status": "degraded_stale_snapshot",
+    "last_check": "2026-07-17T11:55:00+08:00",
+    "usage": "11:30午间涨停、跌停、炸板结构",
+    "detail": "最后完整即时快照为11:02:35，涨停23、跌停38、炸板13；未取得11:30同刻结构池，保留旧快照并明确时间，不用收盘池倒推午间精确家数。",
+    "sample_count": 74,
+    "errors": [
+      "11:30 exact structure-pool snapshot unavailable"
+    ]
+  },
+  "concept_ranking_midday_20260717": {
+    "status": "degraded",
+    "last_check": "2026-07-17T11:55:00+08:00",
+    "usage": "11:30概念全榜",
+    "detail": "未取得可靠概念指数全榜；保留空数组，使用涨跌停结构、98行业排名和代表股成交归因。",
+    "sample_count": 0,
+    "errors": [
+      "概念排行未通过可靠性校验"
+    ]
+  },
+  "tencent_hk_minute_midday_20260717": {
+    "status": "degraded_single_source",
+    "last_check": "2026-07-17T11:55:00+08:00",
+    "usage": "恒指、恒科及港股半导体/创新药11:30映射",
+    "detail": "取得恒指、恒科、中芯、华虹、药明生物、康方生物11:30分钟线；缺少第二实时源，只用于方向映射。",
+    "sample_count": 6,
+    "errors": [
+      "缺少第二港股行情源交叉核验"
+    ]
+  },
+  "intraday_future_snapshot_quarantine_20260717": {
+    "status": "quarantined",
+    "last_check": "2026-07-17T11:55:00+08:00",
+    "usage": "延迟执行时段隔离",
+    "detail": "延迟执行期间自动刷新脚本曾写入晚于午盘事件时点的收盘后快照；该批次已从午盘文件隔离并以11:30历史分钟线覆盖。",
+    "sample_count": 0,
+    "errors": []
   }
 }
