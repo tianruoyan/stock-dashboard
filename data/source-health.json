@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-07-17T11:13:18+08:00",
+  "timestamp": "2026-07-17T11:21:32+08:00",
   "sources": {
     "tencent_http": {
       "status": "ok",
@@ -140,12 +140,12 @@
     "akshare_a_spot_watch_decode": {
       "status": "degraded",
       "usage": "盘中观察池/题材强度刷新补充行情源",
-      "checked_at": "2026-07-17T11:13:18+08:00",
+      "checked_at": "2026-07-17T11:21:18+08:00",
       "errors": [
-        "本轮仍按本地监控单源输出，未取得可信行情源交叉验证；发布门禁要求撤下active candidate"
+        "本轮主要使用本地监控单源，未取得可信行情源交叉验证；candidate仅作待确认展示"
       ],
-      "last_error": "active alert lacks trusted quote source proof",
-      "action": "本轮alert.json全部写为invalidated/需复核观察，不作为当前交易触发。"
+      "last_error": "candidate alerts lack trusted quote source proof",
+      "action": "构建门禁阻断active candidate；alert.json全部写为invalidated/需复核观察，不作为当前交易触发。"
     },
     "eastmoney_limit_pool_intraday_0930": {
       "status": "ok",
@@ -1878,13 +1878,13 @@
     },
     "local_monitor_log": {
       "status": "degraded_partial",
-      "last_check": "2026-07-17T11:13:18+08:00",
+      "last_check": "2026-07-17T11:21:18+08:00",
       "usage": "交易时段监控日志正式提醒扫描",
-      "detail": "monitor.pid=76627存活，monitor.log刷新正常；11:13:03发现存储芯片、封装、机器人/工业自动化三条小登risk提醒。因仅有本地监控单源证据且部分结构计数不可审计，alert.json写为invalidated/需复核观察。",
-      "sample_count": 3,
+      "detail": "monitor.pid=76627存活，monitor.log刷新正常；11:18:43-11:20:44发现11条新增正式提醒，其中光刻胶/光刻机催化与封装11:20:33满足本地risk candidate，其余因幅度/成交/结构计数不足列为需复核观察。 构建门禁不允许无交叉行情源的active candidate，已将11条alert全部降为invalidated/需复核观察。",
+      "sample_count": 11,
       "errors": [
-        "no trusted cross-source quote audit for 11:13:03 alerts",
-        "limit_down_count not auditable for structure-triggered alerts"
+        "no trusted cross-source quote audit for 11:20 candidate alerts",
+        "several structure-triggered alerts lack auditable limit_up_count/limit_down_count"
       ]
     },
     "tencent_full_market_intraday_0939_20260716": {
@@ -2389,10 +2389,10 @@
   "last_publish_attempt": "pending_20260717_0830_premarket_publish",
   "status": "degraded_partial",
   "last_error": {
-    "time": "2026-07-17T11:13:18+08:00",
-    "provider": "local_monitor_log",
-    "message": "11:13:03三条risk提醒缺少可信交叉验证或可审计结构计数。",
-    "action": "保留本地产出并以invalidated状态发布到看板。"
+    "time": "2026-07-17T11:21:32+08:00",
+    "provider": "build_dashboard_reports",
+    "message": "active candidate lacks trusted quote audit",
+    "action": "已降级为invalidated并准备重新发布。"
   },
   "tencent_a_close_postmarket_20260716": {
     "status": "ok",
