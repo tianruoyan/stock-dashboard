@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-07-17T11:00:51+08:00",
+  "timestamp": "2026-07-17T11:03:22+08:00",
   "sources": {
     "tencent_http": {
       "status": "ok",
@@ -2391,10 +2391,10 @@
   "last_publish_attempt": "pending_20260717_0830_premarket_publish",
   "status": "degraded_partial",
   "last_error": {
-    "time": "2026-07-17T10:32:56+08:00",
+    "time": "2026-07-17T11:02:17+08:00",
     "provider": "concept_ranking",
     "message": "未取得可靠概念指数全榜。",
-    "action": "保留概念排行空数组，以涨跌停行业分布、申万行业和代表股成交完成归因。"
+    "action": "保留概念排行空数组，以结构池行业分布、申万行业和代表股成交完成归因。"
   },
   "tencent_a_close_postmarket_20260716": {
     "status": "ok",
@@ -2576,7 +2576,7 @@
     "errors": []
   },
   "overall_status": "degraded",
-  "last_codex_note": "10:30有效更新采用腾讯A/H行情与东方财富结构池；概念全榜及港股第二实时源缺失继续显式降级。",
+  "last_codex_note": "11:00有效更新采用腾讯A/H行情与东方财富结构池；概念全榜及港股第二实时源缺失继续显式降级。",
   "eastmoney_structure_pools_intraday_1000_20260717": {
     "status": "ok",
     "last_check": "2026-07-17T10:02:40+08:00",
@@ -2642,6 +2642,42 @@
   "concept_ranking_intraday_1030_20260717": {
     "status": "degraded",
     "last_check": "2026-07-17T10:32:56+08:00",
+    "usage": "概念全榜",
+    "detail": "未取得可靠概念指数全榜；保留空数组，使用结构池行业分布和申万行业排名归因。",
+    "sample_count": 0,
+    "errors": [
+      "概念排行空返回/未通过可靠性校验"
+    ]
+  },
+  "eastmoney_structure_pools_intraday_1100_20260717": {
+    "status": "ok",
+    "last_check": "2026-07-17T11:02:35+08:00",
+    "usage": "涨停池、跌停池、炸板池结构统计",
+    "detail": "有效返回原始涨停23、跌停38、炸板13；涨停池含1只退市整理高波动样本。",
+    "sample_count": 74,
+    "errors": []
+  },
+  "tencent_a_quote_intraday_1100_20260717": {
+    "status": "ok",
+    "last_check": "2026-07-17T11:03:22+08:00",
+    "usage": "5个指数、98个申万行业、重点股票、成交额与日内高低点",
+    "detail": "行情字段有效；沪深成交额约14368.91亿元。",
+    "sample_count": 98,
+    "errors": []
+  },
+  "tencent_hk_quote_intraday_1100_20260717": {
+    "status": "degraded",
+    "last_check": "2026-07-17T11:03:22+08:00",
+    "usage": "恒指、恒科及半导体/AI/创新药A/H情绪映射",
+    "detail": "腾讯实时快照有效，但未取得第二实时源交叉核验，只用于方向性映射。",
+    "sample_count": 13,
+    "errors": [
+      "缺少第二实时港股行情源复核"
+    ]
+  },
+  "concept_ranking_intraday_1100_20260717": {
+    "status": "degraded",
+    "last_check": "2026-07-17T11:02:17+08:00",
     "usage": "概念全榜",
     "detail": "未取得可靠概念指数全榜；保留空数组，使用结构池行业分布和申万行业排名归因。",
     "sample_count": 0,
