@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-07-17T10:02:30+08:00",
+  "timestamp": "2026-07-17T10:06:42+08:00",
   "sources": {
     "tencent_http": {
       "status": "ok",
@@ -2383,10 +2383,10 @@
   "last_publish_attempt": "pending_20260717_0830_premarket_publish",
   "status": "degraded_partial",
   "last_error": {
-    "time": "2026-07-16T11:01:06+08:00",
-    "provider": "行情源/本地监控",
-    "message": "Can not decode value starting with character <",
-    "action": "下一轮自动重试；本轮alert仅按本地监控源candidate处理"
+    "time": "2026-07-17T10:05:02+08:00",
+    "provider": "concept_ranking",
+    "message": "未取得可靠概念指数全榜。",
+    "action": "保留概念排行空数组，使用结构池行业分布和腾讯申万行业排名完成题材归因。"
   },
   "tencent_a_close_postmarket_20260716": {
     "status": "ok",
@@ -2568,5 +2568,41 @@
     "errors": []
   },
   "overall_status": "degraded",
-  "last_codex_note": "10:02本地监控出现多条正式提醒，但可信行情双源验证不足；alert.json已按invalidated/需复核观察写入，避免无审计行情被标为candidate或confirmed。"
+  "last_codex_note": "10:00有效更新采用腾讯A/H行情与东方财富涨跌停/炸板结构；概念全榜和港股第二实时源缺失已显式降级，不编造数据。",
+  "eastmoney_structure_pools_intraday_1000_20260717": {
+    "status": "ok",
+    "last_check": "2026-07-17T10:02:40+08:00",
+    "usage": "涨停池、跌停池、炸板池结构统计",
+    "detail": "有效返回涨停22、跌停21、炸板8；仅用于东财独有盘面结构。",
+    "sample_count": 51,
+    "errors": []
+  },
+  "tencent_a_quote_intraday_1000_20260717": {
+    "status": "ok",
+    "last_check": "2026-07-17T10:06:42+08:00",
+    "usage": "指数、申万行业、重点股票、成交额与日内高低点",
+    "detail": "5个核心指数、98个行业和重点样本报价有效；沪深成交额约9163.27亿元。",
+    "sample_count": 98,
+    "errors": []
+  },
+  "tencent_hk_quote_intraday_1000_20260717": {
+    "status": "degraded",
+    "last_check": "2026-07-17T10:05:16+08:00",
+    "usage": "恒指、恒科及半导体/AI/创新药/汽车A/H情绪映射",
+    "detail": "腾讯实时快照有效，但未取得第二实时源交叉核验，只用于方向性映射。",
+    "sample_count": 18,
+    "errors": [
+      "缺少第二实时港股行情源复核"
+    ]
+  },
+  "concept_ranking_intraday_1000_20260717": {
+    "status": "degraded",
+    "last_check": "2026-07-17T10:05:02+08:00",
+    "usage": "概念全榜",
+    "detail": "未取得可靠概念指数全榜；改用涨跌停池行业分布、申万行业排名和代表股成交归因，不编造概念名次。",
+    "sample_count": 0,
+    "errors": [
+      "概念排行空返回/未通过可靠性校验"
+    ]
+  }
 }
