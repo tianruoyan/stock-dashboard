@@ -1,8 +1,8 @@
 {
-  "timestamp": "2026-07-17T09:19:45+08:00",
+  "timestamp": "2026-07-17T09:23:50+08:00",
   "current_signal_date": "2026-07-17",
   "status": "degraded",
-  "summary": "发现 967 个降级/需复核项（358 个交易阻断，95 个价格/行情复核，5 个信号复核，510 个背景复核），核心结论可看但必须按影响分层使用。",
+  "summary": "发现 969 个降级/需复核项（358 个交易阻断，97 个价格/行情复核，5 个信号复核，510 个背景复核），核心结论可看但必须按影响分层使用。",
   "issues": [
     {
       "severity": "warning",
@@ -70,36 +70,54 @@
     {
       "severity": "warning",
       "file": "premarket.json",
+      "path": "hk_auction.indices[0]",
+      "code": "bad_change_pct",
+      "message": "恒生指数 change_pct 非数字：None，该字段忽略并降权",
+      "impact_level": "price_review",
+      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
+    },
+    {
+      "severity": "warning",
+      "file": "premarket.json",
+      "path": "hk_auction.indices[1]",
+      "code": "bad_change_pct",
+      "message": "恒生科技指数 change_pct 非数字：None，该字段忽略并降权",
+      "impact_level": "price_review",
+      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
+    },
+    {
+      "severity": "warning",
+      "file": "premarket.json",
       "path": "hk_auction.mapping_chain[0]",
       "code": "bad_change_pct",
-      "message": "hk_auction.mapping_chain[0] change_pct 非数字：-1.44%/-7.03%（昨日收盘），该字段忽略并降权",
+      "message": "hk_auction.mapping_chain[0] change_pct 非数字：-3.23%/-4.17%，该字段忽略并降权",
       "impact_level": "price_review",
       "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
     },
     {
       "severity": "warning",
       "file": "premarket.json",
-      "path": "auction_summary.open_limit_down_stocks[0]",
-      "code": "watchlist_limit_down_like",
-      "message": "德明利 接近跌停 -10.0，需确认是否真实",
+      "path": "hk_auction.mapping_chain[1]",
+      "code": "bad_change_pct",
+      "message": "hk_auction.mapping_chain[1] change_pct 非数字：-1.60%/-3.11%，该字段忽略并降权",
       "impact_level": "price_review",
       "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
     },
     {
       "severity": "warning",
       "file": "premarket.json",
-      "path": "auction_summary.open_limit_down_stocks[1]",
-      "code": "watchlist_limit_down_like",
-      "message": "华天科技 接近跌停 -10.0，需确认是否真实",
+      "path": "hk_auction.mapping_chain[2]",
+      "code": "bad_change_pct",
+      "message": "hk_auction.mapping_chain[2] change_pct 非数字：-14.99%/+0.72%/+1.98%/+1.63%，该字段忽略并降权",
       "impact_level": "price_review",
       "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
     },
     {
       "severity": "warning",
       "file": "premarket.json",
-      "path": "auction_summary.representative_stocks[4]",
-      "code": "watchlist_limit_down_like",
-      "message": "江丰电子 接近跌停 -10.06，需确认是否真实",
+      "path": "hk_auction.mapping_chain[3]",
+      "code": "bad_change_pct",
+      "message": "hk_auction.mapping_chain[3] change_pct 非数字：0.00%/+1.06%/-1.18%/0.00%，该字段忽略并降权",
       "impact_level": "price_review",
       "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
     },
@@ -8787,10 +8805,10 @@
   ],
   "counts": {
     "critical": 0,
-    "warning": 967,
+    "warning": 969,
     "info": 1,
     "blocking": 358,
-    "price_review": 95,
+    "price_review": 97,
     "signal_review": 5,
     "background_review": 510
   },
