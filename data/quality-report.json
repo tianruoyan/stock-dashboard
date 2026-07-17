@@ -1,8 +1,8 @@
 {
-  "timestamp": "2026-07-17T09:34:53+08:00",
+  "timestamp": "2026-07-17T09:38:23+08:00",
   "current_signal_date": "2026-07-17",
   "status": "degraded",
-  "summary": "发现 969 个降级/需复核项（358 个交易阻断，97 个价格/行情复核，5 个信号复核，510 个背景复核），核心结论可看但必须按影响分层使用。",
+  "summary": "发现 970 个降级/需复核项（358 个交易阻断，98 个价格/行情复核，5 个信号复核，510 个背景复核），核心结论可看但必须按影响分层使用。",
   "issues": [
     {
       "severity": "warning",
@@ -118,6 +118,15 @@
       "path": "hk_auction.mapping_chain[3]",
       "code": "bad_change_pct",
       "message": "hk_auction.mapping_chain[3] change_pct 非数字：0.00%/+1.06%/-1.18%/0.00%，该字段忽略并降权",
+      "impact_level": "price_review",
+      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
+    },
+    {
+      "severity": "warning",
+      "file": "premarket.json",
+      "path": "auction_summary.open_limit_down_stocks[5]",
+      "code": "watchlist_limit_down_like",
+      "message": "德明利 接近跌停 -10.0，需确认是否真实",
       "impact_level": "price_review",
       "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
     },
@@ -8805,10 +8814,10 @@
   ],
   "counts": {
     "critical": 0,
-    "warning": 969,
+    "warning": 970,
     "info": 1,
     "blocking": 358,
-    "price_review": 97,
+    "price_review": 98,
     "signal_review": 5,
     "background_review": 510
   },
