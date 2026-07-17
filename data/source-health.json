@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-07-17T09:46:05+08:00",
+  "timestamp": "2026-07-17T09:52:40+08:00",
   "sources": {
     "tencent_http": {
       "status": "ok",
@@ -140,15 +140,12 @@
     "akshare_a_spot_watch_decode": {
       "status": "degraded",
       "usage": "盘中观察池/题材强度刷新补充行情源",
-      "checked_at": "2026-07-17T09:45:55+08:00",
+      "checked_at": "2026-07-17T09:51:44+08:00",
       "errors": [
-        "monitor.log 09:43:40 行情源异常：Can not decode value starting with character '<'",
-        "monitor.log 09:42:50 行情源异常：No value to decode",
-        "monitor.log 09:43:51/09:44:34 行情源异常：Response ended prematurely",
-        "monitor.log 09:45:27/09:45:52/09:45:55 行情源异常：Can not decode value starting with character '<'"
+        "monitor.log 09:51:44 行情源异常，本轮仍只按单源候选/失效分级"
       ],
-      "last_error": "Can not decode value starting with character '<' / Response ended prematurely / No value to decode",
-      "action": "本轮alert.json仅按本地监控单源写candidate/invalidated；confirmed仍需cross_source_verified=true；部分watch/结构触发已按门禁拦截。"
+      "last_error": "行情源异常；confirmed 需要等待 cross_source_verified=true",
+      "action": "alert.json已按candidate/invalidated分级，未写confirmed；放量类无价格确认则拦截。"
     },
     "eastmoney_limit_pool_intraday_0930": {
       "status": "ok",
