@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-07-17T11:24:45+08:00",
+  "timestamp": "2026-07-17T11:27:45+08:00",
   "sources": {
     "tencent_http": {
       "status": "ok",
@@ -140,11 +140,12 @@
     "akshare_a_spot_watch_decode": {
       "status": "degraded",
       "usage": "盘中观察池/题材强度刷新补充行情源",
-      "checked_at": "2026-07-17T11:24:45+08:00",
+      "checked_at": "2026-07-17T11:27:45+08:00",
       "errors": [
+        "Can not decode value starting with character <",
         "未取得可信行情源交叉验证；所有新增正式提醒仅作需复核观察"
       ],
-      "last_error": "alerts lack trusted quote source proof",
+      "last_error": "akshare decode failed / alerts lack trusted quote source proof",
       "action": "alert.json全部写为invalidated/需复核观察，不作为当前交易触发。"
     },
     "eastmoney_limit_pool_intraday_0930": {
@@ -1878,13 +1879,13 @@
     },
     "local_monitor_log": {
       "status": "degraded_partial",
-      "last_check": "2026-07-17T11:24:45+08:00",
+      "last_check": "2026-07-17T11:27:45+08:00",
       "usage": "交易时段监控日志正式提醒扫描",
-      "detail": "monitor.pid=76627存活，monitor.log刷新正常；11:23:07-11:24:28发现9条新增正式提醒。CPO、封装、CMP/靶材/材料耗材本地量价较强，但缺少可信交叉行情源，按构建门禁全部写为invalidated/需复核观察。",
-      "sample_count": 9,
+      "detail": "monitor.pid=76627存活，monitor.log刷新正常；11:24:47-11:26:57发现8条新增正式提醒。11:25科技硬件链/CPO/HBM/覆铜板出现本地上涨攻势，但11:26 CMP又快速回落；因缺少可信交叉行情源，全部写为invalidated/需复核观察。",
+      "sample_count": 8,
       "errors": [
         "no trusted cross-source quote audit",
-        "some structure-triggered alerts lack auditable limit_up_count/limit_down_count"
+        "行情源异常：Can not decode value starting with character <"
       ]
     },
     "tencent_full_market_intraday_0939_20260716": {
@@ -2389,10 +2390,10 @@
   "last_publish_attempt": "pending_20260717_0830_premarket_publish",
   "status": "degraded_partial",
   "last_error": {
-    "time": "2026-07-17T11:24:45+08:00",
-    "provider": "local_monitor_log",
-    "message": "新增正式提醒缺少可信交叉验证。",
-    "action": "按构建门禁降为invalidated并发布。"
+    "time": "2026-07-17T11:27:45+08:00",
+    "provider": "akshare_a_spot_watch_decode",
+    "message": "Can not decode value starting with character <",
+    "action": "保留本地监控单源输出，按构建门禁降级发布。"
   },
   "tencent_a_close_postmarket_20260716": {
     "status": "ok",
