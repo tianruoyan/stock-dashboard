@@ -1,0 +1,47 @@
+name: Deploy sanitized V2 share
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "v2-share/site.tar.gz.b64"
+      - ".github/workflows/v2-share-pages.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: v2-share-pages
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Configure GitHub Pages
+        uses: actions/configure-pages@v5
+
+      - name: Unpack sanitized read-only site
+        run: |
+          mkdir -p _site
+          base64 -d v2-share/site.tar.gz.b64 | tar -xzf - -C _site
+          touch _site/.nojekyll
+
+      - name: Upload GitHub Pages artifact
+        uses: actions/upload-pages-artifact@v4
+        with:
+          path: _site
+
+      - name: Deploy
+        id: deployment
+        uses: actions/deploy-pages@v4
