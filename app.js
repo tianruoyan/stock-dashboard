@@ -316,7 +316,17 @@ function dashboardMarketThemeSummary(intraday, postmarket) {
     .sort((a, b) => b.score - a.score)
     .map(row => row.display))
     .slice(0, 4);
-  return { priority: fallbackPriority, avoid, related };
+  const semiconductorSubtheme = rows
+    .map(row => row.display)
+    .find(name => /半导体硅片|半导体封装|半导体设备|半导体材料\/零部件/.test(name))
+    || (rows.some(row => /半导体/.test(row.text || row.display || "")) ? "半导体设备" : "");
+  if (semiconductorSubtheme) {
+    const renderedNames = [...fallbackPriority, ...avoid].map(item => item.display).join(" ");
+    if (!/半导体硅片|半导体封装|半导体设备|半导体材料\/零部件/.test(renderedNames)) {
+      avoid.unshift(...normalizeDashboardThemeList([semiconductorSubtheme]));
+    }
+  }
+  return { priority: fallbackPriority, avoid: avoid.slice(0, 4), related };
 }
 
 function dashboardConclusionMeta(latest) {
