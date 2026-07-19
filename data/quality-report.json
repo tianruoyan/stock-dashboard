@@ -1,8 +1,8 @@
 {
-  "timestamp": "2026-07-19T20:12:57+08:00",
+  "timestamp": "2026-07-19T20:25:39+08:00",
   "current_signal_date": "2026-07-19",
   "status": "degraded",
-  "summary": "发现 98 个降级/需复核项（87 个价格/行情复核，7 个信号复核，5 个背景复核），核心结论可看但必须按影响分层使用。",
+  "summary": "发现 93 个降级/需复核项（86 个价格/行情复核，3 个信号复核，4 个背景复核），核心结论可看但必须按影响分层使用。",
   "issues": [
     {
       "severity": "warning",
@@ -51,15 +51,6 @@
     },
     {
       "severity": "warning",
-      "file": "source-health.json",
-      "path": "",
-      "code": "stale_timestamp",
-      "message": "时间戳不是当前交易日：2026-07-17T11:55:00+08:00",
-      "impact_level": "price_review",
-      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
-    },
-    {
-      "severity": "warning",
       "file": "premarket.json",
       "path": "summary",
       "code": "schema_contract_missing",
@@ -87,42 +78,6 @@
     },
     {
       "severity": "warning",
-      "file": "evening-sentiment.json",
-      "path": "news[0]",
-      "code": "schema_contract_missing",
-      "message": "news[0].text 缺失",
-      "impact_level": "signal_review",
-      "decision_action": "机会信号必须降权并转入验证"
-    },
-    {
-      "severity": "warning",
-      "file": "evening-sentiment.json",
-      "path": "news[1]",
-      "code": "schema_contract_missing",
-      "message": "news[1].text 缺失",
-      "impact_level": "signal_review",
-      "decision_action": "机会信号必须降权并转入验证"
-    },
-    {
-      "severity": "warning",
-      "file": "evening-sentiment.json",
-      "path": "news[2]",
-      "code": "schema_contract_missing",
-      "message": "news[2].text 缺失",
-      "impact_level": "signal_review",
-      "decision_action": "机会信号必须降权并转入验证"
-    },
-    {
-      "severity": "warning",
-      "file": "evening-sentiment.json",
-      "path": "news[3]",
-      "code": "schema_contract_missing",
-      "message": "news[3].text 缺失",
-      "impact_level": "signal_review",
-      "decision_action": "机会信号必须降权并转入验证"
-    },
-    {
-      "severity": "warning",
       "file": "alert.json",
       "path": "",
       "code": "historical_alert_without_trusted_source",
@@ -138,15 +93,6 @@
       "message": "alert.json 存在盘中异动但缺少 quote_audit；当前阶段只降权参考，不阻断整站发布",
       "impact_level": "price_review",
       "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
-    },
-    {
-      "severity": "info",
-      "file": "evening-sentiment.json",
-      "path": "",
-      "code": "evening_not_current",
-      "message": "晚间舆情不是当前交易日，不参与今日总控",
-      "impact_level": "background_review",
-      "decision_action": "仅作背景复核，不单独阻断交易判断"
     },
     {
       "severity": "warning",
@@ -924,8 +870,8 @@
       "impact_level": "price_review",
       "label": "二次行情复核",
       "file": "source-health.json",
-      "code": "stale_timestamp",
-      "problem": "时间戳不是当前交易日：2026-07-17T11:55:00+08:00",
+      "code": "source_degraded",
+      "problem": "A股补充行情源解码异常，盘中异动和个股涨跌幅需以已审计源复核。",
       "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核",
       "next_step": "用第二行情源复核涨跌幅、quote_time 和代表股方向；未确认前只做验证。",
       "unblock_condition": "price_review=0 或相关来源标记 trusted/cross verified。"
@@ -966,12 +912,12 @@
   ],
   "counts": {
     "critical": 0,
-    "warning": 98,
-    "info": 1,
+    "warning": 93,
+    "info": 0,
     "blocking": 0,
-    "price_review": 87,
-    "signal_review": 7,
-    "background_review": 5
+    "price_review": 86,
+    "signal_review": 3,
+    "background_review": 4
   },
   "rules": [
     "异常文本、JSON解析失败、必需文件缺失为 critical。",
