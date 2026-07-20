@@ -1,18 +1,9 @@
 {
-  "timestamp": "2026-07-20T13:38:31+08:00",
+  "timestamp": "2026-07-20T13:43:49+08:00",
   "current_signal_date": "2026-07-20",
   "status": "degraded",
-  "summary": "发现 97 个降级/需复核项（2 个交易阻断，92 个价格/行情复核，1 个信号复核，3 个背景复核），核心结论可看但必须按影响分层使用。",
+  "summary": "发现 97 个降级/需复核项（2 个交易阻断，93 个价格/行情复核，1 个信号复核，2 个背景复核），核心结论可看但必须按影响分层使用。",
   "issues": [
-    {
-      "severity": "warning",
-      "file": "midday.json",
-      "path": "",
-      "code": "stale_timestamp",
-      "message": "时间戳不是当前交易日：2026-07-17T11:30:00+08:00",
-      "impact_level": "background_review",
-      "decision_action": "仅作背景复核，不单独阻断交易判断"
-    },
     {
       "severity": "warning",
       "file": "postmarket.json",
@@ -885,6 +876,15 @@
       "message": "concept_ranking_intraday_1100_20260720: 未取得通过可靠性校验的概念全榜；本轮使用涨跌停/炸板行业分布、496个行业排名和代表股成交归因，不编造概念名次。",
       "impact_level": "price_review",
       "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
+    },
+    {
+      "severity": "warning",
+      "file": "source-health.json",
+      "path": "",
+      "code": "source_degraded",
+      "message": "concept_ranking_midday_20260720: 未取得通过可靠性校验的概念全榜；使用涨跌停/炸板行业分布、496个行业排名和代表股成交归因，不编造概念名次。",
+      "impact_level": "price_review",
+      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
     }
   ],
   "action_plan": [
@@ -960,9 +960,9 @@
     "warning": 97,
     "info": 1,
     "blocking": 2,
-    "price_review": 92,
+    "price_review": 93,
     "signal_review": 1,
-    "background_review": 3
+    "background_review": 2
   },
   "rules": [
     "异常文本、JSON解析失败、必需文件缺失为 critical。",
