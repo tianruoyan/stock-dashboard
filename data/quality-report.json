@@ -1,8 +1,8 @@
 {
-  "timestamp": "2026-07-20T11:10:47+08:00",
+  "timestamp": "2026-07-20T11:12:29+08:00",
   "current_signal_date": "2026-07-20",
   "status": "degraded",
-  "summary": "发现 94 个降级/需复核项（91 个价格/行情复核，1 个信号复核，3 个背景复核），核心结论可看但必须按影响分层使用。",
+  "summary": "发现 95 个降级/需复核项（92 个价格/行情复核，1 个信号复核，3 个背景复核），核心结论可看但必须按影响分层使用。",
   "issues": [
     {
       "severity": "warning",
@@ -858,6 +858,15 @@
       "message": "eastmoney_open_limit_structure_20260720: 开盘涨停6只、开盘跌停9只（剔除退市整理股），差值-3；按约5300只估算占比0.11%和0.17%。接口为9:37后回溯开盘时间字段，非9:25实时快照。",
       "impact_level": "price_review",
       "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
+    },
+    {
+      "severity": "warning",
+      "file": "source-health.json",
+      "path": "",
+      "code": "source_degraded",
+      "message": "concept_ranking_intraday_1100_20260720: 未取得通过可靠性校验的概念全榜；本轮使用涨跌停/炸板行业分布、496个行业排名和代表股成交归因，不编造概念名次。",
+      "impact_level": "price_review",
+      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
     }
   ],
   "action_plan": [
@@ -930,10 +939,10 @@
   ],
   "counts": {
     "critical": 0,
-    "warning": 94,
+    "warning": 95,
     "info": 1,
     "blocking": 0,
-    "price_review": 91,
+    "price_review": 92,
     "signal_review": 1,
     "background_review": 3
   },

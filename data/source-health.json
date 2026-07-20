@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-07-20T10:37:06+08:00",
+  "timestamp": "2026-07-20T11:12:12+08:00",
   "sources": {
     "tencent_http": {
       "status": "ok",
@@ -2497,6 +2497,42 @@
       "errors": [
         "港股个股免费快照约延迟15分钟"
       ]
+    },
+    "tencent_a_quote_intraday_1100_20260720": {
+      "status": "ok",
+      "last_check": "2026-07-20T11:12:12+08:00",
+      "usage": "11:00指数、行业排行、观察池与专项样本",
+      "detail": "腾讯HTTP返回5个指数、496个行业代码和A股代表样本11:03有效报价。",
+      "sample_count": 99,
+      "errors": []
+    },
+    "eastmoney_limit_pool_intraday_1100_20260720": {
+      "status": "ok",
+      "last_check": "2026-07-20T11:12:12+08:00",
+      "usage": "11:00涨停池、跌停池、炸板池和行业分布",
+      "detail": "串行取得结构池：清洗后涨停48、跌停30、炸板21；最高5板、4只20cm涨停。",
+      "sample_count": 99,
+      "errors": []
+    },
+    "tencent_hk_http_intraday_1100_20260720": {
+      "status": "ok_indices_delayed_stocks",
+      "last_check": "2026-07-20T11:12:12+08:00",
+      "usage": "11:00港股指数和A/H映射样本",
+      "detail": "恒指、恒科取得11:03快照；港股个股约10:48，存在约15分钟延迟。",
+      "sample_count": 15,
+      "errors": [
+        "港股个股免费快照约延迟15分钟"
+      ]
+    },
+    "concept_ranking_intraday_1100_20260720": {
+      "status": "degraded",
+      "last_check": "2026-07-20T11:12:12+08:00",
+      "usage": "11:00全市场概念排行",
+      "detail": "未取得通过可靠性校验的概念全榜；本轮使用涨跌停/炸板行业分布、496个行业排名和代表股成交归因，不编造概念名次。",
+      "sample_count": 0,
+      "errors": [
+        "概念全榜未通过可靠性校验"
+      ]
     }
   },
   "last_publish_attempt": "pending_20260717_0830_premarket_publish",
@@ -2687,7 +2723,7 @@
     "errors": []
   },
   "overall_status": "degraded",
-  "last_codex_note": "11:30午盘采用腾讯历史分钟线还原指数、98行业和重点样本；东方财富结构池精确家数停留在11:03，已显式降级，不用收盘池倒推午间总数。",
+  "last_codex_note": "11:00结构池和A股行情有效；港股个股约延迟15分钟，概念全榜未通过校验，均已降级且未用于编造结论。",
   "eastmoney_structure_pools_intraday_1000_20260717": {
     "status": "ok",
     "last_check": "2026-07-17T10:02:40+08:00",
