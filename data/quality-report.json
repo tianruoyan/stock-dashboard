@@ -1,8 +1,8 @@
 {
-  "timestamp": "2026-07-20T14:59:19+08:00",
+  "timestamp": "2026-07-20T22:33:21+08:00",
   "current_signal_date": "2026-07-20",
   "status": "degraded",
-  "summary": "发现 101 个降级/需复核项（2 个交易阻断，97 个价格/行情复核，1 个信号复核，2 个背景复核），核心结论可看但必须按影响分层使用。",
+  "summary": "发现 100 个降级/需复核项（2 个交易阻断，97 个价格/行情复核，1 个背景复核），核心结论可看但必须按影响分层使用。",
   "issues": [
     {
       "severity": "warning",
@@ -78,15 +78,6 @@
     },
     {
       "severity": "warning",
-      "file": "evening-sentiment.json",
-      "path": "sentiment_summary",
-      "code": "schema_contract_missing",
-      "message": "sentiment_summary 缺失",
-      "impact_level": "signal_review",
-      "decision_action": "机会信号必须降权并转入验证"
-    },
-    {
-      "severity": "warning",
       "file": "alert.json",
       "path": "",
       "code": "historical_alert_without_trusted_source",
@@ -120,15 +111,6 @@
       "message": "alerts[1] 候选异动未达到最低短周期价格、方向占比和成交门槛，不得作为当前候选展示",
       "impact_level": "blocking",
       "decision_action": "禁止作为交易依据，需修复后重产"
-    },
-    {
-      "severity": "info",
-      "file": "evening-sentiment.json",
-      "path": "",
-      "code": "evening_not_current",
-      "message": "晚间舆情不是当前交易日，不参与今日总控",
-      "impact_level": "background_review",
-      "decision_action": "仅作背景复核，不单独阻断交易判断"
     },
     {
       "severity": "warning",
@@ -993,12 +975,12 @@
   ],
   "counts": {
     "critical": 0,
-    "warning": 101,
-    "info": 1,
+    "warning": 100,
+    "info": 0,
     "blocking": 2,
     "price_review": 97,
-    "signal_review": 1,
-    "background_review": 2
+    "signal_review": 0,
+    "background_review": 1
   },
   "rules": [
     "异常文本、JSON解析失败、必需文件缺失为 critical。",
