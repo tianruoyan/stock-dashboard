@@ -3175,6 +3175,9 @@ function renderAlertConfirmation(alert, confirmation, purpose) {
     return `<div class="alert-confirm"><b>为什么升级</b><span>${escapeHtml(alertConfirmReason(alert))}</span></div>`;
   }
   if (confirmation === "candidate") {
+    if (hasTrustedQuoteAudit(alert)) {
+      return `<div class="alert-confirm candidate"><b>行情已核验，仍待交易确认</b><span>代表股短周期方向与腾讯分钟行情一致；仍等待封单、后排扩散或ETF同向。</span></div>`;
+    }
     return `<div class="alert-confirm candidate"><b>还差确认</b><span>等待交叉行情源、封单/后排扩散或ETF同向确认。</span></div>`;
   }
   return `<div class="alert-resolution stale"><b>未达机会条件</b><span>缺少短周期价格、成交、扩散或 quote_audit 证明。</span></div>`;
