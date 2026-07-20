@@ -45,13 +45,13 @@
       "confirmation_level": "candidate",
       "source_watch_id": "科技硬件链",
       "quote_audit": {
-        "provider": "local_monitor_log",
+        "provider": "本地盘中监控、腾讯分钟行情",
         "quote_time": "2026-07-20T10:58:56+08:00",
         "pct_field": "3分钟涨跌幅",
         "sample_count": 3,
         "max_abs_leader_change_pct": 1.6,
         "sanity_checks": {
-          "cross_source_verified": false,
+          "cross_source_verified": true,
           "price_move_valid": true,
           "volume_valid": true,
           "direction_ratio_valid": true,
@@ -61,7 +61,50 @@
         "up_ratio": 0.89,
         "volume_ratio": 8.37,
         "relative_volume_vs_yesterday": 2.29,
-        "missing_confirmation": "还差第二行情源交叉验证，或结构化limit_up_count>=2；继续观察雅克科技、安集科技、华海清科是否维持前排，并向半导体扩产组合后排扩散。"
+        "missing_confirmation": "还差第二行情源交叉验证，或结构化limit_up_count>=2；继续观察雅克科技、安集科技、华海清科是否维持前排，并向半导体扩产组合后排扩散。",
+        "secondary_source": "腾讯分钟行情",
+        "secondary_verification": {
+          "state": "passed",
+          "checked_at": "2026-07-20T11:04:08+08:00",
+          "source": "腾讯分钟行情",
+          "reason": "代表股方向与幅度达到双源一致要求。",
+          "representatives": [
+            {
+              "股票": "雅克科技",
+              "代码": "002409.SZ",
+              "监控涨跌幅": 1.6,
+              "腾讯涨跌幅": 1.0365,
+              "起始分钟": "1055",
+              "结束分钟": "1058",
+              "方向一致": true,
+              "幅度一致": true
+            },
+            {
+              "股票": "安集科技",
+              "代码": "688019.SH",
+              "监控涨跌幅": 1.6,
+              "腾讯涨跌幅": 1.0061,
+              "起始分钟": "1055",
+              "结束分钟": "1058",
+              "方向一致": true,
+              "幅度一致": true
+            },
+            {
+              "股票": "华海清科",
+              "代码": "688120.SH",
+              "监控涨跌幅": 1.57,
+              "腾讯涨跌幅": 0.2127,
+              "起始分钟": "1055",
+              "结束分钟": "1058",
+              "方向一致": true,
+              "幅度一致": false
+            }
+          ],
+          "window_minutes": 3,
+          "direction_agreement_ratio": 1.0,
+          "magnitude_agreement_ratio": 0.6667,
+          "fingerprint": "24e22130629670dabcbc"
+        }
       },
       "source_status": "degraded_partial",
       "valid_until": "2026-07-20T11:03:56+08:00"
@@ -110,13 +153,13 @@
       "confirmation_level": "invalidated",
       "source_watch_id": "存储芯片",
       "quote_audit": {
-        "provider": "local_monitor_log",
+        "provider": "本地盘中监控、腾讯分钟行情",
         "quote_time": "2026-07-20T11:00:27+08:00",
         "pct_field": "3分钟涨跌幅",
         "sample_count": 3,
         "max_abs_leader_change_pct": 1.94,
         "sanity_checks": {
-          "cross_source_verified": false,
+          "cross_source_verified": true,
           "price_move_valid": true,
           "volume_valid": false,
           "direction_ratio_valid": true,
@@ -127,7 +170,50 @@
         "volume_ratio": 4.7,
         "relative_volume_vs_yesterday": 1.9,
         "missing_confirmation": "还差成交放大>=8x，或涨幅>=1.5%且成交>=5x；也缺少结构化limit_up_count和第二行情源验证。",
-        "invalidated_reason": "价格和上涨占比接近门槛，但成交确认不足，按机会候选门禁拦截。"
+        "invalidated_reason": "价格和上涨占比接近门槛，但成交确认不足，按机会候选门禁拦截。",
+        "secondary_source": "腾讯分钟行情",
+        "secondary_verification": {
+          "state": "passed",
+          "checked_at": "2026-07-20T11:04:08+08:00",
+          "source": "腾讯分钟行情",
+          "reason": "代表股方向与幅度达到双源一致要求。",
+          "representatives": [
+            {
+              "股票": "澜起科技",
+              "代码": "688008.SH",
+              "监控涨跌幅": 0.83,
+              "腾讯涨跌幅": 0.5663,
+              "起始分钟": "1057",
+              "结束分钟": "1100",
+              "方向一致": true,
+              "幅度一致": true
+            },
+            {
+              "股票": "兆易创新",
+              "代码": "603986.SH",
+              "监控涨跌幅": 1.94,
+              "腾讯涨跌幅": 0.4764,
+              "起始分钟": "1057",
+              "结束分钟": "1100",
+              "方向一致": true,
+              "幅度一致": false
+            },
+            {
+              "股票": "北京君正",
+              "代码": "300223.SZ",
+              "监控涨跌幅": 0.85,
+              "腾讯涨跌幅": 0.6001,
+              "起始分钟": "1057",
+              "结束分钟": "1100",
+              "方向一致": true,
+              "幅度一致": true
+            }
+          ],
+          "window_minutes": 3,
+          "direction_agreement_ratio": 1.0,
+          "magnitude_agreement_ratio": 0.6667,
+          "fingerprint": "ad9e6b44b9c2b031e510"
+        }
       },
       "valid_until": "2026-07-20T11:05:27+08:00"
     },
@@ -175,7 +261,7 @@
       "confirmation_level": "invalidated",
       "source_watch_id": "科技硬件链/支线风险",
       "quote_audit": {
-        "provider": "local_monitor_log",
+        "provider": "本地盘中监控、腾讯分钟行情",
         "quote_time": "2026-07-20T10:59:16+08:00",
         "pct_field": "3分钟涨跌幅",
         "sample_count": 12,
@@ -191,9 +277,63 @@
         "down_ratio": "71%/60%/100%/100%",
         "volume_ratio": "1.00x/10.50x/3.44x/1.00x",
         "missing_confirmation": "还差板块3分钟跌幅>=1.0%、成交放大>=5x且方向一致，或结构化limit_down_count>=2；也缺少第二行情源验证。",
-        "invalidated_reason": "多数价格字段未下跌或跌幅不足，成交确认不一致，结构计数不可审计。"
+        "invalidated_reason": "多数价格字段未下跌或跌幅不足，成交确认不一致，结构计数不可审计。",
+        "secondary_source": "腾讯分钟行情",
+        "secondary_verification": {
+          "state": "mismatch",
+          "checked_at": "2026-07-20T11:04:08+08:00",
+          "source": "腾讯分钟行情",
+          "reason": "腾讯分钟行情与监控源的方向或幅度不一致，维持待确认/失效。",
+          "representatives": [
+            {
+              "股票": "富创精密",
+              "代码": "688409.SH",
+              "监控涨跌幅": -0.9,
+              "腾讯涨跌幅": 1.6723,
+              "起始分钟": "1056",
+              "结束分钟": "1059",
+              "方向一致": false,
+              "幅度一致": false
+            },
+            {
+              "股票": "江海股份",
+              "代码": "002484.SZ",
+              "监控涨跌幅": 0.02,
+              "腾讯涨跌幅": 0.0152,
+              "起始分钟": "1056",
+              "结束分钟": "1059",
+              "方向一致": false,
+              "幅度一致": true
+            },
+            {
+              "股票": "光迅科技",
+              "代码": "002281.SZ",
+              "监控涨跌幅": 0.0,
+              "腾讯涨跌幅": 1.3391,
+              "起始分钟": "1056",
+              "结束分钟": "1059",
+              "方向一致": false,
+              "幅度一致": false
+            }
+          ],
+          "window_minutes": 3,
+          "direction_agreement_ratio": 0.0,
+          "magnitude_agreement_ratio": 0.3333,
+          "fingerprint": "3bf44b5333840077bccb"
+        }
       },
       "valid_until": "2026-07-20T11:04:16+08:00"
     }
-  ]
+  ],
+  "quote_audit": {
+    "provider": "本地盘中监控、腾讯分钟行情",
+    "quote_time": "2026-07-20T11:00:27+08:00",
+    "pct_field": "各异动卡标注的短周期涨跌幅",
+    "sanity_checks": {
+      "sample_count": 3,
+      "max_abs_leader_change_pct": 1.94,
+      "cross_source_verified": false,
+      "verified_alert_count": 2
+    }
+  }
 }
