@@ -1,41 +1,41 @@
 {
-  "timestamp": "2026-07-20T10:17:44+08:00",
+  "timestamp": "2026-07-20T10:27:13+08:00",
   "alerts": [
     {
-      "id": "monitor-20260720-101727-risk-supercapacitor-pullback",
-      "time": "2026-07-20T10:17:27+08:00",
-      "sector": "超级电容",
+      "id": "monitor-20260720-102458-risk-ccl-pullback",
+      "time": "2026-07-20T10:24:58+08:00",
+      "sector": "覆铜板",
       "type": "小登提醒-题材快速回落",
-      "reason": "超级电容触发快速回落提醒：板块3分钟涨跌幅-0.56%，下跌占比59%，3分钟成交放大3.20x，当前领跌为诺德股份、江海股份、艾华集团。该方向更多属于科技硬件链风险扩散的旁支，盘前汇总未列为强主线，判定为无消息支撑的资金试盘后转弱/局部风险释放；但未达到risk candidate最低门槛（3分钟跌幅需>=1.0%、下跌占比>=60%、成交放大>=5x），且日志未给出可审计limit_down_count>=2，只作为风险观察，不升级候选。",
+      "reason": "覆铜板再次触发快速回落提醒：板块3分钟涨跌幅-0.57%，下跌占比86%，3分钟成交放大2.12x，当前领跌为南亚新材、金安国纪、华正新材。对应盘前PCB/电子布与科技硬件链风险线，判定为消息兑现但扩散不足后的风险延续；但该条未达到risk candidate最低门槛（3分钟跌幅需>=1.0%、下跌占比>=60%、成交放大>=5x），且日志虽然文字提示>=2只跌停，但未提供可审计limit_down_count字段，只作为风险观察，不升级候选。",
       "leaders": [
         {
-          "name": "诺德股份",
-          "change_pct": -1.48,
-          "score": 64.0,
+          "name": "南亚新材",
+          "change_pct": -1.21,
+          "score": 68.4,
           "factors": [
-            "3分钟-1.48%",
-            "成交4.84x",
-            "日内-6.33%"
+            "3分钟-1.21%",
+            "成交5.29x",
+            "日内-11.27%"
           ]
         },
         {
-          "name": "江海股份",
-          "change_pct": -0.91,
-          "score": 59.8,
+          "name": "金安国纪",
+          "change_pct": 0.0,
+          "score": 44.8,
           "factors": [
-            "3分钟-0.91%",
-            "成交4.11x",
-            "日内-9.81%"
+            "3分钟0.00%",
+            "成交3.26x",
+            "日内-10.00%"
           ]
         },
         {
-          "name": "艾华集团",
-          "change_pct": -0.86,
-          "score": 55.8,
+          "name": "华正新材",
+          "change_pct": 0.0,
+          "score": 42.4,
           "factors": [
-            "3分钟-0.86%",
-            "成交3.45x",
-            "日内-9.53%"
+            "3分钟0.00%",
+            "成交2.74x",
+            "日内-10.00%"
           ]
         }
       ],
@@ -43,27 +43,27 @@
       "is_old_economy": false,
       "alert_class": "risk",
       "confirmation_level": "invalidated",
-      "source_watch_id": "科技硬件链",
+      "source_watch_id": "PCB-电子布",
       "quote_audit": {
         "provider": "local_monitor_log",
-        "quote_time": "2026-07-20T10:17:27+08:00",
+        "quote_time": "2026-07-20T10:24:58+08:00",
         "pct_field": "3分钟涨跌幅",
         "sample_count": 3,
-        "max_abs_leader_change_pct": 1.48,
+        "max_abs_leader_change_pct": 1.21,
         "sanity_checks": {
           "cross_source_verified": false,
           "price_move_valid": false,
           "volume_valid": false,
-          "direction_ratio_valid": false,
+          "direction_ratio_valid": true,
           "limit_down_count_valid": false
         },
-        "board_3m_change_pct": -0.56,
-        "down_ratio": 0.59,
-        "volume_ratio": 3.2,
-        "missing_confirmation": "还差板块3分钟跌幅>=1.0%、下跌占比>=60%、成交放大>=5x，或可审计limit_down_count>=2；也缺少第二行情源交叉验证。",
-        "invalidated_reason": "幅度、方向占比和成交均不足，且跌停结构计数不可审计，按候选异动门禁拦截，不写risk candidate。"
+        "board_3m_change_pct": -0.57,
+        "down_ratio": 0.86,
+        "volume_ratio": 2.12,
+        "missing_confirmation": "还差板块3分钟跌幅>=1.0%、成交放大>=5x，或结构化limit_down_count>=2；也缺少第二行情源交叉验证。",
+        "invalidated_reason": "幅度和成交不足，且跌停结构计数不可审计，按候选异动门禁拦截，不写risk candidate。"
       },
-      "valid_until": "2026-07-20T10:22:27+08:00"
+      "valid_until": "2026-07-20T10:29:58+08:00"
     }
   ]
 }
