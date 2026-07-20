@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-07-20T09:47:26+08:00",
+  "timestamp": "2026-07-20T10:15:06+08:00",
   "sources": {
     "tencent_http": {
       "status": "ok",
@@ -185,32 +185,30 @@
       ]
     },
     "eastmoney_limit_pool_intraday_1000": {
-      "status": "failed",
-      "last_check": "2026-07-10T10:58:28+08:00",
-      "usage": "10:00涨停池、跌停池、炸板池和板块结构",
-      "detail": "当前运行环境无法解析东方财富结构行情域名，未取得今日涨停池和板块结构。",
-      "sample_count": 0,
-      "errors": [
-        "Could not resolve host: push2ex.eastmoney.com"
-      ]
+      "status": "ok",
+      "last_check": "2026-07-20T10:15:06+08:00",
+      "usage": "10:00涨停池、跌停池、炸板池和行业分布",
+      "detail": "串行取得10:06结构池：清洗后涨停44、跌停17、炸板13；最高5板、6只20cm涨停。",
+      "sample_count": 74,
+      "errors": []
     },
     "tencent_a_quote_intraday_1000": {
-      "status": "failed",
-      "last_check": "2026-07-10T10:58:28+08:00",
-      "usage": "10:00盘中指数、ETF和观察池报价",
-      "detail": "当前运行环境无法解析腾讯行情域名，未生成任何今日指数或个股涨跌数据。",
-      "sample_count": 0,
-      "errors": [
-        "Could not resolve host: qt.gtimg.cn"
-      ]
+      "status": "ok",
+      "last_check": "2026-07-20T10:15:06+08:00",
+      "usage": "10:00指数、行业排行、观察池与专项样本",
+      "detail": "腾讯HTTP返回5个指数、496个行业代码及A股代表样本有效报价；指数由无模型服务继续刷新至约10:10。",
+      "sample_count": 99,
+      "errors": []
     },
     "tencent_hk_http_intraday_1000": {
-      "status": "ok",
-      "last_check": "2026-07-08T09:50:25+08:00",
-      "usage": "港股早盘指数与重点样本快照",
-      "detail": "恒指、恒科和互联网/半导体/创新药样本均返回有效快照。",
-      "sample_count": 15,
-      "errors": []
+      "status": "ok_indices_delayed_stocks",
+      "last_check": "2026-07-20T10:15:06+08:00",
+      "usage": "10:00港股指数和A/H映射样本",
+      "detail": "恒指、恒科指数取得10:06快照；港股个股免费行情约09:51，存在约15分钟延迟，仅作方向映射。",
+      "sample_count": 16,
+      "errors": [
+        "港股个股免费快照约延迟15分钟"
+      ]
     },
     "eastmoney_industry_rank_intraday_1000": {
       "status": "partial",
@@ -2464,6 +2462,14 @@
       "usage": "9:25指数与配置池开盘价回溯",
       "detail": "取得上证、深成、创业板、科创50、沪深300及设备材料、存储、CPO、AI应用、医药、白酒样本开盘价；9:30沪深首笔累计金额约224.46亿元，已标注含首分钟。",
       "sample_count": 55,
+      "errors": []
+    },
+    "tencent_industry_rank_intraday_1000": {
+      "status": "ok",
+      "last_check": "2026-07-20T10:15:06+08:00",
+      "usage": "10:00全市场行业强弱排序",
+      "detail": "成功取得496个行业代码；白酒、医疗服务、食品饮料、保险居前，元件、能源金属、电子化学品、自动化设备居后。",
+      "sample_count": 496,
       "errors": []
     }
   },

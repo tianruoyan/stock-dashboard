@@ -1,18 +1,9 @@
 {
-  "timestamp": "2026-07-20T10:14:35+08:00",
+  "timestamp": "2026-07-20T10:15:21+08:00",
   "current_signal_date": "2026-07-20",
   "status": "degraded",
-  "summary": "发现 102 个降级/需复核项（93 个价格/行情复核，1 个信号复核，9 个背景复核），核心结论可看但必须按影响分层使用。",
+  "summary": "发现 94 个降级/需复核项（91 个价格/行情复核，1 个信号复核，3 个背景复核），核心结论可看但必须按影响分层使用。",
   "issues": [
-    {
-      "severity": "warning",
-      "file": "intraday.json",
-      "path": "",
-      "code": "stale_timestamp",
-      "message": "时间戳不是当前交易日：2026-07-17T11:30:00+08:00",
-      "impact_level": "background_review",
-      "decision_action": "仅作背景复核，不单独阻断交易判断"
-    },
     {
       "severity": "warning",
       "file": "midday.json",
@@ -84,15 +75,6 @@
       "message": "hk_auction.mapping_chain[4] change_pct 非数字：0.00%/+3.93%/+3.80%，该字段忽略并降权",
       "impact_level": "price_review",
       "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
-    },
-    {
-      "severity": "warning",
-      "file": "topics.json",
-      "path": "",
-      "code": "stale_timestamp",
-      "message": "时间戳不是当前交易日：2026-07-19T20:12:00+08:00",
-      "impact_level": "background_review",
-      "decision_action": "仅作背景复核，不单独阻断交易判断"
     },
     {
       "severity": "warning",
@@ -190,24 +172,6 @@
       "path": "",
       "code": "source_failed",
       "message": "eastmoney_board_rank_intraday_0930: 东方财富行业/概念排行接口代理断开，本轮未采用板块排行；主线判断改用涨跌停结构池、腾讯样本和指数联动。",
-      "impact_level": "price_review",
-      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
-    },
-    {
-      "severity": "warning",
-      "file": "source-health.json",
-      "path": "",
-      "code": "source_failed",
-      "message": "eastmoney_limit_pool_intraday_1000: 当前运行环境无法解析东方财富结构行情域名，未取得今日涨停池和板块结构。",
-      "impact_level": "price_review",
-      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
-    },
-    {
-      "severity": "warning",
-      "file": "source-health.json",
-      "path": "",
-      "code": "source_failed",
-      "message": "tencent_a_quote_intraday_1000: 当前运行环境无法解析腾讯行情域名，未生成任何今日指数或个股涨跌数据。",
       "impact_level": "price_review",
       "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
     },
@@ -894,42 +858,6 @@
       "message": "eastmoney_open_limit_structure_20260720: 开盘涨停6只、开盘跌停9只（剔除退市整理股），差值-3；按约5300只估算占比0.11%和0.17%。接口为9:37后回溯开盘时间字段，非9:25实时快照。",
       "impact_level": "price_review",
       "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
-    },
-    {
-      "severity": "warning",
-      "file": "theme-shifts.json",
-      "path": "",
-      "code": "stale_theme_shifts",
-      "message": "theme-shifts 日期不是当前交易日：2026-07-19",
-      "impact_level": "background_review",
-      "decision_action": "仅作背景复核，不单独阻断交易判断"
-    },
-    {
-      "severity": "warning",
-      "file": "decision-feed.json",
-      "path": "opportunities[2]",
-      "code": "stale_relative_time",
-      "message": "opportunities[2] 含过期相对日期",
-      "impact_level": "background_review",
-      "decision_action": "仅作背景复核，不单独阻断交易判断"
-    },
-    {
-      "severity": "warning",
-      "file": "decision-feed.json",
-      "path": "opportunities[6]",
-      "code": "stale_relative_time",
-      "message": "opportunities[6] 含过期相对日期",
-      "impact_level": "background_review",
-      "decision_action": "仅作背景复核，不单独阻断交易判断"
-    },
-    {
-      "severity": "warning",
-      "file": "decision-feed.json",
-      "path": "opportunities[7]",
-      "code": "stale_relative_time",
-      "message": "opportunities[7] 含过期相对日期",
-      "impact_level": "background_review",
-      "decision_action": "仅作背景复核，不单独阻断交易判断"
     }
   ],
   "action_plan": [
@@ -992,9 +920,9 @@
       "priority": 4,
       "impact_level": "background_review",
       "label": "背景来源复核",
-      "file": "decision-feed.json",
-      "code": "stale_relative_time",
-      "problem": "opportunities[2] 含过期相对日期",
+      "file": "midday.json",
+      "code": "stale_timestamp",
+      "problem": "时间戳不是当前交易日：2026-07-17T11:30:00+08:00",
       "decision_action": "仅作背景复核，不单独阻断交易判断",
       "next_step": "补官方/交易所/公司公告来源；未补齐前不升级为核心依据。",
       "unblock_condition": "官方来源补齐或确认不影响交易触发。"
@@ -1002,12 +930,12 @@
   ],
   "counts": {
     "critical": 0,
-    "warning": 102,
+    "warning": 94,
     "info": 1,
     "blocking": 0,
-    "price_review": 93,
+    "price_review": 91,
     "signal_review": 1,
-    "background_review": 9
+    "background_review": 3
   },
   "rules": [
     "异常文本、JSON解析失败、必需文件缺失为 critical。",
