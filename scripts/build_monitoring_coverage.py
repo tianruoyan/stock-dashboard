@@ -205,7 +205,11 @@ def alert_fallback_checks(postmarket: dict[str, Any], intraday: dict[str, Any], 
 
 def market_breadth_text(postmarket: dict[str, Any], intraday: dict[str, Any]) -> str:
     mb = ((postmarket.get("index") or {}).get("market_breadth") or {}) if isinstance(postmarket, dict) else {}
-    sentiment = intraday.get("sentiment") or {} if isinstance(intraday, dict) else {}
+    if not isinstance(mb, dict):
+        mb = {}
+    sentiment = (intraday.get("sentiment") or {}) if isinstance(intraday, dict) else {}
+    if not isinstance(sentiment, dict):
+        sentiment = {}
     limit_up = mb.get("limit_up") or sentiment.get("limit_up_count")
     limit_down = mb.get("limit_down") or sentiment.get("limit_down_count")
     broken = mb.get("broken_board") or sentiment.get("broken_limit_count")

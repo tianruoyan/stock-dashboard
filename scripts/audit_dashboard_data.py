@@ -711,16 +711,46 @@ def validate_candidate_alert_evidence(
             move is not None and down_ratio is not None and volume is not None
             and move <= -1.0 and down_ratio >= 60 and volume >= 5
         )
-    if valid:
+    if valid or structured_candidate_evidence_valid(item, alert_class):
         return
-    severity = "critical" if alert_item_is_fresh(data, item, now, phase) else "warning"
+    fresh = alert_item_is_fresh(data, item, now, phase)
+    severity = "critical" if fresh else "warning"
+    code = "candidate_alert_evidence_weak" if fresh else "historical_candidate_alert_evidence_weak"
     issues.append(issue(
         severity,
         "alert.json",
-        "candidate_alert_evidence_weak",
+        code,
         f"alerts[{index}] 候选异动未达到最低短周期价格、方向占比和成交门槛，不得作为当前候选展示",
         f"alerts[{index}]",
     ))
+
+
+def structured_candidate_evidence_valid(item: dict[str, Any], alert_class: str) -> bool:
+    audit = item.get("quote_audit") if isinstance(item.get("quote_audit"), dict) else {}
+    sanity = audit.get("sanity_checks") if isinstance(audit.get("sanity_checks"), dict) else {}
+    if not all(sanity.get(key) is True for key in ("price_move_valid", "volume_valid", "direction_ratio_valid")):
+        return False
+    board_moves = numeric_values(audit.get("board_3m_change_pct"))
+    if alert_class == "opportunity":
+        return any(value >= 1.0 for value in board_moves)
+    if alert_class == "risk":
+        return any(value <= -1.0 for value in board_moves)
+    return False
+
+
+def numeric_values(value: Any) -> list[float]:
+    if isinstance(value, (int, float)) and not isinstance(value, bool):
+        number = float(value)
+        return [number] if math.isfinite(number) else []
+    values: list[float] = []
+    for raw in re.findall(r"[+-]?\d+(?:\.\d+)?", str(value or "")):
+        try:
+            number = float(raw)
+        except ValueError:
+            continue
+        if math.isfinite(number):
+            values.append(number)
+    return values
 
 
 def metric_value(text: str, pattern: str) -> float | None:
@@ -1115,6 +1145,8 @@ def issue_impact(code: str, file: str, message: str) -> tuple[str, str]:
         "candidate_alert_evidence_weak",
     }:
         return "blocking", "禁止作为交易依据，需修复后重产"
+    if code == "historical_candidate_alert_evidence_weak":
+        return "signal_review", "仅作历史复核，不得恢复为当前候选"
     if code in {"source_degraded", "source_failed"}:
         return "price_review", "价格/涨跌幅相关结论降权，需二次行情源复核"
     if code == "invalidated_source" or re.search(r"撤下|invalidated", text, re.I):

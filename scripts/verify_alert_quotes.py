@@ -18,6 +18,7 @@ from typing import Any, Callable, Dict, Iterable, List, Optional
 ROOT = Path(__file__).resolve().parents[1]
 ALERT_PATH = ROOT / "data" / "alert.json"
 WATCHLIST_PATH = ROOT / "config" / "watchlist.json"
+SOURCE_HEALTH_PATH = ROOT / "data" / "source-health.json"
 STATUS_PATH = ROOT / "logs" / "alert-quote-verifier-status.json"
 PENDING_PATH = ROOT / ".publish-pending"
 LOCK_PATH = ROOT / ".alert-quote-verify.lock"
@@ -36,6 +37,7 @@ def main() -> int:
     parser = argparse.ArgumentParser(description="用腾讯分钟行情复核当日新产生的 V1 盘中异动")
     parser.add_argument("--path", type=Path, default=ALERT_PATH)
     parser.add_argument("--watchlist", type=Path, default=WATCHLIST_PATH)
+    parser.add_argument("--source-health", type=Path, default=SOURCE_HEALTH_PATH)
     parser.add_argument("--now", help="测试用当前时间，ISO 8601")
     parser.add_argument("--dry-run", action="store_true")
     args = parser.parse_args()
@@ -50,12 +52,24 @@ def main() -> int:
         except BlockingIOError:
             print(json.dumps({"state": "skipped", "reason": "another_verifier_running"}, ensure_ascii=False))
             return 0
-        result = run(args.path, args.watchlist, now.astimezone(TZ), args.dry_run)
+        result = run(
+            args.path,
+            args.watchlist,
+            now.astimezone(TZ),
+            args.dry_run,
+            source_health_path=args.source_health,
+        )
     print(json.dumps(result, ensure_ascii=False))
     return 1 if result.get("state") == "failed" else 0
 
 
-def run(path: Path, watchlist_path: Path, now: datetime, dry_run: bool = False) -> Dict[str, Any]:
+def run(
+    path: Path,
+    watchlist_path: Path,
+    now: datetime,
+    dry_run: bool = False,
+    source_health_path: Path = SOURCE_HEALTH_PATH,
+) -> Dict[str, Any]:
     try:
         raw = path.read_bytes()
         payload = json.loads(raw.decode("utf-8"))
@@ -93,7 +107,10 @@ def run(path: Path, watchlist_path: Path, now: datetime, dry_run: bool = False) 
     before = canonical_json(payload)
     enriched = enrich_payload(payload, identity_map, lambda code: minute_rows.get(code, []), now)
     after = canonical_json(enriched)
-    changed = before != after
+    alert_changed = before != after
+    source_health_update = prepare_source_health_update(source_health_path, enriched)
+    source_health_changed = bool(source_health_update and source_health_update[2])
+    changed = alert_changed or source_health_changed
 
     states = [str((item.get("quote_audit") or {}).get("secondary_verification", {}).get("state") or "unprocessed") for item in enriched.get("alerts") or [] if isinstance(item, dict)]
     result = {
@@ -103,18 +120,31 @@ def run(path: Path, watchlist_path: Path, now: datetime, dry_run: bool = False) 
         "pending": sum(1 for state in states if state in {"pending", "unprocessed"}),
         "not_backfilled": states.count("too_late_no_backfill"),
         "changed": changed,
+        "alert_changed": alert_changed,
+        "source_health_changed": source_health_changed,
         "alert_count": len(alerts),
     }
     if not changed or dry_run:
         write_status(result)
         return result
 
-    current_raw = path.read_bytes()
-    if hashlib.sha256(current_raw).digest() != hashlib.sha256(raw).digest():
-        result.update({"state": "source_changed_retry", "changed": False})
-        write_status(result)
-        return result
-    write_atomic(path, enriched)
+    if alert_changed:
+        current_raw = path.read_bytes()
+        if hashlib.sha256(current_raw).digest() != hashlib.sha256(raw).digest():
+            result.update({"state": "source_changed_retry", "changed": False})
+            write_status(result)
+            return result
+        write_atomic(path, enriched)
+    if source_health_changed and source_health_update:
+        source_raw, source_payload, _ = source_health_update
+        try:
+            current_source_raw = source_health_path.read_bytes()
+        except OSError:
+            current_source_raw = b""
+        if hashlib.sha256(current_source_raw).digest() == hashlib.sha256(source_raw).digest():
+            write_atomic(source_health_path, source_payload)
+        else:
+            result["source_health_changed"] = False
     PENDING_PATH.touch()
     write_status(result)
     return result
@@ -149,6 +179,9 @@ def enrich_payload(
         audit = alert.get("quote_audit") if isinstance(alert.get("quote_audit"), dict) else {}
         previous = audit.get("secondary_verification") if isinstance(audit.get("secondary_verification"), dict) else {}
         if previous.get("fingerprint") == fingerprint and previous.get("state") in {"passed", "mismatch", "too_late_no_backfill", "different_trade_date", "insufficient_identity"}:
+            if previous.get("state") == "passed" and isinstance(audit.get("missing_confirmation"), str):
+                audit["missing_confirmation"] = remove_cross_source_missing(audit["missing_confirmation"])
+                alert["quote_audit"] = audit
             continue
         verification = verify_alert(alert, identity_map, minute_loader, now)
         verification["fingerprint"] = fingerprint
@@ -436,9 +469,58 @@ def as_float(value: Any) -> Optional[float]:
 
 
 def remove_cross_source_missing(value: str) -> str:
-    text = re.sub(r"[；;]?\s*(?:也)?缺少第二行情源交叉验证[。.]?", "", value)
+    text = re.sub(
+        r"(?:还差|仍缺少|(?:也)?缺少)第二行情源交叉验证\s*[，,]\s*或\s*",
+        "还需",
+        value,
+    )
+    text = re.sub(r"[；;]?\s*(?:还差|仍缺少|(?:也)?缺少)第二行情源交叉验证[。.]?", "", text)
     text = re.sub(r"[；;]\s*$", "", text).strip()
     return text or "第二行情源已核验；仍需满足卡片列出的价格、成交和扩散条件。"
+
+
+def prepare_source_health_update(path: Path, payload: Dict[str, Any]) -> Optional[tuple[bytes, Dict[str, Any], bool]]:
+    try:
+        raw = path.read_bytes()
+        source_health = json.loads(raw.decode("utf-8"))
+    except Exception:
+        return None
+    if not isinstance(source_health, dict):
+        return None
+    verifications = []
+    for alert in payload.get("alerts") or []:
+        if not isinstance(alert, dict):
+            continue
+        verification = ((alert.get("quote_audit") or {}).get("secondary_verification") or {})
+        if not isinstance(verification, dict) or verification.get("state") not in {"passed", "mismatch"}:
+            continue
+        if not verification.get("checked_at"):
+            continue
+        verifications.append(verification)
+    if not verifications:
+        return raw, source_health, False
+    latest_check = max(str(item.get("checked_at")) for item in verifications)
+    quote_count = sum(
+        1
+        for item in verifications
+        for row in item.get("representatives") or []
+        if isinstance(row, dict) and row.get("腾讯涨跌幅") is not None
+    )
+    passed_count = sum(item.get("state") == "passed" for item in verifications)
+    mismatch_count = sum(item.get("state") == "mismatch" for item in verifications)
+    sources = source_health.get("sources")
+    if not isinstance(sources, dict):
+        sources = {}
+        source_health["sources"] = sources
+    sources["tencent_minute_alert_verifier"] = {
+        "status": "ok",
+        "last_check": latest_check,
+        "usage": "盘中异动代表股第二行情源交叉验证",
+        "detail": f"腾讯分钟行情完成{len(verifications)}张异动卡复核：{passed_count}张一致、{mismatch_count}张不一致；不一致卡保持待确认或失效。",
+        "sample_count": quote_count,
+        "errors": [],
+    }
+    return raw, source_health, canonical_json(json.loads(raw.decode("utf-8"))) != canonical_json(source_health)
 
 
 def alert_fingerprint(alert: Dict[str, Any]) -> str:

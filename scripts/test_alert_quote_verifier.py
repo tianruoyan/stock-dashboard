@@ -3,7 +3,7 @@ from __future__ import annotations
 import unittest
 from datetime import datetime, timedelta, timezone
 
-from verify_alert_quotes import alert_needs_live_quotes, enrich_payload, minute_change
+from verify_alert_quotes import alert_needs_live_quotes, enrich_payload, minute_change, remove_cross_source_missing
 
 
 TZ = timezone(timedelta(hours=8))
@@ -61,6 +61,19 @@ class AlertQuoteVerifierTests(unittest.TestCase):
         payload = sample_payload([("甲公司", 2.0), ("乙公司", 1.5)])
         first = enrich_payload(payload, self.identity, self.loader, self.now)
         self.assertFalse(alert_needs_live_quotes(first["alerts"][0], self.now + timedelta(minutes=1)))
+
+    def test_passed_verification_removes_second_source_from_remaining_conditions(self) -> None:
+        payload = sample_payload([("甲公司", 2.0), ("乙公司", 1.5)])
+        first = enrich_payload(payload, self.identity, self.loader, self.now)
+        first["alerts"][0]["quote_audit"]["missing_confirmation"] = "还差第二行情源交叉验证，或结构化封板>=2；继续观察扩散。"
+        result = enrich_payload(first, self.identity, self.loader, self.now + timedelta(minutes=1))
+        remaining = result["alerts"][0]["quote_audit"]["missing_confirmation"]
+        self.assertNotIn("第二行情源", remaining)
+        self.assertIn("结构化封板", remaining)
+
+    def test_cross_source_missing_text_supports_both_phrasings(self) -> None:
+        self.assertEqual(remove_cross_source_missing("还差第二行情源交叉验证，或结构化封板>=2。"), "还需结构化封板>=2。")
+        self.assertEqual(remove_cross_source_missing("还差成交扩散；也缺少第二行情源交叉验证。"), "还差成交扩散")
 
 
 def rows(*values):
