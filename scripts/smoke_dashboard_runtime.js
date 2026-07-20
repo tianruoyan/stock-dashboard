@@ -373,6 +373,7 @@ async function main() {
   }
   checkDashboardConflictRendering(document, issues);
   checkDashboardThemeCards(document, issues);
+  checkWatchlistQuoteSemantics(document, issues);
   checkTraderViewLanguage(document, issues);
   checkDecisionCardNoEllipsis(document, issues);
   checkDashboardEffectiveTimeRendering(document, issues);
@@ -428,6 +429,44 @@ async function main() {
   writeReport(report);
   console.log(`${status}: ${report.summary}`);
   return status === "critical" ? 1 : 0;
+}
+
+function checkWatchlistQuoteSemantics(document, issues) {
+  const watchlist = readJsonIfExists("config/watchlist.json");
+  const intraday = readJsonIfExists("data/intraday.json");
+  const premarket = readJsonIfExists("data/premarket.json");
+  const rendered = normalizeRenderedText(document.getElementById("watchlist-decision")?.collectHtml() || "");
+  const watchRows = Array.isArray(watchlist.watch_only?.stocks) ? watchlist.watch_only.stocks : [];
+  const currentRows = Array.isArray(intraday.hk_market?.stocks) ? intraday.hk_market.stocks : [];
+  const indicativeRows = Array.isArray(premarket.hk_auction?.stocks) ? premarket.hk_auction.stocks : [];
+  const normalizeCode = value => {
+    const raw = String(value || "").toLowerCase();
+    if (/^hk\d+$/.test(raw)) return `hk${Number(raw.replace(/\D/g, ""))}`;
+    return raw;
+  };
+  const pctLabel = value => {
+    const numeric = Number(value);
+    if (!Number.isFinite(numeric)) return "";
+    const body = numeric.toFixed(2).replace(/\.?0+$/, "");
+    return `${numeric > 0 ? "+" : ""}${body}%`;
+  };
+
+  for (const stock of watchRows) {
+    const current = currentRows.find(row => normalizeCode(row.code) && normalizeCode(row.code) === normalizeCode(stock.code));
+    if (!current || !Number.isFinite(Number(current.pct ?? current.change_pct))) continue;
+    const expected = pctLabel(current.pct ?? current.change_pct);
+    if (expected && !rendered.includes(`${stock.name}强势·${expected}`) && Number(current.pct ?? current.change_pct) >= 3) {
+      issues.push(issue("critical", "watchlist_latest_quote_not_used", `${stock.name}观察池未使用同代码最新行情${expected}`, "watchlist-decision"));
+    }
+    const indicative = indicativeRows.find(row =>
+      String(row.name || "").includes(String(stock.name || "")) &&
+      /无成交|指示价|未成交|待成交/.test(`${row.status || ""} ${row.quote_state || ""}`)
+    );
+    const staleLabel = pctLabel(indicative?.change_pct ?? indicative?.pct);
+    if (staleLabel && staleLabel !== expected && rendered.includes(`${stock.name}强势·${staleLabel}`)) {
+      issues.push(issue("critical", "watchlist_indicative_quote_pollution", `${stock.name}观察池误用了无成交指示价${staleLabel}`, "watchlist-decision"));
+    }
+  }
 }
 
 main().then(code => process.exit(code)).catch(error => {

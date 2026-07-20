@@ -1927,7 +1927,7 @@ function stockSignal(stock, signals, pool) {
     .filter(signal => !(hasCurrentPostmarket() && signal.source === "alert"));
   const context = stockContextText(name, todaySignals, { includeCurrentData: true });
   const contextAll = stockContextText(name, signals, { includeCurrentData: false });
-  const latestChangePct = latestStockChangePct(name);
+  const latestChangePct = latestStockChangePct(stock);
   const changePct = Number.isFinite(latestChangePct) ? latestChangePct : stockChangePct(name, context);
   const volumeBadge = stockVolumeBadge(context);
   const hardEventRiskPattern = /减持|监管|问询|立案|处罚|澄清|业绩雷/;
@@ -1943,7 +1943,7 @@ function stockSignal(stock, signals, pool) {
     .filter(part => name && part.includes(name));
   const tagMatched = signals.filter(s => tags.some(t => t && s.text.includes(t)));
   const tagText = tagMatched.map(s => s.text).join(" ");
-  const updatedAt = latestStockSignalTimestamp(name, todaySignals) || latestStockDataTimestamp(name);
+  const updatedAt = latestStockSignalTimestamp(name, todaySignals) || latestStockDataTimestamp(stock);
   const strongTag = matchedStrongThemeTag(tags);
   const pressureTag = matchedPressureThemeTag(tags, signals);
   const directEventRisk = allDirectSegments.some(part => hardEventRiskPattern.test(part));
@@ -2018,7 +2018,7 @@ function currentDayDataTexts() {
     .map(([, data]) => JSON.stringify(data || {}));
 }
 
-function latestStockChangePct(name) {
+function latestStockChangePct(stock) {
   const currentDate = currentSignalDate();
   const currentAlert = currentDateAlertData(cached("data/alert.json"), currentDate);
   const sources = [
@@ -2030,15 +2030,19 @@ function latestStockChangePct(name) {
   ];
   for (const data of sources) {
     if (signalDate(data?.timestamp) !== currentDate) continue;
-    const value = stockChangePct(name, JSON.stringify(data || {}));
+    const quote = exactStockQuote(stock, data);
+    if (quote) return quote.changePct;
+  }
+  for (const data of sources) {
+    if (signalDate(data?.timestamp) !== currentDate) continue;
+    const value = stockChangePct(stock?.name || "", JSON.stringify(data || {}));
     if (Number.isFinite(value)) return value;
   }
   return NaN;
 }
 
-function latestStockDataTimestamp(name) {
+function latestStockDataTimestamp(stock) {
   const currentDate = currentSignalDate();
-  const cleanName = displayStockName(name);
   const currentAlert = currentDateAlertData(cached("data/alert.json"), currentDate);
   const sources = [
     cached("data/postmarket.json"),
@@ -2047,9 +2051,58 @@ function latestStockDataTimestamp(name) {
     cached("data/premarket.json"),
     ...(hasCurrentPostmarket() ? [] : [currentAlert])
   ];
+  const quoteTimes = sources
+    .filter(data => signalDate(data?.timestamp) === currentDate)
+    .map(data => exactStockQuote(stock, data))
+    .filter(Boolean)
+    .map(quote => ({ timestamp: quote.quoteTime }));
+  if (quoteTimes.length) return latestTimestamp(quoteTimes);
+  const cleanName = displayStockName(stock?.name || "");
   return latestTimestamp(sources
     .filter(data => signalDate(data?.timestamp) === currentDate && JSON.stringify(data || {}).includes(cleanName))
     .map(data => ({ timestamp: data.timestamp })));
+}
+
+function exactStockQuote(stock, data) {
+  if (!stock || !data || typeof data !== "object") return null;
+  const targetCode = normalizeStockCodeForMatch(stock.code);
+  const targetName = normalizeQuoteStockName(stock.name);
+  const matches = [];
+
+  function visit(value, inheritedTime = "") {
+    if (Array.isArray(value)) {
+      value.forEach(item => visit(item, inheritedTime));
+      return;
+    }
+    if (!value || typeof value !== "object") return;
+    const rowTime = value.stock_quote_as_of || value.quote_time || value.as_of || value.timestamp || inheritedTime;
+    const rowCode = normalizeStockCodeForMatch(value.code || value.stock_code || value.symbol);
+    const rowName = normalizeQuoteStockName(value.name || value.stock_name || value.stock);
+    const codeMatched = Boolean(targetCode && rowCode && targetCode === rowCode);
+    const nameMatched = Boolean(targetName && rowName && targetName === rowName);
+    const semantics = [value.status, value.state, value.quote_state, value.metric_state, value.source_note]
+      .filter(Boolean).join(" ");
+    const invalidIndicative = /无成交|指示价|未成交|待成交/.test(semantics);
+    const rawPct = value.stock_change_pct ?? value.change_pct ?? value.pct;
+    const changePct = Number(rawPct);
+    if ((codeMatched || nameMatched) && Number.isFinite(changePct) && !invalidIndicative) {
+      matches.push({ changePct, quoteTime: rowTime || "", codeMatched });
+    }
+    Object.values(value).forEach(item => visit(item, rowTime));
+  }
+
+  visit(data, data.timestamp || "");
+  matches.sort((a, b) => {
+    if (a.codeMatched !== b.codeMatched) return a.codeMatched ? -1 : 1;
+    return (Date.parse(b.quoteTime || "") || 0) - (Date.parse(a.quoteTime || "") || 0);
+  });
+  return matches[0] || null;
+}
+
+function normalizeQuoteStockName(name) {
+  return displayStockName(name)
+    .replace(/[（(](?:SH|SZ|BJ|HK)?\d+[）)]$/i, "")
+    .trim();
 }
 
 function latestStockSignalTimestamp(name, signals) {
@@ -2062,12 +2115,13 @@ function latestStockSignalTimestamp(name, signals) {
 function stockChangePct(name, context) {
   const cleanName = escapeRegExp(displayStockName(name));
   const text = String(context || "");
-  const objectMatches = [...text.matchAll(new RegExp(`\\{[^{}]{0,260}"name"\\s*:\\s*"[^"]*${cleanName}[^"]*"[^{}]{0,520}\\}`, "g"))];
+  const objectMatches = [...text.matchAll(new RegExp(`\\{[^{}]{0,260}"name"\\s*:\\s*"${cleanName}"[^{}]{0,520}\\}`, "g"))];
   const objectValues = objectMatches.map(match => {
     const objectText = match[0] || "";
+    if (/无成交|指示价|未成交|待成交/.test(objectText)) return NaN;
     const dayPct = objectText.match(/日内(?:涨跌幅|涨幅|跌幅)\s*(-?\d+(?:\.\d+)?)%/);
     if (dayPct) return Number(dayPct[1]);
-    const exact = objectText.match(/"change_pct"\s*:\s*(-?\d+(?:\.\d+)?)/);
+    const exact = objectText.match(/"(?:stock_change_pct|change_pct|pct)"\s*:\s*(-?\d+(?:\.\d+)?)/);
     return exact ? Number(exact[1]) : NaN;
   }).filter(Number.isFinite);
   if (objectValues.length) return objectValues[objectValues.length - 1];
@@ -2252,7 +2306,7 @@ function inferredStockTags(stock) {
 
 function normalizeStockCodeForMatch(code) {
   const raw = String(code || "").toLowerCase();
-  if (/^hk\d+/.test(raw)) return raw;
+  if (/^hk\d+/.test(raw)) return `hk${Number(raw.replace(/\D/g, ""))}`;
   if (/^(sh|sz|bj)\d{6}$/.test(raw)) return raw;
   const digits = raw.replace(/\D/g, "");
   if (digits.length !== 6) return raw;
@@ -2391,7 +2445,7 @@ function hasLargeGain(text, threshold) {
 }
 
 function isConditionalSignal(text) {
-  return /若|如果|是否|能否|等待|观察|看|需|需要|验证|不能|未|不构成|不升级/.test(String(text || ""));
+  return /若|如果|是否|能否|等待|观察|看|需|需要|验证|不能|未|不构成|不升级|无成交|指示价|待成交/.test(String(text || ""));
 }
 
 function collectSignalText() {
