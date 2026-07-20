@@ -1,9 +1,27 @@
 {
-  "timestamp": "2026-07-20T14:09:50+08:00",
+  "timestamp": "2026-07-20T14:22:08+08:00",
   "current_signal_date": "2026-07-20",
   "status": "degraded",
-  "summary": "发现 97 个降级/需复核项（2 个交易阻断，93 个价格/行情复核，1 个信号复核，2 个背景复核），核心结论可看但必须按影响分层使用。",
+  "summary": "发现 100 个降级/需复核项（2 个交易阻断，96 个价格/行情复核，1 个信号复核，2 个背景复核），核心结论可看但必须按影响分层使用。",
   "issues": [
+    {
+      "severity": "warning",
+      "file": "intraday.json",
+      "path": "semiconductor_five_tracking.strength_ranking[2]",
+      "code": "watchlist_limit_down_like",
+      "message": "雅克科技 接近跌停 -10.0，需确认是否真实",
+      "impact_level": "price_review",
+      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
+    },
+    {
+      "severity": "warning",
+      "file": "intraday.json",
+      "path": "semiconductor_five_tracking.strength_ranking[4]",
+      "code": "watchlist_limit_down_like",
+      "message": "富创精密 接近跌停 -10.15，需确认是否真实",
+      "impact_level": "price_review",
+      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
+    },
     {
       "severity": "warning",
       "file": "postmarket.json",
@@ -885,6 +903,15 @@
       "message": "concept_ranking_midday_20260720: 未取得通过可靠性校验的概念全榜；使用涨跌停/炸板行业分布、496个行业排名和代表股成交归因，不编造概念名次。",
       "impact_level": "price_review",
       "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
+    },
+    {
+      "severity": "warning",
+      "file": "source-health.json",
+      "path": "",
+      "code": "source_degraded",
+      "message": "concept_ranking_intraday_1400_20260720: 未取得通过可靠性校验的概念全榜；使用结构池行业分布、腾讯行业排行和代表股成交归因，不编造概念名次。",
+      "impact_level": "price_review",
+      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
     }
   ],
   "action_plan": [
@@ -906,6 +933,17 @@
       "file": "alert.json",
       "code": "historical_alert_without_trusted_source",
       "problem": "盘中异动缺少可信源证明；当前阶段只降权参考，不阻断整站发布",
+      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核",
+      "next_step": "用第二行情源复核涨跌幅、quote_time 和代表股方向；未确认前只做验证。",
+      "unblock_condition": "price_review=0 或相关来源标记 trusted/cross verified。"
+    },
+    {
+      "priority": 2,
+      "impact_level": "price_review",
+      "label": "二次行情复核",
+      "file": "intraday.json",
+      "code": "watchlist_limit_down_like",
+      "problem": "雅克科技 接近跌停 -10.0，需确认是否真实",
       "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核",
       "next_step": "用第二行情源复核涨跌幅、quote_time 和代表股方向；未确认前只做验证。",
       "unblock_condition": "price_review=0 或相关来源标记 trusted/cross verified。"
@@ -942,25 +980,14 @@
       "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核",
       "next_step": "用第二行情源复核涨跌幅、quote_time 和代表股方向；未确认前只做验证。",
       "unblock_condition": "price_review=0 或相关来源标记 trusted/cross verified。"
-    },
-    {
-      "priority": 3,
-      "impact_level": "signal_review",
-      "label": "信号结构复核",
-      "file": "evening-sentiment.json",
-      "code": "schema_contract_missing",
-      "problem": "sentiment_summary 缺失",
-      "decision_action": "机会信号必须降权并转入验证",
-      "next_step": "修正字段结构、证据、触发原因和升级条件；未通过前降权展示。",
-      "unblock_condition": "signal_review=0，decision-feed/核心 JSON 契约通过。"
     }
   ],
   "counts": {
     "critical": 0,
-    "warning": 97,
+    "warning": 100,
     "info": 1,
     "blocking": 2,
-    "price_review": 93,
+    "price_review": 96,
     "signal_review": 1,
     "background_review": 2
   },

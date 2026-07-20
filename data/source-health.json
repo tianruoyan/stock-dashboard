@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-07-20T13:43:40+08:00",
+  "timestamp": "2026-07-20T14:21:52+08:00",
   "sources": {
     "tencent_http": {
       "status": "ok",
@@ -2577,6 +2577,42 @@
       "errors": [
         "概念全榜未通过可靠性校验"
       ]
+    },
+    "tencent_a_quote_intraday_1400_20260720": {
+      "status": "ok",
+      "last_check": "2026-07-20T14:21:52+08:00",
+      "usage": "14:10至14:20五大指数、98个有效行业与A股代表样本",
+      "detail": "腾讯HTTP返回指数、行业和观察样本实时价；14:20上证-0.06%、深证-1.68%、创业板-1.17%、科创50-2.64%、沪深300+0.39%。",
+      "sample_count": 76,
+      "errors": []
+    },
+    "eastmoney_structure_pools_intraday_1400_20260720": {
+      "status": "ok",
+      "last_check": "2026-07-20T14:21:52+08:00",
+      "usage": "14:09涨停池、跌停池、炸板池及行业分布",
+      "detail": "串行取得并清洗结构池：涨停41、跌停182、炸板41；最高3板、4只20cm涨停。",
+      "sample_count": 264,
+      "errors": []
+    },
+    "tencent_hk_quote_intraday_1400_20260720": {
+      "status": "degraded_single_source",
+      "last_check": "2026-07-20T14:21:52+08:00",
+      "usage": "13:56恒指、恒科及A/H映射样本",
+      "detail": "腾讯港股HTTP返回14个指数/个股方向性快照，缺少第二实时源交叉校验。",
+      "sample_count": 14,
+      "errors": [
+        "缺少第二港股实时行情源交叉校验"
+      ]
+    },
+    "concept_ranking_intraday_1400_20260720": {
+      "status": "degraded",
+      "last_check": "2026-07-20T14:21:52+08:00",
+      "usage": "14:00全市场概念排行",
+      "detail": "未取得通过可靠性校验的概念全榜；使用结构池行业分布、腾讯行业排行和代表股成交归因，不编造概念名次。",
+      "sample_count": 0,
+      "errors": [
+        "概念全榜未通过可靠性校验"
+      ]
     }
   },
   "last_publish_attempt": "pending_20260717_0830_premarket_publish",
@@ -2767,7 +2803,7 @@
     "errors": []
   },
   "overall_status": "degraded",
-  "last_codex_note": "11:30 A股午收行情、精确分钟价和东财结构池有效；港股快照为单源，概念全榜未通过校验，均已降级且未用于编造结论。",
+  "last_codex_note": "14:00 A股腾讯指数/行业/代表股与东财涨跌停、炸板结构池有效；港股为腾讯单源，概念全榜未通过校验，已降级且未用于编造结论。",
   "eastmoney_structure_pools_intraday_1000_20260717": {
     "status": "ok",
     "last_check": "2026-07-17T10:02:40+08:00",
