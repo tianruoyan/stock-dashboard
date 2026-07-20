@@ -1,15 +1,15 @@
 {
-  "timestamp": "2026-07-20T11:18:54+08:00",
+  "timestamp": "2026-07-20T13:38:31+08:00",
   "current_signal_date": "2026-07-20",
   "target_trade_date": "2026-07-20",
-  "overall_status": "waiting",
-  "summary": "6 个自动化尚未到产出窗口：盘中全景、盘中异动、午盘分析、盘后复盘。",
+  "overall_status": "degraded",
+  "summary": "1 个自动化产出异常：午盘分析。",
   "counts": {
     "ok": 1,
-    "late": 0,
+    "late": 1,
     "missing": 0,
     "invalidated": 0,
-    "waiting": 6
+    "waiting": 5
   },
   "processes": [
     {
@@ -73,16 +73,21 @@
       "due": "11:30",
       "deadline": "2026-07-20T12:00:00+08:00",
       "timestamp": "2026-07-17T11:30:00+08:00",
-      "status": "waiting",
+      "status": "late",
       "blocking": false,
-      "action": "等待产出",
-      "reason": "计划 11:30 后产出",
-      "failure_type": "not_due",
-      "diagnosis": "尚未到该自动化的计划产出窗口。",
+      "action": "重跑该自动化",
+      "reason": "时间戳不是当前交易日：2026-07-17T11:30:00+08:00",
+      "failure_type": "stale_or_time_anomaly",
+      "diagnosis": "时间戳不是当前交易日：2026-07-17T11:30:00+08:00",
       "next_actions": [
-        "到 11:30 后再检查是否产出。"
+        "核对文件 timestamp 是否由自动化真实写入。",
+        "重跑自动化，避免使用上一交易日或异常超前数据。"
       ],
-      "related_sources": []
+      "related_sources": [
+        "ths_sina_or_akshare_quote_decode",
+        "eastmoney_hk_akshare",
+        "tencent_hk_auction_http"
+      ]
     },
     {
       "id": "postmarket",
@@ -141,11 +146,11 @@
   ],
   "next_session_readiness": {
     "target_trade_date": "2026-07-20",
-    "status": "pending",
-    "summary": "2026-07-20 开盘链路待产出：午盘分析 11:30。",
-    "pending_count": 3,
+    "status": "overdue",
+    "summary": "2026-07-20 有 1 个产出已过窗口未更新。",
+    "pending_count": 2,
     "ready_count": 4,
-    "overdue_count": 0,
+    "overdue_count": 1,
     "items": [
       {
         "id": "premarket",
@@ -191,9 +196,9 @@
         "deadline": "2026-07-20T12:00:00+08:00",
         "timestamp": "2026-07-17T11:30:00+08:00",
         "file_date": "2026-07-17",
-        "status": "pending",
-        "action": "等待产出",
-        "reason": "计划 11:30 后产出"
+        "status": "overdue",
+        "action": "需要重跑",
+        "reason": "目标交易日尚未产出：当前文件日期 2026-07-17"
       },
       {
         "id": "postmarket",
