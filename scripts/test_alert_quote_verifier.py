@@ -3,7 +3,14 @@ from __future__ import annotations
 import unittest
 from datetime import datetime, timedelta, timezone
 
-from verify_alert_quotes import alert_needs_live_quotes, enrich_payload, minute_change, remove_cross_source_missing
+from verify_alert_quotes import (
+    alert_needs_live_quotes,
+    enrich_payload,
+    minute_change,
+    normalize_user_facing_text,
+    remove_cross_source_missing,
+    rewrite_verified_alert_reason,
+)
 
 
 TZ = timezone(timedelta(hours=8))
@@ -66,14 +73,27 @@ class AlertQuoteVerifierTests(unittest.TestCase):
         payload = sample_payload([("甲公司", 2.0), ("乙公司", 1.5)])
         first = enrich_payload(payload, self.identity, self.loader, self.now)
         first["alerts"][0]["quote_audit"]["missing_confirmation"] = "还差第二行情源交叉验证，或结构化封板>=2；继续观察扩散。"
+        first["alerts"][0]["reason"] = "已满足risk candidate门槛，但缺第二行情源验证，暂为待确认风险。"
         result = enrich_payload(first, self.identity, self.loader, self.now + timedelta(minutes=1))
         remaining = result["alerts"][0]["quote_audit"]["missing_confirmation"]
         self.assertNotIn("第二行情源", remaining)
         self.assertIn("结构化封板", remaining)
+        reason = result["alerts"][0]["reason"]
+        self.assertIn("第二行情源已核验", reason)
+        self.assertIn("风险候选", reason)
+        self.assertNotIn("缺第二行情源", reason)
 
     def test_cross_source_missing_text_supports_both_phrasings(self) -> None:
         self.assertEqual(remove_cross_source_missing("还差第二行情源交叉验证，或结构化封板>=2。"), "还需结构化封板>=2。")
         self.assertEqual(remove_cross_source_missing("还差成交扩散；也缺少第二行情源交叉验证。"), "还差成交扩散")
+
+    def test_verified_reason_no_longer_claims_second_source_is_missing(self) -> None:
+        result = rewrite_verified_alert_reason("已满足risk candidate门槛，但缺第二行情源验证，暂为待确认风险。")
+        self.assertEqual(result, "已满足风险候选门槛，第二行情源已核验；仍需满足其余交易条件，暂为待确认风险。")
+
+    def test_user_facing_text_hides_engineering_status_names(self) -> None:
+        result = normalize_user_facing_text("不满足risk candidate，写为invalidated；还需结构化limit_down_count>=2。")
+        self.assertEqual(result, "不满足风险候选，判为失效；还需至少2只跌停的结构化板块证据。")
 
 
 def rows(*values):

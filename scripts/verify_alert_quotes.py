@@ -175,13 +175,21 @@ def enrich_payload(
     for alert in alerts:
         if not isinstance(alert, dict):
             continue
+        for field in ("reason", "invalidated_reason"):
+            if isinstance(alert.get(field), str):
+                alert[field] = normalize_user_facing_text(alert[field])
         fingerprint = alert_fingerprint(alert)
         audit = alert.get("quote_audit") if isinstance(alert.get("quote_audit"), dict) else {}
+        if isinstance(audit.get("missing_confirmation"), str):
+            audit["missing_confirmation"] = normalize_user_facing_text(audit["missing_confirmation"])
+            alert["quote_audit"] = audit
         previous = audit.get("secondary_verification") if isinstance(audit.get("secondary_verification"), dict) else {}
         if previous.get("fingerprint") == fingerprint and previous.get("state") in {"passed", "mismatch", "too_late_no_backfill", "different_trade_date", "insufficient_identity"}:
             if previous.get("state") == "passed" and isinstance(audit.get("missing_confirmation"), str):
                 audit["missing_confirmation"] = remove_cross_source_missing(audit["missing_confirmation"])
                 alert["quote_audit"] = audit
+            if previous.get("state") == "passed" and isinstance(alert.get("reason"), str):
+                alert["reason"] = rewrite_verified_alert_reason(alert["reason"])
             continue
         verification = verify_alert(alert, identity_map, minute_loader, now)
         verification["fingerprint"] = fingerprint
@@ -195,6 +203,8 @@ def enrich_payload(
         audit["sanity_checks"] = sanity
         if verification.get("state") == "passed" and isinstance(audit.get("missing_confirmation"), str):
             audit["missing_confirmation"] = remove_cross_source_missing(audit["missing_confirmation"])
+        if verification.get("state") == "passed" and isinstance(alert.get("reason"), str):
+            alert["reason"] = rewrite_verified_alert_reason(alert["reason"])
         alert["quote_audit"] = audit
 
     result["quote_audit"] = aggregate_quote_audit(alerts, result.get("timestamp"))
@@ -477,6 +487,28 @@ def remove_cross_source_missing(value: str) -> str:
     text = re.sub(r"[；;]?\s*(?:还差|仍缺少|(?:也)?缺少)第二行情源交叉验证[。.]?", "", text)
     text = re.sub(r"[；;]\s*$", "", text).strip()
     return text or "第二行情源已核验；仍需满足卡片列出的价格、成交和扩散条件。"
+
+
+def rewrite_verified_alert_reason(value: str) -> str:
+    text = re.sub(
+        r"但(?:仍)?缺(?:少)?第二行情源(?:交叉)?验证",
+        "第二行情源已核验；仍需满足其余交易条件",
+        str(value or ""),
+    )
+    return normalize_user_facing_text(text)
+
+
+def normalize_user_facing_text(value: str) -> str:
+    return (
+        str(value or "")
+        .replace("risk candidate", "风险候选")
+        .replace("opportunity candidate", "机会候选")
+        .replace("写为invalidated", "判为失效")
+        .replace("结构化limit_down_count>=2", "至少2只跌停的结构化板块证据")
+        .replace("结构化limit_up_count>=2", "至少2只涨停的结构化板块证据")
+        .replace("limit_down_count>=2", "至少2只跌停的板块证据")
+        .replace("limit_up_count>=2", "至少2只涨停的板块证据")
+    )
 
 
 def prepare_source_health_update(path: Path, payload: Dict[str, Any]) -> Optional[tuple[bytes, Dict[str, Any], bool]]:
