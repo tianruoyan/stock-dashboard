@@ -1,14 +1,33 @@
 {
-  "timestamp": "2026-07-20T09:44:54+08:00",
+  "timestamp": "2026-07-20T09:47:56+08:00",
   "current_signal_date": "2026-07-20",
   "overall_status": "degraded",
-  "summary": "2 个监测维度需降权，1 个背景维度需复核。",
+  "summary": "3 个监测维度需降权，1 个背景维度需复核。",
   "counts": {
     "critical": 0,
-    "warning": 2,
+    "warning": 3,
     "info": 1
   },
   "blind_spots": [
+    {
+      "id": "premarket-cross-market-degraded",
+      "title": "盘前外部映射降权",
+      "severity": "warning",
+      "conclusion": "美股/港股/日韩映射可以提供方向，但部分实时外部源非终值或需复核。",
+      "impacted_decisions": [
+        "盘前提振/压制判断不能单独作为开盘动作",
+        "科技映射链需要9:25竞价和9:30后承接确认"
+      ],
+      "evidence": [
+        "hk_auction.mapping_chain[0] change_pct 非数字：+13.73%/+8.53%，该字段忽略并降权；hk_auction.mapping_chain[1] change_pct 非数字：+0.44%/0.00%，该字段忽略并降权；A股补充行情源解码异常，盘中异动和个股涨跌幅需以已审计源复核。；港股结构行情源连接/解码异常，港股映射和收盘窗口价格需二次复核。"
+      ],
+      "fallback_action": "开盘只按竞价确认后的 A 股反馈升级，不把外盘映射直接升为强主线。",
+      "fallback_checks": [],
+      "source_files": [
+        "data/premarket.json",
+        "data/source-health.json"
+      ]
+    },
     {
       "id": "evening-sentiment-stale",
       "title": "晚间舆情过期",
@@ -37,7 +56,7 @@
         "风险栏优先级高于机会栏"
       ],
       "evidence": [
-        "发现 104 个降级/需复核项（87 个价格/行情复核，3 个信号复核，15 个背景复核），核心结论可看但必须按影响分层使用。；opportunities[2] 含过期相对日期；opportunities[3] 含过期相对日期"
+        "发现 103 个降级/需复核项（93 个价格/行情复核，1 个信号复核，10 个背景复核），核心结论可看但必须按影响分层使用。；opportunities[2] 含过期相对日期；opportunities[6] 含过期相对日期"
       ],
       "fallback_action": "只跟踪验证条件；若风险项不收敛，不升级任何机会。",
       "fallback_checks": [],
