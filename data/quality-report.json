@@ -1,8 +1,8 @@
 {
-  "timestamp": "2026-07-20T10:51:06+08:00",
+  "timestamp": "2026-07-20T10:55:40+08:00",
   "current_signal_date": "2026-07-20",
   "status": "degraded",
-  "summary": "发现 95 个降级/需复核项（92 个价格/行情复核，1 个信号复核，3 个背景复核），核心结论可看但必须按影响分层使用。",
+  "summary": "发现 95 个降级/需复核项（1 个交易阻断，91 个价格/行情复核，1 个信号复核，3 个背景复核），核心结论可看但必须按影响分层使用。",
   "issues": [
     {
       "severity": "warning",
@@ -102,6 +102,15 @@
       "message": "alert.json 存在盘中异动但缺少 quote_audit；当前阶段只降权参考，不阻断整站发布",
       "impact_level": "price_review",
       "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
+    },
+    {
+      "severity": "warning",
+      "file": "alert.json",
+      "path": "alerts[1]",
+      "code": "candidate_alert_evidence_weak",
+      "message": "alerts[1] 候选异动未达到最低短周期价格、方向占比和成交门槛，不得作为当前候选展示",
+      "impact_level": "blocking",
+      "decision_action": "禁止作为交易依据，需修复后重产"
     },
     {
       "severity": "info",
@@ -858,18 +867,20 @@
       "message": "eastmoney_open_limit_structure_20260720: 开盘涨停6只、开盘跌停9只（剔除退市整理股），差值-3；按约5300只估算占比0.11%和0.17%。接口为9:37后回溯开盘时间字段，非9:25实时快照。",
       "impact_level": "price_review",
       "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
-    },
-    {
-      "severity": "warning",
-      "file": "cross-file",
-      "path": "雅克科技",
-      "code": "stock_pct_cross_file_conflict",
-      "message": "雅克科技 跨文件涨跌幅差异过大：intraday.json -6.26% vs alert.json 1.79%",
-      "impact_level": "price_review",
-      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
     }
   ],
   "action_plan": [
+    {
+      "priority": 1,
+      "impact_level": "blocking",
+      "label": "先修复阻断",
+      "file": "alert.json",
+      "code": "candidate_alert_evidence_weak",
+      "problem": "alerts[1] 候选异动未达到最低短周期价格、方向占比和成交门槛，不得作为当前候选展示",
+      "decision_action": "禁止作为交易依据，需修复后重产",
+      "next_step": "暂停对应交易触发；等待污染批次撤下、可信行情源恢复并重产 JSON。",
+      "unblock_condition": "quality-report blocking=0，相关文件不再 invalidated/missing。"
+    },
     {
       "priority": 2,
       "impact_level": "price_review",
@@ -877,17 +888,6 @@
       "file": "alert.json",
       "code": "historical_alert_without_trusted_source",
       "problem": "盘中异动缺少可信源证明；当前阶段只降权参考，不阻断整站发布",
-      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核",
-      "next_step": "用第二行情源复核涨跌幅、quote_time 和代表股方向；未确认前只做验证。",
-      "unblock_condition": "price_review=0 或相关来源标记 trusted/cross verified。"
-    },
-    {
-      "priority": 2,
-      "impact_level": "price_review",
-      "label": "二次行情复核",
-      "file": "cross-file",
-      "code": "stock_pct_cross_file_conflict",
-      "problem": "雅克科技 跨文件涨跌幅差异过大：intraday.json -6.26% vs alert.json 1.79%",
       "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核",
       "next_step": "用第二行情源复核涨跌幅、quote_time 和代表股方向；未确认前只做验证。",
       "unblock_condition": "price_review=0 或相关来源标记 trusted/cross verified。"
@@ -941,8 +941,8 @@
     "critical": 0,
     "warning": 95,
     "info": 1,
-    "blocking": 0,
-    "price_review": 92,
+    "blocking": 1,
+    "price_review": 91,
     "signal_review": 1,
     "background_review": 3
   },
