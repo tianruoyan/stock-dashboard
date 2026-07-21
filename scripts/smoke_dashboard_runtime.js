@@ -437,8 +437,20 @@ function checkWatchlistQuoteSemantics(document, issues) {
   const premarket = readJsonIfExists("data/premarket.json");
   const rendered = normalizeRenderedText(document.getElementById("watchlist-decision")?.collectHtml() || "");
   const watchRows = Array.isArray(watchlist.watch_only?.stocks) ? watchlist.watch_only.stocks : [];
-  const currentRows = Array.isArray(intraday.hk_market?.stocks) ? intraday.hk_market.stocks : [];
-  const indicativeRows = Array.isArray(premarket.hk_auction?.stocks) ? premarket.hk_auction.stocks : [];
+  const signalDate = value => String(value || "").match(/\d{4}-\d{2}-\d{2}/)?.[0] || "";
+  const latestDate = [
+    premarket,
+    intraday,
+    readJsonIfExists("data/midday.json"),
+    readJsonIfExists("data/topics.json"),
+    readJsonIfExists("data/postmarket.json")
+  ].map(data => signalDate(data.timestamp)).filter(Boolean).sort().at(-1) || "";
+  const currentRows = signalDate(intraday.timestamp) === latestDate && Array.isArray(intraday.hk_market?.stocks)
+    ? intraday.hk_market.stocks
+    : [];
+  const indicativeRows = signalDate(premarket.timestamp) === latestDate && Array.isArray(premarket.hk_auction?.stocks)
+    ? premarket.hk_auction.stocks
+    : [];
   const normalizeCode = value => {
     const raw = String(value || "").toLowerCase();
     if (/^hk\d+$/.test(raw)) return `hk${Number(raw.replace(/\D/g, ""))}`;
