@@ -1,8 +1,8 @@
 {
-  "timestamp": "2026-07-21T10:06:22+08:00",
+  "timestamp": "2026-07-21T10:08:36+08:00",
   "current_signal_date": "2026-07-21",
   "status": "degraded",
-  "summary": "发现 104 个降级/需复核项（100 个价格/行情复核，5 个背景复核），核心结论可看但必须按影响分层使用。",
+  "summary": "发现 104 个降级/需复核项（101 个价格/行情复核，4 个背景复核），核心结论可看但必须按影响分层使用。",
   "issues": [
     {
       "severity": "warning",
@@ -102,15 +102,6 @@
       "message": "hk_auction.mapping_chain[3] change_pct 非数字：待核验/-2.51%/+0.27%，该字段忽略并降权",
       "impact_level": "price_review",
       "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
-    },
-    {
-      "severity": "warning",
-      "file": "topics.json",
-      "path": "",
-      "code": "stale_timestamp",
-      "message": "时间戳不是当前交易日：2026-07-20T14:41:55+08:00",
-      "impact_level": "background_review",
-      "decision_action": "仅作背景复核，不单独阻断交易判断"
     },
     {
       "severity": "warning",
@@ -948,6 +939,15 @@
       "message": "eastmoney_structure_pools_intraday_0930_20260721: 09:35涨停6只、跌停35只（剔除云创退后34只）、炸板池报1只；腾讯行情显示立新能源触及涨停后开板，但未进入炸板池，故炸板率暂不使用。",
       "impact_level": "price_review",
       "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
+    },
+    {
+      "severity": "warning",
+      "file": "source-health.json",
+      "path": "",
+      "code": "source_degraded",
+      "message": "eastmoney_structure_pools_intraday_1000_20260721: 结构池一度涨停12、跌停125（剔除云创退124）、炸板7；腾讯10:03逐股确认智度、证通、翠微已开板，实时有效封板约9只、可核验炸板至少9只。",
+      "impact_level": "price_review",
+      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
     }
   ],
   "action_plan": [
@@ -1023,9 +1023,9 @@
     "warning": 104,
     "info": 1,
     "blocking": 0,
-    "price_review": 100,
+    "price_review": 101,
     "signal_review": 0,
-    "background_review": 5
+    "background_review": 4
   },
   "rules": [
     "异常文本、JSON解析失败、必需文件缺失为 critical。",
