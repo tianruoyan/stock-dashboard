@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-07-21T14:39:25+08:00",
+  "timestamp": "2026-07-21T15:16:00+08:00",
   "sources": {
     "tencent_http": {
       "status": "ok",
@@ -27,9 +27,9 @@
     },
     "mootdx_tdx": {
       "status": "failed_not_installed",
-      "last_check": "2026-07-10T13:03:00+08:00",
+      "last_check": "2026-07-21T15:10:00+08:00",
       "usage": "通达信TCP高频行情备用",
-      "detail": "当前Python环境未安装mootdx；本轮由腾讯HTTP完成高频报价，不影响已取得行情事实。",
+      "detail": "当前Python环境未安装mootdx；核心收盘事实已由腾讯、东方财富、新浪和申万分类交叉完成。",
       "sample_count": 0,
       "errors": [
         "ModuleNotFoundError: mootdx"
@@ -422,10 +422,10 @@
     },
     "eastmoney_limit_pool_postmarket_1500": {
       "status": "ok",
-      "last_check": "2026-07-08T15:06:00+08:00",
-      "usage": "A股收盘涨停/跌停/炸板结构池",
-      "detail": "返回涨停48、跌停36、炸板13。",
-      "sample_count": 97,
+      "last_check": "2026-07-21T15:10:00+08:00",
+      "usage": "15:00涨停、跌停、炸板和连板结构",
+      "detail": "过滤后涨停121、跌停20、炸板8；半导体28只涨停。",
+      "sample_count": 149,
       "errors": []
     },
     "sina_all_a_width_postmarket_1500": {
@@ -438,18 +438,18 @@
     },
     "tencent_minute_postmarket_1455_1500": {
       "status": "ok",
-      "last_check": "2026-07-08T15:06:00+08:00",
-      "usage": "14:55-15:00尾盘分钟样本校验",
-      "detail": "成功获取紫光、浪潮、中芯、沪硅、中国巨石等关键样本分钟线。",
-      "sample_count": 10,
+      "last_check": "2026-07-21T15:10:00+08:00",
+      "usage": "14:55-15:00尾盘/收盘竞价校验",
+      "detail": "取得5个指数及25个关键题材样本分钟线；五大指数尾盘同向小幅上涨。",
+      "sample_count": 30,
       "errors": []
     },
     "tencent_a_quote_postmarket_1500": {
       "status": "ok",
-      "last_check": "2026-07-08T15:06:00+08:00",
-      "usage": "收盘指数、ETF、观察池样本报价",
-      "detail": "成功获取主要指数、ETF和核心样本收盘快照。",
-      "sample_count": 73,
+      "last_check": "2026-07-21T15:10:00+08:00",
+      "usage": "15:00核心指数、行业、观察池与专题样本收盘",
+      "detail": "取得5个指数、98个申万行业和86个代表样本收盘报价。",
+      "sample_count": 189,
       "errors": []
     },
     "tencent_hk_close_http": {
@@ -3063,6 +3063,42 @@
       "sample_count": 0,
       "errors": [
         "full concept ranking unavailable"
+      ]
+    },
+    "sina_a_spot_postmarket_1500": {
+      "status": "ok",
+      "last_check": "2026-07-21T15:10:00+08:00",
+      "usage": "沪深京市场宽度及5%/8%强势股分组",
+      "detail": "全量5528条；按既有口径过滤后5317条，5%-<8%为448家，>=8%为473家。",
+      "sample_count": 5528,
+      "errors": []
+    },
+    "sws_cninfo_industry_postmarket": {
+      "status": "ok",
+      "last_check": "2026-07-21T15:10:00+08:00",
+      "usage": "强势股申万一二级行业映射",
+      "detail": "申万行业分类历史12876条、巨潮申万行业目录512条；有效强势股映射覆盖率100%。",
+      "sample_count": 13388,
+      "errors": []
+    },
+    "eastmoney_all_a_enrichment_postmarket": {
+      "status": "degraded_noncritical",
+      "last_check": "2026-07-21T15:10:00+08:00",
+      "usage": "全A行业字段补充尝试",
+      "detail": "push2单次返回100/5880条，未用于全市场统计；改用新浪全A+申万/巨潮分类完成归类。",
+      "sample_count": 100,
+      "errors": [
+        "page size capped at 100"
+      ]
+    },
+    "intraday_alert_current_day": {
+      "status": "invalidated_no_audited_signal",
+      "last_check": "2026-07-21T15:16:00+08:00",
+      "usage": "盘中异动当前日有效性",
+      "detail": "alert.json原为2026-07-20旧信号；收盘发布前按时效门禁撤下，今日未产出可审计双源信号，不编造替代异动。",
+      "sample_count": 0,
+      "errors": [
+        "2026-07-21 current-day audited alert not produced"
       ]
     }
   },

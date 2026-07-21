@@ -1,53 +1,17 @@
 {
-  "timestamp": "2026-07-21T15:00:51+08:00",
+  "timestamp": "2026-07-21T15:17:30+08:00",
   "current_signal_date": "2026-07-21",
   "status": "degraded",
-  "summary": "发现 107 个降级/需复核项（105 个价格/行情复核，3 个背景复核），核心结论可看但必须按影响分层使用。",
+  "summary": "发现 101 个降级/需复核项（1 个交易阻断，100 个价格/行情复核，1 个背景复核），核心结论可看但必须按影响分层使用。",
   "issues": [
     {
       "severity": "warning",
       "file": "alert.json",
       "path": "",
-      "code": "stale_timestamp",
-      "message": "时间戳不是当前交易日：2026-07-20T11:14:18+08:00",
-      "impact_level": "background_review",
-      "decision_action": "仅作背景复核，不单独阻断交易判断"
-    },
-    {
-      "severity": "warning",
-      "file": "postmarket.json",
-      "path": "",
-      "code": "stale_timestamp",
-      "message": "时间戳不是当前交易日：2026-07-20T15:11:00+08:00",
-      "impact_level": "background_review",
-      "decision_action": "仅作背景复核，不单独阻断交易判断"
-    },
-    {
-      "severity": "warning",
-      "file": "postmarket.json",
-      "path": "hotspots[2].stocks[0]",
-      "code": "watchlist_limit_down_like",
-      "message": "华天科技 接近跌停 -9.99，需确认是否真实",
-      "impact_level": "price_review",
-      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
-    },
-    {
-      "severity": "warning",
-      "file": "postmarket.json",
-      "path": "hotspots[2].stocks[1]",
-      "code": "watchlist_limit_down_like",
-      "message": "德明利 接近跌停 -10.0，需确认是否真实",
-      "impact_level": "price_review",
-      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
-    },
-    {
-      "severity": "warning",
-      "file": "postmarket.json",
-      "path": "hotspots[3].stocks[2]",
-      "code": "watchlist_limit_down_like",
-      "message": "艾华集团 接近跌停 -10.01，需确认是否真实",
-      "impact_level": "price_review",
-      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
+      "code": "invalidated_source",
+      "message": "截至A股收盘，盘中异动文件未产出2026-07-21当日可审计且满足双源门禁的有效信号；上一交易日异动已过期并撤下。保留盘后复盘、盘中全景和机会清单作为替代观察，不编造当日盘中异动。",
+      "impact_level": "blocking",
+      "decision_action": "对应信号等待重产，页面必须显示阻断"
     },
     {
       "severity": "warning",
@@ -91,24 +55,6 @@
       "path": "hk_auction.mapping_chain[3]",
       "code": "bad_change_pct",
       "message": "hk_auction.mapping_chain[3] change_pct 非数字：待核验/-2.51%/+0.27%，该字段忽略并降权",
-      "impact_level": "price_review",
-      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
-    },
-    {
-      "severity": "warning",
-      "file": "alert.json",
-      "path": "",
-      "code": "historical_alert_without_trusted_source",
-      "message": "盘中异动缺少可信源证明；当前阶段只降权参考，不阻断整站发布",
-      "impact_level": "price_review",
-      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
-    },
-    {
-      "severity": "warning",
-      "file": "alert.json",
-      "path": "quote_audit.sanity_checks",
-      "code": "historical_alert_not_cross_verified",
-      "message": "行情污染源仍降级，历史 alert 未交叉验证，只降权复盘参考",
       "impact_level": "price_review",
       "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
     },
@@ -979,26 +925,15 @@
   ],
   "action_plan": [
     {
-      "priority": 2,
-      "impact_level": "price_review",
-      "label": "二次行情复核",
+      "priority": 1,
+      "impact_level": "blocking",
+      "label": "先修复阻断",
       "file": "alert.json",
-      "code": "historical_alert_without_trusted_source",
-      "problem": "盘中异动缺少可信源证明；当前阶段只降权参考，不阻断整站发布",
-      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核",
-      "next_step": "用第二行情源复核涨跌幅、quote_time 和代表股方向；未确认前只做验证。",
-      "unblock_condition": "price_review=0 或相关来源标记 trusted/cross verified。"
-    },
-    {
-      "priority": 2,
-      "impact_level": "price_review",
-      "label": "二次行情复核",
-      "file": "postmarket.json",
-      "code": "watchlist_limit_down_like",
-      "problem": "华天科技 接近跌停 -9.99，需确认是否真实",
-      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核",
-      "next_step": "用第二行情源复核涨跌幅、quote_time 和代表股方向；未确认前只做验证。",
-      "unblock_condition": "price_review=0 或相关来源标记 trusted/cross verified。"
+      "code": "invalidated_source",
+      "problem": "截至A股收盘，盘中异动文件未产出2026-07-21当日可审计且满足双源门禁的有效信号；上一交易日异动已过期并撤下。保留盘后复盘、盘中全景和机会清单作为替代观察，不编造当日盘中异动。",
+      "decision_action": "对应信号等待重产，页面必须显示阻断",
+      "next_step": "暂停对应交易触发；等待污染批次撤下、可信行情源恢复并重产 JSON。",
+      "unblock_condition": "quality-report blocking=0，相关文件不再 invalidated/missing。"
     },
     {
       "priority": 2,
@@ -1026,20 +961,9 @@
       "priority": 4,
       "impact_level": "background_review",
       "label": "背景来源复核",
-      "file": "alert.json",
-      "code": "stale_timestamp",
-      "problem": "时间戳不是当前交易日：2026-07-20T11:14:18+08:00",
-      "decision_action": "仅作背景复核，不单独阻断交易判断",
-      "next_step": "补官方/交易所/公司公告来源；未补齐前不升级为核心依据。",
-      "unblock_condition": "官方来源补齐或确认不影响交易触发。"
-    },
-    {
-      "priority": 4,
-      "impact_level": "background_review",
-      "label": "背景来源复核",
-      "file": "postmarket.json",
-      "code": "stale_timestamp",
-      "problem": "时间戳不是当前交易日：2026-07-20T15:11:00+08:00",
+      "file": "evening-sentiment.json",
+      "code": "evening_not_current",
+      "problem": "晚间舆情不是当前交易日，不参与今日总控",
       "decision_action": "仅作背景复核，不单独阻断交易判断",
       "next_step": "补官方/交易所/公司公告来源；未补齐前不升级为核心依据。",
       "unblock_condition": "官方来源补齐或确认不影响交易触发。"
@@ -1047,12 +971,12 @@
   ],
   "counts": {
     "critical": 0,
-    "warning": 107,
+    "warning": 101,
     "info": 1,
-    "blocking": 0,
-    "price_review": 105,
+    "blocking": 1,
+    "price_review": 100,
     "signal_review": 0,
-    "background_review": 3
+    "background_review": 1
   },
   "rules": [
     "异常文本、JSON解析失败、必需文件缺失为 critical。",
