@@ -1,8 +1,8 @@
 {
-  "timestamp": "2026-07-21T09:33:42+08:00",
+  "timestamp": "2026-07-21T09:44:06+08:00",
   "current_signal_date": "2026-07-21",
   "status": "degraded",
-  "summary": "发现 105 个降级/需复核项（99 个价格/行情复核，7 个背景复核），核心结论可看但必须按影响分层使用。",
+  "summary": "发现 104 个降级/需复核项（100 个价格/行情复核，5 个背景复核），核心结论可看但必须按影响分层使用。",
   "issues": [
     {
       "severity": "warning",
@@ -12,24 +12,6 @@
       "message": "时间戳不是当前交易日：2026-07-20T11:14:18+08:00",
       "impact_level": "background_review",
       "decision_action": "仅作背景复核，不单独阻断交易判断"
-    },
-    {
-      "severity": "warning",
-      "file": "intraday.json",
-      "path": "",
-      "code": "stale_timestamp",
-      "message": "时间戳不是当前交易日：2026-07-20T14:41:55+08:00",
-      "impact_level": "background_review",
-      "decision_action": "仅作背景复核，不单独阻断交易判断"
-    },
-    {
-      "severity": "warning",
-      "file": "intraday.json",
-      "path": "semiconductor_five_tracking.strength_ranking[2]",
-      "code": "watchlist_limit_down_like",
-      "message": "雅克科技 接近跌停 -10.0，需确认是否真实",
-      "impact_level": "price_review",
-      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
     },
     {
       "severity": "warning",
@@ -951,12 +933,21 @@
     },
     {
       "severity": "warning",
-      "file": "theme-shifts.json",
+      "file": "source-health.json",
       "path": "",
-      "code": "stale_theme_shifts",
-      "message": "theme-shifts 日期不是当前交易日：2026-07-20",
-      "impact_level": "background_review",
-      "decision_action": "仅作背景复核，不单独阻断交易判断"
+      "code": "source_degraded",
+      "message": "tencent_hk_quote_intraday_0930_20260721: 09:34查询仍停留在09:19竞价时间，未用于连续交易结论，已降级到新浪港股实时行情。",
+      "impact_level": "price_review",
+      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
+    },
+    {
+      "severity": "warning",
+      "file": "source-health.json",
+      "path": "",
+      "code": "source_degraded",
+      "message": "eastmoney_structure_pools_intraday_0930_20260721: 09:35涨停6只、跌停35只（剔除云创退后34只）、炸板池报1只；腾讯行情显示立新能源触及涨停后开板，但未进入炸板池，故炸板率暂不使用。",
+      "impact_level": "price_review",
+      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
     }
   ],
   "action_plan": [
@@ -967,17 +958,6 @@
       "file": "alert.json",
       "code": "historical_alert_without_trusted_source",
       "problem": "盘中异动缺少可信源证明；当前阶段只降权参考，不阻断整站发布",
-      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核",
-      "next_step": "用第二行情源复核涨跌幅、quote_time 和代表股方向；未确认前只做验证。",
-      "unblock_condition": "price_review=0 或相关来源标记 trusted/cross verified。"
-    },
-    {
-      "priority": 2,
-      "impact_level": "price_review",
-      "label": "二次行情复核",
-      "file": "intraday.json",
-      "code": "watchlist_limit_down_like",
-      "problem": "雅克科技 接近跌停 -10.0，需确认是否真实",
       "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核",
       "next_step": "用第二行情源复核涨跌幅、quote_time 和代表股方向；未确认前只做验证。",
       "unblock_condition": "price_review=0 或相关来源标记 trusted/cross verified。"
@@ -1025,16 +1005,27 @@
       "decision_action": "仅作背景复核，不单独阻断交易判断",
       "next_step": "补官方/交易所/公司公告来源；未补齐前不升级为核心依据。",
       "unblock_condition": "官方来源补齐或确认不影响交易触发。"
+    },
+    {
+      "priority": 4,
+      "impact_level": "background_review",
+      "label": "背景来源复核",
+      "file": "midday.json",
+      "code": "stale_timestamp",
+      "problem": "时间戳不是当前交易日：2026-07-20T13:43:40+08:00",
+      "decision_action": "仅作背景复核，不单独阻断交易判断",
+      "next_step": "补官方/交易所/公司公告来源；未补齐前不升级为核心依据。",
+      "unblock_condition": "官方来源补齐或确认不影响交易触发。"
     }
   ],
   "counts": {
     "critical": 0,
-    "warning": 105,
+    "warning": 104,
     "info": 1,
     "blocking": 0,
-    "price_review": 99,
+    "price_review": 100,
     "signal_review": 0,
-    "background_review": 7
+    "background_review": 5
   },
   "rules": [
     "异常文本、JSON解析失败、必需文件缺失为 critical。",

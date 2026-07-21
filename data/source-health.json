@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-07-21T09:28:30+08:00",
+  "timestamp": "2026-07-21T09:38:00+08:00",
   "sources": {
     "tencent_http": {
       "status": "ok",
@@ -2786,6 +2786,42 @@
       "detail": "09:25涨停2家、跌停15家；涨停为电力、家居各1家，跌停行业分散并包含消费电子、军工电子、元件。",
       "sample_count": 17,
       "errors": []
+    },
+    "tencent_a_quote_intraday_0930_20260721": {
+      "status": "ok",
+      "last_check": "2026-07-21T09:38:00+08:00",
+      "usage": "A股指数、成交额、专项股及代表股连续行情",
+      "detail": "09:34上证-0.21%、深证+0.20%、创业板+0.69%、科创50+0.37%；沪深成交约2225.93亿元，取得75只A股样本。",
+      "sample_count": 75,
+      "errors": []
+    },
+    "tencent_hk_quote_intraday_0930_20260721": {
+      "status": "degraded",
+      "last_check": "2026-07-21T09:38:00+08:00",
+      "usage": "港股连续交易行情尝试",
+      "detail": "09:34查询仍停留在09:19竞价时间，未用于连续交易结论，已降级到新浪港股实时行情。",
+      "sample_count": 16,
+      "errors": [
+        "quote_time_stale_at_09:19"
+      ]
+    },
+    "sina_hk_quote_intraday_0930_20260721": {
+      "status": "ok",
+      "last_check": "2026-07-21T09:38:00+08:00",
+      "usage": "恒指、恒科及港股科技/医药连续交易交叉验证",
+      "detail": "09:37恒指-0.29%、恒科+0.13%；澜起+3.64%、兆易+4.12%、中芯+2.51%、华虹+4.55%、智谱+10.78%。",
+      "sample_count": 15,
+      "errors": []
+    },
+    "eastmoney_structure_pools_intraday_0930_20260721": {
+      "status": "degraded",
+      "last_check": "2026-07-21T09:38:00+08:00",
+      "usage": "A股涨停、跌停、炸板池和行业分布",
+      "detail": "09:35涨停6只、跌停35只（剔除云创退后34只）、炸板池报1只；腾讯行情显示立新能源触及涨停后开板，但未进入炸板池，故炸板率暂不使用。",
+      "sample_count": 42,
+      "errors": [
+        "broken_board_pool_short_lag_for_001258"
+      ]
     }
   },
   "last_publish_attempt": "pending_20260717_0830_premarket_publish",
@@ -2976,7 +3012,7 @@
     "errors": []
   },
   "overall_status": "degraded",
-  "last_codex_note": "9:25主行情已由腾讯核验，涨跌停结构由东财单次串行获取；mootdx未安装，已记录降级。",
+  "last_codex_note": "09:30首轮盘中行情由腾讯A股和新浪港股核验；mootdx不可用，东财炸板池对立新能源开板存在短时漏记，已按降级口径披露。",
   "eastmoney_structure_pools_intraday_1000_20260717": {
     "status": "ok",
     "last_check": "2026-07-17T10:02:40+08:00",
