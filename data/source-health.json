@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-07-21T11:37:51+08:00",
+  "timestamp": "2026-07-21T14:06:08+08:00",
   "sources": {
     "tencent_http": {
       "status": "ok",
@@ -2970,6 +2970,53 @@
       "errors": [
         "reliable_full_concept_ranking_unavailable"
       ]
+    },
+    "tencent_a_quote_intraday_1400_20260721": {
+      "status": "ok",
+      "last_check": "2026-07-21T14:06:08+08:00",
+      "usage": "A股14:00五指数、496行业、配置池与重点样本",
+      "detail": "13:59科创50+7.72%、创业板+5.54%、半导体+9.11%；取得116只配置及重点样本，沪深成交约24890.21亿元。",
+      "sample_count": 617,
+      "errors": []
+    },
+    "eastmoney_structure_pools_intraday_1400_20260721": {
+      "status": "ok",
+      "last_check": "2026-07-21T14:06:08+08:00",
+      "usage": "14:00涨停、跌停、炸板池和行业分布",
+      "detail": "按66至81秒间隔串行取得并清洗结构池：涨停79、跌停18、炸板6；半导体15只涨停、22只20cm及以上涨停。",
+      "sample_count": 103,
+      "errors": []
+    },
+    "tencent_hk_quote_intraday_1400_20260721": {
+      "status": "degraded_delayed_single_source",
+      "last_check": "2026-07-21T14:06:08+08:00",
+      "usage": "恒指、恒科及港股科技A/H映射",
+      "detail": "恒指+0.18%、恒科+1.38%；港股个股约13:44，澜起H+10.30%、兆易H+12.00%、华虹+15.47%、中芯H+7.81%，存在约15分钟延迟且缺少第二实时源。",
+      "sample_count": 16,
+      "errors": [
+        "hk_stock_quotes_delayed_about_15_minutes",
+        "single_source_only"
+      ]
+    },
+    "mootdx_intraday_1400_20260721": {
+      "status": "failed_unavailable",
+      "last_check": "2026-07-21T14:06:08+08:00",
+      "usage": "通达信TCP优先行情尝试",
+      "detail": "本机Python环境未安装mootdx，未使用其数据；高频行情降级到腾讯财经HTTP。",
+      "sample_count": 0,
+      "errors": [
+        "ModuleNotFoundError: No module named mootdx"
+      ]
+    },
+    "concept_ranking_intraday_1400_20260721": {
+      "status": "degraded",
+      "last_check": "2026-07-21T14:06:08+08:00",
+      "usage": "全市场概念排行",
+      "detail": "未取得通过可靠性校验的概念全榜；使用涨跌停/炸板行业分布、496行业排名和代表股成交归因，不编造概念名次。",
+      "sample_count": 0,
+      "errors": [
+        "reliable_full_concept_ranking_unavailable"
+      ]
     }
   },
   "last_publish_attempt": "pending_20260717_0830_premarket_publish",
@@ -3160,7 +3207,7 @@
     "errors": []
   },
   "overall_status": "degraded",
-  "last_codex_note": "11:30腾讯A股/98行业、东财结构池和新浪港股正常；涨停46、干净跌停19、炸板4。mootdx缺失、概念全榜不可用，结论按腾讯+东财+新浪交叉验证。",
+  "last_codex_note": "14:00腾讯A股/496行业与东财结构池正常；涨停79、干净跌停18、炸板6。腾讯港股指数实时、个股约延迟15分钟；mootdx和可靠概念全榜不可用。",
   "eastmoney_structure_pools_intraday_1000_20260717": {
     "status": "ok",
     "last_check": "2026-07-17T10:02:40+08:00",
