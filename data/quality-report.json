@@ -1,8 +1,8 @@
 {
-  "timestamp": "2026-07-21T11:14:12+08:00",
+  "timestamp": "2026-07-21T11:18:10+08:00",
   "current_signal_date": "2026-07-21",
   "status": "degraded",
-  "summary": "发现 117 个降级/需复核项（101 个价格/行情复核，12 个信号复核，5 个背景复核），核心结论可看但必须按影响分层使用。",
+  "summary": "发现 105 个降级/需复核项（102 个价格/行情复核，4 个背景复核），核心结论可看但必须按影响分层使用。",
   "issues": [
     {
       "severity": "warning",
@@ -102,123 +102,6 @@
       "message": "hk_auction.mapping_chain[3] change_pct 非数字：待核验/-2.51%/+0.27%，该字段忽略并降权",
       "impact_level": "price_review",
       "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
-    },
-    {
-      "severity": "warning",
-      "file": "topics.json",
-      "path": "",
-      "code": "missing_timestamp",
-      "message": "缺少 timestamp",
-      "impact_level": "background_review",
-      "decision_action": "仅作背景复核，不单独阻断交易判断"
-    },
-    {
-      "severity": "warning",
-      "file": "topics.json",
-      "path": "topics[0]",
-      "code": "schema_contract_missing",
-      "message": "topics[0].status 缺失",
-      "impact_level": "signal_review",
-      "decision_action": "机会信号必须降权并转入验证"
-    },
-    {
-      "severity": "warning",
-      "file": "topics.json",
-      "path": "topics[1]",
-      "code": "schema_contract_missing",
-      "message": "topics[1].status 缺失",
-      "impact_level": "signal_review",
-      "decision_action": "机会信号必须降权并转入验证"
-    },
-    {
-      "severity": "warning",
-      "file": "topics.json",
-      "path": "topics[2]",
-      "code": "schema_contract_missing",
-      "message": "topics[2].status 缺失",
-      "impact_level": "signal_review",
-      "decision_action": "机会信号必须降权并转入验证"
-    },
-    {
-      "severity": "warning",
-      "file": "topics.json",
-      "path": "topics[3]",
-      "code": "schema_contract_missing",
-      "message": "topics[3].status 缺失",
-      "impact_level": "signal_review",
-      "decision_action": "机会信号必须降权并转入验证"
-    },
-    {
-      "severity": "warning",
-      "file": "topics.json",
-      "path": "topics[4]",
-      "code": "schema_contract_missing",
-      "message": "topics[4].status 缺失",
-      "impact_level": "signal_review",
-      "decision_action": "机会信号必须降权并转入验证"
-    },
-    {
-      "severity": "warning",
-      "file": "topics.json",
-      "path": "topics[5]",
-      "code": "schema_contract_missing",
-      "message": "topics[5].status 缺失",
-      "impact_level": "signal_review",
-      "decision_action": "机会信号必须降权并转入验证"
-    },
-    {
-      "severity": "warning",
-      "file": "topics.json",
-      "path": "topics[6]",
-      "code": "schema_contract_missing",
-      "message": "topics[6].status 缺失",
-      "impact_level": "signal_review",
-      "decision_action": "机会信号必须降权并转入验证"
-    },
-    {
-      "severity": "warning",
-      "file": "topics.json",
-      "path": "topics[7]",
-      "code": "schema_contract_missing",
-      "message": "topics[7].status 缺失",
-      "impact_level": "signal_review",
-      "decision_action": "机会信号必须降权并转入验证"
-    },
-    {
-      "severity": "warning",
-      "file": "topics.json",
-      "path": "topics[8]",
-      "code": "schema_contract_missing",
-      "message": "topics[8].status 缺失",
-      "impact_level": "signal_review",
-      "decision_action": "机会信号必须降权并转入验证"
-    },
-    {
-      "severity": "warning",
-      "file": "topics.json",
-      "path": "topics[9]",
-      "code": "schema_contract_missing",
-      "message": "topics[9].status 缺失",
-      "impact_level": "signal_review",
-      "decision_action": "机会信号必须降权并转入验证"
-    },
-    {
-      "severity": "warning",
-      "file": "topics.json",
-      "path": "topics[10]",
-      "code": "schema_contract_missing",
-      "message": "topics[10].status 缺失",
-      "impact_level": "signal_review",
-      "decision_action": "机会信号必须降权并转入验证"
-    },
-    {
-      "severity": "warning",
-      "file": "topics.json",
-      "path": "topics[11]",
-      "code": "schema_contract_missing",
-      "message": "topics[11].status 缺失",
-      "impact_level": "signal_review",
-      "decision_action": "机会信号必须降权并转入验证"
     },
     {
       "severity": "warning",
@@ -1065,6 +948,15 @@
       "message": "eastmoney_structure_pools_intraday_1000_20260721: 结构池一度涨停12、跌停125（剔除云创退124）、炸板7；腾讯10:03逐股确认智度、证通、翠微已开板，实时有效封板约9只、可核验炸板至少9只。",
       "impact_level": "price_review",
       "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
+    },
+    {
+      "severity": "warning",
+      "file": "source-health.json",
+      "path": "",
+      "code": "source_degraded",
+      "message": "concept_ranking_intraday_1100_20260721: 未取得可可靠校验的概念全榜；概念强弱改用涨跌停行业分布、98行业排名及代表股成交归因，不编造名次。",
+      "impact_level": "price_review",
+      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
     }
   ],
   "action_plan": [
@@ -1113,17 +1005,6 @@
       "unblock_condition": "price_review=0 或相关来源标记 trusted/cross verified。"
     },
     {
-      "priority": 3,
-      "impact_level": "signal_review",
-      "label": "信号结构复核",
-      "file": "topics.json",
-      "code": "schema_contract_missing",
-      "problem": "topics[0].status 缺失",
-      "decision_action": "机会信号必须降权并转入验证",
-      "next_step": "修正字段结构、证据、触发原因和升级条件；未通过前降权展示。",
-      "unblock_condition": "signal_review=0，decision-feed/核心 JSON 契约通过。"
-    },
-    {
       "priority": 4,
       "impact_level": "background_review",
       "label": "背景来源复核",
@@ -1133,16 +1014,27 @@
       "decision_action": "仅作背景复核，不单独阻断交易判断",
       "next_step": "补官方/交易所/公司公告来源；未补齐前不升级为核心依据。",
       "unblock_condition": "官方来源补齐或确认不影响交易触发。"
+    },
+    {
+      "priority": 4,
+      "impact_level": "background_review",
+      "label": "背景来源复核",
+      "file": "midday.json",
+      "code": "stale_timestamp",
+      "problem": "时间戳不是当前交易日：2026-07-20T13:43:40+08:00",
+      "decision_action": "仅作背景复核，不单独阻断交易判断",
+      "next_step": "补官方/交易所/公司公告来源；未补齐前不升级为核心依据。",
+      "unblock_condition": "官方来源补齐或确认不影响交易触发。"
     }
   ],
   "counts": {
     "critical": 0,
-    "warning": 117,
+    "warning": 105,
     "info": 1,
     "blocking": 0,
-    "price_review": 101,
-    "signal_review": 12,
-    "background_review": 5
+    "price_review": 102,
+    "signal_review": 0,
+    "background_review": 4
   },
   "rules": [
     "异常文本、JSON解析失败、必需文件缺失为 critical。",
