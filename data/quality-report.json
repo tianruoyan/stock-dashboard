@@ -1,24 +1,24 @@
 {
-  "timestamp": "2026-07-22T21:06:04+08:00",
+  "timestamp": "2026-07-22T21:12:51+08:00",
   "current_signal_date": "2026-07-22",
   "status": "degraded",
-  "summary": "发现 104 个降级/需复核项（102 个价格/行情复核，2 个背景复核），核心结论可看但必须按影响分层使用。",
+  "summary": "发现 104 个降级/需复核项（103 个价格/行情复核，1 个背景复核），核心结论可看但必须按影响分层使用。",
   "issues": [
     {
       "severity": "warning",
       "file": "postmarket.json",
-      "path": "",
-      "code": "stale_timestamp",
-      "message": "时间戳不是当前交易日：2026-07-21T16:14:00+08:00",
-      "impact_level": "background_review",
-      "decision_action": "仅作背景复核，不单独阻断交易判断"
+      "path": "hotspots[1].stocks[0]",
+      "code": "watchlist_limit_down_like",
+      "message": "中国巨石 接近跌停 -10.0，需确认是否真实",
+      "impact_level": "price_review",
+      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
     },
     {
       "severity": "warning",
       "file": "postmarket.json",
-      "path": "hotspots[7].stocks[0]",
-      "code": "watchlist_extreme_change",
-      "message": "智谱 涨跌幅 36.89，需回查源",
+      "path": "hotspots[1].stocks[1]",
+      "code": "watchlist_limit_down_like",
+      "message": "德明利 接近跌停 -10.0，需确认是否真实",
       "impact_level": "price_review",
       "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
     },
@@ -947,8 +947,8 @@
       "impact_level": "price_review",
       "label": "二次行情复核",
       "file": "postmarket.json",
-      "code": "watchlist_extreme_change",
-      "problem": "智谱 涨跌幅 36.89，需回查源",
+      "code": "watchlist_limit_down_like",
+      "problem": "中国巨石 接近跌停 -10.0，需确认是否真实",
       "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核",
       "next_step": "用第二行情源复核涨跌幅、quote_time 和代表股方向；未确认前只做验证。",
       "unblock_condition": "price_review=0 或相关来源标记 trusted/cross verified。"
@@ -979,17 +979,6 @@
       "priority": 4,
       "impact_level": "background_review",
       "label": "背景来源复核",
-      "file": "postmarket.json",
-      "code": "stale_timestamp",
-      "problem": "时间戳不是当前交易日：2026-07-21T16:14:00+08:00",
-      "decision_action": "仅作背景复核，不单独阻断交易判断",
-      "next_step": "补官方/交易所/公司公告来源；未补齐前不升级为核心依据。",
-      "unblock_condition": "官方来源补齐或确认不影响交易触发。"
-    },
-    {
-      "priority": 4,
-      "impact_level": "background_review",
-      "label": "背景来源复核",
       "file": "premarket.json",
       "code": "stale_timestamp",
       "problem": "时间戳不是当前交易日：2026-07-21T09:28:30+08:00",
@@ -1003,9 +992,9 @@
     "warning": 104,
     "info": 0,
     "blocking": 0,
-    "price_review": 102,
+    "price_review": 103,
     "signal_review": 0,
-    "background_review": 2
+    "background_review": 1
   },
   "rules": [
     "异常文本、JSON解析失败、必需文件缺失为 critical。",
