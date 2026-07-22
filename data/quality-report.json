@@ -1,9 +1,18 @@
 {
-  "timestamp": "2026-07-22T15:03:46+08:00",
+  "timestamp": "2026-07-22T15:05:47+08:00",
   "current_signal_date": "2026-07-22",
   "status": "degraded",
-  "summary": "发现 104 个降级/需复核项（102 个价格/行情复核，3 个背景复核），核心结论可看但必须按影响分层使用。",
+  "summary": "发现 105 个降级/需复核项（1 个交易阻断，102 个价格/行情复核，3 个背景复核），核心结论可看但必须按影响分层使用。",
   "issues": [
+    {
+      "severity": "warning",
+      "file": "alert.json",
+      "path": "",
+      "code": "invalidated_source",
+      "message": "盘中监控进程未运行，等待自动拉起。",
+      "impact_level": "blocking",
+      "decision_action": "对应信号等待重产，页面必须显示阻断"
+    },
     {
       "severity": "warning",
       "file": "postmarket.json",
@@ -952,6 +961,17 @@
   ],
   "action_plan": [
     {
+      "priority": 1,
+      "impact_level": "blocking",
+      "label": "先修复阻断",
+      "file": "alert.json",
+      "code": "invalidated_source",
+      "problem": "盘中监控进程未运行，等待自动拉起。",
+      "decision_action": "对应信号等待重产，页面必须显示阻断",
+      "next_step": "暂停对应交易触发；等待污染批次撤下、可信行情源恢复并重产 JSON。",
+      "unblock_condition": "quality-report blocking=0，相关文件不再 invalidated/missing。"
+    },
+    {
       "priority": 2,
       "impact_level": "price_review",
       "label": "二次行情复核",
@@ -1005,24 +1025,13 @@
       "decision_action": "仅作背景复核，不单独阻断交易判断",
       "next_step": "补官方/交易所/公司公告来源；未补齐前不升级为核心依据。",
       "unblock_condition": "官方来源补齐或确认不影响交易触发。"
-    },
-    {
-      "priority": 4,
-      "impact_level": "background_review",
-      "label": "背景来源复核",
-      "file": "evening-sentiment.json",
-      "code": "evening_not_current",
-      "problem": "晚间舆情不是当前交易日，不参与今日总控",
-      "decision_action": "仅作背景复核，不单独阻断交易判断",
-      "next_step": "补官方/交易所/公司公告来源；未补齐前不升级为核心依据。",
-      "unblock_condition": "官方来源补齐或确认不影响交易触发。"
     }
   ],
   "counts": {
     "critical": 0,
-    "warning": 104,
+    "warning": 105,
     "info": 1,
-    "blocking": 0,
+    "blocking": 1,
     "price_review": 102,
     "signal_review": 0,
     "background_review": 3
