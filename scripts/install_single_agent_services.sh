@@ -8,6 +8,8 @@ labels=(
   com.stock-dashboard.publisher
   com.stock-dashboard.intraday-data
   com.stock-dashboard.intraday-recovery
+  com.stock-dashboard.monitor-signal-bridge
+  com.stock-dashboard.alert-quote-verifier
   com.stock-dashboard.codex-runtime
   com.stock-dashboard.local-health
 )
