@@ -29,10 +29,14 @@ def main() -> int:
     forbidden = forbidden_source_rows(source_rows)
     active_alerts = alert.get("alerts") if isinstance(alert.get("alerts"), list) else []
     invalidated = alert.get("source_status") == "invalidated"
+    live_no_trigger = alert.get("source_status") == "monitor_live_no_trigger"
     quote_audit = alert.get("quote_audit") if isinstance(alert.get("quote_audit"), dict) else {}
 
     if active_alerts:
       status, summary = active_alert_status(quote_audit, forbidden, active_alerts)
+    elif live_no_trigger:
+      status = "monitoring_no_trigger"
+      summary = "盘中短周期监控运行正常，当前没有达到规则门槛的新异动。"
     elif invalidated and trusted:
       status = "ready_to_recover"
       summary = "旧盘中异动批次已撤下；可信行情源可用于重产，但必须带交叉验证审计。"
@@ -146,6 +150,8 @@ def source_view(source_id: str, source: dict[str, Any]) -> dict[str, str]:
 
 
 def next_actions(status: str, trusted: list[dict[str, Any]], forbidden: list[dict[str, Any]], invalidated: bool, active_alerts: list[Any]) -> list[str]:
+    if status == "monitoring_no_trigger":
+        return ["继续运行短周期扫描；只有达到价格、成交和扩散门槛后才生成候选异动。"]
     if status == "ready_to_recover":
         return [
             "用 tencent_http 作为 A股涨跌幅主源，重新生成 data/alert.json。",

@@ -52,6 +52,11 @@ cleanup() {
 trap cleanup EXIT INT TERM
 
 cd "$ROOT" || exit 1
+if [ -d "$ROOT/.monitor-signal-write-active" ]; then
+  write_status "waiting" "monitor signal bridge is switching the alert snapshot"
+  echo "monitor signal bridge is active; publish remains pending"
+  exit 0
+fi
 write_status "building" "running dashboard audit and smoke checks"
 
 "$PYTHON_BIN" scripts/build_dashboard_reports.py

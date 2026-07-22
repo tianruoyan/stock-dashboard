@@ -24,6 +24,8 @@ DEFAULT_MONITOR_START = INVESTMENT_ROOT / "run_monitor_guard.sh"
 DEFAULT_ALERT_PATH = ROOT / "data" / "alert.json"
 DEFAULT_STATUS_PATH = ROOT / "logs" / "monitor-signal-bridge-status.json"
 LOCK_PATH = ROOT / ".monitor-signal-bridge.lock"
+PUBLISH_LOCK_PATH = ROOT / ".publish-lock"
+ACTIVE_DIR = ROOT / ".monitor-signal-write-active"
 PENDING_PATH = ROOT / ".publish-pending"
 MAX_ALERTS = 20
 HEARTBEAT_MINUTES = 4
@@ -63,7 +65,23 @@ def main() -> int:
         except BlockingIOError:
             print(json.dumps({"state": "已有接线任务运行", "changed": False}, ensure_ascii=False))
             return 0
-        result = run_bridge(args, now)
+        if PUBLISH_LOCK_PATH.exists():
+            result = {"state": "等待发布任务完成", "changed": False, "detail": "避免数据审计期间切换异动快照"}
+            write_json(args.status_output, status_payload(now, result))
+            print(json.dumps(result, ensure_ascii=False))
+            return 0
+        try:
+            ACTIVE_DIR.mkdir()
+        except FileExistsError:
+            print(json.dumps({"state": "已有接线任务运行", "changed": False}, ensure_ascii=False))
+            return 0
+        try:
+            result = run_bridge(args, now)
+        finally:
+            try:
+                ACTIVE_DIR.rmdir()
+            except OSError:
+                pass
     print(json.dumps(result, ensure_ascii=False))
     return 0
 

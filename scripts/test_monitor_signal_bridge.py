@@ -5,7 +5,7 @@ import unittest
 from datetime import datetime
 from pathlib import Path
 
-from import_monitor_signals import TZ, convert_record, read_signal_records, should_refresh
+from import_monitor_signals import TZ, convert_record, live_payload, read_signal_records, should_refresh
 
 
 def theme_record(timestamp: str, side: str = "up", speed: float = 1.8) -> dict:
@@ -82,6 +82,12 @@ class MonitorSignalBridgeTests(unittest.TestCase):
         current = {"timestamp": "2026-07-22T10:03:00+08:00", "source_status": "monitor_live_no_trigger", "alerts": []}
         self.assertFalse(should_refresh(previous, current, datetime(2026, 7, 22, 10, 3, tzinfo=TZ)))
         self.assertTrue(should_refresh(previous, current, datetime(2026, 7, 22, 10, 4, tzinfo=TZ)))
+
+    def test_no_trigger_payload_does_not_claim_monitor_failure(self) -> None:
+        payload = live_payload([], datetime(2026, 7, 22, 10, 4, tzinfo=TZ))
+        self.assertEqual(payload["source_status"], "monitor_live_no_trigger")
+        self.assertIn("监控运行正常", payload["note"])
+        self.assertEqual(payload["alerts"], [])
 
 
 if __name__ == "__main__":
