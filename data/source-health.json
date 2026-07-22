@@ -1,13 +1,15 @@
 {
-  "timestamp": "2026-07-22T12:10:00+08:00",
+  "timestamp": "2026-07-22T13:56:22+08:00",
   "sources": {
     "tencent_http": {
-      "status": "ok",
-      "last_check": "2026-07-10T14:34:12+08:00",
-      "usage": "14:30指数、观察池与专项样本",
-      "detail": "腾讯HTTP返回14:34有效A股报价。",
-      "sample_count": 88,
-      "errors": []
+      "status": "degraded_recovered",
+      "last_check": "2026-07-22T13:56:22+08:00",
+      "usage": "午后指数、行业和A/H重点样本",
+      "detail": "13:00后曾出现DNS/网络失败；13:23恢复，13:55取得5个指数、98个行业及重点样本有效报价。未回填错过的历史时点。",
+      "sample_count": 98,
+      "errors": [
+        "13:00-13:23 qt.gtimg.cn DNS解析失败，随后恢复"
+      ]
     },
     "eastmoney_push2_akshare": {
       "status": "ok",
@@ -323,10 +325,10 @@
     },
     "eastmoney_limit_pool_intraday_1330": {
       "status": "ok",
-      "last_check": "2026-07-08T13:35:00+08:00",
-      "usage": "13:30涨停/跌停/炸板结构池",
-      "detail": "返回涨停45、跌停16、炸板8；用于全市场结构判断，不做高频轮询。",
-      "sample_count": 69,
+      "last_check": "2026-07-22T13:56:22+08:00",
+      "usage": "午后涨停池、跌停总数、炸板池和行业分布",
+      "detail": "串行限流取得涨停44、跌停7、炸板34；最高5板、4只20cm涨停。",
+      "sample_count": 85,
       "errors": []
     },
     "tencent_a_quote_intraday_1330": {
@@ -338,12 +340,14 @@
       "errors": []
     },
     "tencent_hk_http_intraday_1330": {
-      "status": "ok",
-      "last_check": "2026-07-08T13:35:00+08:00",
-      "usage": "港股午后指数与重点样本快照",
-      "detail": "恒指、恒科、互联网、AI应用和港股半导体样本返回有效快照；港股科技强势，创新药偏弱。",
-      "sample_count": 12,
-      "errors": []
+      "status": "ok_delayed_stocks",
+      "last_check": "2026-07-22T13:56:22+08:00",
+      "usage": "午后港股指数及A/H科技映射",
+      "detail": "取得13:28恒指、恒科及半导体/互联网样本；免费行情可能存在延时，只用于方向映射。",
+      "sample_count": 10,
+      "errors": [
+        "港股免费快照可能延迟"
+      ]
     },
     "eastmoney_board_rank_intraday_1330": {
       "status": "failed",
