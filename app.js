@@ -2890,7 +2890,7 @@ function intradayOpportunityAlerts(alertTimestamp) {
     .slice(0, 4)
     .map((item, index) => {
       const evidence = arrayTextItems(item.evidence);
-      const leaders = extractOpportunityLeaders(evidence.join("；")).slice(0, 3);
+      const leaders = extractIntradayRepresentativeLeaders(evidence).slice(0, 3);
       return normalizeAlertTime({
         id: `intraday-opportunity-${signalDate(intraday.timestamp)}-${index}`,
         time: intraday.timestamp,
@@ -2927,7 +2927,7 @@ function intradayRiskAlerts(alertTimestamp) {
         sector: item.name || "盘中风险",
         type: "盘中全景 / 风险变化",
         reason,
-        leaders: extractOpportunityLeaders(evidence.join("；")).slice(0, 3),
+        leaders: extractIntradayRepresentativeLeaders(evidence).slice(0, 3),
         signal_type: "风险变化观察",
         _syntheticRisk: true,
         _purpose: "risk",
@@ -2962,6 +2962,30 @@ function renderIntradayFallbackCards(alerts) {
       </div>`;
     }).join("")}
   </div>`;
+}
+
+function extractIntradayRepresentativeLeaders(evidence) {
+  const text = arrayTextItems(evidence).join("；");
+  const candidates = extractOpportunityLeaders(text);
+  const boardMatches = [];
+  const boardRe = /([\u4e00-\u9fa5]{2,10})(\d+)板/g;
+  let boardMatch;
+  while ((boardMatch = boardRe.exec(text)) && boardMatches.length < 3) {
+    boardMatches.push({ name: boardMatch[1], change_pct: null, factors: [`${boardMatch[2]}板`] });
+  }
+  const alias = {
+    "紫光": "紫光股份", "锐捷": "锐捷网络", "盛科": "盛科通信", "菲菱": "菲菱科思", "三旺": "三旺通信",
+    "通富": "通富微电", "长电": "长电科技", "甬矽": "甬矽电子", "曙光": "中科曙光", "浪潮": "浪潮信息",
+    "北方": "北方华创", "拓荆": "拓荆科技", "中微": "中微公司", "雅克": "雅克科技", "澜起": "澜起科技",
+    "中际": "中际旭创", "天孚": "天孚通信", "富创": "富创精密", "新莱": "新莱应材", "沪硅": "沪硅产业",
+    "巨石": "中国巨石", "国际复材": "国际复材", "生益": "生益科技", "沪电": "沪电股份", "腾讯": "腾讯控股", "智谱": "智谱"
+  };
+  const forbidden = /行业|板块|样本|均值|贵金属|工业金属|有色金属|通信设备|半导体|电子化学|科创|创业板|上证|深证|沪深|恒生|涨停|跌停|成交|概念/;
+  const seen = new Set();
+  return [...boardMatches, ...candidates]
+    .map(item => ({ ...item, name: alias[item.name] || item.name }))
+    .filter(item => item.name && !forbidden.test(item.name) && !seen.has(item.name) && seen.add(item.name))
+    .slice(0, 6);
 }
 
 function renderOpportunityWatchQueue(activeAlerts = []) {
