@@ -978,6 +978,7 @@ function timestampHourMinute(value) {
 
 function checkInvalidatedAlertRendering(document, issues) {
   const alert = readJsonIfExists("data/alert.json");
+  const intraday = readJsonIfExists("data/intraday.json");
   const trust = readJsonIfExists("data/data-trust.json");
   const trustRow = Array.isArray(trust.files)
     ? trust.files.find(item => item.file === "data/alert.json")
@@ -1005,6 +1006,11 @@ function checkInvalidatedAlertRendering(document, issues) {
   }
   if (rendered.includes("暂无新异动") || rendered.includes("等待触发") || rendered.includes("暂无盘中异动")) {
     issues.push(issue("critical", "invalidated_alert_shown_as_empty", "盘中异动失效时被渲染成普通空状态", "section-alerts"));
+  }
+  if (Date.parse(intraday.timestamp || "") > Date.parse(alert.timestamp || "")) {
+    if (!rendered.includes("最新盘面变化") || !rendered.includes("不是短周期异动直接触发")) {
+      issues.push(issue("critical", "intraday_fallback_not_rendered", "原异动源失效但盘中全景较新时，未展示明确标注来源的最新盘面变化", "section-alerts"));
+    }
   }
 }
 

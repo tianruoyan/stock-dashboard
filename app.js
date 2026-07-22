@@ -2748,7 +2748,11 @@ function renderAlerts(data) {
   const invalidated = alertInvalidationState(data);
   if (invalidated.invalidated) {
     renderAlertsSummary([], data.timestamp, invalidated);
-    el.innerHTML = renderAlertInvalidatedState(invalidated);
+    const fallbackAlerts = sortAlertsByEventTime([
+      ...intradayOpportunityAlerts(data.timestamp),
+      ...intradayRiskAlerts(data.timestamp)
+    ]).sort(alertDisplaySort).slice(0, 6);
+    el.innerHTML = renderAlertInvalidatedState(invalidated) + renderIntradayFallbackCards(fallbackAlerts);
     return;
   }
   const saved = sortAlertsByEventTime(
@@ -2900,6 +2904,64 @@ function intradayOpportunityAlerts(alertTimestamp) {
         _received: Date.parse(intraday.timestamp) || Date.now()
       }, intraday.timestamp, Date.parse(intraday.timestamp) || Date.now());
     });
+}
+
+function intradayRiskAlerts(alertTimestamp) {
+  const intraday = cached("data/intraday.json") || {};
+  if (!intraday.timestamp || signalDate(intraday.timestamp) !== currentSignalDate()) return [];
+  if (alertTimestamp && Date.parse(intraday.timestamp) <= Date.parse(alertTimestamp)) return [];
+  const trends = Array.isArray(intraday.main_trends) ? intraday.main_trends : [];
+  return trends
+    .filter(item => {
+      const evidenceText = arrayTextItems(item?.evidence);
+      const text = [item?.name, item?.tier, item?.status, item?.risk, ...evidenceText].join(" ");
+      return /风险线|主要风险源|放量回落|负反馈.*扩大|退潮|走弱/.test(text);
+    })
+    .slice(0, 3)
+    .map((item, index) => {
+      const evidence = arrayTextItems(item.evidence);
+      const reason = [evidence[0], item.risk].filter(Boolean).join("；") || item.status || intraday.summary || "盘中全景显示风险扩大";
+      return normalizeAlertTime({
+        id: `intraday-risk-${signalDate(intraday.timestamp)}-${index}`,
+        time: intraday.timestamp,
+        sector: item.name || "盘中风险",
+        type: "盘中全景 / 风险变化",
+        reason,
+        leaders: extractOpportunityLeaders(evidence.join("；")).slice(0, 3),
+        signal_type: "风险变化观察",
+        _syntheticRisk: true,
+        _purpose: "risk",
+        _received: Date.parse(intraday.timestamp) || Date.now()
+      }, intraday.timestamp, Date.parse(intraday.timestamp) || Date.now());
+    });
+}
+
+function renderIntradayFallbackCards(alerts) {
+  if (!alerts.length) return "";
+  const intraday = cached("data/intraday.json") || {};
+  return `<div class="alert-live-fallback">
+    <div class="alert-live-fallback-head">
+      <b>最新盘面变化</b>
+      <span>${escapeHtml(formatUpdateTime(intraday.timestamp) || "当前时点")} · 来自盘中全景，不是短周期异动直接触发</span>
+    </div>
+    ${alerts.map(item => {
+      const purpose = alertPurpose(item);
+      const leaders = (item.leaders || []).slice(0, 3).map(leader => leader.name).filter(Boolean);
+      const action = purpose === "risk"
+        ? "先降低追高频率，等待跌幅、炸板或核心负反馈收敛。"
+        : "只作机会观察，等待代表股承接、后排扩散和成交继续确认。";
+      return `<div class="card ${purpose === "risk" ? "risk-card" : "hot"}">
+        <div class="card-head">
+          <span class="badge ${purpose === "risk" ? "risk" : "signal"}">${purpose === "risk" ? "全景风险" : "全景机会"}</span>
+          <b>${escapeHtml(displayAlertSector(item))}</b>
+          <span class="time">${escapeHtml(displayAlertTime(item))}</span>
+        </div>
+        <div class="card-body"><b>${escapeHtml(item.type)}</b> · ${escapeHtml(item.reason || "等待进一步确认")}</div>
+        ${leaders.length ? `<div class="card-leaders">代表股：${leaders.map(escapeHtml).join(" / ")}</div>` : ""}
+        <div class="alert-confirm ${purpose === "risk" ? "" : "candidate"}"><b>当前处理</b><span>${escapeHtml(action)}</span></div>
+      </div>`;
+    }).join("")}
+  </div>`;
 }
 
 function renderOpportunityWatchQueue(activeAlerts = []) {

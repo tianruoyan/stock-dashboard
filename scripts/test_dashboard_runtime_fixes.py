@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import unittest
 from datetime import datetime, timedelta, timezone
+from pathlib import Path
 
 from audit_dashboard_data import structured_candidate_evidence_valid, validate_candidate_alert_evidence
 from build_monitoring_coverage import market_breadth_text
@@ -11,6 +12,12 @@ TZ = timezone(timedelta(hours=8))
 
 
 class DashboardRuntimeFixTests(unittest.TestCase):
+    def test_invalidated_alert_keeps_current_intraday_fallback_visible(self) -> None:
+        app = (Path(__file__).resolve().parents[1] / "app.js").read_text(encoding="utf-8")
+        self.assertIn("function intradayRiskAlerts", app)
+        self.assertIn("最新盘面变化", app)
+        self.assertIn("不是短周期异动直接触发", app)
+
     def test_monitoring_coverage_accepts_text_sentiment(self) -> None:
         self.assertEqual(market_breadth_text({}, {"sentiment": "风险释放加速"}), "")
 
