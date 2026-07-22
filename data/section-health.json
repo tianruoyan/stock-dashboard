@@ -1,12 +1,12 @@
 {
-  "timestamp": "2026-07-21T16:19:14+08:00",
+  "timestamp": "2026-07-22T08:15:48+08:00",
   "current_signal_date": "2026-07-21",
   "overall_status": "degraded",
-  "summary": "1 个区块不可直接使用，7 个区块需降权。",
+  "summary": "1 个区块不可直接使用，6 个区块需降权。",
   "counts": {
-    "ok": 1,
-    "degraded": 6,
-    "stale": 1,
+    "ok": 2,
+    "degraded": 3,
+    "stale": 3,
     "invalidated": 1,
     "missing": 0
   },
@@ -14,10 +14,10 @@
     {
       "id": "control",
       "label": "今日总控",
-      "status": "degraded",
+      "status": "stale",
       "usable": true,
-      "reason": "data/quality-report.json 发现 101 个降级/需复核项（1 个交易阻断，100 个价格/行情复核，1 个背景复核），核心结论可看但必须按影响分层使用。",
-      "action": "可看但降权",
+      "reason": "data/quality-report.json 非当前交易日：2026-07-22；data/decision-feed.json 非当前交易日：2026-07-22",
+      "action": "仅作历史背景",
       "files": [
         {
           "file": "data/intraday.json",
@@ -33,32 +33,32 @@
         },
         {
           "file": "data/quality-report.json",
-          "status": "degraded",
-          "timestamp": "2026-07-21T16:19:14+08:00",
-          "signal_date": "2026-07-21"
+          "status": "stale",
+          "timestamp": "2026-07-22T08:15:48+08:00",
+          "signal_date": "2026-07-22"
         },
         {
           "file": "data/theme-shifts.json",
           "status": "ok",
-          "timestamp": "2026-07-21T16:19:14+08:00",
+          "timestamp": "2026-07-22T08:15:48+08:00",
           "signal_date": "2026-07-21"
         },
         {
           "file": "data/decision-feed.json",
-          "status": "ok",
-          "timestamp": "2026-07-21T16:19:14+08:00",
-          "signal_date": "2026-07-21"
+          "status": "stale",
+          "timestamp": "2026-07-22T08:15:48+08:00",
+          "signal_date": "2026-07-22"
         }
       ],
-      "latest_timestamp": "2026-07-21T16:19:14+08:00"
+      "latest_timestamp": "2026-07-22T08:15:48+08:00"
     },
     {
       "id": "watchlist",
       "label": "我的观察池",
-      "status": "degraded",
+      "status": "stale",
       "usable": true,
-      "reason": "data/quality-report.json 发现 101 个降级/需复核项（1 个交易阻断，100 个价格/行情复核，1 个背景复核），核心结论可看但必须按影响分层使用。",
-      "action": "可看但降权",
+      "reason": "data/quality-report.json 非当前交易日：2026-07-22",
+      "action": "仅作历史背景",
       "files": [
         {
           "file": "config/watchlist.json",
@@ -92,12 +92,12 @@
         },
         {
           "file": "data/quality-report.json",
-          "status": "degraded",
-          "timestamp": "2026-07-21T16:19:14+08:00",
-          "signal_date": "2026-07-21"
+          "status": "stale",
+          "timestamp": "2026-07-22T08:15:48+08:00",
+          "signal_date": "2026-07-22"
         }
       ],
-      "latest_timestamp": "2026-07-21T16:19:14+08:00"
+      "latest_timestamp": "2026-07-22T08:15:48+08:00"
     },
     {
       "id": "alerts",
@@ -116,7 +116,7 @@
         {
           "file": "data/opportunity-watch.json",
           "status": "ok",
-          "timestamp": "2026-07-21T16:19:14+08:00",
+          "timestamp": "2026-07-22T08:15:48+08:00",
           "signal_date": "2026-07-21"
         },
         {
@@ -126,7 +126,7 @@
           "signal_date": "2026-07-21"
         }
       ],
-      "latest_timestamp": "2026-07-21T16:19:14+08:00"
+      "latest_timestamp": "2026-07-22T08:15:48+08:00"
     },
     {
       "id": "intraday",
@@ -217,27 +217,27 @@
     {
       "id": "evening",
       "label": "晚间舆情",
-      "status": "stale",
+      "status": "ok",
       "usable": true,
-      "reason": "data/evening-sentiment.json 非当前交易日：2026-07-20",
-      "action": "仅作历史背景",
+      "reason": "区块数据可用",
+      "action": "正常使用",
       "files": [
         {
           "file": "data/evening-sentiment.json",
-          "status": "stale",
-          "timestamp": "2026-07-20T21:00:00+08:00",
-          "signal_date": "2026-07-20"
+          "status": "ok",
+          "timestamp": "2026-07-21T21:00:00+08:00",
+          "signal_date": "2026-07-21"
         }
       ],
-      "latest_timestamp": "2026-07-20T21:00:00+08:00"
+      "latest_timestamp": "2026-07-21T21:00:00+08:00"
     },
     {
       "id": "topics",
       "label": "专题跟踪",
-      "status": "degraded",
+      "status": "stale",
       "usable": true,
-      "reason": "data/quality-report.json 发现 101 个降级/需复核项（1 个交易阻断，100 个价格/行情复核，1 个背景复核），核心结论可看但必须按影响分层使用。",
-      "action": "可看但降权",
+      "reason": "data/quality-report.json 非当前交易日：2026-07-22",
+      "action": "仅作历史背景",
       "files": [
         {
           "file": "data/topics.json",
@@ -253,12 +253,12 @@
         },
         {
           "file": "data/quality-report.json",
-          "status": "degraded",
-          "timestamp": "2026-07-21T16:19:14+08:00",
-          "signal_date": "2026-07-21"
+          "status": "stale",
+          "timestamp": "2026-07-22T08:15:48+08:00",
+          "signal_date": "2026-07-22"
         }
       ],
-      "latest_timestamp": "2026-07-21T16:19:14+08:00"
+      "latest_timestamp": "2026-07-22T08:15:48+08:00"
     }
   ],
   "rules": [

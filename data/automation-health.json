@@ -1,15 +1,15 @@
 {
-  "timestamp": "2026-07-21T16:19:14+08:00",
+  "timestamp": "2026-07-22T08:15:48+08:00",
   "current_signal_date": "2026-07-21",
-  "target_trade_date": "2026-07-21",
+  "target_trade_date": "2026-07-22",
   "overall_status": "blocked",
   "summary": "1 个自动化产出异常：盘中异动。",
   "counts": {
-    "ok": 5,
+    "ok": 6,
     "late": 0,
     "missing": 0,
     "invalidated": 1,
-    "waiting": 1
+    "waiting": 0
   },
   "processes": [
     {
@@ -114,15 +114,15 @@
       "file": "data/evening-sentiment.json",
       "due": "20:00",
       "deadline": "2026-07-21T21:30:00+08:00",
-      "timestamp": "2026-07-20T21:00:00+08:00",
-      "status": "waiting",
+      "timestamp": "2026-07-21T21:00:00+08:00",
+      "status": "ok",
       "blocking": false,
-      "action": "等待产出",
-      "reason": "计划 20:00 后产出",
-      "failure_type": "not_due",
-      "diagnosis": "尚未到该自动化的计划产出窗口。",
+      "action": "正常使用",
+      "reason": "当日产出已到位",
+      "failure_type": "none",
+      "diagnosis": "产出正常，未发现自动化层异常。",
       "next_actions": [
-        "到 20:00 后再检查是否产出。"
+        "正常读取；仍需结合数据质量卡判断是否降权。"
       ],
       "related_sources": []
     },
@@ -146,81 +146,81 @@
     }
   ],
   "next_session_readiness": {
-    "target_trade_date": "2026-07-21",
-    "status": "overdue",
-    "summary": "2026-07-21 有 1 个产出已过窗口未更新。",
-    "pending_count": 1,
-    "ready_count": 5,
-    "overdue_count": 1,
+    "target_trade_date": "2026-07-22",
+    "status": "pending",
+    "summary": "2026-07-22 开盘链路待产出：盘前简报 09:25。",
+    "pending_count": 7,
+    "ready_count": 0,
+    "overdue_count": 0,
     "items": [
       {
         "id": "premarket",
         "label": "盘前简报",
         "file": "data/premarket.json",
         "due": "09:25",
-        "deadline": "2026-07-21T09:45:00+08:00",
+        "deadline": "2026-07-22T09:45:00+08:00",
         "timestamp": "2026-07-21T09:28:30+08:00",
         "file_date": "2026-07-21",
-        "status": "ready",
-        "action": "已产出",
-        "reason": "目标交易日文件已更新"
+        "status": "pending",
+        "action": "等待产出",
+        "reason": "计划 09:25 后产出"
       },
       {
         "id": "intraday",
         "label": "盘中全景",
         "file": "data/intraday.json",
         "due": "15:05",
-        "deadline": "2026-07-21T16:35:00+08:00",
+        "deadline": "2026-07-22T16:35:00+08:00",
         "timestamp": "2026-07-21T16:14:00+08:00",
         "file_date": "2026-07-21",
-        "status": "ready",
-        "action": "已产出",
-        "reason": "目标交易日文件已更新"
+        "status": "pending",
+        "action": "等待产出",
+        "reason": "计划 15:05 后产出"
       },
       {
         "id": "alerts",
         "label": "盘中异动",
         "file": "data/alert.json",
         "due": "15:00",
-        "deadline": "2026-07-21T15:05:00+08:00",
+        "deadline": "2026-07-22T15:05:00+08:00",
         "timestamp": "2026-07-21T15:16:00+08:00",
         "file_date": "2026-07-21",
-        "status": "overdue",
-        "action": "需要重跑",
-        "reason": "目标交易日尚未产出：当前文件日期 2026-07-21"
+        "status": "pending",
+        "action": "等待产出",
+        "reason": "计划 15:00 后产出"
       },
       {
         "id": "midday",
         "label": "午盘分析",
         "file": "data/midday.json",
         "due": "11:30",
-        "deadline": "2026-07-21T12:00:00+08:00",
+        "deadline": "2026-07-22T12:00:00+08:00",
         "timestamp": "2026-07-21T11:37:51+08:00",
         "file_date": "2026-07-21",
-        "status": "ready",
-        "action": "已产出",
-        "reason": "目标交易日文件已更新"
+        "status": "pending",
+        "action": "等待产出",
+        "reason": "计划 11:30 后产出"
       },
       {
         "id": "postmarket",
         "label": "盘后复盘",
         "file": "data/postmarket.json",
         "due": "15:30",
-        "deadline": "2026-07-21T16:30:00+08:00",
+        "deadline": "2026-07-22T16:30:00+08:00",
         "timestamp": "2026-07-21T16:14:00+08:00",
         "file_date": "2026-07-21",
-        "status": "ready",
-        "action": "已产出",
-        "reason": "目标交易日文件已更新"
+        "status": "pending",
+        "action": "等待产出",
+        "reason": "计划 15:30 后产出"
       },
       {
         "id": "evening",
         "label": "晚间舆情",
         "file": "data/evening-sentiment.json",
         "due": "20:00",
-        "deadline": "2026-07-21T21:30:00+08:00",
-        "timestamp": "2026-07-20T21:00:00+08:00",
-        "file_date": "2026-07-20",
+        "deadline": "2026-07-22T21:30:00+08:00",
+        "timestamp": "2026-07-21T21:00:00+08:00",
+        "file_date": "2026-07-21",
         "status": "pending",
         "action": "等待产出",
         "reason": "计划 20:00 后产出"
@@ -230,12 +230,12 @@
         "label": "专题跟踪",
         "file": "data/topics.json",
         "due": "15:30",
-        "deadline": "2026-07-21T18:30:00+08:00",
+        "deadline": "2026-07-22T18:30:00+08:00",
         "timestamp": "2026-07-21T16:14:00+08:00",
         "file_date": "2026-07-21",
-        "status": "ready",
-        "action": "已产出",
-        "reason": "目标交易日文件已更新"
+        "status": "pending",
+        "action": "等待产出",
+        "reason": "计划 15:30 后产出"
       }
     ]
   },
