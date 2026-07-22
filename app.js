@@ -4236,7 +4236,9 @@ function renderMidday(data) {
       }
       const breadth = ms.breadth || ms.sentiment;
       if (breadth) {
-        html += `<br><span style="font-size:12px">涨停${breadth.limit_up || breadth.limit_up_count || '?'}家 跌停${breadth.limit_down || breadth.limit_down_count || '?'}家${breadth.break_board_count ? ` 炸板${breadth.break_board_count}家` : ""}</span>`;
+        const limitUpCount = breadth.effective_limit_up_count ?? breadth.limit_up ?? breadth.limit_up_count ?? '?';
+        const limitDownCount = breadth.limit_down ?? breadth.limit_down_count ?? '?';
+        html += `<br><span style="font-size:12px">涨停${limitUpCount}家 跌停${limitDownCount}家${breadth.break_board_count ? ` 炸板${breadth.break_board_count}家` : ""}</span>`;
       }
     }
     html += '</div></div>';

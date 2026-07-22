@@ -1,8 +1,10 @@
 #!/usr/bin/env python3
-"""Mirror TongHuaShun watchlist into config/watchlist.json.
+"""Safely merge TongHuaShun watchlist items into config/watchlist.json.
 
-Only the watch_only pool follows TongHuaShun exactly. The small_deng and
-old_deng pools remain independent style-monitoring pools.
+The normal scheduled job may add or update watch_only records, but it never
+deletes user assets.  Deletion is available only for an explicitly confirmed,
+complete cloud snapshot.  The small_deng and old_deng pools remain independent
+style-monitoring pools.
 """
 import argparse
 import json
@@ -322,7 +324,7 @@ def enrich(item):
     }
 
 
-def merge_watchlist(watchlist, imported):
+def merge_watchlist(watchlist, imported, *, allow_removal=False):
     pool = watchlist.setdefault("watch_only", {})
     stocks = pool.setdefault("stocks", [])
     old_count = len(stocks)
@@ -339,6 +341,7 @@ def merge_watchlist(watchlist, imported):
     updated = 0
     mirrored = []
     seen = set()
+    matched_existing_ids = set()
     for raw in imported:
         stock = enrich(raw)
         code = normalize_code(stock.get("code"))
@@ -351,6 +354,7 @@ def merge_watchlist(watchlist, imported):
             seen.add(key)
         existing = (code and by_code.get(code)) or (digits and by_code.get(digits)) or (name and by_name.get(name))
         if existing:
+            matched_existing_ids.add(id(existing))
             merged = dict(existing)
             existing_code = normalize_code(existing.get("code"))
             if code and (existing_code != code or existing.get("code") != code):
@@ -374,9 +378,16 @@ def merge_watchlist(watchlist, imported):
         if name:
             by_name[name] = stock
         added += 1
+    if not allow_removal:
+        for existing in stocks:
+            if id(existing) not in matched_existing_ids:
+                mirrored.append(dict(existing))
     pool["stocks"] = mirrored
-    pool["_说明"] = "个人观察池—与同花顺自选股保持一致；同步时有增有减。小登池/老登池不受影响。"
-    removed = max(old_count - len(mirrored) + added, 0)
+    if allow_removal:
+        pool["_说明"] = "个人观察池—已依据人工确认的完整同花顺云端快照同步；小登池/老登池不受影响。"
+    else:
+        pool["_说明"] = "个人观察池—同花顺日常同步仅增补和更新；未证明列表完整性时不自动删除。小登池/老登池不受影响。"
+    removed = old_count - len(matched_existing_ids) if allow_removal else 0
     return added, updated, removed
 
 
@@ -393,9 +404,22 @@ def main():
     parser.add_argument(
         "--allow-large-removal",
         action="store_true",
-        help="允许一次同步删除超过当前观察池40%的股票",
+        help="在完整同步已人工确认的前提下，允许一次删除超过当前观察池40%的股票",
+    )
+    parser.add_argument(
+        "--complete-sync-confirmed",
+        action="store_true",
+        help="人工确认本次来源是完整云端列表；只有该模式才允许按来源删除股票",
     )
     args = parser.parse_args()
+
+    if args.allow_large_removal and not args.complete_sync_confirmed:
+        print(
+            "--allow-large-removal requires --complete-sync-confirmed; "
+            "a partial source is never allowed to delete user assets",
+            file=sys.stderr,
+        )
+        return 4
 
     import_source = ""
     imported = []
@@ -422,6 +446,8 @@ def main():
     watchlist = load_json(WATCHLIST_PATH)
     old_count = len(watchlist.get("watch_only", {}).get("stocks", []))
     if (
+        args.complete_sync_confirmed
+        and
         old_count >= 10
         and len(imported) < old_count * 0.6
         and not args.allow_large_removal
@@ -433,18 +459,23 @@ def main():
         )
         return 3
     before = json.dumps(watchlist, ensure_ascii=False, sort_keys=True)
-    added, updated, removed = merge_watchlist(watchlist, imported)
+    added, updated, removed = merge_watchlist(
+        watchlist,
+        imported,
+        allow_removal=args.complete_sync_confirmed,
+    )
+    sync_mode = "mirror_confirmed" if args.complete_sync_confirmed else "protected_merge"
     changed = before != json.dumps(watchlist, ensure_ascii=False, sort_keys=True)
     if args.dry_run:
-        print(json.dumps({"source": import_source, "found": len(imported), "added": added, "updated": updated, "removed": removed, "changed": changed, "mode": "mirror"}, ensure_ascii=False))
+        print(json.dumps({"source": import_source, "found": len(imported), "added": added, "updated": updated, "removed": removed, "changed": changed, "mode": sync_mode}, ensure_ascii=False))
         return 0
     if not changed:
-        print(json.dumps({"source": import_source, "found": len(imported), "added": 0, "updated": 0, "removed": 0, "changed": False, "mode": "mirror", "saved": str(WATCHLIST_PATH), "publish_status": "skipped_no_change"}, ensure_ascii=False))
+        print(json.dumps({"source": import_source, "found": len(imported), "added": 0, "updated": 0, "removed": 0, "changed": False, "mode": sync_mode, "saved": str(WATCHLIST_PATH), "publish_status": "skipped_no_change"}, ensure_ascii=False))
         return 0
     save_json(WATCHLIST_PATH, watchlist)
     run_quality_audit()
     publish_status = publish_dashboard()
-    print(json.dumps({"source": import_source, "found": len(imported), "added": added, "updated": updated, "removed": removed, "changed": True, "mode": "mirror", "saved": str(WATCHLIST_PATH), "publish_status": publish_status}, ensure_ascii=False))
+    print(json.dumps({"source": import_source, "found": len(imported), "added": added, "updated": updated, "removed": removed, "changed": True, "mode": sync_mode, "saved": str(WATCHLIST_PATH), "publish_status": publish_status}, ensure_ascii=False))
     return 0 if publish_status == 0 else 1
 
 

@@ -17,7 +17,15 @@ cd /Users/sweet_orange/stock-dashboard
 python3 scripts/import_ths_watchlist.py --mode ths
 ```
 
-脚本会把 `config/watchlist.json` 里的 `watch_only` 镜像为同花顺当前自选股：同花顺新增则新增，同花顺删除则删除。`small_deng` 和 `old_deng` 仍是独立风格监测池，不跟随同花顺删除。同步成功后直接调用 Codex 单智能体发布器完成校验、提交和推送；网络失败时由本机发布重试服务继续处理。
+脚本默认把同花顺返回的股票安全合并到 `config/watchlist.json` 的 `watch_only`：新增股票会加入，已有股票会更新，但来源没有证明为完整列表时绝不自动删除用户资产。`small_deng` 和 `old_deng` 仍是独立风格监测池，不参与用户自选同步。同步成功后直接调用 Codex 单智能体发布器完成校验、提交和推送；网络失败时由本机发布重试服务继续处理。
+
+只有人工确认本次数据确实是完整云端列表时，才允许按来源执行删除：
+
+```bash
+python3 scripts/import_ths_watchlist.py --mode ths --complete-sync-confirmed
+```
+
+如完整列表相较现有观察池减少超过 40%，还需在核对删除预览后同时增加 `--allow-large-removal`。日常后台任务不会传入这两个参数，因此只能增补和更新，不能删除。
 
 ## 备用方式：iCloud 文本
 
@@ -58,7 +66,7 @@ launchctl load ~/Library/LaunchAgents/com.stock-dashboard.ths-watchlist.plist
 
 默认每 30 分钟同步一次，开机后自动跑一次。后台任务先通过 Finder 把桌面同花顺 Cookie 复制到 `logs/ths-cookie-source/`，再调用同花顺自选接口；桌面登录态失效时才回退到 iCloud 文本镜像。观察池没有变化时不会重复构建和推送。
 
-为避免旧文件误删当前观察池，系统有两层保护：iCloud 文本早于当前 `watchlist.json` 时拒绝覆盖；一次同步拟删除超过当前观察池40%时也拒绝覆盖，必须人工确认后才能使用 `--allow-large-removal`。
+为避免不完整接口响应或旧文件误删当前观察池，系统采用三层保护：日常同步默认禁止删除；iCloud 文本早于当前 `watchlist.json` 时拒绝使用；即使人工确认完整同步，一次拟删除超过当前观察池 40% 时仍会拒绝，必须再次核对后联合使用 `--complete-sync-confirmed --allow-large-removal`。
 
 ## macOS 权限
 
