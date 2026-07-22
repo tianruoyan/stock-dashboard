@@ -52,7 +52,8 @@ def main() -> int:
         raise SystemExit("--now 必须是 ISO 8601 时间")
     now = now.astimezone(TZ)
 
-    if not args.force and not should_run(args.calendar, now):
+    mode = "active" if args.force else market_mode(args.calendar, now)
+    if mode == "inactive":
         result = {"state": "无需运行", "changed": False, "detail": "当前不是已验证交易时段"}
         write_json(args.status_output, status_payload(now, result))
         print(json.dumps(result, ensure_ascii=False))
@@ -76,7 +77,7 @@ def main() -> int:
             print(json.dumps({"state": "已有接线任务运行", "changed": False}, ensure_ascii=False))
             return 0
         try:
-            result = run_bridge(args, now)
+            result = finalize_session(args, now) if mode == "closed" else run_bridge(args, now)
         finally:
             try:
                 ACTIVE_DIR.rmdir()
@@ -142,20 +143,60 @@ def run_bridge(args: argparse.Namespace, now: datetime) -> dict[str, Any]:
 
 
 def should_run(calendar_path: Path, now: datetime) -> bool:
-    hhmm = now.hour * 100 + now.minute
-    in_window = 925 <= hhmm <= 1135 or 1255 <= hhmm <= 1505
-    if not in_window:
-        return False
+    return market_mode(calendar_path, now) == "active"
+
+
+def market_mode(calendar_path: Path, now: datetime) -> str:
     calendar = read_json(calendar_path)
     if calendar.get("verification_state") != "verified":
-        return False
+        return "inactive"
     day = now.date().isoformat()
     if not (str(calendar.get("valid_from") or "") <= day <= str(calendar.get("valid_to") or "")):
-        return False
+        return "inactive"
     weekends = set(calendar.get("weekend_days") or [5, 6])
     if now.weekday() in weekends:
-        return day in set(calendar.get("extra_open_days") or [])
-    return day not in set(calendar.get("holidays") or [])
+        trading_day = day in set(calendar.get("extra_open_days") or [])
+    else:
+        trading_day = day not in set(calendar.get("holidays") or [])
+    if not trading_day:
+        return "inactive"
+    hhmm = now.hour * 100 + now.minute
+    if 925 <= hhmm <= 1135 or 1255 <= hhmm <= 1501:
+        return "active"
+    if hhmm >= 1505:
+        return "closed"
+    return "inactive"
+
+
+def finalize_session(args: argparse.Namespace, now: datetime) -> dict[str, Any]:
+    previous = read_json(args.output)
+    previous_time = parse_datetime(previous.get("timestamp"))
+    if previous_time and previous_time.astimezone(TZ).date() == now.date() and previous.get("source_status") != "invalidated":
+        alerts = [item for item in previous.get("alerts") or [] if isinstance(item, dict)]
+        payload = dict(previous)
+    else:
+        records = read_signal_records(args.signals, now)
+        alerts = dedupe_alerts([converted for record in records if (converted := convert_record(record))])[-MAX_ALERTS:]
+        payload = live_payload(alerts, now)
+    payload["timestamp"] = now.replace(microsecond=0).isoformat()
+    payload["source_status"] = "monitor_session_closed"
+    payload["alerts"] = alerts
+    payload["note"] = (
+        f"盘中监控已按计划结束，今日保留{len(alerts)}条短周期触发供收盘复盘；已过交易时效，不作为当前触发。"
+        if alerts
+        else "盘中监控已按计划结束，今日没有达到短周期价格、成交和扩散规则门槛的有效异动。"
+    )
+    changed = should_refresh(previous, payload, now) and write_if_changed(args.output, payload, previous)
+    if changed:
+        PENDING_PATH.touch()
+    result = {
+        "state": "今日监控已收盘",
+        "changed": changed,
+        "alert_count": len(alerts),
+        "detail": payload["note"],
+    }
+    write_json(args.status_output, status_payload(now, result))
+    return result
 
 
 def monitor_health(status_path: Path, log_path: Path, now: datetime) -> dict[str, Any]:
@@ -485,6 +526,8 @@ def should_refresh(previous: dict[str, Any], current: dict[str, Any], now: datet
     current_ids = [item.get("id") for item in current.get("alerts") or [] if isinstance(item, dict)]
     if previous_ids != current_ids:
         return True
+    if current.get("source_status") == "monitor_session_closed":
+        return False
     timestamp = parse_datetime(previous.get("timestamp"))
     return timestamp is None or now - timestamp.astimezone(TZ) >= timedelta(minutes=HEARTBEAT_MINUTES)
 

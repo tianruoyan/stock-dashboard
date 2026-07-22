@@ -1,18 +1,9 @@
 {
-  "timestamp": "2026-07-22T15:05:47+08:00",
+  "timestamp": "2026-07-22T21:06:04+08:00",
   "current_signal_date": "2026-07-22",
   "status": "degraded",
-  "summary": "发现 105 个降级/需复核项（1 个交易阻断，102 个价格/行情复核，3 个背景复核），核心结论可看但必须按影响分层使用。",
+  "summary": "发现 104 个降级/需复核项（102 个价格/行情复核，2 个背景复核），核心结论可看但必须按影响分层使用。",
   "issues": [
-    {
-      "severity": "warning",
-      "file": "alert.json",
-      "path": "",
-      "code": "invalidated_source",
-      "message": "盘中监控进程未运行，等待自动拉起。",
-      "impact_level": "blocking",
-      "decision_action": "对应信号等待重产，页面必须显示阻断"
-    },
     {
       "severity": "warning",
       "file": "postmarket.json",
@@ -84,15 +75,6 @@
       "message": "hk_auction.mapping_chain[3] change_pct 非数字：待核验/-2.51%/+0.27%，该字段忽略并降权",
       "impact_level": "price_review",
       "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
-    },
-    {
-      "severity": "info",
-      "file": "evening-sentiment.json",
-      "path": "",
-      "code": "evening_not_current",
-      "message": "晚间舆情不是当前交易日，不参与今日总控",
-      "impact_level": "background_review",
-      "decision_action": "仅作背景复核，不单独阻断交易判断"
     },
     {
       "severity": "warning",
@@ -961,17 +943,6 @@
   ],
   "action_plan": [
     {
-      "priority": 1,
-      "impact_level": "blocking",
-      "label": "先修复阻断",
-      "file": "alert.json",
-      "code": "invalidated_source",
-      "problem": "盘中监控进程未运行，等待自动拉起。",
-      "decision_action": "对应信号等待重产，页面必须显示阻断",
-      "next_step": "暂停对应交易触发；等待污染批次撤下、可信行情源恢复并重产 JSON。",
-      "unblock_condition": "quality-report blocking=0，相关文件不再 invalidated/missing。"
-    },
-    {
       "priority": 2,
       "impact_level": "price_review",
       "label": "二次行情复核",
@@ -1029,12 +1000,12 @@
   ],
   "counts": {
     "critical": 0,
-    "warning": 105,
-    "info": 1,
-    "blocking": 1,
+    "warning": 104,
+    "info": 0,
+    "blocking": 0,
     "price_review": 102,
     "signal_review": 0,
-    "background_review": 3
+    "background_review": 2
   },
   "rules": [
     "异常文本、JSON解析失败、必需文件缺失为 critical。",

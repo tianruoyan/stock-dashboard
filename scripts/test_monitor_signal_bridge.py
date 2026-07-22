@@ -5,7 +5,7 @@ import unittest
 from datetime import datetime
 from pathlib import Path
 
-from import_monitor_signals import TZ, convert_record, live_payload, read_signal_records, should_refresh
+from import_monitor_signals import TZ, convert_record, live_payload, market_mode, read_signal_records, should_refresh
 
 
 def theme_record(timestamp: str, side: str = "up", speed: float = 1.8) -> dict:
@@ -88,6 +88,19 @@ class MonitorSignalBridgeTests(unittest.TestCase):
         self.assertEqual(payload["source_status"], "monitor_live_no_trigger")
         self.assertIn("监控运行正常", payload["note"])
         self.assertEqual(payload["alerts"], [])
+
+    def test_verified_trading_day_is_closed_after_monitor_shutdown(self) -> None:
+        with tempfile.TemporaryDirectory() as temp:
+            calendar = Path(temp) / "calendar.json"
+            calendar.write_text(json.dumps({
+                "verification_state": "verified",
+                "valid_from": "2026-01-01",
+                "valid_to": "2026-12-31",
+                "weekend_days": [5, 6],
+                "holidays": [],
+            }), encoding="utf-8")
+            self.assertEqual(market_mode(calendar, datetime(2026, 7, 22, 15, 5, tzinfo=TZ)), "closed")
+            self.assertEqual(market_mode(calendar, datetime(2026, 7, 22, 14, 59, tzinfo=TZ)), "active")
 
 
 if __name__ == "__main__":

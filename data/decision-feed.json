@@ -1,20 +1,20 @@
 {
-  "timestamp": "2026-07-22T15:05:47+08:00",
+  "timestamp": "2026-07-22T21:06:04+08:00",
   "current_signal_date": "2026-07-22",
   "quality_gate": {
     "status": "degraded",
-    "summary": "发现 105 个降级/需复核项（1 个交易阻断，102 个价格/行情复核，3 个背景复核），核心结论可看但必须按影响分层使用。",
+    "summary": "发现 104 个降级/需复核项（102 个价格/行情复核，2 个背景复核），核心结论可看但必须按影响分层使用。",
     "decision_flags": [
-      "交易阻断项未修复，相关信号不可直接用",
       "行情/涨跌幅需二次源复核",
       "盘中异动源降级，alert 类信号降权",
-      "港股收盘窗口可能非终值"
+      "港股收盘窗口可能非终值",
+      "行情源降级，需复核涨跌幅"
     ],
-    "blocking_count": 1,
+    "blocking_count": 0,
     "price_review_count": 102,
-    "background_review_count": 3
+    "background_review_count": 2
   },
-  "summary": "14:09可核验快照：科技退潮继续扩大，创业板与科创50均跌逾3%，通信设备跌4.24%居行业末位；交换机整机和ODM少数前排仍强，但紫光、星网锐捷、通富已炸板，本轮科技反弹由前排抱团进一步降为风险测试期。 数据质量：发现 105 个降级/需复核项（1 个交易阻断，102 个价格/行情复核，3 个背景复核），核心结论可看但必须按影响分层使用。",
+  "summary": "14:09可核验快照：科技退潮继续扩大，创业板与科创50均跌逾3%，通信设备跌4.24%居行业末位；交换机整机和ODM少数前排仍强，但紫光、星网锐捷、通富已炸板，本轮科技反弹由前排抱团进一步降为风险测试期。 数据质量：发现 104 个降级/需复核项（102 个价格/行情复核，2 个背景复核），核心结论可看但必须按影响分层使用。",
   "observation_coverage": {
     "summary": "主动扫描捕捉 9 条：AI芯片/半导体 / 贵金属/工业金属+电力 / AI服务器/先进封装/交换机ODM / 贵金属/工业金属+电力",
     "independent_count": 15,
@@ -35,7 +35,7 @@
     "stance": "风险优先，只做验证",
     "action": "不把候选方向当交易机会；先看风险收敛、数据恢复和核心承接。",
     "reasons": [
-      "发现 105 个降级/需复核项（1 个交易阻断，102 个价格/行情复核，3 个背景复核），核心结论可看但必须按影响分层使用。",
+      "发现 104 个降级/需复核项（102 个价格/行情复核，2 个背景复核），核心结论可看但必须按影响分层使用。",
       "A/B级风险 8 条",
       "风险优先冲突 2 条",
       "可用机会 0 条，降权候选 8 条"
@@ -56,14 +56,14 @@
     ],
     "quality_actions": [
       {
-        "label": "先修复阻断",
-        "file": "alert.json",
-        "next_step": "暂停对应交易触发；等待污染批次撤下、可信行情源恢复并重产 JSON。",
-        "unblock_condition": "quality-report blocking=0，相关文件不再 invalidated/missing。"
+        "label": "二次行情复核",
+        "file": "postmarket.json",
+        "next_step": "用第二行情源复核涨跌幅、quote_time 和代表股方向；未确认前只做验证。",
+        "unblock_condition": "price_review=0 或相关来源标记 trusted/cross verified。"
       },
       {
         "label": "二次行情复核",
-        "file": "postmarket.json",
+        "file": "premarket.json",
         "next_step": "用第二行情源复核涨跌幅、quote_time 和代表股方向；未确认前只做验证。",
         "unblock_condition": "price_review=0 或相关来源标记 trusted/cross verified。"
       }
@@ -180,10 +180,10 @@
         "科技硬件链"
       ],
       "quality_flags": [
-        "交易阻断项未修复，相关信号不可直接用",
         "行情/涨跌幅需二次源复核",
         "盘中异动源降级，alert 类信号降权",
-        "港股收盘窗口可能非终值"
+        "港股收盘窗口可能非终值",
+        "行情源降级，需复核涨跌幅"
       ],
       "tone": "good",
       "discovery_type": "active_market_scan",
@@ -233,10 +233,10 @@
         "科技硬件链"
       ],
       "quality_flags": [
-        "交易阻断项未修复，相关信号不可直接用",
         "行情/涨跌幅需二次源复核",
         "盘中异动源降级，alert 类信号降权",
-        "港股收盘窗口可能非终值"
+        "港股收盘窗口可能非终值",
+        "行情源降级，需复核涨跌幅"
       ],
       "tone": "good",
       "discovery_type": "theme_shift_scan",
@@ -283,10 +283,10 @@
         "风控"
       ],
       "quality_flags": [
-        "交易阻断项未修复，相关信号不可直接用",
         "行情/涨跌幅需二次源复核",
         "盘中异动源降级，alert 类信号降权",
-        "港股收盘窗口可能非终值"
+        "港股收盘窗口可能非终值",
+        "行情源降级，需复核涨跌幅"
       ],
       "tone": "good",
       "discovery_type": "active_market_scan",
@@ -334,10 +334,10 @@
         "风控"
       ],
       "quality_flags": [
-        "交易阻断项未修复，相关信号不可直接用",
         "行情/涨跌幅需二次源复核",
         "盘中异动源降级，alert 类信号降权",
-        "港股收盘窗口可能非终值"
+        "港股收盘窗口可能非终值",
+        "行情源降级，需复核涨跌幅"
       ],
       "tone": "good",
       "discovery_type": "active_market_scan",
@@ -380,10 +380,10 @@
       "invalidation": "高带宽内存 需要次日竞价、量能和后排扩散共同确认。",
       "tags": [],
       "quality_flags": [
-        "交易阻断项未修复，相关信号不可直接用",
         "行情/涨跌幅需二次源复核",
         "盘中异动源降级，alert 类信号降权",
-        "港股收盘窗口可能非终值"
+        "港股收盘窗口可能非终值",
+        "行情源降级，需复核涨跌幅"
       ],
       "tone": "good",
       "discovery_type": "theme_shift_scan",
@@ -429,10 +429,10 @@
         "风控"
       ],
       "quality_flags": [
-        "交易阻断项未修复，相关信号不可直接用",
         "行情/涨跌幅需二次源复核",
         "盘中异动源降级，alert 类信号降权",
-        "港股收盘窗口可能非终值"
+        "港股收盘窗口可能非终值",
+        "行情源降级，需复核涨跌幅"
       ],
       "tone": "good",
       "discovery_type": "topic_watch_scan",
@@ -478,10 +478,10 @@
         "风控"
       ],
       "quality_flags": [
-        "交易阻断项未修复，相关信号不可直接用",
         "行情/涨跌幅需二次源复核",
         "盘中异动源降级，alert 类信号降权",
-        "港股收盘窗口可能非终值"
+        "港股收盘窗口可能非终值",
+        "行情源降级，需复核涨跌幅"
       ],
       "tone": "good",
       "discovery_type": "topic_watch_scan",
@@ -526,10 +526,10 @@
         "科技硬件链"
       ],
       "quality_flags": [
-        "交易阻断项未修复，相关信号不可直接用",
         "行情/涨跌幅需二次源复核",
         "盘中异动源降级，alert 类信号降权",
-        "港股收盘窗口可能非终值"
+        "港股收盘窗口可能非终值",
+        "行情源降级，需复核涨跌幅"
       ],
       "tone": "good",
       "discovery_type": "topic_watch_scan",
@@ -599,13 +599,13 @@
       "title": "数据质量降级",
       "type": "data_quality",
       "trigger_reason": "风控兜底触发：市场宽度、数据质量或回撤条件触发风险优先。",
-      "conclusion": "发现 105 个降级/需复核项（1 个交易阻断，102 个价格/行情复核，3 个背景复核），核心结论可看但必须按影响分层使用。",
+      "conclusion": "发现 104 个降级/需复核项（102 个价格/行情复核，2 个背景复核），核心结论可看但必须按影响分层使用。",
       "confidence": "high",
       "evidence": [
-        "盘中监控进程未运行，等待自动拉起。",
         "时间戳不是当前交易日：2026-07-21T16:14:00+08:00",
         "智谱 涨跌幅 36.89，需回查源",
-        "时间戳不是当前交易日：2026-07-21T09:28:30+08:00"
+        "时间戳不是当前交易日：2026-07-21T09:28:30+08:00",
+        "五一视界 change_pct 非数字：None，该字段忽略并降权"
       ],
       "source_files": [
         "quality-report.json",
@@ -972,6 +972,47 @@
       ]
     },
     {
+      "title": "盘中追踪：半导体制造",
+      "type": "opportunity_watch",
+      "trigger_reason": "盘前/晚间注意点已转为盘中追踪清单，等待实时行情触发。",
+      "conclusion": "科技硬件链；强化；半导体断层第一，CPO/算力与PCB/光学协同扩散，科技硬件完成首日全面反转。；次日按强分歧验证：平台核心承接、后排淘汰和炸板反馈比高开幅度更重要。；A股半导体28只涨停、通信设备4只、元件8只，科创50+10.73%；港股恒科+1.32%，澜起H、兆易H、中芯、华虹涨8.24%…",
+      "confidence": "low",
+      "evidence": [],
+      "source_files": [
+        "opportunity-watch.json"
+      ],
+      "watch_next": [
+        "题材3分钟涨跌幅>=1.5%，方向占比>=70%，成交放大>=5x",
+        "板块内出现批量涨停/封板或后排扩散",
+        "核心股、ETF、后排扩散同向确认"
+      ],
+      "invalidation": "核心股高开低走或冲高回落",
+      "tags": [
+        "科技硬件链",
+        "风控"
+      ],
+      "quality_flags": [],
+      "tone": "neutral",
+      "discovery_type": "premarket_watch_queue",
+      "evidence_score": 28,
+      "missing_evidence": [
+        "缺少可核验证据"
+      ],
+      "next_action": "题材3分钟涨跌幅>=1.5%，方向占比>=70%，成交放大>=5x",
+      "observation_source": "数据派生",
+      "independent_observation": false,
+      "signal_score": 47,
+      "signal_grade": "D",
+      "use_action": "仅复核",
+      "use_reasons": [
+        "缺少证据",
+        "有下一步验证",
+        "有证伪条件",
+        "有来源文件",
+        "有证据缺口"
+      ]
+    },
+    {
       "title": "盘中追踪：先进封装",
       "type": "opportunity_watch",
       "trigger_reason": "盘前/晚间注意点已转为盘中追踪清单，等待实时行情触发。",
@@ -1069,47 +1110,6 @@
         "同题材后排不再扩大负反馈，跌停/炸板数量下降",
         "板块ETF或指数不再创新低并出现承接",
         "题材3分钟涨跌幅>=1.5%，方向占比>=70%，成交放大>=5x"
-      ],
-      "invalidation": "核心股继续放量下跌",
-      "tags": [
-        "科技硬件链",
-        "风控"
-      ],
-      "quality_flags": [],
-      "tone": "neutral",
-      "discovery_type": "premarket_watch_queue",
-      "evidence_score": 28,
-      "missing_evidence": [
-        "缺少可核验证据"
-      ],
-      "next_action": "核心股低开后放量收复开盘价或跌幅明显收敛",
-      "observation_source": "数据派生",
-      "independent_observation": false,
-      "signal_score": 47,
-      "signal_grade": "D",
-      "use_action": "仅复核",
-      "use_reasons": [
-        "缺少证据",
-        "有下一步验证",
-        "有证伪条件",
-        "有来源文件",
-        "有证据缺口"
-      ]
-    },
-    {
-      "title": "盘中追踪：半导体设备",
-      "type": "opportunity_watch",
-      "trigger_reason": "盘前/晚间注意点已转为盘中追踪清单，等待实时行情触发。",
-      "conclusion": "指数和设备材料核心同步高开，但涨停仅2家、跌停15家，尾部风险仍在；上午判断为分化，盘前科技假设部分确认。；半导体首日极端反转，次日先验平台承接；半导体行业+11.71%、28只涨停、申万半导体108只涨超8%，同时科创50+10.73%；这会直接影响次日竞价方向和仓位风控，但属于7月20日退潮后…",
-      "confidence": "low",
-      "evidence": [],
-      "source_files": [
-        "opportunity-watch.json"
-      ],
-      "watch_next": [
-        "核心股低开后放量收复开盘价或跌幅明显收敛",
-        "同题材后排不再扩大负反馈，跌停/炸板数量下降",
-        "板块ETF或指数不再创新低并出现承接"
       ],
       "invalidation": "核心股继续放量下跌",
       "tags": [

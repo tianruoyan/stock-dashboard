@@ -2765,6 +2765,7 @@ function renderAlerts(data) {
     ...saved
   ]).sort(alertDisplaySort).slice(0, MAX_ALERTS);
   const monitorNoTrigger = data.source_status === "monitor_live_no_trigger";
+  const monitorClosed = data.source_status === "monitor_session_closed";
 
   renderAlertsSummary(displayAlerts, data.timestamp, null, data);
 
@@ -2778,6 +2779,11 @@ function renderAlerts(data) {
     ? `<div class="alert-monitor-state">
         <span class="badge signal">监控正常</span>
         <div><b>当前暂无短周期规则触发</b><span>下方“全景机会”来自最新盘面解释，不是3分钟异动直接触发。</span></div>
+      </div>`
+    : monitorClosed
+    ? `<div class="alert-monitor-state">
+        <span class="badge watch">今日收盘</span>
+        <div><b>盘中监控已按计划结束</b><span>${escapeHtml(data.note || "今日触发只作收盘复盘，不作为当前交易信号。")}</span></div>
       </div>`
     : "";
   el.innerHTML = monitorState + displayAlerts.map((a, i) => {
@@ -3197,6 +3203,22 @@ function renderAlertsSummary(alerts, timestamp, invalidatedState = null, sourceD
           <span class="decision-label">当前动作</span>
           <b>等待规则触发</b>
           <span>全景卡只作盘面解释，不冒充3分钟异动</span>
+        </div>
+      </div>`;
+    return;
+  }
+  if (sourceData?.source_status === "monitor_session_closed") {
+    el.innerHTML = `
+      <div class="decision-strip alerts-decision">
+        <div class="decision-card neutral">
+          <span class="decision-label">今日盘中监控</span>
+          <b>已按计划收盘</b>
+          <span>今日触发只作复盘，不作为当前信号</span>
+        </div>
+        <div class="decision-card action">
+          <span class="decision-label">下一步</span>
+          <b>等待下一交易日</b>
+          <span>开盘后自动恢复短周期扫描</span>
         </div>
       </div>`;
     return;

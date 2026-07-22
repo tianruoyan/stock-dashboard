@@ -1,12 +1,12 @@
 {
-  "timestamp": "2026-07-22T15:05:47+08:00",
+  "timestamp": "2026-07-22T21:06:04+08:00",
   "current_signal_date": "2026-07-22",
-  "status": "ready_to_recover",
-  "summary": "旧盘中异动批次已撤下；可信行情源可用于重产，但必须带交叉验证审计。",
+  "status": "session_closed",
+  "summary": "盘中监控已按计划收盘，今日触发仅供复盘。",
   "alert_state": {
-    "source_status": "invalidated",
+    "source_status": "monitor_session_closed",
     "active_count": 0,
-    "note": "盘中监控进程未运行，等待自动拉起。"
+    "note": "盘中监控已按计划结束，今日没有达到短周期价格、成交和扩散规则门槛的有效异动。"
   },
   "trusted_sources": [
     {
@@ -54,9 +54,7 @@
     ]
   },
   "next_actions": [
-    "用 tencent_http 作为 A股涨跌幅主源，重新生成 data/alert.json。",
-    "用 eastmoney_push2_akshare 只补涨停池/跌停池/炸板池结构，不做全市场高频轮询。",
-    "写入 quote_audit 并确认 cross_source_verified=true 后再触发推送。"
+    "下一交易日开盘后自动恢复短周期扫描。"
   ],
   "rules": [
     "该文件供自动化进程和构建门禁使用，不进入交易主页面。",
