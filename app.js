@@ -161,6 +161,26 @@ function updatePanelMeta(targetId, timestamp) {
   meta.innerHTML = text ? `<span class="updated-dot"></span>已更新 · ${text}` : "";
 }
 
+function updateIntradayPanelMeta(data) {
+  const target = document.getElementById("intraday-indices");
+  const panel = target?.closest(".panel");
+  if (!panel) return;
+  let meta = panel.querySelector(".update-meta");
+  if (!meta) {
+    meta = document.createElement("div");
+    meta.className = "update-meta";
+    panel.querySelector("h2")?.insertAdjacentElement("afterend", meta);
+  }
+  const quoteTime = formatUpdateTime(data.market_data_as_of);
+  const analysisTime = formatUpdateTime(data.timestamp);
+  if (quoteTime && analysisTime && quoteTime !== analysisTime) {
+    meta.innerHTML = `<span class="updated-dot"></span>行情更新 · ${quoteTime} ｜ 分析结论 · ${analysisTime}`;
+    return;
+  }
+  const text = quoteTime || analysisTime;
+  meta.innerHTML = text ? `<span class="updated-dot"></span>已更新 · ${text}` : "";
+}
+
 function escapeHtml(value) {
   return String(value ?? "")
     .replace(/&/g, "&amp;")
@@ -3330,7 +3350,7 @@ function alertQuoteAuditSummary(data) {
    盘中全景（双格式兼容）
 ========================= */
 function renderIntraday(data) {
-  updatePanelMeta("intraday-indices", data.timestamp);
+  updateIntradayPanelMeta(data);
 
   const idxEl = document.getElementById("intraday-indices");
   const intradayIndices = intradayIndexItems(data);

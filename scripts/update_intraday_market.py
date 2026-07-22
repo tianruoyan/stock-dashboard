@@ -5,7 +5,7 @@ import argparse
 import json
 import re
 import urllib.request
-from datetime import datetime, timezone
+from datetime import datetime, time, timezone
 from pathlib import Path
 from typing import Any, Dict, Iterable, List, Optional
 
@@ -24,6 +24,36 @@ INDEX_CODES = {
 
 def now_iso() -> str:
     return datetime.now(timezone.utc).astimezone().isoformat(timespec="seconds")
+
+
+def parse_quote_time(value: Any) -> Optional[datetime]:
+    text = str(value or "").strip()
+    for pattern in ("%Y%m%d%H%M%S", "%Y%m%d%H%M"):
+        try:
+            parsed = datetime.strptime(text, pattern)
+            return parsed.replace(tzinfo=datetime.now().astimezone().tzinfo)
+        except ValueError:
+            continue
+    return None
+
+
+def quote_status(value: Any) -> str:
+    parsed = parse_quote_time(value)
+    if parsed is None:
+        return "行情状态待核验"
+    if parsed.time() >= time(15, 0):
+        return "已收盘"
+    if time(11, 30) <= parsed.time() < time(13, 0):
+        return "午间休市"
+    return "交易中"
+
+
+def latest_quote_time(rows: Iterable[Dict[str, Any]]) -> datetime:
+    parsed = [parse_quote_time(row.get("quote_time")) for row in rows]
+    valid = [value for value in parsed if value is not None]
+    if not valid:
+        raise RuntimeError("行情源未返回可验证的行情时间")
+    return max(valid)
 
 
 def as_float(value: str) -> Optional[float]:
@@ -70,8 +100,9 @@ def fetch_indices() -> List[Dict[str, Any]]:
                 "value": value,
                 "change": change,
                 "pct": pct,
+                "change_pct": pct,
                 "amount_yi": round(amount_raw / 10000, 2) if amount_raw is not None else None,
-                "status": "交易中",
+                "status": quote_status(fields[30]),
                 "quote_time": fields[30],
                 "source": "腾讯财经HTTP",
             }
@@ -130,11 +161,12 @@ def update(path: Path) -> Dict[str, Any]:
     payload = json.loads(path.read_text(encoding="utf-8"))
     indices = fetch_indices()
     industries = fetch_industries()
-    refreshed_at = now_iso()
+    collected_at = now_iso()
+    quote_as_of = latest_quote_time(indices).isoformat(timespec="seconds")
 
     payload["indices"] = merge_index_rows(payload.get("indices"), indices)
     index_section = payload.setdefault("index", {})
-    index_section["snapshot_time"] = refreshed_at
+    index_section["snapshot_time"] = quote_as_of
     index_section["a_share_indices"] = merge_index_rows(index_section.get("a_share_indices"), indices)
 
     turnover = sum(
@@ -150,18 +182,21 @@ def update(path: Path) -> Dict[str, Any]:
     ranked = sorted(industries, key=lambda item: item["change_pct"], reverse=True)
     payload["industry_top5"] = ranked[:5]
     payload["industry_bottom5"] = sorted(industries, key=lambda item: item["change_pct"])[:5]
-    payload["market_data_as_of"] = refreshed_at
+    payload["market_data_as_of"] = quote_as_of
+    payload["market_data_collected_at"] = collected_at
     payload["market_data_refresh"] = {
         "owner": "Codex单智能体",
         "indices": "腾讯财经HTTP",
         "industry_ranking": "腾讯财经HTTP",
         "concept_ranking": "由Codex盘中分析任务更新",
         "analysis_timestamp_unchanged": True,
+        "time_basis": "行情源时间",
     }
     write_atomic(path, payload)
     return {
         "updated": str(path),
-        "market_data_as_of": refreshed_at,
+        "market_data_as_of": quote_as_of,
+        "market_data_collected_at": collected_at,
         "indices": len(indices),
         "industries": len(industries),
     }

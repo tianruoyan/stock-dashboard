@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-07-21T16:14:00+08:00",
+  "timestamp": "2026-07-22T11:49:00+08:00",
   "sources": {
     "tencent_http": {
       "status": "ok",
@@ -3128,10 +3128,46 @@
       "errors": [
         "港股免费行情延时，正式终值采用新浪16:08收盘"
       ]
+    },
+    "mootdx_midday_20260722": {
+      "status": "degraded",
+      "last_check": "2026-07-22T11:47:00+08:00",
+      "usage": "高频实时行情第一优先级尝试",
+      "detail": "本机Python环境未安装mootdx，本轮高频报价降级到腾讯财经HTTP。",
+      "sample_count": 0,
+      "errors": [
+        "ModuleNotFoundError: mootdx"
+      ]
+    },
+    "tencent_a_h_midday_20260722": {
+      "status": "ok",
+      "last_check": "2026-07-22T11:47:38+08:00",
+      "usage": "A股指数、98个行业、重点A/H样本午间定格",
+      "detail": "取得5个A股指数、98个行业、64只A股重点样本和22个港股指数/样本，报价时间覆盖11:30至11:47静态午休快照。",
+      "sample_count": 189,
+      "errors": []
+    },
+    "eastmoney_structure_midday_20260722": {
+      "status": "ok",
+      "last_check": "2026-07-22T11:45:00+08:00",
+      "usage": "涨停池、跌停池、炸板池和概念排行",
+      "detail": "push2ex有效返回涨停51、跌停5、炸板21；概念榜返回50/495条，用于盘面结构第二优先级。",
+      "sample_count": 127,
+      "errors": []
+    },
+    "sina_all_a_midday_20260722": {
+      "status": "degraded_noncritical",
+      "last_check": "2026-07-22T11:45:00+08:00",
+      "usage": "全市场上涨/下跌宽度补充尝试",
+      "detail": "接口单次仅返回100条，未用于全市场宽度；本轮只报告可核验涨跌停结构，不编造上涨/下跌家数。",
+      "sample_count": 100,
+      "errors": [
+        "page size capped at 100"
+      ]
     }
   },
   "last_publish_attempt": "pending_20260717_0830_premarket_publish",
-  "status": "degraded",
+  "status": "degraded_noncritical",
   "last_error": "mootdx unavailable; full concept ranking unavailable; HK quote delayed single source",
   "tencent_a_close_postmarket_20260716": {
     "status": "ok",
@@ -3312,8 +3348,8 @@
     "sample_count": 15,
     "errors": []
   },
-  "overall_status": "degraded_but_core_market_structure_cross_checked",
-  "last_codex_note": "14:00腾讯A股/496行业与东财结构池正常；涨停79、干净跌停18、炸板6。腾讯港股指数实时、个股约延迟15分钟；mootdx和可靠概念全榜不可用。",
+  "overall_status": "degraded_noncritical",
+  "last_codex_note": "11:30午盘核心行情与结构池已完成A/H交叉核验；mootdx缺失和新浪全A页数上限不影响涨跌停、指数、行业及重点样本结论，但未提供全市场上涨/下跌家数。",
   "eastmoney_structure_pools_intraday_1000_20260717": {
     "status": "ok",
     "last_check": "2026-07-17T10:02:40+08:00",
