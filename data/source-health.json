@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-07-22T14:09:06+08:00",
+  "timestamp": "2026-07-22T14:16:59+08:00",
   "sources": {
     "tencent_http": {
       "status": "degraded_recovered",
@@ -2923,13 +2923,11 @@
     },
     "local_monitor_watch_quote": {
       "status": "degraded_partial",
-      "last_check": "2026-07-21T11:30:17+08:00",
-      "usage": "盘中本地老登/小登监控 watch 行情刷新",
-      "detail": "monitor.log 在11:24:17后超过5分钟未更新；已调用本地启动脚本刷新，守护进程仍为95184、状态running，但watch行情源出现 No value to decode，本轮未采用该异常行情生成候选或正式提醒。",
-      "sample_count": 0,
-      "errors": [
-        "2026-07-21 11:30:17 行情源异常 [watch]: No value to decode"
-      ]
+      "last_checked_at": "2026-07-22T14:16:59+08:00",
+      "provider": "local_monitor_guard/mootdx_tencent_pipeline",
+      "error": "No value to decode",
+      "impact": "本地监控在14:16前出现行情源解析异常；监控进程仍存活，日志仍刷新，但本轮候选/确认信号需降权。",
+      "action": "下一轮自动重试；不编造行情，不因机会清单主观生成异动。"
     },
     "tencent_a_quote_midday_20260721": {
       "status": "ok",
