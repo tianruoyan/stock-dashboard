@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-07-22T13:56:22+08:00",
+  "timestamp": "2026-07-22T14:09:06+08:00",
   "sources": {
     "tencent_http": {
       "status": "degraded_recovered",
@@ -3178,6 +3178,32 @@
       "errors": [
         "curl: (52) Empty reply from server"
       ]
+    },
+    "tencent_a_quote_intraday_1400_20260722": {
+      "status": "ok",
+      "last_check": "2026-07-22T14:09:06+08:00",
+      "usage": "14:00指数、行业和科技细分代表股实时报价",
+      "detail": "腾讯财经HTTP恢复正常；指数quote_time 14:09，代表股quote_time 14:04-14:07。",
+      "sample_count": 58,
+      "errors": []
+    },
+    "eastmoney_structure_pools_intraday_1400_20260722": {
+      "status": "ok",
+      "last_check": "2026-07-22T14:07:00+08:00",
+      "usage": "14:00涨停、跌停、炸板结构池及行业分布",
+      "detail": "按串行限流与随机抖动请求，返回涨停42、跌停8、炸板39；涨停池42条、炸板池39条完整，跌停总数可核验但池明细为空。",
+      "sample_count": 81,
+      "errors": [
+        "跌停池tc=8但pool为空，未使用其行业明细"
+      ]
+    },
+    "tencent_hk_http_intraday_1400_20260722": {
+      "status": "delayed_ok",
+      "last_check": "2026-07-22T14:08:00+08:00",
+      "usage": "港股指数、半导体与AI映射",
+      "detail": "免费行情正常返回，quote_time 13:51，按约15分钟延迟标注使用。",
+      "sample_count": 10,
+      "errors": []
     }
   },
   "last_publish_attempt": "pending_20260717_0830_premarket_publish",
@@ -3363,7 +3389,7 @@
     "errors": []
   },
   "overall_status": "degraded_noncritical",
-  "last_codex_note": "11:30午盘核心行情与结构池已完成A/H交叉核验；mootdx缺失和新浪全A页数上限不影响涨跌停、指数、行业及重点样本结论，但未提供全市场上涨/下跌家数。",
+  "last_codex_note": "14:00 A股指数、行业、重点样本及涨停/跌停/炸板结构已交叉核验；港股为明确标注的延迟行情。跌停池明细为空，仅使用可核验总数8，不据此推断行业分布。",
   "eastmoney_structure_pools_intraday_1000_20260717": {
     "status": "ok",
     "last_check": "2026-07-17T10:02:40+08:00",

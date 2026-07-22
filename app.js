@@ -2764,6 +2764,7 @@ function renderAlerts(data) {
     ...intradayOpportunityAlerts(data.timestamp),
     ...saved
   ]).sort(alertDisplaySort).slice(0, MAX_ALERTS);
+  const monitorNoTrigger = data.source_status === "monitor_live_no_trigger";
 
   renderAlertsSummary(displayAlerts, data.timestamp, null, data);
 
@@ -2773,7 +2774,13 @@ function renderAlerts(data) {
     return;
   }
 
-  el.innerHTML = displayAlerts.map((a, i) => {
+  const monitorState = monitorNoTrigger
+    ? `<div class="alert-monitor-state">
+        <span class="badge signal">监控正常</span>
+        <div><b>当前暂无短周期规则触发</b><span>下方“全景机会”来自最新盘面解释，不是3分钟异动直接触发。</span></div>
+      </div>`
+    : "";
+  el.innerHTML = monitorState + displayAlerts.map((a, i) => {
     const age = now - (a._eventTime || a._received || now);
     const ageMin = Math.floor(age / 60000);
     const isFresh = isAlertFresh(a, now);
@@ -3174,6 +3181,22 @@ function renderAlertsSummary(alerts, timestamp, invalidatedState = null, sourceD
           <span class="decision-label">替代观察</span>
           <b>全景 / 观察池 / 宽度</b>
           <span>用这些确认题材和个股变化</span>
+        </div>
+      </div>`;
+    return;
+  }
+  if (sourceData?.source_status === "monitor_live_no_trigger") {
+    el.innerHTML = `
+      <div class="decision-strip alerts-decision">
+        <div class="decision-card neutral">
+          <span class="decision-label">短周期监控</span>
+          <b>运行正常</b>
+          <span>当前没有达到价格、成交和扩散门槛的新异动</span>
+        </div>
+        <div class="decision-card action">
+          <span class="decision-label">当前动作</span>
+          <b>等待规则触发</b>
+          <span>全景卡只作盘面解释，不冒充3分钟异动</span>
         </div>
       </div>`;
     return;
