@@ -1,8 +1,8 @@
 {
-  "timestamp": "2026-07-23T10:07:58+08:00",
+  "timestamp": "2026-07-23T10:09:35+08:00",
   "current_signal_date": "2026-07-23",
   "status": "degraded",
-  "summary": "发现 112 个降级/需复核项（108 个价格/行情复核，1 个信号复核，4 个背景复核），核心结论可看但必须按影响分层使用。",
+  "summary": "发现 112 个降级/需复核项（109 个价格/行情复核，1 个信号复核，3 个背景复核），核心结论可看但必须按影响分层使用。",
   "issues": [
     {
       "severity": "warning",
@@ -120,15 +120,6 @@
       "message": "hk_auction.mapping_chain[3] change_pct 非数字：待核验/0.00%/+2.92%，该字段忽略并降权",
       "impact_level": "price_review",
       "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
-    },
-    {
-      "severity": "warning",
-      "file": "topics.json",
-      "path": "",
-      "code": "stale_timestamp",
-      "message": "时间戳不是当前交易日：2026-07-22T14:09:06+08:00",
-      "impact_level": "background_review",
-      "decision_action": "仅作背景复核，不单独阻断交易判断"
     },
     {
       "severity": "warning",
@@ -1020,6 +1011,15 @@
       "message": "mootdx_midday_20260722: 本机Python环境未安装mootdx，本轮高频报价降级到腾讯财经HTTP。",
       "impact_level": "price_review",
       "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
+    },
+    {
+      "severity": "warning",
+      "file": "source-health.json",
+      "path": "",
+      "code": "source_degraded",
+      "message": "concept_ranking_intraday_1000_20260723: 本轮未取得通过可靠性校验的概念指数全榜；主线判断使用涨跌停行业/题材分布、腾讯行业和代表股成交归因，未编造概念涨幅。",
+      "impact_level": "price_review",
+      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
     }
   ],
   "action_plan": [
@@ -1095,9 +1095,9 @@
     "warning": 112,
     "info": 1,
     "blocking": 0,
-    "price_review": 108,
+    "price_review": 109,
     "signal_review": 1,
-    "background_review": 4
+    "background_review": 3
   },
   "rules": [
     "异常文本、JSON解析失败、必需文件缺失为 critical。",
