@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-07-22T14:16:59+08:00",
+  "timestamp": "2026-07-23T09:05:44+08:00",
   "sources": {
     "tencent_http": {
       "status": "degraded_recovered",
@@ -3386,8 +3386,8 @@
     "sample_count": 15,
     "errors": []
   },
-  "overall_status": "degraded_noncritical",
-  "last_codex_note": "14:00 A股指数、行业、重点样本及涨停/跌停/炸板结构已交叉核验；港股为明确标注的延迟行情。跌停池明细为空，仅使用可核验总数8，不据此推断行业分布。",
+  "overall_status": "ok_with_expected_premarket_gaps",
+  "last_codex_note": "09:05补产8:30假设验证早报；采用美股正式收盘、腾讯日韩个股与Naver KOSPI交叉证据。Yahoo KOSPI冲突值已剔除；港股当日竞价尚无有效时间戳，保留为空。",
   "eastmoney_structure_pools_intraday_1000_20260717": {
     "status": "ok",
     "last_check": "2026-07-17T10:02:40+08:00",
@@ -3549,5 +3549,51 @@
     "detail": "延迟执行期间自动刷新脚本曾写入晚于午盘事件时点的收盘后快照；该批次已从午盘文件隔离并以11:30历史分钟线覆盖。",
     "sample_count": 0,
     "errors": []
+  },
+  "tencent_us_close_premarket_20260723": {
+    "status": "ok",
+    "last_check": "2026-07-23T09:05:44+08:00",
+    "usage": "美股三大指数与AI硬件正式收盘",
+    "detail": "取得道指、标普500、纳指及NVDA/MU/AVGO/AMD/SOXX/KWEB正式收盘；AP交叉核验道指与纳指及美光收盘方向。",
+    "sample_count": 9,
+    "errors": []
+  },
+  "tencent_japan_korea_premarket_20260723": {
+    "status": "ok_cross_checked",
+    "last_check": "2026-07-23T09:05:44+08:00",
+    "usage": "日韩半导体龙头早盘",
+    "detail": "取得东京电子、爱德万测试、Socionext、信越化学、三星电子等早盘行情；SK海力士与KOSPI采用Naver交叉确认。",
+    "sample_count": 7,
+    "errors": []
+  },
+  "yahoo_kospi_premarket_20260723": {
+    "status": "failed_conflict_quarantined",
+    "last_check": "2026-07-23T09:05:44+08:00",
+    "usage": "韩国宽基指数备源",
+    "detail": "Yahoo返回的KOSPI负值与Naver KOSPI+3.83%、三星电子与SK海力士上涨方向完全冲突，未采用。",
+    "sample_count": 0,
+    "errors": [
+      "cross-source value conflict"
+    ]
+  },
+  "tencent_hk_auction_premarket_20260723": {
+    "status": "stale_expected_before_effective_indication",
+    "last_check": "2026-07-23T09:05:44+08:00",
+    "usage": "9:00港股竞价候选",
+    "detail": "9:05返回的恒指、恒科和重点股时间仍为2026-07-22收盘，未冒充当日竞价；等待9:15复核。",
+    "sample_count": 0,
+    "errors": [
+      "no current-day quote timestamp"
+    ]
+  },
+  "official_increment_scan_premarket_20260723": {
+    "status": "partial",
+    "last_check": "2026-07-23T09:05:44+08:00",
+    "usage": "20:00至9:05官方政策、公司与产业增量证据",
+    "detail": "未发现足以改变开盘风控的新P0；采用美光与NVIDIA官方资料作H2/HBM4及AI网络架构背景。逐只公告页全量审计未完成，未宣称完整覆盖。",
+    "sample_count": 3,
+    "errors": [
+      "full watchlist announcement page audit not completed"
+    ]
   }
 }
