@@ -1900,5 +1900,47 @@
       "name": "新浪港股实时正式收盘",
       "url": "https://finance.sina.com.cn/stock/hkstock/"
     }
+  },
+  "sentiment_indicator": {
+    "score": 72.6,
+    "level": "偏强但分化",
+    "components": [
+      {
+        "name": "全市场宽度",
+        "score": 76.0,
+        "weight": 0.30,
+        "evidence": "剔除ST、退市及前5交易日新股后，上涨4080、下跌1182、平盘57，宽度偏强。",
+        "source": "data/postmarket.json.market_breadth"
+      },
+      {
+        "name": "涨跌停结构",
+        "score": 82.0,
+        "weight": 0.25,
+        "evidence": "涨停116、跌停2、涨跌停比58:1，炸板25、炸板率17.7%，情绪强但并非无分歧。",
+        "source": "东方财富收盘结构池"
+      },
+      {
+        "name": "主线集中度",
+        "score": 78.0,
+        "weight": 0.20,
+        "evidence": "电网设备/电力37只涨停，占涨停池31.9%，同时资源、化工、装备制造仍有扩散。",
+        "source": "data/postmarket.json.market_breadth.theme_concentration"
+      },
+      {
+        "name": "风格分化风险",
+        "score": 48.0,
+        "weight": 0.15,
+        "evidence": "科创50收跌3.78%，跌超5%仍有112只，半导体设备/材料风险尚未释放完。",
+        "source": "腾讯财经HTTP正式收盘+新浪全A收盘"
+      },
+      {
+        "name": "尾盘承接",
+        "score": 65.0,
+        "weight": 0.10,
+        "evidence": "14:55至15:00沪深约新增509.17亿元成交，上证、深成、创业板小幅上行，科创50反向回落。",
+        "source": "data/postmarket.json.closing_auction_patch"
+      }
+    ],
+    "method": "V1盘后兜底按当日可核验收盘事实加权：全市场宽度30%、涨跌停结构25%、主线集中度20%、风格分化风险15%、尾盘承接10%；score=72.6，仅代表复盘温度，不构成交易指令。"
   }
 }
