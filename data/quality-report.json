@@ -1,8 +1,8 @@
 {
-  "timestamp": "2026-07-23T10:45:12+08:00",
+  "timestamp": "2026-07-23T10:46:36+08:00",
   "current_signal_date": "2026-07-23",
   "status": "degraded",
-  "summary": "发现 118 个降级/需复核项（113 个价格/行情复核，3 个信号复核，3 个背景复核），核心结论可看但必须按影响分层使用。",
+  "summary": "发现 113 个降级/需复核项（110 个价格/行情复核，1 个信号复核，3 个背景复核），核心结论可看但必须按影响分层使用。",
   "issues": [
     {
       "severity": "warning",
@@ -124,42 +124,6 @@
     {
       "severity": "warning",
       "file": "alert.json",
-      "path": "quote_audit",
-      "code": "historical_alert_quote_audit_incomplete",
-      "message": "quote_audit.pct_field 缺失",
-      "impact_level": "price_review",
-      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
-    },
-    {
-      "severity": "warning",
-      "file": "alert.json",
-      "path": "quote_audit.sanity_checks",
-      "code": "historical_alert_quote_audit_incomplete",
-      "message": "quote_audit.sanity_checks.sample_count 缺失",
-      "impact_level": "price_review",
-      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
-    },
-    {
-      "severity": "warning",
-      "file": "alert.json",
-      "path": "quote_audit.sanity_checks",
-      "code": "historical_alert_quote_audit_incomplete",
-      "message": "quote_audit.sanity_checks.max_abs_leader_change_pct 缺失",
-      "impact_level": "price_review",
-      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
-    },
-    {
-      "severity": "warning",
-      "file": "alert.json",
-      "path": "quote_audit.sanity_checks",
-      "code": "historical_alert_quote_audit_incomplete",
-      "message": "quote_audit.sanity_checks.cross_source_verified 缺失",
-      "impact_level": "price_review",
-      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
-    },
-    {
-      "severity": "warning",
-      "file": "alert.json",
       "path": "quote_audit.sanity_checks",
       "code": "historical_alert_not_cross_verified",
       "message": "行情污染源仍降级，历史 alert 未交叉验证，只降权复盘参考",
@@ -172,24 +136,6 @@
       "path": "alerts[2]",
       "code": "historical_candidate_alert_evidence_weak",
       "message": "alerts[2] 候选异动未达到最低短周期价格、方向占比和成交门槛，不得作为当前候选展示",
-      "impact_level": "signal_review",
-      "decision_action": "仅作历史复核，不得恢复为当前候选"
-    },
-    {
-      "severity": "warning",
-      "file": "alert.json",
-      "path": "alerts[7]",
-      "code": "historical_candidate_alert_evidence_weak",
-      "message": "alerts[7] 候选异动未达到最低短周期价格、方向占比和成交门槛，不得作为当前候选展示",
-      "impact_level": "signal_review",
-      "decision_action": "仅作历史复核，不得恢复为当前候选"
-    },
-    {
-      "severity": "warning",
-      "file": "alert.json",
-      "path": "alerts[8]",
-      "code": "historical_candidate_alert_evidence_weak",
-      "message": "alerts[8] 候选异动未达到最低短周期价格、方向占比和成交门槛，不得作为当前候选展示",
       "impact_level": "signal_review",
       "decision_action": "仅作历史复核，不得恢复为当前候选"
     },
@@ -1074,6 +1020,15 @@
       "message": "concept_ranking_intraday_1000_20260723: 本轮未取得通过可靠性校验的概念指数全榜；主线判断使用涨跌停行业/题材分布、腾讯行业和代表股成交归因，未编造概念涨幅。",
       "impact_level": "price_review",
       "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
+    },
+    {
+      "severity": "warning",
+      "file": "source-health.json",
+      "path": "",
+      "code": "source_degraded",
+      "message": "concept_ranking_intraday_1030_20260723: 未取得通过可靠性校验的概念全榜；使用涨停/炸板行业分布、腾讯行业排名和代表股成交归因，未编造概念名次。",
+      "impact_level": "price_review",
+      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
     }
   ],
   "action_plan": [
@@ -1082,8 +1037,8 @@
       "impact_level": "price_review",
       "label": "二次行情复核",
       "file": "alert.json",
-      "code": "historical_alert_quote_audit_incomplete",
-      "problem": "quote_audit.pct_field 缺失",
+      "code": "historical_alert_not_cross_verified",
+      "problem": "行情污染源仍降级，历史 alert 未交叉验证，只降权复盘参考",
       "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核",
       "next_step": "用第二行情源复核涨跌幅、quote_time 和代表股方向；未确认前只做验证。",
       "unblock_condition": "price_review=0 或相关来源标记 trusted/cross verified。"
@@ -1146,11 +1101,11 @@
   ],
   "counts": {
     "critical": 0,
-    "warning": 118,
+    "warning": 113,
     "info": 1,
     "blocking": 0,
-    "price_review": 113,
-    "signal_review": 3,
+    "price_review": 110,
+    "signal_review": 1,
     "background_review": 3
   },
   "rules": [
