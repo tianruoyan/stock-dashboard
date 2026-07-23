@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-07-23T14:39:43+08:00",
+  "timestamp": "2026-07-23T15:20:16+08:00",
   "sources": {
     "tencent_http": {
       "status": "degraded_recovered",
@@ -3458,11 +3458,61 @@
       "status": "degraded",
       "checked_at": "2026-07-23T14:39:43+08:00",
       "evidence": "未取得可靠概念指数全榜；使用行业分布和代表股归因。"
+    },
+    "tencent_a_close_postmarket_20260723": {
+      "status": "ok_with_field_conflict",
+      "checked_at": "2026-07-23T15:20:16+08:00",
+      "market_time": "2026-07-23 15:14-15:15 CST",
+      "evidence": "5只指数正式收盘值、98个行业和代表股可核验；沪深成交约21953.02亿元。上证日高字段在本地解析与原始报文不同步，本轮不使用该字段。"
+    },
+    "sina_all_a_close_postmarket_20260723": {
+      "status": "ok",
+      "checked_at": "2026-07-23T15:20:16+08:00",
+      "market_time": "2026-07-23 15:01:56 CST",
+      "evidence": "沪深京A股5529只收盘快照可用；剔除208只ST/退市及2只前5交易日新股后，有效样本5319只。"
+    },
+    "eastmoney_structure_pools_postmarket_20260723": {
+      "status": "ok",
+      "checked_at": "2026-07-23T15:20:16+08:00",
+      "market_time": "约2026-07-23 15:03-15:05 CST",
+      "evidence": "涨停116、跌停2、炸板25，炸板率17.7%，最高6板，11只20cm及1只30cm。",
+      "rate_limit": "三个结构池按60秒以上间隔串行采集。"
+    },
+    "tencent_minute_1455_1500_postmarket_20260723": {
+      "status": "ok",
+      "checked_at": "2026-07-23T15:20:16+08:00",
+      "market_time": "2026-07-23 14:55-15:00 CST",
+      "evidence": "5只指数及电网、资源、半导体、电子布、PCB、CPO代表股分钟线可用；沪深最后5分钟新增成交约509.17亿元。"
+    },
+    "sw_official_classification_postmarket_20260723": {
+      "status": "ok",
+      "checked_at": "2026-07-23T15:20:16+08:00",
+      "evidence": "申万官方历史分类表可用，按截至当日最新生效记录映射强势样本一级行业。"
+    },
+    "cninfo_new_ipo_postmarket_20260723": {
+      "status": "ok",
+      "checked_at": "2026-07-23T15:20:16+08:00",
+      "evidence": "巨潮新股上市数据可用；前5交易日新股剔除泰诺麦博、乔路铭。"
+    },
+    "eastmoney_all_a_close_postmarket_20260723": {
+      "status": "failed_fallback_used",
+      "checked_at": "2026-07-23T15:20:16+08:00",
+      "evidence": "东财全A快照请求ProxyError；已由新浪全A完整替代，未编造数据。"
+    },
+    "concept_ranking_postmarket_20260723": {
+      "status": "degraded",
+      "checked_at": "2026-07-23T15:20:16+08:00",
+      "evidence": "未取得可靠概念指数全榜；题材归因使用涨停/跌停/炸板行业分布、腾讯行业排行和代表股证据。"
+    },
+    "tencent_hk_close_postmarket_20260723": {
+      "status": "pending_market_open",
+      "checked_at": "2026-07-23T15:20:16+08:00",
+      "evidence": "15:15港股尚未正式收盘，本版不生成港股收盘事实。"
     }
   },
   "last_publish_attempt": "pending_20260717_0830_premarket_publish",
   "status": "degraded_noncritical",
-  "last_error": "HK delayed single source; full concept ranking unavailable",
+  "last_error": "东财全A接口失败后由新浪全A替代；概念全榜缺失；腾讯上证日高字段存在源内解析冲突；港股尚未收盘。",
   "tencent_a_close_postmarket_20260716": {
     "status": "ok",
     "last_check": "2026-07-16T15:18:57+08:00",
@@ -3642,8 +3692,8 @@
     "sample_count": 15,
     "errors": []
   },
-  "overall_status": "ok_with_delayed_hk_and_missing_concept_rank",
-  "last_codex_note": "14:30有效更新使用14:34腾讯行情及14:31-14:34东财串行结构池；A股核心行情完整。",
+  "overall_status": "ok_with_noncritical_fallbacks_and_pending_hk_close",
+  "last_codex_note": "A股收盘核心行情、结构池、全A宽度、申万分类和14:55-15:00分钟线完整；所有缺失与降级已显式记录。",
   "eastmoney_structure_pools_intraday_1000_20260717": {
     "status": "ok",
     "last_check": "2026-07-17T10:02:40+08:00",
@@ -4067,5 +4117,55 @@
     "status": "degraded",
     "checked_at": "2026-07-23T14:39:43+08:00",
     "evidence": "未取得可靠概念指数全榜；使用行业分布和代表股归因。"
+  },
+  "tencent_a_close_postmarket_20260723": {
+    "status": "ok_with_field_conflict",
+    "checked_at": "2026-07-23T15:20:16+08:00",
+    "market_time": "2026-07-23 15:14-15:15 CST",
+    "evidence": "5只指数正式收盘值、98个行业和代表股可核验；沪深成交约21953.02亿元。上证日高字段在本地解析与原始报文不同步，本轮不使用该字段。"
+  },
+  "sina_all_a_close_postmarket_20260723": {
+    "status": "ok",
+    "checked_at": "2026-07-23T15:20:16+08:00",
+    "market_time": "2026-07-23 15:01:56 CST",
+    "evidence": "沪深京A股5529只收盘快照可用；剔除208只ST/退市及2只前5交易日新股后，有效样本5319只。"
+  },
+  "eastmoney_structure_pools_postmarket_20260723": {
+    "status": "ok",
+    "checked_at": "2026-07-23T15:20:16+08:00",
+    "market_time": "约2026-07-23 15:03-15:05 CST",
+    "evidence": "涨停116、跌停2、炸板25，炸板率17.7%，最高6板，11只20cm及1只30cm。",
+    "rate_limit": "三个结构池按60秒以上间隔串行采集。"
+  },
+  "tencent_minute_1455_1500_postmarket_20260723": {
+    "status": "ok",
+    "checked_at": "2026-07-23T15:20:16+08:00",
+    "market_time": "2026-07-23 14:55-15:00 CST",
+    "evidence": "5只指数及电网、资源、半导体、电子布、PCB、CPO代表股分钟线可用；沪深最后5分钟新增成交约509.17亿元。"
+  },
+  "sw_official_classification_postmarket_20260723": {
+    "status": "ok",
+    "checked_at": "2026-07-23T15:20:16+08:00",
+    "evidence": "申万官方历史分类表可用，按截至当日最新生效记录映射强势样本一级行业。"
+  },
+  "cninfo_new_ipo_postmarket_20260723": {
+    "status": "ok",
+    "checked_at": "2026-07-23T15:20:16+08:00",
+    "evidence": "巨潮新股上市数据可用；前5交易日新股剔除泰诺麦博、乔路铭。"
+  },
+  "eastmoney_all_a_close_postmarket_20260723": {
+    "status": "failed_fallback_used",
+    "checked_at": "2026-07-23T15:20:16+08:00",
+    "evidence": "东财全A快照请求ProxyError；已由新浪全A完整替代，未编造数据。"
+  },
+  "concept_ranking_postmarket_20260723": {
+    "status": "degraded",
+    "checked_at": "2026-07-23T15:20:16+08:00",
+    "evidence": "未取得可靠概念指数全榜；题材归因使用涨停/跌停/炸板行业分布、腾讯行业排行和代表股证据。"
+  },
+  "tencent_hk_close_postmarket_20260723": {
+    "status": "pending_market_open",
+    "checked_at": "2026-07-23T15:20:16+08:00",
+    "evidence": "15:15港股尚未正式收盘，本版不生成港股收盘事实。"
   }
 }

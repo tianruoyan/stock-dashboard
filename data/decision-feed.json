@@ -1,9 +1,9 @@
 {
-  "timestamp": "2026-07-23T15:06:49+08:00",
+  "timestamp": "2026-07-23T15:39:58+08:00",
   "current_signal_date": "2026-07-23",
   "quality_gate": {
     "status": "degraded",
-    "summary": "发现 124 个降级/需复核项（121 个价格/行情复核，2 个信号复核，2 个背景复核），核心结论可看但必须按影响分层使用。",
+    "summary": "发现 127 个降级/需复核项（120 个价格/行情复核，3 个信号复核，5 个背景复核），核心结论可看但必须按影响分层使用。",
     "decision_flags": [
       "行情/涨跌幅需二次源复核",
       "机会信号需降权转验证",
@@ -11,22 +11,21 @@
       "港股收盘窗口可能非终值"
     ],
     "blocking_count": 0,
-    "price_review_count": 121,
-    "background_review_count": 2
+    "price_review_count": 120,
+    "background_review_count": 5
   },
-  "summary": "14:34快照：涨停102、跌停1、炸板23，炸板率18.4%，情绪宽度继续改善。电网/电力封板增至32只，资源封板增至7只，强主线延续；中药、军工和汽车零部件补涨。科创50-3.77%、半导体-4.41%、通信设备-1.09%，科技仍未止跌；电子布/PCB反抽失败延续。 数据质量：发现 124 个降级/需复核项（121 个价格/行情复核，2 个信号复核，…",
+  "summary": "正式收盘：涨停116、跌停2、炸板25，炸板率17.7%；电网/电力37只涨停成为最强主线，资源与化工扩散。上证、深成、创业板微涨，但科创50-3.78%、半导体-4.20%，科技风险未解除。 数据质量：发现 127 个降级/需复核项（120 个价格/行情复核，3 个信号复核，5 个背景复核），核心结论可看但必须按影响分层使用。",
   "observation_coverage": {
-    "summary": "主动扫描捕捉 11 条：有色金属/能源金属 / 电网设备/电力 / AI网络/服务器/CPO / 专用设备/油服机械",
-    "independent_count": 17,
-    "inherited_count": 7,
-    "active_market_count": 11,
-    "postmarket_scan_count": 0,
-    "topic_inherited_count": 1,
+    "summary": "主动扫描捕捉 3 条：基础化工/机械设备 / 有色金属/能源金属 / 专用设备/油服机械",
+    "independent_count": 18,
+    "inherited_count": 6,
+    "active_market_count": 3,
+    "postmarket_scan_count": 9,
+    "topic_inherited_count": 0,
     "verification_count": 2,
     "active_titles": [
+      "基础化工/机械设备",
       "有色金属/能源金属",
-      "电网设备/电力",
-      "AI网络/服务器/CPO",
       "专用设备/油服机械"
     ],
     "status": "active"
@@ -35,20 +34,20 @@
     "stance": "风险优先，只做验证",
     "action": "不把候选方向当交易机会；先看风险收敛、数据恢复和核心承接。",
     "reasons": [
-      "发现 124 个降级/需复核项（121 个价格/行情复核，2 个信号复核，2 个背景复核），核心结论可看但必须按影响分层使用。",
+      "发现 127 个降级/需复核项（120 个价格/行情复核，3 个信号复核，5 个背景复核），核心结论可看但必须按影响分层使用。",
       "A/B级风险 8 条",
-      "风险优先冲突 3 条",
+      "风险优先冲突 2 条",
       "可用机会 0 条，降权候选 8 条"
     ],
     "risk_focus": [
+      "全市场亏钱效应",
       "数据质量降级",
-      "电网设备/电力",
-      "化工/农化"
+      "电网设备/电力"
     ],
     "upgrade_watch": [
-      "#1 有色金属/能源金属：看核心个股、ETF、后排扩散和尾盘承接是否同向确认。 数据质量恢复或二次行情源确认前，不升级为可用机会。",
-      "#2 电网设备/电力：看核心个股、ETF、后排扩散和尾盘承接是否同向确认。 数据质量恢复或二次行情源确认前，不升级为可用机会。",
-      "#3 主线变化：化工/材料/资源轮动：维持周期资源切换；保险超过+1%并与证券同步放量时确认金融切换。 数据质量恢复或二次行情源确认前，不升级为可用机会。"
+      "#1 基础化工/机械设备：看核心个股、ETF、后排扩散和尾盘承接是否同向确认。 数据质量恢复或二次行情源确认前，不升级为可用机会。",
+      "#2 有色金属/能源金属：看核心个股、ETF、后排扩散和尾盘承接是否同向确认。 数据质量恢复或二次行情源确认前，不升级为可用机会。",
+      "#3 主线变化：化工/材料/资源轮动：继续验证资源/电网相对科技的跷跷板；金融需券商+保险同步放量才独立确认。 数据质量恢复或二次行情源确认前，不升级为可用机会。"
     ],
     "verification_focus": [
       "核心股低开后放量收复开盘价或跌幅明显收敛"
@@ -62,16 +61,22 @@
       },
       {
         "label": "二次行情复核",
-        "file": "postmarket.json",
+        "file": "premarket.json",
         "next_step": "用第二行情源复核涨跌幅、quote_time 和代表股方向；未确认前只做验证。",
         "unblock_condition": "price_review=0 或相关来源标记 trusted/cross verified。"
       }
     ]
   },
   "signal_queue": {
-    "summary": "无可用机会，4 条风险优先，5 条只做验证，4 条禁用直用。",
+    "summary": "无可用机会，4 条风险优先，5 条只做验证，3 条禁用直用。",
     "active_opportunities": [],
     "trackable_risks": [
+      {
+        "title": "全市场亏钱效应",
+        "grade": "A",
+        "use_action": "可跟踪",
+        "reason": "次日先看跌停/炸板是否收敛，再判断强线能否从抱团转扩散。"
+      },
       {
         "title": "数据质量降级",
         "grade": "A",
@@ -85,13 +90,7 @@
         "reason": "看核心个股、ETF、后排扩散和尾盘承接是否同向确认。"
       },
       {
-        "title": "化工/农化",
-        "grade": "A",
-        "use_action": "可跟踪",
-        "reason": "看核心个股、ETF、后排扩散和尾盘承接是否同向确认。"
-      },
-      {
-        "title": "专用设备/低位轮动",
+        "title": "有色/锂矿/周期资源",
         "grade": "A",
         "use_action": "可跟踪",
         "reason": "看核心个股、ETF、后排扩散和尾盘承接是否同向确认。"
@@ -99,13 +98,13 @@
     ],
     "verification_queue": [
       {
-        "title": "有色金属/能源金属",
+        "title": "基础化工/机械设备",
         "grade": "C",
         "use_action": "降权观察",
         "reason": "看核心个股、ETF、后排扩散和尾盘承接是否同向确认。"
       },
       {
-        "title": "电网设备/电力",
+        "title": "有色金属/能源金属",
         "grade": "C",
         "use_action": "降权观察",
         "reason": "看核心个股、ETF、后排扩散和尾盘承接是否同向确认。"
@@ -114,18 +113,18 @@
         "title": "主线变化：化工/材料/资源轮动",
         "grade": "C",
         "use_action": "降权观察",
-        "reason": "维持周期资源切换；保险超过+1%并与证券同步放量时确认金融切换。"
+        "reason": "继续验证资源/电网相对科技的跷跷板；金融需券商+保险同步放量才独立确认。"
       },
       {
-        "title": "AI网络/服务器/CPO",
+        "title": "电网设备/电力",
         "grade": "C",
         "use_action": "降权观察",
         "reason": "看核心个股、ETF、后排扩散和尾盘承接是否同向确认。"
       },
       {
-        "title": "专用设备/油服机械",
-        "grade": "D",
-        "use_action": "仅复核",
+        "title": "有色/锂矿/周期资源",
+        "grade": "C",
+        "use_action": "降权观察",
         "reason": "看核心个股、ETF、后排扩散和尾盘承接是否同向确认。"
       }
     ],
@@ -146,28 +145,22 @@
         "grade": "D",
         "use_action": "仅复核",
         "reason": "等待A股应用端独立涨停扩散，港股情绪锚不能替代板块确认。"
-      },
-      {
-        "title": "主线变化：算力",
-        "grade": "D",
-        "use_action": "仅复核",
-        "reason": "工业富联继续放量、服务器核心止跌后再判断主线。"
       }
     ]
   },
   "opportunities": [
     {
-      "title": "有色金属/能源金属",
+      "title": "基础化工/机械设备",
       "type": "theme",
       "trigger_reason": "主动盘面扫描触发：涨跌停、炸板、尾盘承接或板块扩散出现可验证变化。",
-      "conclusion": "资源中军保持红盘，工业金属再增1只封板",
+      "conclusion": "回流首日与首次集中，等待次日持续性",
       "confidence": "low",
       "evidence": [
-        "能源金属+5.05%、工业金属+3.31%、贵金属+0.69%，对应2、3、2只涨停，资源封板合计增至7只。",
-        "赣锋+6.89%、天齐+4.99%、云铝+4.73%、江西铜业+4.41%、中铝+3.50%；紫金+2.61%成交132.59亿元、洛钼+1.58%成交66.38亿元。",
-        "资源中军仍低于日高，趋势承接有效但追涨空间收窄。",
-        "资源与科创50-3.77%形成风格跷跷板。",
-        "紫金矿业"
+        "基础化工9只涨停、56只涨超5%；机械设备66只涨超5%、专用/通用设备10只涨停。",
+        "两条都缺少连续两日的中军确认，未升级为强主线。",
+        "日科化学",
+        "滨化股份",
+        "德石股份"
       ],
       "source_files": [
         "intraday.json"
@@ -175,8 +168,11 @@
       "watch_next": [
         "看核心个股、ETF、后排扩散和尾盘承接是否同向确认。"
       ],
-      "invalidation": "有色金属/能源金属核心股冲高回落、ETF转弱或后排不扩散，则机会降级为观察。",
-      "tags": [],
+      "invalidation": "基础化工/机械设备核心股冲高回落、ETF转弱或后排不扩散，则机会降级为观察。",
+      "tags": [
+        "科技硬件链",
+        "机器人/工业自动化"
+      ],
       "quality_flags": [
         "行情/涨跌幅需二次源复核",
         "机会信号需降权转验证",
@@ -207,16 +203,16 @@
       "upgrade_condition": "看核心个股、ETF、后排扩散和尾盘承接是否同向确认。 数据质量恢复或二次行情源确认前，不升级为可用机会。"
     },
     {
-      "title": "电网设备/电力",
+      "title": "有色金属/能源金属",
       "type": "theme",
       "trigger_reason": "主动盘面扫描触发：涨跌停、炸板、尾盘承接或板块扩散出现可验证变化。",
-      "conclusion": "强主线｜19只涨停构成全市场最宽封板簇，但午前开板反馈增加",
+      "conclusion": "强主线｜行业、封板与大市值中军三重确认，上午最强趋势线",
       "confidence": "low",
       "evidence": [
-        "电网设备14只涨停、电力5只涨停，仍是全市场封板数量最集中的产业链。",
-        "立新能源6板提供高度，中国西电、中能电气等中军和20cm弹性样本维持强势。",
-        "益坤电气30cm开板后收涨约26.86%，积成电子、杭电股份等进入炸板池，说明高位与后排分歧抬升。",
-        "与港股/日韩科技链无直接共振，强度主要由A股自身涨停扩散确认。"
+        "能源金属+5.14%、工业金属+4.09%、有色金属+3.47%、贵金属+2.84%，资源分支集中占据行业前排。",
+        "能源金属、工业金属、贵金属各有2只涨停，盛达资源3板；资源链低位补涨继续扩散。",
+        "紫金矿业+3.60%成交101.83亿元、洛阳钼业+3.31%成交50.21亿元、中国铝业+4.56%、云铝股份+6.14%、天齐锂业+5.05%、赣锋锂业+6.24%，中军量价共振。",
+        "该线来自A股周期资源风格，不依赖港股或日韩科技映射；午后需防高成交中军冲高回落。"
       ],
       "source_files": [
         "midday.json"
@@ -224,11 +220,8 @@
       "watch_next": [
         "看核心个股、ETF、后排扩散和尾盘承接是否同向确认。"
       ],
-      "invalidation": "电网设备/电力核心股冲高回落、ETF转弱或后排不扩散，则机会降级为观察。",
-      "tags": [
-        "科技硬件链",
-        "风控"
-      ],
+      "invalidation": "有色金属/能源金属核心股冲高回落、ETF转弱或后排不扩散，则机会降级为观察。",
+      "tags": [],
       "quality_flags": [
         "行情/涨跌幅需二次源复核",
         "机会信号需降权转验证",
@@ -265,19 +258,20 @@
       "conclusion": "化工/材料/资源轮动 有新出现或轮动增强迹象，需看次日扩散确认。",
       "confidence": "low",
       "evidence": [
-        "能源金属+5.05%、工业金属+3.31%、贵金属+0.69%，对应2、3、2只涨停，资源封板合计增至7只。",
-        "赣锋+6.89%、天齐+4.99%、云铝+4.73%、江西铜业+4.41%、中铝+3.50%；紫金+2.61%成交132.59亿元、洛钼+1.58%成交66.38亿元。",
-        "资源中军仍低于日高，趋势承接有效但追涨空间收窄。",
-        "资源与科创50-3.77%形成风格跷跷板。",
-        "资源封板降至4只以下且紫金、洛钼、中铝同步跌破午后均价时转观察。"
+        "能源金属+5.65%、工业金属+3.58%、冶钢原料+3.40%，均进入行业涨幅前五。",
+        "能源金属2只、工业金属3只、贵金属2只、小金属1只涨停，资源合计8只。",
+        "有色金属进入5%以上强势样本34只；赣锋+7.93%成交42.62亿元，紫金+2.67%成交144.97亿元。",
+        "紫金、赣锋尾盘分别+0.182%、+0.274%，收盘竞价承接为正。",
+        "若能源金属与工业金属退出行业前五、资源涨停少于4只，或紫金与赣锋同时低开走弱，则按二日轮动处理。"
       ],
       "source_files": [
         "intraday.json",
         "midday.json",
+        "postmarket.json",
         "topics.json"
       ],
       "watch_next": [
-        "维持周期资源切换；保险超过+1%并与证券同步放量时确认金融切换。"
+        "继续验证资源/电网相对科技的跷跷板；金融需券商+保险同步放量才独立确认。"
       ],
       "invalidation": "化工/材料/资源轮动 需要次日竞价、量能和后排扩散共同确认。",
       "tags": [
@@ -295,7 +289,7 @@
       "missing_evidence": [
         "数据源降级需二次确认"
       ],
-      "next_action": "维持周期资源切换；保险超过+1%并与证券同步放量时确认金融切换。",
+      "next_action": "继续验证资源/电网相对科技的跷跷板；金融需券商+保险同步放量才独立确认。",
       "observation_source": "主线变化扫描",
       "independent_observation": true,
       "signal_score": 57,
@@ -310,30 +304,32 @@
       ],
       "upgrade_rank": 3,
       "upgrade_priority": "优先验证",
-      "upgrade_condition": "维持周期资源切换；保险超过+1%并与证券同步放量时确认金融切换。 数据质量恢复或二次行情源确认前，不升级为可用机会。"
+      "upgrade_condition": "继续验证资源/电网相对科技的跷跷板；金融需券商+保险同步放量才独立确认。 数据质量恢复或二次行情源确认前，不升级为可用机会。"
     },
     {
-      "title": "AI网络/服务器/CPO",
+      "title": "电网设备/电力",
       "type": "theme",
-      "trigger_reason": "主动盘面扫描触发：涨跌停、炸板、尾盘承接或板块扩散出现可验证变化。",
-      "conclusion": "少数高成交核心承接，但通信行业继续走弱",
+      "trigger_reason": "盘后主线扫描触发：热点持续性、代表股和尾盘校验进入次日观察。",
+      "conclusion": "7月20日局部强线、21日高标博弈、22日电力8只涨停后，今日扩至电网29只+电力8只，属于连续活跃第4个交易日并明显扩散。",
       "confidence": "low",
       "evidence": [
-        "通信设备-1.09%；仅三旺通信20cm，工业富联+3.33%、中际+0.26%、锐捷+0.02%红盘。",
-        "新易盛-2.32%、天孚-2.93%、光迅-1.64%，浪潮-3.29%、紫光-6.79%、曙光-4.47%。",
-        "高成交核心仍有博弈属性，但只有单只20cm与少数中军，不构成主线。",
-        "恒生科技+0.65%，智谱转+0.51%但商汤-1.43%，AI应用仍是单点。",
-        "工业富联"
+        "中国西电 9.99%",
+        "立新能源 9.96%",
+        "益坤电气 30%",
+        "中能电气 20.04%",
+        "双杰电气 20%"
       ],
       "source_files": [
-        "intraday.json"
+        "postmarket.json"
       ],
       "watch_next": [
         "看核心个股、ETF、后排扩散和尾盘承接是否同向确认。"
       ],
-      "invalidation": "AI网络/服务器/CPO核心股冲高回落、ETF转弱或后排不扩散，则机会降级为观察。",
+      "invalidation": "电网设备/电力核心股冲高回落、ETF转弱或后排不扩散，则机会降级为观察。",
       "tags": [
-        "科技硬件链"
+        "科技硬件链",
+        "金融/消费防御",
+        "风控"
       ],
       "quality_flags": [
         "行情/涨跌幅需二次源复核",
@@ -342,16 +338,15 @@
         "港股收盘窗口可能非终值"
       ],
       "tone": "good",
-      "discovery_type": "active_market_scan",
-      "evidence_score": 76,
+      "discovery_type": "postmarket_theme_scan",
+      "evidence_score": 83,
       "missing_evidence": [
-        "缺少代表股验证",
         "数据源降级需二次确认"
       ],
       "next_action": "看核心个股、ETF、后排扩散和尾盘承接是否同向确认。",
-      "observation_source": "主动盘面扫描",
+      "observation_source": "盘后结构扫描",
       "independent_observation": true,
-      "signal_score": 47,
+      "signal_score": 57,
       "signal_grade": "C",
       "use_action": "降权观察",
       "use_reasons": [
@@ -363,7 +358,113 @@
       ],
       "upgrade_rank": 4,
       "upgrade_priority": "观察验证",
-      "upgrade_condition": "看核心个股、ETF、后排扩散和尾盘承接是否同向确认。 至少2-3只核心股强于板块ETF或指数。 数据质量恢复或二次行情源确认前，不升级为可用机会。"
+      "upgrade_condition": "看核心个股、ETF、后排扩散和尾盘承接是否同向确认。 数据质量恢复或二次行情源确认前，不升级为可用机会。"
+    },
+    {
+      "title": "有色/锂矿/周期资源",
+      "type": "theme",
+      "trigger_reason": "盘后主线扫描触发：热点持续性、代表股和尾盘校验进入次日观察。",
+      "conclusion": "7月22日资金从科技切向资源防御，今日能源金属、工业金属升至行业前两名，涨停与中军同步增强，确认连续活跃第2日。",
+      "confidence": "low",
+      "evidence": [
+        "紫金矿业 2.67%",
+        "赣锋锂业 7.93%",
+        "盛新锂能 10.02%",
+        "南山铝业 10.12%",
+        "四川黄金 10%"
+      ],
+      "source_files": [
+        "postmarket.json"
+      ],
+      "watch_next": [
+        "看核心个股、ETF、后排扩散和尾盘承接是否同向确认。"
+      ],
+      "invalidation": "有色/锂矿/周期资源核心股冲高回落、ETF转弱或后排不扩散，则机会降级为观察。",
+      "tags": [
+        "金融/消费防御"
+      ],
+      "quality_flags": [
+        "行情/涨跌幅需二次源复核",
+        "机会信号需降权转验证",
+        "盘中异动源降级，alert 类信号降权",
+        "港股收盘窗口可能非终值"
+      ],
+      "tone": "good",
+      "discovery_type": "postmarket_theme_scan",
+      "evidence_score": 83,
+      "missing_evidence": [
+        "数据源降级需二次确认"
+      ],
+      "next_action": "看核心个股、ETF、后排扩散和尾盘承接是否同向确认。",
+      "observation_source": "盘后结构扫描",
+      "independent_observation": true,
+      "signal_score": 57,
+      "signal_grade": "C",
+      "use_action": "降权观察",
+      "use_reasons": [
+        "有可核验证据",
+        "有下一步验证",
+        "有证伪条件",
+        "有来源文件",
+        "数据质量降权"
+      ],
+      "upgrade_rank": 5,
+      "upgrade_priority": "观察验证",
+      "upgrade_condition": "看核心个股、ETF、后排扩散和尾盘承接是否同向确认。 数据质量恢复或二次行情源确认前，不升级为可用机会。"
+    },
+    {
+      "title": "机械设备/低位装备",
+      "type": "theme",
+      "trigger_reason": "盘后主线扫描触发：热点持续性、代表股和尾盘校验进入次日观察。",
+      "conclusion": "前5个保存交易日未见同等强势样本集中，今日机械设备66只涨超5%、专用设备与通用设备合计10只涨停，属于首次集中。",
+      "confidence": "low",
+      "evidence": [
+        "德石股份 19.98%",
+        "九州一轨 12.73%",
+        "福事特 12.54%",
+        "北矿科技 10%",
+        "前5个保存交易日未见同等强势样本集中，今日机械设备66只涨超5%、专用设备与通用设备合计10只涨停，属于首次集中。"
+      ],
+      "source_files": [
+        "postmarket.json"
+      ],
+      "watch_next": [
+        "看核心个股、ETF、后排扩散和尾盘承接是否同向确认。"
+      ],
+      "invalidation": "机械设备/低位装备核心股冲高回落、ETF转弱或后排不扩散，则机会降级为观察。",
+      "tags": [
+        "科技硬件链",
+        "机器人/工业自动化",
+        "金融/消费防御"
+      ],
+      "quality_flags": [
+        "行情/涨跌幅需二次源复核",
+        "机会信号需降权转验证",
+        "盘中异动源降级，alert 类信号降权",
+        "港股收盘窗口可能非终值"
+      ],
+      "tone": "good",
+      "discovery_type": "postmarket_theme_scan",
+      "evidence_score": 83,
+      "missing_evidence": [
+        "数据源降级需二次确认"
+      ],
+      "next_action": "看核心个股、ETF、后排扩散和尾盘承接是否同向确认。",
+      "observation_source": "盘后结构扫描",
+      "independent_observation": true,
+      "signal_score": 57,
+      "signal_grade": "C",
+      "use_action": "降权观察",
+      "use_reasons": [
+        "有可核验证据",
+        "有下一步验证",
+        "有证伪条件",
+        "有来源文件",
+        "数据质量降权"
+      ],
+      "upgrade_rank": 6,
+      "upgrade_priority": "观察验证",
+      "upgrade_condition": "看核心个股、ETF、后排扩散和尾盘承接是否同向确认。 数据质量恢复或二次行情源确认前，不升级为可用机会。"
     },
     {
       "title": "专用设备/油服机械",
@@ -411,7 +512,7 @@
         "有来源文件",
         "数据质量降权"
       ],
-      "upgrade_rank": 5,
+      "upgrade_rank": 7,
       "upgrade_priority": "仅复核",
       "upgrade_condition": "看核心个股、ETF、后排扩散和尾盘承接是否同向确认。 数据质量恢复或二次行情源确认前，不升级为可用机会。"
     },
@@ -422,7 +523,7 @@
       "conclusion": "AI应用/物理AI 有新出现或轮动增强迹象，需看次日扩散确认。",
       "confidence": "low",
       "evidence": [
-        "港股智谱-2.21%、商汤-1.43%，A股应用端没有独立涨停集中。",
+        "A股主线在电网与资源，AI应用没有独立涨停集中；港股正式收盘尚未发生。",
         "港股智谱、商汤均下跌，A股应用端未形成独立宽度。"
       ],
       "source_files": [
@@ -459,120 +560,64 @@
         "有来源文件",
         "数据质量降权"
       ],
-      "upgrade_rank": 6,
-      "upgrade_priority": "仅复核",
-      "upgrade_condition": "等待A股应用端独立涨停扩散，港股情绪锚不能替代板块确认。 数据质量恢复或二次行情源确认前，不升级为可用机会。"
-    },
-    {
-      "title": "主线变化：算力",
-      "type": "theme_shift",
-      "trigger_reason": "主线变化扫描触发：升温/降温/抱团/风险状态出现边际变化。",
-      "conclusion": "算力 有升温迹象，但仍需量价和后排扩散验证。",
-      "confidence": "low",
-      "evidence": [
-        "工业富联+3.33%，浪潮-3.29%、曙光-4.47%、紫光-6.79%。"
-      ],
-      "source_files": [
-        "topics.json"
-      ],
-      "watch_next": [
-        "工业富联继续放量、服务器核心止跌后再判断主线。"
-      ],
-      "invalidation": "算力 需要次日竞价、量能和后排扩散共同确认。",
-      "tags": [
-        "科技硬件链"
-      ],
-      "quality_flags": [
-        "行情/涨跌幅需二次源复核",
-        "机会信号需降权转验证",
-        "盘中异动源降级，alert 类信号降权",
-        "港股收盘窗口可能非终值"
-      ],
-      "tone": "good",
-      "discovery_type": "theme_shift_scan",
-      "evidence_score": 67,
-      "missing_evidence": [
-        "数据源降级需二次确认"
-      ],
-      "next_action": "工业富联继续放量、服务器核心止跌后再判断主线。",
-      "observation_source": "主线变化扫描",
-      "independent_observation": true,
-      "signal_score": 36,
-      "signal_grade": "D",
-      "use_action": "仅复核",
-      "use_reasons": [
-        "有可核验证据",
-        "有下一步验证",
-        "有证伪条件",
-        "有来源文件",
-        "数据质量降权"
-      ],
-      "upgrade_rank": 7,
-      "upgrade_priority": "仅复核",
-      "upgrade_condition": "工业富联继续放量、服务器核心止跌后再判断主线。 数据质量恢复或二次行情源确认前，不升级为可用机会。"
-    },
-    {
-      "title": "半导体零部件",
-      "type": "theme",
-      "trigger_reason": "专题观察触发：既有专题出现新的量价证据或代表股变化。",
-      "conclusion": "富创-2.79%、新莱-3.14%、正帆-5.88%，无涨停扩散。",
-      "confidence": "low",
-      "evidence": [
-        "富创-2.79%、新莱-3.14%、正帆-5.88%，无涨停扩散。"
-      ],
-      "source_files": [
-        "topics.json"
-      ],
-      "watch_next": [
-        "富创站回190元且新莱、正帆同步翻红后，才恢复设备外溢观察。"
-      ],
-      "invalidation": "半导体零部件核心股冲高回落、ETF转弱或后排不扩散，则机会降级为观察。",
-      "tags": [
-        "科技硬件链",
-        "风控"
-      ],
-      "quality_flags": [
-        "行情/涨跌幅需二次源复核",
-        "机会信号需降权转验证",
-        "盘中异动源降级，alert 类信号降权",
-        "港股收盘窗口可能非终值"
-      ],
-      "tone": "good",
-      "discovery_type": "topic_watch_scan",
-      "evidence_score": 67,
-      "missing_evidence": [
-        "数据源降级需二次确认"
-      ],
-      "next_action": "富创站回190元且新莱、正帆同步翻红后，才恢复设备外溢观察。",
-      "observation_source": "专题继承",
-      "independent_observation": false,
-      "signal_score": 36,
-      "signal_grade": "D",
-      "use_action": "仅复核",
-      "use_reasons": [
-        "有可核验证据",
-        "有下一步验证",
-        "有证伪条件",
-        "有来源文件",
-        "数据质量降权"
-      ],
       "upgrade_rank": 8,
       "upgrade_priority": "仅复核",
-      "upgrade_condition": "富创站回190元且新莱、正帆同步翻红后，才恢复设备外溢观察。 数据质量恢复或二次行情源确认前，不升级为可用机会。"
+      "upgrade_condition": "等待A股应用端独立涨停扩散，港股情绪锚不能替代板块确认。 数据质量恢复或二次行情源确认前，不升级为可用机会。"
     }
   ],
   "risks": [
     {
+      "title": "全市场亏钱效应",
+      "type": "market_breadth",
+      "trigger_reason": "风控兜底触发：市场宽度、数据质量或回撤条件触发风险优先。",
+      "conclusion": "跌停、炸板或大跌家数偏高，强线不能外推成全面进攻。",
+      "confidence": "high",
+      "evidence": [
+        "跌停约1.0只",
+        "炸板约23.0只"
+      ],
+      "source_files": [
+        "postmarket.json",
+        "intraday.json"
+      ],
+      "watch_next": [
+        "次日先看跌停/炸板是否收敛，再判断强线能否从抱团转扩散。"
+      ],
+      "invalidation": "跌停和炸板显著回落，同时涨停扩散到多个新方向。",
+      "tags": [
+        "仓位",
+        "风控"
+      ],
+      "quality_flags": [],
+      "tone": "risk",
+      "discovery_type": "risk_guardrail",
+      "evidence_score": 81,
+      "missing_evidence": [],
+      "next_action": "次日先看跌停/炸板是否收敛，再判断强线能否从抱团转扩散。",
+      "observation_source": "系统风控扫描",
+      "independent_observation": true,
+      "signal_score": 96,
+      "signal_grade": "A",
+      "use_action": "可跟踪",
+      "use_reasons": [
+        "有可核验证据",
+        "有下一步验证",
+        "有证伪条件",
+        "有来源文件",
+        "证据链较完整"
+      ]
+    },
+    {
       "title": "数据质量降级",
       "type": "data_quality",
       "trigger_reason": "风控兜底触发：市场宽度、数据质量或回撤条件触发风险优先。",
-      "conclusion": "发现 124 个降级/需复核项（121 个价格/行情复核，2 个信号复核，2 个背景复核），核心结论可看但必须按影响分层使用。",
+      "conclusion": "发现 127 个降级/需复核项（120 个价格/行情复核，3 个信号复核，5 个背景复核），核心结论可看但必须按影响分层使用。",
       "confidence": "high",
       "evidence": [
-        "时间戳不是当前交易日：2026-07-22T21:11:03+08:00",
-        "中国巨石 接近跌停 -10.0，需确认是否真实",
-        "德明利 接近跌停 -10.0，需确认是否真实",
-        "us_overnight.mapping_chain[0] change_pct 非数字：+2.30%/+2.67%/+1.45%，该字段忽略并降权"
+        "us_overnight.mapping_chain[0] change_pct 非数字：+2.30%/+2.67%/+1.45%，该字段忽略并降权",
+        "us_overnight.mapping_chain[1] change_pct 非数字：-1.17%/+0.51%，该字段忽略并降权",
+        "us_overnight.mapping_chain[2] change_pct 非数字：东京电子+4.03%、爱德万+5.46%、三星+3.26%、SK海力士+5.79%，该字段忽略并降权",
+        "us_overnight.mapping_chain[3] change_pct 非数字：-2.15%，该字段忽略并降权"
       ],
       "source_files": [
         "quality-report.json",
@@ -608,18 +653,18 @@
     {
       "title": "电网设备/电力",
       "type": "theme",
-      "trigger_reason": "主动盘面扫描触发：涨跌停、炸板、尾盘承接或板块扩散出现可验证变化。",
-      "conclusion": "若封板回落至26只以下，且电网/电力炸板增至5只以上，转强分歧。",
+      "trigger_reason": "盘后风险扫描触发：收盘复盘出现持续性、尾盘或次日风险线。",
+      "conclusion": "加速后次日最怕高标断层与后排批量低开；若封板降至25只以下、炸板增至6只以上，转强分歧。",
       "confidence": "high",
       "evidence": [
-        "电网设备24只、电力8只涨停，合计占102只涨停的31.4%，较14:00再增2只。",
-        "益坤电气30cm，中能、双杰、和顺20cm；中国西电、科林电气等低位补涨封板，立新能源6板维持高度。",
-        "电网仅杭电股份1只炸板，电力2只炸板，新增封板仍多于新增负反馈。",
-        "电力行业+1.21%，强度由A股自身涨停宽度确认。",
-        "中国西电"
+        "中国西电 9.99%",
+        "立新能源 9.96%",
+        "益坤电气 30%",
+        "中能电气 20.04%",
+        "双杰电气 20%"
       ],
       "source_files": [
-        "intraday.json"
+        "postmarket.json"
       ],
       "watch_next": [
         "看核心个股、ETF、后排扩散和尾盘承接是否同向确认。"
@@ -627,103 +672,16 @@
       "invalidation": "电网设备/电力风险信号收敛、核心股重新放量承接，则风险降级。",
       "tags": [
         "科技硬件链",
-        "风控"
-      ],
-      "quality_flags": [],
-      "tone": "risk",
-      "discovery_type": "active_market_scan",
-      "evidence_score": 90,
-      "missing_evidence": [],
-      "next_action": "看核心个股、ETF、后排扩散和尾盘承接是否同向确认。",
-      "observation_source": "主动盘面扫描",
-      "independent_observation": true,
-      "signal_score": 100,
-      "signal_grade": "A",
-      "use_action": "可跟踪",
-      "use_reasons": [
-        "有可核验证据",
-        "有下一步验证",
-        "有证伪条件",
-        "有来源文件",
-        "证据链较完整"
-      ]
-    },
-    {
-      "title": "化工/农化",
-      "type": "theme",
-      "trigger_reason": "主动盘面扫描触发：涨跌停、炸板、尾盘承接或板块扩散出现可验证变化。",
-      "conclusion": "日科开板且化工三分支封板合计降至5只以下时，退回普通观察线。",
-      "confidence": "high",
-      "evidence": [
-        "化学原料4只、化学制品2只、农化2只涨停，行业分别+2.42%、+1.95%、+3.04%。",
-        "日科化学20cm，三友化工、滨化、红宝丽、云图等多分支封板。",
-        "鲁北化工仍炸板且缺少大市值中军，维持观察线偏强。",
-        "日科化学",
-        "三友化工"
-      ],
-      "source_files": [
-        "intraday.json"
-      ],
-      "watch_next": [
-        "看核心个股、ETF、后排扩散和尾盘承接是否同向确认。"
-      ],
-      "invalidation": "化工/农化风险信号收敛、核心股重新放量承接，则风险降级。",
-      "tags": [
-        "风控"
-      ],
-      "quality_flags": [],
-      "tone": "risk",
-      "discovery_type": "active_market_scan",
-      "evidence_score": 90,
-      "missing_evidence": [],
-      "next_action": "看核心个股、ETF、后排扩散和尾盘承接是否同向确认。",
-      "observation_source": "主动盘面扫描",
-      "independent_observation": true,
-      "signal_score": 100,
-      "signal_grade": "A",
-      "use_action": "可跟踪",
-      "use_reasons": [
-        "有可核验证据",
-        "有下一步验证",
-        "有证伪条件",
-        "有来源文件",
-        "证据链较完整"
-      ]
-    },
-    {
-      "title": "专用设备/低位轮动",
-      "type": "theme",
-      "trigger_reason": "主动盘面扫描触发：涨跌停、炸板、尾盘承接或板块扩散出现可验证变化。",
-      "conclusion": "只有小票封板、行业指数不转强时继续按轮动，不追高。",
-      "confidence": "high",
-      "evidence": [
-        "专用设备6只封板、行业+1.79%；中药3只、化学制药2只、地面兵装2只、房地产4只封板。",
-        "北方长龙由炸板转20cm封板，德石20cm保持；通用设备-0.13%且3只炸板。",
-        "中药-0.46%、化学制药-0.44%、房地产-0.07%，小票封板未带动行业中军。",
-        "德石股份",
-        "北方长龙"
-      ],
-      "source_files": [
-        "intraday.json"
-      ],
-      "watch_next": [
-        "看核心个股、ETF、后排扩散和尾盘承接是否同向确认。"
-      ],
-      "invalidation": "专用设备/低位轮动风险信号收敛、核心股重新放量承接，则风险降级。",
-      "tags": [
-        "科技硬件链",
-        "机器人/工业自动化",
-        "创新药/CRO",
         "金融/消费防御",
         "风控"
       ],
       "quality_flags": [],
       "tone": "risk",
-      "discovery_type": "active_market_scan",
-      "evidence_score": 100,
+      "discovery_type": "postmarket_risk_scan",
+      "evidence_score": 90,
       "missing_evidence": [],
       "next_action": "看核心个股、ETF、后排扩散和尾盘承接是否同向确认。",
-      "observation_source": "主动盘面扫描",
+      "observation_source": "盘后结构扫描",
       "independent_observation": true,
       "signal_score": 100,
       "signal_grade": "A",
@@ -737,37 +695,165 @@
       ]
     },
     {
-      "title": "AI网络/服务器/CPO",
+      "title": "有色/锂矿/周期资源",
       "type": "theme",
-      "trigger_reason": "主动盘面扫描触发：涨跌停、炸板、尾盘承接或板块扩散出现可验证变化。",
-      "conclusion": "反抽观察、不是强主线；三旺开板或工业富联跌回平盘时放弃弱反弹。",
+      "trigger_reason": "盘后风险扫描触发：收盘复盘出现持续性、尾盘或次日风险线。",
+      "conclusion": "若能源金属与工业金属退出行业前五、资源涨停少于4只，或紫金与赣锋同时低开走弱，则按二日轮动处理。",
       "confidence": "high",
       "evidence": [
-        "通信设备-1.09%；仅三旺通信20cm，工业富联+3.33%、中际+0.26%、锐捷+0.02%红盘。",
-        "新易盛-2.32%、天孚-2.93%、光迅-1.64%，浪潮-3.29%、紫光-6.79%、曙光-4.47%。",
-        "高成交核心仍有博弈属性，但只有单只20cm与少数中军，不构成主线。",
-        "恒生科技+0.65%，智谱转+0.51%但商汤-1.43%，AI应用仍是单点。",
-        "工业富联"
+        "紫金矿业 2.67%",
+        "赣锋锂业 7.93%",
+        "盛新锂能 10.02%",
+        "南山铝业 10.12%",
+        "四川黄金 10%"
       ],
       "source_files": [
-        "intraday.json"
+        "postmarket.json"
       ],
       "watch_next": [
         "看核心个股、ETF、后排扩散和尾盘承接是否同向确认。"
       ],
-      "invalidation": "AI网络/服务器/CPO风险信号收敛、核心股重新放量承接，则风险降级。",
+      "invalidation": "有色/锂矿/周期资源风险信号收敛、核心股重新放量承接，则风险降级。",
       "tags": [
-        "科技硬件链"
+        "金融/消费防御"
       ],
       "quality_flags": [],
       "tone": "risk",
-      "discovery_type": "active_market_scan",
+      "discovery_type": "postmarket_risk_scan",
+      "evidence_score": 90,
+      "missing_evidence": [],
+      "next_action": "看核心个股、ETF、后排扩散和尾盘承接是否同向确认。",
+      "observation_source": "盘后结构扫描",
+      "independent_observation": true,
+      "signal_score": 100,
+      "signal_grade": "A",
+      "use_action": "可跟踪",
+      "use_reasons": [
+        "有可核验证据",
+        "有下一步验证",
+        "有证伪条件",
+        "有来源文件",
+        "证据链较完整"
+      ]
+    },
+    {
+      "title": "基础化工",
+      "type": "theme",
+      "trigger_reason": "盘后风险扫描触发：收盘复盘出现持续性、尾盘或次日风险线。",
+      "conclusion": "缺少大市值中军一致确认；若日科低溢价且化工封板降至5只以下，按一日轮动处理。",
+      "confidence": "high",
+      "evidence": [
+        "日科化学 20%",
+        "滨化股份 10.09%",
+        "云图控股 10.04%",
+        "三友化工 10.01%",
+        "7月20日曾出现强分歧，此后三个保存快照未形成同等集中；今日9只涨停、56只涨超5%，属于回流首日，尚未形成连续主线。"
+      ],
+      "source_files": [
+        "postmarket.json"
+      ],
+      "watch_next": [
+        "看核心个股、ETF、后排扩散和尾盘承接是否同向确认。"
+      ],
+      "invalidation": "基础化工风险信号收敛、核心股重新放量承接，则风险降级。",
+      "tags": [
+        "金融/消费防御"
+      ],
+      "quality_flags": [],
+      "tone": "risk",
+      "discovery_type": "postmarket_risk_scan",
+      "evidence_score": 90,
+      "missing_evidence": [],
+      "next_action": "看核心个股、ETF、后排扩散和尾盘承接是否同向确认。",
+      "observation_source": "盘后结构扫描",
+      "independent_observation": true,
+      "signal_score": 100,
+      "signal_grade": "A",
+      "use_action": "可跟踪",
+      "use_reasons": [
+        "有可核验证据",
+        "有下一步验证",
+        "有证伪条件",
+        "有来源文件",
+        "证据链较完整"
+      ]
+    },
+    {
+      "title": "半导体设备/材料/零部件",
+      "type": "theme",
+      "trigger_reason": "盘后风险扫描触发：收盘复盘出现持续性、尾盘或次日风险线。",
+      "conclusion": "高成交下跌且A股设备、材料、零部件同步弱，降低博弈频率；没有订单、客户、收入和毛利新证据时不把扩产预期当结论。",
+      "confidence": "high",
+      "evidence": [
+        "北方华创 -3.14%",
+        "中微公司 -4.53%",
+        "华海清科 -5.29%",
+        "安集科技 -3.51%",
+        "江丰电子 -3.1%"
+      ],
+      "source_files": [
+        "postmarket.json"
+      ],
+      "watch_next": [
+        "看核心个股、ETF、后排扩散和尾盘承接是否同向确认。"
+      ],
+      "invalidation": "半导体设备/材料/零部件风险信号收敛、核心股重新放量承接，则风险降级。",
+      "tags": [
+        "科技硬件链",
+        "风控"
+      ],
+      "quality_flags": [],
+      "tone": "risk",
+      "discovery_type": "postmarket_risk_scan",
+      "evidence_score": 100,
+      "missing_evidence": [],
+      "next_action": "看核心个股、ETF、后排扩散和尾盘承接是否同向确认。",
+      "observation_source": "盘后结构扫描",
+      "independent_observation": true,
+      "signal_score": 100,
+      "signal_grade": "A",
+      "use_action": "可跟踪",
+      "use_reasons": [
+        "有可核验证据",
+        "有下一步验证",
+        "有证伪条件",
+        "有来源文件",
+        "证据链较完整"
+      ]
+    },
+    {
+      "title": "电子布/玻纤与PCB",
+      "type": "theme",
+      "trigger_reason": "盘后风险扫描触发：收盘复盘出现持续性、尾盘或次日风险线。",
+      "conclusion": "高成交核心仍多收绿；若中国巨石跌破37.92元、国际复材跌破26.51元，或PCB再现批量跌超5%，弱修复失效。",
+      "confidence": "high",
+      "evidence": [
+        "中国巨石 -0.88%",
+        "国际复材 -2.12%",
+        "山东玻纤 0.3%",
+        "长海股份 0.98%",
+        "东材科技 0.22%"
+      ],
+      "source_files": [
+        "postmarket.json"
+      ],
+      "watch_next": [
+        "看核心个股、ETF、后排扩散和尾盘承接是否同向确认。"
+      ],
+      "invalidation": "电子布/玻纤与PCB风险信号收敛、核心股重新放量承接，则风险降级。",
+      "tags": [
+        "科技硬件链",
+        "金融/消费防御"
+      ],
+      "quality_flags": [],
+      "tone": "risk",
+      "discovery_type": "postmarket_risk_scan",
       "evidence_score": 83,
       "missing_evidence": [
         "缺少代表股验证"
       ],
       "next_action": "看核心个股、ETF、后排扩散和尾盘承接是否同向确认。",
-      "observation_source": "主动盘面扫描",
+      "observation_source": "盘后结构扫描",
       "independent_observation": true,
       "signal_score": 100,
       "signal_grade": "A",
@@ -781,36 +867,38 @@
       ]
     },
     {
-      "title": "电子布/玻纤与PCB",
+      "title": "CPO/AI网络硬件",
       "type": "theme",
-      "trigger_reason": "主动盘面扫描触发：涨跌停、炸板、尾盘承接或板块扩散出现可验证变化。",
-      "conclusion": "反抽失败/退潮，不抢弱反弹；等待上游两中军和PCB核心同步翻红。",
+      "trigger_reason": "盘后风险扫描触发：收盘复盘出现持续性、尾盘或次日风险线。",
+      "conclusion": "若工业富联与中际转弱、三旺无溢价，反抽即失效；只有通信封板增至3只以上且三大CPO核心至少2只红盘才升级。",
       "confidence": "high",
       "evidence": [
-        "中国巨石-1.37%、国际复材-2.31%、宏和-1.43%、山东玻纤-0.53%，仅长海+0.55%、南玻A+1.88%。",
-        "PCB七核心仅沪电+0.80%红盘；胜宏-1.02%、生益-1.11%、鹏鼎-4.58%、景旺-4.15%、东山-7.20%。",
-        "中国巨石与国际复材成交104.43亿元，PCB七核心成交约499.03亿元；高换手仍对应价格回落。",
-        "元件-1.98%且4只炸板，上游与PCB均无涨停扩散。",
-        "中国巨石"
+        "工业富联 3.57%",
+        "中际旭创 1.1%",
+        "新易盛 -2.26%",
+        "天孚通信 -2.55%",
+        "三旺通信 19.99%"
       ],
       "source_files": [
-        "intraday.json"
+        "postmarket.json"
       ],
       "watch_next": [
         "看核心个股、ETF、后排扩散和尾盘承接是否同向确认。"
       ],
-      "invalidation": "电子布/玻纤与PCB风险信号收敛、核心股重新放量承接，则风险降级。",
+      "invalidation": "CPO/AI网络硬件风险信号收敛、核心股重新放量承接，则风险降级。",
       "tags": [
         "科技硬件链",
-        "风控"
+        "金融/消费防御"
       ],
       "quality_flags": [],
       "tone": "risk",
-      "discovery_type": "active_market_scan",
-      "evidence_score": 90,
-      "missing_evidence": [],
+      "discovery_type": "postmarket_risk_scan",
+      "evidence_score": 83,
+      "missing_evidence": [
+        "缺少代表股验证"
+      ],
       "next_action": "看核心个股、ETF、后排扩散和尾盘承接是否同向确认。",
-      "observation_source": "主动盘面扫描",
+      "observation_source": "盘后结构扫描",
       "independent_observation": true,
       "signal_score": 100,
       "signal_grade": "A",
@@ -820,89 +908,7 @@
         "有下一步验证",
         "有证伪条件",
         "有来源文件",
-        "证据链较完整"
-      ]
-    },
-    {
-      "title": "半导体设备/材料/功率半导体",
-      "type": "theme",
-      "trigger_reason": "主动盘面扫描触发：涨跌停、炸板、尾盘承接或板块扩散出现可验证变化。",
-      "conclusion": "半导体收窄至-2%、科创50收窄至-1.5%，且设备材料至少3只翻红后再谈修复。",
-      "confidence": "high",
-      "evidence": [
-        "半导体-4.41%、电子-2.82%、电子化学品-2.30%、科创50-3.77%，风险释放未转为止跌。",
-        "北方-3.40%、中微-4.88%、华海-5.52%、拓荆-5.56%、正帆-5.88%，设备前排无涨停。",
-        "雅克-1.09%、沪硅-2.78%、富创-2.79%、士兰微-3.16%、有研硅-5.82%，五只无一翻红。",
-        "港股澜起H+0.19%，兆易H-3.25%、华虹-7.68%、中芯H-4.12%，A/H制造负向共振加深。",
-        "没有新增订单、客户验证、产能利用率、半年报收入或毛利硬证据。"
-      ],
-      "source_files": [
-        "intraday.json"
-      ],
-      "watch_next": [
-        "看核心个股、ETF、后排扩散和尾盘承接是否同向确认。"
-      ],
-      "invalidation": "半导体设备/材料/功率半导体风险信号收敛、核心股重新放量承接，则风险降级。",
-      "tags": [
-        "科技硬件链",
-        "风控"
-      ],
-      "quality_flags": [],
-      "tone": "risk",
-      "discovery_type": "active_market_scan",
-      "evidence_score": 100,
-      "missing_evidence": [],
-      "next_action": "看核心个股、ETF、后排扩散和尾盘承接是否同向确认。",
-      "observation_source": "主动盘面扫描",
-      "independent_observation": true,
-      "signal_score": 100,
-      "signal_grade": "A",
-      "use_action": "可跟踪",
-      "use_reasons": [
-        "有可核验证据",
-        "有下一步验证",
-        "有证伪条件",
-        "有来源文件",
-        "证据链较完整"
-      ]
-    },
-    {
-      "title": "有色金属/能源金属",
-      "type": "theme",
-      "trigger_reason": "主动盘面扫描触发：涨跌停、炸板、尾盘承接或板块扩散出现可验证变化。",
-      "conclusion": "强主线｜行业、封板与大市值中军三重确认，上午最强趋势线",
-      "confidence": "high",
-      "evidence": [
-        "能源金属+5.14%、工业金属+4.09%、有色金属+3.47%、贵金属+2.84%，资源分支集中占据行业前排。",
-        "能源金属、工业金属、贵金属各有2只涨停，盛达资源3板；资源链低位补涨继续扩散。",
-        "紫金矿业+3.60%成交101.83亿元、洛阳钼业+3.31%成交50.21亿元、中国铝业+4.56%、云铝股份+6.14%、天齐锂业+5.05%、赣锋锂业+6.24%，中军量价共振。",
-        "该线来自A股周期资源风格，不依赖港股或日韩科技映射；午后需防高成交中军冲高回落。"
-      ],
-      "source_files": [
-        "midday.json"
-      ],
-      "watch_next": [
-        "看核心个股、ETF、后排扩散和尾盘承接是否同向确认。"
-      ],
-      "invalidation": "有色金属/能源金属风险信号收敛、核心股重新放量承接，则风险降级。",
-      "tags": [],
-      "quality_flags": [],
-      "tone": "risk",
-      "discovery_type": "active_market_scan",
-      "evidence_score": 90,
-      "missing_evidence": [],
-      "next_action": "看核心个股、ETF、后排扩散和尾盘承接是否同向确认。",
-      "observation_source": "主动盘面扫描",
-      "independent_observation": true,
-      "signal_score": 100,
-      "signal_grade": "A",
-      "use_action": "可跟踪",
-      "use_reasons": [
-        "有可核验证据",
-        "有下一步验证",
-        "有证伪条件",
-        "有来源文件",
-        "证据链较完整"
+        "有证据缺口"
       ]
     }
   ],
@@ -995,7 +1001,7 @@
       "title": "盘中追踪：金融/消费防御",
       "type": "opportunity_watch",
       "trigger_reason": "盘前/晚间注意点已转为盘中追踪清单，等待实时行情触发。",
-      "conclusion": "金融/消费防御；强化；周期资源与科技形成跷跷板，风格切换风险维持；金融仅护盘、消费防御未共振。；维持周期资源切换；保险超过+1%并与证券同步放量时确认金融切换。；证券+1.05%、保险+0.63%，金融护盘增强但未双向确认。",
+      "conclusion": "金融/消费防御；强化；周期资源与科技形成跷跷板，风格切换风险维持；金融仅护盘、消费防御未共振。；继续验证资源/电网相对科技的跷跷板；金融需券商+保险同步放量才独立确认。；能源金属+5.65%、工业金属+3.58%，科创50-3.78%；中信+1.13%、平安+0.65%，白酒-1.03%。周期与公用…",
       "confidence": "low",
       "evidence": [],
       "source_files": [
@@ -1158,28 +1164,26 @@
       ]
     },
     {
-      "title": "风控验证",
+      "title": "验证条件",
       "type": "verification",
       "trigger_reason": "验证队列触发：前序结论需要用下一交易窗口确认或证伪。",
-      "conclusion": "电网/电力看32只封板稳定性，资源看中军午后均价；缩量冲高或炸板增加时等待二次确认，不追高。",
+      "conclusion": "电网/电力和资源只复盘涨停扩散、尾盘承接与次日竞价溢价；加速后等待二次确认，不追高。",
       "confidence": "actionable",
       "evidence": [],
       "source_files": [
         "intraday.json"
       ],
       "watch_next": [
-        "电网/电力看32只封板稳定性，资源看中军午后均价；缩量冲高或炸板增加时等待二次确认，不追高。"
+        "电网/电力和资源只复盘涨停扩散、尾盘承接与次日竞价溢价；加速后等待二次确认，不追高。"
       ],
       "invalidation": "条件不出现或反向出现，即撤销对应方向判断。",
-      "tags": [
-        "风控"
-      ],
+      "tags": [],
       "quality_flags": [],
       "tone": "neutral",
       "discovery_type": "verification_queue",
       "evidence_score": 35,
       "missing_evidence": [],
-      "next_action": "电网/电力看32只封板稳定性，资源看中军午后均价；缩量冲高或炸板增加时等待二次确认，不追高。",
+      "next_action": "电网/电力和资源只复盘涨停扩散、尾盘承接与次日竞价溢价；加速后等待二次确认，不追高。",
       "observation_source": "验证队列",
       "independent_observation": true,
       "signal_score": 60,
@@ -1196,27 +1200,25 @@
       "title": "科技硬件链验证",
       "type": "verification",
       "trigger_reason": "验证队列触发：前序结论需要用下一交易窗口确认或证伪。",
-      "conclusion": "化工看8只封板；设备、医药、军工、地产只看行业中军是否加入，单靠小票不升级。",
+      "conclusion": "化工和机械设备只看次日是否继续扩散并出现中军承接，未连续前不升级。",
       "confidence": "actionable",
       "evidence": [],
       "source_files": [
         "intraday.json"
       ],
       "watch_next": [
-        "化工看8只封板；设备、医药、军工、地产只看行业中军是否加入，单靠小票不升级。"
+        "化工和机械设备只看次日是否继续扩散并出现中军承接，未连续前不升级。"
       ],
       "invalidation": "条件不出现或反向出现，即撤销对应方向判断。",
       "tags": [
-        "科技硬件链",
-        "创新药/CRO",
-        "金融/消费防御"
+        "科技硬件链"
       ],
       "quality_flags": [],
       "tone": "neutral",
       "discovery_type": "verification_queue",
       "evidence_score": 35,
       "missing_evidence": [],
-      "next_action": "化工看8只封板；设备、医药、军工、地产只看行业中军是否加入，单靠小票不升级。",
+      "next_action": "化工和机械设备只看次日是否继续扩散并出现中军承接，未连续前不升级。",
       "observation_source": "验证队列",
       "independent_observation": true,
       "signal_score": 60,
@@ -1232,20 +1234,6 @@
   ],
   "conflicts": [
     {
-      "theme": "有色金属/能源金属",
-      "sections": [
-        "opportunities",
-        "risks"
-      ],
-      "verdict": "风险优先，只做验证",
-      "severity": "risk_first",
-      "action": "先按风险栏处理；只有风险收敛、核心股承接和数据质量恢复后，才允许从验证栏升级。",
-      "evidence": [
-        "机会：C级/降权观察，资源中军保持红盘，工业金属再增1只封板",
-        "风险：A级/可跟踪，强主线｜行业、封板与大市值中军三重确认，上午最强趋势线"
-      ]
-    },
-    {
       "theme": "电网设备/电力",
       "sections": [
         "opportunities",
@@ -1255,12 +1243,12 @@
       "severity": "risk_first",
       "action": "先按风险栏处理；只有风险收敛、核心股承接和数据质量恢复后，才允许从验证栏升级。",
       "evidence": [
-        "机会：C级/降权观察，强主线｜19只涨停构成全市场最宽封板簇，但午前开板反馈增加",
-        "风险：A级/可跟踪，若封板回落至26只以下，且电网/电力炸板增至5只以上，转强分歧。"
+        "机会：C级/降权观察，7月20日局部强线、21日高标博弈、22日电力8只涨停后，今日扩至电网29只+电力8只，属于连续活跃第4个交易日并明显扩散。",
+        "风险：A级/可跟踪，加速后次日最怕高标断层与后排批量低开；若封板降至25只以下、炸板增至6只以上，转强分歧。"
       ]
     },
     {
-      "theme": "AI网络/服务器/CPO",
+      "theme": "有色/锂矿/周期资源",
       "sections": [
         "opportunities",
         "risks"
@@ -1269,22 +1257,8 @@
       "severity": "risk_first",
       "action": "先按风险栏处理；只有风险收敛、核心股承接和数据质量恢复后，才允许从验证栏升级。",
       "evidence": [
-        "机会：C级/降权观察，少数高成交核心承接，但通信行业继续走弱",
-        "风险：A级/可跟踪，反抽观察、不是强主线；三旺开板或工业富联跌回平盘时放弃弱反弹。"
-      ]
-    },
-    {
-      "theme": "科技硬件链",
-      "sections": [
-        "opportunities",
-        "verifications"
-      ],
-      "verdict": "候选分歧，观察验证",
-      "severity": "watch",
-      "action": "保留验证，不升级为交易机会。",
-      "evidence": [
-        "机会：D级/仅复核，富创-2.79%、新莱-3.14%、正帆-5.88%，无涨停扩散。",
-        "验证：B级/等待确认，化工看8只封板；设备、医药、军工、地产只看行业中军是否加入，单靠小票不升级。"
+        "机会：C级/降权观察，7月22日资金从科技切向资源防御，今日能源金属、工业金属升至行业前两名，涨停与中军同步增强，确认连续活跃第2日。",
+        "风险：A级/可跟踪，若能源金属与工业金属退出行业前五、资源涨停少于4只，或紫金与赣锋同时低开走弱，则按二日轮动处理。"
       ]
     }
   ],
