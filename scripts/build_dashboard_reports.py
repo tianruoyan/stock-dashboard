@@ -13,6 +13,7 @@ NODE_BIN = Path("/Users/sweet_orange/.cache/codex-runtimes/codex-primary-runtime
 
 
 STEPS = [
+    ("topics-refresh", ["python3", "scripts/build_topics.py"], False),
     ("opportunity-watch:pre", ["python3", "scripts/build_opportunity_watch.py"], False),
     ("theme-shifts:pre", ["python3", "scripts/build_theme_shifts.py"], False),
     ("decision-feed:pre", ["python3", "scripts/build_decision_feed.py"], False),
@@ -60,6 +61,7 @@ def write_report(status: str, summary: str, results: list[dict[str, object]]) ->
         "summary": summary,
         "steps": results,
         "rules": [
+            "先用当天盘后数据刷新机器人/工业自动化和医药修复链，再生成下游机会与主线变化。",
             "先把盘前/晚间/专题线索生成 opportunity-watch，再生成 theme-shifts 和 decision-feed。",
             "先生成 theme-shifts 和 decision-feed，再审计。",
             "审计会更新 quality-report，因此审计后必须重刷异动恢复就绪、automation-health、opportunity-watch、theme-shifts、decision-feed、data-trust、monitoring、section-health。",

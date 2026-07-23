@@ -3,6 +3,15 @@
   "summary": "统一构建完成，但存在降权/需复核项。",
   "steps": [
     {
+      "name": "topics-refresh",
+      "command": "python3 scripts/build_topics.py",
+      "returncode": 0,
+      "status": "ok",
+      "blocking": false,
+      "stdout_tail": "topics-refresh: ok - 已更新机器人/工业自动化、医药修复链，依据截至2026-07-23T16:14:44+08:00",
+      "stderr_tail": ""
+    },
+    {
       "name": "opportunity-watch:pre",
       "command": "python3 scripts/build_opportunity_watch.py",
       "returncode": 0,
@@ -139,6 +148,7 @@
     }
   ],
   "rules": [
+    "先用当天盘后数据刷新机器人/工业自动化和医药修复链，再生成下游机会与主线变化。",
     "先把盘前/晚间/专题线索生成 opportunity-watch，再生成 theme-shifts 和 decision-feed。",
     "先生成 theme-shifts 和 decision-feed，再审计。",
     "审计会更新 quality-report，因此审计后必须重刷异动恢复就绪、automation-health、opportunity-watch、theme-shifts、decision-feed、data-trust、monitoring、section-health。",

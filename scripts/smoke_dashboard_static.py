@@ -41,6 +41,7 @@ def main() -> int:
     check_index_contract(index, issues)
     check_app_files(app, issues)
     check_bad_literals(issues)
+    check_topic_refresh(issues)
     check_build_report(issues)
     check_quality_report(issues)
     check_automation_health(issues)
@@ -63,6 +64,7 @@ def main() -> int:
             "app.js 语法检查通过。",
             "FILES 列出的必需 JSON/配置文件存在。",
             "data/config/settings 文件不含常见坏字面量。",
+            "机器人/工业自动化和医药修复链已使用当天盘后事实刷新。",
             "decision-feed 不含泛化机会、旧相对日期和高置信无证据项。",
             "非空 alert.json 必须带 quote_audit，声明行情源、quote_time、涨跌幅字段和交叉验证。",
             "data-trust 文件级可信度结构完整，能标记不可用/降权数据文件。",
@@ -147,6 +149,32 @@ def check_bad_literals(issues: list[dict[str, Any]]) -> None:
                 issues.append(issue("critical", rel(path), "bad_literal", f"发现异常文本：{bad_literal_label(literal)}"))
         if MOJIBAKE_PATTERN.search(text):
             issues.append(issue("critical", rel(path), "mojibake_text", "发现疑似乱码文本，需先清理页面文本"))
+
+
+def check_topic_refresh(issues: list[dict[str, Any]]) -> None:
+    postmarket = read_json(ROOT / "data" / "postmarket.json")
+    topics = read_json(ROOT / "data" / "topics.json")
+    postmarket_time = parse_timestamp(postmarket.get("timestamp"))
+    if not postmarket_time:
+        return
+    rows = {
+        str(item.get("name") or ""): item
+        for item in topics.get("topics") or []
+        if isinstance(item, dict)
+    }
+    for name in ("机器人/工业自动化", "医药修复链"):
+        item = rows.get(name)
+        if not item:
+            issues.append(issue("critical", "data/topics.json", "missing_core_topic", f"专题缺失：{name}"))
+            continue
+        updated_at = parse_timestamp(item.get("updated_at"))
+        if not updated_at or updated_at < postmarket_time:
+            issues.append(issue(
+                "critical",
+                "data/topics.json",
+                "stale_core_topic",
+                f"{name}未使用当天盘后数据刷新。",
+            ))
 
 
 def check_decision_feed(issues: list[dict[str, Any]]) -> None:
@@ -467,7 +495,7 @@ def check_build_report(issues: list[dict[str, Any]]) -> None:
     if data.get("status") == "running":
         return
     names = {item.get("name") for item in rows if isinstance(item, dict)}
-    required = {"opportunity-watch:pre", "theme-shifts:pre", "decision-feed:pre", "automation-health:pre", "audit", "opportunity-watch:post-audit", "automation-health:post-audit", "data-trust", "monitoring-coverage", "section-health", "static-smoke", "runtime-smoke"}
+    required = {"topics-refresh", "opportunity-watch:pre", "theme-shifts:pre", "decision-feed:pre", "automation-health:pre", "audit", "opportunity-watch:post-audit", "automation-health:post-audit", "data-trust", "monitoring-coverage", "section-health", "static-smoke", "runtime-smoke"}
     missing = sorted(required - names)
     if missing:
         issues.append(issue("warning", "data/build-report.json", "missing_build_steps", f"统一构建缺少步骤：{', '.join(missing)}"))
