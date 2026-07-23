@@ -606,7 +606,7 @@
       ],
       "source_watch_id": "topic-cpo-optical-module",
       "quote_audit": {
-        "provider": "本地盘中监控",
+        "provider": "本地盘中监控、腾讯分钟行情",
         "quote_time": "2026-07-23T10:57:28+08:00",
         "pct_field": "3分钟涨跌幅",
         "sample_count": 5,
@@ -623,7 +623,50 @@
         "up_ratio": 0.8,
         "volume_ratio": 7.16,
         "relative_volume_vs_yesterday": 1.65,
-        "missing_confirmation": "还差腾讯/通达信双源核验和AI硬件后排继续扩散。"
+        "missing_confirmation": "还差腾讯/通达信双源核验和AI硬件后排继续扩散。",
+        "secondary_source": "腾讯分钟行情",
+        "secondary_verification": {
+          "state": "mismatch",
+          "checked_at": "2026-07-23T10:58:53+08:00",
+          "source": "腾讯分钟行情",
+          "reason": "腾讯分钟行情与监控源的方向或幅度不一致，维持待确认/失效。",
+          "representatives": [
+            {
+              "股票": "天孚通信",
+              "代码": "300394.SZ",
+              "监控涨跌幅": 2.21,
+              "腾讯涨跌幅": -0.351,
+              "起始分钟": "1054",
+              "结束分钟": "1057",
+              "方向一致": false,
+              "幅度一致": false
+            },
+            {
+              "股票": "光迅科技",
+              "代码": "002281.SZ",
+              "监控涨跌幅": 3.25,
+              "腾讯涨跌幅": -0.4997,
+              "起始分钟": "1054",
+              "结束分钟": "1057",
+              "方向一致": false,
+              "幅度一致": false
+            },
+            {
+              "股票": "光库科技",
+              "代码": "300620.SZ",
+              "监控涨跌幅": 2.76,
+              "腾讯涨跌幅": -0.6041,
+              "起始分钟": "1054",
+              "结束分钟": "1057",
+              "方向一致": false,
+              "幅度一致": false
+            }
+          ],
+          "window_minutes": 3,
+          "direction_agreement_ratio": 0.0,
+          "magnitude_agreement_ratio": 0.0,
+          "fingerprint": "65ccb0d7f250a2fc32ee"
+        }
       }
     },
     {
@@ -672,7 +715,7 @@
       ],
       "source_watch_id": "topic-silicon-wafer",
       "quote_audit": {
-        "provider": "本地盘中监控",
+        "provider": "本地盘中监控、腾讯分钟行情",
         "quote_time": "2026-07-23T10:57:28+08:00",
         "pct_field": "3分钟涨跌幅",
         "sample_count": 6,
@@ -689,20 +732,63 @@
         "up_ratio": 0.83,
         "volume_ratio": 9.05,
         "relative_volume_vs_yesterday": 1.61,
-        "missing_confirmation": "还差双源核验和确认不是风险回落后的短暂回抽。"
+        "missing_confirmation": "还差双源核验和确认不是风险回落后的短暂回抽。",
+        "secondary_source": "腾讯分钟行情",
+        "secondary_verification": {
+          "state": "mismatch",
+          "checked_at": "2026-07-23T10:58:53+08:00",
+          "source": "腾讯分钟行情",
+          "reason": "腾讯分钟行情与监控源的方向或幅度不一致，维持待确认/失效。",
+          "representatives": [
+            {
+              "股票": "沪硅产业",
+              "代码": "688126.SH",
+              "监控涨跌幅": 2.77,
+              "腾讯涨跌幅": -0.233,
+              "起始分钟": "1054",
+              "结束分钟": "1057",
+              "方向一致": false,
+              "幅度一致": false
+            },
+            {
+              "股票": "中晶科技",
+              "代码": "003026.SZ",
+              "监控涨跌幅": 1.92,
+              "腾讯涨跌幅": -0.2583,
+              "起始分钟": "1054",
+              "结束分钟": "1057",
+              "方向一致": false,
+              "幅度一致": false
+            },
+            {
+              "股票": "立昂微",
+              "代码": "605358.SH",
+              "监控涨跌幅": 2.85,
+              "腾讯涨跌幅": -0.4947,
+              "起始分钟": "1054",
+              "结束分钟": "1057",
+              "方向一致": false,
+              "幅度一致": false
+            }
+          ],
+          "window_minutes": 3,
+          "direction_agreement_ratio": 0.0,
+          "magnitude_agreement_ratio": 0.0,
+          "fingerprint": "e0fb647e49aac0f1946c"
+        }
       }
     }
   ],
   "quote_audit": {
-    "provider": "本地盘中监控",
-    "quote_time": "2026-07-23T10:57:41+08:00",
-    "cross_source_verified": false,
+    "provider": "本地盘中监控、腾讯分钟行情",
+    "quote_time": "2026-07-23T10:57:28+08:00",
+    "pct_field": "各异动卡标注的短周期涨跌幅",
     "sanity_checks": {
-      "new_formal_alert_count": 2,
-      "monitor_log_fresh": true,
-      "candidate_gate_passed_by_local_monitor": true
-    },
-    "missing_confirmation": "本轮新增提醒来自本地监控正式提醒，尚未完成双源交叉验证。"
+      "sample_count": 9,
+      "max_abs_leader_change_pct": 3.3435,
+      "cross_source_verified": false,
+      "verified_alert_count": 0
+    }
   },
   "note": "异动来自本地短周期监控；候选卡须经腾讯分钟行情复核后才能升级。"
 }
