@@ -1594,7 +1594,7 @@
         "sample_count": 3,
         "max_abs_leader_change_pct": 1.4893,
         "sanity_checks": {
-          "cross_source_verified": false,
+          "cross_source_verified": true,
           "price_move_valid": true,
           "volume_valid": true,
           "direction_ratio_valid": true,
@@ -1607,11 +1607,45 @@
         "missing_confirmation": "等待腾讯分钟行情交叉核验；通过前只作候选或观察，不作为确认交易信号。",
         "secondary_source": "腾讯分钟行情",
         "secondary_verification": {
-          "state": "pending",
-          "checked_at": "2026-07-24T10:27:55+08:00",
+          "state": "passed",
+          "checked_at": "2026-07-24T10:28:56+08:00",
           "source": "腾讯分钟行情",
-          "reason": "等待触发分钟行情完整落盘。",
-          "representatives": [],
+          "reason": "代表股方向与幅度达到双源一致要求。",
+          "representatives": [
+            {
+              "股票": "江丰电子",
+              "代码": "300666.SZ",
+              "监控涨跌幅": 1.4893,
+              "腾讯涨跌幅": 1.6558,
+              "起始分钟": "1023",
+              "结束分钟": "1026",
+              "方向一致": true,
+              "幅度一致": true
+            },
+            {
+              "股票": "安集科技",
+              "代码": "688019.SH",
+              "监控涨跌幅": 0.9292,
+              "腾讯涨跌幅": 1.0137,
+              "起始分钟": "1023",
+              "结束分钟": "1026",
+              "方向一致": true,
+              "幅度一致": true
+            },
+            {
+              "股票": "华海清科",
+              "代码": "688120.SH",
+              "监控涨跌幅": 0.9874,
+              "腾讯涨跌幅": 1.3462,
+              "起始分钟": "1023",
+              "结束分钟": "1026",
+              "方向一致": true,
+              "幅度一致": true
+            }
+          ],
+          "window_minutes": 3,
+          "direction_agreement_ratio": 1.0,
+          "magnitude_agreement_ratio": 1.0,
           "fingerprint": "d078e756fd732cabdbb2"
         }
       },
@@ -1632,7 +1666,7 @@
       "sample_count": 20,
       "max_abs_leader_change_pct": 3.5692,
       "cross_source_verified": false,
-      "verified_alert_count": 1
+      "verified_alert_count": 2
     }
   },
   "note": "异动来自本地短周期监控；候选卡须经腾讯分钟行情复核后才能升级。"
