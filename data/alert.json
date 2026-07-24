@@ -1,78 +1,7 @@
 {
-  "timestamp": "2026-07-24T10:33:04+08:00",
+  "timestamp": "2026-07-24T10:35:04+08:00",
   "source_status": "monitor_live",
   "alerts": [
-    {
-      "id": "monitor-20260724-094801-c287e4ac4146",
-      "time": "2026-07-24T09:48:01+08:00",
-      "sector": "光模块/CPO",
-      "type": "小登题材快速回落",
-      "reason": "触发规则：小登底池回落预警：板块行情缺失时，底池3分钟平均跌幅≥1.0%，下跌占比≥60%，且成交放大≥5x\n异动性质：快速回落。价格下行和下跌占比触发回落提醒，优先按风险扩散处理。\n结论：光模块/CPO题材回落，有扩散，天孚通信是主要拖累。\n题材：光模块/CPO，当前领跌股：天孚通信 / 新易盛 / 光迅科技。\n强度：底池样本 3分钟涨跌幅 -1.12%，下跌占比 80%，弱势股 4 只。\n成交：3分钟放大 5.28x，较昨同期 2.39x，风险扩散明显。\n当前领跌股分数：天孚通信(40.9)，新易盛(38.8)，光迅科技(35.2)。\n主要贡献因子：天孚通信: 3分钟涨跌幅 -1.18%，成交放大 5.52x，日内涨幅 -1.67%；新易盛: 3分钟涨跌幅 -0.93%，成交放大 5.36x，日内涨幅 -2.03%；光迅科技: 3分钟涨跌幅 -0.99%，成交放大 6.24x，日内涨幅 -0.02%\n观察点：领跌是否止跌、后排是否继续补跌、放量是否变成抛压。\n风险提示：这是题材强度分析，不构成买卖建议。",
-      "leaders": [
-        {
-          "name": "天孚通信",
-          "code": "300394",
-          "change_pct": -1.1752,
-          "score": 40.9,
-          "factors": [
-            "3分钟-1.18%",
-            "成交放大5.52x",
-            "日内-1.67%"
-          ]
-        },
-        {
-          "name": "新易盛",
-          "code": "300502",
-          "change_pct": -0.9293,
-          "score": 38.78,
-          "factors": [
-            "3分钟-0.93%",
-            "成交放大5.36x",
-            "日内-2.03%"
-          ]
-        },
-        {
-          "name": "光迅科技",
-          "code": "002281",
-          "change_pct": -0.9879,
-          "score": 35.2,
-          "factors": [
-            "3分钟-0.99%",
-            "成交放大6.24x",
-            "日内-0.02%"
-          ]
-        }
-      ],
-      "signal_type": "风险提示",
-      "is_old_economy": false,
-      "source_watch_id": "光模块/CPO",
-      "quote_audit": {
-        "provider": "本地盘中监控",
-        "quote_time": "2026-07-24T09:48:01+08:00",
-        "pct_field": "3分钟涨跌幅",
-        "sample_count": 3,
-        "max_abs_leader_change_pct": 1.1752,
-        "sanity_checks": {
-          "cross_source_verified": false,
-          "price_move_valid": true,
-          "volume_valid": true,
-          "direction_ratio_valid": true,
-          "limit_down_count_valid": false
-        },
-        "board_3m_change_pct": -1.1218,
-        "direction_ratio": 0.8,
-        "volume_ratio": 5.2772,
-        "relative_volume_vs_yesterday": 2.3864,
-        "missing_confirmation": "等待腾讯分钟行情交叉核验；通过前只作候选或观察，不作为确认交易信号。"
-      },
-      "source_status": "monitor_live_unverified",
-      "valid_until": "2026-07-24T09:53:01+08:00",
-      "trigger_rule": "小登底池回落预警：板块行情缺失时，底池3分钟平均跌幅≥1.0%，下跌占比≥60%，且成交放大≥5x",
-      "alert_class": "risk",
-      "confirmation_level": "candidate",
-      "limit_up_count": 0,
-      "limit_down_count": 0
-    },
     {
       "id": "monitor-20260724-094801-bc286337c667",
       "time": "2026-07-24T09:48:01+08:00",
@@ -118,7 +47,7 @@
       "is_old_economy": false,
       "source_watch_id": "存储芯片",
       "quote_audit": {
-        "provider": "本地盘中监控",
+        "provider": "本地盘中监控、腾讯分钟行情",
         "quote_time": "2026-07-24T09:48:01+08:00",
         "pct_field": "3分钟涨跌幅",
         "sample_count": 3,
@@ -134,7 +63,16 @@
         "direction_ratio": 0.8571,
         "volume_ratio": 5.6549,
         "relative_volume_vs_yesterday": 2.7755,
-        "missing_confirmation": "等待腾讯分钟行情交叉核验；通过前只作候选或观察，不作为确认交易信号。"
+        "missing_confirmation": "等待腾讯分钟行情交叉核验；通过前只作候选或观察，不作为确认交易信号。",
+        "secondary_source": "腾讯分钟行情",
+        "secondary_verification": {
+          "state": "too_late_no_backfill",
+          "checked_at": "2026-07-24T10:35:58+08:00",
+          "source": "腾讯分钟行情",
+          "reason": "超过实时核验窗口，不事后补成已确认。",
+          "representatives": [],
+          "fingerprint": "20380adcff34d71a1732"
+        }
       },
       "source_status": "monitor_live_unverified",
       "valid_until": "2026-07-24T09:53:01+08:00",
@@ -189,7 +127,7 @@
       "is_old_economy": false,
       "source_watch_id": "电子布",
       "quote_audit": {
-        "provider": "本地盘中监控",
+        "provider": "本地盘中监控、腾讯分钟行情",
         "quote_time": "2026-07-24T09:48:01+08:00",
         "pct_field": "3分钟涨跌幅",
         "sample_count": 3,
@@ -205,7 +143,16 @@
         "direction_ratio": 1.0,
         "volume_ratio": 5.1537,
         "relative_volume_vs_yesterday": 2.2979,
-        "missing_confirmation": "等待腾讯分钟行情交叉核验；通过前只作候选或观察，不作为确认交易信号。"
+        "missing_confirmation": "等待腾讯分钟行情交叉核验；通过前只作候选或观察，不作为确认交易信号。",
+        "secondary_source": "腾讯分钟行情",
+        "secondary_verification": {
+          "state": "too_late_no_backfill",
+          "checked_at": "2026-07-24T10:35:58+08:00",
+          "source": "腾讯分钟行情",
+          "reason": "超过实时核验窗口，不事后补成已确认。",
+          "representatives": [],
+          "fingerprint": "1b7f340b1d477be1d23a"
+        }
       },
       "source_status": "monitor_live_unverified",
       "valid_until": "2026-07-24T09:53:01+08:00",
@@ -260,7 +207,7 @@
       "is_old_economy": false,
       "source_watch_id": "液冷",
       "quote_audit": {
-        "provider": "本地盘中监控",
+        "provider": "本地盘中监控、腾讯分钟行情",
         "quote_time": "2026-07-24T09:48:01+08:00",
         "pct_field": "3分钟涨跌幅",
         "sample_count": 3,
@@ -276,7 +223,16 @@
         "direction_ratio": 1.0,
         "volume_ratio": 7.8444,
         "relative_volume_vs_yesterday": 2.2846,
-        "missing_confirmation": "等待腾讯分钟行情交叉核验；通过前只作候选或观察，不作为确认交易信号。"
+        "missing_confirmation": "等待腾讯分钟行情交叉核验；通过前只作候选或观察，不作为确认交易信号。",
+        "secondary_source": "腾讯分钟行情",
+        "secondary_verification": {
+          "state": "too_late_no_backfill",
+          "checked_at": "2026-07-24T10:35:58+08:00",
+          "source": "腾讯分钟行情",
+          "reason": "超过实时核验窗口，不事后补成已确认。",
+          "representatives": [],
+          "fingerprint": "196414ae6b3676e559bb"
+        }
       },
       "source_status": "monitor_live_unverified",
       "valid_until": "2026-07-24T09:53:01+08:00",
@@ -320,7 +276,7 @@
       "is_old_economy": false,
       "source_watch_id": "半导体零部件弹性",
       "quote_audit": {
-        "provider": "本地盘中监控",
+        "provider": "本地盘中监控、腾讯分钟行情",
         "quote_time": "2026-07-24T09:53:26+08:00",
         "pct_field": "3分钟涨跌幅",
         "sample_count": 2,
@@ -336,7 +292,16 @@
         "direction_ratio": 1.0,
         "volume_ratio": 15.183,
         "relative_volume_vs_yesterday": 2.9102,
-        "missing_confirmation": "等待腾讯分钟行情交叉核验；通过前只作候选或观察，不作为确认交易信号。"
+        "missing_confirmation": "等待腾讯分钟行情交叉核验；通过前只作候选或观察，不作为确认交易信号。",
+        "secondary_source": "腾讯分钟行情",
+        "secondary_verification": {
+          "state": "too_late_no_backfill",
+          "checked_at": "2026-07-24T10:35:58+08:00",
+          "source": "腾讯分钟行情",
+          "reason": "超过实时核验窗口，不事后补成已确认。",
+          "representatives": [],
+          "fingerprint": "afbd97df8fffb83bd185"
+        }
       },
       "source_status": "monitor_live_unverified",
       "valid_until": "2026-07-24T09:58:26+08:00",
@@ -391,7 +356,7 @@
       "is_old_economy": false,
       "source_watch_id": "光刻胶/光刻机催化",
       "quote_audit": {
-        "provider": "本地盘中监控",
+        "provider": "本地盘中监控、腾讯分钟行情",
         "quote_time": "2026-07-24T09:53:26+08:00",
         "pct_field": "3分钟涨跌幅",
         "sample_count": 3,
@@ -407,7 +372,16 @@
         "direction_ratio": 1.0,
         "volume_ratio": 10.1935,
         "relative_volume_vs_yesterday": 2.7042,
-        "missing_confirmation": "等待腾讯分钟行情交叉核验；通过前只作候选或观察，不作为确认交易信号。"
+        "missing_confirmation": "等待腾讯分钟行情交叉核验；通过前只作候选或观察，不作为确认交易信号。",
+        "secondary_source": "腾讯分钟行情",
+        "secondary_verification": {
+          "state": "too_late_no_backfill",
+          "checked_at": "2026-07-24T10:35:58+08:00",
+          "source": "腾讯分钟行情",
+          "reason": "超过实时核验窗口，不事后补成已确认。",
+          "representatives": [],
+          "fingerprint": "dba71ba339609f3cb855"
+        }
       },
       "source_status": "monitor_live_unverified",
       "valid_until": "2026-07-24T09:58:26+08:00",
@@ -462,7 +436,7 @@
       "is_old_economy": false,
       "source_watch_id": "高带宽内存",
       "quote_audit": {
-        "provider": "本地盘中监控",
+        "provider": "本地盘中监控、腾讯分钟行情",
         "quote_time": "2026-07-24T09:53:26+08:00",
         "pct_field": "3分钟涨跌幅",
         "sample_count": 3,
@@ -478,7 +452,16 @@
         "direction_ratio": 0.8,
         "volume_ratio": 8.7153,
         "relative_volume_vs_yesterday": 2.9467,
-        "missing_confirmation": "等待腾讯分钟行情交叉核验；通过前只作候选或观察，不作为确认交易信号。"
+        "missing_confirmation": "等待腾讯分钟行情交叉核验；通过前只作候选或观察，不作为确认交易信号。",
+        "secondary_source": "腾讯分钟行情",
+        "secondary_verification": {
+          "state": "too_late_no_backfill",
+          "checked_at": "2026-07-24T10:35:58+08:00",
+          "source": "腾讯分钟行情",
+          "reason": "超过实时核验窗口，不事后补成已确认。",
+          "representatives": [],
+          "fingerprint": "429d7cc5f2ae4e820db0"
+        }
       },
       "source_status": "monitor_live_unverified",
       "valid_until": "2026-07-24T09:58:26+08:00",
@@ -533,7 +516,7 @@
       "is_old_economy": false,
       "source_watch_id": "封装",
       "quote_audit": {
-        "provider": "本地盘中监控",
+        "provider": "本地盘中监控、腾讯分钟行情",
         "quote_time": "2026-07-24T09:53:26+08:00",
         "pct_field": "3分钟涨跌幅",
         "sample_count": 3,
@@ -549,7 +532,16 @@
         "direction_ratio": 1.0,
         "volume_ratio": 9.1884,
         "relative_volume_vs_yesterday": 2.965,
-        "missing_confirmation": "等待腾讯分钟行情交叉核验；通过前只作候选或观察，不作为确认交易信号。"
+        "missing_confirmation": "等待腾讯分钟行情交叉核验；通过前只作候选或观察，不作为确认交易信号。",
+        "secondary_source": "腾讯分钟行情",
+        "secondary_verification": {
+          "state": "too_late_no_backfill",
+          "checked_at": "2026-07-24T10:35:58+08:00",
+          "source": "腾讯分钟行情",
+          "reason": "超过实时核验窗口，不事后补成已确认。",
+          "representatives": [],
+          "fingerprint": "67129837eed309499108"
+        }
       },
       "source_status": "monitor_live_unverified",
       "valid_until": "2026-07-24T09:58:26+08:00",
@@ -604,7 +596,7 @@
       "is_old_economy": false,
       "source_watch_id": "传说游资票走势关联",
       "quote_audit": {
-        "provider": "本地盘中监控",
+        "provider": "本地盘中监控、腾讯分钟行情",
         "quote_time": "2026-07-24T09:53:26+08:00",
         "pct_field": "3分钟涨跌幅",
         "sample_count": 3,
@@ -620,7 +612,16 @@
         "direction_ratio": 0.8,
         "volume_ratio": 8.9695,
         "relative_volume_vs_yesterday": 2.7815,
-        "missing_confirmation": "等待腾讯分钟行情交叉核验；通过前只作候选或观察，不作为确认交易信号。"
+        "missing_confirmation": "等待腾讯分钟行情交叉核验；通过前只作候选或观察，不作为确认交易信号。",
+        "secondary_source": "腾讯分钟行情",
+        "secondary_verification": {
+          "state": "too_late_no_backfill",
+          "checked_at": "2026-07-24T10:35:58+08:00",
+          "source": "腾讯分钟行情",
+          "reason": "超过实时核验窗口，不事后补成已确认。",
+          "representatives": [],
+          "fingerprint": "163a557880f127e7392f"
+        }
       },
       "source_status": "monitor_live_unverified",
       "valid_until": "2026-07-24T09:58:26+08:00",
@@ -675,7 +676,7 @@
       "is_old_economy": false,
       "source_watch_id": "7月半导体扩产组合",
       "quote_audit": {
-        "provider": "本地盘中监控",
+        "provider": "本地盘中监控、腾讯分钟行情",
         "quote_time": "2026-07-24T09:54:57+08:00",
         "pct_field": "3分钟涨跌幅",
         "sample_count": 3,
@@ -691,7 +692,16 @@
         "direction_ratio": 1.0,
         "volume_ratio": 14.3996,
         "relative_volume_vs_yesterday": null,
-        "missing_confirmation": "等待腾讯分钟行情交叉核验；通过前只作候选或观察，不作为确认交易信号。"
+        "missing_confirmation": "等待腾讯分钟行情交叉核验；通过前只作候选或观察，不作为确认交易信号。",
+        "secondary_source": "腾讯分钟行情",
+        "secondary_verification": {
+          "state": "too_late_no_backfill",
+          "checked_at": "2026-07-24T10:35:58+08:00",
+          "source": "腾讯分钟行情",
+          "reason": "超过实时核验窗口，不事后补成已确认。",
+          "representatives": [],
+          "fingerprint": "1148509f3600ac2b7ab4"
+        }
       },
       "source_status": "monitor_live_unverified",
       "valid_until": "2026-07-24T09:59:57+08:00",
@@ -744,7 +754,7 @@
       "is_old_economy": false,
       "source_watch_id": "覆铜板",
       "quote_audit": {
-        "provider": "本地盘中监控",
+        "provider": "本地盘中监控、腾讯分钟行情",
         "quote_time": "2026-07-24T10:01:09+08:00",
         "pct_field": "3分钟涨跌幅",
         "sample_count": 3,
@@ -760,7 +770,16 @@
         "direction_ratio": 1.0,
         "volume_ratio": 5.6844,
         "relative_volume_vs_yesterday": 1.4559,
-        "missing_confirmation": "等待腾讯分钟行情交叉核验；通过前只作候选或观察，不作为确认交易信号。"
+        "missing_confirmation": "等待腾讯分钟行情交叉核验；通过前只作候选或观察，不作为确认交易信号。",
+        "secondary_source": "腾讯分钟行情",
+        "secondary_verification": {
+          "state": "too_late_no_backfill",
+          "checked_at": "2026-07-24T10:35:58+08:00",
+          "source": "腾讯分钟行情",
+          "reason": "超过实时核验窗口，不事后补成已确认。",
+          "representatives": [],
+          "fingerprint": "90c0a6aef4cb11a90231"
+        }
       },
       "source_status": "monitor_live_unverified",
       "valid_until": "2026-07-24T10:06:09+08:00",
@@ -815,7 +834,7 @@
       "is_old_economy": false,
       "source_watch_id": "电子布",
       "quote_audit": {
-        "provider": "本地盘中监控",
+        "provider": "本地盘中监控、腾讯分钟行情",
         "quote_time": "2026-07-24T10:05:50+08:00",
         "pct_field": "3分钟涨跌幅",
         "sample_count": 3,
@@ -831,7 +850,16 @@
         "direction_ratio": 1.0,
         "volume_ratio": 7.8127,
         "relative_volume_vs_yesterday": 1.7,
-        "missing_confirmation": "等待腾讯分钟行情交叉核验；通过前只作候选或观察，不作为确认交易信号。"
+        "missing_confirmation": "等待腾讯分钟行情交叉核验；通过前只作候选或观察，不作为确认交易信号。",
+        "secondary_source": "腾讯分钟行情",
+        "secondary_verification": {
+          "state": "too_late_no_backfill",
+          "checked_at": "2026-07-24T10:35:58+08:00",
+          "source": "腾讯分钟行情",
+          "reason": "超过实时核验窗口，不事后补成已确认。",
+          "representatives": [],
+          "fingerprint": "14c1cab6a572af894604"
+        }
       },
       "source_status": "monitor_live_unverified",
       "valid_until": "2026-07-24T10:10:50+08:00",
@@ -886,7 +914,7 @@
       "is_old_economy": false,
       "source_watch_id": "光模块/CPO",
       "quote_audit": {
-        "provider": "本地盘中监控",
+        "provider": "本地盘中监控、腾讯分钟行情",
         "quote_time": "2026-07-24T10:08:10+08:00",
         "pct_field": "3分钟涨跌幅",
         "sample_count": 3,
@@ -902,7 +930,16 @@
         "direction_ratio": 0.8,
         "volume_ratio": 8.4841,
         "relative_volume_vs_yesterday": 1.6442,
-        "missing_confirmation": "等待腾讯分钟行情交叉核验；通过前只作候选或观察，不作为确认交易信号。"
+        "missing_confirmation": "等待腾讯分钟行情交叉核验；通过前只作候选或观察，不作为确认交易信号。",
+        "secondary_source": "腾讯分钟行情",
+        "secondary_verification": {
+          "state": "too_late_no_backfill",
+          "checked_at": "2026-07-24T10:35:58+08:00",
+          "source": "腾讯分钟行情",
+          "reason": "超过实时核验窗口，不事后补成已确认。",
+          "representatives": [],
+          "fingerprint": "969678aacfd5c64a2440"
+        }
       },
       "source_status": "monitor_live_unverified",
       "valid_until": "2026-07-24T10:13:10+08:00",
@@ -957,7 +994,7 @@
       "is_old_economy": false,
       "source_watch_id": "封装",
       "quote_audit": {
-        "provider": "本地盘中监控",
+        "provider": "本地盘中监控、腾讯分钟行情",
         "quote_time": "2026-07-24T10:09:00+08:00",
         "pct_field": "3分钟涨跌幅",
         "sample_count": 3,
@@ -973,7 +1010,16 @@
         "direction_ratio": 1.0,
         "volume_ratio": 8.8521,
         "relative_volume_vs_yesterday": 3.0821,
-        "missing_confirmation": "等待腾讯分钟行情交叉核验；通过前只作候选或观察，不作为确认交易信号。"
+        "missing_confirmation": "等待腾讯分钟行情交叉核验；通过前只作候选或观察，不作为确认交易信号。",
+        "secondary_source": "腾讯分钟行情",
+        "secondary_verification": {
+          "state": "too_late_no_backfill",
+          "checked_at": "2026-07-24T10:35:58+08:00",
+          "source": "腾讯分钟行情",
+          "reason": "超过实时核验窗口，不事后补成已确认。",
+          "representatives": [],
+          "fingerprint": "120aa3af8641ef7daef6"
+        }
       },
       "source_status": "monitor_live_unverified",
       "valid_until": "2026-07-24T10:14:00+08:00",
@@ -1028,7 +1074,7 @@
       "is_old_economy": false,
       "source_watch_id": "算力",
       "quote_audit": {
-        "provider": "本地盘中监控",
+        "provider": "本地盘中监控、腾讯分钟行情",
         "quote_time": "2026-07-24T10:11:57+08:00",
         "pct_field": "3分钟涨跌幅",
         "sample_count": 3,
@@ -1044,7 +1090,16 @@
         "direction_ratio": 0.8,
         "volume_ratio": 11.1096,
         "relative_volume_vs_yesterday": 1.6023,
-        "missing_confirmation": "等待腾讯分钟行情交叉核验；通过前只作候选或观察，不作为确认交易信号。"
+        "missing_confirmation": "等待腾讯分钟行情交叉核验；通过前只作候选或观察，不作为确认交易信号。",
+        "secondary_source": "腾讯分钟行情",
+        "secondary_verification": {
+          "state": "too_late_no_backfill",
+          "checked_at": "2026-07-24T10:35:58+08:00",
+          "source": "腾讯分钟行情",
+          "reason": "超过实时核验窗口，不事后补成已确认。",
+          "representatives": [],
+          "fingerprint": "618b8d6ee00ecc8975f5"
+        }
       },
       "source_status": "monitor_live_unverified",
       "valid_until": "2026-07-24T10:16:57+08:00",
@@ -1099,7 +1154,7 @@
       "is_old_economy": false,
       "source_watch_id": "超级电容",
       "quote_audit": {
-        "provider": "本地盘中监控",
+        "provider": "本地盘中监控、腾讯分钟行情",
         "quote_time": "2026-07-24T10:14:28+08:00",
         "pct_field": "3分钟涨跌幅",
         "sample_count": 3,
@@ -1115,7 +1170,16 @@
         "direction_ratio": 0.8,
         "volume_ratio": 8.6567,
         "relative_volume_vs_yesterday": 1.8809,
-        "missing_confirmation": "等待腾讯分钟行情交叉核验；通过前只作候选或观察，不作为确认交易信号。"
+        "missing_confirmation": "等待腾讯分钟行情交叉核验；通过前只作候选或观察，不作为确认交易信号。",
+        "secondary_source": "腾讯分钟行情",
+        "secondary_verification": {
+          "state": "too_late_no_backfill",
+          "checked_at": "2026-07-24T10:35:58+08:00",
+          "source": "腾讯分钟行情",
+          "reason": "超过实时核验窗口，不事后补成已确认。",
+          "representatives": [],
+          "fingerprint": "0cf37f17b633136d200f"
+        }
       },
       "source_status": "monitor_live_unverified",
       "valid_until": "2026-07-24T10:19:28+08:00",
@@ -1170,7 +1234,7 @@
       "is_old_economy": false,
       "source_watch_id": "覆铜板",
       "quote_audit": {
-        "provider": "本地盘中监控",
+        "provider": "本地盘中监控、腾讯分钟行情",
         "quote_time": "2026-07-24T10:18:05+08:00",
         "pct_field": "3分钟涨跌幅",
         "sample_count": 3,
@@ -1186,7 +1250,16 @@
         "direction_ratio": 1.0,
         "volume_ratio": 10.207,
         "relative_volume_vs_yesterday": 1.2759,
-        "missing_confirmation": "等待腾讯分钟行情交叉核验；通过前只作候选或观察，不作为确认交易信号。"
+        "missing_confirmation": "等待腾讯分钟行情交叉核验；通过前只作候选或观察，不作为确认交易信号。",
+        "secondary_source": "腾讯分钟行情",
+        "secondary_verification": {
+          "state": "too_late_no_backfill",
+          "checked_at": "2026-07-24T10:35:58+08:00",
+          "source": "腾讯分钟行情",
+          "reason": "超过实时核验窗口，不事后补成已确认。",
+          "representatives": [],
+          "fingerprint": "5b69aa33ed4a151a249a"
+        }
       },
       "source_status": "monitor_live_unverified",
       "valid_until": "2026-07-24T10:23:05+08:00",
@@ -1241,13 +1314,13 @@
       "is_old_economy": false,
       "source_watch_id": "CMP/靶材/材料耗材",
       "quote_audit": {
-        "provider": "本地盘中监控",
+        "provider": "本地盘中监控、腾讯分钟行情",
         "quote_time": "2026-07-24T10:26:54+08:00",
         "pct_field": "3分钟涨跌幅",
         "sample_count": 3,
         "max_abs_leader_change_pct": 1.4893,
         "sanity_checks": {
-          "cross_source_verified": false,
+          "cross_source_verified": true,
           "price_move_valid": true,
           "volume_valid": true,
           "direction_ratio_valid": true,
@@ -1257,7 +1330,50 @@
         "direction_ratio": 1.0,
         "volume_ratio": 8.4293,
         "relative_volume_vs_yesterday": 1.5633,
-        "missing_confirmation": "等待腾讯分钟行情交叉核验；通过前只作候选或观察，不作为确认交易信号。"
+        "missing_confirmation": "等待腾讯分钟行情交叉核验；通过前只作候选或观察，不作为确认交易信号。",
+        "secondary_source": "腾讯分钟行情",
+        "secondary_verification": {
+          "state": "passed",
+          "checked_at": "2026-07-24T10:35:58+08:00",
+          "source": "腾讯分钟行情",
+          "reason": "代表股方向与幅度达到双源一致要求。",
+          "representatives": [
+            {
+              "股票": "江丰电子",
+              "代码": "300666.SZ",
+              "监控涨跌幅": 1.4893,
+              "腾讯涨跌幅": 1.6558,
+              "起始分钟": "1023",
+              "结束分钟": "1026",
+              "方向一致": true,
+              "幅度一致": true
+            },
+            {
+              "股票": "安集科技",
+              "代码": "688019.SH",
+              "监控涨跌幅": 0.9292,
+              "腾讯涨跌幅": 1.0137,
+              "起始分钟": "1023",
+              "结束分钟": "1026",
+              "方向一致": true,
+              "幅度一致": true
+            },
+            {
+              "股票": "华海清科",
+              "代码": "688120.SH",
+              "监控涨跌幅": 0.9874,
+              "腾讯涨跌幅": 1.3462,
+              "起始分钟": "1023",
+              "结束分钟": "1026",
+              "方向一致": true,
+              "幅度一致": true
+            }
+          ],
+          "window_minutes": 3,
+          "direction_agreement_ratio": 1.0,
+          "magnitude_agreement_ratio": 1.0,
+          "fingerprint": "d078e756fd732cabdbb2"
+        }
       },
       "source_status": "monitor_live_unverified",
       "valid_until": "2026-07-24T10:31:54+08:00",
@@ -1312,7 +1428,7 @@
       "is_old_economy": false,
       "source_watch_id": "机器人/工业自动化",
       "quote_audit": {
-        "provider": "本地盘中监控",
+        "provider": "本地盘中监控、腾讯分钟行情",
         "quote_time": "2026-07-24T10:32:00+08:00",
         "pct_field": "3分钟涨跌幅",
         "sample_count": 3,
@@ -1328,7 +1444,28 @@
         "direction_ratio": 1.0,
         "volume_ratio": 6.8387,
         "relative_volume_vs_yesterday": 1.5243,
-        "missing_confirmation": "等待腾讯分钟行情交叉核验；通过前只作候选或观察，不作为确认交易信号。"
+        "missing_confirmation": "等待腾讯分钟行情交叉核验；通过前只作候选或观察，不作为确认交易信号。",
+        "secondary_source": "腾讯分钟行情",
+        "secondary_verification": {
+          "state": "insufficient_identity",
+          "checked_at": "2026-07-24T10:35:58+08:00",
+          "source": "腾讯分钟行情",
+          "reason": "可解析且有分钟行情的代表股不足2只。",
+          "representatives": [
+            {
+              "股票": "埃斯顿",
+              "代码": "002747.SZ",
+              "监控涨跌幅": -1.1079,
+              "腾讯涨跌幅": -1.0111,
+              "起始分钟": "1029",
+              "结束分钟": "1032",
+              "方向一致": true,
+              "幅度一致": true
+            }
+          ],
+          "window_minutes": 3,
+          "fingerprint": "e4cf6aeab48f99823047"
+        }
       },
       "source_status": "monitor_live_unverified",
       "valid_until": "2026-07-24T10:37:00+08:00",
@@ -1383,13 +1520,13 @@
       "is_old_economy": false,
       "source_watch_id": "覆铜板",
       "quote_audit": {
-        "provider": "本地盘中监控",
+        "provider": "本地盘中监控、腾讯分钟行情",
         "quote_time": "2026-07-24T10:32:39+08:00",
         "pct_field": "3分钟涨跌幅",
         "sample_count": 3,
         "max_abs_leader_change_pct": 1.2877,
         "sanity_checks": {
-          "cross_source_verified": false,
+          "cross_source_verified": true,
           "price_move_valid": true,
           "volume_valid": true,
           "direction_ratio_valid": true,
@@ -1399,10 +1536,167 @@
         "direction_ratio": 1.0,
         "volume_ratio": 9.2832,
         "relative_volume_vs_yesterday": 1.1694,
-        "missing_confirmation": "等待腾讯分钟行情交叉核验；通过前只作候选或观察，不作为确认交易信号。"
+        "missing_confirmation": "等待腾讯分钟行情交叉核验；通过前只作候选或观察，不作为确认交易信号。",
+        "secondary_source": "腾讯分钟行情",
+        "secondary_verification": {
+          "state": "passed",
+          "checked_at": "2026-07-24T10:35:58+08:00",
+          "source": "腾讯分钟行情",
+          "reason": "代表股方向与幅度达到双源一致要求。",
+          "representatives": [
+            {
+              "股票": "南亚新材",
+              "代码": "688519.SH",
+              "监控涨跌幅": -1.2877,
+              "腾讯涨跌幅": -1.362,
+              "起始分钟": "1029",
+              "结束分钟": "1032",
+              "方向一致": true,
+              "幅度一致": true
+            },
+            {
+              "股票": "金安国纪",
+              "代码": "002636.SZ",
+              "监控涨跌幅": -0.9663,
+              "腾讯涨跌幅": -1.033,
+              "起始分钟": "1029",
+              "结束分钟": "1032",
+              "方向一致": true,
+              "幅度一致": true
+            },
+            {
+              "股票": "生益科技",
+              "代码": "600183.SH",
+              "监控涨跌幅": -1.2062,
+              "腾讯涨跌幅": -1.0096,
+              "起始分钟": "1029",
+              "结束分钟": "1032",
+              "方向一致": true,
+              "幅度一致": true
+            }
+          ],
+          "window_minutes": 3,
+          "direction_agreement_ratio": 1.0,
+          "magnitude_agreement_ratio": 1.0,
+          "fingerprint": "5a729e493e935cc6d242"
+        }
       },
       "source_status": "monitor_live_unverified",
       "valid_until": "2026-07-24T10:37:39+08:00",
+      "trigger_rule": "小登底池回落预警：板块行情缺失时，底池3分钟平均跌幅≥1.0%，下跌占比≥60%，且成交放大≥5x",
+      "alert_class": "risk",
+      "confirmation_level": "candidate",
+      "limit_up_count": 0,
+      "limit_down_count": 0
+    },
+    {
+      "id": "monitor-20260724-103413-517664c7169c",
+      "time": "2026-07-24T10:34:13+08:00",
+      "sector": "液冷",
+      "type": "小登题材快速回落",
+      "reason": "触发规则：小登底池回落预警：板块行情缺失时，底池3分钟平均跌幅≥1.0%，下跌占比≥60%，且成交放大≥5x\n异动性质：快速回落。价格下行和下跌占比触发回落提醒，优先按风险扩散处理。\n结论：液冷题材回落，有扩散，申菱环境是主要拖累。\n题材：液冷，当前领跌股：申菱环境 / 佳力图 / 同飞股份。\n强度：底池样本 3分钟涨跌幅 -1.15%，下跌占比 100%，弱势股 5 只。\n成交：3分钟放大 12.43x，较昨同期 1.22x，风险扩散明显。\n当前领跌股分数：申菱环境(52.3)，佳力图(48.0)，同飞股份(42.1)。\n主要贡献因子：申菱环境: 3分钟涨跌幅 -1.45%，成交放大 15.42x，日内涨幅 -4.07%；佳力图: 3分钟涨跌幅 -1.15%，成交放大 20.00x，日内涨幅 -2.55%；同飞股份: 3分钟涨跌幅 -1.29%，成交放大 9.25x，日内涨幅 -3.56%\n观察点：领跌是否止跌、后排是否继续补跌、放量是否变成抛压。\n风险提示：这是题材强度分析，不构成买卖建议。",
+      "leaders": [
+        {
+          "name": "申菱环境",
+          "code": "301018",
+          "change_pct": -1.4473,
+          "score": 52.32,
+          "factors": [
+            "3分钟-1.45%",
+            "成交放大15.42x",
+            "日内-4.07%"
+          ]
+        },
+        {
+          "name": "佳力图",
+          "code": "603912",
+          "change_pct": -1.1494,
+          "score": 47.97,
+          "factors": [
+            "3分钟-1.15%",
+            "成交放大20.00x",
+            "日内-2.55%"
+          ]
+        },
+        {
+          "name": "同飞股份",
+          "code": "300990",
+          "change_pct": -1.2913,
+          "score": 42.08,
+          "factors": [
+            "3分钟-1.29%",
+            "成交放大9.25x",
+            "日内-3.56%"
+          ]
+        }
+      ],
+      "signal_type": "风险提示",
+      "is_old_economy": false,
+      "source_watch_id": "液冷",
+      "quote_audit": {
+        "provider": "本地盘中监控、腾讯分钟行情",
+        "quote_time": "2026-07-24T10:34:13+08:00",
+        "pct_field": "3分钟涨跌幅",
+        "sample_count": 3,
+        "max_abs_leader_change_pct": 1.4473,
+        "sanity_checks": {
+          "cross_source_verified": true,
+          "price_move_valid": true,
+          "volume_valid": true,
+          "direction_ratio_valid": true,
+          "limit_down_count_valid": false
+        },
+        "board_3m_change_pct": -1.1503,
+        "direction_ratio": 1.0,
+        "volume_ratio": 12.4279,
+        "relative_volume_vs_yesterday": 1.2195,
+        "missing_confirmation": "等待腾讯分钟行情交叉核验；通过前只作候选或观察，不作为确认交易信号。",
+        "secondary_source": "腾讯分钟行情",
+        "secondary_verification": {
+          "state": "passed",
+          "checked_at": "2026-07-24T10:35:58+08:00",
+          "source": "腾讯分钟行情",
+          "reason": "代表股方向与幅度达到双源一致要求。",
+          "representatives": [
+            {
+              "股票": "申菱环境",
+              "代码": "301018.SZ",
+              "监控涨跌幅": -1.4473,
+              "腾讯涨跌幅": -1.0116,
+              "起始分钟": "1031",
+              "结束分钟": "1034",
+              "方向一致": true,
+              "幅度一致": true
+            },
+            {
+              "股票": "佳力图",
+              "代码": "603912.SH",
+              "监控涨跌幅": -1.1494,
+              "腾讯涨跌幅": -0.7184,
+              "起始分钟": "1031",
+              "结束分钟": "1034",
+              "方向一致": true,
+              "幅度一致": true
+            },
+            {
+              "股票": "同飞股份",
+              "代码": "300990.SZ",
+              "监控涨跌幅": -1.2913,
+              "腾讯涨跌幅": -1.0124,
+              "起始分钟": "1031",
+              "结束分钟": "1034",
+              "方向一致": true,
+              "幅度一致": true
+            }
+          ],
+          "window_minutes": 3,
+          "direction_agreement_ratio": 1.0,
+          "magnitude_agreement_ratio": 1.0,
+          "fingerprint": "381df62e9ae63b8f4c51"
+        }
+      },
+      "source_status": "monitor_live_unverified",
+      "valid_until": "2026-07-24T10:39:13+08:00",
       "trigger_rule": "小登底池回落预警：板块行情缺失时，底池3分钟平均跌幅≥1.0%，下跌占比≥60%，且成交放大≥5x",
       "alert_class": "risk",
       "confirmation_level": "candidate",
@@ -1412,13 +1706,13 @@
   ],
   "quote_audit": {
     "provider": "本地盘中监控、腾讯分钟行情",
-    "quote_time": "2026-07-24T10:32:39+08:00",
-    "pct_field": "各异动卡标注的3分钟涨跌幅",
+    "quote_time": "2026-07-24T10:34:13+08:00",
+    "pct_field": "各异动卡标注的短周期涨跌幅",
     "sanity_checks": {
       "sample_count": 20,
       "max_abs_leader_change_pct": 3.5692,
       "cross_source_verified": false,
-      "verified_alert_count": 0
+      "verified_alert_count": 3
     }
   },
   "note": "异动来自本地短周期监控；候选卡须经腾讯分钟行情复核后才能升级。"
