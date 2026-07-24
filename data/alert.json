@@ -1,78 +1,7 @@
 {
-  "timestamp": "2026-07-24T10:44:24+08:00",
+  "timestamp": "2026-07-24T10:46:05+08:00",
   "source_status": "monitor_live",
   "alerts": [
-    {
-      "id": "monitor-20260724-094801-aebf80bf506f",
-      "time": "2026-07-24T09:48:01+08:00",
-      "sector": "液冷",
-      "type": "小登题材快速回落",
-      "reason": "触发规则：小登股异动：3分钟平均跌幅≥1.5%，下跌占比≥70%，且成交放大≥5x；小登底池回落预警：板块行情缺失时，底池3分钟平均跌幅≥1.0%，下跌占比≥60%，且成交放大≥5x\n异动性质：快速回落。价格下行和下跌占比触发回落提醒，优先按风险扩散处理。\n结论：液冷快速回落且风险扩散，申菱环境领跌。\n题材：液冷，当前领跌股：申菱环境 / 英维克 / 同飞股份。\n强度：底池样本 3分钟涨跌幅 -1.51%，下跌占比 100%，弱势股 4 只。\n成交：3分钟放大 7.84x，较昨同期 2.28x，风险扩散明显。\n当前领跌股分数：申菱环境(41.3)，英维克(39.9)，同飞股份(37.2)。\n主要贡献因子：申菱环境: 3分钟涨跌幅 -2.21%，成交放大 3.77x，日内涨幅 -2.04%；英维克: 3分钟涨跌幅 -1.78%，成交放大 6.22x，日内涨幅 -2.32%；同飞股份: 3分钟涨跌幅 -1.87%，成交放大 6.89x，日内涨幅 -1.12%\n观察点：领跌是否止跌、后排是否继续补跌、放量是否变成抛压。\n风险提示：这是题材强度分析，不构成买卖建议。",
-      "leaders": [
-        {
-          "name": "申菱环境",
-          "code": "301018",
-          "change_pct": -2.2052,
-          "score": 41.3,
-          "factors": [
-            "3分钟-2.21%",
-            "成交放大3.77x",
-            "日内-2.04%"
-          ]
-        },
-        {
-          "name": "英维克",
-          "code": "002837",
-          "change_pct": -1.7772,
-          "score": 39.94,
-          "factors": [
-            "3分钟-1.78%",
-            "成交放大6.22x",
-            "日内-2.32%"
-          ]
-        },
-        {
-          "name": "同飞股份",
-          "code": "300990",
-          "change_pct": -1.8726,
-          "score": 37.24,
-          "factors": [
-            "3分钟-1.87%",
-            "成交放大6.89x",
-            "日内-1.12%"
-          ]
-        }
-      ],
-      "signal_type": "风险提示",
-      "is_old_economy": false,
-      "source_watch_id": "液冷",
-      "quote_audit": {
-        "provider": "本地盘中监控",
-        "quote_time": "2026-07-24T09:48:01+08:00",
-        "pct_field": "3分钟涨跌幅",
-        "sample_count": 3,
-        "max_abs_leader_change_pct": 2.2052,
-        "sanity_checks": {
-          "cross_source_verified": false,
-          "price_move_valid": true,
-          "volume_valid": true,
-          "direction_ratio_valid": true,
-          "limit_down_count_valid": false
-        },
-        "board_3m_change_pct": -1.5142,
-        "direction_ratio": 1.0,
-        "volume_ratio": 7.8444,
-        "relative_volume_vs_yesterday": 2.2846,
-        "missing_confirmation": "等待腾讯分钟行情交叉核验；通过前只作候选或观察，不作为确认交易信号。"
-      },
-      "source_status": "monitor_live_unverified",
-      "valid_until": "2026-07-24T09:53:01+08:00",
-      "trigger_rule": "小登股异动：3分钟平均跌幅≥1.5%，下跌占比≥70%，且成交放大≥5x；小登底池回落预警：板块行情缺失时，底池3分钟平均跌幅≥1.0%，下跌占比≥60%，且成交放大≥5x",
-      "alert_class": "risk",
-      "confirmation_level": "candidate",
-      "limit_up_count": 0,
-      "limit_down_count": 0
-    },
     {
       "id": "monitor-20260724-094801-bc286337c667",
       "time": "2026-07-24T09:48:01+08:00",
@@ -118,7 +47,7 @@
       "is_old_economy": false,
       "source_watch_id": "存储芯片",
       "quote_audit": {
-        "provider": "本地盘中监控",
+        "provider": "本地盘中监控、腾讯分钟行情",
         "quote_time": "2026-07-24T09:48:01+08:00",
         "pct_field": "3分钟涨跌幅",
         "sample_count": 3,
@@ -134,7 +63,16 @@
         "direction_ratio": 0.8571,
         "volume_ratio": 5.6549,
         "relative_volume_vs_yesterday": 2.7755,
-        "missing_confirmation": "等待腾讯分钟行情交叉核验；通过前只作候选或观察，不作为确认交易信号。"
+        "missing_confirmation": "等待腾讯分钟行情交叉核验；通过前只作候选或观察，不作为确认交易信号。",
+        "secondary_source": "腾讯分钟行情",
+        "secondary_verification": {
+          "state": "too_late_no_backfill",
+          "checked_at": "2026-07-24T10:46:05+08:00",
+          "source": "腾讯分钟行情",
+          "reason": "超过实时核验窗口，不事后补成已确认。",
+          "representatives": [],
+          "fingerprint": "20380adcff34d71a1732"
+        }
       },
       "source_status": "monitor_live_unverified",
       "valid_until": "2026-07-24T09:53:01+08:00",
@@ -189,7 +127,7 @@
       "is_old_economy": false,
       "source_watch_id": "电子布",
       "quote_audit": {
-        "provider": "本地盘中监控",
+        "provider": "本地盘中监控、腾讯分钟行情",
         "quote_time": "2026-07-24T09:48:01+08:00",
         "pct_field": "3分钟涨跌幅",
         "sample_count": 3,
@@ -205,7 +143,16 @@
         "direction_ratio": 1.0,
         "volume_ratio": 5.1537,
         "relative_volume_vs_yesterday": 2.2979,
-        "missing_confirmation": "等待腾讯分钟行情交叉核验；通过前只作候选或观察，不作为确认交易信号。"
+        "missing_confirmation": "等待腾讯分钟行情交叉核验；通过前只作候选或观察，不作为确认交易信号。",
+        "secondary_source": "腾讯分钟行情",
+        "secondary_verification": {
+          "state": "too_late_no_backfill",
+          "checked_at": "2026-07-24T10:46:05+08:00",
+          "source": "腾讯分钟行情",
+          "reason": "超过实时核验窗口，不事后补成已确认。",
+          "representatives": [],
+          "fingerprint": "1b7f340b1d477be1d23a"
+        }
       },
       "source_status": "monitor_live_unverified",
       "valid_until": "2026-07-24T09:53:01+08:00",
@@ -216,55 +163,55 @@
       "limit_down_count": 0
     },
     {
-      "id": "monitor-20260724-095326-0c34b056ef73",
-      "time": "2026-07-24T09:53:26+08:00",
-      "sector": "高带宽内存",
-      "type": "小登题材短周期拉动",
-      "reason": "触发规则：小登底池扩散预警：板块行情缺失时，底池3分钟平均涨幅≥1.0%，上涨占比≥60%，成交放大≥8x，且至少2只样本明显推进\n异动性质：上涨攻势中的拉起。3分钟价格推进、上涨占比、强势股数量和前排日内状态同时确认。\n结论：高带宽内存处在上涨攻势中的拉起，有扩散，华海诚科暂为核心。\n题材：高带宽内存，当前动态龙头：华海诚科 / 香农芯创 / 澜起科技。\n强度：底池样本 3分钟涨跌幅 1.18%，上涨占比 80%，强势股 4 只。\n成交：3分钟放大 8.72x，较昨同期 2.95x，有后排扩散。\n当前动态龙头分数：华海诚科(54.4)，香农芯创(35.8)，澜起科技(31.6)。\n主要贡献因子：华海诚科: 3分钟涨跌幅 2.14%，成交放大 16.51x，日内涨幅 2.17%；香农芯创: 3分钟涨跌幅 1.46%，成交放大 12.40x，日内涨幅 -0.13%；澜起科技: 3分钟涨跌幅 1.13%，成交放大 7.16x，日内涨幅 2.62%\n观察点：龙头是否维持日内高位、后排是否继续补涨、成交是否继续放大。\n风险提示：这是题材强度分析，不构成买卖建议。",
+      "id": "monitor-20260724-094801-aebf80bf506f",
+      "time": "2026-07-24T09:48:01+08:00",
+      "sector": "液冷",
+      "type": "小登题材快速回落",
+      "reason": "触发规则：小登股异动：3分钟平均跌幅≥1.5%，下跌占比≥70%，且成交放大≥5x；小登底池回落预警：板块行情缺失时，底池3分钟平均跌幅≥1.0%，下跌占比≥60%，且成交放大≥5x\n异动性质：快速回落。价格下行和下跌占比触发回落提醒，优先按风险扩散处理。\n结论：液冷快速回落且风险扩散，申菱环境领跌。\n题材：液冷，当前领跌股：申菱环境 / 英维克 / 同飞股份。\n强度：底池样本 3分钟涨跌幅 -1.51%，下跌占比 100%，弱势股 4 只。\n成交：3分钟放大 7.84x，较昨同期 2.28x，风险扩散明显。\n当前领跌股分数：申菱环境(41.3)，英维克(39.9)，同飞股份(37.2)。\n主要贡献因子：申菱环境: 3分钟涨跌幅 -2.21%，成交放大 3.77x，日内涨幅 -2.04%；英维克: 3分钟涨跌幅 -1.78%，成交放大 6.22x，日内涨幅 -2.32%；同飞股份: 3分钟涨跌幅 -1.87%，成交放大 6.89x，日内涨幅 -1.12%\n观察点：领跌是否止跌、后排是否继续补跌、放量是否变成抛压。\n风险提示：这是题材强度分析，不构成买卖建议。",
       "leaders": [
         {
-          "name": "华海诚科",
-          "code": "688535",
-          "change_pct": 2.1436,
-          "score": 54.44,
+          "name": "申菱环境",
+          "code": "301018",
+          "change_pct": -2.2052,
+          "score": 41.3,
           "factors": [
-            "3分钟+2.14%",
-            "成交放大16.51x",
-            "日内+2.17%"
+            "3分钟-2.21%",
+            "成交放大3.77x",
+            "日内-2.04%"
           ]
         },
         {
-          "name": "香农芯创",
-          "code": "300475",
-          "change_pct": 1.4645,
-          "score": 35.79,
+          "name": "英维克",
+          "code": "002837",
+          "change_pct": -1.7772,
+          "score": 39.94,
           "factors": [
-            "3分钟+1.46%",
-            "成交放大12.40x",
-            "日内-0.13%"
+            "3分钟-1.78%",
+            "成交放大6.22x",
+            "日内-2.32%"
           ]
         },
         {
-          "name": "澜起科技",
-          "code": "688008",
-          "change_pct": 1.1275,
-          "score": 31.63,
+          "name": "同飞股份",
+          "code": "300990",
+          "change_pct": -1.8726,
+          "score": 37.24,
           "factors": [
-            "3分钟+1.13%",
-            "成交放大7.16x",
-            "日内+2.62%"
+            "3分钟-1.87%",
+            "成交放大6.89x",
+            "日内-1.12%"
           ]
         }
       ],
-      "signal_type": "机会观察",
+      "signal_type": "风险提示",
       "is_old_economy": false,
-      "source_watch_id": "高带宽内存",
+      "source_watch_id": "液冷",
       "quote_audit": {
-        "provider": "本地盘中监控",
-        "quote_time": "2026-07-24T09:53:26+08:00",
+        "provider": "本地盘中监控、腾讯分钟行情",
+        "quote_time": "2026-07-24T09:48:01+08:00",
         "pct_field": "3分钟涨跌幅",
         "sample_count": 3,
-        "max_abs_leader_change_pct": 2.1436,
+        "max_abs_leader_change_pct": 2.2052,
         "sanity_checks": {
           "cross_source_verified": false,
           "price_move_valid": true,
@@ -272,158 +219,25 @@
           "direction_ratio_valid": true,
           "limit_down_count_valid": false
         },
-        "board_3m_change_pct": 1.1818,
-        "direction_ratio": 0.8,
-        "volume_ratio": 8.7153,
-        "relative_volume_vs_yesterday": 2.9467,
-        "missing_confirmation": "等待腾讯分钟行情交叉核验；通过前只作候选或观察，不作为确认交易信号。"
-      },
-      "source_status": "monitor_live_unverified",
-      "valid_until": "2026-07-24T09:58:26+08:00",
-      "trigger_rule": "小登底池扩散预警：板块行情缺失时，底池3分钟平均涨幅≥1.0%，上涨占比≥60%，成交放大≥8x，且至少2只样本明显推进",
-      "alert_class": "opportunity",
-      "confirmation_level": "candidate",
-      "limit_up_count": 0,
-      "limit_down_count": 0
-    },
-    {
-      "id": "monitor-20260724-095326-24184cb764e2",
-      "time": "2026-07-24T09:53:26+08:00",
-      "sector": "封装",
-      "type": "小登题材短周期拉动",
-      "reason": "触发规则：小登股异动：3分钟平均涨跌幅≥1.5%，上涨占比≥70%，且成交放大≥5x；小登底池拉起预警：板块行情缺失时，底池3分钟平均涨幅≥1.5%，上涨占比≥70%，且成交放大≥5x；小登底池扩散预警：板块行情缺失时，底池3分钟平均涨幅≥1.0%，上涨占比≥60%，成交放大≥8x，且至少2只样本明显推进\n异动性质：上涨攻势中的拉起。3分钟价格推进、上涨占比、强势股数量和前排日内状态同时确认。\n结论：封装上涨攻势较强且扩散较好，华天科技领涨。\n题材：封装，当前动态龙头：华天科技 / 通富微电 / 甬矽电子。\n强度：底池样本 3分钟涨跌幅 1.74%，上涨占比 100%，强势股 4 只。\n成交：3分钟放大 9.19x，较昨同期 2.96x，有后排扩散。\n当前动态龙头分数：华天科技(66.2)，通富微电(60.4)，甬矽电子(52.6)。\n主要贡献因子：华天科技: 3分钟涨跌幅 2.61%，成交放大 13.48x，日内涨幅 4.30%；通富微电: 3分钟涨跌幅 1.61%，成交放大 8.58x，日内涨幅 6.99%；甬矽电子: 3分钟涨跌幅 2.07%，成交放大 9.55x，日内涨幅 3.90%\n观察点：龙头是否维持日内高位、后排是否继续补涨、成交是否继续放大。\n风险提示：这是题材强度分析，不构成买卖建议。",
-      "leaders": [
-        {
-          "name": "华天科技",
-          "code": "002185",
-          "change_pct": 2.614,
-          "score": 66.24,
-          "factors": [
-            "3分钟+2.61%",
-            "成交放大13.48x",
-            "日内+4.30%"
-          ]
-        },
-        {
-          "name": "通富微电",
-          "code": "002156",
-          "change_pct": 1.605,
-          "score": 60.35,
-          "factors": [
-            "3分钟+1.61%",
-            "成交放大8.58x",
-            "日内+6.99%"
-          ]
-        },
-        {
-          "name": "甬矽电子",
-          "code": "688362",
-          "change_pct": 2.0669,
-          "score": 52.56,
-          "factors": [
-            "3分钟+2.07%",
-            "成交放大9.55x",
-            "日内+3.90%"
-          ]
-        }
-      ],
-      "signal_type": "机会观察",
-      "is_old_economy": false,
-      "source_watch_id": "封装",
-      "quote_audit": {
-        "provider": "本地盘中监控",
-        "quote_time": "2026-07-24T09:53:26+08:00",
-        "pct_field": "3分钟涨跌幅",
-        "sample_count": 3,
-        "max_abs_leader_change_pct": 2.614,
-        "sanity_checks": {
-          "cross_source_verified": false,
-          "price_move_valid": true,
-          "volume_valid": true,
-          "direction_ratio_valid": true,
-          "limit_down_count_valid": false
-        },
-        "board_3m_change_pct": 1.7393,
+        "board_3m_change_pct": -1.5142,
         "direction_ratio": 1.0,
-        "volume_ratio": 9.1884,
-        "relative_volume_vs_yesterday": 2.965,
-        "missing_confirmation": "等待腾讯分钟行情交叉核验；通过前只作候选或观察，不作为确认交易信号。"
-      },
-      "source_status": "monitor_live_unverified",
-      "valid_until": "2026-07-24T09:58:26+08:00",
-      "trigger_rule": "小登股异动：3分钟平均涨跌幅≥1.5%，上涨占比≥70%，且成交放大≥5x；小登底池拉起预警：板块行情缺失时，底池3分钟平均涨幅≥1.5%，上涨占比≥70%，且成交放大≥5x；小登底池扩散预警：板块行情缺失时，底池3分钟平均涨幅≥1.0%，上涨占比≥60%，成交放大≥8x，且至少2只样本明显推进",
-      "alert_class": "opportunity",
-      "confirmation_level": "candidate",
-      "limit_up_count": 0,
-      "limit_down_count": 0
-    },
-    {
-      "id": "monitor-20260724-095326-646d5afb9449",
-      "time": "2026-07-24T09:53:26+08:00",
-      "sector": "传说游资票走势关联",
-      "type": "小登题材短周期拉动",
-      "reason": "触发规则：小登底池扩散预警：板块行情缺失时，底池3分钟平均涨幅≥1.0%，上涨占比≥60%，成交放大≥8x，且至少2只样本明显推进\n异动性质：上涨攻势中的拉起。3分钟价格推进、上涨占比、强势股数量和前排日内状态同时确认。\n结论：传说游资票走势关联处在上涨攻势中的拉起，有扩散，太极实业暂为核心。\n题材：传说游资票走势关联，当前动态龙头：太极实业 / 中京电子 / 宏昌电子。\n强度：底池样本 3分钟涨跌幅 1.22%，上涨占比 80%，强势股 3 只。\n成交：3分钟放大 8.97x，较昨同期 2.78x，有后排扩散。\n当前动态龙头分数：太极实业(68.2)，中京电子(45.5)，宏昌电子(35.4)。\n主要贡献因子：太极实业: 3分钟涨跌幅 3.57%，成交放大 16.11x，日内涨幅 3.70%；中京电子: 3分钟涨跌幅 1.12%，成交放大 10.54x，日内涨幅 4.73%；宏昌电子: 3分钟涨跌幅 1.43%，成交放大 9.24x，日内涨幅 1.51%\n观察点：龙头是否维持日内高位、后排是否继续补涨、成交是否继续放大。\n风险提示：这是题材强度分析，不构成买卖建议。",
-      "leaders": [
-        {
-          "name": "太极实业",
-          "code": "600667",
-          "change_pct": 3.5692,
-          "score": 68.24,
-          "factors": [
-            "3分钟+3.57%",
-            "成交放大16.11x",
-            "日内+3.70%"
-          ]
-        },
-        {
-          "name": "中京电子",
-          "code": "002579",
-          "change_pct": 1.1218,
-          "score": 45.53,
-          "factors": [
-            "3分钟+1.12%",
-            "成交放大10.54x",
-            "日内+4.73%"
-          ]
-        },
-        {
-          "name": "宏昌电子",
-          "code": "603002",
-          "change_pct": 1.4337,
-          "score": 35.4,
-          "factors": [
-            "3分钟+1.43%",
-            "成交放大9.24x",
-            "日内+1.51%"
-          ]
+        "volume_ratio": 7.8444,
+        "relative_volume_vs_yesterday": 2.2846,
+        "missing_confirmation": "等待腾讯分钟行情交叉核验；通过前只作候选或观察，不作为确认交易信号。",
+        "secondary_source": "腾讯分钟行情",
+        "secondary_verification": {
+          "state": "too_late_no_backfill",
+          "checked_at": "2026-07-24T10:46:05+08:00",
+          "source": "腾讯分钟行情",
+          "reason": "超过实时核验窗口，不事后补成已确认。",
+          "representatives": [],
+          "fingerprint": "196414ae6b3676e559bb"
         }
-      ],
-      "signal_type": "机会观察",
-      "is_old_economy": false,
-      "source_watch_id": "传说游资票走势关联",
-      "quote_audit": {
-        "provider": "本地盘中监控",
-        "quote_time": "2026-07-24T09:53:26+08:00",
-        "pct_field": "3分钟涨跌幅",
-        "sample_count": 3,
-        "max_abs_leader_change_pct": 3.5692,
-        "sanity_checks": {
-          "cross_source_verified": false,
-          "price_move_valid": true,
-          "volume_valid": true,
-          "direction_ratio_valid": true,
-          "limit_down_count_valid": false
-        },
-        "board_3m_change_pct": 1.2249,
-        "direction_ratio": 0.8,
-        "volume_ratio": 8.9695,
-        "relative_volume_vs_yesterday": 2.7815,
-        "missing_confirmation": "等待腾讯分钟行情交叉核验；通过前只作候选或观察，不作为确认交易信号。"
       },
       "source_status": "monitor_live_unverified",
-      "valid_until": "2026-07-24T09:58:26+08:00",
-      "trigger_rule": "小登底池扩散预警：板块行情缺失时，底池3分钟平均涨幅≥1.0%，上涨占比≥60%，成交放大≥8x，且至少2只样本明显推进",
-      "alert_class": "opportunity",
+      "valid_until": "2026-07-24T09:53:01+08:00",
+      "trigger_rule": "小登股异动：3分钟平均跌幅≥1.5%，下跌占比≥70%，且成交放大≥5x；小登底池回落预警：板块行情缺失时，底池3分钟平均跌幅≥1.0%，下跌占比≥60%，且成交放大≥5x",
+      "alert_class": "risk",
       "confirmation_level": "candidate",
       "limit_up_count": 0,
       "limit_down_count": 0
@@ -462,7 +276,7 @@
       "is_old_economy": false,
       "source_watch_id": "半导体零部件弹性",
       "quote_audit": {
-        "provider": "本地盘中监控",
+        "provider": "本地盘中监控、腾讯分钟行情",
         "quote_time": "2026-07-24T09:53:26+08:00",
         "pct_field": "3分钟涨跌幅",
         "sample_count": 2,
@@ -478,7 +292,16 @@
         "direction_ratio": 1.0,
         "volume_ratio": 15.183,
         "relative_volume_vs_yesterday": 2.9102,
-        "missing_confirmation": "等待腾讯分钟行情交叉核验；通过前只作候选或观察，不作为确认交易信号。"
+        "missing_confirmation": "等待腾讯分钟行情交叉核验；通过前只作候选或观察，不作为确认交易信号。",
+        "secondary_source": "腾讯分钟行情",
+        "secondary_verification": {
+          "state": "too_late_no_backfill",
+          "checked_at": "2026-07-24T10:46:05+08:00",
+          "source": "腾讯分钟行情",
+          "reason": "超过实时核验窗口，不事后补成已确认。",
+          "representatives": [],
+          "fingerprint": "afbd97df8fffb83bd185"
+        }
       },
       "source_status": "monitor_live_unverified",
       "valid_until": "2026-07-24T09:58:26+08:00",
@@ -533,7 +356,7 @@
       "is_old_economy": false,
       "source_watch_id": "光刻胶/光刻机催化",
       "quote_audit": {
-        "provider": "本地盘中监控",
+        "provider": "本地盘中监控、腾讯分钟行情",
         "quote_time": "2026-07-24T09:53:26+08:00",
         "pct_field": "3分钟涨跌幅",
         "sample_count": 3,
@@ -549,7 +372,256 @@
         "direction_ratio": 1.0,
         "volume_ratio": 10.1935,
         "relative_volume_vs_yesterday": 2.7042,
-        "missing_confirmation": "等待腾讯分钟行情交叉核验；通过前只作候选或观察，不作为确认交易信号。"
+        "missing_confirmation": "等待腾讯分钟行情交叉核验；通过前只作候选或观察，不作为确认交易信号。",
+        "secondary_source": "腾讯分钟行情",
+        "secondary_verification": {
+          "state": "too_late_no_backfill",
+          "checked_at": "2026-07-24T10:46:05+08:00",
+          "source": "腾讯分钟行情",
+          "reason": "超过实时核验窗口，不事后补成已确认。",
+          "representatives": [],
+          "fingerprint": "dba71ba339609f3cb855"
+        }
+      },
+      "source_status": "monitor_live_unverified",
+      "valid_until": "2026-07-24T09:58:26+08:00",
+      "trigger_rule": "小登底池扩散预警：板块行情缺失时，底池3分钟平均涨幅≥1.0%，上涨占比≥60%，成交放大≥8x，且至少2只样本明显推进",
+      "alert_class": "opportunity",
+      "confirmation_level": "candidate",
+      "limit_up_count": 0,
+      "limit_down_count": 0
+    },
+    {
+      "id": "monitor-20260724-095326-0c34b056ef73",
+      "time": "2026-07-24T09:53:26+08:00",
+      "sector": "高带宽内存",
+      "type": "小登题材短周期拉动",
+      "reason": "触发规则：小登底池扩散预警：板块行情缺失时，底池3分钟平均涨幅≥1.0%，上涨占比≥60%，成交放大≥8x，且至少2只样本明显推进\n异动性质：上涨攻势中的拉起。3分钟价格推进、上涨占比、强势股数量和前排日内状态同时确认。\n结论：高带宽内存处在上涨攻势中的拉起，有扩散，华海诚科暂为核心。\n题材：高带宽内存，当前动态龙头：华海诚科 / 香农芯创 / 澜起科技。\n强度：底池样本 3分钟涨跌幅 1.18%，上涨占比 80%，强势股 4 只。\n成交：3分钟放大 8.72x，较昨同期 2.95x，有后排扩散。\n当前动态龙头分数：华海诚科(54.4)，香农芯创(35.8)，澜起科技(31.6)。\n主要贡献因子：华海诚科: 3分钟涨跌幅 2.14%，成交放大 16.51x，日内涨幅 2.17%；香农芯创: 3分钟涨跌幅 1.46%，成交放大 12.40x，日内涨幅 -0.13%；澜起科技: 3分钟涨跌幅 1.13%，成交放大 7.16x，日内涨幅 2.62%\n观察点：龙头是否维持日内高位、后排是否继续补涨、成交是否继续放大。\n风险提示：这是题材强度分析，不构成买卖建议。",
+      "leaders": [
+        {
+          "name": "华海诚科",
+          "code": "688535",
+          "change_pct": 2.1436,
+          "score": 54.44,
+          "factors": [
+            "3分钟+2.14%",
+            "成交放大16.51x",
+            "日内+2.17%"
+          ]
+        },
+        {
+          "name": "香农芯创",
+          "code": "300475",
+          "change_pct": 1.4645,
+          "score": 35.79,
+          "factors": [
+            "3分钟+1.46%",
+            "成交放大12.40x",
+            "日内-0.13%"
+          ]
+        },
+        {
+          "name": "澜起科技",
+          "code": "688008",
+          "change_pct": 1.1275,
+          "score": 31.63,
+          "factors": [
+            "3分钟+1.13%",
+            "成交放大7.16x",
+            "日内+2.62%"
+          ]
+        }
+      ],
+      "signal_type": "机会观察",
+      "is_old_economy": false,
+      "source_watch_id": "高带宽内存",
+      "quote_audit": {
+        "provider": "本地盘中监控、腾讯分钟行情",
+        "quote_time": "2026-07-24T09:53:26+08:00",
+        "pct_field": "3分钟涨跌幅",
+        "sample_count": 3,
+        "max_abs_leader_change_pct": 2.1436,
+        "sanity_checks": {
+          "cross_source_verified": false,
+          "price_move_valid": true,
+          "volume_valid": true,
+          "direction_ratio_valid": true,
+          "limit_down_count_valid": false
+        },
+        "board_3m_change_pct": 1.1818,
+        "direction_ratio": 0.8,
+        "volume_ratio": 8.7153,
+        "relative_volume_vs_yesterday": 2.9467,
+        "missing_confirmation": "等待腾讯分钟行情交叉核验；通过前只作候选或观察，不作为确认交易信号。",
+        "secondary_source": "腾讯分钟行情",
+        "secondary_verification": {
+          "state": "too_late_no_backfill",
+          "checked_at": "2026-07-24T10:46:05+08:00",
+          "source": "腾讯分钟行情",
+          "reason": "超过实时核验窗口，不事后补成已确认。",
+          "representatives": [],
+          "fingerprint": "429d7cc5f2ae4e820db0"
+        }
+      },
+      "source_status": "monitor_live_unverified",
+      "valid_until": "2026-07-24T09:58:26+08:00",
+      "trigger_rule": "小登底池扩散预警：板块行情缺失时，底池3分钟平均涨幅≥1.0%，上涨占比≥60%，成交放大≥8x，且至少2只样本明显推进",
+      "alert_class": "opportunity",
+      "confirmation_level": "candidate",
+      "limit_up_count": 0,
+      "limit_down_count": 0
+    },
+    {
+      "id": "monitor-20260724-095326-24184cb764e2",
+      "time": "2026-07-24T09:53:26+08:00",
+      "sector": "封装",
+      "type": "小登题材短周期拉动",
+      "reason": "触发规则：小登股异动：3分钟平均涨跌幅≥1.5%，上涨占比≥70%，且成交放大≥5x；小登底池拉起预警：板块行情缺失时，底池3分钟平均涨幅≥1.5%，上涨占比≥70%，且成交放大≥5x；小登底池扩散预警：板块行情缺失时，底池3分钟平均涨幅≥1.0%，上涨占比≥60%，成交放大≥8x，且至少2只样本明显推进\n异动性质：上涨攻势中的拉起。3分钟价格推进、上涨占比、强势股数量和前排日内状态同时确认。\n结论：封装上涨攻势较强且扩散较好，华天科技领涨。\n题材：封装，当前动态龙头：华天科技 / 通富微电 / 甬矽电子。\n强度：底池样本 3分钟涨跌幅 1.74%，上涨占比 100%，强势股 4 只。\n成交：3分钟放大 9.19x，较昨同期 2.96x，有后排扩散。\n当前动态龙头分数：华天科技(66.2)，通富微电(60.4)，甬矽电子(52.6)。\n主要贡献因子：华天科技: 3分钟涨跌幅 2.61%，成交放大 13.48x，日内涨幅 4.30%；通富微电: 3分钟涨跌幅 1.61%，成交放大 8.58x，日内涨幅 6.99%；甬矽电子: 3分钟涨跌幅 2.07%，成交放大 9.55x，日内涨幅 3.90%\n观察点：龙头是否维持日内高位、后排是否继续补涨、成交是否继续放大。\n风险提示：这是题材强度分析，不构成买卖建议。",
+      "leaders": [
+        {
+          "name": "华天科技",
+          "code": "002185",
+          "change_pct": 2.614,
+          "score": 66.24,
+          "factors": [
+            "3分钟+2.61%",
+            "成交放大13.48x",
+            "日内+4.30%"
+          ]
+        },
+        {
+          "name": "通富微电",
+          "code": "002156",
+          "change_pct": 1.605,
+          "score": 60.35,
+          "factors": [
+            "3分钟+1.61%",
+            "成交放大8.58x",
+            "日内+6.99%"
+          ]
+        },
+        {
+          "name": "甬矽电子",
+          "code": "688362",
+          "change_pct": 2.0669,
+          "score": 52.56,
+          "factors": [
+            "3分钟+2.07%",
+            "成交放大9.55x",
+            "日内+3.90%"
+          ]
+        }
+      ],
+      "signal_type": "机会观察",
+      "is_old_economy": false,
+      "source_watch_id": "封装",
+      "quote_audit": {
+        "provider": "本地盘中监控、腾讯分钟行情",
+        "quote_time": "2026-07-24T09:53:26+08:00",
+        "pct_field": "3分钟涨跌幅",
+        "sample_count": 3,
+        "max_abs_leader_change_pct": 2.614,
+        "sanity_checks": {
+          "cross_source_verified": false,
+          "price_move_valid": true,
+          "volume_valid": true,
+          "direction_ratio_valid": true,
+          "limit_down_count_valid": false
+        },
+        "board_3m_change_pct": 1.7393,
+        "direction_ratio": 1.0,
+        "volume_ratio": 9.1884,
+        "relative_volume_vs_yesterday": 2.965,
+        "missing_confirmation": "等待腾讯分钟行情交叉核验；通过前只作候选或观察，不作为确认交易信号。",
+        "secondary_source": "腾讯分钟行情",
+        "secondary_verification": {
+          "state": "too_late_no_backfill",
+          "checked_at": "2026-07-24T10:46:05+08:00",
+          "source": "腾讯分钟行情",
+          "reason": "超过实时核验窗口，不事后补成已确认。",
+          "representatives": [],
+          "fingerprint": "67129837eed309499108"
+        }
+      },
+      "source_status": "monitor_live_unverified",
+      "valid_until": "2026-07-24T09:58:26+08:00",
+      "trigger_rule": "小登股异动：3分钟平均涨跌幅≥1.5%，上涨占比≥70%，且成交放大≥5x；小登底池拉起预警：板块行情缺失时，底池3分钟平均涨幅≥1.5%，上涨占比≥70%，且成交放大≥5x；小登底池扩散预警：板块行情缺失时，底池3分钟平均涨幅≥1.0%，上涨占比≥60%，成交放大≥8x，且至少2只样本明显推进",
+      "alert_class": "opportunity",
+      "confirmation_level": "candidate",
+      "limit_up_count": 0,
+      "limit_down_count": 0
+    },
+    {
+      "id": "monitor-20260724-095326-646d5afb9449",
+      "time": "2026-07-24T09:53:26+08:00",
+      "sector": "传说游资票走势关联",
+      "type": "小登题材短周期拉动",
+      "reason": "触发规则：小登底池扩散预警：板块行情缺失时，底池3分钟平均涨幅≥1.0%，上涨占比≥60%，成交放大≥8x，且至少2只样本明显推进\n异动性质：上涨攻势中的拉起。3分钟价格推进、上涨占比、强势股数量和前排日内状态同时确认。\n结论：传说游资票走势关联处在上涨攻势中的拉起，有扩散，太极实业暂为核心。\n题材：传说游资票走势关联，当前动态龙头：太极实业 / 中京电子 / 宏昌电子。\n强度：底池样本 3分钟涨跌幅 1.22%，上涨占比 80%，强势股 3 只。\n成交：3分钟放大 8.97x，较昨同期 2.78x，有后排扩散。\n当前动态龙头分数：太极实业(68.2)，中京电子(45.5)，宏昌电子(35.4)。\n主要贡献因子：太极实业: 3分钟涨跌幅 3.57%，成交放大 16.11x，日内涨幅 3.70%；中京电子: 3分钟涨跌幅 1.12%，成交放大 10.54x，日内涨幅 4.73%；宏昌电子: 3分钟涨跌幅 1.43%，成交放大 9.24x，日内涨幅 1.51%\n观察点：龙头是否维持日内高位、后排是否继续补涨、成交是否继续放大。\n风险提示：这是题材强度分析，不构成买卖建议。",
+      "leaders": [
+        {
+          "name": "太极实业",
+          "code": "600667",
+          "change_pct": 3.5692,
+          "score": 68.24,
+          "factors": [
+            "3分钟+3.57%",
+            "成交放大16.11x",
+            "日内+3.70%"
+          ]
+        },
+        {
+          "name": "中京电子",
+          "code": "002579",
+          "change_pct": 1.1218,
+          "score": 45.53,
+          "factors": [
+            "3分钟+1.12%",
+            "成交放大10.54x",
+            "日内+4.73%"
+          ]
+        },
+        {
+          "name": "宏昌电子",
+          "code": "603002",
+          "change_pct": 1.4337,
+          "score": 35.4,
+          "factors": [
+            "3分钟+1.43%",
+            "成交放大9.24x",
+            "日内+1.51%"
+          ]
+        }
+      ],
+      "signal_type": "机会观察",
+      "is_old_economy": false,
+      "source_watch_id": "传说游资票走势关联",
+      "quote_audit": {
+        "provider": "本地盘中监控、腾讯分钟行情",
+        "quote_time": "2026-07-24T09:53:26+08:00",
+        "pct_field": "3分钟涨跌幅",
+        "sample_count": 3,
+        "max_abs_leader_change_pct": 3.5692,
+        "sanity_checks": {
+          "cross_source_verified": false,
+          "price_move_valid": true,
+          "volume_valid": true,
+          "direction_ratio_valid": true,
+          "limit_down_count_valid": false
+        },
+        "board_3m_change_pct": 1.2249,
+        "direction_ratio": 0.8,
+        "volume_ratio": 8.9695,
+        "relative_volume_vs_yesterday": 2.7815,
+        "missing_confirmation": "等待腾讯分钟行情交叉核验；通过前只作候选或观察，不作为确认交易信号。",
+        "secondary_source": "腾讯分钟行情",
+        "secondary_verification": {
+          "state": "too_late_no_backfill",
+          "checked_at": "2026-07-24T10:46:05+08:00",
+          "source": "腾讯分钟行情",
+          "reason": "超过实时核验窗口，不事后补成已确认。",
+          "representatives": [],
+          "fingerprint": "163a557880f127e7392f"
+        }
       },
       "source_status": "monitor_live_unverified",
       "valid_until": "2026-07-24T09:58:26+08:00",
@@ -604,7 +676,7 @@
       "is_old_economy": false,
       "source_watch_id": "7月半导体扩产组合",
       "quote_audit": {
-        "provider": "本地盘中监控",
+        "provider": "本地盘中监控、腾讯分钟行情",
         "quote_time": "2026-07-24T09:54:57+08:00",
         "pct_field": "3分钟涨跌幅",
         "sample_count": 3,
@@ -620,7 +692,16 @@
         "direction_ratio": 1.0,
         "volume_ratio": 14.3996,
         "relative_volume_vs_yesterday": null,
-        "missing_confirmation": "等待腾讯分钟行情交叉核验；通过前只作候选或观察，不作为确认交易信号。"
+        "missing_confirmation": "等待腾讯分钟行情交叉核验；通过前只作候选或观察，不作为确认交易信号。",
+        "secondary_source": "腾讯分钟行情",
+        "secondary_verification": {
+          "state": "too_late_no_backfill",
+          "checked_at": "2026-07-24T10:46:05+08:00",
+          "source": "腾讯分钟行情",
+          "reason": "超过实时核验窗口，不事后补成已确认。",
+          "representatives": [],
+          "fingerprint": "1148509f3600ac2b7ab4"
+        }
       },
       "source_status": "monitor_live_unverified",
       "valid_until": "2026-07-24T09:59:57+08:00",
@@ -673,7 +754,7 @@
       "is_old_economy": false,
       "source_watch_id": "覆铜板",
       "quote_audit": {
-        "provider": "本地盘中监控",
+        "provider": "本地盘中监控、腾讯分钟行情",
         "quote_time": "2026-07-24T10:01:09+08:00",
         "pct_field": "3分钟涨跌幅",
         "sample_count": 3,
@@ -689,7 +770,16 @@
         "direction_ratio": 1.0,
         "volume_ratio": 5.6844,
         "relative_volume_vs_yesterday": 1.4559,
-        "missing_confirmation": "等待腾讯分钟行情交叉核验；通过前只作候选或观察，不作为确认交易信号。"
+        "missing_confirmation": "等待腾讯分钟行情交叉核验；通过前只作候选或观察，不作为确认交易信号。",
+        "secondary_source": "腾讯分钟行情",
+        "secondary_verification": {
+          "state": "too_late_no_backfill",
+          "checked_at": "2026-07-24T10:46:05+08:00",
+          "source": "腾讯分钟行情",
+          "reason": "超过实时核验窗口，不事后补成已确认。",
+          "representatives": [],
+          "fingerprint": "90c0a6aef4cb11a90231"
+        }
       },
       "source_status": "monitor_live_unverified",
       "valid_until": "2026-07-24T10:06:09+08:00",
@@ -744,7 +834,7 @@
       "is_old_economy": false,
       "source_watch_id": "电子布",
       "quote_audit": {
-        "provider": "本地盘中监控",
+        "provider": "本地盘中监控、腾讯分钟行情",
         "quote_time": "2026-07-24T10:05:50+08:00",
         "pct_field": "3分钟涨跌幅",
         "sample_count": 3,
@@ -760,7 +850,16 @@
         "direction_ratio": 1.0,
         "volume_ratio": 7.8127,
         "relative_volume_vs_yesterday": 1.7,
-        "missing_confirmation": "等待腾讯分钟行情交叉核验；通过前只作候选或观察，不作为确认交易信号。"
+        "missing_confirmation": "等待腾讯分钟行情交叉核验；通过前只作候选或观察，不作为确认交易信号。",
+        "secondary_source": "腾讯分钟行情",
+        "secondary_verification": {
+          "state": "too_late_no_backfill",
+          "checked_at": "2026-07-24T10:46:05+08:00",
+          "source": "腾讯分钟行情",
+          "reason": "超过实时核验窗口，不事后补成已确认。",
+          "representatives": [],
+          "fingerprint": "14c1cab6a572af894604"
+        }
       },
       "source_status": "monitor_live_unverified",
       "valid_until": "2026-07-24T10:10:50+08:00",
@@ -815,7 +914,7 @@
       "is_old_economy": false,
       "source_watch_id": "光模块/CPO",
       "quote_audit": {
-        "provider": "本地盘中监控",
+        "provider": "本地盘中监控、腾讯分钟行情",
         "quote_time": "2026-07-24T10:08:10+08:00",
         "pct_field": "3分钟涨跌幅",
         "sample_count": 3,
@@ -831,7 +930,16 @@
         "direction_ratio": 0.8,
         "volume_ratio": 8.4841,
         "relative_volume_vs_yesterday": 1.6442,
-        "missing_confirmation": "等待腾讯分钟行情交叉核验；通过前只作候选或观察，不作为确认交易信号。"
+        "missing_confirmation": "等待腾讯分钟行情交叉核验；通过前只作候选或观察，不作为确认交易信号。",
+        "secondary_source": "腾讯分钟行情",
+        "secondary_verification": {
+          "state": "too_late_no_backfill",
+          "checked_at": "2026-07-24T10:46:05+08:00",
+          "source": "腾讯分钟行情",
+          "reason": "超过实时核验窗口，不事后补成已确认。",
+          "representatives": [],
+          "fingerprint": "969678aacfd5c64a2440"
+        }
       },
       "source_status": "monitor_live_unverified",
       "valid_until": "2026-07-24T10:13:10+08:00",
@@ -886,7 +994,7 @@
       "is_old_economy": false,
       "source_watch_id": "封装",
       "quote_audit": {
-        "provider": "本地盘中监控",
+        "provider": "本地盘中监控、腾讯分钟行情",
         "quote_time": "2026-07-24T10:09:00+08:00",
         "pct_field": "3分钟涨跌幅",
         "sample_count": 3,
@@ -902,7 +1010,16 @@
         "direction_ratio": 1.0,
         "volume_ratio": 8.8521,
         "relative_volume_vs_yesterday": 3.0821,
-        "missing_confirmation": "等待腾讯分钟行情交叉核验；通过前只作候选或观察，不作为确认交易信号。"
+        "missing_confirmation": "等待腾讯分钟行情交叉核验；通过前只作候选或观察，不作为确认交易信号。",
+        "secondary_source": "腾讯分钟行情",
+        "secondary_verification": {
+          "state": "too_late_no_backfill",
+          "checked_at": "2026-07-24T10:46:05+08:00",
+          "source": "腾讯分钟行情",
+          "reason": "超过实时核验窗口，不事后补成已确认。",
+          "representatives": [],
+          "fingerprint": "120aa3af8641ef7daef6"
+        }
       },
       "source_status": "monitor_live_unverified",
       "valid_until": "2026-07-24T10:14:00+08:00",
@@ -957,7 +1074,7 @@
       "is_old_economy": false,
       "source_watch_id": "算力",
       "quote_audit": {
-        "provider": "本地盘中监控",
+        "provider": "本地盘中监控、腾讯分钟行情",
         "quote_time": "2026-07-24T10:11:57+08:00",
         "pct_field": "3分钟涨跌幅",
         "sample_count": 3,
@@ -973,7 +1090,16 @@
         "direction_ratio": 0.8,
         "volume_ratio": 11.1096,
         "relative_volume_vs_yesterday": 1.6023,
-        "missing_confirmation": "等待腾讯分钟行情交叉核验；通过前只作候选或观察，不作为确认交易信号。"
+        "missing_confirmation": "等待腾讯分钟行情交叉核验；通过前只作候选或观察，不作为确认交易信号。",
+        "secondary_source": "腾讯分钟行情",
+        "secondary_verification": {
+          "state": "too_late_no_backfill",
+          "checked_at": "2026-07-24T10:46:05+08:00",
+          "source": "腾讯分钟行情",
+          "reason": "超过实时核验窗口，不事后补成已确认。",
+          "representatives": [],
+          "fingerprint": "618b8d6ee00ecc8975f5"
+        }
       },
       "source_status": "monitor_live_unverified",
       "valid_until": "2026-07-24T10:16:57+08:00",
@@ -1028,7 +1154,7 @@
       "is_old_economy": false,
       "source_watch_id": "超级电容",
       "quote_audit": {
-        "provider": "本地盘中监控",
+        "provider": "本地盘中监控、腾讯分钟行情",
         "quote_time": "2026-07-24T10:14:28+08:00",
         "pct_field": "3分钟涨跌幅",
         "sample_count": 3,
@@ -1044,7 +1170,16 @@
         "direction_ratio": 0.8,
         "volume_ratio": 8.6567,
         "relative_volume_vs_yesterday": 1.8809,
-        "missing_confirmation": "等待腾讯分钟行情交叉核验；通过前只作候选或观察，不作为确认交易信号。"
+        "missing_confirmation": "等待腾讯分钟行情交叉核验；通过前只作候选或观察，不作为确认交易信号。",
+        "secondary_source": "腾讯分钟行情",
+        "secondary_verification": {
+          "state": "too_late_no_backfill",
+          "checked_at": "2026-07-24T10:46:05+08:00",
+          "source": "腾讯分钟行情",
+          "reason": "超过实时核验窗口，不事后补成已确认。",
+          "representatives": [],
+          "fingerprint": "0cf37f17b633136d200f"
+        }
       },
       "source_status": "monitor_live_unverified",
       "valid_until": "2026-07-24T10:19:28+08:00",
@@ -1099,7 +1234,7 @@
       "is_old_economy": false,
       "source_watch_id": "覆铜板",
       "quote_audit": {
-        "provider": "本地盘中监控",
+        "provider": "本地盘中监控、腾讯分钟行情",
         "quote_time": "2026-07-24T10:18:05+08:00",
         "pct_field": "3分钟涨跌幅",
         "sample_count": 3,
@@ -1115,7 +1250,16 @@
         "direction_ratio": 1.0,
         "volume_ratio": 10.207,
         "relative_volume_vs_yesterday": 1.2759,
-        "missing_confirmation": "等待腾讯分钟行情交叉核验；通过前只作候选或观察，不作为确认交易信号。"
+        "missing_confirmation": "等待腾讯分钟行情交叉核验；通过前只作候选或观察，不作为确认交易信号。",
+        "secondary_source": "腾讯分钟行情",
+        "secondary_verification": {
+          "state": "too_late_no_backfill",
+          "checked_at": "2026-07-24T10:46:05+08:00",
+          "source": "腾讯分钟行情",
+          "reason": "超过实时核验窗口，不事后补成已确认。",
+          "representatives": [],
+          "fingerprint": "5b69aa33ed4a151a249a"
+        }
       },
       "source_status": "monitor_live_unverified",
       "valid_until": "2026-07-24T10:23:05+08:00",
@@ -1170,7 +1314,7 @@
       "is_old_economy": false,
       "source_watch_id": "CMP/靶材/材料耗材",
       "quote_audit": {
-        "provider": "本地盘中监控",
+        "provider": "本地盘中监控、腾讯分钟行情",
         "quote_time": "2026-07-24T10:26:54+08:00",
         "pct_field": "3分钟涨跌幅",
         "sample_count": 3,
@@ -1186,7 +1330,16 @@
         "direction_ratio": 1.0,
         "volume_ratio": 8.4293,
         "relative_volume_vs_yesterday": 1.5633,
-        "missing_confirmation": "等待腾讯分钟行情交叉核验；通过前只作候选或观察，不作为确认交易信号。"
+        "missing_confirmation": "等待腾讯分钟行情交叉核验；通过前只作候选或观察，不作为确认交易信号。",
+        "secondary_source": "腾讯分钟行情",
+        "secondary_verification": {
+          "state": "too_late_no_backfill",
+          "checked_at": "2026-07-24T10:46:05+08:00",
+          "source": "腾讯分钟行情",
+          "reason": "超过实时核验窗口，不事后补成已确认。",
+          "representatives": [],
+          "fingerprint": "d078e756fd732cabdbb2"
+        }
       },
       "source_status": "monitor_live_unverified",
       "valid_until": "2026-07-24T10:31:54+08:00",
@@ -1241,7 +1394,7 @@
       "is_old_economy": false,
       "source_watch_id": "机器人/工业自动化",
       "quote_audit": {
-        "provider": "本地盘中监控",
+        "provider": "本地盘中监控、腾讯分钟行情",
         "quote_time": "2026-07-24T10:32:00+08:00",
         "pct_field": "3分钟涨跌幅",
         "sample_count": 3,
@@ -1257,7 +1410,16 @@
         "direction_ratio": 1.0,
         "volume_ratio": 6.8387,
         "relative_volume_vs_yesterday": 1.5243,
-        "missing_confirmation": "等待腾讯分钟行情交叉核验；通过前只作候选或观察，不作为确认交易信号。"
+        "missing_confirmation": "等待腾讯分钟行情交叉核验；通过前只作候选或观察，不作为确认交易信号。",
+        "secondary_source": "腾讯分钟行情",
+        "secondary_verification": {
+          "state": "too_late_no_backfill",
+          "checked_at": "2026-07-24T10:46:05+08:00",
+          "source": "腾讯分钟行情",
+          "reason": "超过实时核验窗口，不事后补成已确认。",
+          "representatives": [],
+          "fingerprint": "e4cf6aeab48f99823047"
+        }
       },
       "source_status": "monitor_live_unverified",
       "valid_until": "2026-07-24T10:37:00+08:00",
@@ -1312,7 +1474,7 @@
       "is_old_economy": false,
       "source_watch_id": "覆铜板",
       "quote_audit": {
-        "provider": "本地盘中监控",
+        "provider": "本地盘中监控、腾讯分钟行情",
         "quote_time": "2026-07-24T10:32:39+08:00",
         "pct_field": "3分钟涨跌幅",
         "sample_count": 3,
@@ -1328,7 +1490,16 @@
         "direction_ratio": 1.0,
         "volume_ratio": 9.2832,
         "relative_volume_vs_yesterday": 1.1694,
-        "missing_confirmation": "等待腾讯分钟行情交叉核验；通过前只作候选或观察，不作为确认交易信号。"
+        "missing_confirmation": "等待腾讯分钟行情交叉核验；通过前只作候选或观察，不作为确认交易信号。",
+        "secondary_source": "腾讯分钟行情",
+        "secondary_verification": {
+          "state": "too_late_no_backfill",
+          "checked_at": "2026-07-24T10:46:05+08:00",
+          "source": "腾讯分钟行情",
+          "reason": "超过实时核验窗口，不事后补成已确认。",
+          "representatives": [],
+          "fingerprint": "5a729e493e935cc6d242"
+        }
       },
       "source_status": "monitor_live_unverified",
       "valid_until": "2026-07-24T10:37:39+08:00",
@@ -1337,68 +1508,6 @@
       "confirmation_level": "candidate",
       "limit_up_count": 0,
       "limit_down_count": 0
-    },
-    {
-      "id": "codex-20260724-103340-fff95c52624c",
-      "time": "2026-07-24T10:33:40+08:00",
-      "sector": "覆铜板",
-      "type": "小登题材快速回落",
-      "reason": "触发规则：小登股异动：板块内出现≥2只跌停\n异动性质：快速回落。价格下行和下跌占比触发回落提醒，优先按风险扩散处理。\n结论：覆铜板触发回落阈值，先观察承接和止跌。\n题材：覆铜板，当前领跌股：金安国纪 / 南亚新材 / 华正新材。\n强度：底池样本 3分钟涨跌幅 0.00%，下跌占比 75%，弱势股 0 只。\n成交：3分钟放大 1.00x，较昨同期 1.61x，风险扩散明显。\n当前领跌股分数：金安国纪(33.8)，南亚新材(33.8)，华正新材(33.8)。\n主要贡献因子：金安国纪: 3分钟涨跌幅 0.00%，成交放大 1.00x，日内涨幅 -9.99%；南亚新材: 3分钟涨跌幅 0.00%，成交放大 1.00x，日内涨幅 -10.68%；华正新材: 3分钟涨跌幅 0.00%，成交放大 1.00x，日内涨幅 -10.00%\n观察点：领跌是否止跌、后排是否继续补跌、放量是否变成抛压。\n风险提示：这是题材强度分析，不构成买卖建议。",
-      "leaders": [
-        {
-          "name": "覆铜板，当前领跌股：金安国纪"
-        },
-        {
-          "name": "南亚新材",
-          "change_pct": 0.0,
-          "score": 33.8,
-          "factors": [
-            "3分钟涨跌幅 0.00%",
-            "成交放大 1.00x",
-            "日内涨幅 -10.68%"
-          ]
-        },
-        {
-          "name": "华正新材",
-          "change_pct": 0.0,
-          "score": 33.8,
-          "factors": [
-            "3分钟涨跌幅 0.00%",
-            "成交放大 1.00x",
-            "日内涨幅 -10.00%"
-          ]
-        }
-      ],
-      "signal_type": "风险提示",
-      "is_old_economy": false,
-      "alert_class": "risk",
-      "confirmation_level": "candidate",
-      "source_watch_id": "覆铜板",
-      "quote_audit": {
-        "provider": "本地盘中监控日志",
-        "quote_time": "2026-07-24T10:33:40+08:00",
-        "pct_field": "3分钟涨跌幅",
-        "sample_count": 3,
-        "max_abs_leader_change_pct": 0,
-        "sanity_checks": {
-          "cross_source_verified": false,
-          "price_move_valid": false,
-          "volume_valid": false,
-          "direction_ratio_valid": true,
-          "limit_down_count_valid": true
-        },
-        "board_3m_change_pct": 0.0,
-        "direction_ratio": 0.75,
-        "volume_ratio": 1.0,
-        "relative_volume_vs_yesterday": 1.61,
-        "missing_confirmation": "等待腾讯分钟行情交叉核验；通过前只作候选或观察，不作为确认交易信号。",
-        "limit_down_count": 3
-      },
-      "source_status": "degraded_partial",
-      "valid_until": "2026-07-24T10:38:40+08:00",
-      "trigger_rule": "小登股异动：板块内出现≥2只跌停",
-      "limit_up_count": 0,
-      "limit_down_count": 3
     },
     {
       "id": "monitor-20260724-103413-517664c7169c",
@@ -1445,7 +1554,7 @@
       "is_old_economy": false,
       "source_watch_id": "液冷",
       "quote_audit": {
-        "provider": "本地盘中监控",
+        "provider": "本地盘中监控、腾讯分钟行情",
         "quote_time": "2026-07-24T10:34:13+08:00",
         "pct_field": "3分钟涨跌幅",
         "sample_count": 3,
@@ -1461,7 +1570,16 @@
         "direction_ratio": 1.0,
         "volume_ratio": 12.4279,
         "relative_volume_vs_yesterday": 1.2195,
-        "missing_confirmation": "等待腾讯分钟行情交叉核验；通过前只作候选或观察，不作为确认交易信号。"
+        "missing_confirmation": "等待腾讯分钟行情交叉核验；通过前只作候选或观察，不作为确认交易信号。",
+        "secondary_source": "腾讯分钟行情",
+        "secondary_verification": {
+          "state": "too_late_no_backfill",
+          "checked_at": "2026-07-24T10:46:05+08:00",
+          "source": "腾讯分钟行情",
+          "reason": "超过实时核验窗口，不事后补成已确认。",
+          "representatives": [],
+          "fingerprint": "381df62e9ae63b8f4c51"
+        }
       },
       "source_status": "monitor_live_unverified",
       "valid_until": "2026-07-24T10:39:13+08:00",
@@ -1470,528 +1588,6 @@
       "confirmation_level": "candidate",
       "limit_up_count": 0,
       "limit_down_count": 0
-    },
-    {
-      "id": "codex-20260724-103415-6d1be5d25c54",
-      "time": "2026-07-24T10:34:15+08:00",
-      "sector": "7月半导体扩产组合",
-      "type": "风格共振回暖",
-      "reason": "触发规则：风格回暖：同一风格≥3个板块5分钟内同向急拉≥2%\n结论：7月半导体扩产组合 出现回暖信号，4个关联板块5分钟窗口内同向急拉。\n关联板块：半导体设备平台 5分钟涨跌幅 3.50%，上涨 100%/下跌 0%，成交 1.00x；CMP/靶材/材料耗材 5分钟涨跌幅 3.43%，上涨 100%/下跌 0%，成交 1.00x；长鑫存储IPO映射 5分钟涨跌幅 3.28%，上涨 75%/下跌 25%，成交 1.00x；科技硬件链 5分钟涨跌幅 2.74%，上涨 89%/下跌 11%，成交 1.00x\n观察点：是否继续扩散到同风格后排，成交放大是否伴随价格延续。\n风险提示：这是风格级盘面信号，不构成买卖建议。",
-      "leaders": [
-        {
-          "name": "半导体设备平台",
-          "change_pct": 3.5,
-          "factors": [
-            "5分钟3.50%",
-            "上涨100%/下跌0%",
-            "成交1.00x"
-          ]
-        },
-        {
-          "name": "CMP/靶材/材料耗材",
-          "change_pct": 3.43,
-          "factors": [
-            "5分钟3.43%",
-            "上涨100%/下跌0%",
-            "成交1.00x"
-          ]
-        },
-        {
-          "name": "长鑫存储IPO映射",
-          "change_pct": 3.28,
-          "factors": [
-            "5分钟3.28%",
-            "上涨75%/下跌25%",
-            "成交1.00x"
-          ]
-        },
-        {
-          "name": "科技硬件链",
-          "change_pct": 2.74,
-          "factors": [
-            "5分钟2.74%",
-            "上涨89%/下跌11%",
-            "成交1.00x"
-          ]
-        }
-      ],
-      "signal_type": "风格提醒",
-      "is_old_economy": false,
-      "alert_class": "style",
-      "confirmation_level": "candidate",
-      "source_watch_id": "7月半导体扩产组合",
-      "quote_audit": {
-        "provider": "本地盘中监控日志",
-        "quote_time": "2026-07-24T10:34:15+08:00",
-        "pct_field": "5分钟风格涨跌幅",
-        "sample_count": 4,
-        "max_abs_leader_change_pct": 3.5,
-        "sanity_checks": {
-          "cross_source_verified": false,
-          "price_move_valid": true,
-          "volume_valid": false,
-          "direction_ratio_valid": true,
-          "limit_down_count_valid": false
-        },
-        "board_3m_change_pct": 0.0,
-        "direction_ratio": null,
-        "volume_ratio": 1.0,
-        "relative_volume_vs_yesterday": 1.0,
-        "missing_confirmation": "等待腾讯分钟行情交叉核验；通过前只作候选或观察，不作为确认交易信号。",
-        "board_5m_change_pct": 3.5
-      },
-      "source_status": "degraded_partial",
-      "valid_until": "2026-07-24T10:39:15+08:00",
-      "trigger_rule": "风格回暖：同一风格≥3个板块5分钟内同向急拉≥2%",
-      "limit_up_count": 0,
-      "limit_down_count": 0
-    },
-    {
-      "id": "codex-20260724-103455-06a9f6c5e2c9",
-      "time": "2026-07-24T10:34:55+08:00",
-      "sector": "半导体设备平台",
-      "type": "小登题材上涨攻势",
-      "reason": "触发规则：小登股异动：3分钟平均涨跌幅≥1.5%，上涨占比≥70%，且成交放大≥5x；小登底池拉起预警：板块行情缺失时，底池3分钟平均涨幅≥1.5%，上涨占比≥70%，且成交放大≥5x；小登底池扩散预警：板块行情缺失时，底池3分钟平均涨幅≥1.0%，上涨占比≥60%，成交放大≥8x，且至少2只样本明显推进\n异动性质：上涨攻势中的拉起。3分钟价格推进、上涨占比、强势股数量和前排日内状态同时确认。\n结论：半导体设备平台上涨攻势较强且扩散较好，北方华创领涨。\n题材：半导体设备平台，当前动态龙头：北方华创 / 中微公司。\n强度：底池样本 3分钟涨跌幅 3.07%，上涨占比 100%，强势股 2 只。\n成交：3分钟放大 20.00x，较昨同期 2.12x，有后排扩散。\n当前动态龙头分数：北方华创(86.6)，中微公司(84.7)。\n主要贡献因子：北方华创: 3分钟涨跌幅 3.11%，成交放大 20.00x，日内涨幅 7.84%；中微公司: 3分钟涨跌幅 3.02%，成交放大 20.00x，日内涨幅 7.08%\n观察点：龙头是否维持日内高位、后排是否继续补涨、成交是否继续放大。\n风险提示：这是题材强度分析，不构成买卖建议。",
-      "leaders": [
-        {
-          "name": "半导体设备平台，当前动态龙头：北方华创"
-        },
-        {
-          "name": "中微公司",
-          "change_pct": 3.02,
-          "score": 84.7,
-          "factors": [
-            "3分钟涨跌幅 3.02%",
-            "成交放大 20.00x",
-            "日内涨幅 7.08%"
-          ]
-        }
-      ],
-      "signal_type": "🎯交易信号",
-      "is_old_economy": false,
-      "alert_class": "opportunity",
-      "confirmation_level": "candidate",
-      "source_watch_id": "半导体设备平台",
-      "quote_audit": {
-        "provider": "本地盘中监控日志",
-        "quote_time": "2026-07-24T10:34:55+08:00",
-        "pct_field": "3分钟涨跌幅",
-        "sample_count": 2,
-        "max_abs_leader_change_pct": 3.02,
-        "sanity_checks": {
-          "cross_source_verified": false,
-          "price_move_valid": true,
-          "volume_valid": true,
-          "direction_ratio_valid": true,
-          "limit_down_count_valid": false
-        },
-        "board_3m_change_pct": 3.07,
-        "direction_ratio": 1.0,
-        "volume_ratio": 20.0,
-        "relative_volume_vs_yesterday": 2.12,
-        "missing_confirmation": "等待腾讯分钟行情交叉核验；通过前只作候选或观察，不作为确认交易信号。"
-      },
-      "source_status": "degraded_partial",
-      "valid_until": "2026-07-24T10:39:55+08:00",
-      "trigger_rule": "小登股异动：3分钟平均涨跌幅≥1.5%，上涨占比≥70%，且成交放大≥5x；小登底池拉起预警：板块行情缺失时，底池3分钟平均涨幅≥1.5%，上涨占比≥70%，且成交放大≥5x；小登底池扩散预警：板块行情缺失时，底池3分钟平均涨幅≥1.0%，上涨占比≥60%，成交放大≥8x，且至少2只样本明显推进",
-      "limit_up_count": 0,
-      "limit_down_count": 0
-    },
-    {
-      "id": "codex-20260724-103455-11728d1dc900",
-      "time": "2026-07-24T10:34:55+08:00",
-      "sector": "科技硬件链",
-      "type": "小登题材上涨攻势",
-      "reason": "触发规则：小登股异动：3分钟平均涨跌幅≥1.5%，上涨占比≥70%，且成交放大≥5x；小登底池拉起预警：板块行情缺失时，底池3分钟平均涨幅≥1.5%，上涨占比≥70%，且成交放大≥5x；小登底池扩散预警：板块行情缺失时，底池3分钟平均涨幅≥1.0%，上涨占比≥60%，成交放大≥8x，且至少2只样本明显推进\n异动性质：上涨攻势中的拉起。3分钟价格推进、上涨占比、强势股数量和前排日内状态同时确认。\n结论：科技硬件链上涨攻势较强且扩散较好，北方华创领涨。\n题材：科技硬件链，当前动态龙头：北方华创 / 中微公司 / 华海清科。\n强度：底池样本 3分钟涨跌幅 2.38%，上涨占比 78%，强势股 8 只。\n成交：3分钟放大 20.00x，较昨同期 1.70x，有后排扩散。\n当前动态龙头分数：北方华创(85.5)，中微公司(83.6)，华海清科(66.7)。\n主要贡献因子：北方华创: 3分钟涨跌幅 3.11%，成交放大 20.00x，日内涨幅 7.84%；中微公司: 3分钟涨跌幅 3.02%，成交放大 20.00x，日内涨幅 7.08%；华海清科: 3分钟涨跌幅 3.42%，成交放大 20.00x，日内涨幅 3.14%\n观察点：龙头是否维持日内高位、后排是否继续补涨、成交是否继续放大。\n风险提示：这是题材强度分析，不构成买卖建议。",
-      "leaders": [
-        {
-          "name": "科技硬件链，当前动态龙头：北方华创"
-        },
-        {
-          "name": "中微公司",
-          "change_pct": 3.02,
-          "score": 83.6,
-          "factors": [
-            "3分钟涨跌幅 3.02%",
-            "成交放大 20.00x",
-            "日内涨幅 7.08%"
-          ]
-        },
-        {
-          "name": "华海清科",
-          "change_pct": 3.42,
-          "score": 66.7,
-          "factors": [
-            "3分钟涨跌幅 3.42%",
-            "成交放大 20.00x",
-            "日内涨幅 3.14%"
-          ]
-        }
-      ],
-      "signal_type": "🎯交易信号",
-      "is_old_economy": false,
-      "alert_class": "opportunity",
-      "confirmation_level": "candidate",
-      "source_watch_id": "科技硬件链",
-      "quote_audit": {
-        "provider": "本地盘中监控日志",
-        "quote_time": "2026-07-24T10:34:55+08:00",
-        "pct_field": "3分钟涨跌幅",
-        "sample_count": 3,
-        "max_abs_leader_change_pct": 3.42,
-        "sanity_checks": {
-          "cross_source_verified": false,
-          "price_move_valid": true,
-          "volume_valid": true,
-          "direction_ratio_valid": true,
-          "limit_down_count_valid": false
-        },
-        "board_3m_change_pct": 2.38,
-        "direction_ratio": 0.78,
-        "volume_ratio": 20.0,
-        "relative_volume_vs_yesterday": 1.7,
-        "missing_confirmation": "等待腾讯分钟行情交叉核验；通过前只作候选或观察，不作为确认交易信号。"
-      },
-      "source_status": "degraded_partial",
-      "valid_until": "2026-07-24T10:39:55+08:00",
-      "trigger_rule": "小登股异动：3分钟平均涨跌幅≥1.5%，上涨占比≥70%，且成交放大≥5x；小登底池拉起预警：板块行情缺失时，底池3分钟平均涨幅≥1.5%，上涨占比≥70%，且成交放大≥5x；小登底池扩散预警：板块行情缺失时，底池3分钟平均涨幅≥1.0%，上涨占比≥60%，成交放大≥8x，且至少2只样本明显推进",
-      "limit_up_count": 0,
-      "limit_down_count": 0
-    },
-    {
-      "id": "codex-20260724-103455-7205626e8abe",
-      "time": "2026-07-24T10:34:55+08:00",
-      "sector": "CMP/靶材/材料耗材",
-      "type": "小登题材上涨攻势",
-      "reason": "触发规则：小登股异动：3分钟平均涨跌幅≥1.5%，上涨占比≥70%，且成交放大≥5x；小登底池拉起预警：板块行情缺失时，底池3分钟平均涨幅≥1.5%，上涨占比≥70%，且成交放大≥5x；小登底池扩散预警：板块行情缺失时，底池3分钟平均涨幅≥1.0%，上涨占比≥60%，成交放大≥8x，且至少2只样本明显推进\n异动性质：上涨攻势中的拉起。3分钟价格推进、上涨占比、强势股数量和前排日内状态同时确认。\n结论：CMP/靶材/材料耗材上涨攻势较强且扩散较好，华海清科领涨。\n题材：CMP/靶材/材料耗材，当前动态龙头：华海清科 / 安集科技 / 江丰电子。\n强度：底池样本 3分钟涨跌幅 2.95%，上涨占比 100%，强势股 3 只。\n成交：3分钟放大 20.00x，较昨同期 1.58x，有后排扩散。\n当前动态龙头分数：华海清科(67.8)，安集科技(67.2)，江丰电子(55.5)。\n主要贡献因子：华海清科: 3分钟涨跌幅 3.42%，成交放大 20.00x，日内涨幅 3.14%；安集科技: 3分钟涨跌幅 2.83%，成交放大 20.00x，日内涨幅 3.66%；江丰电子: 3分钟涨跌幅 2.60%，成交放大 20.00x，日内涨幅 0.07%\n观察点：龙头是否维持日内高位、后排是否继续补涨、成交是否继续放大。\n风险提示：这是题材强度分析，不构成买卖建议。",
-      "leaders": [
-        {
-          "name": "CMP"
-        },
-        {
-          "name": "靶材"
-        },
-        {
-          "name": "材料耗材，当前动态龙头：华海清科"
-        }
-      ],
-      "signal_type": "🎯交易信号",
-      "is_old_economy": false,
-      "alert_class": "opportunity",
-      "confirmation_level": "candidate",
-      "source_watch_id": "CMP/靶材/材料耗材",
-      "quote_audit": {
-        "provider": "本地盘中监控日志",
-        "quote_time": "2026-07-24T10:34:55+08:00",
-        "pct_field": "3分钟涨跌幅",
-        "sample_count": 3,
-        "max_abs_leader_change_pct": 0,
-        "sanity_checks": {
-          "cross_source_verified": false,
-          "price_move_valid": true,
-          "volume_valid": true,
-          "direction_ratio_valid": true,
-          "limit_down_count_valid": false
-        },
-        "board_3m_change_pct": 2.95,
-        "direction_ratio": 1.0,
-        "volume_ratio": 20.0,
-        "relative_volume_vs_yesterday": 1.58,
-        "missing_confirmation": "等待腾讯分钟行情交叉核验；通过前只作候选或观察，不作为确认交易信号。"
-      },
-      "source_status": "degraded_partial",
-      "valid_until": "2026-07-24T10:39:55+08:00",
-      "trigger_rule": "小登股异动：3分钟平均涨跌幅≥1.5%，上涨占比≥70%，且成交放大≥5x；小登底池拉起预警：板块行情缺失时，底池3分钟平均涨幅≥1.5%，上涨占比≥70%，且成交放大≥5x；小登底池扩散预警：板块行情缺失时，底池3分钟平均涨幅≥1.0%，上涨占比≥60%，成交放大≥8x，且至少2只样本明显推进",
-      "limit_up_count": 0,
-      "limit_down_count": 0
-    },
-    {
-      "id": "codex-20260724-103455-89516df43c9a",
-      "time": "2026-07-24T10:34:55+08:00",
-      "sector": "长鑫存储IPO映射",
-      "type": "小登题材上涨攻势",
-      "reason": "触发规则：小登股异动：3分钟平均涨跌幅≥1.5%，上涨占比≥70%，且成交放大≥5x；小登底池拉起预警：板块行情缺失时，底池3分钟平均涨幅≥1.5%，上涨占比≥70%，且成交放大≥5x；小登底池扩散预警：板块行情缺失时，底池3分钟平均涨幅≥1.0%，上涨占比≥60%，成交放大≥8x，且至少2只样本明显推进\n异动性质：上涨攻势中的拉起。3分钟价格推进、上涨占比、强势股数量和前排日内状态同时确认。\n结论：长鑫存储IPO映射上涨攻势较强且扩散较好，北方华创领涨。\n题材：长鑫存储IPO映射，当前动态龙头：北方华创 / 中微公司 / 富创精密。\n强度：底池样本 3分钟涨跌幅 2.87%，上涨占比 75%，强势股 4 只。\n成交：3分钟放大 20.00x，较昨同期 2.01x，有后排扩散。\n当前动态龙头分数：北方华创(85.4)，中微公司(83.5)，富创精密(55.7)。\n主要贡献因子：北方华创: 3分钟涨跌幅 3.11%，成交放大 20.00x，日内涨幅 7.84%；中微公司: 3分钟涨跌幅 3.02%，成交放大 20.00x，日内涨幅 7.08%；富创精密: 3分钟涨跌幅 2.74%，成交放大 20.00x，日内涨幅 -0.58%\n观察点：龙头是否维持日内高位、后排是否继续补涨、成交是否继续放大。\n风险提示：这是题材强度分析，不构成买卖建议。",
-      "leaders": [
-        {
-          "name": "长鑫存储IPO映射，当前动态龙头：北方华创"
-        },
-        {
-          "name": "中微公司",
-          "change_pct": 3.02,
-          "score": 83.5,
-          "factors": [
-            "3分钟涨跌幅 3.02%",
-            "成交放大 20.00x",
-            "日内涨幅 7.08%"
-          ]
-        },
-        {
-          "name": "富创精密",
-          "change_pct": 2.74,
-          "score": 55.7,
-          "factors": [
-            "3分钟涨跌幅 2.74%",
-            "成交放大 20.00x",
-            "日内涨幅 -0.58%"
-          ]
-        }
-      ],
-      "signal_type": "🎯交易信号",
-      "is_old_economy": false,
-      "alert_class": "opportunity",
-      "confirmation_level": "candidate",
-      "source_watch_id": "长鑫存储IPO映射",
-      "quote_audit": {
-        "provider": "本地盘中监控日志",
-        "quote_time": "2026-07-24T10:34:55+08:00",
-        "pct_field": "3分钟涨跌幅",
-        "sample_count": 3,
-        "max_abs_leader_change_pct": 3.02,
-        "sanity_checks": {
-          "cross_source_verified": false,
-          "price_move_valid": true,
-          "volume_valid": true,
-          "direction_ratio_valid": true,
-          "limit_down_count_valid": false
-        },
-        "board_3m_change_pct": 2.87,
-        "direction_ratio": 0.75,
-        "volume_ratio": 20.0,
-        "relative_volume_vs_yesterday": 2.01,
-        "missing_confirmation": "等待腾讯分钟行情交叉核验；通过前只作候选或观察，不作为确认交易信号。"
-      },
-      "source_status": "degraded_partial",
-      "valid_until": "2026-07-24T10:39:55+08:00",
-      "trigger_rule": "小登股异动：3分钟平均涨跌幅≥1.5%，上涨占比≥70%，且成交放大≥5x；小登底池拉起预警：板块行情缺失时，底池3分钟平均涨幅≥1.5%，上涨占比≥70%，且成交放大≥5x；小登底池扩散预警：板块行情缺失时，底池3分钟平均涨幅≥1.0%，上涨占比≥60%，成交放大≥8x，且至少2只样本明显推进",
-      "limit_up_count": 0,
-      "limit_down_count": 0
-    },
-    {
-      "id": "codex-20260724-103706-6c1f0acec2c9",
-      "time": "2026-07-24T10:37:06+08:00",
-      "sector": "半导体零部件弹性",
-      "type": "小登题材观察拉动",
-      "reason": "触发规则：小登股异动：3分钟平均涨跌幅≥1.5%，上涨占比≥70%，且成交放大≥5x；小登底池拉起预警：板块行情缺失时，底池3分钟平均涨幅≥1.5%，上涨占比≥70%，且成交放大≥5x；小登底池扩散预警：板块行情缺失时，底池3分钟平均涨幅≥1.0%，上涨占比≥60%，成交放大≥8x，且至少2只样本明显推进\n异动性质：观察性拉动。有短线拉动，但尚未同时满足上涨攻势确认条件。\n结论：半导体零部件弹性前排有拉动但未确认上涨攻势，新莱应材暂为观察核心。\n题材：半导体零部件弹性，当前动态龙头：新莱应材 / 富创精密。\n强度：底池样本 3分钟涨跌幅 3.55%，上涨占比 100%，强势股 2 只。\n成交：3分钟放大 20.00x，较昨同期 1.67x，有后排扩散。\n当前动态龙头分数：新莱应材(61.4)，富创精密(61.2)。\n主要贡献因子：新莱应材: 3分钟涨跌幅 3.27%，成交放大 20.00x，日内涨幅 0.57%；富创精密: 3分钟涨跌幅 3.83%，成交放大 20.00x，日内涨幅 0.47%\n观察点：龙头是否维持日内高位、后排是否继续补涨、成交是否继续放大。\n风险提示：这是题材强度分析，不构成买卖建议。",
-      "leaders": [
-        {
-          "name": "半导体零部件弹性，当前动态龙头：新莱应材"
-        },
-        {
-          "name": "富创精密",
-          "change_pct": 3.83,
-          "score": 61.2,
-          "factors": [
-            "3分钟涨跌幅 3.83%",
-            "成交放大 20.00x",
-            "日内涨幅 0.47%"
-          ]
-        }
-      ],
-      "signal_type": "🎯交易信号",
-      "is_old_economy": false,
-      "alert_class": "opportunity",
-      "confirmation_level": "candidate",
-      "source_watch_id": "半导体零部件弹性",
-      "quote_audit": {
-        "provider": "本地盘中监控日志",
-        "quote_time": "2026-07-24T10:37:06+08:00",
-        "pct_field": "3分钟涨跌幅",
-        "sample_count": 2,
-        "max_abs_leader_change_pct": 3.83,
-        "sanity_checks": {
-          "cross_source_verified": false,
-          "price_move_valid": true,
-          "volume_valid": true,
-          "direction_ratio_valid": true,
-          "limit_down_count_valid": false
-        },
-        "board_3m_change_pct": 3.55,
-        "direction_ratio": 1.0,
-        "volume_ratio": 20.0,
-        "relative_volume_vs_yesterday": 1.67,
-        "missing_confirmation": "等待腾讯分钟行情交叉核验；通过前只作候选或观察，不作为确认交易信号。"
-      },
-      "source_status": "degraded_partial",
-      "valid_until": "2026-07-24T10:42:06+08:00",
-      "trigger_rule": "小登股异动：3分钟平均涨跌幅≥1.5%，上涨占比≥70%，且成交放大≥5x；小登底池拉起预警：板块行情缺失时，底池3分钟平均涨幅≥1.5%，上涨占比≥70%，且成交放大≥5x；小登底池扩散预警：板块行情缺失时，底池3分钟平均涨幅≥1.0%，上涨占比≥60%，成交放大≥8x，且至少2只样本明显推进",
-      "limit_up_count": 0,
-      "limit_down_count": 0
-    },
-    {
-      "id": "codex-20260724-103936-f640ffc06ded",
-      "time": "2026-07-24T10:39:36+08:00",
-      "sector": "光刻胶/光刻机催化",
-      "type": "小登题材观察拉动",
-      "reason": "触发规则：小登底池扩散预警：板块行情缺失时，底池3分钟平均涨幅≥1.0%，上涨占比≥60%，成交放大≥8x，且至少2只样本明显推进\n异动性质：观察性拉动。有短线拉动，但尚未同时满足上涨攻势确认条件。\n结论：光刻胶/光刻机催化前排有拉动但未确认上涨攻势，南大光电暂为观察核心。\n题材：光刻胶/光刻机催化，当前动态龙头：南大光电 / 彤程新材 / 晶瑞电材。\n强度：底池样本 3分钟涨跌幅 1.40%，上涨占比 100%，强势股 3 只。\n成交：3分钟放大 10.21x，较昨同期 1.59x，有后排扩散。\n当前动态龙头分数：南大光电(44.2)，彤程新材(38.6)，晶瑞电材(26.9)。\n主要贡献因子：南大光电: 3分钟涨跌幅 1.57%，成交放大 14.18x，日内涨幅 0.33%；彤程新材: 3分钟涨跌幅 1.67%，成交放大 10.20x，日内涨幅 0.05%；晶瑞电材: 3分钟涨跌幅 0.95%，成交放大 6.24x，日内涨幅 1.13%\n观察点：龙头是否维持日内高位、后排是否继续补涨、成交是否继续放大。\n风险提示：这是题材强度分析，不构成买卖建议。",
-      "leaders": [
-        {
-          "name": "光刻胶"
-        },
-        {
-          "name": "光刻机催化，当前动态龙头：南大光电"
-        },
-        {
-          "name": "彤程新材",
-          "change_pct": 1.67,
-          "score": 38.6,
-          "factors": [
-            "3分钟涨跌幅 1.67%",
-            "成交放大 10.20x",
-            "日内涨幅 0.05%"
-          ]
-        }
-      ],
-      "signal_type": "🎯交易信号",
-      "is_old_economy": false,
-      "alert_class": "opportunity",
-      "confirmation_level": "candidate",
-      "source_watch_id": "光刻胶/光刻机催化",
-      "quote_audit": {
-        "provider": "本地盘中监控日志",
-        "quote_time": "2026-07-24T10:39:36+08:00",
-        "pct_field": "3分钟涨跌幅",
-        "sample_count": 3,
-        "max_abs_leader_change_pct": 1.67,
-        "sanity_checks": {
-          "cross_source_verified": false,
-          "price_move_valid": true,
-          "volume_valid": true,
-          "direction_ratio_valid": true,
-          "limit_down_count_valid": false
-        },
-        "board_3m_change_pct": 1.4,
-        "direction_ratio": 1.0,
-        "volume_ratio": 10.21,
-        "relative_volume_vs_yesterday": 1.59,
-        "missing_confirmation": "等待腾讯分钟行情交叉核验；通过前只作候选或观察，不作为确认交易信号。"
-      },
-      "source_status": "degraded_partial",
-      "valid_until": "2026-07-24T10:44:36+08:00",
-      "trigger_rule": "小登底池扩散预警：板块行情缺失时，底池3分钟平均涨幅≥1.0%，上涨占比≥60%，成交放大≥8x，且至少2只样本明显推进",
-      "limit_up_count": 0,
-      "limit_down_count": 0
-    },
-    {
-      "id": "codex-20260724-104322-0bae2ef6c0c8",
-      "time": "2026-07-24T10:43:22+08:00",
-      "sector": "硅片",
-      "type": "小登题材快速回落",
-      "reason": "触发规则：小登底池回落预警：板块行情缺失时，底池3分钟平均跌幅≥1.0%，下跌占比≥60%，且成交放大≥5x\n异动性质：快速回落。价格下行和下跌占比触发回落提醒，优先按风险扩散处理。\n结论：硅片题材回落，有扩散，有研硅是主要拖累。\n题材：硅片，当前领跌股：有研硅 / 中晶科技 / 天岳先进。\n强度：底池样本 3分钟涨跌幅 -1.17%，下跌占比 100%，弱势股 4 只。\n成交：3分钟放大 5.46x，较昨同期 1.71x，风险扩散明显。\n当前领跌股分数：有研硅(72.8)，中晶科技(42.5)，天岳先进(38.9)。\n主要贡献因子：有研硅: 3分钟涨跌幅 -3.12%，成交放大 2.56x，日内涨幅 -9.61%；中晶科技: 3分钟涨跌幅 -0.80%，成交放大 12.21x，日内涨幅 -2.18%；天岳先进: 3分钟涨跌幅 -0.72%，成交放大 7.86x，日内涨幅 -3.53%\n观察点：领跌是否止跌、后排是否继续补跌、放量是否变成抛压。\n风险提示：这是题材强度分析，不构成买卖建议。",
-      "leaders": [
-        {
-          "name": "硅片，当前领跌股：有研硅"
-        },
-        {
-          "name": "中晶科技",
-          "change_pct": -0.8,
-          "score": 42.5,
-          "factors": [
-            "3分钟涨跌幅 -0.80%",
-            "成交放大 12.21x",
-            "日内涨幅 -2.18%"
-          ]
-        },
-        {
-          "name": "天岳先进",
-          "change_pct": -0.72,
-          "score": 38.9,
-          "factors": [
-            "3分钟涨跌幅 -0.72%",
-            "成交放大 7.86x",
-            "日内涨幅 -3.53%"
-          ]
-        }
-      ],
-      "signal_type": "风险提示",
-      "is_old_economy": false,
-      "alert_class": "risk",
-      "confirmation_level": "candidate",
-      "source_watch_id": "硅片",
-      "quote_audit": {
-        "provider": "本地盘中监控日志",
-        "quote_time": "2026-07-24T10:43:22+08:00",
-        "pct_field": "3分钟涨跌幅",
-        "sample_count": 3,
-        "max_abs_leader_change_pct": 0.8,
-        "sanity_checks": {
-          "cross_source_verified": false,
-          "price_move_valid": true,
-          "volume_valid": true,
-          "direction_ratio_valid": true,
-          "limit_down_count_valid": false
-        },
-        "board_3m_change_pct": -1.17,
-        "direction_ratio": 1.0,
-        "volume_ratio": 5.46,
-        "relative_volume_vs_yesterday": 1.71,
-        "missing_confirmation": "等待腾讯分钟行情交叉核验；通过前只作候选风险，不作为确认交易信号。"
-      },
-      "source_status": "degraded_partial",
-      "valid_until": "2026-07-24T10:48:22+08:00",
-      "trigger_rule": "小登底池回落预警：板块行情缺失时，底池3分钟平均跌幅≥1.0%，下跌占比≥60%，且成交放大≥5x",
-      "limit_up_count": 0,
-      "limit_down_count": 0
-    },
-    {
-      "id": "codex-20260724-104408-6c257cc84e63",
-      "time": "2026-07-24T10:44:08+08:00",
-      "sector": "覆铜板",
-      "type": "小登题材快速回落",
-      "reason": "触发规则：小登股异动：板块内出现≥2只跌停\n异动性质：快速回落。价格下行和下跌占比触发回落提醒，优先按风险扩散处理。\n结论：覆铜板触发回落阈值，先观察承接和止跌。\n题材：覆铜板，当前领跌股：华正新材 / 金安国纪 / 生益科技。\n强度：底池样本 3分钟涨跌幅 -0.59%，下跌占比 67%，弱势股 1 只。\n成交：3分钟放大 2.42x，较昨同期 1.76x，风险扩散明显。\n当前领跌股分数：华正新材(67.0)，金安国纪(42.3)，生益科技(24.0)。\n主要贡献因子：华正新材: 3分钟涨跌幅 -1.26%，成交放大 2.89x，日内涨幅 -10.00%；金安国纪: 3分钟涨跌幅 -0.02%，成交放大 1.88x，日内涨幅 -9.99%；生益科技: 3分钟涨跌幅 -0.49%，成交放大 2.49x，日内涨幅 1.70%\n观察点：领跌是否止跌、后排是否继续补跌、放量是否变成抛压。\n风险提示：这是题材强度分析，不构成买卖建议。",
-      "leaders": [
-        {
-          "name": "覆铜板，当前领跌股：华正新材"
-        },
-        {
-          "name": "金安国纪",
-          "change_pct": -0.02,
-          "score": 42.3,
-          "factors": [
-            "3分钟涨跌幅 -0.02%",
-            "成交放大 1.88x",
-            "日内涨幅 -9.99%"
-          ]
-        },
-        {
-          "name": "生益科技",
-          "change_pct": -0.49,
-          "score": 24.0,
-          "factors": [
-            "3分钟涨跌幅 -0.49%",
-            "成交放大 2.49x",
-            "日内涨幅 1.70%"
-          ]
-        }
-      ],
-      "signal_type": "风险提示",
-      "is_old_economy": false,
-      "alert_class": "risk",
-      "confirmation_level": "candidate",
-      "source_watch_id": "覆铜板",
-      "quote_audit": {
-        "provider": "本地盘中监控日志",
-        "quote_time": "2026-07-24T10:44:08+08:00",
-        "pct_field": "3分钟涨跌幅",
-        "sample_count": 3,
-        "max_abs_leader_change_pct": 0.49,
-        "sanity_checks": {
-          "cross_source_verified": false,
-          "price_move_valid": true,
-          "volume_valid": true,
-          "direction_ratio_valid": true,
-          "limit_down_count_valid": true
-        },
-        "board_3m_change_pct": -0.59,
-        "direction_ratio": 0.67,
-        "volume_ratio": 2.42,
-        "relative_volume_vs_yesterday": 1.76,
-        "missing_confirmation": "等待腾讯分钟行情交叉核验；通过前只作候选风险，不作为确认交易信号。"
-      },
-      "source_status": "degraded_partial",
-      "valid_until": "2026-07-24T10:49:08+08:00",
-      "trigger_rule": "小登股异动：板块内出现≥2只跌停",
-      "limit_up_count": 0,
-      "limit_down_count": 2
     }
   ],
   "quote_audit": {
