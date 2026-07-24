@@ -12,6 +12,8 @@ from typing import Any, Dict, Iterable, List, Optional
 
 ROOT = Path(__file__).resolve().parent.parent
 INTRADAY_PATH = ROOT / "data" / "intraday.json"
+WATCHLIST_PATH = ROOT / "config" / "watchlist.json"
+WATCHLIST_QUOTES_PATH = ROOT / "data" / "watchlist-quotes.json"
 TENCENT_URL = "https://qt.gtimg.cn/q={}"
 INDEX_CODES = {
     "sh000001": "上证指数",
@@ -28,7 +30,7 @@ def now_iso() -> str:
 
 def parse_quote_time(value: Any) -> Optional[datetime]:
     text = str(value or "").strip()
-    for pattern in ("%Y%m%d%H%M%S", "%Y%m%d%H%M"):
+    for pattern in ("%Y%m%d%H%M%S", "%Y%m%d%H%M", "%Y/%m/%d %H:%M:%S"):
         try:
             parsed = datetime.strptime(text, pattern)
             return parsed.replace(tzinfo=datetime.now().astimezone().tzinfo)
@@ -118,6 +120,78 @@ def fetch_indices() -> List[Dict[str, Any]]:
     return result
 
 
+def provider_code(code: Any) -> str:
+    raw = str(code or "").strip().lower()
+    if raw.startswith("hk"):
+        digits = re.sub(r"\D", "", raw)
+        return f"hk{digits.zfill(5)}"
+    return raw
+
+
+def normalized_code(code: Any) -> str:
+    raw = str(code or "").strip().lower()
+    if raw.startswith("hk"):
+        digits = re.sub(r"\D", "", raw)
+        return f"hk{int(digits)}" if digits else raw
+    return raw
+
+
+def fetch_watchlist_quotes(path: Path = WATCHLIST_PATH) -> Dict[str, Any]:
+    watchlist = json.loads(path.read_text(encoding="utf-8"))
+    stocks = watchlist.get("watch_only", {}).get("stocks", [])
+    query_codes = [provider_code(item.get("code")) for item in stocks if item.get("code")]
+    fetched = {
+        normalized_code(row["query_code"]): row["fields"]
+        for row in fetch_quotes(query_codes)
+    }
+    rows = []
+    missing = 0
+    for stock in stocks:
+        code = str(stock.get("code") or "")
+        configured_name = str(stock.get("name") or code)
+        fields = fetched.get(normalized_code(code))
+        if not fields:
+            missing += 1
+            rows.append(
+                {
+                    "code": code,
+                    "name": configured_name,
+                    "price": None,
+                    "change_pct": None,
+                    "quote_time": None,
+                    "status": "行情待补",
+                    "source": "腾讯财经HTTP",
+                }
+            )
+            continue
+        rows.append(
+            {
+                "code": code,
+                "name": configured_name,
+                "provider_name": fields[1],
+                "price": as_float(fields[3]),
+                "previous_close": as_float(fields[4]),
+                "open": as_float(fields[5]),
+                "change_pct": as_float(fields[32]),
+                "high": as_float(fields[33]),
+                "low": as_float(fields[34]),
+                "quote_time": fields[30],
+                "status": quote_status(fields[30]),
+                "source": "腾讯财经HTTP",
+            }
+        )
+    valid_times = [parse_quote_time(row.get("quote_time")) for row in rows]
+    valid_times = [value for value in valid_times if value is not None]
+    quote_as_of = max(valid_times).isoformat(timespec="seconds") if valid_times else None
+    return {
+        "timestamp": now_iso(),
+        "quote_as_of": quote_as_of,
+        "source": "腾讯财经HTTP",
+        "summary": f"观察池{len(rows)}只，{len(rows) - missing}只取得当日收盘行情，{missing}只待补。",
+        "stocks": rows,
+    }
+
+
 def fetch_industries() -> List[Dict[str, Any]]:
     rows = []
     codes = [f"pt01801{index:03d}" for index in range(1, 501)]
@@ -199,12 +273,16 @@ def update(path: Path) -> Dict[str, Any]:
         "time_basis": "行情源时间",
     }
     write_atomic(path, payload)
+    watchlist_quotes = fetch_watchlist_quotes()
+    write_atomic(WATCHLIST_QUOTES_PATH, watchlist_quotes)
     return {
         "updated": str(path),
         "market_data_as_of": quote_as_of,
         "market_data_collected_at": collected_at,
         "indices": len(indices),
         "industries": len(industries),
+        "watchlist_quotes": len(watchlist_quotes.get("stocks", [])),
+        "watchlist_quote_as_of": watchlist_quotes.get("quote_as_of"),
     }
 
 

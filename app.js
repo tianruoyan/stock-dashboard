@@ -4,6 +4,7 @@ const FILES = [
   "data/premarket.json",
   "data/midday.json",
   "data/postmarket.json",
+  "data/watchlist-quotes.json",
   "data/evening-sentiment.json",
   "data/topics.json",
   "data/quality-report.json",
@@ -100,6 +101,7 @@ function render(file, data) {
   else if (file === "data/premarket.json") renderPremarket(data);
   else if (file === "data/midday.json") renderMidday(data);
   else if (file === "data/postmarket.json") renderPostmarket(data);
+  else if (file === "data/watchlist-quotes.json") renderWatchlistDecision();
   else if (file === "data/evening-sentiment.json") renderEvening(data);
   else if (file === "data/topics.json") renderTopics(data);
   else if (file === "data/quality-report.json") renderDataQualityGate();
@@ -1861,8 +1863,10 @@ function renderWatchlistDecision() {
     return;
   }
   const signals = collectSignalText();
+  const quoteAsOf = cached("data/watchlist-quotes.json")?.quote_as_of;
+  const quoteLabel = quoteAsOf ? `行情 ${formatUpdateTime(quoteAsOf)}` : "个人跟踪";
   const pools = [
-    ["watch_only", "观察池", "个人跟踪"]
+    ["watch_only", "观察池", quoteLabel]
   ];
   el.innerHTML = `<div class="watchlist-grid">${pools.map(([key, title, desc]) => renderWatchPool(key, title, desc, wl[key]?.stocks || [], signals)).join("")}</div>`;
 }
@@ -1926,7 +1930,18 @@ function renderWatchStock(stock) {
 function renderWatchStockName(stock) {
   const label = watchSignalBadge(stock.signal);
   const tone = stock.signal?.tone || "neutral";
-  return `<span class="watch-stock-name">${escapeHtml(displayStockName(stock.name || stock.code))}${label ? `<small class="watch-signal-${tone}">${escapeHtml(label)}</small>` : ""}</span>`;
+  return `<span class="watch-stock-name">${escapeHtml(watchStockDisplayName(stock))}${label ? `<small class="watch-signal-${tone}">${escapeHtml(label)}</small>` : ""}</span>`;
+}
+
+function watchStockDisplayName(stock) {
+  const name = displayStockName(stock.name || stock.code);
+  const rows = cached("config/watchlist.json")?.watch_only?.stocks || [];
+  const duplicateCount = rows.filter(row => displayStockName(row.name || row.code) === name).length;
+  if (duplicateCount < 2) return name;
+  const code = normalizeStockCodeForMatch(stock.code);
+  if (code.startsWith("hk")) return `${name}（H股）`;
+  if (/^(sh|sz|bj)/.test(code)) return `${name}（A股）`;
+  return name;
 }
 
 function watchSignalBadge(signal) {
@@ -1949,6 +1964,7 @@ function stockSignal(stock, signals, pool) {
   const contextAll = stockContextText(name, signals, { includeCurrentData: false });
   const latestChangePct = latestStockChangePct(stock);
   const changePct = Number.isFinite(latestChangePct) ? latestChangePct : stockChangePct(name, context);
+  const hasVerifiedMove = Number.isFinite(latestChangePct);
   const volumeBadge = stockVolumeBadge(context);
   const hardEventRiskPattern = /减持|监管|问询|立案|处罚|澄清|业绩雷/;
   const priceRiskPattern = /跌停|接近跌停|暴跌|放量大跌|放量下跌|破位|跌破|降级|风险核心|负反馈核心/;
@@ -1978,20 +1994,33 @@ function stockSignal(stock, signals, pool) {
   const weakMove = Number.isFinite(changePct) && changePct <= -3;
   const hardWeakMove = Number.isFinite(changePct) && changePct <= -7;
   const currentNamedStrong = directTrigger || contextStrong;
-  const currentStrong = currentNamedStrong || strongMove;
-  const currentWeak = directRisk || contextRisk || hardWeakMove || (directPressure && weakMove) || (contextPressure && weakMove);
+  const currentStrong = strongMove || (!hasVerifiedMove && currentNamedStrong);
+  const currentWeak = weakMove || (!hasVerifiedMove && (directRisk || contextRisk || directPressure || contextPressure));
   if (directEventRisk) return watchTone("event", "待盘面确认", eventRiskBadge(directSegments) || "消息风险", changePct, volumeBadge, 82, updatedAt);
+  if (!hasVerifiedMove) return watchTone("neutral", "今日行情待补", "待更新", changePct, "", 0, updatedAt);
   if (currentStrong) {
-    const badge = currentNamedStrong
+    const badge = hasVerifiedMove
+      ? pctBadge(changePct) || "走强"
+      : currentNamedStrong
       ? strongSignalBadge([...strongSegments(directSegments), namedStrongContext(name, context)]) || pctBadge(changePct) || volumeBadge
       : [pctBadge(changePct), volumeBadge].filter(Boolean).join("/") || "走强";
-    return watchTone("strong", currentNamedStrong ? shortReason(strongSegments([...directSegments, namedStrongContext(name, context)]), "强信号") : "当日大涨", badge, changePct, volumeBadge, 90, updatedAt);
+    const reason = hasVerifiedMove
+      ? "当日走强"
+      : currentNamedStrong
+        ? shortReason(strongSegments([...directSegments, namedStrongContext(name, context)]), "强信号")
+        : "当日大涨";
+    return watchTone("strong", reason, badge, changePct, volumeBadge, 90, updatedAt);
   }
-  if (currentWeak) return watchTone("weak", directRisk || contextRisk ? "硬风险" : pressureReason(directSegments), priceRiskBadge([...directSegments, namedRiskContext(name, context)]) || pressureBadge([...directSegments, namedRiskContext(name, context)]) || pctBadge(changePct), changePct, volumeBadge, 85, updatedAt);
-  if (strongTag && positiveMove) return watchTone("strong", `${strongTag}强线内走强`, [pctBadge(changePct), volumeBadge].filter(Boolean).join("/") || "强线走强", changePct, volumeBadge, 72, updatedAt);
-  if (pressureTag && weakMove) return watchTone("weak", `${pressureTag}承压`, [pctBadge(changePct), volumeBadge].filter(Boolean).join("/") || "方向承压", changePct, volumeBadge, 70, updatedAt);
-  if (positiveMove) return watchTone("strong", directSegments.length ? shortReason(directSegments, "个股走强") : "当日走强", [pctBadge(changePct), volumeBadge].filter(Boolean).join("/") || "上涨", changePct, volumeBadge, 62, updatedAt);
-  if (weakMove) return watchTone("weak", directSegments.length ? shortReason(directSegments, "个股转弱") : "当日转弱", [pctBadge(changePct), volumeBadge].filter(Boolean).join("/") || "下跌", changePct, volumeBadge, 62, updatedAt);
+  if (currentWeak) {
+    const badge = hasVerifiedMove
+      ? pctBadge(changePct) || "走弱"
+      : priceRiskBadge([...directSegments, namedRiskContext(name, context)]) || pressureBadge([...directSegments, namedRiskContext(name, context)]) || pctBadge(changePct);
+    return watchTone("weak", hasVerifiedMove ? "当日走弱" : directRisk || contextRisk ? "硬风险" : pressureReason(directSegments), badge, changePct, volumeBadge, 85, updatedAt);
+  }
+  if (strongTag && positiveMove) return watchTone("strong", `${strongTag}强线内走强`, pctBadge(changePct) || "强线走强", changePct, "", 72, updatedAt);
+  if (pressureTag && weakMove) return watchTone("weak", `${pressureTag}承压`, pctBadge(changePct) || "方向承压", changePct, "", 70, updatedAt);
+  if (positiveMove) return watchTone("strong", directSegments.length ? shortReason(directSegments, "个股走强") : "当日走强", pctBadge(changePct) || "上涨", changePct, "", 62, updatedAt);
+  if (weakMove) return watchTone("weak", directSegments.length ? shortReason(directSegments, "个股转弱") : "当日转弱", pctBadge(changePct) || "下跌", changePct, "", 62, updatedAt);
   if (strongTag) return watchTone("neutral", `${strongTag}主线内待确认`, "主线待确认", changePct, volumeBadge, 50, updatedAt);
   if (pressureTag) return watchTone("neutral", `${pressureTag}方向待确认`, "方向待确认", changePct, volumeBadge, 48, updatedAt);
   if (watchPattern.test(tagText) || directSegments.some(part => hasAnyGain(part))) {
@@ -2042,6 +2071,7 @@ function latestStockChangePct(stock) {
   const currentDate = currentSignalDate();
   const currentAlert = currentDateAlertData(cached("data/alert.json"), currentDate);
   const sources = [
+    cached("data/watchlist-quotes.json"),
     cached("data/postmarket.json"),
     cached("data/intraday.json"),
     cached("data/midday.json"),
@@ -2065,6 +2095,7 @@ function latestStockDataTimestamp(stock) {
   const currentDate = currentSignalDate();
   const currentAlert = currentDateAlertData(cached("data/alert.json"), currentDate);
   const sources = [
+    cached("data/watchlist-quotes.json"),
     cached("data/postmarket.json"),
     cached("data/intraday.json"),
     cached("data/midday.json"),
@@ -2765,7 +2796,6 @@ function renderAlerts(data) {
     ...saved
   ]).sort(alertDisplaySort).slice(0, MAX_ALERTS);
   const monitorNoTrigger = data.source_status === "monitor_live_no_trigger";
-  const monitorClosed = data.source_status === "monitor_session_closed";
 
   renderAlertsSummary(displayAlerts, data.timestamp, null, data);
 
@@ -2779,11 +2809,6 @@ function renderAlerts(data) {
     ? `<div class="alert-monitor-state">
         <span class="badge signal">监控正常</span>
         <div><b>当前暂无短周期规则触发</b><span>下方“全景机会”来自最新盘面解释，不是3分钟异动直接触发。</span></div>
-      </div>`
-    : monitorClosed
-    ? `<div class="alert-monitor-state">
-        <span class="badge watch">今日收盘</span>
-        <div><b>盘中监控已按计划结束</b><span>${escapeHtml(data.note || "今日触发只作收盘复盘，不作为当前交易信号。")}</span></div>
       </div>`
     : "";
   el.innerHTML = monitorState + displayAlerts.map((a, i) => {
@@ -3208,18 +3233,12 @@ function renderAlertsSummary(alerts, timestamp, invalidatedState = null, sourceD
     return;
   }
   if (sourceData?.source_status === "monitor_session_closed") {
+    const triggerCount = Array.isArray(sourceData.alerts) ? sourceData.alerts.length : alerts.length;
+    const triggerText = triggerCount > 0 ? `今日${triggerCount}条触发已转入复盘，` : "";
     el.innerHTML = `
-      <div class="decision-strip alerts-decision">
-        <div class="decision-card neutral">
-          <span class="decision-label">今日盘中监控</span>
-          <b>已按计划收盘</b>
-          <span>今日触发只作复盘，不作为当前信号</span>
-        </div>
-        <div class="decision-card action">
-          <span class="decision-label">下一步</span>
-          <b>等待下一交易日</b>
-          <span>开盘后自动恢复短周期扫描</span>
-        </div>
+      <div class="alert-session-closed">
+        <span class="badge watch">今日收盘</span>
+        <span>盘中监控已结束，${escapeHtml(triggerText)}不再作为当前信号。</span>
       </div>`;
     return;
   }
