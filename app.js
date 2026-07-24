@@ -4703,7 +4703,7 @@ function renderPostmarketSentimentIndicator(indicator) {
 function renderPostmarketDecision(data) {
   const hotspots = Array.isArray(data.hotspots) ? data.hotspots : [];
   const strong = hotspots.find(h => /强/.test(h.status || "")) || hotspots[0];
-  const riskLine = hotspots.find(h => /风险|弱|退潮/.test([h.status, h.risk, h.continuity].join(" ")));
+  const riskLine = hotspots.find(h => /风险|弱|退潮/.test([h.status, h.continuity].join(" ")));
   const patch = data.closing_auction_patch || {};
   const watch = data.next_day_watch || patch.watch_next_day || [];
   const reviewText = data.review?.summary || data.review?.one_sentence || data.index?.summary || "";

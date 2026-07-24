@@ -90,6 +90,9 @@ def fetch_indices() -> List[Dict[str, Any]]:
         value = as_float(fields[3])
         change = as_float(fields[31])
         pct = as_float(fields[32])
+        open_value = as_float(fields[5])
+        high = as_float(fields[33])
+        low = as_float(fields[34])
         amount_raw = as_float(fields[37])
         if value is None or pct is None:
             continue
@@ -101,6 +104,9 @@ def fetch_indices() -> List[Dict[str, Any]]:
                 "change": change,
                 "pct": pct,
                 "change_pct": pct,
+                "open": open_value,
+                "high": high,
+                "low": low,
                 "amount_yi": round(amount_raw / 10000, 2) if amount_raw is not None else None,
                 "status": quote_status(fields[30]),
                 "quote_time": fields[30],

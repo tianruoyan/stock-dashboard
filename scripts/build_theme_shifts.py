@@ -150,7 +150,7 @@ def state_for(theme: str, text: str, evidence: list[str], stocks: list[str], qua
     if quality_degraded:
         score -= 10
 
-    if re.search(r"跌停|退潮|负反馈|压制|证伪|风险线|弱化|明显负反馈", text):
+    if re.search(r"跌停|退潮|负反馈|压制|证伪|风险线|风险观察|风险并存|弱化|明显负反馈", text):
         return "risk", clamp(score), f"{theme} 出现负反馈或风险信号，优先作为风险观察。"
     if re.search(r"抱团|未扩散|不健康|分化|只.*情绪锚|不能.*升级|核心.*未形成一致", text):
         return "crowded", clamp(score), f"{theme} 强点集中但扩散不足，属于抱团/拥挤结构。"
