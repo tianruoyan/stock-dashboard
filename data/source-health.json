@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-07-23T21:49:34+08:00",
+  "timestamp": "2026-07-24T09:37:24+08:00",
   "sources": {
     "tencent_http": {
       "status": "degraded_recovered",
@@ -2657,10 +2657,10 @@
     },
     "tencent_minute_alert_verifier": {
       "status": "ok",
-      "last_check": "2026-07-23T13:50:08+08:00",
+      "last_check": "2026-07-24T09:39:30+08:00",
       "usage": "盘中异动代表股第二行情源交叉验证",
-      "detail": "腾讯分钟行情完成1张异动卡复核：1张一致、0张不一致；不一致卡保持待确认或失效。",
-      "sample_count": 3,
+      "detail": "腾讯分钟行情完成12张异动卡复核：10张一致、2张不一致；不一致卡保持待确认或失效。",
+      "sample_count": 33,
       "errors": []
     },
     "sina_us_close_premarket_0830_20260721": {
@@ -3552,11 +3552,22 @@
       "errors": [
         "美股尚未收盘"
       ]
+    },
+    "local_monitor_intraday_0937": {
+      "status": "degraded_partial",
+      "last_check": "2026-07-24T09:37:24+08:00",
+      "usage": "盘中老登/小登正式提醒、观察池3分钟变化与看板 alert.json 写入依据",
+      "detail": "monitor.log 在09:35:48与09:36:50出现行情源异常 No value to decode；本轮提醒已保留quote_audit，未通过交叉验证的候选仅按candidate或style/risk观察展示，不升级为confirmed。",
+      "sample_count": 19,
+      "errors": [
+        "09:35:48 行情源异常: No value to decode",
+        "09:36:50 行情源异常: No value to decode"
+      ]
     }
   },
   "last_publish_attempt": "pending_20260717_0830_premarket_publish",
   "status": "degraded_noncritical",
-  "last_error": "巨潮分页实取较接口报告少2条；美股仍处早盘，AMD/Intel结果尚未落地，均待8:30增量复核。",
+  "last_error": "未取得可交叉验证的7月24日韩早盘科技股快照；港股正式开盘在A股9:25时点尚未发生。两项均标记缺失，未编造。",
   "tencent_a_close_postmarket_20260716": {
     "status": "ok",
     "last_check": "2026-07-16T15:18:57+08:00",
@@ -3736,8 +3747,8 @@
     "sample_count": 15,
     "errors": []
   },
-  "overall_status": "ok_with_noncritical_fallbacks",
-  "last_codex_note": "20:00晚间全量扫描已按实际采集时间补产：公告、官方IR、政策和美股早盘均写明证据与缺口。",
+  "overall_status": "degraded_noncritical",
+  "last_codex_note": "9:25集合竞价在宽限期内补产；只使用固定开盘价和当日精确涨跌停价，不将09:30后的连续竞价价格倒填为竞价。",
   "eastmoney_structure_pools_intraday_1000_20260717": {
     "status": "ok",
     "last_check": "2026-07-17T10:02:40+08:00",
@@ -4255,5 +4266,46 @@
     "errors": [
       "美股尚未收盘"
     ]
+  },
+  "tencent_index_auction_20260724": {
+    "status": "ok",
+    "last_check": "2026-07-24T09:27:18+08:00",
+    "market_data_as_of": "2026-07-24T09:25:06+08:00",
+    "usage": "上证、深成指、创业板、科创50、沪深300开盘价及竞价成交估算。",
+    "sample_count": 5,
+    "errors": []
+  },
+  "tencent_all_a_open_auction_20260724": {
+    "status": "ok",
+    "last_check": "2026-07-24T09:30:29+08:00",
+    "usage": "腾讯全A固定开盘价与当日精确涨跌停价；计算开盘涨停8家、跌停1家。",
+    "detail": "静态证券5531只，5517只取得有效固定开盘价。采集跨过09:30但未使用连续竞价现价。",
+    "sample_count": 5517,
+    "errors": []
+  },
+  "official_overseas_increment_20260724": {
+    "status": "ok",
+    "last_check": "2026-07-24T09:35:30+08:00",
+    "usage": "Intel Q2财报与扩产、AMD MI455X、Tesla Q2及美股正式收盘影响映射。",
+    "sample_count": 4,
+    "errors": []
+  },
+  "japan_korea_early_20260724": {
+    "status": "degraded",
+    "last_check": "2026-07-24T09:35:30+08:00",
+    "usage": "日韩早盘科技链交叉验证。",
+    "detail": "未取得当日可交叉验证快照，保留缺失，不使用旧闻或搜索摘要替代。",
+    "sample_count": 0,
+    "errors": [
+      "current_day_verified_snapshot_unavailable"
+    ]
+  },
+  "hk_auction_20260724": {
+    "status": "not_applicable_at_timestamp",
+    "last_check": "2026-07-24T09:25:00+08:00",
+    "usage": "A股9:25集合竞价跨市场校验。",
+    "detail": "港股正式开盘尚未发生；只保留7月23日收盘背景，不倒填09:30后的港股价格。",
+    "sample_count": 0,
+    "errors": []
   }
 }

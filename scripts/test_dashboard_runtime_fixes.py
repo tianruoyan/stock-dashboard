@@ -40,6 +40,19 @@ class DashboardRuntimeFixTests(unittest.TestCase):
         }
         self.assertTrue(structured_candidate_evidence_valid(item, "risk"))
 
+    def test_structured_style_candidate_accepts_verified_board_move(self) -> None:
+        item = {
+            "quote_audit": {
+                "board_3m_change_pct": 2.4,
+                "sanity_checks": {
+                    "price_move_valid": True,
+                    "volume_valid": True,
+                    "direction_ratio_valid": True,
+                },
+            }
+        }
+        self.assertTrue(structured_candidate_evidence_valid(item, "style"))
+
     def test_expired_weak_candidate_is_review_not_trading_blocker(self) -> None:
         item = {
             "time": "2026-07-20T10:00:00+08:00",

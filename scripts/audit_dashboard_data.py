@@ -735,6 +735,8 @@ def structured_candidate_evidence_valid(item: dict[str, Any], alert_class: str) 
         return any(value >= 1.0 for value in board_moves)
     if alert_class == "risk":
         return any(value <= -1.0 for value in board_moves)
+    if alert_class == "style":
+        return any(abs(value) >= 1.0 for value in board_moves)
     return False
 
 
