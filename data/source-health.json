@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-07-24T09:37:24+08:00",
+  "timestamp": "2026-07-24T09:50:26+08:00",
   "sources": {
     "tencent_http": {
       "status": "degraded_recovered",
@@ -3563,11 +3563,41 @@
         "09:35:48 行情源异常: No value to decode",
         "09:36:50 行情源异常: No value to decode"
       ]
+    },
+    "tencent_index_intraday_0950_20260724": {
+      "status": "ok",
+      "checked_at": "2026-07-24T09:50:26+08:00",
+      "market_time": "2026-07-24 09:43:27-09:43:30 CST",
+      "evidence": "五只主要指数和成交额字段有效。"
+    },
+    "eastmoney_structure_pools_intraday_0950_20260724": {
+      "status": "ok",
+      "checked_at": "2026-07-24T09:50:26+08:00",
+      "market_time": "2026-07-24 09:46:42-09:47:16 CST",
+      "evidence": "涨停21、跌停1、炸板1；结构池串行限流。"
+    },
+    "tencent_focus_quotes_intraday_0950_20260724": {
+      "status": "ok",
+      "checked_at": "2026-07-24T09:50:26+08:00",
+      "market_time": "2026-07-24 09:48:16 CST",
+      "evidence": "配置观察池与各专项代表股报价有效。"
+    },
+    "tencent_hk_intraday_0950_20260724": {
+      "status": "ok",
+      "checked_at": "2026-07-24T09:50:26+08:00",
+      "market_time": "2026-07-24 09:47 CST附近",
+      "evidence": "恒指、恒科、半导体及互联网AI代表股报价有效。"
+    },
+    "concept_ranking_intraday_0950_20260724": {
+      "status": "degraded",
+      "checked_at": "2026-07-24T09:50:26+08:00",
+      "market_time": "2026-07-24 09:50 CST",
+      "evidence": "概念指数全榜未取得，未编造。"
     }
   },
   "last_publish_attempt": "pending_20260717_0830_premarket_publish",
   "status": "degraded_noncritical",
-  "last_error": "未取得可交叉验证的7月24日韩早盘科技股快照；港股正式开盘在A股9:25时点尚未发生。两项均标记缺失，未编造。",
+  "last_error": "当日韩早盘科技链快照和概念指数全榜仍未取得；HBM与封装候选信号存在源间方向不一致，均未用于确认或主线升级。",
   "tencent_a_close_postmarket_20260716": {
     "status": "ok",
     "last_check": "2026-07-16T15:18:57+08:00",
@@ -3748,7 +3778,7 @@
     "errors": []
   },
   "overall_status": "degraded_noncritical",
-  "last_codex_note": "9:25集合竞价在宽限期内补产；只使用固定开盘价和当日精确涨跌停价，不将09:30后的连续竞价价格倒填为竞价。",
+  "last_codex_note": "09:50非整点重大反转补产：涨跌停结构池、A股/港股代表报价与指数成交均可核验；竞价结论仅上修为科技局部修复，不回写历史时点。",
   "eastmoney_structure_pools_intraday_1000_20260717": {
     "status": "ok",
     "last_check": "2026-07-17T10:02:40+08:00",
@@ -4307,5 +4337,35 @@
     "detail": "港股正式开盘尚未发生；只保留7月23日收盘背景，不倒填09:30后的港股价格。",
     "sample_count": 0,
     "errors": []
+  },
+  "tencent_index_intraday_0950_20260724": {
+    "status": "ok",
+    "checked_at": "2026-07-24T09:50:26+08:00",
+    "market_time": "2026-07-24 09:43:27-09:43:30 CST",
+    "evidence": "上证、深成、创业板、科创50、沪深300及成交额字段返回有效；科创50+0.12%，其余主要指数仍跌。"
+  },
+  "eastmoney_structure_pools_intraday_0950_20260724": {
+    "status": "ok",
+    "checked_at": "2026-07-24T09:50:26+08:00",
+    "market_time": "2026-07-24 09:46:42-09:47:16 CST",
+    "evidence": "涨停21、跌停1、炸板1；结构池按约15至20秒间隔串行采集，未用于全市场高频轮询。"
+  },
+  "tencent_focus_quotes_intraday_0950_20260724": {
+    "status": "ok",
+    "checked_at": "2026-07-24T09:50:26+08:00",
+    "market_time": "2026-07-24 09:48:16 CST",
+    "evidence": "配置观察池、半导体五只及同行、存储、AI算力、电子布/PCB和风格雷达代表股报价返回有效。"
+  },
+  "tencent_hk_intraday_0950_20260724": {
+    "status": "ok",
+    "checked_at": "2026-07-24T09:50:26+08:00",
+    "market_time": "2026-07-24 09:47 CST附近",
+    "evidence": "恒指-1.03%、恒生科技-1.20%；中芯H+1.27%、华虹+0.13%，平台互联网与商汤偏弱。"
+  },
+  "concept_ranking_intraday_0950_20260724": {
+    "status": "degraded",
+    "checked_at": "2026-07-24T09:50:26+08:00",
+    "market_time": "2026-07-24 09:50 CST",
+    "evidence": "概念指数全榜未取得；主线分级使用涨停/跌停/炸板行业分布、指数联动及代表股交叉证据，未编造概念排名。"
   }
 }
