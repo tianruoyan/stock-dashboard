@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-07-24T10:36:03+08:00",
+  "timestamp": "2026-07-24T11:05:30+08:00",
   "sources": {
     "tencent_http": {
       "status": "degraded_recovered",
@@ -3668,6 +3668,70 @@
       "checked_at": "2026-07-24T10:36:03+08:00",
       "market_time": "最近快照为2026-07-23收盘",
       "evidence": "旧快照只作历史背景，未用于当前行动。"
+    },
+    "tencent_a_quote_intraday_1100_20260724": {
+      "status": "ok",
+      "checked_at": "2026-07-24T11:05:30+08:00",
+      "market_time": "2026-07-24 11:02:54-11:03:46 CST",
+      "evidence": "5只A股指数、98个行业及交换机/半导体/电子布/PCB/风格雷达代表股可核验；沪深成交额估算11023.26亿元。",
+      "sample_count": 100,
+      "errors": []
+    },
+    "eastmoney_structure_pools_intraday_1100_20260724": {
+      "status": "ok",
+      "checked_at": "2026-07-24T11:05:30+08:00",
+      "market_time": "2026-07-24 11:00-11:04 CST",
+      "evidence": "串行取得涨停29、跌停3、炸板8；最高7板、3只20cm涨停，交换机7只核心无封板。",
+      "sample_count": 40,
+      "rate_limit": "三类结构池串行采集并执行随机抖动。",
+      "errors": []
+    },
+    "tencent_hk_quote_intraday_1100_20260724": {
+      "status": "degraded_delayed_single_source",
+      "checked_at": "2026-07-24T11:05:30+08:00",
+      "market_time": "指数约11:03，个股约10:48 HKT",
+      "evidence": "恒指-1.42%、恒科-2.08%；港股半导体选择性红盘，但个股免费行情约延迟15分钟且缺少第二实时源。",
+      "sample_count": 10,
+      "errors": [
+        "港股个股免费快照约延迟15分钟",
+        "缺少第二实时源交叉核验"
+      ]
+    },
+    "concept_ranking_intraday_1100_20260724": {
+      "status": "degraded",
+      "checked_at": "2026-07-24T11:05:30+08:00",
+      "market_time": "2026-07-24 11:05 CST",
+      "evidence": "未取得可靠概念指数全榜；使用涨停/跌停/炸板行业分布、腾讯行业排名和代表股归因，不编造概念名次。",
+      "sample_count": 0,
+      "errors": [
+        "可靠概念指数全榜缺失"
+      ]
+    },
+    "japan_korea_intraday_1100_20260724": {
+      "status": "degraded",
+      "checked_at": "2026-07-24T11:05:30+08:00",
+      "evidence": "本轮未取得可交叉验证的韩国科技链当前快照，不使用旧行情代替。",
+      "sample_count": 0,
+      "errors": [
+        "current_day_verified_korea_snapshot_unavailable"
+      ]
+    },
+    "overseas_switch_anchors_intraday_1100_20260724": {
+      "status": "degraded_missing_current_sync",
+      "checked_at": "2026-07-24T11:05:30+08:00",
+      "evidence": "Arista、Cisco、Broadcom、Marvell及NVIDIA Spectrum-X本轮无当前同步实时报价；仅保留产业锚，不据旧快照推导A股订单。",
+      "sample_count": 0,
+      "errors": [
+        "current_sync_quotes_unavailable"
+      ]
+    },
+    "v2_governed_context_intraday_1100_20260724": {
+      "status": "background_only",
+      "checked_at": "2026-07-24T11:05:30+08:00",
+      "market_time": "最近快照为2026-07-23收盘",
+      "evidence": "V2受治理快照不是当前交易日检查点，只用于历史背景，未作为现价或主行动依据。",
+      "sample_count": 0,
+      "errors": []
     }
   },
   "last_publish_attempt": "pending_20260717_0830_premarket_publish",
