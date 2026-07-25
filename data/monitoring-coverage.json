@@ -1,98 +1,14 @@
 {
-  "timestamp": "2026-07-24T17:47:00+08:00",
-  "current_signal_date": "2026-07-24",
+  "timestamp": "2026-07-25T11:12:00+08:00",
+  "current_signal_date": "2026-07-25",
   "overall_status": "degraded",
-  "summary": "6 个监测维度需降权，1 个背景维度需复核。",
+  "summary": "2 个监测维度需降权，1 个背景维度需复核。",
   "counts": {
     "critical": 0,
-    "warning": 6,
+    "warning": 2,
     "info": 1
   },
   "blind_spots": [
-    {
-      "id": "intraday-alert-degraded",
-      "title": "盘中异动触发降权",
-      "severity": "warning",
-      "conclusion": "异动信号可参考，但触发价格/涨跌幅需要二次核验。",
-      "impacted_decisions": [
-        "交易信号不能直接执行",
-        "同题材连续触发需要看原始行情源确认"
-      ],
-      "evidence": [
-        "行情污染源仍降级，历史 alert 未交叉验证，只降权复盘参考；A股补充行情源解码异常，盘中异动和个股涨跌幅需以已审计源复核。；港股结构行情源连接/解码异常，港股映射和收盘窗口价格需二次复核。"
-      ],
-      "fallback_action": "只把 alert 当成线索，必须结合指数、板块宽度和个股原始报价确认。",
-      "fallback_checks": [
-        "宽度替代：9:25/9:30先看涨停40、跌停24、炸板11、跌5%以上696是否收敛；不收敛则风险优先。",
-        "主线替代：汽车零部件 看 建设工业/湖南天雁/东安动力 是否同步高开承接，单点强不升级。",
-        "新线替代：从行业与题材涨幅、成交和涨停新增中寻找首次扩散方向；没有宽度不升级。",
-        "风险线替代：半导体设备/材料/封装 看 光力科技/中船特气/至纯科技/通富微电 是否继续低开或弱反抽；未修复前不升级。",
-        "风险线替代：电网设备/电力 看 长缆科技/顺钠股份/立新能源 是否继续低开或弱反抽；未修复前不升级。",
-        "风险线替代：AI算力/CPO 看 工业富联/中际旭创/新易盛/天孚通信 是否继续低开或弱反抽；未修复前不升级。"
-      ],
-      "source_files": [
-        "data/alert.json",
-        "data/data-trust.json"
-      ]
-    },
-    {
-      "id": "intraday-structure-degraded",
-      "title": "盘中结构降权",
-      "severity": "warning",
-      "conclusion": "盘面宽度、行业/概念强弱和午后建议可看，但实时涨跌幅需复核。",
-      "impacted_decisions": [
-        "强主线不能直接外推为进攻",
-        "机会候选只能等待确认",
-        "风险项优先级高于机会项"
-      ],
-      "evidence": [
-        "A股补充行情源解码异常，盘中异动和个股涨跌幅需以已审计源复核。；港股结构行情源连接/解码异常，港股映射和收盘窗口价格需二次复核。"
-      ],
-      "fallback_action": "优先看涨跌停/炸板/尾盘承接等结构证据，不用单个涨跌幅做结论。",
-      "fallback_checks": [],
-      "source_files": [
-        "data/intraday.json",
-        "data/data-trust.json"
-      ]
-    },
-    {
-      "id": "premarket-cross-market-degraded",
-      "title": "盘前外部映射降权",
-      "severity": "warning",
-      "conclusion": "美股/港股/日韩映射可以提供方向，但部分实时外部源非终值或需复核。",
-      "impacted_decisions": [
-        "盘前提振/压制判断不能单独作为开盘动作",
-        "科技映射链需要9:25竞价和9:30后承接确认"
-      ],
-      "evidence": [
-        "us_overnight.mapping_chain[1] change_pct 非数字：AMD -2.27%、英伟达 -1.53%、博通 -1.06%，该字段忽略并降权；A股补充行情源解码异常，盘中异动和个股涨跌幅需以已审计源复核。；港股结构行情源连接/解码异常，港股映射和收盘窗口价格需二次复核。"
-      ],
-      "fallback_action": "开盘只按竞价确认后的 A 股反馈升级，不把外盘映射直接升为强主线。",
-      "fallback_checks": [],
-      "source_files": [
-        "data/premarket.json",
-        "data/source-health.json"
-      ]
-    },
-    {
-      "id": "postmarket-close-degraded",
-      "title": "盘后复盘降权",
-      "severity": "warning",
-      "conclusion": "收盘复盘可参考，但港股收盘窗口和部分补充行情源需要复核。",
-      "impacted_decisions": [
-        "次日方向只作为预案",
-        "需等待次日竞价验证"
-      ],
-      "evidence": [
-        "A股补充行情源解码异常，盘中异动和个股涨跌幅需以已审计源复核。；港股结构行情源连接/解码异常，港股映射和收盘窗口价格需二次复核。"
-      ],
-      "fallback_action": "把盘后结论拆成次日验证条件，不直接继承为次日交易方向。",
-      "fallback_checks": [],
-      "source_files": [
-        "data/postmarket.json",
-        "data/source-health.json"
-      ]
-    },
     {
       "id": "evening-sentiment-stale",
       "title": "晚间舆情过期",
@@ -121,7 +37,7 @@
         "风险栏优先级高于机会栏"
       ],
       "evidence": [
-        "发现 117 个降级/需复核项（117 个价格/行情复核，1 个背景复核），核心结论可看但必须按影响分层使用。"
+        "发现 128 个降级/需复核项（118 个价格/行情复核，11 个背景复核），核心结论可看但必须按影响分层使用。"
       ],
       "fallback_action": "只跟踪验证条件；若风险项不收敛，不升级任何机会。",
       "fallback_checks": [],
