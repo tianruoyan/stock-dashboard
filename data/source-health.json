@@ -1,15 +1,13 @@
 {
-  "timestamp": "2026-07-27T09:46:00+08:00",
+  "timestamp": "2026-07-27T11:36:30+08:00",
   "sources": {
     "tencent_http": {
-      "status": "degraded_recovered",
-      "last_check": "2026-07-22T13:56:22+08:00",
-      "usage": "午后指数、行业和A/H重点样本",
-      "detail": "13:00后曾出现DNS/网络失败；13:23恢复，13:55取得5个指数、98个行业及重点样本有效报价。未回填错过的历史时点。",
+      "status": "ok",
+      "last_check": "2026-07-27T11:36:30+08:00",
+      "usage": "11:30 A/H指数、行业和重点样本午间快照",
+      "detail": "取得5个A股指数、恒指/恒科、98个行业及专项样本有效报价；A股真实行情时点11:30:03，11:35采集。",
       "sample_count": 98,
-      "errors": [
-        "13:00-13:23 qt.gtimg.cn DNS解析失败，随后恢复"
-      ]
+      "errors": []
     },
     "eastmoney_push2_akshare": {
       "status": "ok",
@@ -3841,6 +3839,17 @@
       "detail": "服务状态为数据正常，未回填错过的历史盘中时点。",
       "sample_count": 1,
       "errors": []
+    },
+    "eastmoney_limit_pool_midday_20260727": {
+      "status": "degraded_recovered",
+      "last_check": "2026-07-27T11:36:30+08:00",
+      "usage": "11:30涨停、跌停、炸板结构池及行业分布",
+      "detail": "push2ex直连接口首次返回data=null、rc=205；等待并改用akshare同源接口后完整取得涨停69、跌停3、炸板17。午盘采用恢复后的11:30结果，未沿用11:05历史快照。",
+      "sample_count": 89,
+      "errors": [
+        "push2ex direct first attempt: rc=205, data=null",
+        "recovered through akshare Eastmoney wrapper"
+      ]
     }
   },
   "last_publish_attempt": "pending_20260717_0830_premarket_publish",
