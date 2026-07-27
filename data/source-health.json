@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-07-27T09:21:00+08:00",
+  "timestamp": "2026-07-27T09:31:00+08:00",
   "sources": {
     "tencent_http": {
       "status": "degraded_recovered",
@@ -3775,6 +3775,40 @@
       "detail": "AP确认芯片股拖累纳指；Intel官方确认Q2数据和资本开支方向；Intel Newsroom确认与蓝思科技的先进封装合作。",
       "sample_count": 3,
       "errors": []
+    },
+    "sina_all_a_universe_auction_20260727": {
+      "status": "ok",
+      "last_check": "2026-07-27T09:30:00+08:00",
+      "usage": "A股全量证券代码与固定开盘价候选列表",
+      "detail": "分60页取5532只去重证券；用于生成腾讯分批查询代码和交叉检查。",
+      "sample_count": 5532,
+      "errors": []
+    },
+    "tencent_all_a_open_auction_20260727": {
+      "status": "ok",
+      "last_check": "2026-07-27T09:31:00+08:00",
+      "usage": "9:25固定开盘价、精确涨跌停价和竞价情绪统计",
+      "detail": "腾讯分批返回5500只有效开盘价与涨跌停价；剔除3只N/C无涨跌幅限制新股后，5497只分母内开盘涨停4家、跌停10家。采集跨过09:30，但统计只使用固定open字段与当日精确涨跌停价，未用连续竞价现价代替9:25。",
+      "sample_count": 5497,
+      "errors": []
+    },
+    "tencent_index_auction_20260727": {
+      "status": "ok",
+      "last_check": "2026-07-27T09:27:00+08:00",
+      "usage": "A股五大指数开盘涨跌与竞价金额",
+      "detail": "上证-0.14%、深成-0.04%、创业板+0.03%、科创50 -0.36%、沪深300 +0.15%；沪深两市竞价金额字段合计约320.87亿元。",
+      "sample_count": 5,
+      "errors": []
+    },
+    "eastmoney_all_a_auction_20260727": {
+      "status": "failed_nonblocking",
+      "last_check": "2026-07-27T09:27:00+08:00",
+      "usage": "全A候选列表交叉源",
+      "detail": "push2 clist全A请求返回Empty reply from server，本轮未采用东财全A数据；改用新浪代码列表+腾讯精确开盘价/涨跌停价。",
+      "sample_count": 0,
+      "errors": [
+        "curl: (52) Empty reply from server"
+      ]
     }
   },
   "last_publish_attempt": "pending_20260717_0830_premarket_publish",
