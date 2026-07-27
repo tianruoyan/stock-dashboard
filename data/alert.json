@@ -1,6 +1,6 @@
 {
-  "timestamp": "2026-07-27T09:38:07+08:00",
-  "source_status": "degraded_partial",
+  "timestamp": "2026-07-27T09:39:07+08:00",
+  "source_status": "monitor_live",
   "alerts": [
     {
       "id": "monitor-20260727-093111-2da7ffd9ebdc",
@@ -104,7 +104,7 @@
           "verifier_version": "futu-opend-2026-07-27.1"
         }
       },
-      "source_status": "degraded_partial",
+      "source_status": "monitor_live_unverified",
       "valid_until": "2026-07-27T09:36:11+08:00",
       "trigger_rule": "小登底池回落预警：板块行情缺失时，底池3分钟平均跌幅≥1.0%，下跌占比≥60%，且成交放大≥5x",
       "alert_class": "risk",
@@ -153,7 +153,7 @@
           ]
         }
       ],
-      "signal_type": "🎯交易信号",
+      "signal_type": "机会观察",
       "is_old_economy": false,
       "source_watch_id": "液冷",
       "quote_audit": {
@@ -214,7 +214,7 @@
           "verifier_version": "futu-opend-2026-07-27.1"
         }
       },
-      "source_status": "degraded_partial",
+      "source_status": "monitor_live_unverified",
       "valid_until": "2026-07-27T09:36:11+08:00",
       "trigger_rule": "小登底池扩散预警：板块行情缺失时，底池3分钟平均涨幅≥1.0%，上涨占比≥60%，成交放大≥8x，且至少2只样本明显推进",
       "alert_class": "opportunity",
@@ -315,7 +315,7 @@
           "verifier_version": "futu-opend-2026-07-27.1"
         }
       },
-      "source_status": "degraded_partial",
+      "source_status": "monitor_live_unverified",
       "valid_until": "2026-07-27T09:36:11+08:00",
       "trigger_rule": "小登底池回落预警：板块行情缺失时，底池3分钟平均跌幅≥1.0%，下跌占比≥60%，且成交放大≥5x",
       "alert_class": "risk",
@@ -425,7 +425,7 @@
           "verifier_version": "futu-opend-2026-07-27.1"
         }
       },
-      "source_status": "degraded_partial",
+      "source_status": "monitor_live_unverified",
       "valid_until": "2026-07-27T09:36:11+08:00",
       "trigger_rule": "小登底池回落预警：板块行情缺失时，底池3分钟平均跌幅≥1.0%，下跌占比≥60%，且成交放大≥5x",
       "alert_class": "risk",
@@ -474,7 +474,7 @@
           ]
         }
       ],
-      "signal_type": "🎯交易信号",
+      "signal_type": "机会观察",
       "is_old_economy": false,
       "source_watch_id": "电子布",
       "quote_audit": {
@@ -546,7 +546,7 @@
           "verifier_version": "futu-opend-2026-07-27.1"
         }
       },
-      "source_status": "degraded_partial",
+      "source_status": "monitor_live_unverified",
       "valid_until": "2026-07-27T09:38:36+08:00",
       "trigger_rule": "小登底池扩散预警：板块行情缺失时，底池3分钟平均涨幅≥1.0%，上涨占比≥60%，成交放大≥8x，且至少2只样本明显推进",
       "alert_class": "opportunity",
@@ -667,7 +667,7 @@
           "verifier_version": "futu-opend-2026-07-27.1"
         }
       },
-      "source_status": "degraded_partial",
+      "source_status": "monitor_live_unverified",
       "valid_until": "2026-07-27T09:40:55+08:00",
       "trigger_rule": "风格杀：同一风格≥3个板块5分钟内同向急跌≥2%",
       "alert_class": "style",
@@ -737,16 +737,56 @@
         "missing_confirmation": "等待腾讯分钟行情交叉核验；通过前只作候选或观察，不作为确认交易信号。",
         "secondary_source": "富途分钟行情",
         "secondary_verification": {
-          "state": "pending",
-          "checked_at": "2026-07-27T09:38:27+08:00",
+          "state": "mismatch",
+          "checked_at": "2026-07-27T09:39:10+08:00",
           "source": "富途分钟行情",
-          "reason": "等待触发分钟行情完整落盘。",
-          "representatives": [],
+          "reason": "富途分钟行情与监控源存在明显差异，维持待确认/失效。",
+          "representatives": [
+            {
+              "股票": "共进股份",
+              "代码": "603118.SH",
+              "监控涨跌幅": -5.9053,
+              "富途涨跌幅": -6.6191,
+              "腾讯涨跌幅": -6.6191,
+              "起始分钟": "0934",
+              "结束分钟": "0937",
+              "方向一致": true,
+              "幅度一致": false,
+              "允许误差": 0.15
+            },
+            {
+              "股票": "菲菱科思",
+              "代码": "301191.SZ",
+              "监控涨跌幅": -4.323,
+              "富途涨跌幅": -3.0177,
+              "腾讯涨跌幅": -3.0177,
+              "起始分钟": "0934",
+              "结束分钟": "0937",
+              "方向一致": true,
+              "幅度一致": false,
+              "允许误差": 0.15
+            },
+            {
+              "股票": "锐捷网络",
+              "代码": "301165.SZ",
+              "监控涨跌幅": -2.7312,
+              "富途涨跌幅": -2.3699,
+              "腾讯涨跌幅": -2.3699,
+              "起始分钟": "0934",
+              "结束分钟": "0937",
+              "方向一致": true,
+              "幅度一致": false,
+              "允许误差": 0.15
+            }
+          ],
+          "window_minutes": 3,
+          "direction_agreement_ratio": 1.0,
+          "magnitude_agreement_ratio": 0.0,
           "fingerprint": "9b1b643aa4caf6be50bb",
           "verifier_version": "futu-opend-2026-07-27.1"
         }
       },
-      "source_status": "degraded_partial",
+      "source_status": "monitor_live_unverified",
       "valid_until": "2026-07-27T09:42:13+08:00",
       "trigger_rule": "小登股异动：3分钟平均跌幅≥1.5%，下跌占比≥70%，且成交放大≥5x；小登底池回落预警：板块行情缺失时，底池3分钟平均跌幅≥1.0%，下跌占比≥60%，且成交放大≥5x",
       "alert_class": "risk",
@@ -818,16 +858,56 @@
         "missing_confirmation": "等待腾讯分钟行情交叉核验；通过前只作候选或观察，不作为确认交易信号。",
         "secondary_source": "富途分钟行情",
         "secondary_verification": {
-          "state": "pending",
-          "checked_at": "2026-07-27T09:38:27+08:00",
+          "state": "mismatch",
+          "checked_at": "2026-07-27T09:39:10+08:00",
           "source": "富途分钟行情",
-          "reason": "等待触发分钟行情完整落盘。",
-          "representatives": [],
+          "reason": "富途分钟行情与监控源存在明显差异，维持待确认/失效。",
+          "representatives": [
+            {
+              "股票": "兆易创新",
+              "代码": "603986.SH",
+              "监控涨跌幅": -3.0731,
+              "富途涨跌幅": -3.0445,
+              "腾讯涨跌幅": -3.0445,
+              "起始分钟": "0934",
+              "结束分钟": "0937",
+              "方向一致": true,
+              "幅度一致": true,
+              "允许误差": 0.15
+            },
+            {
+              "股票": "澜起科技",
+              "代码": "688008.SH",
+              "监控涨跌幅": -3.4113,
+              "富途涨跌幅": -2.6073,
+              "腾讯涨跌幅": -2.6073,
+              "起始分钟": "0934",
+              "结束分钟": "0937",
+              "方向一致": true,
+              "幅度一致": false,
+              "允许误差": 0.15
+            },
+            {
+              "股票": "华海清科",
+              "代码": "688120.SH",
+              "监控涨跌幅": -2.519,
+              "富途涨跌幅": -3.0949,
+              "腾讯涨跌幅": -3.2722,
+              "起始分钟": "0934",
+              "结束分钟": "0937",
+              "方向一致": true,
+              "幅度一致": false,
+              "允许误差": 0.15
+            }
+          ],
+          "window_minutes": 3,
+          "direction_agreement_ratio": 1.0,
+          "magnitude_agreement_ratio": 0.3333,
           "fingerprint": "b4aa3e96f724f184b911",
           "verifier_version": "futu-opend-2026-07-27.1"
         }
       },
-      "source_status": "degraded_partial",
+      "source_status": "monitor_live_unverified",
       "valid_until": "2026-07-27T09:42:13+08:00",
       "trigger_rule": "小登股异动：3分钟平均跌幅≥1.5%，下跌占比≥70%，且成交放大≥5x；小登底池回落预警：板块行情缺失时，底池3分钟平均跌幅≥1.0%，下跌占比≥60%，且成交放大≥5x",
       "alert_class": "risk",
@@ -888,16 +968,44 @@
         "missing_confirmation": "等待腾讯分钟行情交叉核验；通过前只作候选或观察，不作为确认交易信号。",
         "secondary_source": "富途分钟行情",
         "secondary_verification": {
-          "state": "pending",
-          "checked_at": "2026-07-27T09:38:27+08:00",
+          "state": "mismatch",
+          "checked_at": "2026-07-27T09:39:10+08:00",
           "source": "富途分钟行情",
-          "reason": "等待触发分钟行情完整落盘。",
-          "representatives": [],
+          "reason": "富途分钟行情与监控源存在明显差异，维持待确认/失效。",
+          "representatives": [
+            {
+              "股票": "北方华创",
+              "代码": "002371.SZ",
+              "监控涨跌幅": -2.0545,
+              "富途涨跌幅": -2.8913,
+              "腾讯涨跌幅": -2.8913,
+              "起始分钟": "0934",
+              "结束分钟": "0937",
+              "方向一致": true,
+              "幅度一致": false,
+              "允许误差": 0.15
+            },
+            {
+              "股票": "中微公司",
+              "代码": "688012.SH",
+              "监控涨跌幅": -1.2317,
+              "富途涨跌幅": -1.0439,
+              "腾讯涨跌幅": -1.0439,
+              "起始分钟": "0934",
+              "结束分钟": "0937",
+              "方向一致": true,
+              "幅度一致": false,
+              "允许误差": 0.15
+            }
+          ],
+          "window_minutes": 3,
+          "direction_agreement_ratio": 1.0,
+          "magnitude_agreement_ratio": 0.0,
           "fingerprint": "973323e2b8234f1887db",
           "verifier_version": "futu-opend-2026-07-27.1"
         }
       },
-      "source_status": "degraded_partial",
+      "source_status": "monitor_live_unverified",
       "valid_until": "2026-07-27T09:42:13+08:00",
       "trigger_rule": "小登股异动：3分钟平均跌幅≥1.5%，下跌占比≥70%，且成交放大≥5x；小登底池回落预警：板块行情缺失时，底池3分钟平均跌幅≥1.0%，下跌占比≥60%，且成交放大≥5x",
       "alert_class": "risk",
@@ -969,16 +1077,56 @@
         "missing_confirmation": "等待腾讯分钟行情交叉核验；通过前只作候选或观察，不作为确认交易信号。",
         "secondary_source": "富途分钟行情",
         "secondary_verification": {
-          "state": "pending",
-          "checked_at": "2026-07-27T09:38:27+08:00",
+          "state": "mismatch",
+          "checked_at": "2026-07-27T09:39:10+08:00",
           "source": "富途分钟行情",
-          "reason": "等待触发分钟行情完整落盘。",
-          "representatives": [],
+          "reason": "富途分钟行情与监控源存在明显差异，维持待确认/失效。",
+          "representatives": [
+            {
+              "股票": "华海清科",
+              "代码": "688120.SH",
+              "监控涨跌幅": -2.519,
+              "富途涨跌幅": -3.0949,
+              "腾讯涨跌幅": -3.2722,
+              "起始分钟": "0934",
+              "结束分钟": "0937",
+              "方向一致": true,
+              "幅度一致": false,
+              "允许误差": 0.15
+            },
+            {
+              "股票": "安集科技",
+              "代码": "688019.SH",
+              "监控涨跌幅": -3.1663,
+              "富途涨跌幅": -3.0042,
+              "腾讯涨跌幅": -3.0042,
+              "起始分钟": "0934",
+              "结束分钟": "0937",
+              "方向一致": true,
+              "幅度一致": false,
+              "允许误差": 0.15
+            },
+            {
+              "股票": "江丰电子",
+              "代码": "300666.SZ",
+              "监控涨跌幅": -2.1242,
+              "富途涨跌幅": -2.942,
+              "腾讯涨跌幅": -2.942,
+              "起始分钟": "0934",
+              "结束分钟": "0937",
+              "方向一致": true,
+              "幅度一致": false,
+              "允许误差": 0.15
+            }
+          ],
+          "window_minutes": 3,
+          "direction_agreement_ratio": 1.0,
+          "magnitude_agreement_ratio": 0.0,
           "fingerprint": "81f01b4b8266399b93e1",
           "verifier_version": "futu-opend-2026-07-27.1"
         }
       },
-      "source_status": "degraded_partial",
+      "source_status": "monitor_live_unverified",
       "valid_until": "2026-07-27T09:42:13+08:00",
       "trigger_rule": "小登股异动：3分钟平均跌幅≥1.5%，下跌占比≥70%，且成交放大≥5x；小登底池回落预警：板块行情缺失时，底池3分钟平均跌幅≥1.0%，下跌占比≥60%，且成交放大≥5x",
       "alert_class": "risk",
@@ -1037,7 +1185,7 @@
         "sample_count": 3,
         "max_abs_leader_change_pct": 2.4436,
         "sanity_checks": {
-          "cross_source_verified": false,
+          "cross_source_verified": true,
           "price_move_valid": true,
           "volume_valid": true,
           "direction_ratio_valid": true,
@@ -1050,16 +1198,56 @@
         "missing_confirmation": "等待腾讯分钟行情交叉核验；通过前只作候选或观察，不作为确认交易信号。",
         "secondary_source": "富途分钟行情",
         "secondary_verification": {
-          "state": "pending",
-          "checked_at": "2026-07-27T09:38:27+08:00",
+          "state": "passed",
+          "checked_at": "2026-07-27T09:39:10+08:00",
           "source": "富途分钟行情",
-          "reason": "等待触发分钟行情完整落盘。",
-          "representatives": [],
+          "reason": "富途分钟行情与监控源的方向、幅度在容许误差内。",
+          "representatives": [
+            {
+              "股票": "南大光电",
+              "代码": "300346.SZ",
+              "监控涨跌幅": -2.4436,
+              "富途涨跌幅": -2.8069,
+              "腾讯涨跌幅": -2.8069,
+              "起始分钟": "0934",
+              "结束分钟": "0937",
+              "方向一致": true,
+              "幅度一致": false,
+              "允许误差": 0.15
+            },
+            {
+              "股票": "晶瑞电材",
+              "代码": "300655.SZ",
+              "监控涨跌幅": -2.3353,
+              "富途涨跌幅": -2.4126,
+              "腾讯涨跌幅": -2.4126,
+              "起始分钟": "0934",
+              "结束分钟": "0937",
+              "方向一致": true,
+              "幅度一致": true,
+              "允许误差": 0.15
+            },
+            {
+              "股票": "彤程新材",
+              "代码": "603650.SH",
+              "监控涨跌幅": -1.7165,
+              "富途涨跌幅": -1.8058,
+              "腾讯涨跌幅": -1.8058,
+              "起始分钟": "0934",
+              "结束分钟": "0937",
+              "方向一致": true,
+              "幅度一致": true,
+              "允许误差": 0.15
+            }
+          ],
+          "window_minutes": 3,
+          "direction_agreement_ratio": 1.0,
+          "magnitude_agreement_ratio": 0.6667,
           "fingerprint": "8633de1439d49b5df33b",
           "verifier_version": "futu-opend-2026-07-27.1"
         }
       },
-      "source_status": "degraded_partial",
+      "source_status": "monitor_live_unverified",
       "valid_until": "2026-07-27T09:42:13+08:00",
       "trigger_rule": "小登股异动：3分钟平均跌幅≥1.5%，下跌占比≥70%，且成交放大≥5x；小登底池回落预警：板块行情缺失时，底池3分钟平均跌幅≥1.0%，下跌占比≥60%，且成交放大≥5x",
       "alert_class": "risk",
@@ -1131,16 +1319,56 @@
         "missing_confirmation": "等待腾讯分钟行情交叉核验；通过前只作候选或观察，不作为确认交易信号。",
         "secondary_source": "富途分钟行情",
         "secondary_verification": {
-          "state": "pending",
-          "checked_at": "2026-07-27T09:38:27+08:00",
+          "state": "mismatch",
+          "checked_at": "2026-07-27T09:39:10+08:00",
           "source": "富途分钟行情",
-          "reason": "等待触发分钟行情完整落盘。",
-          "representatives": [],
+          "reason": "富途分钟行情与监控源存在明显差异，维持待确认/失效。",
+          "representatives": [
+            {
+              "股票": "新易盛",
+              "代码": "300502.SZ",
+              "监控涨跌幅": -2.7687,
+              "富途涨跌幅": -2.1121,
+              "腾讯涨跌幅": -2.1121,
+              "起始分钟": "0934",
+              "结束分钟": "0937",
+              "方向一致": true,
+              "幅度一致": false,
+              "允许误差": 0.15
+            },
+            {
+              "股票": "中际旭创",
+              "代码": "300308.SZ",
+              "监控涨跌幅": -1.5163,
+              "富途涨跌幅": -1.2689,
+              "腾讯涨跌幅": -1.2689,
+              "起始分钟": "0934",
+              "结束分钟": "0937",
+              "方向一致": true,
+              "幅度一致": false,
+              "允许误差": 0.15
+            },
+            {
+              "股票": "光迅科技",
+              "代码": "002281.SZ",
+              "监控涨跌幅": -2.2599,
+              "富途涨跌幅": -2.7244,
+              "腾讯涨跌幅": -2.7244,
+              "起始分钟": "0934",
+              "结束分钟": "0937",
+              "方向一致": true,
+              "幅度一致": false,
+              "允许误差": 0.15
+            }
+          ],
+          "window_minutes": 3,
+          "direction_agreement_ratio": 1.0,
+          "magnitude_agreement_ratio": 0.0,
           "fingerprint": "634a438c71a73ce42a5f",
           "verifier_version": "futu-opend-2026-07-27.1"
         }
       },
-      "source_status": "degraded_partial",
+      "source_status": "monitor_live_unverified",
       "valid_until": "2026-07-27T09:42:13+08:00",
       "trigger_rule": "小登股异动：3分钟平均跌幅≥1.5%，下跌占比≥70%，且成交放大≥5x；小登底池回落预警：板块行情缺失时，底池3分钟平均跌幅≥1.0%，下跌占比≥60%，且成交放大≥5x",
       "alert_class": "risk",
@@ -1212,16 +1440,56 @@
         "missing_confirmation": "等待腾讯分钟行情交叉核验；通过前只作候选或观察，不作为确认交易信号。",
         "secondary_source": "富途分钟行情",
         "secondary_verification": {
-          "state": "pending",
-          "checked_at": "2026-07-27T09:38:27+08:00",
+          "state": "mismatch",
+          "checked_at": "2026-07-27T09:39:10+08:00",
           "source": "富途分钟行情",
-          "reason": "等待触发分钟行情完整落盘。",
-          "representatives": [],
+          "reason": "富途分钟行情与监控源存在明显差异，维持待确认/失效。",
+          "representatives": [
+            {
+              "股票": "中科曙光",
+              "代码": "603019.SH",
+              "监控涨跌幅": -3.5907,
+              "富途涨跌幅": -2.8482,
+              "腾讯涨跌幅": -2.8482,
+              "起始分钟": "0934",
+              "结束分钟": "0937",
+              "方向一致": true,
+              "幅度一致": false,
+              "允许误差": 0.15
+            },
+            {
+              "股票": "浪潮信息",
+              "代码": "000977.SZ",
+              "监控涨跌幅": -2.8166,
+              "富途涨跌幅": -2.118,
+              "腾讯涨跌幅": -2.118,
+              "起始分钟": "0934",
+              "结束分钟": "0937",
+              "方向一致": true,
+              "幅度一致": false,
+              "允许误差": 0.15
+            },
+            {
+              "股票": "中际旭创",
+              "代码": "300308.SZ",
+              "监控涨跌幅": -1.5163,
+              "富途涨跌幅": -1.2689,
+              "腾讯涨跌幅": -1.2689,
+              "起始分钟": "0934",
+              "结束分钟": "0937",
+              "方向一致": true,
+              "幅度一致": false,
+              "允许误差": 0.15
+            }
+          ],
+          "window_minutes": 3,
+          "direction_agreement_ratio": 1.0,
+          "magnitude_agreement_ratio": 0.0,
           "fingerprint": "00bb44587f92ba2ea086",
           "verifier_version": "futu-opend-2026-07-27.1"
         }
       },
-      "source_status": "degraded_partial",
+      "source_status": "monitor_live_unverified",
       "valid_until": "2026-07-27T09:42:13+08:00",
       "trigger_rule": "小登股异动：3分钟平均跌幅≥1.5%，下跌占比≥70%，且成交放大≥5x；小登底池回落预警：板块行情缺失时，底池3分钟平均跌幅≥1.0%，下跌占比≥60%，且成交放大≥5x",
       "alert_class": "risk",
@@ -1293,16 +1561,56 @@
         "missing_confirmation": "等待腾讯分钟行情交叉核验；通过前只作候选或观察，不作为确认交易信号。",
         "secondary_source": "富途分钟行情",
         "secondary_verification": {
-          "state": "pending",
-          "checked_at": "2026-07-27T09:38:27+08:00",
+          "state": "mismatch",
+          "checked_at": "2026-07-27T09:39:10+08:00",
           "source": "富途分钟行情",
-          "reason": "等待触发分钟行情完整落盘。",
-          "representatives": [],
+          "reason": "富途分钟行情与监控源存在明显差异，维持待确认/失效。",
+          "representatives": [
+            {
+              "股票": "澜起科技",
+              "代码": "688008.SH",
+              "监控涨跌幅": -3.4113,
+              "富途涨跌幅": -2.6073,
+              "腾讯涨跌幅": -2.6073,
+              "起始分钟": "0934",
+              "结束分钟": "0937",
+              "方向一致": true,
+              "幅度一致": false,
+              "允许误差": 0.15
+            },
+            {
+              "股票": "长川科技",
+              "代码": "300604.SZ",
+              "监控涨跌幅": -3.3361,
+              "富途涨跌幅": -3.4086,
+              "腾讯涨跌幅": -3.4086,
+              "起始分钟": "0934",
+              "结束分钟": "0937",
+              "方向一致": true,
+              "幅度一致": true,
+              "允许误差": 0.15
+            },
+            {
+              "股票": "华海诚科",
+              "代码": "688535.SH",
+              "监控涨跌幅": -3.5763,
+              "富途涨跌幅": -3.3043,
+              "腾讯涨跌幅": -3.3043,
+              "起始分钟": "0934",
+              "结束分钟": "0937",
+              "方向一致": true,
+              "幅度一致": false,
+              "允许误差": 0.15
+            }
+          ],
+          "window_minutes": 3,
+          "direction_agreement_ratio": 1.0,
+          "magnitude_agreement_ratio": 0.3333,
           "fingerprint": "bfef73e6347070998c23",
           "verifier_version": "futu-opend-2026-07-27.1"
         }
       },
-      "source_status": "degraded_partial",
+      "source_status": "monitor_live_unverified",
       "valid_until": "2026-07-27T09:42:13+08:00",
       "trigger_rule": "小登股异动：3分钟平均跌幅≥1.5%，下跌占比≥70%，且成交放大≥5x；小登底池回落预警：板块行情缺失时，底池3分钟平均跌幅≥1.0%，下跌占比≥60%，且成交放大≥5x",
       "alert_class": "risk",
@@ -1374,16 +1682,56 @@
         "missing_confirmation": "等待腾讯分钟行情交叉核验；通过前只作候选或观察，不作为确认交易信号。",
         "secondary_source": "富途分钟行情",
         "secondary_verification": {
-          "state": "pending",
-          "checked_at": "2026-07-27T09:38:27+08:00",
+          "state": "mismatch",
+          "checked_at": "2026-07-27T09:39:10+08:00",
           "source": "富途分钟行情",
-          "reason": "等待触发分钟行情完整落盘。",
-          "representatives": [],
+          "reason": "富途分钟行情与监控源存在明显差异，维持待确认/失效。",
+          "representatives": [
+            {
+              "股票": "兆易创新",
+              "代码": "603986.SH",
+              "监控涨跌幅": -3.0731,
+              "富途涨跌幅": -3.0445,
+              "腾讯涨跌幅": -3.0445,
+              "起始分钟": "0934",
+              "结束分钟": "0937",
+              "方向一致": true,
+              "幅度一致": true,
+              "允许误差": 0.15
+            },
+            {
+              "股票": "澜起科技",
+              "代码": "688008.SH",
+              "监控涨跌幅": -3.4113,
+              "富途涨跌幅": -2.6073,
+              "腾讯涨跌幅": -2.6073,
+              "起始分钟": "0934",
+              "结束分钟": "0937",
+              "方向一致": true,
+              "幅度一致": false,
+              "允许误差": 0.15
+            },
+            {
+              "股票": "佰维存储",
+              "代码": "688525.SH",
+              "监控涨跌幅": -4.2425,
+              "富途涨跌幅": -3.5199,
+              "腾讯涨跌幅": -3.5199,
+              "起始分钟": "0934",
+              "结束分钟": "0937",
+              "方向一致": true,
+              "幅度一致": false,
+              "允许误差": 0.15
+            }
+          ],
+          "window_minutes": 3,
+          "direction_agreement_ratio": 1.0,
+          "magnitude_agreement_ratio": 0.3333,
           "fingerprint": "6de3cd7d5a204b88fc95",
           "verifier_version": "futu-opend-2026-07-27.1"
         }
       },
-      "source_status": "degraded_partial",
+      "source_status": "monitor_live_unverified",
       "valid_until": "2026-07-27T09:42:13+08:00",
       "trigger_rule": "小登股异动：3分钟平均跌幅≥1.5%，下跌占比≥70%，且成交放大≥5x；小登底池回落预警：板块行情缺失时，底池3分钟平均跌幅≥1.0%，下跌占比≥60%，且成交放大≥5x",
       "alert_class": "risk",
@@ -1455,16 +1803,56 @@
         "missing_confirmation": "等待腾讯分钟行情交叉核验；通过前只作候选或观察，不作为确认交易信号。",
         "secondary_source": "富途分钟行情",
         "secondary_verification": {
-          "state": "pending",
-          "checked_at": "2026-07-27T09:38:27+08:00",
+          "state": "mismatch",
+          "checked_at": "2026-07-27T09:39:10+08:00",
           "source": "富途分钟行情",
-          "reason": "等待触发分钟行情完整落盘。",
-          "representatives": [],
+          "reason": "富途分钟行情与监控源存在明显差异，维持待确认/失效。",
+          "representatives": [
+            {
+              "股票": "华天科技",
+              "代码": "002185.SZ",
+              "监控涨跌幅": -4.0929,
+              "富途涨跌幅": -4.1505,
+              "腾讯涨跌幅": -4.1505,
+              "起始分钟": "0934",
+              "结束分钟": "0937",
+              "方向一致": true,
+              "幅度一致": true,
+              "允许误差": 0.15
+            },
+            {
+              "股票": "长电科技",
+              "代码": "600584.SH",
+              "监控涨跌幅": -4.3846,
+              "富途涨跌幅": -4.1646,
+              "腾讯涨跌幅": -4.1646,
+              "起始分钟": "0934",
+              "结束分钟": "0937",
+              "方向一致": true,
+              "幅度一致": false,
+              "允许误差": 0.15
+            },
+            {
+              "股票": "通富微电",
+              "代码": "002156.SZ",
+              "监控涨跌幅": -3.2537,
+              "富途涨跌幅": -3.4469,
+              "腾讯涨跌幅": -3.4469,
+              "起始分钟": "0934",
+              "结束分钟": "0937",
+              "方向一致": true,
+              "幅度一致": false,
+              "允许误差": 0.15
+            }
+          ],
+          "window_minutes": 3,
+          "direction_agreement_ratio": 1.0,
+          "magnitude_agreement_ratio": 0.3333,
           "fingerprint": "fdcf404dc30fd35cd955",
           "verifier_version": "futu-opend-2026-07-27.1"
         }
       },
-      "source_status": "degraded_partial",
+      "source_status": "monitor_live_unverified",
       "valid_until": "2026-07-27T09:42:13+08:00",
       "trigger_rule": "小登股异动：3分钟平均跌幅≥1.5%，下跌占比≥70%，且成交放大≥5x；小登底池回落预警：板块行情缺失时，底池3分钟平均跌幅≥1.0%，下跌占比≥60%，且成交放大≥5x",
       "alert_class": "risk",
@@ -1536,16 +1924,56 @@
         "missing_confirmation": "等待腾讯分钟行情交叉核验；通过前只作候选或观察，不作为确认交易信号。",
         "secondary_source": "富途分钟行情",
         "secondary_verification": {
-          "state": "pending",
-          "checked_at": "2026-07-27T09:38:27+08:00",
+          "state": "mismatch",
+          "checked_at": "2026-07-27T09:39:10+08:00",
           "source": "富途分钟行情",
-          "reason": "等待触发分钟行情完整落盘。",
-          "representatives": [],
+          "reason": "富途分钟行情与监控源存在明显差异，维持待确认/失效。",
+          "representatives": [
+            {
+              "股票": "金安国纪",
+              "代码": "002636.SZ",
+              "监控涨跌幅": -2.2941,
+              "富途涨跌幅": -1.7897,
+              "腾讯涨跌幅": -1.7897,
+              "起始分钟": "0934",
+              "结束分钟": "0937",
+              "方向一致": true,
+              "幅度一致": false,
+              "允许误差": 0.15
+            },
+            {
+              "股票": "华正新材",
+              "代码": "603186.SH",
+              "监控涨跌幅": -2.5339,
+              "富途涨跌幅": -2.1258,
+              "腾讯涨跌幅": -2.1258,
+              "起始分钟": "0934",
+              "结束分钟": "0937",
+              "方向一致": true,
+              "幅度一致": false,
+              "允许误差": 0.15
+            },
+            {
+              "股票": "生益科技",
+              "代码": "600183.SH",
+              "监控涨跌幅": -2.1101,
+              "富途涨跌幅": -1.5932,
+              "腾讯涨跌幅": -1.5932,
+              "起始分钟": "0934",
+              "结束分钟": "0937",
+              "方向一致": true,
+              "幅度一致": false,
+              "允许误差": 0.15
+            }
+          ],
+          "window_minutes": 3,
+          "direction_agreement_ratio": 1.0,
+          "magnitude_agreement_ratio": 0.0,
           "fingerprint": "296570c52834c814b0ee",
           "verifier_version": "futu-opend-2026-07-27.1"
         }
       },
-      "source_status": "degraded_partial",
+      "source_status": "monitor_live_unverified",
       "valid_until": "2026-07-27T09:42:13+08:00",
       "trigger_rule": "小登股异动：3分钟平均跌幅≥1.5%，下跌占比≥70%，且成交放大≥5x；小登底池回落预警：板块行情缺失时，底池3分钟平均跌幅≥1.0%，下跌占比≥60%，且成交放大≥5x",
       "alert_class": "risk",
@@ -1617,16 +2045,56 @@
         "missing_confirmation": "等待腾讯分钟行情交叉核验；通过前只作候选或观察，不作为确认交易信号。",
         "secondary_source": "富途分钟行情",
         "secondary_verification": {
-          "state": "pending",
-          "checked_at": "2026-07-27T09:38:27+08:00",
+          "state": "mismatch",
+          "checked_at": "2026-07-27T09:39:10+08:00",
           "source": "富途分钟行情",
-          "reason": "等待触发分钟行情完整落盘。",
-          "representatives": [],
+          "reason": "富途分钟行情与监控源存在明显差异，维持待确认/失效。",
+          "representatives": [
+            {
+              "股票": "沪硅产业",
+              "代码": "688126.SH",
+              "监控涨跌幅": -2.9516,
+              "富途涨跌幅": -2.4035,
+              "腾讯涨跌幅": -2.4035,
+              "起始分钟": "0934",
+              "结束分钟": "0937",
+              "方向一致": true,
+              "幅度一致": false,
+              "允许误差": 0.15
+            },
+            {
+              "股票": "立昂微",
+              "代码": "605358.SH",
+              "监控涨跌幅": -2.8461,
+              "富途涨跌幅": -2.3677,
+              "腾讯涨跌幅": -2.3677,
+              "起始分钟": "0934",
+              "结束分钟": "0937",
+              "方向一致": true,
+              "幅度一致": false,
+              "允许误差": 0.15
+            },
+            {
+              "股票": "天岳先进",
+              "代码": "688234.SH",
+              "监控涨跌幅": -2.1617,
+              "富途涨跌幅": -2.1689,
+              "腾讯涨跌幅": -2.1689,
+              "起始分钟": "0934",
+              "结束分钟": "0937",
+              "方向一致": true,
+              "幅度一致": true,
+              "允许误差": 0.15
+            }
+          ],
+          "window_minutes": 3,
+          "direction_agreement_ratio": 1.0,
+          "magnitude_agreement_ratio": 0.3333,
           "fingerprint": "0e5ff10920a0535ad761",
           "verifier_version": "futu-opend-2026-07-27.1"
         }
       },
-      "source_status": "degraded_partial",
+      "source_status": "monitor_live_unverified",
       "valid_until": "2026-07-27T09:42:13+08:00",
       "trigger_rule": "小登股异动：3分钟平均跌幅≥1.5%，下跌占比≥70%，且成交放大≥5x；小登底池回落预警：板块行情缺失时，底池3分钟平均跌幅≥1.0%，下跌占比≥60%，且成交放大≥5x",
       "alert_class": "risk",
@@ -1698,16 +2166,44 @@
         "missing_confirmation": "等待腾讯分钟行情交叉核验；通过前只作候选或观察，不作为确认交易信号。",
         "secondary_source": "富途分钟行情",
         "secondary_verification": {
-          "state": "pending",
-          "checked_at": "2026-07-27T09:38:27+08:00",
+          "state": "mismatch",
+          "checked_at": "2026-07-27T09:39:10+08:00",
           "source": "富途分钟行情",
-          "reason": "等待触发分钟行情完整落盘。",
-          "representatives": [],
+          "reason": "富途分钟行情与监控源存在明显差异，维持待确认/失效。",
+          "representatives": [
+            {
+              "股票": "新易盛",
+              "代码": "300502.SZ",
+              "监控涨跌幅": -2.7687,
+              "富途涨跌幅": -2.1121,
+              "腾讯涨跌幅": -2.1121,
+              "起始分钟": "0934",
+              "结束分钟": "0937",
+              "方向一致": true,
+              "幅度一致": false,
+              "允许误差": 0.15
+            },
+            {
+              "股票": "神州数码",
+              "代码": "000034.SZ",
+              "监控涨跌幅": -1.8702,
+              "富途涨跌幅": -1.6055,
+              "腾讯涨跌幅": -1.6055,
+              "起始分钟": "0934",
+              "结束分钟": "0937",
+              "方向一致": true,
+              "幅度一致": false,
+              "允许误差": 0.15
+            }
+          ],
+          "window_minutes": 3,
+          "direction_agreement_ratio": 1.0,
+          "magnitude_agreement_ratio": 0.0,
           "fingerprint": "720b21a65fddc149f897",
           "verifier_version": "futu-opend-2026-07-27.1"
         }
       },
-      "source_status": "degraded_partial",
+      "source_status": "monitor_live_unverified",
       "valid_until": "2026-07-27T09:42:13+08:00",
       "trigger_rule": "小登股异动：3分钟平均跌幅≥1.5%，下跌占比≥70%，且成交放大≥5x；小登底池回落预警：板块行情缺失时，底池3分钟平均跌幅≥1.0%，下跌占比≥60%，且成交放大≥5x",
       "alert_class": "risk",
@@ -1724,8 +2220,8 @@
       "sample_count": 19,
       "max_abs_leader_change_pct": 5.9053,
       "cross_source_verified": false,
-      "verified_alert_count": 0
+      "verified_alert_count": 1
     }
   },
-  "note": "异动来自本地短周期监控；候选卡须经腾讯分钟行情复核后才能升级。"
+  "note": "异动来自本地短周期监控；候选卡须经富途分钟行情复核后才能升级。"
 }
