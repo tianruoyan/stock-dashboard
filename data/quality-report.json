@@ -1,8 +1,8 @@
 {
-  "timestamp": "2026-07-27T14:25:02+08:00",
+  "timestamp": "2026-07-27T14:27:03+08:00",
   "current_signal_date": "2026-07-27",
   "status": "degraded",
-  "summary": "发现 128 个降级/需复核项（127 个价格/行情复核，2 个背景复核），核心结论可看但必须按影响分层使用。",
+  "summary": "发现 126 个降级/需复核项（125 个价格/行情复核，2 个背景复核），核心结论可看但必须按影响分层使用。",
   "issues": [
     {
       "severity": "warning",
@@ -82,24 +82,6 @@
       "path": "hk_auction.mapping_chain[3]",
       "code": "bad_change_pct",
       "message": "hk_auction.mapping_chain[3] change_pct 非数字：康方-1.41% / 药明康德0.00%，该字段忽略并降权",
-      "impact_level": "price_review",
-      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
-    },
-    {
-      "severity": "warning",
-      "file": "alert.json",
-      "path": "quote_audit.sanity_checks",
-      "code": "historical_alert_quote_audit_incomplete",
-      "message": "quote_audit.sanity_checks.sample_count 缺失",
-      "impact_level": "price_review",
-      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
-    },
-    {
-      "severity": "warning",
-      "file": "alert.json",
-      "path": "quote_audit.sanity_checks",
-      "code": "historical_alert_quote_audit_incomplete",
-      "message": "quote_audit.sanity_checks.max_abs_leader_change_pct 缺失",
       "impact_level": "price_review",
       "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
     },
@@ -1172,8 +1154,8 @@
       "impact_level": "price_review",
       "label": "二次行情复核",
       "file": "alert.json",
-      "code": "historical_alert_quote_audit_incomplete",
-      "problem": "quote_audit.sanity_checks.sample_count 缺失",
+      "code": "historical_alert_not_cross_verified",
+      "problem": "行情污染源仍降级，历史 alert 未交叉验证，只降权复盘参考",
       "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核",
       "next_step": "用第二行情源复核涨跌幅、quote_time 和代表股方向；未确认前只做验证。",
       "unblock_condition": "price_review=0 或相关来源标记 trusted/cross verified。"
@@ -1236,10 +1218,10 @@
   ],
   "counts": {
     "critical": 0,
-    "warning": 128,
+    "warning": 126,
     "info": 1,
     "blocking": 0,
-    "price_review": 127,
+    "price_review": 125,
     "signal_review": 0,
     "background_review": 2
   },
