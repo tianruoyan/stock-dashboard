@@ -1,8 +1,8 @@
 {
-  "timestamp": "2026-07-27T13:55:17+08:00",
+  "timestamp": "2026-07-27T13:57:33+08:00",
   "current_signal_date": "2026-07-27",
   "status": "degraded",
-  "summary": "发现 126 个降级/需复核项（125 个价格/行情复核，2 个背景复核），核心结论可看但必须按影响分层使用。",
+  "summary": "发现 127 个降级/需复核项（126 个价格/行情复核，2 个背景复核），核心结论可看但必须按影响分层使用。",
   "issues": [
     {
       "severity": "warning",
@@ -82,6 +82,15 @@
       "path": "hk_auction.mapping_chain[3]",
       "code": "bad_change_pct",
       "message": "hk_auction.mapping_chain[3] change_pct 非数字：康方-1.41% / 药明康德0.00%，该字段忽略并降权",
+      "impact_level": "price_review",
+      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
+    },
+    {
+      "severity": "warning",
+      "file": "alert.json",
+      "path": "quote_audit.sanity_checks",
+      "code": "alert_quote_audit_mismatch",
+      "message": "quote_audit 样本数小于 alerts 数量",
       "impact_level": "price_review",
       "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
     },
@@ -1154,8 +1163,8 @@
       "impact_level": "price_review",
       "label": "二次行情复核",
       "file": "alert.json",
-      "code": "historical_alert_not_cross_verified",
-      "problem": "行情污染源仍降级，历史 alert 未交叉验证，只降权复盘参考",
+      "code": "alert_quote_audit_mismatch",
+      "problem": "quote_audit 样本数小于 alerts 数量",
       "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核",
       "next_step": "用第二行情源复核涨跌幅、quote_time 和代表股方向；未确认前只做验证。",
       "unblock_condition": "price_review=0 或相关来源标记 trusted/cross verified。"
@@ -1218,10 +1227,10 @@
   ],
   "counts": {
     "critical": 0,
-    "warning": 126,
+    "warning": 127,
     "info": 1,
     "blocking": 0,
-    "price_review": 125,
+    "price_review": 126,
     "signal_review": 0,
     "background_review": 2
   },
