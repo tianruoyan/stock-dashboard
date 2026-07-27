@@ -1,8 +1,8 @@
 {
-  "timestamp": "2026-07-27T10:14:46+08:00",
+  "timestamp": "2026-07-27T10:16:43+08:00",
   "current_signal_date": "2026-07-27",
   "status": "degraded",
-  "summary": "发现 126 个降级/需复核项（124 个价格/行情复核，3 个背景复核），核心结论可看但必须按影响分层使用。",
+  "summary": "发现 128 个降级/需复核项（126 个价格/行情复核，3 个背景复核），核心结论可看但必须按影响分层使用。",
   "issues": [
     {
       "severity": "warning",
@@ -1146,6 +1146,24 @@
       "message": "japan_korea_intraday_1100_20260724: degraded",
       "impact_level": "price_review",
       "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
+    },
+    {
+      "severity": "warning",
+      "file": "cross-file",
+      "path": "国际复材",
+      "code": "stock_pct_cross_file_conflict",
+      "message": "国际复材 跨文件涨跌幅差异过大：alert.json -0.1716% vs intraday.json 13.39%",
+      "impact_level": "price_review",
+      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
+    },
+    {
+      "severity": "warning",
+      "file": "cross-file",
+      "path": "宏和科技",
+      "code": "stock_pct_cross_file_conflict",
+      "message": "宏和科技 跨文件涨跌幅差异过大：alert.json 0.0% vs intraday.json 10.0%",
+      "impact_level": "price_review",
+      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
     }
   ],
   "action_plan": [
@@ -1156,6 +1174,17 @@
       "file": "alert.json",
       "code": "historical_alert_not_cross_verified",
       "problem": "行情污染源仍降级，历史 alert 未交叉验证，只降权复盘参考",
+      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核",
+      "next_step": "用第二行情源复核涨跌幅、quote_time 和代表股方向；未确认前只做验证。",
+      "unblock_condition": "price_review=0 或相关来源标记 trusted/cross verified。"
+    },
+    {
+      "priority": 2,
+      "impact_level": "price_review",
+      "label": "二次行情复核",
+      "file": "cross-file",
+      "code": "stock_pct_cross_file_conflict",
+      "problem": "国际复材 跨文件涨跌幅差异过大：alert.json -0.1716% vs intraday.json 13.39%",
       "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核",
       "next_step": "用第二行情源复核涨跌幅、quote_time 和代表股方向；未确认前只做验证。",
       "unblock_condition": "price_review=0 或相关来源标记 trusted/cross verified。"
@@ -1203,25 +1232,14 @@
       "decision_action": "仅作背景复核，不单独阻断交易判断",
       "next_step": "补官方/交易所/公司公告来源；未补齐前不升级为核心依据。",
       "unblock_condition": "官方来源补齐或确认不影响交易触发。"
-    },
-    {
-      "priority": 4,
-      "impact_level": "background_review",
-      "label": "背景来源复核",
-      "file": "evening-sentiment.json",
-      "code": "evening_not_current",
-      "problem": "晚间舆情不是当前交易日，不参与今日总控",
-      "decision_action": "仅作背景复核，不单独阻断交易判断",
-      "next_step": "补官方/交易所/公司公告来源；未补齐前不升级为核心依据。",
-      "unblock_condition": "官方来源补齐或确认不影响交易触发。"
     }
   ],
   "counts": {
     "critical": 0,
-    "warning": 126,
+    "warning": 128,
     "info": 1,
     "blocking": 0,
-    "price_review": 124,
+    "price_review": 126,
     "signal_review": 0,
     "background_review": 3
   },
