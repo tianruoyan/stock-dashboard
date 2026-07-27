@@ -69,6 +69,39 @@ class AlertQuoteVerifierTests(unittest.TestCase):
         first = enrich_payload(payload, self.identity, self.loader, self.now)
         self.assertFalse(alert_needs_live_quotes(first["alerts"][0], self.now + timedelta(minutes=1)))
 
+    def test_futu_is_formal_second_source_and_small_error_is_allowed(self) -> None:
+        futu = {
+            "sh600001": rows(("1002", 10.0), ("1005", 10.19)),
+            "sz000002": rows(("1002", 20.0), ("1005", 20.29)),
+        }
+        payload = sample_payload([("甲公司", 2.0), ("乙公司", 1.5)])
+        result = enrich_payload(payload, self.identity, self.loader, self.now, formal_minute_loader=lambda code: futu.get(code, []))
+        verification = result["alerts"][0]["quote_audit"]["secondary_verification"]
+        self.assertEqual(verification["state"], "passed")
+        self.assertEqual(verification["source"], "富途分钟行情")
+        self.assertTrue(result["quote_audit"]["sanity_checks"]["cross_source_verified"])
+
+    def test_futu_missing_cannot_be_replaced_by_tencent_backup(self) -> None:
+        payload = sample_payload([("甲公司", 2.0), ("乙公司", 1.5)])
+        result = enrich_payload(payload, self.identity, self.loader, self.now, formal_minute_loader=lambda code: [])
+        verification = result["alerts"][0]["quote_audit"]["secondary_verification"]
+        self.assertEqual(verification["state"], "insufficient_identity")
+        self.assertFalse(result["quote_audit"]["sanity_checks"]["cross_source_verified"])
+
+    def test_historical_tencent_verification_is_not_rewritten_as_futu(self) -> None:
+        payload = sample_payload([("甲公司", 2.0), ("乙公司", 1.5)], event="2026-07-19T10:05:00+08:00")
+        payload["alerts"][0]["quote_audit"]["secondary_verification"] = {
+            "state": "passed",
+            "source": "腾讯分钟行情",
+            "fingerprint": "placeholder",
+        }
+        from verify_alert_quotes import alert_fingerprint
+        payload["alerts"][0]["quote_audit"]["secondary_verification"]["fingerprint"] = alert_fingerprint(payload["alerts"][0])
+        result = enrich_payload(payload, self.identity, self.loader, self.now, formal_minute_loader=lambda code: [])
+        verification = result["alerts"][0]["quote_audit"]["secondary_verification"]
+        self.assertEqual(verification["state"], "passed")
+        self.assertEqual(verification["source"], "腾讯分钟行情")
+
     def test_passed_verification_removes_second_source_from_remaining_conditions(self) -> None:
         payload = sample_payload([("甲公司", 2.0), ("乙公司", 1.5)])
         first = enrich_payload(payload, self.identity, self.loader, self.now)

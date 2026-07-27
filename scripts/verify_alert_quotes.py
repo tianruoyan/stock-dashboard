@@ -28,13 +28,14 @@ EASTMONEY_TOKEN = "D43BF722C8E33E1B5FBF8EF4C0C8ECBE"
 TZ = timezone(timedelta(hours=8))
 MAX_VERIFY_AGE_MINUTES = 10
 MIN_SETTLE_SECONDS = 75
+VERIFIER_VERSION = "futu-opend-2026-07-27.1"
 
 
 MinuteLoader = Callable[[str], List[Dict[str, Any]]]
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="用腾讯分钟行情复核当日新产生的 V1 盘中异动")
+    parser = argparse.ArgumentParser(description="用富途分钟行情复核当日新产生的 V1 盘中异动，腾讯仅作备用参考")
     parser.add_argument("--path", type=Path, default=ALERT_PATH)
     parser.add_argument("--watchlist", type=Path, default=WATCHLIST_PATH)
     parser.add_argument("--source-health", type=Path, default=SOURCE_HEALTH_PATH)
@@ -104,8 +105,15 @@ def run(
 
     code_set = sorted({identity_map[name] for name in names if name in identity_map})
     minute_rows = fetch_many_minute_rows(code_set)
+    futu_minute_rows = fetch_many_futu_minute_rows(code_set, now)
     before = canonical_json(payload)
-    enriched = enrich_payload(payload, identity_map, lambda code: minute_rows.get(code, []), now)
+    enriched = enrich_payload(
+        payload,
+        identity_map,
+        lambda code: minute_rows.get(code, []),
+        now,
+        formal_minute_loader=lambda code: futu_minute_rows.get(code, []),
+    )
     after = canonical_json(enriched)
     alert_changed = before != after
     source_health_update = prepare_source_health_update(source_health_path, enriched)
@@ -154,7 +162,11 @@ def alert_needs_live_quotes(alert: Dict[str, Any], now: datetime) -> bool:
     fingerprint = alert_fingerprint(alert)
     audit = alert.get("quote_audit") if isinstance(alert.get("quote_audit"), dict) else {}
     previous = audit.get("secondary_verification") if isinstance(audit.get("secondary_verification"), dict) else {}
-    if previous.get("fingerprint") == fingerprint and previous.get("state") in {"passed", "mismatch", "too_late_no_backfill", "different_trade_date", "insufficient_identity"}:
+    if (
+        previous.get("fingerprint") == fingerprint
+        and previous.get("verifier_version") == VERIFIER_VERSION
+        and previous.get("state") in {"passed", "mismatch", "too_late_no_backfill", "different_trade_date", "insufficient_identity"}
+    ):
         return False
     event_at = parse_datetime(alert.get("time"))
     if event_at is None:
@@ -169,6 +181,7 @@ def enrich_payload(
     identity_map: Dict[str, str],
     minute_loader: MinuteLoader,
     now: datetime,
+    formal_minute_loader: MinuteLoader | None = None,
 ) -> Dict[str, Any]:
     result = copy.deepcopy(payload)
     alerts = result.get("alerts") if isinstance(result.get("alerts"), list) else []
@@ -184,18 +197,25 @@ def enrich_payload(
             audit["missing_confirmation"] = normalize_user_facing_text(audit["missing_confirmation"])
             alert["quote_audit"] = audit
         previous = audit.get("secondary_verification") if isinstance(audit.get("secondary_verification"), dict) else {}
-        if previous.get("fingerprint") == fingerprint and previous.get("state") in {"passed", "mismatch", "too_late_no_backfill", "different_trade_date", "insufficient_identity"}:
+        previous_completed = (
+            previous.get("fingerprint") == fingerprint
+            and previous.get("state") in {"passed", "mismatch", "too_late_no_backfill", "different_trade_date", "insufficient_identity"}
+        )
+        if previous_completed and (
+            previous.get("verifier_version") == VERIFIER_VERSION or not alert_needs_live_quotes(alert, now)
+        ):
             if previous.get("state") == "passed" and isinstance(audit.get("missing_confirmation"), str):
                 audit["missing_confirmation"] = remove_cross_source_missing(audit["missing_confirmation"])
                 alert["quote_audit"] = audit
             if previous.get("state") == "passed" and isinstance(alert.get("reason"), str):
                 alert["reason"] = rewrite_verified_alert_reason(alert["reason"])
             continue
-        verification = verify_alert(alert, identity_map, minute_loader, now)
+        verification = verify_alert(alert, identity_map, minute_loader, now, formal_minute_loader=formal_minute_loader)
         verification["fingerprint"] = fingerprint
+        verification["verifier_version"] = VERIFIER_VERSION
         audit.update({
-            "provider": "本地盘中监控、腾讯分钟行情",
-            "secondary_source": "腾讯分钟行情",
+            "provider": "本地盘中监控、富途分钟行情（腾讯备用）" if formal_minute_loader is not None else "本地盘中监控、腾讯分钟行情",
+            "secondary_source": "富途分钟行情" if formal_minute_loader is not None else "腾讯分钟行情",
             "secondary_verification": verification,
         })
         sanity = audit.get("sanity_checks") if isinstance(audit.get("sanity_checks"), dict) else {}
@@ -216,20 +236,22 @@ def verify_alert(
     identity_map: Dict[str, str],
     minute_loader: MinuteLoader,
     now: datetime,
+    formal_minute_loader: MinuteLoader | None = None,
 ) -> Dict[str, Any]:
+    verification_source = "富途分钟行情" if formal_minute_loader is not None else "腾讯分钟行情"
     event_at = parse_datetime(alert.get("time"))
     if event_at is None:
-        return verification_result("pending", now, reason="异动时间无法解析，等待下一轮。")
+        return verification_result("pending", now, reason="异动时间无法解析，等待下一轮。", source=verification_source)
     event_at = event_at.astimezone(TZ)
     if event_at.date() != now.date():
-        return verification_result("different_trade_date", now, reason="只核验当日新异动，不反向补造历史证据。")
+        return verification_result("different_trade_date", now, reason="只核验当日新异动，不反向补造历史证据。", source=verification_source)
     age = (now - event_at).total_seconds()
     if age < 0:
-        return verification_result("pending", now, reason="异动时间尚未到达。")
+        return verification_result("pending", now, reason="异动时间尚未到达。", source=verification_source)
     if age > MAX_VERIFY_AGE_MINUTES * 60:
-        return verification_result("too_late_no_backfill", now, reason="超过实时核验窗口，不事后补成已确认。")
+        return verification_result("too_late_no_backfill", now, reason="超过实时核验窗口，不事后补成已确认。", source=verification_source)
     if age < MIN_SETTLE_SECONDS:
-        return verification_result("pending", now, reason="等待触发分钟行情完整落盘。")
+        return verification_result("pending", now, reason="等待触发分钟行情完整落盘。", source=verification_source)
 
     audit = alert.get("quote_audit") if isinstance(alert.get("quote_audit"), dict) else {}
     window = parse_window_minutes(audit.get("pct_field"))
@@ -242,38 +264,66 @@ def verify_alert(
         primary = as_float(leader.get("change_pct"))
         if not name or not code or primary is None:
             continue
-        secondary = minute_change(minute_loader(code), event_at, window)
+        backup = minute_change(minute_loader(code), event_at, window)
+        secondary = minute_change(formal_minute_loader(code), event_at, window) if formal_minute_loader is not None else backup
         if secondary is None:
-            rows.append({"股票": name, "代码": display_code(code), "监控涨跌幅": primary, "腾讯涨跌幅": None, "方向一致": False, "幅度一致": False})
+            rows.append({
+                "股票": name,
+                "代码": display_code(code),
+                "监控涨跌幅": primary,
+                "富途涨跌幅": None,
+                "腾讯涨跌幅": backup.get("change_pct") if backup else None,
+                "方向一致": False,
+                "幅度一致": False,
+            })
             continue
         direction_match = direction(primary) != 0 and direction(primary) == direction(secondary["change_pct"])
-        tolerance = max(0.8, abs(primary) * 0.75)
+        tolerance = 0.15
         magnitude_match = abs(primary - secondary["change_pct"]) <= tolerance
         rows.append({
             "股票": name,
             "代码": display_code(code),
             "监控涨跌幅": round(primary, 4),
-            "腾讯涨跌幅": secondary["change_pct"],
+            "富途涨跌幅": secondary["change_pct"] if formal_minute_loader is not None else None,
+            "腾讯涨跌幅": backup.get("change_pct") if backup else (secondary["change_pct"] if formal_minute_loader is None else None),
             "起始分钟": secondary["start_minute"],
             "结束分钟": secondary["end_minute"],
             "方向一致": direction_match,
             "幅度一致": magnitude_match,
+            "允许误差": round(tolerance, 4),
         })
 
-    comparable = [row for row in rows if row.get("腾讯涨跌幅") is not None]
+    comparison_field = "富途涨跌幅" if formal_minute_loader is not None else "腾讯涨跌幅"
+    comparable = [row for row in rows if row.get(comparison_field) is not None]
     if len(comparable) < 2:
-        return verification_result("insufficient_identity", now, reason="可解析且有分钟行情的代表股不足2只。", representatives=rows, window=window)
+        return verification_result(
+            "insufficient_identity",
+            now,
+            reason="可解析且有分钟行情的代表股不足2只。",
+            representatives=rows,
+            window=window,
+            source=verification_source,
+        )
     direction_ratio = sum(bool(row["方向一致"]) for row in comparable) / len(comparable)
     magnitude_ratio = sum(bool(row["幅度一致"]) for row in comparable) / len(comparable)
     passed = direction_ratio >= 2 / 3 and magnitude_ratio >= 2 / 3
     return verification_result(
         "passed" if passed else "mismatch",
         now,
-        reason="代表股方向与幅度达到双源一致要求。" if passed else "腾讯分钟行情与监控源的方向或幅度不一致，维持待确认/失效。",
+        reason=(
+            "富途分钟行情与监控源的方向、幅度在容许误差内。"
+            if passed and formal_minute_loader is not None
+            else "代表股方向与幅度达到双源一致要求。"
+            if passed
+            else "富途分钟行情与监控源存在明显差异，维持待确认/失效。"
+            if formal_minute_loader is not None
+            else "腾讯分钟行情与监控源的方向或幅度不一致，维持待确认/失效。"
+        ),
         representatives=rows,
         window=window,
         direction_ratio=direction_ratio,
         magnitude_ratio=magnitude_ratio,
+        source=verification_source,
     )
 
 
@@ -285,11 +335,12 @@ def verification_result(
     window: Optional[int] = None,
     direction_ratio: Optional[float] = None,
     magnitude_ratio: Optional[float] = None,
+    source: str = "腾讯分钟行情",
 ) -> Dict[str, Any]:
     result: Dict[str, Any] = {
         "state": state,
         "checked_at": now.astimezone(TZ).replace(microsecond=0).isoformat(),
-        "source": "腾讯分钟行情",
+        "source": source,
         "reason": reason,
         "representatives": representatives or [],
     }
@@ -313,8 +364,9 @@ def aggregate_quote_audit(alerts: List[Any], fallback_time: Any) -> Dict[str, An
         [abs(as_float(leader.get("change_pct")) or 0.0) for item in valid_alerts for leader in item.get("leaders") or [] if isinstance(leader, dict)] or [0.0]
     )
     quote_time = max([str(item.get("time") or "") for item in valid_alerts] or [str(fallback_time or "")])
+    uses_futu = any(item.get("source") == "富途分钟行情" for item in verifications)
     return {
-        "provider": "本地盘中监控、腾讯分钟行情",
+        "provider": "本地盘中监控、富途分钟行情（腾讯备用）" if uses_futu else "本地盘中监控、腾讯分钟行情",
         "quote_time": quote_time,
         "pct_field": "各异动卡标注的短周期涨跌幅",
         "sanity_checks": {
@@ -338,6 +390,66 @@ def fetch_many_minute_rows(codes: Iterable[str]) -> Dict[str, List[Dict[str, Any
             except Exception:
                 result[code] = []
     return result
+
+
+def fetch_many_futu_minute_rows(codes: Iterable[str], now: datetime) -> Dict[str, List[Dict[str, Any]]]:
+    try:
+        from futu import AuType, KLType, OpenQuoteContext, RET_OK, SubType, SysConfig
+    except ImportError:
+        return {}
+    try:
+        SysConfig.enable_console_log(False)
+    except Exception:
+        pass
+    context = None
+    result: Dict[str, List[Dict[str, Any]]] = {}
+    try:
+        context = OpenQuoteContext(host="127.0.0.1", port=11111)
+        mapped = {code: to_futu_code(code) for code in codes}
+        futu_codes = [code for code in mapped.values() if code]
+        if not futu_codes:
+            return result
+        ret, _ = context.subscribe(futu_codes, [SubType.K_1M], subscribe_push=False)
+        if ret != RET_OK:
+            return result
+        observed = now.astimezone(TZ)
+        for code, futu_code in mapped.items():
+            if not futu_code:
+                continue
+            ret, data = context.get_cur_kline(futu_code, 32, KLType.K_1M, AuType.NONE)
+            if ret != RET_OK:
+                continue
+            rows = []
+            for _, item in data.iterrows():
+                timestamp = parse_datetime(item.get("time_key"))
+                price = as_float(item.get("close"))
+                if (
+                    timestamp is None
+                    or timestamp.astimezone(TZ).date() != observed.date()
+                    or timestamp.astimezone(TZ) > observed + timedelta(seconds=5)
+                    or price is None
+                    or price <= 0
+                ):
+                    continue
+                rows.append({"hhmm": timestamp.astimezone(TZ).strftime("%H%M"), "price": price})
+            result[code] = rows
+    except Exception:
+        return {}
+    finally:
+        if context is not None:
+            try:
+                context.close()
+            except Exception:
+                pass
+    return result
+
+
+def to_futu_code(code: str) -> str:
+    if re.fullmatch(r"sh\d{6}", code):
+        return f"SH.{code[2:]}"
+    if re.fullmatch(r"sz\d{6}", code):
+        return f"SZ.{code[2:]}"
+    return ""
 
 
 def fetch_tencent_minutes(code: str) -> List[Dict[str, Any]]:
@@ -526,6 +638,8 @@ def prepare_source_health_update(path: Path, payload: Dict[str, Any]) -> Optiona
         verification = ((alert.get("quote_audit") or {}).get("secondary_verification") or {})
         if not isinstance(verification, dict) or verification.get("state") not in {"passed", "mismatch"}:
             continue
+        if verification.get("source") != "富途分钟行情" or verification.get("verifier_version") != VERIFIER_VERSION:
+            continue
         if not verification.get("checked_at"):
             continue
         verifications.append(verification)
@@ -536,7 +650,7 @@ def prepare_source_health_update(path: Path, payload: Dict[str, Any]) -> Optiona
         1
         for item in verifications
         for row in item.get("representatives") or []
-        if isinstance(row, dict) and row.get("腾讯涨跌幅") is not None
+        if isinstance(row, dict) and row.get("富途涨跌幅") is not None
     )
     passed_count = sum(item.get("state") == "passed" for item in verifications)
     mismatch_count = sum(item.get("state") == "mismatch" for item in verifications)
@@ -544,11 +658,12 @@ def prepare_source_health_update(path: Path, payload: Dict[str, Any]) -> Optiona
     if not isinstance(sources, dict):
         sources = {}
         source_health["sources"] = sources
-    sources["tencent_minute_alert_verifier"] = {
+    sources.pop("tencent_minute_alert_verifier", None)
+    sources["futu_minute_alert_verifier"] = {
         "status": "ok",
         "last_check": latest_check,
         "usage": "盘中异动代表股第二行情源交叉验证",
-        "detail": f"腾讯分钟行情完成{len(verifications)}张异动卡复核：{passed_count}张一致、{mismatch_count}张不一致；不一致卡保持待确认或失效。",
+        "detail": f"富途分钟行情完成{len(verifications)}张异动卡复核：{passed_count}张一致、{mismatch_count}张不一致；腾讯仅作备用参考，不一致卡保持待确认或失效。",
         "sample_count": quote_count,
         "errors": [],
     }
