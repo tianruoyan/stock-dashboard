@@ -1,9 +1,9 @@
 {
-  "timestamp": "2026-07-27T09:13:13+08:00",
+  "timestamp": "2026-07-27T09:18:19+08:00",
   "current_signal_date": "2026-07-27",
   "quality_gate": {
     "status": "degraded",
-    "summary": "发现 140 个降级/需复核项（133 个价格/行情复核，1 个信号复核，7 个背景复核），核心结论可看但必须按影响分层使用。",
+    "summary": "发现 126 个降级/需复核项（121 个价格/行情复核，1 个信号复核，5 个背景复核），核心结论可看但必须按影响分层使用。",
     "decision_flags": [
       "行情/涨跌幅需二次源复核",
       "机会信号需降权转验证",
@@ -11,10 +11,10 @@
       "港股收盘窗口可能非终值"
     ],
     "blocking_count": 0,
-    "price_review_count": 133,
-    "background_review_count": 7
+    "price_review_count": 121,
+    "background_review_count": 5
   },
-  "summary": "当前时段尚无可用盘面结论。 数据质量：发现 140 个降级/需复核项（133 个价格/行情复核，1 个信号复核，7 个背景复核），核心结论可看但必须按影响分层使用。",
+  "summary": "当前时段尚无可用盘面结论。 数据质量：发现 126 个降级/需复核项（121 个价格/行情复核，1 个信号复核，5 个背景复核），核心结论可看但必须按影响分层使用。",
   "observation_coverage": {
     "summary": "独立盘面/盘后扫描 5 条，但缺少纯主动新线。",
     "independent_count": 5,
@@ -30,7 +30,7 @@
     "stance": "风险优先，只做验证",
     "action": "不把候选方向当交易机会；先看风险收敛、数据恢复和核心承接。",
     "reasons": [
-      "发现 140 个降级/需复核项（133 个价格/行情复核，1 个信号复核，7 个背景复核），核心结论可看但必须按影响分层使用。",
+      "发现 126 个降级/需复核项（121 个价格/行情复核，1 个信号复核，5 个背景复核），核心结论可看但必须按影响分层使用。",
       "A/B级风险 8 条",
       "可用机会 0 条，降权候选 8 条",
       "先处理：二次行情复核（alert.json）"
@@ -58,7 +58,7 @@
       },
       {
         "label": "二次行情复核",
-        "file": "automation-health.json",
+        "file": "premarket.json",
         "next_step": "用第二行情源复核涨跌幅、quote_time 和代表股方向；未确认前只做验证。",
         "unblock_condition": "price_review=0 或相关来源标记 trusted/cross verified。"
       }
@@ -544,13 +544,12 @@
       "title": "数据质量降级",
       "type": "data_quality",
       "trigger_reason": "风控兜底触发：市场宽度、数据质量或回撤条件触发风险优先。",
-      "conclusion": "发现 140 个降级/需复核项（133 个价格/行情复核，1 个信号复核，7 个背景复核），核心结论可看但必须按影响分层使用。",
+      "conclusion": "发现 126 个降级/需复核项（121 个价格/行情复核，1 个信号复核，5 个背景复核），核心结论可看但必须按影响分层使用。",
       "confidence": "high",
       "evidence": [
         "时间戳不是当前交易日：2026-07-24T16:38:56+08:00",
-        "processes[0].timestamp 超前当前时间约 4 分钟：2026-07-27T09:18:00+08:00",
-        "processes[6].timestamp 超前当前时间约 4 分钟：2026-07-27T09:18:00+08:00",
-        "next_session_readiness.items[0].timestamp 超前当前时间约 4 分钟：2026-07-27T09:18:00+08:00"
+        "时间戳不是当前交易日：2026-07-24T11:05:30+08:00",
+        "时间戳不是当前交易日：2026-07-24T17:25:16+08:00"
       ],
       "source_files": [
         "quality-report.json",
@@ -567,7 +566,7 @@
       "quality_flags": [],
       "tone": "risk",
       "discovery_type": "risk_guardrail",
-      "evidence_score": 90,
+      "evidence_score": 88,
       "missing_evidence": [],
       "next_action": "污染 alert 修复前，盘中异动信号必须降权；观察池个股涨跌幅以已审计源为准。",
       "observation_source": "系统风控扫描",
