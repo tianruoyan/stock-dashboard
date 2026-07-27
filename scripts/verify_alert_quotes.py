@@ -31,7 +31,7 @@ MIN_SETTLE_SECONDS = 75
 MAX_TICK_ALIGNMENT_SECONDS = 12
 MINUTE_RANGE_MAX_WIDTH_PCT = 1.5
 RANGE_PADDING_PCT = 0.12
-VERIFIER_VERSION = "futu-opend-2026-07-27.2"
+VERIFIER_VERSION = "futu-opend-2026-07-27.3"
 
 
 MinuteLoader = Callable[[str], List[Dict[str, Any]]]
@@ -39,7 +39,7 @@ TickLoader = Callable[[str], List[Dict[str, Any]]]
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="用富途分钟行情复核当日新产生的 V1 盘中异动，腾讯仅作备用参考")
+    parser = argparse.ArgumentParser(description="用富途逐笔/分钟行情复核当日新产生的 V1 盘中异动，腾讯仅作备用参考")
     parser.add_argument("--path", type=Path, default=ALERT_PATH)
     parser.add_argument("--watchlist", type=Path, default=WATCHLIST_PATH)
     parser.add_argument("--source-health", type=Path, default=SOURCE_HEALTH_PATH)
@@ -237,8 +237,8 @@ def enrich_payload(
         verification["fingerprint"] = fingerprint
         verification["verifier_version"] = VERIFIER_VERSION
         audit.update({
-            "provider": "本地盘中监控、富途分钟行情（腾讯备用）" if formal_minute_loader is not None else "本地盘中监控、腾讯分钟行情",
-            "secondary_source": "富途分钟行情" if formal_minute_loader is not None else "腾讯分钟行情",
+            "provider": "本地盘中监控、富途行情（腾讯备用）" if formal_minute_loader is not None else "本地盘中监控、腾讯分钟行情",
+            "secondary_source": "富途行情" if formal_minute_loader is not None else "腾讯分钟行情",
             "secondary_verification": verification,
         })
         sanity = audit.get("sanity_checks") if isinstance(audit.get("sanity_checks"), dict) else {}
@@ -271,7 +271,7 @@ def verify_alert(
     formal_minute_loader: MinuteLoader | None = None,
     formal_tick_loader: TickLoader | None = None,
 ) -> Dict[str, Any]:
-    verification_source = "富途分钟行情" if formal_minute_loader is not None else "腾讯分钟行情"
+    verification_source = "富途行情" if formal_minute_loader is not None else "腾讯分钟行情"
     event_at = parse_datetime(alert.get("time"))
     if event_at is None:
         return verification_result("pending", now, reason="异动时间无法解析，等待下一轮。", source=verification_source)
@@ -412,9 +412,9 @@ def aggregate_quote_audit(alerts: List[Any], fallback_time: Any) -> Dict[str, An
         [abs(as_float(leader.get("change_pct")) or 0.0) for item in valid_alerts for leader in item.get("leaders") or [] if isinstance(leader, dict)] or [0.0]
     )
     quote_time = max([str(item.get("time") or "") for item in valid_alerts] or [str(fallback_time or "")])
-    uses_futu = any(item.get("source") == "富途分钟行情" for item in verifications)
+    uses_futu = any(item.get("source") == "富途行情" for item in verifications)
     return {
-        "provider": "本地盘中监控、富途分钟行情（腾讯备用）" if uses_futu else "本地盘中监控、腾讯分钟行情",
+        "provider": "本地盘中监控、富途行情（腾讯备用）" if uses_futu else "本地盘中监控、腾讯分钟行情",
         "quote_time": quote_time,
         "pct_field": "各异动卡标注的短周期涨跌幅",
         "sanity_checks": {
@@ -803,7 +803,7 @@ def prepare_source_health_update(path: Path, payload: Dict[str, Any]) -> Optiona
         verification = ((alert.get("quote_audit") or {}).get("secondary_verification") or {})
         if not isinstance(verification, dict) or verification.get("state") not in {"passed", "mismatch", "insufficient_precision"}:
             continue
-        if verification.get("source") != "富途分钟行情" or verification.get("verifier_version") != VERIFIER_VERSION:
+        if verification.get("source") != "富途行情" or verification.get("verifier_version") != VERIFIER_VERSION:
             continue
         if not verification.get("checked_at"):
             continue

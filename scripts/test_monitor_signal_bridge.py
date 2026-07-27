@@ -68,16 +68,16 @@ class MonitorSignalBridgeTests(unittest.TestCase):
     def test_bridge_preserves_completed_futu_verification_for_same_alert(self) -> None:
         previous_alert = convert_record(theme_record("2026-07-22T10:01:02"))
         previous_alert["quote_audit"].update({
-            "provider": "本地盘中监控、富途分钟行情（腾讯备用）",
-            "secondary_source": "富途分钟行情",
-            "secondary_verification": {"state": "passed", "source": "富途分钟行情"},
+            "provider": "本地盘中监控、富途行情（腾讯备用）",
+            "secondary_source": "富途行情",
+            "secondary_verification": {"state": "passed", "source": "富途行情"},
         })
         previous_alert["quote_audit"]["sanity_checks"]["cross_source_verified"] = True
         regenerated = convert_record(theme_record("2026-07-22T10:01:02"))
         merged = preserve_quote_verifications([regenerated], {"alerts": [previous_alert]})
         verification = merged[0]["quote_audit"]["secondary_verification"]
         self.assertEqual(verification["state"], "passed")
-        self.assertEqual(verification["source"], "富途分钟行情")
+        self.assertEqual(verification["source"], "富途行情")
         self.assertTrue(merged[0]["quote_audit"]["sanity_checks"]["cross_source_verified"])
 
     def test_ignores_system_and_other_trade_dates(self) -> None:

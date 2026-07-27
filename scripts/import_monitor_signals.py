@@ -477,7 +477,7 @@ def item_quote_audit(timestamp: datetime, leaders: list[dict[str, Any]], board: 
         "direction_ratio": round(direction_ratio, 4) if direction_ratio is not None else None,
         "volume_ratio": round(volume, 4) if volume is not None else None,
         "relative_volume_vs_yesterday": round(board["relative_volume"], 4) if board.get("relative_volume") is not None else None,
-        "missing_confirmation": "等待富途分钟行情交叉核验；通过前只作候选或观察，不作为确认交易信号。",
+        "missing_confirmation": "等待富途行情按触发时点交叉核验；通过前只作候选或观察，不作为确认交易信号。",
     }
 
 
@@ -517,7 +517,7 @@ def live_payload(alerts: list[dict[str, Any]], now: datetime) -> dict[str, Any]:
         for item in alerts
     ]
     uses_futu = any(
-        ((item.get("quote_audit") or {}).get("secondary_verification") or {}).get("source") == "富途分钟行情"
+        ((item.get("quote_audit") or {}).get("secondary_verification") or {}).get("source") == "富途行情"
         for item in alerts
     )
     max_move = max([abs(as_float(leader.get("change_pct")) or 0) for item in alerts for leader in item.get("leaders") or []] or [0])
@@ -526,7 +526,7 @@ def live_payload(alerts: list[dict[str, Any]], now: datetime) -> dict[str, Any]:
         "source_status": "monitor_live",
         "alerts": alerts,
         "quote_audit": {
-            "provider": "本地盘中监控、富途分钟行情（腾讯备用）" if uses_futu else "本地盘中监控",
+            "provider": "本地盘中监控、富途行情（腾讯备用）" if uses_futu else "本地盘中监控",
             "quote_time": max(str(item.get("time") or "") for item in alerts),
             "pct_field": "各异动卡标注的3分钟涨跌幅",
             "sanity_checks": {
@@ -536,7 +536,7 @@ def live_payload(alerts: list[dict[str, Any]], now: datetime) -> dict[str, Any]:
                 "verified_alert_count": sum(verifications),
             },
         },
-        "note": "异动来自本地短周期监控；候选卡须经富途分钟行情复核后才能升级。",
+        "note": "异动来自本地短周期监控；候选卡须经富途行情按触发时点复核后才能升级。",
     }
 
 

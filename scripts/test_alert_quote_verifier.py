@@ -96,7 +96,7 @@ class AlertQuoteVerifierTests(unittest.TestCase):
         result = enrich_payload(payload, self.identity, self.loader, self.now, formal_minute_loader=lambda code: futu.get(code, []))
         verification = result["alerts"][0]["quote_audit"]["secondary_verification"]
         self.assertEqual(verification["state"], "passed")
-        self.assertEqual(verification["source"], "富途分钟行情")
+        self.assertEqual(verification["source"], "富途行情")
         self.assertTrue(result["quote_audit"]["sanity_checks"]["cross_source_verified"])
 
     def test_exact_tick_alignment_wins_over_shifted_minute_closes(self) -> None:
@@ -201,7 +201,7 @@ class AlertQuoteVerifierTests(unittest.TestCase):
         from verify_alert_quotes import alert_fingerprint
         payload["alerts"][0]["quote_audit"]["secondary_verification"] = {
             "state": "mismatch",
-            "source": "富途分钟行情",
+            "source": "富途行情",
             "fingerprint": alert_fingerprint(payload["alerts"][0]),
             "verifier_version": "futu-opend-2026-07-27.1",
         }
