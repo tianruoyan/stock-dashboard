@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-07-27T14:22:50+08:00",
+  "timestamp": "2026-07-27T14:47:24+08:00",
   "sources": {
     "tencent_http": {
       "status": "ok",
@@ -3802,7 +3802,7 @@
     },
     "futu_minute_alert_verifier": {
       "status": "ok",
-      "last_check": "2026-07-27T14:44:52+08:00",
+      "last_check": "2026-07-27T14:46:55+08:00",
       "usage": "盘中异动代表股第二行情源交叉验证",
       "detail": "富途行情按触发时点复核5张异动卡：1张相互支持、3张明显冲突、1张精度不足；精度不足只维持观察，不计作冲突。",
       "sample_count": 15,
@@ -3859,6 +3859,53 @@
       "sample_count": 13,
       "errors": [
         "14:17:09 行情源异常：No value to decode"
+      ]
+    },
+    "tencent_a_quote_intraday_1430_20260727": {
+      "status": "ok",
+      "last_check": "2026-07-27T14:47:24+08:00",
+      "usage": "14:30尾盘指数、98个行业与重点样本",
+      "detail": "腾讯HTTP取得5个A股指数、98个行业及交换机、电子布、半导体、CPO、存储和风格样本；A股行情时间更新至14:41。",
+      "sample_count": 150,
+      "errors": []
+    },
+    "eastmoney_structure_pools_intraday_1430_20260727": {
+      "status": "ok",
+      "last_check": "2026-07-27T14:47:24+08:00",
+      "usage": "14:30涨停、跌停、炸板结构池及行业分布",
+      "detail": "三个结构池按约65秒间隔串行取得：涨停104、跌停6、炸板13；最高5板、11只20cm涨停。",
+      "sample_count": 123,
+      "errors": []
+    },
+    "tencent_hk_quote_intraday_1430_20260727": {
+      "status": "degraded_delayed_single_source",
+      "last_check": "2026-07-27T14:47:24+08:00",
+      "usage": "恒指、恒科及A/H科技映射",
+      "detail": "恒指、恒科更新至14:40；港股个股约14:25且缺少第二实时源，只用于方向映射。",
+      "sample_count": 11,
+      "errors": [
+        "港股个股相对A股快照约延迟15分钟",
+        "缺少第二港股实时行情源交叉校验"
+      ]
+    },
+    "concept_ranking_intraday_1430_20260727": {
+      "status": "degraded",
+      "last_check": "2026-07-27T14:47:24+08:00",
+      "usage": "14:30全市场概念排行",
+      "detail": "未取得通过可靠性校验的全量概念榜；使用涨跌停行业分布、98个行业报价和代表股归因，不编造概念名次。",
+      "sample_count": 0,
+      "errors": [
+        "可靠全量概念排行不可用"
+      ]
+    },
+    "futu_intraday_signal_verification_1430_20260727": {
+      "status": "ok_partial",
+      "last_check": "2026-07-27T14:33:43+08:00",
+      "usage": "14:30电子布短周期异动交叉核验",
+      "detail": "国际复材、宏和科技、中国巨石的3分钟方向与幅度通过同一时点复核；CMP/材料短周期幅度存在冲突，未作为强化依据。",
+      "sample_count": 6,
+      "errors": [
+        "CMP/材料短周期幅度交叉源不一致，已降级不用"
       ]
     }
   },
