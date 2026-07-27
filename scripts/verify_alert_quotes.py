@@ -170,7 +170,7 @@ def alert_needs_live_quotes(alert: Dict[str, Any], now: datetime) -> bool:
     if (
         previous.get("fingerprint") == fingerprint
         and previous.get("verifier_version") == VERIFIER_VERSION
-        and previous.get("state") in {"passed", "mismatch", "too_late_no_backfill", "different_trade_date", "insufficient_identity", "insufficient_precision"}
+        and previous.get("state") in {"passed", "mismatch", "too_late_no_backfill", "different_trade_date", "insufficient_identity"}
     ):
         return False
     event_at = parse_datetime(alert.get("time"))
@@ -203,13 +203,23 @@ def enrich_payload(
             audit["missing_confirmation"] = normalize_user_facing_text(audit["missing_confirmation"])
             alert["quote_audit"] = audit
         previous = audit.get("secondary_verification") if isinstance(audit.get("secondary_verification"), dict) else {}
-        previous_completed = (
-            previous.get("fingerprint") == fingerprint
-            and previous.get("state") in {"passed", "mismatch", "too_late_no_backfill", "different_trade_date", "insufficient_identity", "insufficient_precision"}
+        previous_state = previous.get("state")
+        previous_completed = previous_state in {
+            "passed", "mismatch", "too_late_no_backfill", "different_trade_date", "insufficient_identity"
+        }
+        live_eligible = live_verification_eligible(alert, now)
+        preserve_previous = (
+            previous_completed and not live_eligible
+        ) or (
+            previous_completed
+            and previous.get("fingerprint") == fingerprint
+            and previous.get("verifier_version") == VERIFIER_VERSION
+        ) or (
+            previous_state == "insufficient_precision"
+            and previous.get("fingerprint") == fingerprint
+            and not live_eligible
         )
-        if previous_completed and (
-            previous.get("verifier_version") == VERIFIER_VERSION or not alert_needs_live_quotes(alert, now)
-        ):
+        if preserve_previous:
             if previous.get("state") == "passed" and isinstance(audit.get("missing_confirmation"), str):
                 audit["missing_confirmation"] = remove_cross_source_missing(audit["missing_confirmation"])
                 alert["quote_audit"] = audit
@@ -242,6 +252,15 @@ def enrich_payload(
 
     result["quote_audit"] = aggregate_quote_audit(alerts, result.get("timestamp"))
     return result
+
+
+def live_verification_eligible(alert: Dict[str, Any], now: datetime) -> bool:
+    event_at = parse_datetime(alert.get("time"))
+    if event_at is None:
+        return False
+    event_at = event_at.astimezone(TZ)
+    age = (now - event_at).total_seconds()
+    return event_at.date() == now.astimezone(TZ).date() and 0 <= age <= MAX_VERIFY_AGE_MINUTES * 60
 
 
 def verify_alert(
@@ -782,7 +801,7 @@ def prepare_source_health_update(path: Path, payload: Dict[str, Any]) -> Optiona
         if not isinstance(alert, dict):
             continue
         verification = ((alert.get("quote_audit") or {}).get("secondary_verification") or {})
-        if not isinstance(verification, dict) or verification.get("state") not in {"passed", "mismatch"}:
+        if not isinstance(verification, dict) or verification.get("state") not in {"passed", "mismatch", "insufficient_precision"}:
             continue
         if verification.get("source") != "富途分钟行情" or verification.get("verifier_version") != VERIFIER_VERSION:
             continue
@@ -800,6 +819,7 @@ def prepare_source_health_update(path: Path, payload: Dict[str, Any]) -> Optiona
     )
     passed_count = sum(item.get("state") == "passed" for item in verifications)
     mismatch_count = sum(item.get("state") == "mismatch" for item in verifications)
+    precision_count = sum(item.get("state") == "insufficient_precision" for item in verifications)
     sources = source_health.get("sources")
     if not isinstance(sources, dict):
         sources = {}
@@ -809,7 +829,10 @@ def prepare_source_health_update(path: Path, payload: Dict[str, Any]) -> Optiona
         "status": "ok",
         "last_check": latest_check,
         "usage": "盘中异动代表股第二行情源交叉验证",
-        "detail": f"富途分钟行情完成{len(verifications)}张异动卡复核：{passed_count}张一致、{mismatch_count}张不一致；腾讯仅作备用参考，不一致卡保持待确认或失效。",
+        "detail": (
+            f"富途行情按触发时点复核{len(verifications)}张异动卡：{passed_count}张相互支持、"
+            f"{mismatch_count}张明显冲突、{precision_count}张精度不足；精度不足只维持观察，不计作冲突。"
+        ),
         "sample_count": quote_count,
         "errors": [],
     }

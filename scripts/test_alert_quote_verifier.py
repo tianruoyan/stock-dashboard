@@ -181,6 +181,41 @@ class AlertQuoteVerifierTests(unittest.TestCase):
         verification = result["alerts"][0]["quote_audit"]["secondary_verification"]
         self.assertEqual(verification["state"], "insufficient_precision")
         self.assertFalse(result["quote_audit"]["sanity_checks"]["cross_source_verified"])
+        self.assertTrue(alert_needs_live_quotes(result["alerts"][0], self.now + timedelta(minutes=1)))
+
+    def test_insufficient_precision_retries_live_but_is_not_overwritten_after_window(self) -> None:
+        payload = sample_payload([("甲公司", 2.0), ("乙公司", 1.5)])
+        first = enrich_payload(payload, self.identity, self.loader, self.now, formal_minute_loader=lambda code: [])
+        later = enrich_payload(
+            first,
+            self.identity,
+            self.loader,
+            self.now + timedelta(minutes=10),
+            formal_minute_loader=lambda code: [],
+        )
+        verification = later["alerts"][0]["quote_audit"]["secondary_verification"]
+        self.assertEqual(verification["state"], "insufficient_precision")
+
+    def test_completed_historical_verification_survives_non_semantic_metadata_upgrade(self) -> None:
+        payload = sample_payload([("甲公司", 2.0), ("乙公司", 1.5)], event="2026-07-20T09:30:00+08:00")
+        from verify_alert_quotes import alert_fingerprint
+        payload["alerts"][0]["quote_audit"]["secondary_verification"] = {
+            "state": "mismatch",
+            "source": "富途分钟行情",
+            "fingerprint": alert_fingerprint(payload["alerts"][0]),
+            "verifier_version": "futu-opend-2026-07-27.1",
+        }
+        payload["alerts"][0]["leaders"][0]["quote_time"] = "2026-07-20T09:29:58+08:00"
+        result = enrich_payload(
+            payload,
+            self.identity,
+            self.loader,
+            self.now,
+            formal_minute_loader=lambda code: [],
+        )
+        verification = result["alerts"][0]["quote_audit"]["secondary_verification"]
+        self.assertEqual(verification["state"], "mismatch")
+        self.assertEqual(verification["verifier_version"], "futu-opend-2026-07-27.1")
 
     def test_historical_tencent_verification_is_not_rewritten_as_futu(self) -> None:
         payload = sample_payload([("甲公司", 2.0), ("乙公司", 1.5)], event="2026-07-19T10:05:00+08:00")
