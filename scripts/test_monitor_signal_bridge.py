@@ -5,7 +5,7 @@ import unittest
 from datetime import datetime
 from pathlib import Path
 
-from import_monitor_signals import TZ, convert_record, live_payload, market_mode, read_signal_records, should_refresh
+from import_monitor_signals import TZ, convert_record, live_payload, market_mode, preserve_quote_verifications, read_signal_records, should_refresh
 
 
 def theme_record(timestamp: str, side: str = "up", speed: float = 1.8) -> dict:
@@ -63,6 +63,21 @@ class MonitorSignalBridgeTests(unittest.TestCase):
         self.assertEqual(alert["alert_class"], "risk")
         self.assertEqual(alert["signal_type"], "风险提示")
         self.assertLess(alert["leaders"][0]["change_pct"], 0)
+
+    def test_bridge_preserves_completed_futu_verification_for_same_alert(self) -> None:
+        previous_alert = convert_record(theme_record("2026-07-22T10:01:02"))
+        previous_alert["quote_audit"].update({
+            "provider": "本地盘中监控、富途分钟行情（腾讯备用）",
+            "secondary_source": "富途分钟行情",
+            "secondary_verification": {"state": "passed", "source": "富途分钟行情"},
+        })
+        previous_alert["quote_audit"]["sanity_checks"]["cross_source_verified"] = True
+        regenerated = convert_record(theme_record("2026-07-22T10:01:02"))
+        merged = preserve_quote_verifications([regenerated], {"alerts": [previous_alert]})
+        verification = merged[0]["quote_audit"]["secondary_verification"]
+        self.assertEqual(verification["state"], "passed")
+        self.assertEqual(verification["source"], "富途分钟行情")
+        self.assertTrue(merged[0]["quote_audit"]["sanity_checks"]["cross_source_verified"])
 
     def test_ignores_system_and_other_trade_dates(self) -> None:
         with tempfile.TemporaryDirectory() as temp:

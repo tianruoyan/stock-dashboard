@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import argparse
+import copy
 import fcntl
 import hashlib
 import json
@@ -115,6 +116,7 @@ def run_bridge(args: argparse.Namespace, now: datetime) -> dict[str, Any]:
     records = read_signal_records(args.signals, now)
     alerts = [converted for record in records if (converted := convert_record(record))]
     alerts = dedupe_alerts(alerts)[-MAX_ALERTS:]
+    alerts = preserve_quote_verifications(alerts, previous)
     payload = live_payload(alerts, now)
 
     if not should_refresh(previous, payload, now):
@@ -474,8 +476,31 @@ def item_quote_audit(timestamp: datetime, leaders: list[dict[str, Any]], board: 
         "direction_ratio": round(direction_ratio, 4) if direction_ratio is not None else None,
         "volume_ratio": round(volume, 4) if volume is not None else None,
         "relative_volume_vs_yesterday": round(board["relative_volume"], 4) if board.get("relative_volume") is not None else None,
-        "missing_confirmation": "等待腾讯分钟行情交叉核验；通过前只作候选或观察，不作为确认交易信号。",
+        "missing_confirmation": "等待富途分钟行情交叉核验；通过前只作候选或观察，不作为确认交易信号。",
     }
+
+
+def preserve_quote_verifications(
+    alerts: list[dict[str, Any]],
+    previous_payload: dict[str, Any],
+) -> list[dict[str, Any]]:
+    previous_by_id = {
+        str(item.get("id") or ""): item
+        for item in previous_payload.get("alerts") or []
+        if isinstance(item, dict) and item.get("id")
+    }
+    for alert in alerts:
+        previous = previous_by_id.get(str(alert.get("id") or ""))
+        if not isinstance(previous, dict):
+            continue
+        old_audit = previous.get("quote_audit") if isinstance(previous.get("quote_audit"), dict) else {}
+        verification = old_audit.get("secondary_verification")
+        if not isinstance(verification, dict) or not verification.get("state"):
+            continue
+        alert["quote_audit"] = copy.deepcopy(old_audit)
+        if isinstance(previous.get("reason"), str):
+            alert["reason"] = previous["reason"]
+    return alerts
 
 
 def live_payload(alerts: list[dict[str, Any]], now: datetime) -> dict[str, Any]:
@@ -490,13 +515,17 @@ def live_payload(alerts: list[dict[str, Any]], now: datetime) -> dict[str, Any]:
         ((item.get("quote_audit") or {}).get("sanity_checks") or {}).get("cross_source_verified") is True
         for item in alerts
     ]
+    uses_futu = any(
+        ((item.get("quote_audit") or {}).get("secondary_verification") or {}).get("source") == "富途分钟行情"
+        for item in alerts
+    )
     max_move = max([abs(as_float(leader.get("change_pct")) or 0) for item in alerts for leader in item.get("leaders") or []] or [0])
     return {
         "timestamp": now.replace(microsecond=0).isoformat(),
         "source_status": "monitor_live",
         "alerts": alerts,
         "quote_audit": {
-            "provider": "本地盘中监控、腾讯分钟行情",
+            "provider": "本地盘中监控、富途分钟行情（腾讯备用）" if uses_futu else "本地盘中监控",
             "quote_time": max(str(item.get("time") or "") for item in alerts),
             "pct_field": "各异动卡标注的3分钟涨跌幅",
             "sanity_checks": {
@@ -506,7 +535,7 @@ def live_payload(alerts: list[dict[str, Any]], now: datetime) -> dict[str, Any]:
                 "verified_alert_count": sum(verifications),
             },
         },
-        "note": "异动来自本地短周期监控；候选卡须经腾讯分钟行情复核后才能升级。",
+        "note": "异动来自本地短周期监控；候选卡须经富途分钟行情复核后才能升级。",
     }
 
 
