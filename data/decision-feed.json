@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-07-27T15:21:51+08:00",
+  "timestamp": "2026-07-27T15:23:53+08:00",
   "current_signal_date": "2026-07-27",
   "quality_gate": {
     "status": "degraded",
@@ -20,7 +20,7 @@
     "independent_count": 18,
     "inherited_count": 6,
     "active_market_count": 7,
-    "postmarket_scan_count": 8,
+    "postmarket_scan_count": 7,
     "topic_inherited_count": 0,
     "verification_count": 2,
     "active_titles": [
@@ -448,6 +448,62 @@
       "upgrade_condition": "看核心个股、ETF、后排扩散和尾盘承接是否同向确认。 数据质量恢复或二次行情源确认前，不升级为可用机会。"
     },
     {
+      "title": "主线变化：创新药/CRO",
+      "type": "theme_shift",
+      "trigger_reason": "主线变化扫描触发：升温/降温/抱团/风险状态出现边际变化。",
+      "conclusion": "创新药/CRO 有新出现或轮动增强迹象，需看次日扩散确认。",
+      "confidence": "low",
+      "evidence": [
+        "申万医药生物96只涨幅达到5%以上，其中33只涨幅达到8%以上；全市场涨停池中医药13只。",
+        "涨停分布为化学制药5只、中药3只、医疗器械2只、医药商业2只、医疗服务1只，覆盖多个分支。",
+        "五洲医疗4板并与陇神戎发、爱朋医疗3只20cm强势样本形成高度和弹性。",
+        "低位普涨日容易虚增宽度；若次日医药涨停少于7只、五洲医疗断板且中军不承接，按一日修复而非持续主线处理。",
+        "69只涨停中医药14只，占20.3%，与11:00持平；化学制药5只、中药3只，医疗器械、医疗服务、医药商业各2只。"
+      ],
+      "source_files": [
+        "intraday.json",
+        "midday.json",
+        "postmarket.json",
+        "topics.json"
+      ],
+      "watch_next": [
+        "次日先看化学制药涨停能否继续增加、医药涨超5%的股票能否保持在96只以上，再看恒瑞、科伦、普洛等核心股是否多数上涨；否则只按低位轮动观察。",
+        "次日看5只化学制药封板留存和中军承接；封板少于3只则降回修复观察。"
+      ],
+      "invalidation": "创新药/CRO 需要次日竞价、量能和后排扩散共同确认。",
+      "tags": [
+        "创新药/CRO"
+      ],
+      "quality_flags": [
+        "行情/涨跌幅需二次源复核",
+        "盘中异动源降级，alert 类信号降权",
+        "港股收盘窗口可能非终值",
+        "行情源降级，需复核涨跌幅"
+      ],
+      "tone": "good",
+      "discovery_type": "theme_shift_scan",
+      "evidence_score": 83,
+      "missing_evidence": [
+        "数据源降级需二次确认"
+      ],
+      "next_action": "次日先看化学制药涨停能否继续增加、医药涨超5%的股票能否保持在96只以上，再看恒瑞、科伦、普洛等核心股是否多数上涨；否则只按低位轮动观察。",
+      "observation_source": "主线变化扫描",
+      "independent_observation": true,
+      "signal_score": 57,
+      "signal_grade": "C",
+      "use_action": "降权观察",
+      "use_reasons": [
+        "有可核验证据",
+        "有下一步验证",
+        "有证伪条件",
+        "有来源文件",
+        "数据质量降权"
+      ],
+      "upgrade_rank": 7,
+      "upgrade_priority": "优先验证",
+      "upgrade_condition": "次日先看化学制药涨停能否继续增加、医药涨超5%的股票能否保持在96只以上，再看恒瑞、科伦、普洛等核心股是否多数上涨；否则只按低位轮动观察。 数据质量恢复或二次行情源确认前，不升级为可用机会。"
+    },
+    {
       "title": "医药修复",
       "type": "theme",
       "trigger_reason": "主动盘面扫描触发：涨跌停、炸板、尾盘承接或板块扩散出现可验证变化。",
@@ -484,58 +540,6 @@
       "observation_source": "主动盘面扫描",
       "independent_observation": true,
       "signal_score": 55,
-      "signal_grade": "C",
-      "use_action": "降权观察",
-      "use_reasons": [
-        "有可核验证据",
-        "有下一步验证",
-        "有证伪条件",
-        "有来源文件",
-        "数据质量降权"
-      ],
-      "upgrade_rank": 7,
-      "upgrade_priority": "观察验证",
-      "upgrade_condition": "看核心个股、ETF、后排扩散和尾盘承接是否同向确认。 数据质量恢复或二次行情源确认前，不升级为可用机会。"
-    },
-    {
-      "title": "创新药/CRO",
-      "type": "theme",
-      "trigger_reason": "盘后主线扫描触发：热点持续性、代表股和尾盘校验进入次日观察。",
-      "conclusion": "前5个交易日并非持续主线，今天是重新集中首日；需用次日封板留存率判断是一日轮动还是连续修复。",
-      "confidence": "low",
-      "evidence": [
-        "申万医药生物96只涨幅达到5%以上，其中33只涨幅达到8%以上；全市场涨停池中医药13只。",
-        "涨停分布为化学制药5只、中药3只、医疗器械2只、医药商业2只、医疗服务1只，覆盖多个分支。",
-        "五洲医疗4板并与陇神戎发、爱朋医疗3只20cm强势样本形成高度和弹性。",
-        "五洲医疗 20.0%",
-        "陇神戎发 20.04%"
-      ],
-      "source_files": [
-        "postmarket.json"
-      ],
-      "watch_next": [
-        "看核心个股、ETF、后排扩散和尾盘承接是否同向确认。"
-      ],
-      "invalidation": "创新药/CRO核心股冲高回落、ETF转弱或后排不扩散，则机会降级为观察。",
-      "tags": [
-        "创新药/CRO"
-      ],
-      "quality_flags": [
-        "行情/涨跌幅需二次源复核",
-        "盘中异动源降级，alert 类信号降权",
-        "港股收盘窗口可能非终值",
-        "行情源降级，需复核涨跌幅"
-      ],
-      "tone": "good",
-      "discovery_type": "postmarket_theme_scan",
-      "evidence_score": 83,
-      "missing_evidence": [
-        "数据源降级需二次确认"
-      ],
-      "next_action": "看核心个股、ETF、后排扩散和尾盘承接是否同向确认。",
-      "observation_source": "盘后结构扫描",
-      "independent_observation": true,
-      "signal_score": 57,
       "signal_grade": "C",
       "use_action": "降权观察",
       "use_reasons": [
@@ -980,48 +984,6 @@
       ]
     },
     {
-      "title": "盘中追踪：交换机/高速以太网",
-      "type": "opportunity_watch",
-      "trigger_reason": "盘前/晚间注意点已转为盘中追踪清单，等待实时行情触发。",
-      "conclusion": "NVIDIA / AMD / Broadcom；AI芯片、ASIC与高速互联链集体承压；AI算力、服务器、CPO、交换机/高速以太网：工业富联、浪潮信息、新易盛、中际旭创、紫光股份、锐捷网络、盛科通信-U；情绪传导+产业链配套；海外股价不等于A股订单，整机/ODM/交换芯片至少两至三只同步放量才能…",
-      "confidence": "low",
-      "evidence": [],
-      "source_files": [
-        "opportunity-watch.json"
-      ],
-      "watch_next": [
-        "题材3分钟涨跌幅>=1.5%，方向占比>=70%，成交放大>=5x",
-        "板块内出现批量涨停/封板或后排扩散",
-        "核心股、ETF、后排扩散同向确认",
-        "核心股低开后放量收复开盘价或跌幅明显收敛"
-      ],
-      "invalidation": "核心股高开低走或冲高回落",
-      "tags": [
-        "科技硬件链",
-        "风控"
-      ],
-      "quality_flags": [],
-      "tone": "neutral",
-      "discovery_type": "premarket_watch_queue",
-      "evidence_score": 28,
-      "missing_evidence": [
-        "缺少可核验证据"
-      ],
-      "next_action": "题材3分钟涨跌幅>=1.5%，方向占比>=70%，成交放大>=5x",
-      "observation_source": "数据派生",
-      "independent_observation": false,
-      "signal_score": 47,
-      "signal_grade": "D",
-      "use_action": "仅复核",
-      "use_reasons": [
-        "缺少证据",
-        "有下一步验证",
-        "有证伪条件",
-        "有来源文件",
-        "有证据缺口"
-      ]
-    },
-    {
       "title": "盘中追踪：半导体材料",
       "type": "opportunity_watch",
       "trigger_reason": "盘前/晚间注意点已转为盘中追踪清单，等待实时行情触发。",
@@ -1110,6 +1072,48 @@
       "type": "opportunity_watch",
       "trigger_reason": "盘前/晚间注意点已转为盘中追踪清单，等待实时行情触发。",
       "conclusion": "韩国半导体供应链与美国科技企业的大规模AI产业合作报道继续发酵。；与今日Samsung、SK hynix早盘上涨形成局部共振，对A股存储/HBM只是观察加分项。；Micron；存储股估值与AI资本开支担忧加剧；存储/HBM：兆易创新、江波龙、佰维存储、澜起科技、华海诚科；海外同行情绪传导+产业链上…",
+      "confidence": "low",
+      "evidence": [],
+      "source_files": [
+        "opportunity-watch.json"
+      ],
+      "watch_next": [
+        "题材3分钟涨跌幅>=1.5%，方向占比>=70%，成交放大>=5x",
+        "板块内出现批量涨停/封板或后排扩散",
+        "核心股、ETF、后排扩散同向确认",
+        "核心股低开后放量收复开盘价或跌幅明显收敛"
+      ],
+      "invalidation": "核心股高开低走或冲高回落",
+      "tags": [
+        "科技硬件链",
+        "风控"
+      ],
+      "quality_flags": [],
+      "tone": "neutral",
+      "discovery_type": "premarket_watch_queue",
+      "evidence_score": 28,
+      "missing_evidence": [
+        "缺少可核验证据"
+      ],
+      "next_action": "题材3分钟涨跌幅>=1.5%，方向占比>=70%，成交放大>=5x",
+      "observation_source": "数据派生",
+      "independent_observation": false,
+      "signal_score": 47,
+      "signal_grade": "D",
+      "use_action": "仅复核",
+      "use_reasons": [
+        "缺少证据",
+        "有下一步验证",
+        "有证伪条件",
+        "有来源文件",
+        "有证据缺口"
+      ]
+    },
+    {
+      "title": "盘中追踪：CPO/光模块",
+      "type": "opportunity_watch",
+      "trigger_reason": "盘前/晚间注意点已转为盘中追踪清单，等待实时行情触发。",
+      "conclusion": "NVIDIA / AMD / Broadcom；AI芯片、ASIC与高速互联链集体承压；AI算力、服务器、CPO、交换机/高速以太网：工业富联、浪潮信息、新易盛、中际旭创、紫光股份、锐捷网络、盛科通信-U；情绪传导+产业链配套；海外股价不等于A股订单，整机/ODM/交换芯片至少两至三只同步放量才能…",
       "confidence": "low",
       "evidence": [],
       "source_files": [
