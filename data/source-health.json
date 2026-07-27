@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-07-11T20:19:06+08:00",
+  "timestamp": "2026-07-13T16:10:00+08:00",
   "sources": {
     "tencent_http": {
       "status": "ok",
@@ -266,27 +266,27 @@
     },
     "tencent_a_quote_midday_1130": {
       "status": "ok",
-      "last_check": "2026-07-08T11:32:24+08:00",
+      "last_check": "2026-07-13T12:46:56+08:00",
       "usage": "11:30午盘指数、ETF、观察池样本报价",
-      "detail": "成功获取A股指数、ETF、半导体/算力/CPO/电子布/风格雷达样本报价。",
-      "sample_count": 95,
+      "detail": "成功获取A股午间指数与半导体、算力、CPO、电子布和风格雷达样本报价；接口约12:05返回午间缓存值。",
+      "sample_count": 75,
       "errors": []
     },
     "tencent_hk_http_midday_1130": {
       "status": "ok",
-      "last_check": "2026-07-08T11:17:19+08:00",
-      "usage": "港股午前指数与重点样本快照",
-      "detail": "恒指、恒科和互联网/半导体/创新药样本返回有效快照；恒生科技与港股半导体强势，创新药偏弱。",
-      "sample_count": 15,
+      "last_check": "2026-07-13T12:46:56+08:00",
+      "usage": "11:30港股指数与映射样本",
+      "detail": "取得恒指、恒生科技、中芯H、华虹、阿里、腾讯、康方约11:59延迟行情。",
+      "sample_count": 7,
       "errors": []
     },
     "eastmoney_board_rank_midday_1130": {
       "status": "failed",
-      "last_check": "2026-07-08T11:32:24+08:00",
+      "last_check": "2026-07-13T12:46:56+08:00",
       "usage": "11:30行业/概念板块排行补充",
-      "detail": "东方财富行业/概念排行接口代理断开，本轮未采用板块排行；主线判断使用涨跌停结构池、腾讯报价和港股联动。",
+      "detail": "东方财富行业和概念排行接口均被远端关闭连接；保留11:05最后有效排行并标记为stale_for_noon，未冒充午间数据。",
       "errors": [
-        "ProxyError Remote end closed connection without response"
+        "Remote end closed connection without response"
       ]
     },
     "eastmoney_limit_pool_intraday_1300": {
@@ -993,6 +993,401 @@
       "detail": "config/watchlist.json存在无市场前缀代码3986，名称bBreak Systems，无法可靠映射到交易所证券；按只增强不删减保留监测，但不编造行情或公告。",
       "errors": [
         "unmapped code: 3986 bBreak Systems"
+      ]
+    },
+    "cninfo_watchlist_evening_20260712": {
+      "status": "ok_empty",
+      "last_check": "2026-07-12T20:12:33+08:00",
+      "usage": "20:00观察池108只A股公告全量扫描",
+      "detail": "巨潮深市和沪市2026-07-12公告页均返回0条，无接口错误；原始结果保存于data/.cninfo-evening-scan-20260712.json。",
+      "sample_count": 108,
+      "errors": []
+    },
+    "hkex_watchlist_evening_20260712": {
+      "status": "degraded",
+      "last_check": "2026-07-12T20:12:33+08:00",
+      "usage": "20:00观察池5只港股公告核验",
+      "detail": "港交所官方域名标题检索及公司新闻页未见7月12日重大新增，但未取得可审计的批量披露清单，故不表述为绝对无公告。",
+      "sample_count": 5,
+      "errors": [
+        "bulk HKEX disclosure list not available in current scan workflow"
+      ]
+    },
+    "official_policy_evening_20260712": {
+      "status": "ok_empty",
+      "last_check": "2026-07-12T20:12:33+08:00",
+      "usage": "20:00工信部/商务部/发改委/政府网固定政策扫描",
+      "detail": "未核验到7月12日新增半导体、AI、机器人、新材料或出口管制P0政策；中国材料大会按地方政府确认的日历事件记录。",
+      "sample_count": 6,
+      "errors": []
+    },
+    "global_benchmark_evening_20260712": {
+      "status": "ok_empty",
+      "last_check": "2026-07-12T20:12:33+08:00",
+      "usage": "20:00全球设备/材料/AI算力/HBM标杆公司扫描",
+      "detail": "ASML、TEL、AMAT、LRCX、KLA、SUMCO、信越、Entegris、NVIDIA、AMD、Broadcom、SK海力士、三星、台积电等公开新闻未核验到7月12日新增公司级P0；保留台积电和AMD既有事件日历。",
+      "sample_count": 14,
+      "errors": []
+    },
+    "company_media_evening_20260712": {
+      "status": "ok",
+      "last_check": "2026-07-12T20:12:33+08:00",
+      "usage": "20:00观察池公司战略与定价事件扫描",
+      "detail": "核验智谱内部信、金山云调价生效和中国材料大会日历；智谱列P0，后两项按已知事件/观察线。",
+      "sample_count": 3,
+      "errors": []
+    },
+    "cninfo_watchlist_premarket_20260713": {
+      "status": "ok_empty",
+      "last_check": "2026-07-13T08:47:00+08:00",
+      "usage": "8:30增量观察池108只A股公告扫描",
+      "detail": "巨潮深市与沪市2026-07-13公告页各返回104条；与108只观察池交叉后，业绩、订单、减持、回购、重组、监管、诉讼、产能及客户验证等重大新增命中0条。原始结果保存于data/.cninfo-premarket-scan-20260713.json。",
+      "sample_count": 108,
+      "errors": []
+    },
+    "sina_tencent_japan_korea_early_20260713": {
+      "status": "ok",
+      "last_check": "2026-07-13T09:18:00+08:00",
+      "usage": "日韩早盘指数与半导体设备/存储样本",
+      "detail": "日经225约-1.05%、KOSPI约-2.89%；东京电子、Disco偏强，铠侠、SK海力士偏弱，设备与存储分化。",
+      "sample_count": 8,
+      "errors": []
+    },
+    "official_policy_premarket_20260713": {
+      "status": "ok_empty",
+      "last_check": "2026-07-13T08:52:00+08:00",
+      "usage": "20:00至8:30工信部/商务部/发改委固定政策增量扫描",
+      "detail": "未核验到新增半导体、AI、机器人、新材料或出口管制P0政策；既有政策仅作背景，不伪装为今晨新增催化。",
+      "sample_count": 3,
+      "errors": []
+    },
+    "global_benchmark_premarket_20260713": {
+      "status": "ok_empty",
+      "last_check": "2026-07-13T08:52:00+08:00",
+      "usage": "20:00至8:30全球设备、材料、AI算力、HBM标杆增量扫描",
+      "detail": "周末无新增美股交易，沿用7月10日收盘；未核验到ASML、TEL、AMAT、LRCX、KLA、SUMCO、信越、Entegris、NVIDIA、AMD、Broadcom、SK海力士、三星、台积电等公司级P0公告。",
+      "sample_count": 14,
+      "errors": []
+    },
+    "yahoo_finance_premarket_20260713": {
+      "status": "degraded",
+      "last_check": "2026-07-13T08:51:00+08:00",
+      "usage": "日韩早盘交叉验证",
+      "detail": "Yahoo chart接口返回区域错误页或超时，未使用其空结果；改由新浪指数和腾讯个股快照交叉核验。",
+      "sample_count": 0,
+      "errors": [
+        "Yahoo chart endpoint returned localized error page or timeout"
+      ]
+    },
+    "tencent_hk_auction_20260713": {
+      "status": "degraded",
+      "last_check": "2026-07-13T09:19:00+08:00",
+      "usage": "9:15港股竞价及A/H映射",
+      "detail": "取得中芯、华虹、澜起、兆易、智谱、商汤、五一视界、互联网、创新药、汽车等竞价指示价；时间戳主要为09:00-09:04，尚非09:30正式开盘成交，已明确标注不可当终值。",
+      "sample_count": 17,
+      "errors": [
+        "pre-open indicative prices are not official opening trades"
+      ]
+    },
+    "sina_global_futures_20260713": {
+      "status": "ok",
+      "last_check": "2026-07-13T09:18:00+08:00",
+      "usage": "A50与恒指期货盘前方向",
+      "detail": "富时中国A50期货约14931.15，较前结算14962约-0.21%；恒指期货约24168.15，较前结算24158约+0.04%。",
+      "sample_count": 2,
+      "errors": []
+    },
+    "nasdaq_golden_dragon_20260710": {
+      "status": "ok",
+      "last_check": "2026-07-13T09:17:00+08:00",
+      "usage": "中概股整体情绪",
+      "detail": "Nasdaq官方历史页显示7月10日金龙中国指数6119.55点，日变动-11.76，百分比近0.00%，外资对中资情绪中性。",
+      "sample_count": 1,
+      "errors": []
+    },
+    "eastmoney_auction_limit_pool_20260713": {
+      "status": "degraded",
+      "last_check": "2026-07-13T09:27:00+08:00",
+      "usage": "9:25开盘涨停、跌停、炸板结构统计",
+      "detail": "涨停池返回tc=6且6条明细，含国华退1只；跌停池返回tc=5但明细列表为空；炸板池tc=0。采用跌停总数5，不编造跌停名单。",
+      "sample_count": 11,
+      "errors": [
+        "DTPool total count available but pool rows empty"
+      ]
+    },
+    "tencent_a_auction_20260713": {
+      "status": "ok",
+      "last_check": "2026-07-13T09:28:00+08:00",
+      "usage": "A股指数、观察池开盘价及竞价成交代理",
+      "detail": "取得5个主要指数及33只核心样本09:26-09:27开盘快照；沪深指数成交额字段合计约289.48亿元，作为集合竞价代理口径。",
+      "sample_count": 38,
+      "errors": []
+    },
+    "eastmoney_structure_intraday_0930_20260713": {
+      "status": "degraded",
+      "last_check": "2026-07-13T09:34:00+08:00",
+      "usage": "涨停/跌停/炸板及行业概念排行",
+      "detail": "涨停池13条、炸板池1条；跌停池tc=10但明细为空。行业与概念排行各返回30条，按串行请求使用。",
+      "sample_count": 54,
+      "errors": [
+        "DTPool total count available but pool rows empty"
+      ]
+    },
+    "tencent_a_intraday_0930_20260713": {
+      "status": "ok",
+      "last_check": "2026-07-13T09:35:00+08:00",
+      "usage": "A股指数、半导体、CPO、电子布、风格雷达实时行情",
+      "detail": "取得5个指数、2只ETF及70余只核心样本09:34-09:35快照；沪深累计成交约3192.63亿元。",
+      "sample_count": 77,
+      "errors": []
+    },
+    "tencent_hk_open_0930_20260713": {
+      "status": "degraded",
+      "last_check": "2026-07-13T09:35:00+08:00",
+      "usage": "港股正式开盘交叉验证",
+      "detail": "返回时间戳仍停在09:19竞价阶段，未将其数值作为正式开盘成交或A/H共振确认。",
+      "sample_count": 12,
+      "errors": [
+        "HK quote timestamps remained pre-open"
+      ]
+    },
+    "eastmoney_structure_intraday_1000_20260713": {
+      "status": "degraded",
+      "last_check": "2026-07-13T10:14:00+08:00",
+      "usage": "10:00涨停/跌停/炸板与行业概念排行",
+      "detail": "涨停池23条、炸板池9条、跌停总数19但明细为空；行业排行返回35条，概念排行请求被远端断开，保留上一版概念排行且不编造更新。",
+      "sample_count": 67,
+      "errors": [
+        "DTPool total count available but rows empty",
+        "concept rank RemoteDisconnected"
+      ]
+    },
+    "tencent_a_h_intraday_1000_20260713": {
+      "status": "ok",
+      "last_check": "2026-07-13T10:15:00+08:00",
+      "usage": "A/H指数、科技、电子布、风格雷达实时行情",
+      "detail": "取得A股5个指数、2只ETF、70余只样本及港股指数/核心股10:00-10:15快照；沪深累计成交约12236.16亿元。",
+      "sample_count": 89,
+      "errors": []
+    },
+    "eastmoney_structure_intraday_1030_20260713": {
+      "status": "degraded",
+      "last_check": "2026-07-13T10:37:03+08:00",
+      "usage": "10:30涨停/跌停/炸板与行业概念排行",
+      "detail": "涨停池23条、炸板池12条，跌停总数35但明细为空；行业和概念排行各返回完整结果。使用跌停总数，不编造跌停名单或行业分布。",
+      "sample_count": 1026,
+      "errors": [
+        "DTPool total count available but rows empty"
+      ]
+    },
+    "tencent_a_h_intraday_1030_20260713": {
+      "status": "ok",
+      "last_check": "2026-07-13T10:37:03+08:00",
+      "usage": "A/H指数、科技、电子布、风格雷达实时行情",
+      "detail": "取得A股5个指数及70余只核心样本10:37快照；港股指数与核心股为10:24延迟快照，已明确降权。沪深累计成交约14394.65亿元。",
+      "sample_count": 82,
+      "errors": []
+    },
+    "eastmoney_structure_intraday_1100_20260713": {
+      "status": "degraded",
+      "last_check": "2026-07-13T11:05:12+08:00",
+      "usage": "11:00涨停/跌停/炸板与行业概念排行",
+      "detail": "涨停池25条、炸板池12条、跌停总数50但明细为空；行业和概念排行完整返回。使用跌停总数，不编造跌停名单或行业分布。",
+      "sample_count": 1028,
+      "errors": [
+        "DTPool total count available but rows empty"
+      ]
+    },
+    "tencent_a_h_intraday_1100_20260713": {
+      "status": "ok",
+      "last_check": "2026-07-13T11:05:12+08:00",
+      "usage": "A/H指数、科技、电子布、风格雷达实时行情",
+      "detail": "取得A股5个指数及70余只核心样本11:05快照；港股指数与核心股为10:50延迟快照。沪深累计成交约16598.04亿元。",
+      "sample_count": 82,
+      "errors": []
+    },
+    "eastmoney_structure_midday_1130_20260713": {
+      "status": "degraded",
+      "last_check": "2026-07-13T12:46:56+08:00",
+      "usage": "11:30涨停/跌停/炸板与行业概念排行",
+      "detail": "涨停池tc=24、炸板池tc=13并返回明细；跌停池tc=43但明细为空。行业和概念排行两次请求均被远端断开，本轮未采用午间排行。",
+      "sample_count": 37,
+      "errors": [
+        "DTPool total count available but rows empty",
+        "industry rank RemoteDisconnected",
+        "concept rank RemoteDisconnected"
+      ]
+    },
+    "tencent_a_h_midday_1130_20260713": {
+      "status": "ok",
+      "last_check": "2026-07-13T12:46:56+08:00",
+      "usage": "A股午间指数、观察池及港股延迟行情",
+      "detail": "取得A股5个指数及半导体、存储、CPO、电子布、风格雷达核心样本午间终值；港股为约11:59延迟快照。沪深累计成交约18528.36亿元。",
+      "sample_count": 82,
+      "errors": []
+    },
+    "tencent_intraday_market_update_1300_20260713": {
+      "status": "ok",
+      "last_check": "2026-07-13T13:17:29+08:00",
+      "usage": "13:00指数与行业排行无模型刷新",
+      "detail": "取得5个A股指数及98个行业样本；沪深累计成交约19008.16亿元。",
+      "sample_count": 103,
+      "errors": []
+    },
+    "tencent_a_h_intraday_1300_20260713": {
+      "status": "ok",
+      "last_check": "2026-07-13T13:17:29+08:00",
+      "usage": "13:00核心样本、专项与A/H联动行情",
+      "detail": "取得70余只A股样本13:05快照；恒指与恒生科技为13:05，港股个股因午休为11:59。",
+      "sample_count": 77,
+      "errors": []
+    },
+    "eastmoney_structure_intraday_1300_20260713": {
+      "status": "degraded",
+      "last_check": "2026-07-13T13:17:29+08:00",
+      "usage": "13:00涨停/跌停/炸板结构",
+      "detail": "涨停池tc=23且返回23条，炸板池tc=14且返回14条；跌停池tc=60但明细为空。使用跌停总数，不编造跌停名单或行业分布。",
+      "sample_count": 37,
+      "errors": [
+        "DTPool total count available but rows empty"
+      ]
+    },
+    "tencent_intraday_market_update_1330_20260713": {
+      "status": "ok",
+      "last_check": "2026-07-13T13:34:40+08:00",
+      "usage": "13:30指数与行业排行无模型刷新",
+      "detail": "取得5个A股指数及98个行业样本；沪深累计成交约21338.64亿元。",
+      "sample_count": 103,
+      "errors": []
+    },
+    "tencent_a_h_intraday_1330_20260713": {
+      "status": "ok",
+      "last_check": "2026-07-13T13:34:40+08:00",
+      "usage": "13:30核心样本、专项与A/H联动行情",
+      "detail": "取得70余只A股样本13:31快照；恒指与恒生科技为13:31，港股个股约13:16。",
+      "sample_count": 77,
+      "errors": []
+    },
+    "eastmoney_structure_intraday_1330_20260713": {
+      "status": "degraded",
+      "last_check": "2026-07-13T13:34:40+08:00",
+      "usage": "13:30涨停/跌停/炸板结构",
+      "detail": "涨停池tc=23且返回23条，炸板池tc=15且返回15条；跌停池tc=91但明细为空。使用跌停总数，不编造跌停名单或行业分布。",
+      "sample_count": 38,
+      "errors": [
+        "DTPool total count available but rows empty"
+      ]
+    },
+    "tencent_intraday_market_update_1400_20260713": {
+      "status": "ok",
+      "last_check": "2026-07-13T14:07:30+08:00",
+      "usage": "14:00指数与行业排行无模型刷新",
+      "detail": "取得5个A股指数及98个行业样本；沪深累计成交约23564.95亿元。",
+      "sample_count": 103,
+      "errors": []
+    },
+    "tencent_a_h_intraday_1400_20260713": {
+      "status": "ok",
+      "last_check": "2026-07-13T14:07:30+08:00",
+      "usage": "14:00核心样本、专项与A/H联动行情",
+      "detail": "取得70余只A股样本14:05快照；恒指与恒生科技为14:05，港股个股约13:50。",
+      "sample_count": 77,
+      "errors": []
+    },
+    "eastmoney_structure_intraday_1400_20260713": {
+      "status": "degraded",
+      "last_check": "2026-07-13T14:07:30+08:00",
+      "usage": "14:00涨停/跌停/炸板结构",
+      "detail": "涨停池tc=25且返回25条，炸板池tc=17且返回17条；跌停池tc=107但明细为空。使用跌停总数，不编造跌停名单或行业分布。",
+      "sample_count": 42,
+      "errors": [
+        "DTPool total count available but rows empty"
+      ]
+    },
+    "tencent_intraday_market_update_1430_20260713": {
+      "status": "ok",
+      "last_check": "2026-07-13T14:34:30+08:00",
+      "usage": "14:30指数与行业排行无模型刷新",
+      "detail": "取得5个A股指数及98个行业样本；沪深累计成交约25434.49亿元。",
+      "sample_count": 103,
+      "errors": []
+    },
+    "tencent_a_h_intraday_1430_20260713": {
+      "status": "ok",
+      "last_check": "2026-07-13T14:34:30+08:00",
+      "usage": "14:30核心样本、专项与A/H联动行情",
+      "detail": "取得70余只A股样本14:32快照；恒指与恒生科技为14:32，港股个股约14:17。",
+      "sample_count": 77,
+      "errors": []
+    },
+    "eastmoney_structure_intraday_1430_20260713": {
+      "status": "degraded",
+      "last_check": "2026-07-13T14:34:30+08:00",
+      "usage": "14:30涨停/跌停/炸板结构",
+      "detail": "涨停池tc=25且返回25条，炸板池tc=17且返回17条；跌停池tc=153但明细为空。使用跌停总数，不编造跌停名单或行业分布。",
+      "sample_count": 42,
+      "errors": [
+        "DTPool total count available but rows empty"
+      ]
+    },
+    "tencent_close_postmarket_20260713": {
+      "status": "ok",
+      "last_check": "2026-07-13T15:12:00+08:00",
+      "usage": "A股收盘指数、观察池、专项样本与14:55至15:00分钟线",
+      "detail": "5个指数、核心样本和31条尾盘分钟线返回有效收盘数据。",
+      "sample_count": 31,
+      "errors": []
+    },
+    "eastmoney_limit_pool_postmarket_20260713": {
+      "status": "degraded",
+      "last_check": "2026-07-13T15:12:00+08:00",
+      "usage": "收盘涨停、炸板、跌停总数及近5交易日结构",
+      "detail": "涨停池29条、炸板池14条有效；跌停接口返回总数161但明细为空，未据此编造跌停行业分布。",
+      "sample_count": 43,
+      "errors": [
+        "跌停池仅返回total=161，rows为空"
+      ]
+    },
+    "sina_up5_postmarket_20260713": {
+      "status": "ok",
+      "last_check": "2026-07-13T15:12:00+08:00",
+      "usage": "全市场涨幅不低于5%宽度统计",
+      "detail": "清洗后104只，其中5%至不足8%为55只、8%以上49只。",
+      "sample_count": 104,
+      "errors": []
+    },
+    "sw_official_industry_postmarket_20260713": {
+      "status": "ok",
+      "last_check": "2026-07-13T15:12:00+08:00",
+      "usage": "104只强势样本申万一级行业映射",
+      "detail": "通过申万官方分类数据的AKShare封装读取12873条历史分类，按股票最新生效记录完成104只全量映射，无未映射样本。",
+      "sample_count": 104,
+      "errors": []
+    },
+    "eastmoney_history_limit_pool_5d_20260713": {
+      "status": "ok",
+      "last_check": "2026-07-13T15:12:00+08:00",
+      "usage": "2026-07-06至07-13六个交易日涨停题材连续性",
+      "detail": "逐日结构池有效涨停64/33/47/74/90/27，用于热点连续性判断。",
+      "sample_count": 335,
+      "errors": []
+    },
+    "sina_hk_close_postmarket_20260713": {
+      "status": "ok",
+      "last_check": "2026-07-13T16:10:00+08:00",
+      "usage": "港股指数与重点样本正式收盘及16:00至16:09竞价校验",
+      "detail": "恒指、恒科及19只重点港股返回16:08至16:09终值；字段方向与腾讯15:57快照一致。",
+      "sample_count": 21,
+      "errors": []
+    },
+    "tencent_hk_close_postmarket_20260713": {
+      "status": "degraded_delayed",
+      "last_check": "2026-07-13T16:10:00+08:00",
+      "usage": "港股收盘方向交叉验证",
+      "detail": "腾讯接口在16:09查询时最新时间停在15:57，方向与新浪一致但未作为正式终值。",
+      "sample_count": 21,
+      "errors": [
+        "quote_time停在15:57，未覆盖收市竞价"
       ]
     }
   }

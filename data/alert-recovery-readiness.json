@@ -1,12 +1,12 @@
 {
-  "timestamp": "2026-07-12T20:54:40+08:00",
-  "current_signal_date": "2026-07-10",
+  "timestamp": "2026-07-27T16:19:48+08:00",
+  "current_signal_date": "2026-07-23",
   "status": "candidate_visible",
   "summary": "盘中候选异动证据完整，可展示为待确认；未通过双源核验前不得升级为确认机会。",
   "alert_state": {
-    "source_status": "degraded_partial",
-    "active_count": 4,
-    "note": "尾盘出现更晚且达标的单源risk candidate：CMP/靶材/材料耗材、科技硬件链、长鑫存储IPO映射、封装均满足3分钟跌幅>=1.0%、下跌占比>=60%、成交放大>=5x。quote_audit为本地监控单源，cross_source_verified=false，仅显示待确认，不升级confirmed。"
+    "source_status": "monitor_session_closed",
+    "active_count": 10,
+    "note": "盘中监控已按计划结束，今日保留10条短周期触发供收盘复盘；已过交易时效，不作为当前触发。"
   },
   "trusted_sources": [
     {
@@ -48,13 +48,13 @@
       "quote_time",
       "field_mapping",
       "sanity_checks.sample_count",
-      "sanity_checks.max_abs_leader_change_pct",
+      "sanity_checks.max_abs_trigger_change_pct（题材/底池）或 max_abs_leader_change_pct（个股）",
       "sanity_checks.cross_source_verified"
     ],
     "hard_gates": [
       "candidate 必须带单源 quote_audit 和完整短周期证据，可在未交叉验证时展示为待确认。",
       "confirmed 必须带 quote_audit，且 cross_source_verified=true。",
-      "leaders.change_pct 不得超过 A股常规单日边界；异常值直接撤下。",
+      "题材/底池涨跌幅只写 trigger_metrics；个股涨跌幅只写独立个股行情字段。",
       "污染源仍 degraded 时，禁止只用该源恢复 alert。",
       "重产后必须执行 build_dashboard_reports.py，runtime-smoke 通过后再推送。"
     ]

@@ -1,0 +1,966 @@
+{
+  "schema_version": 1,
+  "mode": "shadow_only",
+  "decision_snapshot_id": "environment_decision_7ae349b0d78cf57fd700",
+  "environment_snapshot_id": "environment_0250fdb44c7380b7923c",
+  "trade_date": "2026-07-17",
+  "session_phase": "close",
+  "as_of": "2026-07-17T16:09:54+08:00",
+  "built_at": "2026-07-18T15:06:08+08:00",
+  "policy_version": "2026-07-18.e5.2",
+  "primary_state": "risk_release",
+  "action_constraint": "风险优先，等待负反馈收敛",
+  "state_transition": {
+    "transition_id": "environment_transition_7dc6817e32ec07a9560a",
+    "environment_snapshot_id": "environment_0250fdb44c7380b7923c",
+    "from_state": "risk_release",
+    "primary_state": "risk_release",
+    "transition_type": "unchanged",
+    "trigger_dimensions": [
+      "sentiment_structure",
+      "position_fragility"
+    ],
+    "trigger_evidence_ids": [
+      "env_evidence_c02e56161e25ea1b84fe",
+      "env_evidence_ba668ba46707e58e94c0",
+      "env_evidence_6dee4bc6720b305553b0"
+    ],
+    "counter_evidence": [
+      "旧指数时点为2026-07-13，已排除。",
+      "过滤后仍有32家涨停，不能把风险理解为所有股票同向下跌。",
+      "单一宽基代理不能代表全部风格。",
+      "样本数量有限，不能代表全市场。",
+      "旧外盘时点为2026-07-13，已排除。"
+    ],
+    "confirmation_count": 1,
+    "pending_candidate": null,
+    "policy_version": "2026-07-18.e5.2",
+    "transition_reason": "情绪、位置、流动性或宽度中的可靠风险证据形成快速降级条件。",
+    "action_constraint": "风险优先，等待负反馈收敛",
+    "positive_upgrade_requires_two_checks": true,
+    "risk_fast_path": false,
+    "state_changed": false
+  },
+  "style_regimes": [
+    {
+      "style_id": "old_deng",
+      "label": "老登",
+      "definition_version": "2026-07-12.1",
+      "basket_version": "2026-07-18.e5.1",
+      "basket_status": "versioned_candidate_basket",
+      "construction": "成熟价值、金融、消费防御主题篮子；已排除旧名单中与定义冲突的科技样本。",
+      "member_count": 18,
+      "observed_count": 5,
+      "coverage_ratio": 0.2778,
+      "price_state": "unknown",
+      "turnover_state": "unknown",
+      "breadth_state": "unknown",
+      "leader_confirmation": "partial",
+      "sentiment_state": "risk",
+      "median_change_pct": -0.6054,
+      "positive_ratio": 0.2,
+      "negative_ratio": 0.8,
+      "representative_securities": [
+        {
+          "code": "sz002714",
+          "name": "牧原股份",
+          "group": "消费防御",
+          "change_pct": -2.6161,
+          "as_of": "2026-07-17T16:14:30+08:00",
+          "source": "腾讯财经公开行情"
+        },
+        {
+          "code": "sh600030",
+          "name": "中信证券",
+          "group": "券商",
+          "change_pct": -1.7794,
+          "as_of": "2026-07-17T16:14:44+08:00",
+          "source": "腾讯财经公开行情"
+        },
+        {
+          "code": "sz300059",
+          "name": "东方财富",
+          "group": "券商",
+          "change_pct": -0.6054,
+          "as_of": "2026-07-17T16:14:57+08:00",
+          "source": "腾讯财经公开行情"
+        },
+        {
+          "code": "sh600519",
+          "name": "贵州茅台",
+          "group": "白酒",
+          "change_pct": -0.4758,
+          "as_of": "2026-07-17T16:14:59+08:00",
+          "source": "腾讯财经公开行情"
+        },
+        {
+          "code": "sh601318",
+          "name": "中国平安",
+          "group": "保险",
+          "change_pct": 0.0592,
+          "as_of": "2026-07-17T16:14:50+08:00",
+          "source": "腾讯财经公开行情"
+        }
+      ],
+      "counter_evidence": [
+        "最强样本中国平安+0.06%，最弱样本牧原股份-2.62%，需防止单股代表整体。",
+        "缺少篮子成交额与相对稳定坐标，不能完整确认回流或退潮。"
+      ],
+      "conclusion": "老登篮子仅取得5/18只同日行情，证据不足，不判断方向。",
+      "quality_state": "unknown",
+      "as_of": "2026-07-17T16:14:59+08:00",
+      "user_assets_modified": false
+    },
+    {
+      "style_id": "middle_deng",
+      "label": "中登",
+      "definition_version": "2026-07-12.1",
+      "basket_version": "2026-07-18.e5.1",
+      "basket_status": "versioned_candidate_basket",
+      "construction": "按用户既有语义重点覆盖新能源、光伏、储能、新能源车及电力设备链；当前先建立候选篮子，证据不足时不判断方向。",
+      "member_count": 5,
+      "observed_count": 0,
+      "coverage_ratio": 0.0,
+      "price_state": "unknown",
+      "turnover_state": "unknown",
+      "breadth_state": "unknown",
+      "leader_confirmation": "unconfirmed",
+      "sentiment_state": "risk",
+      "median_change_pct": null,
+      "positive_ratio": null,
+      "negative_ratio": null,
+      "representative_securities": [],
+      "counter_evidence": [
+        "缺少篮子成交额与相对稳定坐标，不能完整确认回流或退潮。"
+      ],
+      "conclusion": "中登篮子仅取得0/5只同日行情，证据不足，不判断方向。",
+      "quality_state": "unknown",
+      "as_of": null,
+      "user_assets_modified": false
+    },
+    {
+      "style_id": "small_deng",
+      "label": "小登",
+      "definition_version": "2026-07-12.1",
+      "basket_version": "2026-07-18.e5.1",
+      "basket_status": "versioned_candidate_basket",
+      "construction": "当前创新周期的半导体、AI算力和光模块代表篮子；不含纯微盘代理。",
+      "member_count": 12,
+      "observed_count": 12,
+      "coverage_ratio": 1.0,
+      "price_state": "weakening",
+      "turnover_state": "unknown",
+      "breadth_state": "narrowing",
+      "leader_confirmation": "weakening",
+      "sentiment_state": "risk",
+      "median_change_pct": -8.7788,
+      "positive_ratio": 0.0,
+      "negative_ratio": 1.0,
+      "representative_securities": [
+        {
+          "code": "sz300394",
+          "name": "天孚通信",
+          "group": "光模块",
+          "change_pct": -13.4191,
+          "as_of": "2026-07-17T16:14:21+08:00",
+          "source": "腾讯财经公开行情"
+        },
+        {
+          "code": "sh688008",
+          "name": "澜起科技",
+          "group": "存储与算力",
+          "change_pct": -13.0394,
+          "as_of": "2026-07-17T16:14:56+08:00",
+          "source": "腾讯财经公开行情"
+        },
+        {
+          "code": "sz300308",
+          "name": "中际旭创",
+          "group": "光模块",
+          "change_pct": -11.9982,
+          "as_of": "2026-07-17T16:14:45+08:00",
+          "source": "腾讯财经公开行情"
+        },
+        {
+          "code": "sz300502",
+          "name": "新易盛",
+          "group": "光模块",
+          "change_pct": -11.0063,
+          "as_of": "2026-07-17T16:14:45+08:00",
+          "source": "腾讯财经公开行情"
+        },
+        {
+          "code": "sh603019",
+          "name": "中科曙光",
+          "group": "AI算力",
+          "change_pct": -10.0041,
+          "as_of": "2026-07-17T16:14:45+08:00",
+          "source": "腾讯财经公开行情"
+        },
+        {
+          "code": "sz000977",
+          "name": "浪潮信息",
+          "group": "AI算力",
+          "change_pct": -8.9412,
+          "as_of": "2026-07-17T16:14:09+08:00",
+          "source": "腾讯财经公开行情"
+        }
+      ],
+      "counter_evidence": [
+        "最强样本中微公司-2.97%，最弱样本天孚通信-13.42%，需防止单股代表整体。",
+        "缺少篮子成交额与相对稳定坐标，不能完整确认回流或退潮。"
+      ],
+      "conclusion": "小登价格与宽度明显走弱，但成交分布缺失，只能列为退潮候选。",
+      "quality_state": "degraded",
+      "as_of": "2026-07-17T16:14:59+08:00",
+      "user_assets_modified": false
+    },
+    {
+      "style_id": "microcap",
+      "label": "微盘",
+      "definition_version": "2026-07-12.1",
+      "basket_version": "2026-07-18.e5.1",
+      "basket_status": "proxy_only",
+      "construction": "独立使用中证2000小微盘宽基代理；不从小登篮子推断，不等于纯微盘。",
+      "member_count": 0,
+      "observed_count": 1,
+      "coverage_ratio": null,
+      "price_state": "weakening",
+      "turnover_state": "unknown",
+      "breadth_state": "proxy_only",
+      "leader_confirmation": "not_applicable",
+      "sentiment_state": "risk",
+      "median_change_pct": -6.182,
+      "positive_ratio": null,
+      "negative_ratio": null,
+      "representative_securities": [
+        {
+          "code": "932000",
+          "name": "中证2000指数（新浪行情）",
+          "change_pct": -6.182,
+          "as_of": "2026-07-17T16:09:54+08:00",
+          "source": "新浪财经中证2000公开行情",
+          "source_url": "https://quotes.sina.cn/hs/company/quotes/view/si932000",
+          "role": "小微盘宽基代理"
+        }
+      ],
+      "counter_evidence": [
+        "中证2000是小微盘宽基代理，不代表纯微盘，也不代表小登题材。",
+        "纯微盘正式数据仍缺失。"
+      ],
+      "conclusion": "中证2000小微盘宽基代理-6.18%；不等于纯微盘，也不从小登推断。",
+      "quality_state": "degraded",
+      "as_of": "2026-07-17T16:09:54+08:00",
+      "user_assets_modified": false
+    }
+  ],
+  "cross_market_mappings": [
+    {
+      "mapping_id": "us_ai_compute_to_a_share",
+      "mapping_version": "2026-07-18.e5.1",
+      "origin_market": "US",
+      "origin_objects": [
+        "NVIDIA",
+        "AMD",
+        "美股半导体"
+      ],
+      "origin_as_of": null,
+      "origin_direction": "unknown",
+      "origin_source_state": "missing_or_stale",
+      "transmission_type": "产业链与风险偏好",
+      "a_share_themes": [
+        "AI算力",
+        "光模块/CPO"
+      ],
+      "representative_securities": [
+        {
+          "code": "sz300308",
+          "name": "中际旭创",
+          "change_pct": -11.9982,
+          "as_of": "2026-07-17T16:14:45+08:00",
+          "source": "腾讯财经公开行情"
+        },
+        {
+          "code": "sz300502",
+          "name": "新易盛",
+          "change_pct": -11.0063,
+          "as_of": "2026-07-17T16:14:45+08:00",
+          "source": "腾讯财经公开行情"
+        },
+        {
+          "code": "sh601138",
+          "name": "工业富联",
+          "change_pct": -8.6163,
+          "as_of": "2026-07-17T16:14:59+08:00",
+          "source": "腾讯财经公开行情"
+        }
+      ],
+      "a_share_direction": "down",
+      "transmission_state": "background_only",
+      "conclusion": "海外触发缺少当前交易日、当前时点的可核验来源，只保留为背景。",
+      "counter_evidence": [
+        "海外变化属于公司特有事件",
+        "A股代表股竞价至10:00未兑现",
+        "A股已经提前交易并出现高开低走",
+        "未取得当前交易日海外事实。"
+      ],
+      "valid_window": [
+        "盘前观察",
+        "竞价至10:00验证",
+        "午盘复核",
+        "收盘定性",
+        "T+1/T+3/T+5回溯"
+      ],
+      "valid_until": "2026-07-17T15:00:00+08:00",
+      "supports_g5_upgrade": false,
+      "single_company_event_theme_upgrade": false,
+      "user_assets_modified": false
+    },
+    {
+      "mapping_id": "us_memory_to_a_share",
+      "mapping_version": "2026-07-18.e5.1",
+      "origin_market": "US",
+      "origin_objects": [
+        "Micron",
+        "美光",
+        "HBM"
+      ],
+      "origin_as_of": null,
+      "origin_direction": "unknown",
+      "origin_source_state": "missing_or_stale",
+      "transmission_type": "产业链映射",
+      "a_share_themes": [
+        "存储",
+        "HBM"
+      ],
+      "representative_securities": [
+        {
+          "code": "sh688008",
+          "name": "澜起科技",
+          "change_pct": -13.0394,
+          "as_of": "2026-07-17T16:14:56+08:00",
+          "source": "腾讯财经公开行情"
+        },
+        {
+          "code": "sh603986",
+          "name": "兆易创新",
+          "change_pct": -9.9998,
+          "as_of": "2026-07-17T16:14:54+08:00",
+          "source": "腾讯财经公开行情"
+        },
+        {
+          "code": "sz301308",
+          "name": "江波龙",
+          "change_pct": -14.5797,
+          "as_of": "2026-07-17T16:14:06+08:00",
+          "source": "腾讯财经公开行情"
+        }
+      ],
+      "a_share_direction": "down",
+      "transmission_state": "background_only",
+      "conclusion": "海外触发缺少当前交易日、当前时点的可核验来源，只保留为背景。",
+      "counter_evidence": [
+        "变化只来自美光公司特有财报或诉讼",
+        "A股存储代表股背离",
+        "A股此前已提前交易",
+        "未取得当前交易日海外事实。"
+      ],
+      "valid_window": [
+        "盘前观察",
+        "竞价至10:00验证",
+        "午盘复核",
+        "收盘定性",
+        "T+1/T+3/T+5回溯"
+      ],
+      "valid_until": "2026-07-17T15:00:00+08:00",
+      "supports_g5_upgrade": false,
+      "single_company_event_theme_upgrade": false,
+      "user_assets_modified": false
+    },
+    {
+      "mapping_id": "hk_semiconductor_to_a_share",
+      "mapping_version": "2026-07-18.e5.1",
+      "origin_market": "HK",
+      "origin_objects": [
+        "中芯国际H",
+        "华虹半导体",
+        "恒生科技"
+      ],
+      "origin_as_of": null,
+      "origin_direction": "unknown",
+      "origin_source_state": "missing_or_stale",
+      "transmission_type": "公司与产业链映射",
+      "a_share_themes": [
+        "半导体设备",
+        "半导体材料"
+      ],
+      "representative_securities": [
+        {
+          "code": "sz002371",
+          "name": "北方华创",
+          "change_pct": -3.6655,
+          "as_of": "2026-07-17T16:14:27+08:00",
+          "source": "腾讯财经公开行情"
+        },
+        {
+          "code": "sh688012",
+          "name": "中微公司",
+          "change_pct": -2.9688,
+          "as_of": "2026-07-17T16:14:39+08:00",
+          "source": "腾讯财经公开行情"
+        },
+        {
+          "code": "sh688120",
+          "name": "华海清科",
+          "change_pct": -6.4853,
+          "as_of": "2026-07-17T16:14:43+08:00",
+          "source": "腾讯财经公开行情"
+        }
+      ],
+      "a_share_direction": "down",
+      "transmission_state": "background_only",
+      "conclusion": "海外触发缺少当前交易日、当前时点的可核验来源，只保留为背景。",
+      "counter_evidence": [
+        "港股波动来自个股特有事件",
+        "A股设备代表股未共振",
+        "人民币或A股风险偏好反向",
+        "未取得当前交易日海外事实。"
+      ],
+      "valid_window": [
+        "盘前观察",
+        "竞价至10:00验证",
+        "午盘复核",
+        "收盘定性",
+        "T+1/T+3/T+5回溯"
+      ],
+      "valid_until": "2026-07-17T15:00:00+08:00",
+      "supports_g5_upgrade": false,
+      "single_company_event_theme_upgrade": false,
+      "user_assets_modified": false
+    },
+    {
+      "mapping_id": "kr_memory_to_a_share",
+      "mapping_version": "2026-07-18.e5.1",
+      "origin_market": "KR",
+      "origin_objects": [
+        "Samsung Electronics",
+        "SK Hynix"
+      ],
+      "origin_as_of": null,
+      "origin_direction": "unknown",
+      "origin_source_state": "missing_or_stale",
+      "transmission_type": "存储产业链映射",
+      "a_share_themes": [
+        "存储",
+        "HBM"
+      ],
+      "representative_securities": [
+        {
+          "code": "sh688008",
+          "name": "澜起科技",
+          "change_pct": -13.0394,
+          "as_of": "2026-07-17T16:14:56+08:00",
+          "source": "腾讯财经公开行情"
+        },
+        {
+          "code": "sh603986",
+          "name": "兆易创新",
+          "change_pct": -9.9998,
+          "as_of": "2026-07-17T16:14:54+08:00",
+          "source": "腾讯财经公开行情"
+        },
+        {
+          "code": "sz301308",
+          "name": "江波龙",
+          "change_pct": -14.5797,
+          "as_of": "2026-07-17T16:14:06+08:00",
+          "source": "腾讯财经公开行情"
+        }
+      ],
+      "a_share_direction": "down",
+      "transmission_state": "background_only",
+      "conclusion": "海外触发缺少当前交易日、当前时点的可核验来源，只保留为背景。",
+      "counter_evidence": [
+        "韩国行情来源或时点未核验",
+        "A股代表股背离",
+        "变化属于单一公司事件",
+        "未取得当前交易日海外事实。"
+      ],
+      "valid_window": [
+        "盘前观察",
+        "竞价至10:00验证",
+        "午盘复核",
+        "收盘定性",
+        "T+1/T+3/T+5回溯"
+      ],
+      "valid_until": "2026-07-17T15:00:00+08:00",
+      "supports_g5_upgrade": false,
+      "single_company_event_theme_upgrade": false,
+      "user_assets_modified": false
+    }
+  ],
+  "g5_links": [
+    {
+      "opportunity_id": "validation_56bc9e4ba0c3f55b46b9",
+      "title": "燃气与通用/专用设备的非科技竞价强势股",
+      "environment_snapshot_id": "environment_0250fdb44c7380b7923c",
+      "g5_result": "suppress",
+      "supporting_dimensions": [],
+      "suppressing_dimensions": [
+        "sentiment_structure",
+        "position_fragility"
+      ],
+      "confirmed_external_mappings": [],
+      "effective_action": "等待风险收敛，不追",
+      "reason": "全市场风险状态和抑制维度限制机会升级。",
+      "representative_stock_gate_still_required": true,
+      "position_gate_still_required": true,
+      "user_asset_identity_bypasses_gate": false,
+      "user_assets_modified": false
+    },
+    {
+      "opportunity_id": "validation_89c68c6a50327559986b",
+      "title": "低位化工20cm情绪锚",
+      "environment_snapshot_id": "environment_0250fdb44c7380b7923c",
+      "g5_result": "suppress",
+      "supporting_dimensions": [],
+      "suppressing_dimensions": [
+        "sentiment_structure",
+        "position_fragility"
+      ],
+      "confirmed_external_mappings": [],
+      "effective_action": "等待风险收敛，不追",
+      "reason": "全市场风险状态和抑制维度限制机会升级。",
+      "representative_stock_gate_still_required": true,
+      "position_gate_still_required": true,
+      "user_asset_identity_bypasses_gate": false,
+      "user_assets_modified": false
+    },
+    {
+      "opportunity_id": "validation_1de7e0144fe9c4242eca",
+      "title": "港股物理AI仅作跨市场观察",
+      "environment_snapshot_id": "environment_0250fdb44c7380b7923c",
+      "g5_result": "suppress",
+      "supporting_dimensions": [],
+      "suppressing_dimensions": [
+        "sentiment_structure",
+        "position_fragility"
+      ],
+      "confirmed_external_mappings": [],
+      "effective_action": "等待风险收敛，不追",
+      "reason": "全市场风险状态和抑制维度限制机会升级。",
+      "representative_stock_gate_still_required": true,
+      "position_gate_still_required": true,
+      "user_asset_identity_bypasses_gate": false,
+      "user_assets_modified": false
+    },
+    {
+      "opportunity_id": "validation_8b285064265de85bb23c",
+      "title": "半导体材料",
+      "environment_snapshot_id": "environment_0250fdb44c7380b7923c",
+      "g5_result": "suppress",
+      "supporting_dimensions": [],
+      "suppressing_dimensions": [
+        "sentiment_structure",
+        "position_fragility"
+      ],
+      "confirmed_external_mappings": [],
+      "effective_action": "等待风险收敛，不追",
+      "reason": "全市场风险状态和抑制维度限制机会升级。",
+      "representative_stock_gate_still_required": true,
+      "position_gate_still_required": true,
+      "user_asset_identity_bypasses_gate": false,
+      "user_assets_modified": false
+    },
+    {
+      "opportunity_id": "validation_c67ba767bbc0168e937d",
+      "title": "存储/HBM",
+      "environment_snapshot_id": "environment_0250fdb44c7380b7923c",
+      "g5_result": "suppress",
+      "supporting_dimensions": [],
+      "suppressing_dimensions": [
+        "sentiment_structure",
+        "position_fragility"
+      ],
+      "confirmed_external_mappings": [],
+      "effective_action": "等待风险收敛，不追",
+      "reason": "全市场风险状态和抑制维度限制机会升级。",
+      "representative_stock_gate_still_required": true,
+      "position_gate_still_required": true,
+      "user_asset_identity_bypasses_gate": false,
+      "user_assets_modified": false
+    },
+    {
+      "opportunity_id": "validation_65524672c9759e32d42b",
+      "title": "半导体设备",
+      "environment_snapshot_id": "environment_0250fdb44c7380b7923c",
+      "g5_result": "suppress",
+      "supporting_dimensions": [],
+      "suppressing_dimensions": [
+        "sentiment_structure",
+        "position_fragility"
+      ],
+      "confirmed_external_mappings": [],
+      "effective_action": "等待风险收敛，不追",
+      "reason": "全市场风险状态和抑制维度限制机会升级。",
+      "representative_stock_gate_still_required": true,
+      "position_gate_still_required": true,
+      "user_asset_identity_bypasses_gate": false,
+      "user_assets_modified": false
+    },
+    {
+      "opportunity_id": "validation_07cb3097c7f0250c7a66",
+      "title": "CPO/光模块",
+      "environment_snapshot_id": "environment_0250fdb44c7380b7923c",
+      "g5_result": "suppress",
+      "supporting_dimensions": [],
+      "suppressing_dimensions": [
+        "sentiment_structure",
+        "position_fragility"
+      ],
+      "confirmed_external_mappings": [],
+      "effective_action": "等待风险收敛，不追",
+      "reason": "全市场风险状态和抑制维度限制机会升级。",
+      "representative_stock_gate_still_required": true,
+      "position_gate_still_required": true,
+      "user_asset_identity_bypasses_gate": false,
+      "user_assets_modified": false
+    },
+    {
+      "opportunity_id": "validation_b60199cbb221440fdec9",
+      "title": "老登风格切换",
+      "environment_snapshot_id": "environment_0250fdb44c7380b7923c",
+      "g5_result": "suppress",
+      "supporting_dimensions": [],
+      "suppressing_dimensions": [
+        "sentiment_structure",
+        "position_fragility"
+      ],
+      "confirmed_external_mappings": [],
+      "effective_action": "等待风险收敛，不追",
+      "reason": "全市场风险状态和抑制维度限制机会升级。",
+      "representative_stock_gate_still_required": true,
+      "position_gate_still_required": true,
+      "user_asset_identity_bypasses_gate": false,
+      "user_assets_modified": false
+    },
+    {
+      "opportunity_id": "validation_554c4a41e44ec4dc3b1d",
+      "title": "机器人/工业自动化",
+      "environment_snapshot_id": "environment_0250fdb44c7380b7923c",
+      "g5_result": "suppress",
+      "supporting_dimensions": [],
+      "suppressing_dimensions": [
+        "sentiment_structure",
+        "position_fragility"
+      ],
+      "confirmed_external_mappings": [],
+      "effective_action": "等待风险收敛，不追",
+      "reason": "全市场风险状态和抑制维度限制机会升级。",
+      "representative_stock_gate_still_required": true,
+      "position_gate_still_required": true,
+      "user_asset_identity_bypasses_gate": false,
+      "user_assets_modified": false
+    },
+    {
+      "opportunity_id": "validation_30fab2597e0feb345337",
+      "title": "PCB/电子布",
+      "environment_snapshot_id": "environment_0250fdb44c7380b7923c",
+      "g5_result": "suppress",
+      "supporting_dimensions": [],
+      "suppressing_dimensions": [
+        "sentiment_structure",
+        "position_fragility"
+      ],
+      "confirmed_external_mappings": [],
+      "effective_action": "等待风险收敛，不追",
+      "reason": "全市场风险状态和抑制维度限制机会升级。",
+      "representative_stock_gate_still_required": true,
+      "position_gate_still_required": true,
+      "user_asset_identity_bypasses_gate": false,
+      "user_assets_modified": false
+    },
+    {
+      "opportunity_id": "validation_dc06e74d80bec1322269",
+      "title": "AI算力",
+      "environment_snapshot_id": "environment_0250fdb44c7380b7923c",
+      "g5_result": "suppress",
+      "supporting_dimensions": [],
+      "suppressing_dimensions": [
+        "sentiment_structure",
+        "position_fragility"
+      ],
+      "confirmed_external_mappings": [],
+      "effective_action": "等待风险收敛，不追",
+      "reason": "全市场风险状态和抑制维度限制机会升级。",
+      "representative_stock_gate_still_required": true,
+      "position_gate_still_required": true,
+      "user_asset_identity_bypasses_gate": false,
+      "user_assets_modified": false
+    },
+    {
+      "opportunity_id": "validation_ede5d04ae1ecc7cd3720",
+      "title": "先进封装",
+      "environment_snapshot_id": "environment_0250fdb44c7380b7923c",
+      "g5_result": "suppress",
+      "supporting_dimensions": [],
+      "suppressing_dimensions": [
+        "sentiment_structure",
+        "position_fragility"
+      ],
+      "confirmed_external_mappings": [],
+      "effective_action": "等待风险收敛，不追",
+      "reason": "全市场风险状态和抑制维度限制机会升级。",
+      "representative_stock_gate_still_required": true,
+      "position_gate_still_required": true,
+      "user_asset_identity_bypasses_gate": false,
+      "user_assets_modified": false
+    },
+    {
+      "opportunity_id": "validation_9d2c70c0f9372375a7d3",
+      "title": "7月半导体扩产组合",
+      "environment_snapshot_id": "environment_0250fdb44c7380b7923c",
+      "g5_result": "suppress",
+      "supporting_dimensions": [],
+      "suppressing_dimensions": [
+        "sentiment_structure",
+        "position_fragility"
+      ],
+      "confirmed_external_mappings": [],
+      "effective_action": "等待风险收敛，不追",
+      "reason": "全市场风险状态和抑制维度限制机会升级。",
+      "representative_stock_gate_still_required": true,
+      "position_gate_still_required": true,
+      "user_asset_identity_bypasses_gate": false,
+      "user_assets_modified": false
+    },
+    {
+      "opportunity_id": "validation_4bfce747d3e60db9756b",
+      "title": "CPO/光通信",
+      "environment_snapshot_id": "environment_0250fdb44c7380b7923c",
+      "g5_result": "suppress",
+      "supporting_dimensions": [],
+      "suppressing_dimensions": [
+        "sentiment_structure",
+        "position_fragility"
+      ],
+      "confirmed_external_mappings": [],
+      "effective_action": "等待风险收敛，不追",
+      "reason": "全市场风险状态和抑制维度限制机会升级。",
+      "representative_stock_gate_still_required": true,
+      "position_gate_still_required": true,
+      "user_asset_identity_bypasses_gate": false,
+      "user_assets_modified": false
+    },
+    {
+      "opportunity_id": "validation_f091747122f7ddfa7808",
+      "title": "中药/特色药",
+      "environment_snapshot_id": "environment_0250fdb44c7380b7923c",
+      "g5_result": "suppress",
+      "supporting_dimensions": [],
+      "suppressing_dimensions": [
+        "sentiment_structure",
+        "position_fragility"
+      ],
+      "confirmed_external_mappings": [],
+      "effective_action": "等待风险收敛，不追",
+      "reason": "全市场风险状态和抑制维度限制机会升级。",
+      "representative_stock_gate_still_required": true,
+      "position_gate_still_required": true,
+      "user_asset_identity_bypasses_gate": false,
+      "user_assets_modified": false
+    },
+    {
+      "opportunity_id": "validation_5f14c015be12a4b062b9",
+      "title": "全市场亏钱效应",
+      "environment_snapshot_id": "environment_0250fdb44c7380b7923c",
+      "g5_result": "suppress",
+      "supporting_dimensions": [],
+      "suppressing_dimensions": [
+        "sentiment_structure",
+        "position_fragility"
+      ],
+      "confirmed_external_mappings": [],
+      "effective_action": "等待风险收敛，不追",
+      "reason": "全市场风险状态和抑制维度限制机会升级。",
+      "representative_stock_gate_still_required": true,
+      "position_gate_still_required": true,
+      "user_asset_identity_bypasses_gate": false,
+      "user_assets_modified": false
+    },
+    {
+      "opportunity_id": "validation_d17b04cbd42fa12c8aec",
+      "title": "半导体设备/材料/零部件",
+      "environment_snapshot_id": "environment_0250fdb44c7380b7923c",
+      "g5_result": "suppress",
+      "supporting_dimensions": [],
+      "suppressing_dimensions": [
+        "sentiment_structure",
+        "position_fragility"
+      ],
+      "confirmed_external_mappings": [],
+      "effective_action": "等待风险收敛，不追",
+      "reason": "全市场风险状态和抑制维度限制机会升级。",
+      "representative_stock_gate_still_required": true,
+      "position_gate_still_required": true,
+      "user_asset_identity_bypasses_gate": false,
+      "user_assets_modified": false
+    },
+    {
+      "opportunity_id": "validation_8f7568cb8cd56de05701",
+      "title": "存储/HBM",
+      "environment_snapshot_id": "environment_0250fdb44c7380b7923c",
+      "g5_result": "suppress",
+      "supporting_dimensions": [],
+      "suppressing_dimensions": [
+        "sentiment_structure",
+        "position_fragility"
+      ],
+      "confirmed_external_mappings": [],
+      "effective_action": "等待风险收敛，不追",
+      "reason": "全市场风险状态和抑制维度限制机会升级。",
+      "representative_stock_gate_still_required": true,
+      "position_gate_still_required": true,
+      "user_asset_identity_bypasses_gate": false,
+      "user_assets_modified": false
+    },
+    {
+      "opportunity_id": "validation_79ec6fd58c87b937b852",
+      "title": "数据质量降级",
+      "environment_snapshot_id": "environment_0250fdb44c7380b7923c",
+      "g5_result": "suppress",
+      "supporting_dimensions": [],
+      "suppressing_dimensions": [
+        "sentiment_structure",
+        "position_fragility"
+      ],
+      "confirmed_external_mappings": [],
+      "effective_action": "等待风险收敛，不追",
+      "reason": "全市场风险状态和抑制维度限制机会升级。",
+      "representative_stock_gate_still_required": true,
+      "position_gate_still_required": true,
+      "user_asset_identity_bypasses_gate": false,
+      "user_assets_modified": false
+    },
+    {
+      "opportunity_id": "validation_8a96c85ee09969ef8425",
+      "title": "电子布/玻纤与PCB",
+      "environment_snapshot_id": "environment_0250fdb44c7380b7923c",
+      "g5_result": "suppress",
+      "supporting_dimensions": [],
+      "suppressing_dimensions": [
+        "sentiment_structure",
+        "position_fragility"
+      ],
+      "confirmed_external_mappings": [],
+      "effective_action": "等待风险收敛，不追",
+      "reason": "全市场风险状态和抑制维度限制机会升级。",
+      "representative_stock_gate_still_required": true,
+      "position_gate_still_required": true,
+      "user_asset_identity_bypasses_gate": false,
+      "user_assets_modified": false
+    },
+    {
+      "opportunity_id": "validation_9a90f42607b348bc57ce",
+      "title": "软件信创/EDA",
+      "environment_snapshot_id": "environment_0250fdb44c7380b7923c",
+      "g5_result": "suppress",
+      "supporting_dimensions": [],
+      "suppressing_dimensions": [
+        "sentiment_structure",
+        "position_fragility"
+      ],
+      "confirmed_external_mappings": [],
+      "effective_action": "等待风险收敛，不追",
+      "reason": "全市场风险状态和抑制维度限制机会升级。",
+      "representative_stock_gate_still_required": true,
+      "position_gate_still_required": true,
+      "user_asset_identity_bypasses_gate": false,
+      "user_assets_modified": false
+    },
+    {
+      "opportunity_id": "validation_9088be75310aef6ed051",
+      "title": "主线变化：化工/材料/资源轮动",
+      "environment_snapshot_id": "environment_0250fdb44c7380b7923c",
+      "g5_result": "suppress",
+      "supporting_dimensions": [],
+      "suppressing_dimensions": [
+        "sentiment_structure",
+        "position_fragility"
+      ],
+      "confirmed_external_mappings": [],
+      "effective_action": "等待风险收敛，不追",
+      "reason": "全市场风险状态和抑制维度限制机会升级。",
+      "representative_stock_gate_still_required": true,
+      "position_gate_still_required": true,
+      "user_asset_identity_bypasses_gate": false,
+      "user_assets_modified": false
+    },
+    {
+      "opportunity_id": "validation_679a697d00b9b039a568",
+      "title": "创新药/CRO验证",
+      "environment_snapshot_id": "environment_0250fdb44c7380b7923c",
+      "g5_result": "suppress",
+      "supporting_dimensions": [],
+      "suppressing_dimensions": [
+        "sentiment_structure",
+        "position_fragility"
+      ],
+      "confirmed_external_mappings": [],
+      "effective_action": "等待风险收敛，不追",
+      "reason": "全市场风险状态和抑制维度限制机会升级。",
+      "representative_stock_gate_still_required": true,
+      "position_gate_still_required": true,
+      "user_asset_identity_bypasses_gate": false,
+      "user_assets_modified": false
+    },
+    {
+      "opportunity_id": "validation_c59a5052bab7fa2b3220",
+      "title": "待触发：半导体材料",
+      "environment_snapshot_id": "environment_0250fdb44c7380b7923c",
+      "g5_result": "suppress",
+      "supporting_dimensions": [],
+      "suppressing_dimensions": [
+        "sentiment_structure",
+        "position_fragility"
+      ],
+      "confirmed_external_mappings": [],
+      "effective_action": "等待风险收敛，不追",
+      "reason": "全市场风险状态和抑制维度限制机会升级。",
+      "representative_stock_gate_still_required": true,
+      "position_gate_still_required": true,
+      "user_asset_identity_bypasses_gate": false,
+      "user_assets_modified": false
+    }
+  ],
+  "summary": {
+    "strengthening_styles": [],
+    "weakening_styles": [
+      "small_deng",
+      "microcap"
+    ],
+    "confirmed_external_count": 0,
+    "g5_support": 0,
+    "g5_suppress": 24
+  },
+  "user_view": {
+    "当前状态": "risk_release",
+    "当前允许": "风险优先，等待负反馈收敛",
+    "状态变化原因": "情绪、位置、流动性或宽度中的可靠风险证据形成快速降级条件。",
+    "确认要求": "积极变化至少连续两个不同事实快照确认；可靠风险证据可快速降低行动许可。",
+    "风格说明": "老登、中登、小登使用显式观察篮子；微盘独立，不与小登互换。",
+    "外盘说明": "只有当前交易日海外触发与A股代表股同向兑现，才可支持环境门禁。"
+  },
+  "guardrails": {
+    "current_v1_modified": false,
+    "production_entry_changed": false,
+    "automatic_trading": false,
+    "user_assets_modified": false,
+    "style_pool_used_as_user_pool": false,
+    "temporary_candidate_auto_upgraded": false,
+    "model_promoted": false,
+    "g5_bypasses_other_gates": false,
+    "single_company_event_auto_upgrades_theme": false
+  },
+  "immutable_hash": "sha256:fc655b0973b7d08300fa0b409b42e8916a5a359ffd5f0e981a135cfc6c86b3e5"
+}

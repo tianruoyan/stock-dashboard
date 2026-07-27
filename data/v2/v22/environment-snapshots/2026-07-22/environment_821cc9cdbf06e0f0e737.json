@@ -1,0 +1,1233 @@
+{
+  "schema_version": 1,
+  "mode": "shadow_only",
+  "facts_only": true,
+  "environment_snapshot_id": "environment_821cc9cdbf06e0f0e737",
+  "trade_date": "2026-07-22",
+  "session_phase": "afternoon",
+  "as_of": "2026-07-22T13:36:54+08:00",
+  "built_at": "2026-07-22T13:36:58+08:00",
+  "source_cutoff_at": "2026-07-22T13:36:59+08:00",
+  "policy_version": "2026-07-20.e4.4",
+  "price_limit_rule_version": "2026-07-18.1",
+  "primary_state": "待E5状态机判定",
+  "state_changed": false,
+  "action_constraint": "风险优先，等待剩余事实补齐",
+  "quality_state": "degraded",
+  "quality_summary": "八维中可用2项、降级6项、未知0项；冲突1项。",
+  "headline": "风险事实可用，但关键结构仍有缺口",
+  "conclusion": "同日风险事实已经形成；流动性仍待数据源补采，AI不会凭空生成。",
+  "dimension_summary": {
+    "total": 8,
+    "support": 0,
+    "partial_support": 0,
+    "neutral": 4,
+    "suppress": 3,
+    "risk_release": 0,
+    "unknown": 1
+  },
+  "dimensions": [
+    {
+      "dimension_state_id": "env_dimension_3899c609de15a894e50a",
+      "environment_snapshot_id": "environment_821cc9cdbf06e0f0e737",
+      "dimension_code": "index_structure",
+      "label": "指数结构",
+      "scope_type": "market",
+      "scope_id": null,
+      "support_level": "neutral",
+      "conclusion": "核心指数方向分化。",
+      "fact_summary": [
+        "5个核心指数有同日行情，1涨、3跌。"
+      ],
+      "counter_evidence": [],
+      "missing_evidence": [],
+      "quality_state": "usable",
+      "freshness_state": "current",
+      "as_of": "2026-07-22T13:36:36+08:00",
+      "method_version": "2026-07-20.e4.4",
+      "evidence_ref_ids": [
+        "env_evidence_6942c8bf84a1616a4dd4",
+        "env_evidence_65418444b6492a1f7a69",
+        "env_evidence_a7ddd73c0d997302e43f",
+        "env_evidence_981f1c83b0f91c54e2b0",
+        "env_evidence_650d47936c51659cae16"
+      ]
+    },
+    {
+      "dimension_state_id": "env_dimension_358fc6bd310b4a93d0be",
+      "environment_snapshot_id": "environment_821cc9cdbf06e0f0e737",
+      "dimension_code": "liquidity",
+      "label": "流动性",
+      "scope_type": "market",
+      "scope_id": null,
+      "support_level": "unknown",
+      "conclusion": "取得成交总额，但缺少可比变化或集中度，不能判断增量资金是否扩散。",
+      "fact_summary": [
+        "全市场成交额20896.8亿元。"
+      ],
+      "counter_evidence": [],
+      "missing_evidence": [
+        "可比变化或成交集中度"
+      ],
+      "quality_state": "degraded",
+      "freshness_state": "current",
+      "as_of": "2026-07-22T13:36:54+08:00",
+      "method_version": "2026-07-20.e4.4",
+      "evidence_ref_ids": [
+        "env_evidence_0015da7cc84c55281c5f"
+      ]
+    },
+    {
+      "dimension_state_id": "env_dimension_34f408211a4ca4d9e84c",
+      "environment_snapshot_id": "environment_821cc9cdbf06e0f0e737",
+      "dimension_code": "market_breadth",
+      "label": "市场宽度",
+      "scope_type": "market",
+      "scope_id": null,
+      "support_level": "suppress",
+      "conclusion": "多数股票下跌，宽度抑制。",
+      "fact_summary": [
+        "上涨1474家、下跌3931家、平盘122家。"
+      ],
+      "counter_evidence": [],
+      "missing_evidence": [
+        "主来源未返回，使用新浪公开行情并以腾讯核心指数日期交叉核验。"
+      ],
+      "quality_state": "degraded",
+      "freshness_state": "current",
+      "as_of": "2026-07-22T13:36:54+08:00",
+      "method_version": "2026-07-20.e4.4",
+      "evidence_ref_ids": [
+        "env_evidence_7e7c5bf7b13baa7d0a75"
+      ]
+    },
+    {
+      "dimension_state_id": "env_dimension_c5a8257ebd74ecaad068",
+      "environment_snapshot_id": "environment_821cc9cdbf06e0f0e737",
+      "dimension_code": "mainline_structure",
+      "label": "主线结构",
+      "scope_type": "market",
+      "scope_id": null,
+      "support_level": "suppress",
+      "conclusion": "全市场宽度或涨跌停行业分布偏弱，局部强势不能直接升级为主线。",
+      "fact_summary": [
+        "同口径涨停5只、跌停0只。",
+        "同口径涨停4只、跌停0只。",
+        "同口径涨停3只、跌停0只。",
+        "同口径涨停3只、跌停0只。",
+        "同口径涨停3只、跌停0只。",
+        "同口径涨停3只、跌停0只。"
+      ],
+      "counter_evidence": [
+        "涨跌停数量集中不等于行业全部个股和成交同步。"
+      ],
+      "missing_evidence": [
+        "完整行业上涨下跌宽度",
+        "行业成交额与历史基线",
+        "核心、中军和后排的连续时点确认"
+      ],
+      "quality_state": "degraded",
+      "freshness_state": "current",
+      "as_of": "2026-07-22T13:36:38+08:00",
+      "method_version": "2026-07-20.e4.4",
+      "evidence_ref_ids": [
+        "env_evidence_a358963fe4c5679750d6",
+        "env_evidence_c7444651a3fa556ec84e",
+        "env_evidence_6eeb1aa534660b2ed2af",
+        "env_evidence_17967f976ef20ae3a4fd",
+        "env_evidence_5388992c06370c69a9ea",
+        "env_evidence_ff4a8b51f5dc7c7016fe"
+      ]
+    },
+    {
+      "dimension_state_id": "env_dimension_103e64a2da9439f492f8",
+      "environment_snapshot_id": "environment_821cc9cdbf06e0f0e737",
+      "dimension_code": "sentiment_structure",
+      "label": "情绪结构",
+      "scope_type": "market",
+      "scope_id": null,
+      "support_level": "neutral",
+      "conclusion": "涨跌停结构没有形成明确同向优势。",
+      "fact_summary": [
+        "过滤后涨停44家、跌停5家；两侧使用同一交易日和过滤规则。",
+        "最高涨停5板、最高连续跌停5天。"
+      ],
+      "counter_evidence": [],
+      "missing_evidence": [
+        "晋级响应日期异常，晋级率已剔除",
+        "同口径炸板总数"
+      ],
+      "quality_state": "degraded",
+      "freshness_state": "current",
+      "as_of": "2026-07-22T13:36:38+08:00",
+      "method_version": "2026-07-20.e4.4",
+      "evidence_ref_ids": [
+        "env_evidence_ebb72c768a65e0889f55",
+        "env_evidence_a6f7729b2c230838382a"
+      ]
+    },
+    {
+      "dimension_state_id": "env_dimension_2465e8a7cc5274b5df48",
+      "environment_snapshot_id": "environment_821cc9cdbf06e0f0e737",
+      "dimension_code": "style_structure",
+      "label": "风格结构",
+      "scope_type": "market",
+      "scope_id": null,
+      "support_level": "neutral",
+      "conclusion": "老登、中登、小登之间分化，尚未形成一致风格。",
+      "fact_summary": [
+        "老登篮子中位涨跌幅+0.22%。",
+        "中登篮子中位涨跌幅-2.33%。",
+        "小登篮子中位涨跌幅+0.91%。",
+        "中证2000小微盘宽基代理涨跌幅-0.98%；不等于纯微盘或小登。"
+      ],
+      "counter_evidence": [
+        "风格篮子是市场环境观察工具，不是用户股票池。",
+        "中证2000仅为小微盘宽基代理，不等于纯微盘或小登。"
+      ],
+      "missing_evidence": [
+        "纯微盘正式数据"
+      ],
+      "quality_state": "degraded",
+      "freshness_state": "current",
+      "as_of": "2026-07-22T13:36:59+08:00",
+      "method_version": "2026-07-20.e4.4",
+      "evidence_ref_ids": [
+        "env_evidence_147b9f73d4e37ca55d74",
+        "env_evidence_29b2b8d81bdacaca4196",
+        "env_evidence_84f1f24aa61be390ee6f",
+        "env_evidence_4c3e440741a05e278942"
+      ]
+    },
+    {
+      "dimension_state_id": "env_dimension_f981dbb096ff423514b8",
+      "environment_snapshot_id": "environment_821cc9cdbf06e0f0e737",
+      "dimension_code": "position_fragility",
+      "label": "位置与脆弱性",
+      "scope_type": "market",
+      "scope_id": null,
+      "support_level": "neutral",
+      "conclusion": "高位样本未显示整体负收益，但仍需结合拥挤和成交。",
+      "fact_summary": [
+        "高位样本5只，收益中位数7.20%，最大不利波动-4.71%。"
+      ],
+      "counter_evidence": [
+        "样本数量有限，不能代表全市场。"
+      ],
+      "missing_evidence": [
+        "全市场拥挤度和换手结构"
+      ],
+      "quality_state": "usable",
+      "freshness_state": "current",
+      "as_of": "2026-07-22T13:36:38+08:00",
+      "method_version": "2026-07-20.e4.4",
+      "evidence_ref_ids": [
+        "env_evidence_62a58ca16faebc82153b"
+      ]
+    },
+    {
+      "dimension_state_id": "env_dimension_7aad4b359d36a27db17d",
+      "environment_snapshot_id": "environment_821cc9cdbf06e0f0e737",
+      "dimension_code": "external_constraint",
+      "label": "外部约束",
+      "scope_type": "market",
+      "scope_id": null,
+      "support_level": "suppress",
+      "conclusion": "已取得外盘公开行情，需结合A股代表股兑现或背离判断传导。",
+      "fact_summary": [
+        "美股前一交易窗口：纳斯达克+1.29%、英伟达+1.97%、美光科技+12.17%；只用于映射验证，不机械推断A股涨跌。",
+        "港股当前交易窗口：恒生指数-1.00%、恒生科技指数-2.77%、中芯国际-0.20%、华虹宏力-3.44%；只用于映射验证，不机械推断A股涨跌。"
+      ],
+      "counter_evidence": [
+        "外盘同向不等于A股同向，必须检查代表股兑现或背离。"
+      ],
+      "missing_evidence": [
+        "韩国三星电子与SK海力士同口径公开行情尚未接入"
+      ],
+      "quality_state": "degraded",
+      "freshness_state": "current",
+      "as_of": "2026-07-22T13:21:58+08:00",
+      "method_version": "2026-07-20.e4.4",
+      "evidence_ref_ids": [
+        "env_evidence_0484a15269d050d157b1",
+        "env_evidence_670ac01fc0be20829e69"
+      ]
+    }
+  ],
+  "sentiment_view": {
+    "status": "neutral",
+    "headline": "强弱分化",
+    "judgment": "涨跌停、市场宽度与高位反馈尚未形成一致方向。",
+    "action": "按结构观察，不因单一指数或个别强股提高行动许可",
+    "as_of": "2026-07-22T13:36:54+08:00",
+    "counter_evidence": null,
+    "drivers": [
+      {
+        "label": "涨跌停结构",
+        "state": "分化",
+        "evidence": "过滤后涨停44家、跌停5家；两侧使用同一交易日和过滤规则。"
+      },
+      {
+        "label": "市场宽度",
+        "state": "偏弱",
+        "evidence": "上涨1474家、下跌3931家、平盘122家。"
+      },
+      {
+        "label": "高位反馈",
+        "state": "分化",
+        "evidence": "高位样本5只，收益中位数7.20%，最大不利波动-4.71%。"
+      },
+      {
+        "label": "指数结构",
+        "state": "分化",
+        "evidence": "5个核心指数有同日行情，1涨、3跌。"
+      }
+    ]
+  },
+  "evidence_refs": [
+    {
+      "evidence_ref_id": "env_evidence_6942c8bf84a1616a4dd4",
+      "environment_snapshot_id": "environment_821cc9cdbf06e0f0e737",
+      "dimension_code": "index_structure",
+      "evidence_role": "support",
+      "metric_name": "上证指数",
+      "metric_scope": "index",
+      "metric_value": 0.14,
+      "unit": "%",
+      "source_id": "腾讯财经HTTP",
+      "source_label": "腾讯财经HTTP",
+      "source_url": null,
+      "source_as_of": "2026-07-22T13:36:36+08:00",
+      "trade_date": "2026-07-22",
+      "session_phase": "afternoon",
+      "quality_state": "usable",
+      "rule_version": null,
+      "scope_definition": null,
+      "representative_securities": []
+    },
+    {
+      "evidence_ref_id": "env_evidence_65418444b6492a1f7a69",
+      "environment_snapshot_id": "environment_821cc9cdbf06e0f0e737",
+      "dimension_code": "index_structure",
+      "evidence_role": "risk",
+      "metric_name": "深证成指",
+      "metric_scope": "index",
+      "metric_value": -0.56,
+      "unit": "%",
+      "source_id": "腾讯财经HTTP",
+      "source_label": "腾讯财经HTTP",
+      "source_url": null,
+      "source_as_of": "2026-07-22T13:36:33+08:00",
+      "trade_date": "2026-07-22",
+      "session_phase": "afternoon",
+      "quality_state": "usable",
+      "rule_version": null,
+      "scope_definition": null,
+      "representative_securities": []
+    },
+    {
+      "evidence_ref_id": "env_evidence_a7ddd73c0d997302e43f",
+      "environment_snapshot_id": "environment_821cc9cdbf06e0f0e737",
+      "dimension_code": "index_structure",
+      "evidence_role": "risk",
+      "metric_name": "创业板指",
+      "metric_scope": "index",
+      "metric_value": -1.8,
+      "unit": "%",
+      "source_id": "腾讯财经HTTP",
+      "source_label": "腾讯财经HTTP",
+      "source_url": null,
+      "source_as_of": "2026-07-22T13:36:33+08:00",
+      "trade_date": "2026-07-22",
+      "session_phase": "afternoon",
+      "quality_state": "usable",
+      "rule_version": null,
+      "scope_definition": null,
+      "representative_securities": []
+    },
+    {
+      "evidence_ref_id": "env_evidence_981f1c83b0f91c54e2b0",
+      "environment_snapshot_id": "environment_821cc9cdbf06e0f0e737",
+      "dimension_code": "index_structure",
+      "evidence_role": "risk",
+      "metric_name": "科创50",
+      "metric_scope": "index",
+      "metric_value": -1.36,
+      "unit": "%",
+      "source_id": "腾讯财经HTTP",
+      "source_label": "腾讯财经HTTP",
+      "source_url": null,
+      "source_as_of": "2026-07-22T13:36:36+08:00",
+      "trade_date": "2026-07-22",
+      "session_phase": "afternoon",
+      "quality_state": "usable",
+      "rule_version": null,
+      "scope_definition": null,
+      "representative_securities": []
+    },
+    {
+      "evidence_ref_id": "env_evidence_650d47936c51659cae16",
+      "environment_snapshot_id": "environment_821cc9cdbf06e0f0e737",
+      "dimension_code": "index_structure",
+      "evidence_role": "support",
+      "metric_name": "沪深300",
+      "metric_scope": "index",
+      "metric_value": 0.0,
+      "unit": "%",
+      "source_id": "腾讯财经HTTP",
+      "source_label": "腾讯财经HTTP",
+      "source_url": null,
+      "source_as_of": "2026-07-22T13:36:36+08:00",
+      "trade_date": "2026-07-22",
+      "session_phase": "afternoon",
+      "quality_state": "usable",
+      "rule_version": null,
+      "scope_definition": null,
+      "representative_securities": []
+    },
+    {
+      "evidence_ref_id": "env_evidence_0015da7cc84c55281c5f",
+      "environment_snapshot_id": "environment_821cc9cdbf06e0f0e737",
+      "dimension_code": "liquidity",
+      "evidence_role": "counter",
+      "metric_name": "全市场成交额",
+      "metric_scope": "market",
+      "metric_value": 20896.76,
+      "unit": "亿元",
+      "source_id": "sina_a_share_universe_live_turnover",
+      "source_label": "新浪财经A股公开行情",
+      "source_url": "https://vip.stock.finance.sina.com.cn/mkt/#hs_a",
+      "source_as_of": "2026-07-22T13:36:54+08:00",
+      "trade_date": "2026-07-22",
+      "session_phase": "afternoon",
+      "quality_state": "degraded",
+      "rule_version": "live_liquidity_v2",
+      "scope_definition": "沪深京A股当前累计成交额",
+      "representative_securities": []
+    },
+    {
+      "evidence_ref_id": "env_evidence_7e7c5bf7b13baa7d0a75",
+      "environment_snapshot_id": "environment_821cc9cdbf06e0f0e737",
+      "dimension_code": "market_breadth",
+      "evidence_role": "risk",
+      "metric_name": "上涨下跌平盘家数",
+      "metric_scope": "market",
+      "metric_value": {
+        "上涨": 1474,
+        "下跌": 3931,
+        "平盘": 122,
+        "合计": 5527
+      },
+      "unit": "家",
+      "source_id": "sina_a_share_universe_live",
+      "source_label": "新浪财经A股公开行情",
+      "source_url": "https://vip.stock.finance.sina.com.cn/mkt/#hs_a",
+      "source_as_of": "2026-07-22T13:36:54+08:00",
+      "trade_date": "2026-07-22",
+      "session_phase": "afternoon",
+      "quality_state": "degraded",
+      "rule_version": "cn_a_sh_sz_bj_valid_quote_v2",
+      "scope_definition": "沪深京A股；仅统计具有有效价格和涨跌幅的证券。",
+      "representative_securities": []
+    },
+    {
+      "evidence_ref_id": "env_evidence_a358963fe4c5679750d6",
+      "environment_snapshot_id": "environment_821cc9cdbf06e0f0e737",
+      "dimension_code": "mainline_structure",
+      "evidence_role": "counter",
+      "metric_name": "电力收盘结构",
+      "metric_scope": "theme",
+      "metric_value": "涨停代表较集中，但仍需行业宽度、成交和非涨停中军确认。",
+      "unit": null,
+      "source_id": "price_limit_industry_distribution_live",
+      "source_label": "东方财富涨跌停行业分布",
+      "source_url": "https://push2ex.eastmoney.com/getTopicZTPool ; https://push2ex.eastmoney.com/getTopicDTPool",
+      "source_as_of": "2026-07-22T13:36:38+08:00",
+      "trade_date": "2026-07-22",
+      "session_phase": "afternoon",
+      "quality_state": "degraded",
+      "rule_version": "live_mainline_distribution_v2",
+      "scope_definition": "沪深A股涨跌停池行业分布；不等同于全行业涨跌幅和成交宽度。",
+      "representative_securities": [
+        {
+          "code": "sz001258",
+          "name": "立新能源",
+          "change_pct": 9.990009307861328,
+          "as_of": "2026-07-22T13:36:38+08:00",
+          "source": "东方财富涨跌停股池",
+          "role": "涨停代表"
+        },
+        {
+          "code": "sz000595",
+          "name": "新能股份",
+          "change_pct": 10.087719917297363,
+          "as_of": "2026-07-22T13:36:38+08:00",
+          "source": "东方财富涨跌停股池",
+          "role": "涨停代表"
+        },
+        {
+          "code": "sh605028",
+          "name": "世茂能源",
+          "change_pct": 10.022573471069336,
+          "as_of": "2026-07-22T13:36:38+08:00",
+          "source": "东方财富涨跌停股池",
+          "role": "涨停代表"
+        }
+      ]
+    },
+    {
+      "evidence_ref_id": "env_evidence_c7444651a3fa556ec84e",
+      "environment_snapshot_id": "environment_821cc9cdbf06e0f0e737",
+      "dimension_code": "mainline_structure",
+      "evidence_role": "counter",
+      "metric_name": "半导体收盘结构",
+      "metric_scope": "theme",
+      "metric_value": "涨停代表较集中，但仍需行业宽度、成交和非涨停中军确认。",
+      "unit": null,
+      "source_id": "price_limit_industry_distribution_live",
+      "source_label": "东方财富涨跌停行业分布",
+      "source_url": "https://push2ex.eastmoney.com/getTopicZTPool ; https://push2ex.eastmoney.com/getTopicDTPool",
+      "source_as_of": "2026-07-22T13:36:38+08:00",
+      "trade_date": "2026-07-22",
+      "session_phase": "afternoon",
+      "quality_state": "degraded",
+      "rule_version": "live_mainline_distribution_v2",
+      "scope_definition": "沪深A股涨跌停池行业分布；不等同于全行业涨跌幅和成交宽度。",
+      "representative_securities": [
+        {
+          "code": "sz002213",
+          "name": "大为股份",
+          "change_pct": 10.00400161743164,
+          "as_of": "2026-07-22T13:36:38+08:00",
+          "source": "东方财富涨跌停股池",
+          "role": "涨停代表"
+        },
+        {
+          "code": "sz301583",
+          "name": "托伦斯",
+          "change_pct": 19.99848747253418,
+          "as_of": "2026-07-22T13:36:38+08:00",
+          "source": "东方财富涨跌停股池",
+          "role": "涨停代表"
+        },
+        {
+          "code": "sz002156",
+          "name": "通富微电",
+          "change_pct": 10.0,
+          "as_of": "2026-07-22T13:36:38+08:00",
+          "source": "东方财富涨跌停股池",
+          "role": "涨停代表"
+        }
+      ]
+    },
+    {
+      "evidence_ref_id": "env_evidence_6eeb1aa534660b2ed2af",
+      "environment_snapshot_id": "environment_821cc9cdbf06e0f0e737",
+      "dimension_code": "mainline_structure",
+      "evidence_role": "counter",
+      "metric_name": "IT服务Ⅱ收盘结构",
+      "metric_scope": "theme",
+      "metric_value": "涨停代表较集中，但仍需行业宽度、成交和非涨停中军确认。",
+      "unit": null,
+      "source_id": "price_limit_industry_distribution_live",
+      "source_label": "东方财富涨跌停行业分布",
+      "source_url": "https://push2ex.eastmoney.com/getTopicZTPool ; https://push2ex.eastmoney.com/getTopicDTPool",
+      "source_as_of": "2026-07-22T13:36:38+08:00",
+      "trade_date": "2026-07-22",
+      "session_phase": "afternoon",
+      "quality_state": "degraded",
+      "rule_version": "live_mainline_distribution_v2",
+      "scope_definition": "沪深A股涨跌停池行业分布；不等同于全行业涨跌幅和成交宽度。",
+      "representative_securities": [
+        {
+          "code": "sz000815",
+          "name": "美利云",
+          "change_pct": 10.027284622192383,
+          "as_of": "2026-07-22T13:36:38+08:00",
+          "source": "东方财富涨跌停股池",
+          "role": "涨停代表"
+        },
+        {
+          "code": "sz000938",
+          "name": "紫光股份",
+          "change_pct": 10.009648323059082,
+          "as_of": "2026-07-22T13:36:38+08:00",
+          "source": "东方财富涨跌停股池",
+          "role": "涨停代表"
+        },
+        {
+          "code": "sh600936",
+          "name": "北投科技",
+          "change_pct": 9.978307723999023,
+          "as_of": "2026-07-22T13:36:38+08:00",
+          "source": "东方财富涨跌停股池",
+          "role": "涨停代表"
+        }
+      ]
+    },
+    {
+      "evidence_ref_id": "env_evidence_17967f976ef20ae3a4fd",
+      "environment_snapshot_id": "environment_821cc9cdbf06e0f0e737",
+      "dimension_code": "mainline_structure",
+      "evidence_role": "counter",
+      "metric_name": "家居用品收盘结构",
+      "metric_scope": "theme",
+      "metric_value": "涨停代表较集中，但仍需行业宽度、成交和非涨停中军确认。",
+      "unit": null,
+      "source_id": "price_limit_industry_distribution_live",
+      "source_label": "东方财富涨跌停行业分布",
+      "source_url": "https://push2ex.eastmoney.com/getTopicZTPool ; https://push2ex.eastmoney.com/getTopicDTPool",
+      "source_as_of": "2026-07-22T13:36:38+08:00",
+      "trade_date": "2026-07-22",
+      "session_phase": "afternoon",
+      "quality_state": "degraded",
+      "rule_version": "live_mainline_distribution_v2",
+      "scope_definition": "沪深A股涨跌停池行业分布；不等同于全行业涨跌幅和成交宽度。",
+      "representative_securities": [
+        {
+          "code": "sh603221",
+          "name": "爱丽家居",
+          "change_pct": 9.980988502502441,
+          "as_of": "2026-07-22T13:36:38+08:00",
+          "source": "东方财富涨跌停股池",
+          "role": "涨停代表"
+        },
+        {
+          "code": "sh603725",
+          "name": "天安新材",
+          "change_pct": 10.040816307067871,
+          "as_of": "2026-07-22T13:36:38+08:00",
+          "source": "东方财富涨跌停股池",
+          "role": "涨停代表"
+        },
+        {
+          "code": "sh605155",
+          "name": "西大门",
+          "change_pct": 9.991386413574219,
+          "as_of": "2026-07-22T13:36:38+08:00",
+          "source": "东方财富涨跌停股池",
+          "role": "涨停代表"
+        }
+      ]
+    },
+    {
+      "evidence_ref_id": "env_evidence_5388992c06370c69a9ea",
+      "environment_snapshot_id": "environment_821cc9cdbf06e0f0e737",
+      "dimension_code": "mainline_structure",
+      "evidence_role": "counter",
+      "metric_name": "通信设备收盘结构",
+      "metric_scope": "theme",
+      "metric_value": "涨停代表较集中，但仍需行业宽度、成交和非涨停中军确认。",
+      "unit": null,
+      "source_id": "price_limit_industry_distribution_live",
+      "source_label": "东方财富涨跌停行业分布",
+      "source_url": "https://push2ex.eastmoney.com/getTopicZTPool ; https://push2ex.eastmoney.com/getTopicDTPool",
+      "source_as_of": "2026-07-22T13:36:38+08:00",
+      "trade_date": "2026-07-22",
+      "session_phase": "afternoon",
+      "quality_state": "degraded",
+      "rule_version": "live_mainline_distribution_v2",
+      "scope_definition": "沪深A股涨跌停池行业分布；不等同于全行业涨跌幅和成交宽度。",
+      "representative_securities": [
+        {
+          "code": "sh603118",
+          "name": "共进股份",
+          "change_pct": 9.97990608215332,
+          "as_of": "2026-07-22T13:36:38+08:00",
+          "source": "东方财富涨跌停股池",
+          "role": "涨停代表"
+        },
+        {
+          "code": "sz002396",
+          "name": "星网锐捷",
+          "change_pct": 9.99683666229248,
+          "as_of": "2026-07-22T13:36:38+08:00",
+          "source": "东方财富涨跌停股池",
+          "role": "涨停代表"
+        },
+        {
+          "code": "sh603803",
+          "name": "瑞斯康达",
+          "change_pct": 10.054644584655762,
+          "as_of": "2026-07-22T13:36:38+08:00",
+          "source": "东方财富涨跌停股池",
+          "role": "涨停代表"
+        }
+      ]
+    },
+    {
+      "evidence_ref_id": "env_evidence_ff4a8b51f5dc7c7016fe",
+      "environment_snapshot_id": "environment_821cc9cdbf06e0f0e737",
+      "dimension_code": "mainline_structure",
+      "evidence_role": "counter",
+      "metric_name": "贵金属收盘结构",
+      "metric_scope": "theme",
+      "metric_value": "涨停代表较集中，但仍需行业宽度、成交和非涨停中军确认。",
+      "unit": null,
+      "source_id": "price_limit_industry_distribution_live",
+      "source_label": "东方财富涨跌停行业分布",
+      "source_url": "https://push2ex.eastmoney.com/getTopicZTPool ; https://push2ex.eastmoney.com/getTopicDTPool",
+      "source_as_of": "2026-07-22T13:36:38+08:00",
+      "trade_date": "2026-07-22",
+      "session_phase": "afternoon",
+      "quality_state": "degraded",
+      "rule_version": "live_mainline_distribution_v2",
+      "scope_definition": "沪深A股涨跌停池行业分布；不等同于全行业涨跌幅和成交宽度。",
+      "representative_securities": [
+        {
+          "code": "sz000426",
+          "name": "兴业银锡",
+          "change_pct": 9.993247985839844,
+          "as_of": "2026-07-22T13:36:38+08:00",
+          "source": "东方财富涨跌停股池",
+          "role": "涨停代表"
+        },
+        {
+          "code": "sz000603",
+          "name": "盛达资源",
+          "change_pct": 9.990253448486328,
+          "as_of": "2026-07-22T13:36:38+08:00",
+          "source": "东方财富涨跌停股池",
+          "role": "涨停代表"
+        },
+        {
+          "code": "sz000506",
+          "name": "招金黄金",
+          "change_pct": 9.966216087341309,
+          "as_of": "2026-07-22T13:36:38+08:00",
+          "source": "东方财富涨跌停股池",
+          "role": "涨停代表"
+        }
+      ]
+    },
+    {
+      "evidence_ref_id": "env_evidence_ebb72c768a65e0889f55",
+      "environment_snapshot_id": "environment_821cc9cdbf06e0f0e737",
+      "dimension_code": "sentiment_structure",
+      "evidence_role": "support",
+      "metric_name": "过滤后涨停数",
+      "metric_scope": "market",
+      "metric_value": 44,
+      "unit": "家",
+      "source_id": "eastmoney_price_limit_pool",
+      "source_label": "东方财富涨跌停股池",
+      "source_url": "https://push2ex.eastmoney.com/getTopicZTPool",
+      "source_as_of": "2026-07-22T13:36:38+08:00",
+      "trade_date": "2026-07-22",
+      "session_phase": "afternoon",
+      "quality_state": "usable",
+      "rule_version": "2026-07-18.1",
+      "scope_definition": "沪深A股；剔除名称含ST/退市及N/C前缀新股；不含北交所。",
+      "representative_securities": [
+        {
+          "code": "sz001258",
+          "name": "立新能源",
+          "change_pct": 9.990009307861328,
+          "as_of": "2026-07-22T13:36:38+08:00",
+          "source": "东方财富涨跌停股池",
+          "role": "涨停梯队"
+        },
+        {
+          "code": "sh603683",
+          "name": "晶华新材",
+          "change_pct": -9.98389720916748,
+          "as_of": "2026-07-22T13:36:38+08:00",
+          "source": "东方财富涨跌停股池",
+          "role": "跌停梯队"
+        }
+      ]
+    },
+    {
+      "evidence_ref_id": "env_evidence_a6f7729b2c230838382a",
+      "environment_snapshot_id": "environment_821cc9cdbf06e0f0e737",
+      "dimension_code": "sentiment_structure",
+      "evidence_role": "risk",
+      "metric_name": "过滤后跌停数",
+      "metric_scope": "market",
+      "metric_value": 5,
+      "unit": "家",
+      "source_id": "eastmoney_price_limit_pool",
+      "source_label": "东方财富涨跌停股池",
+      "source_url": "https://push2ex.eastmoney.com/getTopicZTPool",
+      "source_as_of": "2026-07-22T13:36:38+08:00",
+      "trade_date": "2026-07-22",
+      "session_phase": "afternoon",
+      "quality_state": "usable",
+      "rule_version": "2026-07-18.1",
+      "scope_definition": "沪深A股；剔除名称含ST/退市及N/C前缀新股；不含北交所。",
+      "representative_securities": [
+        {
+          "code": "sz001258",
+          "name": "立新能源",
+          "change_pct": 9.990009307861328,
+          "as_of": "2026-07-22T13:36:38+08:00",
+          "source": "东方财富涨跌停股池",
+          "role": "涨停梯队"
+        },
+        {
+          "code": "sh603683",
+          "name": "晶华新材",
+          "change_pct": -9.98389720916748,
+          "as_of": "2026-07-22T13:36:38+08:00",
+          "source": "东方财富涨跌停股池",
+          "role": "跌停梯队"
+        }
+      ]
+    },
+    {
+      "evidence_ref_id": "env_evidence_147b9f73d4e37ca55d74",
+      "environment_snapshot_id": "environment_821cc9cdbf06e0f0e737",
+      "dimension_code": "style_structure",
+      "evidence_role": "counter",
+      "metric_name": "老登篮子收盘结构",
+      "metric_scope": "style",
+      "metric_value": {
+        "中位涨跌幅": 0.2182,
+        "上涨比例": 0.6667,
+        "下跌比例": 0.2778
+      },
+      "unit": "%",
+      "source_id": "tencent_style_basket_quotes",
+      "source_label": "腾讯财经风格篮子行情",
+      "source_url": null,
+      "source_as_of": "2026-07-22T13:36:59+08:00",
+      "trade_date": "2026-07-22",
+      "session_phase": "afternoon",
+      "quality_state": "usable",
+      "rule_version": "2026-07-18.e5.1",
+      "scope_definition": "成熟价值、金融、消费防御主题篮子；已排除旧名单中与定义冲突的科技样本。",
+      "representative_securities": [
+        {
+          "code": "sh601601",
+          "name": "中国太保",
+          "group": "保险",
+          "change_pct": 2.9719,
+          "as_of": "2026-07-22T13:36:57+08:00",
+          "source": "腾讯财经公开行情",
+          "turnover_yi": 20.1698
+        },
+        {
+          "code": "sh601628",
+          "name": "中国人寿",
+          "group": "保险",
+          "change_pct": 2.4147,
+          "as_of": "2026-07-22T13:36:58+08:00",
+          "source": "腾讯财经公开行情",
+          "turnover_yi": 13.6084
+        },
+        {
+          "code": "sh600809",
+          "name": "山西汾酒",
+          "group": "白酒",
+          "change_pct": 1.8581,
+          "as_of": "2026-07-22T13:36:58+08:00",
+          "source": "腾讯财经公开行情",
+          "turnover_yi": 11.1894
+        },
+        {
+          "code": "sh601318",
+          "name": "中国平安",
+          "group": "保险",
+          "change_pct": 1.5882,
+          "as_of": "2026-07-22T13:36:56+08:00",
+          "source": "腾讯财经公开行情",
+          "turnover_yi": 41.7001
+        },
+        {
+          "code": "sh601336",
+          "name": "新华保险",
+          "group": "保险",
+          "change_pct": 1.1448,
+          "as_of": "2026-07-22T13:36:57+08:00",
+          "source": "腾讯财经公开行情",
+          "turnover_yi": 16.795
+        },
+        {
+          "code": "sh601881",
+          "name": "中国银河",
+          "group": "券商",
+          "change_pct": -0.856,
+          "as_of": "2026-07-22T13:36:55+08:00",
+          "source": "腾讯财经公开行情",
+          "turnover_yi": 3.5954
+        }
+      ]
+    },
+    {
+      "evidence_ref_id": "env_evidence_29b2b8d81bdacaca4196",
+      "environment_snapshot_id": "environment_821cc9cdbf06e0f0e737",
+      "dimension_code": "style_structure",
+      "evidence_role": "risk",
+      "metric_name": "中登篮子收盘结构",
+      "metric_scope": "style",
+      "metric_value": {
+        "中位涨跌幅": -2.3305,
+        "上涨比例": 0.2,
+        "下跌比例": 0.8
+      },
+      "unit": "%",
+      "source_id": "tencent_style_basket_quotes",
+      "source_label": "腾讯财经风格篮子行情",
+      "source_url": null,
+      "source_as_of": "2026-07-22T13:36:57+08:00",
+      "trade_date": "2026-07-22",
+      "session_phase": "afternoon",
+      "quality_state": "usable",
+      "rule_version": "2026-07-18.e5.1",
+      "scope_definition": "按用户既有语义重点覆盖新能源、光伏、储能、新能源车及电力设备链；当前先建立候选篮子，证据不足时不判断方向。",
+      "representative_securities": [
+        {
+          "code": "sz300316",
+          "name": "晶盛机电",
+          "group": "新能源设备",
+          "change_pct": 4.6481,
+          "as_of": "2026-07-22T13:36:54+08:00",
+          "source": "腾讯财经公开行情",
+          "turnover_yi": 8.1208
+        },
+        {
+          "code": "sh600110",
+          "name": "诺德股份",
+          "group": "锂电材料",
+          "change_pct": -4.2827,
+          "as_of": "2026-07-22T13:36:57+08:00",
+          "source": "腾讯财经公开行情",
+          "turnover_yi": 8.1776
+        },
+        {
+          "code": "sz300037",
+          "name": "新宙邦",
+          "group": "锂电材料",
+          "change_pct": -3.6924,
+          "as_of": "2026-07-22T13:36:54+08:00",
+          "source": "腾讯财经公开行情",
+          "turnover_yi": 9.499
+        },
+        {
+          "code": "sz002920",
+          "name": "德赛西威",
+          "group": "新能源车产业链",
+          "change_pct": -2.3305,
+          "as_of": "2026-07-22T13:36:51+08:00",
+          "source": "腾讯财经公开行情",
+          "turnover_yi": 3.8188
+        },
+        {
+          "code": "sz002129",
+          "name": "TCL中环",
+          "group": "光伏硅片",
+          "change_pct": -1.4461,
+          "as_of": "2026-07-22T13:36:57+08:00",
+          "source": "腾讯财经公开行情",
+          "turnover_yi": 10.6887
+        }
+      ]
+    },
+    {
+      "evidence_ref_id": "env_evidence_84f1f24aa61be390ee6f",
+      "environment_snapshot_id": "environment_821cc9cdbf06e0f0e737",
+      "dimension_code": "style_structure",
+      "evidence_role": "counter",
+      "metric_name": "小登篮子收盘结构",
+      "metric_scope": "style",
+      "metric_value": {
+        "中位涨跌幅": 0.9114,
+        "上涨比例": 0.5833,
+        "下跌比例": 0.4167
+      },
+      "unit": "%",
+      "source_id": "tencent_style_basket_quotes",
+      "source_label": "腾讯财经风格篮子行情",
+      "source_url": null,
+      "source_as_of": "2026-07-22T13:36:58+08:00",
+      "trade_date": "2026-07-22",
+      "session_phase": "afternoon",
+      "quality_state": "usable",
+      "rule_version": "2026-07-18.e5.1",
+      "scope_definition": "当前创新周期的半导体、AI算力和光模块代表篮子；不含纯微盘代理。",
+      "representative_securities": [
+        {
+          "code": "sh603019",
+          "name": "中科曙光",
+          "group": "AI算力",
+          "change_pct": 5.895,
+          "as_of": "2026-07-22T13:36:55+08:00",
+          "source": "腾讯财经公开行情",
+          "turnover_yi": 103.6481
+        },
+        {
+          "code": "sz002409",
+          "name": "雅克科技",
+          "group": "半导体材料",
+          "change_pct": 5.7541,
+          "as_of": "2026-07-22T13:36:57+08:00",
+          "source": "腾讯财经公开行情",
+          "turnover_yi": 60.6469
+        },
+        {
+          "code": "sz000977",
+          "name": "浪潮信息",
+          "group": "AI算力",
+          "change_pct": 4.4891,
+          "as_of": "2026-07-22T13:36:57+08:00",
+          "source": "腾讯财经公开行情",
+          "turnover_yi": 143.7712
+        },
+        {
+          "code": "sz300502",
+          "name": "新易盛",
+          "group": "光模块",
+          "change_pct": -4.4004,
+          "as_of": "2026-07-22T13:36:54+08:00",
+          "source": "腾讯财经公开行情",
+          "turnover_yi": 227.3783
+        },
+        {
+          "code": "sz002371",
+          "name": "北方华创",
+          "group": "半导体设备",
+          "change_pct": 3.7792,
+          "as_of": "2026-07-22T13:36:57+08:00",
+          "source": "腾讯财经公开行情",
+          "turnover_yi": 145.9203
+        },
+        {
+          "code": "sh688008",
+          "name": "澜起科技",
+          "group": "存储与算力",
+          "change_pct": 3.7705,
+          "as_of": "2026-07-22T13:36:55+08:00",
+          "source": "腾讯财经公开行情",
+          "turnover_yi": 164.7743
+        }
+      ]
+    },
+    {
+      "evidence_ref_id": "env_evidence_4c3e440741a05e278942",
+      "environment_snapshot_id": "environment_821cc9cdbf06e0f0e737",
+      "dimension_code": "style_structure",
+      "evidence_role": "risk",
+      "metric_name": "微盘篮子收盘结构",
+      "metric_scope": "style",
+      "metric_value": {
+        "中位涨跌幅": -0.9769,
+        "上涨比例": null,
+        "下跌比例": null
+      },
+      "unit": "%",
+      "source_id": "csi2000_proxy",
+      "source_label": "中证2000小微盘宽基代理",
+      "source_url": null,
+      "source_as_of": "2026-07-22T13:36:35+08:00",
+      "trade_date": "2026-07-22",
+      "session_phase": "afternoon",
+      "quality_state": "degraded",
+      "rule_version": "2026-07-18.e5.1",
+      "scope_definition": "独立使用中证2000小微盘宽基代理；不从小登篮子推断，不等于纯微盘。",
+      "representative_securities": [
+        {
+          "code": "932000",
+          "name": "中证2000指数（新浪行情）",
+          "change_pct": -0.9769,
+          "as_of": "2026-07-22T13:36:35+08:00",
+          "source": "新浪财经中证2000公开行情",
+          "source_url": "https://quotes.sina.cn/hs/company/quotes/view/si932000",
+          "role": "小微盘宽基代理"
+        }
+      ]
+    },
+    {
+      "evidence_ref_id": "env_evidence_62a58ca16faebc82153b",
+      "environment_snapshot_id": "environment_821cc9cdbf06e0f0e737",
+      "dimension_code": "position_fragility",
+      "evidence_role": "counter",
+      "metric_name": "高位样本收益与最大不利波动",
+      "metric_scope": "security",
+      "metric_value": {
+        "样本": 5,
+        "收益中位数": 7.2022,
+        "最大不利波动": -4.7091
+      },
+      "unit": "%",
+      "source_id": "high_level_loss_effect",
+      "source_label": "昨日高位股次日行情",
+      "source_url": "https://qt.gtimg.cn/q=",
+      "source_as_of": "2026-07-22T13:36:38+08:00",
+      "trade_date": "2026-07-22",
+      "session_phase": "afternoon",
+      "quality_state": "usable",
+      "rule_version": "high_level_loss_v1",
+      "scope_definition": "昨日二板及以上样本5只",
+      "representative_securities": [
+        {
+          "code": "sh600744",
+          "name": "华银电力",
+          "change_pct": 7.2022,
+          "as_of": "2026-07-22T13:36:39+08:00",
+          "source": "腾讯财经公开行情",
+          "role": "昨日高位样本"
+        },
+        {
+          "code": "sz002036",
+          "name": "联创电子",
+          "change_pct": 0.1387,
+          "as_of": "2026-07-22T13:36:39+08:00",
+          "source": "腾讯财经公开行情",
+          "role": "昨日高位样本"
+        },
+        {
+          "code": "sz000889",
+          "name": "中嘉博创",
+          "change_pct": 2.6316,
+          "as_of": "2026-07-22T13:36:39+08:00",
+          "source": "腾讯财经公开行情",
+          "role": "昨日高位样本"
+        },
+        {
+          "code": "sz001258",
+          "name": "立新能源",
+          "change_pct": 9.99,
+          "as_of": "2026-07-22T13:36:39+08:00",
+          "source": "腾讯财经公开行情",
+          "role": "昨日高位样本"
+        },
+        {
+          "code": "sz000815",
+          "name": "美利云",
+          "change_pct": 10.0273,
+          "as_of": "2026-07-22T13:36:39+08:00",
+          "source": "腾讯财经公开行情",
+          "role": "昨日高位样本"
+        }
+      ]
+    },
+    {
+      "evidence_ref_id": "env_evidence_0484a15269d050d157b1",
+      "environment_snapshot_id": "environment_821cc9cdbf06e0f0e737",
+      "dimension_code": "external_constraint",
+      "evidence_role": "counter",
+      "metric_name": "US收盘线索",
+      "metric_scope": "cross_market",
+      "metric_value": "美股前一交易窗口：纳斯达克+1.29%、英伟达+1.97%、美光科技+12.17%；只用于映射验证，不机械推断A股涨跌。",
+      "unit": null,
+      "source_id": "tencent_us_public_quotes",
+      "source_label": "腾讯财经公开行情",
+      "source_url": "https://qt.gtimg.cn/q=usIXIC,usNVDA,usMU",
+      "source_as_of": "2026-07-22T05:15:59+08:00",
+      "trade_date": "2026-07-22",
+      "session_phase": "pre_market",
+      "quality_state": "usable",
+      "rule_version": null,
+      "scope_definition": null,
+      "representative_securities": []
+    },
+    {
+      "evidence_ref_id": "env_evidence_670ac01fc0be20829e69",
+      "environment_snapshot_id": "environment_821cc9cdbf06e0f0e737",
+      "dimension_code": "external_constraint",
+      "evidence_role": "risk",
+      "metric_name": "HK收盘线索",
+      "metric_scope": "cross_market",
+      "metric_value": "港股当前交易窗口：恒生指数-1.00%、恒生科技指数-2.77%、中芯国际-0.20%、华虹宏力-3.44%；只用于映射验证，不机械推断A股涨跌。",
+      "unit": null,
+      "source_id": "tencent_hk_public_quotes",
+      "source_label": "腾讯财经公开行情",
+      "source_url": "https://qt.gtimg.cn/q=hkHSI,hkHSTECH,hk00981,hk01347",
+      "source_as_of": "2026-07-22T13:21:58+08:00",
+      "trade_date": "2026-07-22",
+      "session_phase": "afternoon",
+      "quality_state": "usable",
+      "rule_version": null,
+      "scope_definition": null,
+      "representative_securities": []
+    }
+  ],
+  "conflicts": [
+    {
+      "conflict_id": "env_conflict_8a1ca58c186c8903b61b",
+      "dimension_code": "sentiment_structure",
+      "metric_name": "晋级日期",
+      "source_as_of": "2026-07-22T13:36:38+08:00",
+      "values": [
+        "response_qdate_20260722_differs_from_requested_20260721"
+      ],
+      "resolution": "晋级率不参与任何正向判断。"
+    }
+  ],
+  "source_status": [
+    {
+      "label": "盘中指数",
+      "state": "current",
+      "as_of": "2026-07-22T13:36:36+08:00",
+      "note": "与当前交易日一致"
+    },
+    {
+      "label": "涨跌停梯队",
+      "state": "current",
+      "as_of": "2026-07-22T13:36:38+08:00",
+      "note": "与当前交易日一致"
+    },
+    {
+      "label": "小微盘宽基代理",
+      "state": "current",
+      "as_of": "2026-07-22T13:36:35+08:00",
+      "note": "与当前交易日一致"
+    },
+    {
+      "label": "市场宽度",
+      "state": "current",
+      "as_of": "2026-07-22T13:36:54+08:00",
+      "note": "与当前交易日一致"
+    },
+    {
+      "label": "市场流动性",
+      "state": "current",
+      "as_of": "2026-07-22T13:36:54+08:00",
+      "note": "与当前交易日一致"
+    },
+    {
+      "label": "主题线索",
+      "state": "stale",
+      "as_of": "2026-07-18T18:35:44+08:00",
+      "note": "来源时点为2026-07-18，未混入当前快照"
+    }
+  ],
+  "source_content_hashes": {
+    "decision": "sha256:360e4808e733cf89110b494063b1f87194270d227de0583e463f714bae7a78cb",
+    "intraday": "sha256:8fc396fd7c0a7fbbf607e73a4dcc41ebd4be56becd9416e7faec7a63589df45c",
+    "sentiment": "sha256:d39dfe38c3f58e9bd37e1155669ab3666cd7e2cfd15ed50e9b0b13e9f6cb4778",
+    "market_structure": "sha256:755355b46422cc3134704bbaa7a587e6c7fae35978c59bbee450394872895bfa",
+    "breadth": "sha256:e7639ad7019415f703d35b1f7f5e90d0fd559c96d7300afd633dd000cedb3872",
+    "liquidity": "sha256:bc07efb644bc60da2e7a46f618610bd35a22fc7e24ef072ab940ec0f0856d169",
+    "mainline": "sha256:4af211c1dcdcb616af96331d376a1e1e1701fda611bb15c99b48702a58af1ba3",
+    "external": "sha256:e6eb029e4ce95e3c8990ebb9a95d9506bedeff3f2ad94d10f1b4371229fd0eaf",
+    "style_quotes": "sha256:45382e2ffa31c47d84e103e5142bb4e3f349d1afa26d02bb8be5a1c811569cca",
+    "style_baskets": "sha256:414c52ff9e3104d780a1bf79706f2efe338f3331eaccfb996a7c9ffd8afafeef",
+    "theme_shifts": "sha256:fa166f80a62e9ca2328e2e7d3fd42d7331d6c8e96a4bd09ba380c428ee5ba388",
+    "quality": "sha256:520f7280d4772c54f70789fc102f45d82d7c88fae072dc1223d63940b56d6f9a"
+  },
+  "user_view": {
+    "标题": "风险事实可用，但关键结构仍有缺口",
+    "当前判断": "同日风险事实已经形成；流动性仍待数据源补采，AI不会凭空生成。",
+    "当前允许": "风险优先，等待剩余事实补齐",
+    "行情时点": "2026-07-22T13:36:54+08:00",
+    "交易日": "2026-07-22",
+    "阶段": "下午",
+    "支持项": 0,
+    "抑制项": 3,
+    "待补项": 1,
+    "冲突项": 1,
+    "说明": "这是V2.2事实层影子对照，不替换当前V2行动结论。"
+  },
+  "guardrails": {
+    "current_v2_action_modified": false,
+    "environment_state_machine_enabled": false,
+    "automatic_trading": false,
+    "user_assets_modified": false,
+    "model_promoted": false,
+    "v1_modified": false,
+    "mixed_trade_dates_used_as_current": false,
+    "missing_facts_ai_filled": false
+  },
+  "immutable_hash": "sha256:bfd95aaa6005ea6b9e42d0fcfc31dd8c19d8db7159f3600cdbb16117d08c9f7a"
+}

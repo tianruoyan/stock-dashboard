@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-07-12T20:56:00+08:00",
+  "generated_at": "2026-07-25T13:36:28+08:00",
   "shadow_acceptance": "passed",
   "production_promotion": "hold",
   "production_hold_reason": "关键数据仍为降级状态。",
@@ -34,7 +34,7 @@
     {
       "id": "research_domains",
       "passed": true,
-      "detail": "产业领域：6"
+      "detail": "产业领域：7"
     },
     {
       "id": "stock_pool",
@@ -44,7 +44,7 @@
     {
       "id": "immutable_replay",
       "passed": true,
-      "detail": "冻结快照：6个"
+      "detail": "冻结快照：26个"
     },
     {
       "id": "no_live_model_weight_change",
@@ -54,7 +54,7 @@
     {
       "id": "production_v1_preserved",
       "passed": true,
-      "detail": "V1程序与入口保持基线 2e5f149；数据提交可继续前进，当前 cc847c9。"
+      "detail": "V1程序与入口保持基线 f5bb1b5988148ee1ba5efac82e69cbf17a2d5896；数据提交可继续前进，当前 ecbcf80。"
     },
     {
       "id": "rollback_entry_exists",
@@ -65,13 +65,173 @@
       "id": "completion_audit_internal",
       "passed": true,
       "detail": "完成度审计：implemented_external_inputs_pending"
+    },
+    {
+      "id": "v22_stage_feature_scope",
+      "passed": true,
+      "detail": "V2.2只开启当前阶段获准的基础能力。"
+    },
+    {
+      "id": "v22_immutable_boundaries",
+      "passed": true,
+      "detail": "V2.2不自动交易、不自动修改用户资产、不晋升模型、不停用V1。"
+    },
+    {
+      "id": "v22_baseline",
+      "passed": true,
+      "detail": "V2.2基线防护：passed"
+    },
+    {
+      "id": "v22_watchlist_shadow_guard",
+      "passed": true,
+      "detail": "同花顺只生成影子对照，不应用增删。"
+    },
+    {
+      "id": "v22_stock_pool_layers",
+      "passed": true,
+      "detail": "五层股票池只生成影子读取模型，不自动扩池。"
+    },
+    {
+      "id": "v22_market_environment_facts",
+      "passed": true,
+      "detail": "市场环境已生成八维事实影子，不替换现有行动结论。"
+    },
+    {
+      "id": "v22_market_environment_boundaries",
+      "passed": true,
+      "detail": "环境事实不混用交易日、不由AI补事实，也不提前启用状态机。"
+    },
+    {
+      "id": "v22_environment_immutable_snapshot",
+      "passed": true,
+      "detail": "当前环境候选已保存不可覆盖快照。"
+    },
+    {
+      "id": "v22_environment_state_machine",
+      "passed": true,
+      "detail": "七态环境状态机已启用影子判断，正向升级需要连续确认。"
+    },
+    {
+      "id": "v22_style_boundaries",
+      "passed": true,
+      "detail": "老登、中登、小登与微盘独立观察，均不修改用户资产。"
+    },
+    {
+      "id": "v22_cross_market_validation",
+      "passed": true,
+      "detail": "外盘映射要求A股代表股兑现，单一公司事件不自动升级主题。"
+    },
+    {
+      "id": "v22_g5_gate",
+      "passed": true,
+      "detail": "G5环境门禁已形成影子结果，且不能绕过代表股与位置门禁。"
+    },
+    {
+      "id": "v22_environment_decision_boundaries",
+      "passed": true,
+      "detail": "E5不自动交易、不改用户资产、不晋升模型，也不让G5绕过其他门禁。"
+    },
+    {
+      "id": "v22_environment_decision_snapshot",
+      "passed": true,
+      "detail": "E5环境决策已保存不可覆盖快照。"
+    },
+    {
+      "id": "v22_decision_cases",
+      "passed": true,
+      "detail": "决策案例已去重并逐例运行八道透明门禁。"
+    },
+    {
+      "id": "v22_candidate_projection",
+      "passed": true,
+      "detail": "V2.2候选投影只显示代表股行情闭环的当前或观察案例。"
+    },
+    {
+      "id": "v22_no_unearned_ready_case",
+      "passed": true,
+      "detail": "任何决策就绪案例均通过G0至G7；已核验不等于决策就绪。"
+    },
+    {
+      "id": "v22_case_snapshot",
+      "passed": true,
+      "detail": "当前决策案例批次已保存不可覆盖快照。"
+    },
+    {
+      "id": "v22_case_boundaries",
+      "passed": true,
+      "detail": "E6不改V2基线、不自动交易、不改用户资产、不晋升模型。"
+    },
+    {
+      "id": "v22_time_semantics",
+      "passed": true,
+      "detail": "交易日、证据时间、行情时间、采集时间和生成时间已分开记录。"
+    },
+    {
+      "id": "v22_trigger_quote_guard",
+      "passed": true,
+      "detail": "触发行情只保存同交易日首次观察，不反向补造历史价格。"
+    },
+    {
+      "id": "v22_outcome_price_guard",
+      "passed": true,
+      "detail": "结果回填只处理到期窗口，缺失行情不按零处理且不覆盖已验证结果。"
+    },
+    {
+      "id": "v22_replay_learning",
+      "passed": true,
+      "detail": "V2.2案例快照进入独立回溯索引，不重写当时证据。"
+    },
+    {
+      "id": "v22_outcome_integrity",
+      "passed": true,
+      "detail": "缺少触发时点参考价时不评价，不以当前行情冒充历史参考价。"
+    },
+    {
+      "id": "v22_offline_evaluation",
+      "passed": true,
+      "detail": "候选只做离线评价；样本不足不展示命中率。"
+    },
+    {
+      "id": "v22_parallel_hold",
+      "passed": true,
+      "detail": "V2基线与V2.2只做双轨对照，不自动切换。"
+    },
+    {
+      "id": "v22_final_acceptance",
+      "passed": true,
+      "detail": "V2.2工程链路验收通过，生产晋级保持等待。"
+    },
+    {
+      "id": "v22_intraday_shadow_guard",
+      "passed": true,
+      "detail": "盘中影子任务覆盖关键时点，且不改V1、不交易、不改用户资产、不晋升模型。"
+    },
+    {
+      "id": "v22_public_market_fact_guard",
+      "passed": true,
+      "detail": "市场事实来自公开行情；备用源和缺失项显式降级，不由AI补造。"
+    },
+    {
+      "id": "v22_platform_skills",
+      "passed": true,
+      "detail": "四个高频Skill已按只读边界通过真实场景验收。"
+    },
+    {
+      "id": "v22_watchlist_three_way_guard",
+      "passed": true,
+      "detail": "同花顺、旧观察名单和证券主表已生成三方影子对照；完整性不足时继续阻断迁移。"
+    },
+    {
+      "id": "v22_runtime_public_import_guard",
+      "passed": true,
+      "detail": "盘中运行时结果只按部署指纹和公开字段门禁合并回工作树。"
     }
   ],
   "rollback_rehearsal": {
     "status": "passed",
     "method": "验证V1程序、入口、脚本和配置相对冻结基线未改变；允许生产数据按原任务继续提交。",
-    "production_head": "cc847c9ace60664e627cebf297a889bbd2cc30e4",
-    "baseline_commit": "2e5f149",
+    "production_head": "ecbcf809b37b5b304b0ffcf2624c078b9ccd8573",
+    "baseline_commit": "f5bb1b5988148ee1ba5efac82e69cbf17a2d5896",
     "protected_paths": [
       "index.html",
       "style.css",
@@ -81,10 +241,13 @@
       "settings.js",
       "rules.html",
       "scripts",
-      "config"
+      "config/alert-config.json",
+      "config/topics-list.json"
     ],
     "changed_protected_paths": [],
-    "v2_head": "4cb65739fefdc4b54c8b1f248da806fbf73dbac0"
+    "v2_head": "9e163b8e9f95d5228b176a02a6e2482b4469a88a",
+    "v22_stage": "S2_intraday_shadow_capture_and_current_facts",
+    "v22_feature_flags": "config/v2-v22-feature-flags.json"
   },
   "confirmation_items": [
     {

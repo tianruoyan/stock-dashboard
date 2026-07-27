@@ -1,0 +1,2584 @@
+{
+  "schema_version": 1,
+  "snapshot_id": "snapshot_6d2f6b87aa3e0eca12b0",
+  "content_hash": "6d2f6b87aa3e0eca12b001ac1fc81c006efded5e956c5530791c503a0df166f6",
+  "created_at": "2026-07-20T22:51:44+08:00",
+  "primary_market": "CN",
+  "decision_as_of": "2026-07-13T10:37:36+08:00",
+  "decision_date": "2026-07-13",
+  "quality": {
+    "state": "degraded",
+    "headline": "发现 103 个降级/需复核项（7 个交易阻断，39 个价格/行情复核，59 个背景复核），核心结论可看但必须按影响分层使用。",
+    "decision_rule": "数据降级：只允许候选和风险提示，已确认机会必须等待关键证据恢复。",
+    "blocking_count": 7,
+    "price_review_count": 39,
+    "signal_review_count": 0,
+    "background_review_count": 59,
+    "issues": [
+      {
+        "level": "blocking",
+        "problem": "alerts[7] 候选异动未达到最低短周期价格、方向占比和成交门槛，不得作为当前候选展示",
+        "next_step": "暂停对应交易触发；等待污染批次撤下、可信行情源恢复并重产 JSON。",
+        "source": "alert.json"
+      },
+      {
+        "level": "price_review",
+        "problem": "盘中异动缺少可信源证明；当前阶段只降权参考，不阻断整站发布",
+        "next_step": "用第二行情源复核涨跌幅、quote_time 和代表股方向；未确认前只做验证。",
+        "source": "alert.json"
+      },
+      {
+        "level": "price_review",
+        "problem": "中国巨石 接近跌停 -10.0，需确认是否真实",
+        "next_step": "用第二行情源复核涨跌幅、quote_time 和代表股方向；未确认前只做验证。",
+        "source": "intraday.json"
+      },
+      {
+        "level": "price_review",
+        "problem": "eastmoney_limit_pool_postmarket_20260713: 涨停池29条、炸板池14条有效；跌停接口返回总数161但明细为空，未据此编造跌停行业分布。",
+        "next_step": "用第二行情源复核涨跌幅、quote_time 和代表股方向；未确认前只做验证。",
+        "source": "source-health.json"
+      },
+      {
+        "level": "background_review",
+        "problem": "alerts[0].trigger_metrics.metric_scope 缺失",
+        "next_step": "补官方/交易所/公司公告来源；未补齐前不升级为核心依据。",
+        "source": "alert.json"
+      },
+      {
+        "level": "background_review",
+        "problem": "晚间舆情不是当前交易日，不参与今日总控",
+        "next_step": "补官方/交易所/公司公告来源；未补齐前不升级为核心依据。",
+        "source": "evening-sentiment.json"
+      }
+    ],
+    "evidence": [
+      {
+        "label": "质量审计",
+        "source": "quality-report.json",
+        "as_of": "2026-07-20T22:51:42+08:00"
+      },
+      {
+        "label": "文件可信",
+        "source": "data-trust.json",
+        "as_of": "2026-07-20T22:51:42+08:00"
+      },
+      {
+        "label": "任务健康",
+        "source": "automation-health.json",
+        "as_of": "2026-07-20T22:51:42+08:00"
+      }
+    ]
+  },
+  "market_environment": {
+    "state": "风险优先，只做验证",
+    "action": "不把候选方向当交易机会；先看风险收敛、数据恢复和核心承接。",
+    "headline": "14:30尾盘前退潮再加速：有效涨停维持23家、跌停由107激增至153家，科创50跌至-3.81%。中药/特色药封板扩至7只，是唯一强主线但呈极端抱团；14:00半导体止跌萌芽失败，存储、CPO、电子布/PCB的高成交核心同步走弱。",
+    "quality_state": "degraded",
+    "supporting_reasons": [
+      "发现 103 个降级/需复核项（7 个交易阻断，39 个价格/行情复核，59 个背景复核），核心结论可看但必须按影响分层使用。",
+      "A/B级风险 8 条",
+      "风险优先冲突 2 条",
+      "可用机会 0 条，降权候选 8 条"
+    ],
+    "risk_constraints": [
+      "全市场亏钱效应",
+      "数据质量降级",
+      "中药/特色药"
+    ],
+    "indices": [
+      {
+        "name": "上证指数",
+        "pct": 0.85,
+        "three_min_pct": null,
+        "status": "交易中",
+        "as_of": "2026-07-13T14:34:30+08:00"
+      },
+      {
+        "name": "深证成指",
+        "pct": -0.71,
+        "three_min_pct": null,
+        "status": "交易中",
+        "as_of": "2026-07-13T14:34:30+08:00"
+      },
+      {
+        "name": "创业板指",
+        "pct": 0.42,
+        "three_min_pct": null,
+        "status": "交易中",
+        "as_of": "2026-07-13T14:34:30+08:00"
+      },
+      {
+        "name": "科创50",
+        "pct": 0.19,
+        "three_min_pct": null,
+        "status": "交易中",
+        "as_of": "2026-07-13T14:34:30+08:00"
+      },
+      {
+        "name": "沪深300",
+        "pct": 1.53,
+        "three_min_pct": null,
+        "status": "交易中",
+        "as_of": "2026-07-13T14:34:30+08:00"
+      }
+    ],
+    "sentiment_structure": {
+      "limit_up_count": 25,
+      "limit_down_count": 153,
+      "broken_limit_count": 17,
+      "judgement": "退潮加速且指数与个股同步走弱。跌停为有效涨停的6.65倍，中药7只封板占有效涨停30.4%，赚钱效应高度集中，不构成全市场修复。",
+      "limit_up_ladder": {
+        "state": "usable",
+        "items": [
+          {
+            "height": 3,
+            "count": 1,
+            "stocks": [
+              {
+                "code": "sz001258",
+                "name": "立新能源",
+                "change_pct": 10.036275863647461,
+                "industry": "电力",
+                "open_count": 2
+              }
+            ]
+          },
+          {
+            "height": 2,
+            "count": 6,
+            "stocks": [
+              {
+                "code": "sh600644",
+                "name": "乐山电力",
+                "change_pct": 9.988901138305664,
+                "industry": "电力",
+                "open_count": 2
+              },
+              {
+                "code": "sh600744",
+                "name": "华银电力",
+                "change_pct": 10.067113876342773,
+                "industry": "电力",
+                "open_count": 1
+              },
+              {
+                "code": "sh600722",
+                "name": "金牛化工",
+                "change_pct": 9.964829444885254,
+                "industry": "化学原料",
+                "open_count": 0
+              },
+              {
+                "code": "sh600236",
+                "name": "桂冠电力",
+                "change_pct": 9.98116683959961,
+                "industry": "电力",
+                "open_count": 12
+              },
+              {
+                "code": "sz000722",
+                "name": "湖南发展",
+                "change_pct": 9.978307723999023,
+                "industry": "电力",
+                "open_count": 6
+              },
+              {
+                "code": "sz000037",
+                "name": "深南电A",
+                "change_pct": 10.0,
+                "industry": "电力",
+                "open_count": 2
+              }
+            ]
+          },
+          {
+            "height": 1,
+            "count": 46,
+            "stocks": [
+              {
+                "code": "sz000815",
+                "name": "美利云",
+                "change_pct": 9.983498573303223,
+                "industry": "IT服务Ⅱ",
+                "open_count": 0
+              },
+              {
+                "code": "sz002866",
+                "name": "传艺科技",
+                "change_pct": 10.0,
+                "industry": "消费电子",
+                "open_count": 0
+              },
+              {
+                "code": "sz300515",
+                "name": "三德科技",
+                "change_pct": 20.032310485839844,
+                "industry": "通用设备",
+                "open_count": 0
+              },
+              {
+                "code": "sz002490",
+                "name": "山东墨龙",
+                "change_pct": 10.014103889465332,
+                "industry": "专用设备",
+                "open_count": 3
+              },
+              {
+                "code": "sh603533",
+                "name": "掌阅科技",
+                "change_pct": 10.0,
+                "industry": "数字媒体",
+                "open_count": 4
+              },
+              {
+                "code": "sz002992",
+                "name": "宝明科技",
+                "change_pct": 10.0,
+                "industry": "光学光电",
+                "open_count": 0
+              },
+              {
+                "code": "sz000889",
+                "name": "中嘉博创",
+                "change_pct": 9.872611999511719,
+                "industry": "通信服务",
+                "open_count": 0
+              },
+              {
+                "code": "sh688057",
+                "name": "金达莱",
+                "change_pct": 19.98572540283203,
+                "industry": "环境治理",
+                "open_count": 0
+              },
+              {
+                "code": "sh600403",
+                "name": "大有能源",
+                "change_pct": 10.0,
+                "industry": "煤炭开采",
+                "open_count": 0
+              },
+              {
+                "code": "sh600126",
+                "name": "杭钢股份",
+                "change_pct": 10.070671081542969,
+                "industry": "普钢",
+                "open_count": 2
+              },
+              {
+                "code": "sz300368",
+                "name": "汇金股份",
+                "change_pct": 20.025508880615234,
+                "industry": "计算机设",
+                "open_count": 0
+              },
+              {
+                "code": "sh603619",
+                "name": "中曼石油",
+                "change_pct": 9.977452278137207,
+                "industry": "油服工程",
+                "open_count": 0
+              },
+              {
+                "code": "sh603779",
+                "name": "威龙股份",
+                "change_pct": 10.012674331665039,
+                "industry": "非白酒",
+                "open_count": 3
+              },
+              {
+                "code": "sh600756",
+                "name": "浪潮软件",
+                "change_pct": 10.023492813110352,
+                "industry": "IT服务Ⅱ",
+                "open_count": 10
+              },
+              {
+                "code": "sh600797",
+                "name": "浙大网新",
+                "change_pct": 9.951845169067383,
+                "industry": "IT服务Ⅱ",
+                "open_count": 6
+              },
+              {
+                "code": "sh600121",
+                "name": "郑州煤电",
+                "change_pct": 9.941520690917969,
+                "industry": "煤炭开采",
+                "open_count": 1
+              },
+              {
+                "code": "sh600452",
+                "name": "涪陵电力",
+                "change_pct": 10.011000633239746,
+                "industry": "电力",
+                "open_count": 5
+              },
+              {
+                "code": "sh600267",
+                "name": "海正药业",
+                "change_pct": 9.982332229614258,
+                "industry": "化学制药",
+                "open_count": 4
+              },
+              {
+                "code": "sz000596",
+                "name": "古井贡酒",
+                "change_pct": 10.0,
+                "industry": "白酒Ⅱ",
+                "open_count": 4
+              },
+              {
+                "code": "sh600726",
+                "name": "华电能源",
+                "change_pct": 10.0,
+                "industry": "电力",
+                "open_count": 0
+              },
+              {
+                "code": "sh600821",
+                "name": "金开新能",
+                "change_pct": 10.052909851074219,
+                "industry": "电力",
+                "open_count": 1
+              },
+              {
+                "code": "sz001288",
+                "name": "运机集团",
+                "change_pct": 10.009578704833984,
+                "industry": "专用设备",
+                "open_count": 6
+              },
+              {
+                "code": "sz000767",
+                "name": "晋控电力",
+                "change_pct": 9.941520690917969,
+                "industry": "电力",
+                "open_count": 2
+              },
+              {
+                "code": "sz002036",
+                "name": "联创电子",
+                "change_pct": 10.084033966064453,
+                "industry": "光学光电",
+                "open_count": 0
+              },
+              {
+                "code": "sh603727",
+                "name": "博迈科",
+                "change_pct": 10.006627082824707,
+                "industry": "油服工程",
+                "open_count": 0
+              },
+              {
+                "code": "sz000539",
+                "name": "粤电力Ａ",
+                "change_pct": 9.98116683959961,
+                "industry": "电力",
+                "open_count": 3
+              },
+              {
+                "code": "sh601898",
+                "name": "中煤能源",
+                "change_pct": 9.968101501464844,
+                "industry": "煤炭开采",
+                "open_count": 6
+              },
+              {
+                "code": "sh601026",
+                "name": "道生天合",
+                "change_pct": 9.984871864318848,
+                "industry": "风电设备",
+                "open_count": 4
+              },
+              {
+                "code": "sh600746",
+                "name": "江苏索普",
+                "change_pct": 9.933774948120117,
+                "industry": "化学原料",
+                "open_count": 1
+              },
+              {
+                "code": "sh603610",
+                "name": "麒盛科技",
+                "change_pct": 10.0,
+                "industry": "家居用品",
+                "open_count": 2
+              },
+              {
+                "code": "sz300534",
+                "name": "陇神戎发",
+                "change_pct": 20.039880752563477,
+                "industry": "中药Ⅱ",
+                "open_count": 1
+              },
+              {
+                "code": "sz001211",
+                "name": "双枪科技",
+                "change_pct": 10.027247428894043,
+                "industry": "家居用品",
+                "open_count": 0
+              },
+              {
+                "code": "sz002857",
+                "name": "三晖电气",
+                "change_pct": 10.013908386230469,
+                "industry": "电网设备",
+                "open_count": 0
+              },
+              {
+                "code": "sz002440",
+                "name": "闰土股份",
+                "change_pct": 9.990663528442383,
+                "industry": "化学制品",
+                "open_count": 2
+              },
+              {
+                "code": "sh600938",
+                "name": "中国海油",
+                "change_pct": 10.010355949401855,
+                "industry": "油气开采",
+                "open_count": 2
+              },
+              {
+                "code": "sh600188",
+                "name": "兖矿能源",
+                "change_pct": 10.0,
+                "industry": "煤炭开采",
+                "open_count": 4
+              },
+              {
+                "code": "sh600863",
+                "name": "华能蒙电",
+                "change_pct": 10.087719917297363,
+                "industry": "电力",
+                "open_count": 4
+              },
+              {
+                "code": "sz301190",
+                "name": "善水科技",
+                "change_pct": 19.97245216369629,
+                "industry": "化学原料",
+                "open_count": 0
+              },
+              {
+                "code": "sh600578",
+                "name": "京能电力",
+                "change_pct": 10.0,
+                "industry": "电力",
+                "open_count": 1
+              },
+              {
+                "code": "sz000600",
+                "name": "建投能源",
+                "change_pct": 10.049019813537598,
+                "industry": "电力",
+                "open_count": 2
+              },
+              {
+                "code": "sh600985",
+                "name": "淮北矿业",
+                "change_pct": 10.0,
+                "industry": "煤炭开采",
+                "open_count": 2
+              },
+              {
+                "code": "sh600396",
+                "name": "华电辽能",
+                "change_pct": 10.04291820526123,
+                "industry": "电力",
+                "open_count": 0
+              },
+              {
+                "code": "sh601991",
+                "name": "大唐发电",
+                "change_pct": 10.0,
+                "industry": "电力",
+                "open_count": 8
+              },
+              {
+                "code": "sh601001",
+                "name": "晋控煤业",
+                "change_pct": 9.98288631439209,
+                "industry": "煤炭开采",
+                "open_count": 0
+              },
+              {
+                "code": "sh603823",
+                "name": "百合花",
+                "change_pct": 10.002849578857422,
+                "industry": "化学制品",
+                "open_count": 0
+              },
+              {
+                "code": "sh600032",
+                "name": "浙江新能",
+                "change_pct": 10.04243278503418,
+                "industry": "电力",
+                "open_count": 0
+              }
+            ]
+          }
+        ],
+        "filtered_count": 53,
+        "excluded": []
+      },
+      "limit_down_ladder": {
+        "state": "usable",
+        "items": [
+          {
+            "height": 5,
+            "count": 1,
+            "stocks": [
+              {
+                "code": "sz002208",
+                "name": "合肥城建",
+                "change_pct": -10.0,
+                "industry": "房地产开",
+                "open_count": 6
+              }
+            ]
+          },
+          {
+            "height": 4,
+            "count": 8,
+            "stocks": [
+              {
+                "code": "sh600360",
+                "name": "华微电子",
+                "change_pct": -10.008627891540527,
+                "industry": "半导体",
+                "open_count": 14
+              },
+              {
+                "code": "sz002975",
+                "name": "博杰股份",
+                "change_pct": -10.003305435180664,
+                "industry": "自动化设",
+                "open_count": 12
+              },
+              {
+                "code": "sh603163",
+                "name": "圣晖集成",
+                "change_pct": -9.99756145477295,
+                "industry": "专业工程",
+                "open_count": 2
+              },
+              {
+                "code": "sh603065",
+                "name": "宿迁联盛",
+                "change_pct": -10.023309707641602,
+                "industry": "化学制品",
+                "open_count": 8
+              },
+              {
+                "code": "sz002674",
+                "name": "兴业科技",
+                "change_pct": -10.017196655273438,
+                "industry": "纺织制造",
+                "open_count": 4
+              },
+              {
+                "code": "sh600288",
+                "name": "大恒科技",
+                "change_pct": -9.984025001525879,
+                "industry": "软件开发",
+                "open_count": 0
+              },
+              {
+                "code": "sz002185",
+                "name": "华天科技",
+                "change_pct": -9.9893159866333,
+                "industry": "半导体",
+                "open_count": 1
+              },
+              {
+                "code": "sz001309",
+                "name": "德明利",
+                "change_pct": -9.99925422668457,
+                "industry": "半导体",
+                "open_count": 5
+              }
+            ]
+          },
+          {
+            "height": 3,
+            "count": 11,
+            "stocks": [
+              {
+                "code": "sz003018",
+                "name": "金富科技",
+                "change_pct": -9.995251655578613,
+                "industry": "包装印刷",
+                "open_count": 4
+              },
+              {
+                "code": "sh603115",
+                "name": "海星股份",
+                "change_pct": -9.993145942687988,
+                "industry": "元件",
+                "open_count": 3
+              },
+              {
+                "code": "sz003020",
+                "name": "立方制药",
+                "change_pct": -9.971831321716309,
+                "industry": "化学制药",
+                "open_count": 0
+              },
+              {
+                "code": "sh603931",
+                "name": "格林达",
+                "change_pct": -10.002321243286133,
+                "industry": "电子化学",
+                "open_count": 4
+              },
+              {
+                "code": "sh600641",
+                "name": "先导基电",
+                "change_pct": -10.01243782043457,
+                "industry": "半导体",
+                "open_count": 5
+              },
+              {
+                "code": "sh600667",
+                "name": "太极实业",
+                "change_pct": -10.023725509643555,
+                "industry": "工程咨询",
+                "open_count": 6
+              },
+              {
+                "code": "sh605376",
+                "name": "博迁新材",
+                "change_pct": -9.998661041259766,
+                "industry": "金属新材",
+                "open_count": 5
+              },
+              {
+                "code": "sh603669",
+                "name": "灵康药业",
+                "change_pct": -10.045661926269531,
+                "industry": "化学制药",
+                "open_count": 2
+              },
+              {
+                "code": "sz002851",
+                "name": "麦格米特",
+                "change_pct": -10.000731468200684,
+                "industry": "其他电源",
+                "open_count": 13
+              },
+              {
+                "code": "sh603683",
+                "name": "晶华新材",
+                "change_pct": -10.0,
+                "industry": "化学制品",
+                "open_count": 0
+              },
+              {
+                "code": "sz000988",
+                "name": "华工科技",
+                "change_pct": -9.998299598693848,
+                "industry": "自动化设",
+                "open_count": 2
+              }
+            ]
+          },
+          {
+            "height": 2,
+            "count": 81,
+            "stocks": [
+              {
+                "code": "sz002963",
+                "name": "豪尔赛",
+                "change_pct": -10.0,
+                "industry": "装修装饰",
+                "open_count": 14
+              },
+              {
+                "code": "sh603391",
+                "name": "力聚热能",
+                "change_pct": -9.998109817504883,
+                "industry": "专用设备",
+                "open_count": 14
+              },
+              {
+                "code": "sh603933",
+                "name": "睿能科技",
+                "change_pct": -10.005379676818848,
+                "industry": "其他电子",
+                "open_count": 13
+              },
+              {
+                "code": "sh605228",
+                "name": "神通科技",
+                "change_pct": -10.016695022583008,
+                "industry": "汽车零部",
+                "open_count": 24
+              },
+              {
+                "code": "sh603270",
+                "name": "金帝股份",
+                "change_pct": -9.996283531188965,
+                "industry": "通用设备",
+                "open_count": 9
+              },
+              {
+                "code": "sh603679",
+                "name": "华体科技",
+                "change_pct": -10.0,
+                "industry": "光学光电",
+                "open_count": 2
+              },
+              {
+                "code": "sh603052",
+                "name": "可川科技",
+                "change_pct": -10.001824378967285,
+                "industry": "消费电子",
+                "open_count": 3
+              },
+              {
+                "code": "sh600520",
+                "name": "三佳科技",
+                "change_pct": -10.0038480758667,
+                "industry": "半导体",
+                "open_count": 34
+              },
+              {
+                "code": "sz002993",
+                "name": "奥海科技",
+                "change_pct": -10.0,
+                "industry": "消费电子",
+                "open_count": 9
+              },
+              {
+                "code": "sh605588",
+                "name": "冠石科技",
+                "change_pct": -10.006998062133789,
+                "industry": "光学光电",
+                "open_count": 16
+              },
+              {
+                "code": "sh603777",
+                "name": "来伊份",
+                "change_pct": -9.984871864318848,
+                "industry": "休闲食品",
+                "open_count": 8
+              },
+              {
+                "code": "sz003004",
+                "name": "声迅股份",
+                "change_pct": -10.006263732910156,
+                "industry": "计算机设",
+                "open_count": 14
+              },
+              {
+                "code": "sh603407",
+                "name": "长裕集团",
+                "change_pct": -10.003384590148926,
+                "industry": "化学原料",
+                "open_count": 20
+              },
+              {
+                "code": "sz002695",
+                "name": "煌上煌",
+                "change_pct": -10.021322250366211,
+                "industry": "休闲食品",
+                "open_count": 16
+              },
+              {
+                "code": "sh600234",
+                "name": "科新发展",
+                "change_pct": -9.978425025939941,
+                "industry": "装修装饰",
+                "open_count": 12
+              },
+              {
+                "code": "sz002364",
+                "name": "中恒电气",
+                "change_pct": -10.007147789001465,
+                "industry": "其他电源",
+                "open_count": 18
+              },
+              {
+                "code": "sz001287",
+                "name": "中电港",
+                "change_pct": -9.995596885681152,
+                "industry": "其他电子",
+                "open_count": 18
+              },
+              {
+                "code": "sz002830",
+                "name": "名雕股份",
+                "change_pct": -10.007880210876465,
+                "industry": "装修装饰",
+                "open_count": 2
+              },
+              {
+                "code": "sh603773",
+                "name": "沃格光电",
+                "change_pct": -10.0,
+                "industry": "光学光电",
+                "open_count": 13
+              },
+              {
+                "code": "sz002980",
+                "name": "华盛昌",
+                "change_pct": -9.996895790100098,
+                "industry": "电网设备",
+                "open_count": 13
+              },
+              {
+                "code": "sz002921",
+                "name": "联诚精密",
+                "change_pct": -10.0,
+                "industry": "汽车零部",
+                "open_count": 17
+              },
+              {
+                "code": "sh603316",
+                "name": "诚邦股份",
+                "change_pct": -9.98603343963623,
+                "industry": "半导体",
+                "open_count": 1
+              },
+              {
+                "code": "sz001389",
+                "name": "广合科技",
+                "change_pct": -10.001704216003418,
+                "industry": "元件",
+                "open_count": 16
+              },
+              {
+                "code": "sh603666",
+                "name": "亿嘉和",
+                "change_pct": -10.004368782043457,
+                "industry": "自动化设",
+                "open_count": 5
+              },
+              {
+                "code": "sh603139",
+                "name": "康惠股份",
+                "change_pct": -10.008339881896973,
+                "industry": "中药Ⅱ",
+                "open_count": 6
+              },
+              {
+                "code": "sz003043",
+                "name": "华亚智能",
+                "change_pct": -9.998518943786621,
+                "industry": "半导体",
+                "open_count": 5
+              },
+              {
+                "code": "sz002943",
+                "name": "宇晶股份",
+                "change_pct": -10.0,
+                "industry": "通用设备",
+                "open_count": 1
+              },
+              {
+                "code": "sz002235",
+                "name": "安妮股份",
+                "change_pct": -10.035419464111328,
+                "industry": "造纸",
+                "open_count": 15
+              },
+              {
+                "code": "sh603936",
+                "name": "博敏电子",
+                "change_pct": -10.014103889465332,
+                "industry": "元件",
+                "open_count": 4
+              },
+              {
+                "code": "sh603690",
+                "name": "至纯科技",
+                "change_pct": -9.991673469543457,
+                "industry": "半导体",
+                "open_count": 17
+              },
+              {
+                "code": "sz002788",
+                "name": "鹭燕医药",
+                "change_pct": -10.027100563049316,
+                "industry": "医药商业",
+                "open_count": 1
+              },
+              {
+                "code": "sh605186",
+                "name": "健麾信息",
+                "change_pct": -10.0,
+                "industry": "自动化设",
+                "open_count": 7
+              },
+              {
+                "code": "sh600770",
+                "name": "综艺股份",
+                "change_pct": -9.908256530761719,
+                "industry": "综合Ⅱ",
+                "open_count": 2
+              },
+              {
+                "code": "sz002957",
+                "name": "科瑞技术",
+                "change_pct": -9.99725341796875,
+                "industry": "自动化设",
+                "open_count": 12
+              },
+              {
+                "code": "sz003036",
+                "name": "泰坦股份",
+                "change_pct": -9.99496841430664,
+                "industry": "专用设备",
+                "open_count": 0
+              },
+              {
+                "code": "sz002303",
+                "name": "美盈森",
+                "change_pct": -9.911893844604492,
+                "industry": "包装印刷",
+                "open_count": 4
+              },
+              {
+                "code": "sz002579",
+                "name": "中京电子",
+                "change_pct": -9.983766555786133,
+                "industry": "元件",
+                "open_count": 6
+              },
+              {
+                "code": "sh600857",
+                "name": "宁波中百",
+                "change_pct": -9.994767189025879,
+                "industry": "一般零售",
+                "open_count": 4
+              },
+              {
+                "code": "sz002655",
+                "name": "共达电声",
+                "change_pct": -10.010499954223633,
+                "industry": "消费电子",
+                "open_count": 1
+              },
+              {
+                "code": "sz001331",
+                "name": "胜通能源",
+                "change_pct": -9.989572525024414,
+                "industry": "燃气Ⅱ",
+                "open_count": 0
+              },
+              {
+                "code": "sz002718",
+                "name": "友邦吊顶",
+                "change_pct": -9.997942924499512,
+                "industry": "装修建材",
+                "open_count": 4
+              },
+              {
+                "code": "sh600203",
+                "name": "福日电子",
+                "change_pct": -9.972041130065918,
+                "industry": "消费电子",
+                "open_count": 5
+              },
+              {
+                "code": "sh603045",
+                "name": "福达合金",
+                "change_pct": -9.991110801696777,
+                "industry": "金属新材",
+                "open_count": 1
+              },
+              {
+                "code": "sh603283",
+                "name": "赛腾股份",
+                "change_pct": -9.989328384399414,
+                "industry": "自动化设",
+                "open_count": 0
+              },
+              {
+                "code": "sh600488",
+                "name": "津药药业",
+                "change_pct": -9.9827880859375,
+                "industry": "化学制药",
+                "open_count": 2
+              },
+              {
+                "code": "sh603989",
+                "name": "艾华集团",
+                "change_pct": -10.00631332397461,
+                "industry": "元件",
+                "open_count": 20
+              },
+              {
+                "code": "sh603991",
+                "name": "领先股份",
+                "change_pct": -10.000710487365723,
+                "industry": "半导体",
+                "open_count": 9
+              },
+              {
+                "code": "sz002965",
+                "name": "祥鑫科技",
+                "change_pct": -9.991216659545898,
+                "industry": "汽车零部",
+                "open_count": 3
+              },
+              {
+                "code": "sz002119",
+                "name": "康强电子",
+                "change_pct": -9.9873046875,
+                "industry": "半导体",
+                "open_count": 8
+              },
+              {
+                "code": "sz002272",
+                "name": "川润股份",
+                "change_pct": -9.971671104431152,
+                "industry": "通用设备",
+                "open_count": 6
+              },
+              {
+                "code": "sh603306",
+                "name": "华懋科技",
+                "change_pct": -10.004203796386719,
+                "industry": "汽车零部",
+                "open_count": 2
+              },
+              {
+                "code": "sz002290",
+                "name": "禾盛新材",
+                "change_pct": -10.0,
+                "industry": "家电零部",
+                "open_count": 1
+              },
+              {
+                "code": "sz001359",
+                "name": "平安电工",
+                "change_pct": -10.001039505004883,
+                "industry": "塑料",
+                "open_count": 12
+              },
+              {
+                "code": "sz001267",
+                "name": "汇绿生态",
+                "change_pct": -9.99427318572998,
+                "industry": "通信设备",
+                "open_count": 0
+              },
+              {
+                "code": "sh603031",
+                "name": "安孚科技",
+                "change_pct": -9.993202209472656,
+                "industry": "电池",
+                "open_count": 7
+              },
+              {
+                "code": "sh605178",
+                "name": "时空科技",
+                "change_pct": -9.994359970092773,
+                "industry": "专业工程",
+                "open_count": 6
+              },
+              {
+                "code": "sh603800",
+                "name": "洪田股份",
+                "change_pct": -10.0,
+                "industry": "专用设备",
+                "open_count": 4
+              },
+              {
+                "code": "sh603211",
+                "name": "晋拓股份",
+                "change_pct": -10.0,
+                "industry": "汽车零部",
+                "open_count": 1
+              },
+              {
+                "code": "sh600869",
+                "name": "远东股份",
+                "change_pct": -10.023446083068848,
+                "industry": "电网设备",
+                "open_count": 9
+              },
+              {
+                "code": "sz300005",
+                "name": "探路者",
+                "change_pct": -19.973100662231445,
+                "industry": "服装家纺",
+                "open_count": 29
+              },
+              {
+                "code": "sh603011",
+                "name": "合锻智能",
+                "change_pct": -9.975309371948242,
+                "industry": "专用设备",
+                "open_count": 0
+              },
+              {
+                "code": "sz301042",
+                "name": "安联锐视",
+                "change_pct": -20.00960922241211,
+                "industry": "计算机设",
+                "open_count": 6
+              },
+              {
+                "code": "sz002552",
+                "name": "宝鼎科技",
+                "change_pct": -9.993856430053711,
+                "industry": "元件",
+                "open_count": 4
+              },
+              {
+                "code": "sz002536",
+                "name": "飞龙股份",
+                "change_pct": -9.997967720031738,
+                "industry": "汽车零部",
+                "open_count": 5
+              },
+              {
+                "code": "sz002815",
+                "name": "崇达技术",
+                "change_pct": -9.98542308807373,
+                "industry": "元件",
+                "open_count": 9
+              },
+              {
+                "code": "sz002428",
+                "name": "云南锗业",
+                "change_pct": -9.993337631225586,
+                "industry": "小金属",
+                "open_count": 3
+              },
+              {
+                "code": "sh603459",
+                "name": "红板科技",
+                "change_pct": -9.998785018920898,
+                "industry": "元件",
+                "open_count": 10
+              },
+              {
+                "code": "sz002354",
+                "name": "天娱数科",
+                "change_pct": -10.055866241455078,
+                "industry": "广告营销",
+                "open_count": 0
+              },
+              {
+                "code": "sz002484",
+                "name": "江海股份",
+                "change_pct": -10.002729415893555,
+                "industry": "元件",
+                "open_count": 13
+              },
+              {
+                "code": "sz001270",
+                "name": "铖昌科技",
+                "change_pct": -9.99636173248291,
+                "industry": "军工电子",
+                "open_count": 4
+              },
+              {
+                "code": "sh601208",
+                "name": "东材科技",
+                "change_pct": -10.0,
+                "industry": "塑料",
+                "open_count": 18
+              },
+              {
+                "code": "sh603186",
+                "name": "华正新材",
+                "change_pct": -10.0,
+                "industry": "元件",
+                "open_count": 13
+              },
+              {
+                "code": "sz002436",
+                "name": "兴森科技",
+                "change_pct": -10.011743545532227,
+                "industry": "元件",
+                "open_count": 20
+              },
+              {
+                "code": "sh603538",
+                "name": "美诺华",
+                "change_pct": -9.994206428527832,
+                "industry": "化学制药",
+                "open_count": 8
+              },
+              {
+                "code": "sz002384",
+                "name": "东山精密",
+                "change_pct": -9.999173164367676,
+                "industry": "元件",
+                "open_count": 11
+              },
+              {
+                "code": "sh600246",
+                "name": "万通发展",
+                "change_pct": -9.98288631439209,
+                "industry": "房地产开",
+                "open_count": 14
+              },
+              {
+                "code": "sh603083",
+                "name": "剑桥科技",
+                "change_pct": -9.998296737670898,
+                "industry": "通信设备",
+                "open_count": 11
+              },
+              {
+                "code": "sz002747",
+                "name": "埃斯顿",
+                "change_pct": -10.002617835998535,
+                "industry": "自动化设",
+                "open_count": 13
+              },
+              {
+                "code": "sz000636",
+                "name": "风华高科",
+                "change_pct": -9.993552207946777,
+                "industry": "元件",
+                "open_count": 9
+              },
+              {
+                "code": "sz002636",
+                "name": "金安国纪",
+                "change_pct": -10.0,
+                "industry": "元件",
+                "open_count": 4
+              },
+              {
+                "code": "sz002281",
+                "name": "光迅科技",
+                "change_pct": -9.997361183166504,
+                "industry": "通信设备",
+                "open_count": 6
+              }
+            ]
+          },
+          {
+            "height": 1,
+            "count": 109,
+            "stocks": [
+              {
+                "code": "sz301176",
+                "name": "逸豪新材",
+                "change_pct": -20.008068084716797,
+                "industry": "元件",
+                "open_count": 13
+              },
+              {
+                "code": "sh605589",
+                "name": "圣泉集团",
+                "change_pct": -9.990439414978027,
+                "industry": "塑料",
+                "open_count": 11
+              },
+              {
+                "code": "sz300868",
+                "name": "杰美特",
+                "change_pct": -19.99781036376953,
+                "industry": "消费电子",
+                "open_count": 6
+              },
+              {
+                "code": "sh605090",
+                "name": "九丰能源",
+                "change_pct": -10.0,
+                "industry": "燃气Ⅱ",
+                "open_count": 5
+              },
+              {
+                "code": "sh603051",
+                "name": "鹿山新材",
+                "change_pct": -10.009765625,
+                "industry": "化学制品",
+                "open_count": 15
+              },
+              {
+                "code": "sz000510",
+                "name": "新金路",
+                "change_pct": -9.968050956726074,
+                "industry": "化学原料",
+                "open_count": 13
+              },
+              {
+                "code": "sz000668",
+                "name": "荣丰控股",
+                "change_pct": -9.977194786071777,
+                "industry": "房地产开",
+                "open_count": 9
+              },
+              {
+                "code": "sh600397",
+                "name": "江钨装备",
+                "change_pct": -10.019145011901855,
+                "industry": "专用设备",
+                "open_count": 6
+              },
+              {
+                "code": "sh603285",
+                "name": "键邦股份",
+                "change_pct": -10.003096580505371,
+                "industry": "化学制品",
+                "open_count": 18
+              },
+              {
+                "code": "sz002767",
+                "name": "先锋电子",
+                "change_pct": -9.983721733093262,
+                "industry": "通用设备",
+                "open_count": 6
+              },
+              {
+                "code": "sz002853",
+                "name": "皮阿诺",
+                "change_pct": -9.99535083770752,
+                "industry": "家居用品",
+                "open_count": 10
+              },
+              {
+                "code": "sh603038",
+                "name": "华立股份",
+                "change_pct": -9.978307723999023,
+                "industry": "装修建材",
+                "open_count": 1
+              },
+              {
+                "code": "sh603155",
+                "name": "新亚强",
+                "change_pct": -9.978918075561523,
+                "industry": "化学制品",
+                "open_count": 21
+              },
+              {
+                "code": "sh603738",
+                "name": "泰晶科技",
+                "change_pct": -9.994120597839355,
+                "industry": "元件",
+                "open_count": 21
+              },
+              {
+                "code": "sh688308",
+                "name": "欧科亿",
+                "change_pct": -20.0,
+                "industry": "通用设备",
+                "open_count": 9
+              },
+              {
+                "code": "sh605288",
+                "name": "凯迪股份",
+                "change_pct": -9.991849899291992,
+                "industry": "自动化设",
+                "open_count": 1
+              },
+              {
+                "code": "sh603262",
+                "name": "技源集团",
+                "change_pct": -10.01662540435791,
+                "industry": "食品加工",
+                "open_count": 9
+              },
+              {
+                "code": "sz002885",
+                "name": "京泉华",
+                "change_pct": -10.015290260314941,
+                "industry": "其他电子",
+                "open_count": 26
+              },
+              {
+                "code": "sh603435",
+                "name": "嘉德利",
+                "change_pct": -10.0,
+                "industry": "电子化学",
+                "open_count": 13
+              },
+              {
+                "code": "sh603324",
+                "name": "盛剑科技",
+                "change_pct": -9.996600151062012,
+                "industry": "环保设备",
+                "open_count": 16
+              },
+              {
+                "code": "sz300780",
+                "name": "德恩精工",
+                "change_pct": -19.991971969604492,
+                "industry": "通用设备",
+                "open_count": 28
+              },
+              {
+                "code": "sh600172",
+                "name": "黄河旋风",
+                "change_pct": -10.008410453796387,
+                "industry": "通用设备",
+                "open_count": 18
+              },
+              {
+                "code": "sh603657",
+                "name": "春光科技",
+                "change_pct": -9.990999221801758,
+                "industry": "家电零部",
+                "open_count": 2
+              },
+              {
+                "code": "sz001300",
+                "name": "三柏硕",
+                "change_pct": -10.01838207244873,
+                "industry": "文娱用品",
+                "open_count": 6
+              },
+              {
+                "code": "sh603177",
+                "name": "德创环保",
+                "change_pct": -9.966776847839355,
+                "industry": "环境治理",
+                "open_count": 12
+              },
+              {
+                "code": "sh600539",
+                "name": "狮头股份",
+                "change_pct": -10.011848449707031,
+                "industry": "互联网电",
+                "open_count": 7
+              },
+              {
+                "code": "sh603903",
+                "name": "中持股份",
+                "change_pct": -9.970888137817383,
+                "industry": "环境治理",
+                "open_count": 7
+              },
+              {
+                "code": "sz002631",
+                "name": "德尔未来",
+                "change_pct": -9.93197250366211,
+                "industry": "家居用品",
+                "open_count": 8
+              },
+              {
+                "code": "sh600379",
+                "name": "宝光股份",
+                "change_pct": -10.0,
+                "industry": "电网设备",
+                "open_count": 8
+              },
+              {
+                "code": "sh603976",
+                "name": "正川股份",
+                "change_pct": -10.00800609588623,
+                "industry": "医疗器械",
+                "open_count": 18
+              },
+              {
+                "code": "sz301276",
+                "name": "嘉曼服饰",
+                "change_pct": -20.01748275756836,
+                "industry": "服装家纺",
+                "open_count": 18
+              },
+              {
+                "code": "sh688096",
+                "name": "京源环保",
+                "change_pct": -20.0,
+                "industry": "环境治理",
+                "open_count": 5
+              },
+              {
+                "code": "sh603090",
+                "name": "宏盛股份",
+                "change_pct": -10.0,
+                "industry": "通用设备",
+                "open_count": 2
+              },
+              {
+                "code": "sz001268",
+                "name": "联合精密",
+                "change_pct": -9.979423522949219,
+                "industry": "家电零部",
+                "open_count": 4
+              },
+              {
+                "code": "sz002134",
+                "name": "天津普林",
+                "change_pct": -10.008976936340332,
+                "industry": "元件",
+                "open_count": 6
+              },
+              {
+                "code": "sh600110",
+                "name": "诺德股份",
+                "change_pct": -9.949748992919922,
+                "industry": "电池",
+                "open_count": 5
+              },
+              {
+                "code": "sh603063",
+                "name": "禾望电气",
+                "change_pct": -9.984496116638184,
+                "industry": "风电设备",
+                "open_count": 15
+              },
+              {
+                "code": "sh603015",
+                "name": "弘讯科技",
+                "change_pct": -9.949748992919922,
+                "industry": "自动化设",
+                "open_count": 6
+              },
+              {
+                "code": "sz002240",
+                "name": "盛新锂能",
+                "change_pct": -10.006925582885742,
+                "industry": "能源金属",
+                "open_count": 17
+              },
+              {
+                "code": "sh603261",
+                "name": "立航科技",
+                "change_pct": -9.98944091796875,
+                "industry": "航空装备",
+                "open_count": 8
+              },
+              {
+                "code": "sh600769",
+                "name": "祥龙电业",
+                "change_pct": -10.01362419128418,
+                "industry": "环境治理",
+                "open_count": 11
+              },
+              {
+                "code": "sz002350",
+                "name": "北京科锐",
+                "change_pct": -10.0,
+                "industry": "电网设备",
+                "open_count": 1
+              },
+              {
+                "code": "sh600226",
+                "name": "亨通股份",
+                "change_pct": -10.048623085021973,
+                "industry": "电力",
+                "open_count": 30
+              },
+              {
+                "code": "sz002972",
+                "name": "科安达",
+                "change_pct": -9.96763801574707,
+                "industry": "轨交设备",
+                "open_count": 8
+              },
+              {
+                "code": "sh603688",
+                "name": "石英股份",
+                "change_pct": -10.002004623413086,
+                "industry": "非金属材",
+                "open_count": 12
+              },
+              {
+                "code": "sh688059",
+                "name": "华锐精密",
+                "change_pct": -20.002347946166992,
+                "industry": "通用设备",
+                "open_count": 4
+              },
+              {
+                "code": "sz003001",
+                "name": "中岩大地",
+                "change_pct": -10.0204496383667,
+                "industry": "专业工程",
+                "open_count": 9
+              },
+              {
+                "code": "sh600367",
+                "name": "红星发展",
+                "change_pct": -10.006082534790039,
+                "industry": "化学原料",
+                "open_count": 6
+              },
+              {
+                "code": "sz002056",
+                "name": "横店东磁",
+                "change_pct": -9.983360290527344,
+                "industry": "光伏设备",
+                "open_count": 14
+              },
+              {
+                "code": "sh688386",
+                "name": "泛亚微透",
+                "change_pct": -20.005712509155273,
+                "industry": "塑料",
+                "open_count": 5
+              },
+              {
+                "code": "sh603650",
+                "name": "彤程新材",
+                "change_pct": -10.0,
+                "industry": "橡胶",
+                "open_count": 25
+              },
+              {
+                "code": "sz001400",
+                "name": "江顺科技",
+                "change_pct": -10.0040283203125,
+                "industry": "专用设备",
+                "open_count": 0
+              },
+              {
+                "code": "sh600162",
+                "name": "香江控股",
+                "change_pct": -10.130719184875488,
+                "industry": "房地产开",
+                "open_count": 4
+              },
+              {
+                "code": "sh603678",
+                "name": "火炬电子",
+                "change_pct": -9.993647575378418,
+                "industry": "军工电子",
+                "open_count": 13
+              },
+              {
+                "code": "sh605133",
+                "name": "嵘泰股份",
+                "change_pct": -10.0,
+                "industry": "汽车零部",
+                "open_count": 3
+              },
+              {
+                "code": "sz002192",
+                "name": "融捷股份",
+                "change_pct": -10.0,
+                "industry": "能源金属",
+                "open_count": 15
+              },
+              {
+                "code": "sh600378",
+                "name": "昊华科技",
+                "change_pct": -10.004266738891602,
+                "industry": "化学制品",
+                "open_count": 24
+              },
+              {
+                "code": "sz000691",
+                "name": "亚太实业",
+                "change_pct": -9.954338073730469,
+                "industry": "化学原料",
+                "open_count": 3
+              },
+              {
+                "code": "sh605389",
+                "name": "长龄液压",
+                "change_pct": -9.993626594543457,
+                "industry": "工程机械",
+                "open_count": 8
+              },
+              {
+                "code": "sz002348",
+                "name": "高乐股份",
+                "change_pct": -10.0,
+                "industry": "文娱用品",
+                "open_count": 4
+              },
+              {
+                "code": "sh603203",
+                "name": "快克智能",
+                "change_pct": -9.997712135314941,
+                "industry": "自动化设",
+                "open_count": 4
+              },
+              {
+                "code": "sh603256",
+                "name": "宏和科技",
+                "change_pct": -10.001248359680176,
+                "industry": "玻璃玻纤",
+                "open_count": 8
+              },
+              {
+                "code": "sh605006",
+                "name": "山东玻纤",
+                "change_pct": -10.007305145263672,
+                "industry": "玻璃玻纤",
+                "open_count": 4
+              },
+              {
+                "code": "sz000920",
+                "name": "沃顿科技",
+                "change_pct": -10.0,
+                "industry": "塑料",
+                "open_count": 3
+              },
+              {
+                "code": "sh688502",
+                "name": "茂莱光学",
+                "change_pct": -20.0,
+                "industry": "光学光电",
+                "open_count": 10
+              },
+              {
+                "code": "sh603725",
+                "name": "天安新材",
+                "change_pct": -10.02194595336914,
+                "industry": "家居用品",
+                "open_count": 7
+              },
+              {
+                "code": "sz002713",
+                "name": "东易日盛",
+                "change_pct": -9.97008991241455,
+                "industry": "装修装饰",
+                "open_count": 3
+              },
+              {
+                "code": "sh688020",
+                "name": "方邦股份",
+                "change_pct": -20.0,
+                "industry": "元件",
+                "open_count": 14
+              },
+              {
+                "code": "sz002971",
+                "name": "和远气体",
+                "change_pct": -9.99761962890625,
+                "industry": "化学制品",
+                "open_count": 7
+              },
+              {
+                "code": "sh603120",
+                "name": "肯特催化",
+                "change_pct": -9.998175621032715,
+                "industry": "化学制品",
+                "open_count": 0
+              },
+              {
+                "code": "sz002805",
+                "name": "丰元股份",
+                "change_pct": -10.011061668395996,
+                "industry": "电池",
+                "open_count": 14
+              },
+              {
+                "code": "sh688260",
+                "name": "昀冢科技",
+                "change_pct": -20.004911422729492,
+                "industry": "消费电子",
+                "open_count": 6
+              },
+              {
+                "code": "sz002739",
+                "name": "儒意电影",
+                "change_pct": -10.009910583496094,
+                "industry": "影视院线",
+                "open_count": 12
+              },
+              {
+                "code": "sz002723",
+                "name": "小崧股份",
+                "change_pct": -10.0,
+                "industry": "照明设备",
+                "open_count": 0
+              },
+              {
+                "code": "sh688359",
+                "name": "三孚新科",
+                "change_pct": -20.003023147583008,
+                "industry": "电子化学",
+                "open_count": 8
+              },
+              {
+                "code": "sz000935",
+                "name": "四川双马",
+                "change_pct": -10.00772762298584,
+                "industry": "多元金融",
+                "open_count": 0
+              },
+              {
+                "code": "sh603078",
+                "name": "江化微",
+                "change_pct": -10.00284194946289,
+                "industry": "电子化学",
+                "open_count": 7
+              },
+              {
+                "code": "sz002931",
+                "name": "锋龙股份",
+                "change_pct": -10.0,
+                "industry": "通用设备",
+                "open_count": 7
+              },
+              {
+                "code": "sz002741",
+                "name": "光华科技",
+                "change_pct": -10.0,
+                "industry": "电子化学",
+                "open_count": 12
+              },
+              {
+                "code": "sh603201",
+                "name": "常润股份",
+                "change_pct": -9.983174324035645,
+                "industry": "汽车零部",
+                "open_count": 0
+              },
+              {
+                "code": "sz002008",
+                "name": "大族激光",
+                "change_pct": -9.999018669128418,
+                "industry": "自动化设",
+                "open_count": 16
+              },
+              {
+                "code": "sz002407",
+                "name": "多氟多",
+                "change_pct": -9.98719596862793,
+                "industry": "化学制品",
+                "open_count": 16
+              },
+              {
+                "code": "sz002768",
+                "name": "国恩股份",
+                "change_pct": -9.990147590637207,
+                "industry": "塑料",
+                "open_count": 3
+              },
+              {
+                "code": "sz002937",
+                "name": "兴瑞科技",
+                "change_pct": -9.997376441955566,
+                "industry": "汽车零部",
+                "open_count": 15
+              },
+              {
+                "code": "sz301520",
+                "name": "万邦医药",
+                "change_pct": -19.993995666503906,
+                "industry": "医疗服务",
+                "open_count": 0
+              },
+              {
+                "code": "sz002677",
+                "name": "浙江美大",
+                "change_pct": -9.93710708618164,
+                "industry": "厨卫电器",
+                "open_count": 6
+              },
+              {
+                "code": "sh603313",
+                "name": "梦百合",
+                "change_pct": -9.971098899841309,
+                "industry": "家居用品",
+                "open_count": 0
+              },
+              {
+                "code": "sz301092",
+                "name": "争光股份",
+                "change_pct": -19.9935302734375,
+                "industry": "塑料",
+                "open_count": 25
+              },
+              {
+                "code": "sh688669",
+                "name": "聚石化学",
+                "change_pct": -19.997499465942383,
+                "industry": "塑料",
+                "open_count": 3
+              },
+              {
+                "code": "sh600353",
+                "name": "旭光电子",
+                "change_pct": -10.0,
+                "industry": "其他电子",
+                "open_count": 8
+              },
+              {
+                "code": "sz002859",
+                "name": "洁美科技",
+                "change_pct": -9.992119789123535,
+                "industry": "其他电子",
+                "open_count": 7
+              },
+              {
+                "code": "sz002463",
+                "name": "沪电股份",
+                "change_pct": -10.0,
+                "industry": "元件",
+                "open_count": 9
+              },
+              {
+                "code": "sz002167",
+                "name": "东方锆业",
+                "change_pct": -9.988248825073242,
+                "industry": "小金属",
+                "open_count": 6
+              },
+              {
+                "code": "sh601133",
+                "name": "柏诚股份",
+                "change_pct": -9.986859321594238,
+                "industry": "专业工程",
+                "open_count": 6
+              },
+              {
+                "code": "sz001395",
+                "name": "亚联机械",
+                "change_pct": -9.985228538513184,
+                "industry": "专用设备",
+                "open_count": 0
+              },
+              {
+                "code": "sh603002",
+                "name": "宏昌电子",
+                "change_pct": -9.96865177154541,
+                "industry": "电子化学",
+                "open_count": 16
+              },
+              {
+                "code": "sz002326",
+                "name": "永太科技",
+                "change_pct": -9.983543395996094,
+                "industry": "化学制品",
+                "open_count": 5
+              },
+              {
+                "code": "sh603757",
+                "name": "大元泵业",
+                "change_pct": -9.993451118469238,
+                "industry": "通用设备",
+                "open_count": 0
+              },
+              {
+                "code": "sh688500",
+                "name": "慧辰股份",
+                "change_pct": -20.01165199279785,
+                "industry": "IT服务Ⅱ",
+                "open_count": 0
+              },
+              {
+                "code": "sh600673",
+                "name": "东阳光",
+                "change_pct": -10.009154319763184,
+                "industry": "综合Ⅱ",
+                "open_count": 0
+              },
+              {
+                "code": "sh605358",
+                "name": "立昂微",
+                "change_pct": -10.0,
+                "industry": "半导体",
+                "open_count": 14
+              },
+              {
+                "code": "sz002466",
+                "name": "天齐锂业",
+                "change_pct": -10.002127647399902,
+                "industry": "能源金属",
+                "open_count": 3
+              },
+              {
+                "code": "sz002409",
+                "name": "雅克科技",
+                "change_pct": -10.0,
+                "industry": "半导体",
+                "open_count": 0
+              },
+              {
+                "code": "sz001314",
+                "name": "亿道信息",
+                "change_pct": -9.998371124267578,
+                "industry": "消费电子",
+                "open_count": 1
+              },
+              {
+                "code": "sz000779",
+                "name": "甘咨询",
+                "change_pct": -9.975469589233398,
+                "industry": "工程咨询",
+                "open_count": 0
+              },
+              {
+                "code": "sz002632",
+                "name": "道明光学",
+                "change_pct": -10.009443283081055,
+                "industry": "塑料",
+                "open_count": 1
+              },
+              {
+                "code": "sh688146",
+                "name": "中船特气",
+                "change_pct": -20.0,
+                "industry": "半导体",
+                "open_count": 1
+              },
+              {
+                "code": "sz002141",
+                "name": "贤丰控股",
+                "change_pct": -9.933774948120117,
+                "industry": "元件",
+                "open_count": 0
+              },
+              {
+                "code": "sz301217",
+                "name": "铜冠铜箔",
+                "change_pct": -20.0,
+                "industry": "电池",
+                "open_count": 1
+              }
+            ]
+          }
+        ],
+        "filtered_count": 210,
+        "excluded": [
+          {
+            "code": "920305",
+            "name": "云创退",
+            "reason": "risk_or_delisting_name"
+          }
+        ]
+      },
+      "promotion_rate": {
+        "state": "degraded_response_date_unverified",
+        "previous_trade_date": "2026-07-17",
+        "items": [
+          {
+            "from_height": 1,
+            "candidate_count": 24,
+            "promoted_count": 6,
+            "rate": 0.25,
+            "promoted_stocks": [
+              "金牛化工",
+              "华银电力",
+              "乐山电力",
+              "深南电A",
+              "桂冠电力",
+              "湖南发展"
+            ]
+          },
+          {
+            "from_height": 2,
+            "candidate_count": 4,
+            "promoted_count": 1,
+            "rate": 0.25,
+            "promoted_stocks": [
+              "立新能源"
+            ]
+          },
+          {
+            "from_height": 3,
+            "candidate_count": 3,
+            "promoted_count": 0,
+            "rate": 0.0,
+            "promoted_stocks": []
+          },
+          {
+            "from_height": 4,
+            "candidate_count": 1,
+            "promoted_count": 0,
+            "rate": 0.0,
+            "promoted_stocks": []
+          }
+        ],
+        "quality_flags": [
+          "response_qdate_20260720_differs_from_requested_20260717"
+        ]
+      },
+      "high_level_loss_effect": {
+        "state": "usable",
+        "sample_count": 8,
+        "candidate_count": 8,
+        "median_return_pct": -8.6235,
+        "negative_ratio": 0.875,
+        "max_adverse_excursion_pct": -10.1307,
+        "judgement": "高位亏钱效应明显",
+        "stocks": [
+          {
+            "code": "sz002677",
+            "name": "浙江美大",
+            "previous_height": 3,
+            "trade_date": "2026-07-20",
+            "previous_close": 7.95,
+            "close": 7.16,
+            "low": 7.16,
+            "close_return_pct": -9.9371,
+            "low_return_pct": -9.9371,
+            "quote_as_of": "20260720161424"
+          },
+          {
+            "code": "sh603580",
+            "name": "艾艾精工",
+            "previous_height": 4,
+            "trade_date": "2026-07-20",
+            "previous_close": 44.92,
+            "close": 40.43,
+            "low": 40.43,
+            "close_return_pct": -9.9955,
+            "low_return_pct": -9.9955,
+            "quote_as_of": "20260720161442"
+          },
+          {
+            "code": "sz002632",
+            "name": "道明光学",
+            "previous_height": 2,
+            "trade_date": "2026-07-20",
+            "previous_close": 10.59,
+            "close": 9.53,
+            "low": 9.53,
+            "close_return_pct": -10.0094,
+            "low_return_pct": -10.0094,
+            "quote_as_of": "20260720161409"
+          },
+          {
+            "code": "sz000676",
+            "name": "智度股份",
+            "previous_height": 3,
+            "trade_date": "2026-07-20",
+            "previous_close": 6.84,
+            "close": 6.34,
+            "low": 6.22,
+            "close_return_pct": -7.3099,
+            "low_return_pct": -9.0643,
+            "quote_as_of": "20260720161418"
+          },
+          {
+            "code": "sh603567",
+            "name": "珍宝岛",
+            "previous_height": 2,
+            "trade_date": "2026-07-20",
+            "previous_close": 6.03,
+            "close": 5.75,
+            "low": 5.43,
+            "close_return_pct": -4.6434,
+            "low_return_pct": -9.9502,
+            "quote_as_of": "20260720161436"
+          },
+          {
+            "code": "sz001258",
+            "name": "立新能源",
+            "previous_height": 2,
+            "trade_date": "2026-07-20",
+            "previous_close": 8.27,
+            "close": 9.1,
+            "low": 8.4,
+            "close_return_pct": 10.0363,
+            "low_return_pct": 1.5719,
+            "quote_as_of": "20260720161500"
+          },
+          {
+            "code": "sz002829",
+            "name": "星网宇达",
+            "previous_height": 2,
+            "trade_date": "2026-07-20",
+            "previous_close": 20.72,
+            "close": 20.02,
+            "low": 19.08,
+            "close_return_pct": -3.3784,
+            "low_return_pct": -7.9151,
+            "quote_as_of": "20260720161433"
+          },
+          {
+            "code": "sh600162",
+            "name": "香江控股",
+            "previous_height": 3,
+            "trade_date": "2026-07-20",
+            "previous_close": 3.06,
+            "close": 2.75,
+            "low": 2.75,
+            "close_return_pct": -10.1307,
+            "low_return_pct": -10.1307,
+            "quote_as_of": "20260720161456"
+          }
+        ],
+        "missing": [],
+        "source": "https://qt.gtimg.cn/q="
+      },
+      "as_of": "2026-07-20T15:00:00+08:00",
+      "source": "https://push2ex.eastmoney.com/getTopicZTPool ; https://push2ex.eastmoney.com/getTopicDTPool",
+      "ladder_input_state": "loaded"
+    },
+    "cross_market": [
+      {
+        "market": "US",
+        "conclusion": "美股三大指数温和上涨主要反映AI权重股风险偏好修复，但芯片宽基、存储与网络芯片未共振；结合日韩早盘走弱，对A股是局部题材提振而非全面进攻信号。",
+        "mapping": [
+          {
+            "source_asset": "NVIDIA / AMD",
+            "change_pct": 4.02,
+            "reason": "NVIDIA+4.02%、AMD+2.06%，AI权重股风险偏好修复",
+            "a_share_mapping": "工业富联、浪潮信息、中科曙光、国产算力",
+            "mapping_logic": "AI芯片技术路线对标、服务器上游需求和情绪传导"
+          },
+          {
+            "source_asset": "Micron / Broadcom / SOXX",
+            "change_pct": -1.3,
+            "reason": "Micron-1.30%、Broadcom-0.26%、SOXX-0.06%，存储与半导体宽基未跟随",
+            "a_share_mapping": "兆易创新、香农芯创、江波龙、佰维存储、CPO",
+            "mapping_logic": "海外同产业链未共振，A股只能由业绩和订单独立确认"
+          },
+          {
+            "source_asset": "Tokyo Electron / Disco / Kioxia / SK hynix",
+            "change_pct": 1.3,
+            "reason": "Tokyo Electron+1.30%、Disco+2.80%、Kioxia-3.51%、SK hynix-4.86%，设备强于存储",
+            "a_share_mapping": "北方华创、中微公司、华海清科、富创精密优于纯存储涨价映射",
+            "mapping_logic": "资本开支设备链上游映射与存储周期情绪分化"
+          }
+        ],
+        "as_of": "2026-07-13T09:29:00+08:00"
+      },
+      {
+        "market": "HK",
+        "conclusion": "恒生科技、中芯H与华虹同步走弱，A/H半导体负反馈增强；港股未给A股医药提供共振。",
+        "mapping": [],
+        "as_of": "2026-07-13T14:34:30+08:00"
+      },
+      {
+        "market": "KR",
+        "conclusion": "指数走弱且设备、存储显著分化，风险外溢大于板块共振。",
+        "mapping": [],
+        "watch": [
+          "Nikkei 225与Tokyo Electron/Advantest",
+          "KOSPI与Samsung Electronics/SK hynix",
+          "若日韩科技早盘转弱，A/H半导体高开兑现概率上升"
+        ],
+        "quality_state": "missing",
+        "actionability": "background_only",
+        "as_of": "2026-07-13T09:29:00+08:00"
+      }
+    ]
+  },
+  "style_map": {
+    "dimensions": [
+      {
+        "id": "old_deng",
+        "label": "老登",
+        "state": "observed_by_themes",
+        "direction": "mixed",
+        "definition": "处于成熟阶段、偏低估值/高股息/稳定现金流的传统价值与顺周期方向。",
+        "representative_sectors": [
+          "银行",
+          "保险",
+          "白酒",
+          "煤炭",
+          "石油石化",
+          "地产",
+          "基建",
+          "钢铁",
+          "公用事业",
+          "传统消费"
+        ],
+        "conclusion": "老登风格切换 出现负反馈或风险信号，优先作为风险观察。",
+        "matched_themes": [
+          "老登风格切换"
+        ],
+        "definition_version": "2026-07-12.1"
+      },
+      {
+        "id": "middle_deng",
+        "label": "中登",
+        "state": "observed_by_themes",
+        "direction": "mixed",
+        "definition": "上一轮创新周期中已从前沿成长走向产业化、成熟化的过渡型成长方向；本系统按用户既有语义重点覆盖新能源及其设备链。",
+        "representative_sectors": [
+          "光伏",
+          "储能",
+          "新能源汽车",
+          "锂电池",
+          "新能源设备",
+          "电力设备",
+          "电网自动化",
+          "国防军工",
+          "创新药/CXO",
+          "有色战略金属",
+          "新材料"
+        ],
+        "conclusion": "创新药/CRO 强点集中但扩散不足，属于抱团/拥挤结构。",
+        "matched_themes": [
+          "创新药/CRO"
+        ],
+        "definition_version": "2026-07-12.1"
+      },
+      {
+        "id": "small_deng",
+        "label": "小登",
+        "state": "observed_by_themes",
+        "direction": "mixed",
+        "definition": "当前创新周期中更前沿、成长弹性更高的新经济和科技题材方向。",
+        "representative_sectors": [
+          "AI算力",
+          "半导体",
+          "光模块/CPO",
+          "AI软件",
+          "机器人/具身智能",
+          "商业航天",
+          "低空经济",
+          "量子科技"
+        ],
+        "conclusion": "软件信创 强点集中但扩散不足，属于抱团/拥挤结构。；AI应用/物理AI 有新出现或轮动增强迹象，需看次日扩散确认。",
+        "matched_themes": [
+          "软件信创",
+          "AI应用/物理AI"
+        ],
+        "definition_version": "2026-07-12.1"
+      },
+      {
+        "id": "microcap",
+        "label": "微盘",
+        "state": "usable_proxy",
+        "direction": "down",
+        "definition": "按市值和流动性刻画的独立市场结构维度，不等同于小登，也不能由题材风格推断。",
+        "representative_sectors": [],
+        "conclusion": "中证2000指数（新浪行情）最近交易日涨跌幅 -4.06%；仅描述市场结构，不推断小登题材。",
+        "proxy": {
+          "name": "中证2000指数",
+          "code": "932000",
+          "scope_note": "选取市值规模较小且流动性较好的2000只证券；只作为小微盘宽基代理，不等于纯微盘。"
+        },
+        "matched_themes": [],
+        "definition_version": "2026-07-12.1"
+      }
+    ],
+    "theme_shifts": [
+      {
+        "theme": "科技硬件链",
+        "state": "risk",
+        "conclusion": "科技硬件链 出现负反馈或风险信号，优先作为风险观察。",
+        "evidence": [
+          "日科化学、肯特催化、宿迁联盛3只化学制品封板，杭氧、凯美特气炸板；日科为20cm。",
+          "贵绳3板、中信重工2板、晋亿实业、奇精机械封板，但通用设备-7.10%位居跌幅前五。",
+          "睿能科技封板但其他电子Ⅱ-10.99%垫底，中国软件开板回落至+7.26%，离散个股未形成扩散。",
+          "中芯A-0.13%、芯源微-1.10%、华海清科-0.76%重新转弱；中微-6.29%、北方-4.74%、中科飞测-8.68%、长川-7.75%。",
+          "科创50-3.81%跌破2000点，其他电子Ⅱ-10.99%；设备、材料、零部件涨停池仍无扩散。"
+        ],
+        "watch_next": [
+          "先看科创50收复2000点，中微/北方/华海/芯源至少3只同步翻红，并要求港股中芯、华虹止跌及设备分支出现涨停或5%以上宽度。",
+          "沪硅守35.50并收复36.40/37.00，雅克、安集、江丰至少2只同步转强，且港股半导体止跌；有研硅未收复51.50前不列优先。",
+          "富创守251.08/245.88并收复260，正帆、新莱、长川至少2只同步走强，同时设备前排与港股半导体止跌后恢复观察。",
+          "等待A股161家跌停显著收缩，存储、CPO、设备至少两个分支同步转强，并有恒科与港股半导体共振。"
+        ],
+        "risk": "科技硬件链 反抽不能直接当修复，先看负反馈是否收敛。",
+        "stocks": [
+          "贵绳股份",
+          "亚联机械",
+          "中信重工",
+          "晋亿实业",
+          "奇精机械",
+          "信通电子",
+          "中际旭创",
+          "新易盛"
+        ],
+        "quality_flags": [
+          "全局数据降级，主线变化需二次确认"
+        ]
+      },
+      {
+        "theme": "老登风格切换",
+        "state": "risk",
+        "conclusion": "老登风格切换 出现负反馈或风险信号，优先作为风险观察。",
+        "evidence": [
+          "调味发酵品+1.22%、白色家电+1.16%进入行业前三，科技退潮时防御承接延续。",
+          "牧原+1.18%、温氏+1.20%，但新希望-1.68%、巨星农牧-0.51%、唐人神-1.11%；白酒仅茅台+0.57%，其余样本下跌。",
+          "券商样本全绿，保险仅中国人寿+0.21%，没有配置定义的双方向同向放量。",
+          "11:05最后有效行业排行显示银行+1.68%、41涨1跌，国有大行+2.33%；午间排行接口失败，下午13:00需重新核验。",
+          "券商与保险样本午间普跌，银行尚未扩散成金融共振，因此不定义为进攻主线。"
+        ],
+        "watch_next": [
+          "看家电/调味品能否扩散至畜牧+白酒，或券商+保险同步放量；未形成配置双方向共振前不升级。"
+        ],
+        "risk": "老登风格切换 反抽不能直接当修复，先看负反馈是否收敛。",
+        "stocks": [],
+        "quality_flags": [
+          "全局数据降级，主线变化需二次确认"
+        ]
+      },
+      {
+        "theme": "燃气",
+        "state": "risk",
+        "conclusion": "燃气 出现负反馈或风险信号，优先作为风险观察。",
+        "evidence": [
+          "水发燃气、九丰能源2只封板，燃气Ⅱ+1.12%居行业第四；九丰2板但已6次开板，成交约23.14亿元、封单明显收窄。",
+          "杭氧股份+6.00%、凯美特气+7.97%继续炸板，凯美特回升但仍未回封。",
+          "全市场跌停半小时增加46家，燃气没有新增低位封板，承接环境继续恶化。"
+        ],
+        "watch_next": [
+          "看燃气负反馈是否收敛，跌停/炸板是否减少。"
+        ],
+        "risk": "燃气 反抽不能直接当修复，先看负反馈是否收敛。",
+        "stocks": [],
+        "quality_flags": [
+          "全局数据降级，主线变化需二次确认"
+        ]
+      },
+      {
+        "theme": "创新药/CRO",
+        "state": "crowded",
+        "conclusion": "创新药/CRO 强点集中但扩散不足，属于抱团/拥挤结构。",
+        "evidence": [
+          "立方制药、哈药股份、天目药业、陇神戎发、灵康药业、联环药业、九芝堂7只医药股封板，占有效涨停30.4%；万邦医药+18.30%仍在炸板池。",
+          "中药Ⅱ+2.67%继续居行业第一，立方3板、陇神20cm，九芝堂回封使板块宽度扩至7只。",
+          "港股康方生物约14:17跌2.83%，A股医药由内部避险抱团驱动，未获港股创新药共振。",
+          "立方制药、哈药股份、天目药业、陇神戎发、灵康药业5只医药股封板，是上午封板最集中的可识别行业。",
+          "九芝堂、万邦医药炸板，说明主线内部仍有分歧；港股康方生物-3.24%，主线主要由A股内部资金驱动。"
+        ],
+        "watch_next": [
+          "区分A股中药抱团与港股创新药个股轮动；次日看A股前排溢价和港股百济/诺诚能否带动康方、信达同步修复。",
+          "按今天投资对话的筛选口径，优先跟踪恒瑞医药、科伦药业；若市值门槛放宽到200亿以上，普洛药业作为原料药弹性观察。华东医药、复星医药、上海医药估值空间好，但月线只反弹1个月，暂不作为当前主选。"
+        ],
+        "risk": "创新药/CRO 若只有少数核心股强、后排不扩散，次日容易冲高回落。",
+        "stocks": [
+          "立方制药",
+          "陇神戎发",
+          "九芝堂",
+          "哈药股份",
+          "联环药业",
+          "万邦医药",
+          "太极集团"
+        ],
+        "quality_flags": [
+          "全局数据降级，主线变化需二次确认"
+        ]
+      },
+      {
+        "theme": "软件信创",
+        "state": "crowded",
+        "conclusion": "软件信创 强点集中但扩散不足，属于抱团/拥挤结构。",
+        "evidence": [
+          "申万计算机7只涨幅不低于5%，中国软件+9.99%封板、概伦电子+10.07%、华大九天+6.61%。",
+          "星网锐捷成交45.0亿元、收涨5.53%但有炸板反馈，软件方向稳定封板仅中国软件1只。",
+          "科创50-3.42%、深成指-3.48%，指数环境不支持将单日EDA强股直接升级为强主线。",
+          "软件/通信近6日涨停7/1/10/2/2/1，今日属于旧线局部回流；中国软件封板、概伦电子20cm和华大九天走强，但未扩散成全行业主线。",
+          "星网锐捷收涨5.53%但列入炸板池，且科技指数整体重挫；若中国软件次日不开一字溢价、EDA后排不补涨，只能保留情绪锚。"
+        ],
+        "watch_next": [
+          "看软件信创负反馈是否收敛，跌停/炸板是否减少。"
+        ],
+        "risk": "软件信创 若只有少数核心股强、后排不扩散，次日容易冲高回落。",
+        "stocks": [
+          "中国软件",
+          "概伦电子",
+          "华大九天",
+          "星网锐捷",
+          "浪潮软件",
+          "绿盟科技"
+        ],
+        "quality_flags": [
+          "全局数据降级，主线变化需二次确认"
+        ]
+      },
+      {
+        "theme": "工业气体",
+        "state": "crowded",
+        "conclusion": "工业气体 强点集中但扩散不足，属于抱团/拥挤结构。",
+        "evidence": [
+          "水发燃气、九丰能源封板，杭氧股份、凯美特气炸板，呈现2只封板对2只炸板的高分歧结构。",
+          "11:05最后有效概念排行中工业气体-1.82%；午间排行失败，核心抱团不能替代板块扩散。"
+        ],
+        "watch_next": [
+          "看工业气体负反馈是否收敛，跌停/炸板是否减少。"
+        ],
+        "risk": "工业气体 若只有少数核心股强、后排不扩散，次日容易冲高回落。",
+        "stocks": [],
+        "quality_flags": [
+          "全局数据降级，主线变化需二次确认"
+        ]
+      },
+      {
+        "theme": "中药",
+        "state": "warming",
+        "conclusion": "中药 有升温迹象，但仍需量价和后排扩散验证。",
+        "evidence": [
+          "中药/特色药 强主线"
+        ],
+        "watch_next": [
+          "看中药核心股是否继续承接，并扩散到后排。"
+        ],
+        "risk": "中药 需要次日竞价、量能和后排扩散共同确认。",
+        "stocks": [],
+        "quality_flags": [
+          "全局数据降级，主线变化需二次确认"
+        ]
+      },
+      {
+        "theme": "化工/材料/资源轮动",
+        "state": "emerging",
+        "conclusion": "化工/材料/资源轮动 有新出现或轮动增强迹象，需看次日扩散确认。",
+        "evidence": [
+          "燃气Ⅱ+1.18%，九丰能源、水发燃气2只封板，天壕能源+8.35%。",
+          "申万基础化工9只涨幅不低于5%，金宏气体+8.99%、华特气体+6.60%、杭氧股份+6.04%，呈现工业气体支线。",
+          "九丰能源14:55至收盘封板价不变，但盘中6次开板，承接强度低于中药前排。",
+          "连续活跃第2个交易日：近6日对应涨停1/0/0/0/1/2，九丰能源延续并带动水发燃气，但尚未形成广泛公用事业扩散。",
+          "九丰能源6次开板、凯美特气收盘未封且尾盘-0.279%；若次日九丰低溢价且金宏气体、华特气体、杭氧不共振，按防御轮动而非主线处理。"
+        ],
+        "watch_next": [
+          "看化工/材料/资源轮动核心股是否继续承接，并扩散到后排。"
+        ],
+        "risk": "化工/材料/资源轮动 需要次日竞价、量能和后排扩散共同确认。",
+        "stocks": [
+          "九丰能源",
+          "水发燃气",
+          "凯美特气",
+          "金宏气体",
+          "华特气体",
+          "杭氧股份"
+        ],
+        "quality_flags": [
+          "全局数据降级，主线变化需二次确认"
+        ]
+      },
+      {
+        "theme": "AI应用/物理AI",
+        "state": "emerging",
+        "conclusion": "AI应用/物理AI 有新出现或轮动增强迹象，需看次日扩散确认。",
+        "evidence": [
+          "模型端消息偏情绪催化，当前硬度弱于A股业绩公告。"
+        ],
+        "watch_next": [
+          "只看OpenAI等模型消息是否带来A股/港股应用端批量扩散；无交易量确认前不升级。"
+        ],
+        "risk": "AI应用/物理AI 需要次日竞价、量能和后排扩散共同确认。",
+        "stocks": [],
+        "quality_flags": [
+          "全局数据降级，主线变化需二次确认"
+        ]
+      }
+    ],
+    "as_of": "2026-07-20T22:51:42+08:00",
+    "definition_version": "2026-07-12.1",
+    "governance_note": "老登/中登/小登属于市场俗称，没有官方统一分类标准。系统按产业周期与投资者风格建立可版本化口径，不按市值大小机械划分；具体公司可随主业、产业周期和市场叙事迁移。篮子成员和方向证据见config/v2-style-baskets.json；关键词只能形成线索。",
+    "source_refs": [
+      {
+        "type": "user_history",
+        "title": "既有对话口径：电网、新能源设备等被用户称为中登",
+        "url": null,
+        "retrieved_at": "2026-07-12"
+      },
+      {
+        "type": "mainstream_media",
+        "title": "新浪财经：中登包括新能源、光储、新能源车、医药、军工、有色等，且市场无统一官方定义",
+        "url": "https://finance.sina.com.cn/money/nmetal/hjfx/2026-07-01/doc-inifixkk6041634.shtml",
+        "retrieved_at": "2026-07-12"
+      },
+      {
+        "type": "mainstream_media",
+        "title": "东方财富：生物医药、新能源等从前沿成长进入中登语义",
+        "url": "https://finance.eastmoney.com/a/202509253523738311.html",
+        "retrieved_at": "2026-07-12"
+      },
+      {
+        "type": "official_methodology",
+        "title": "中证2000指数编制方案",
+        "url": "https://oss-ch.csindex.com.cn/static/html/csindex/public/uploads/indices/detail/files/zh_CN/20231208180041-932000_Index_Methodology_cn.pdf",
+        "retrieved_at": "2026-07-12"
+      },
+      {
+        "type": "official_factsheet",
+        "title": "中证2000指数事实表",
+        "url": "https://oss-ch.csindex.com.cn/static/html/csindex/public/uploads/indices/detail/files/zh_CN/932000factsheet.pdf",
+        "retrieved_at": "2026-07-12"
+      }
+    ]
+  },
+  "signals": [],
+  "learning_policy_version": "2026-07-12.1",
+  "decision_model_version": "decision-v2.0-baseline-1",
+  "calendar_version": "cn-sse-2026-1"
+}
