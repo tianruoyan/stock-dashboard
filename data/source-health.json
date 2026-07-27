@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-07-27T14:47:24+08:00",
+  "timestamp": "2026-07-27T15:21:10+08:00",
   "sources": {
     "tencent_http": {
       "status": "ok",
@@ -3907,10 +3907,80 @@
       "errors": [
         "CMP/材料短周期幅度交叉源不一致，已降级不用"
       ]
+    },
+    "tencent_a_close_postmarket_20260727": {
+      "status": "ok",
+      "last_check": "2026-07-27T15:21:10+08:00",
+      "usage": "A股五大指数、98个行业、重点代表股与成交额终值",
+      "detail": "五大指数终值有效，沪深成交额约20766.20亿元；98个行业报价更新至15:02。",
+      "sample_count": 172,
+      "errors": []
+    },
+    "sina_all_a_close_postmarket_20260727": {
+      "status": "ok",
+      "last_check": "2026-07-27T15:21:10+08:00",
+      "usage": "全A收盘宽度与5%/8%强势组",
+      "detail": "取得5532只沪深京A股；按规则剔除后有效5318只，上涨4998、下跌273。",
+      "sample_count": 5532,
+      "errors": []
+    },
+    "eastmoney_structure_pools_postmarket_20260727": {
+      "status": "ok",
+      "last_check": "2026-07-27T15:21:10+08:00",
+      "usage": "收盘涨停、跌停、炸板与连板结构",
+      "detail": "按约65秒间隔串行取得涨停111、跌停6、炸板13；最高5板、11只20cm。",
+      "sample_count": 130,
+      "rate_limit": "三类结构池按约65秒间隔串行采集，未用于全市场高频轮询。",
+      "errors": []
+    },
+    "shenwan_industry_mapping_postmarket_20260727": {
+      "status": "ok",
+      "last_check": "2026-07-27T15:21:10+08:00",
+      "usage": "802只涨幅5%以上样本申万一级行业归类",
+      "detail": "申万历史分类12882条、巨潮申万目录512条；802只强势样本全部映射。",
+      "sample_count": 802,
+      "errors": []
+    },
+    "cninfo_recent_ipo_filter_postmarket_20260727": {
+      "status": "ok",
+      "last_check": "2026-07-27T15:21:10+08:00",
+      "usage": "上市5个交易日内新股剔除",
+      "detail": "巨潮新股列表识别2026-07-21至07-27上市的5只证券，并与ST/退市/N/C名称规则合并剔除。",
+      "sample_count": 5,
+      "errors": []
+    },
+    "tencent_minute_closing_auction_postmarket_20260727": {
+      "status": "ok",
+      "last_check": "2026-07-27T15:21:10+08:00",
+      "usage": "14:55-15:00尾盘与收盘竞价校验",
+      "detail": "五大指数及电子布、交换机、半导体重点样本分钟行情有效；五大指数尾盘均未回落，玻纤和景旺核心守板。",
+      "sample_count": 27,
+      "errors": []
+    },
+    "tencent_hk_a_close_mapping_20260727": {
+      "status": "degraded_delayed_single_source",
+      "last_check": "2026-07-27T15:21:10+08:00",
+      "usage": "A股收盘时点A/H映射",
+      "detail": "恒指+1.09%、恒科+1.91%；港股个股约15:00且港股尚未收盘，仅作方向映射。",
+      "sample_count": 12,
+      "errors": [
+        "港股尚未收盘",
+        "免费行情单一来源"
+      ]
+    },
+    "concept_ranking_postmarket_20260727": {
+      "status": "degraded",
+      "last_check": "2026-07-27T15:21:10+08:00",
+      "usage": "全量概念指数收盘排行",
+      "detail": "未取得通过可靠性校验的全量概念榜；使用涨跌停行业分布、申万强势股集中度和代表股链路归因，不编造概念名次。",
+      "sample_count": 0,
+      "errors": [
+        "可靠全量概念排行不可用"
+      ]
     }
   },
   "last_publish_attempt": "pending_20260717_0830_premarket_publish",
-  "status": "ok",
+  "status": "degraded",
   "last_error": null,
   "tencent_a_close_postmarket_20260716": {
     "status": "ok",
@@ -4091,8 +4161,8 @@
     "sample_count": 15,
     "errors": []
   },
-  "overall_status": "degraded_noncritical",
-  "last_codex_note": "10:00常规盘中更新：A股指数、行业排行、观察池与结构池均可核验；半导体多分支回流仅上修为观察，未因监控候选或延迟港股报价升级强主线。",
+  "overall_status": "degraded",
+  "last_codex_note": "A股收盘终值、全A宽度、结构池、申万归类和尾盘分钟均可用；仅全量概念榜与港股未收盘映射降级。",
   "eastmoney_structure_pools_intraday_1000_20260717": {
     "status": "ok",
     "last_check": "2026-07-17T10:02:40+08:00",
