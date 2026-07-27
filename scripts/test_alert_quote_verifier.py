@@ -5,11 +5,13 @@ from datetime import datetime, timedelta, timezone
 
 from verify_alert_quotes import (
     alert_needs_live_quotes,
+    assess_change_consistency,
     enrich_payload,
     minute_change,
     normalize_user_facing_text,
     remove_cross_source_missing,
     rewrite_verified_alert_reason,
+    tick_change,
 )
 
 
@@ -34,6 +36,22 @@ class AlertQuoteVerifierTests(unittest.TestCase):
         self.assertEqual(result["start_minute"], "1002")
         self.assertEqual(result["end_minute"], "1005")
         self.assertAlmostEqual(result["change_pct"], 2.0)
+
+    def test_tick_change_aligns_to_the_same_second_window(self) -> None:
+        result = tick_change(
+            tick_rows(
+                ("2026-07-20T10:02:04+08:00", 10.0),
+                ("2026-07-20T10:02:06+08:00", 10.01),
+                ("2026-07-20T10:05:04+08:00", 10.2),
+                ("2026-07-20T10:05:06+08:00", 10.21),
+            ),
+            datetime(2026, 7, 20, 10, 5, 5, tzinfo=TZ),
+            3,
+        )
+        self.assertIsNotNone(result)
+        self.assertEqual(result["alignment_method"], "tick_aligned")
+        self.assertLessEqual(result["max_time_gap_seconds"], 1)
+        self.assertTrue(assess_change_consistency(2.0, result)["magnitude_match"])
 
     def test_two_independent_representatives_can_pass_without_promoting_signal(self) -> None:
         payload = sample_payload([("甲公司", 2.0), ("乙公司", 1.5)])
@@ -81,11 +99,87 @@ class AlertQuoteVerifierTests(unittest.TestCase):
         self.assertEqual(verification["source"], "富途分钟行情")
         self.assertTrue(result["quote_audit"]["sanity_checks"]["cross_source_verified"])
 
+    def test_exact_tick_alignment_wins_over_shifted_minute_closes(self) -> None:
+        shifted_minutes = {
+            "sh600001": rows(("1002", 10.0), ("1005", 10.05)),
+            "sz000002": rows(("1002", 20.0), ("1005", 20.1)),
+        }
+        aligned_ticks = {
+            "sh600001": tick_rows(
+                ("2026-07-20T10:02:00+08:00", 10.0),
+                ("2026-07-20T10:05:00+08:00", 10.2),
+            ),
+            "sz000002": tick_rows(
+                ("2026-07-20T10:02:00+08:00", 20.0),
+                ("2026-07-20T10:05:00+08:00", 20.3),
+            ),
+        }
+        payload = sample_payload([("甲公司", 2.0), ("乙公司", 1.5)])
+        result = enrich_payload(
+            payload,
+            self.identity,
+            self.loader,
+            self.now,
+            formal_minute_loader=lambda code: shifted_minutes.get(code, []),
+            formal_tick_loader=lambda code: aligned_ticks.get(code, []),
+        )
+        verification = result["alerts"][0]["quote_audit"]["secondary_verification"]
+        self.assertEqual(verification["state"], "passed")
+        self.assertTrue(all(row["对齐方式"] == "逐笔行情同一时点对齐" for row in verification["representatives"]))
+
+    def test_aligned_tick_direction_conflict_remains_blocked(self) -> None:
+        conflicting_ticks = {
+            "sh600001": tick_rows(
+                ("2026-07-20T10:02:00+08:00", 10.0),
+                ("2026-07-20T10:05:00+08:00", 9.8),
+            ),
+            "sz000002": tick_rows(
+                ("2026-07-20T10:02:00+08:00", 20.0),
+                ("2026-07-20T10:05:00+08:00", 19.7),
+            ),
+        }
+        payload = sample_payload([("甲公司", 2.0), ("乙公司", 1.5)])
+        result = enrich_payload(
+            payload,
+            self.identity,
+            self.loader,
+            self.now,
+            formal_minute_loader=self.loader,
+            formal_tick_loader=lambda code: conflicting_ticks.get(code, []),
+        )
+        verification = result["alerts"][0]["quote_audit"]["secondary_verification"]
+        self.assertEqual(verification["state"], "mismatch")
+        self.assertTrue(all(row["复核结论"] == "明显冲突" for row in verification["representatives"]))
+
+    def test_minute_ohlc_range_can_confirm_boundary_compatible_move(self) -> None:
+        secondary = minute_change(
+            [
+                {"hhmm": "1002", "price": 10.02, "low": 10.0, "high": 10.04},
+                {"hhmm": "1005", "price": 10.11, "low": 10.08, "high": 10.14},
+            ],
+            datetime(2026, 7, 20, 10, 5, tzinfo=TZ),
+            3,
+        )
+        assessment = assess_change_consistency(1.0, secondary)
+        self.assertEqual(assessment["label"], "一致")
+
+    def test_wide_minute_range_is_insufficient_instead_of_false_conflict(self) -> None:
+        secondary = minute_change(
+            [
+                {"hhmm": "1002", "price": 10.0, "low": 9.8, "high": 10.2},
+                {"hhmm": "1005", "price": 10.1, "low": 9.9, "high": 10.4},
+            ],
+            datetime(2026, 7, 20, 10, 5, tzinfo=TZ),
+            3,
+        )
+        assessment = assess_change_consistency(1.0, secondary)
+        self.assertEqual(assessment["label"], "行情精度不足")
+
     def test_futu_missing_cannot_be_replaced_by_tencent_backup(self) -> None:
         payload = sample_payload([("甲公司", 2.0), ("乙公司", 1.5)])
         result = enrich_payload(payload, self.identity, self.loader, self.now, formal_minute_loader=lambda code: [])
         verification = result["alerts"][0]["quote_audit"]["secondary_verification"]
-        self.assertEqual(verification["state"], "insufficient_identity")
+        self.assertEqual(verification["state"], "insufficient_precision")
         self.assertFalse(result["quote_audit"]["sanity_checks"]["cross_source_verified"])
 
     def test_historical_tencent_verification_is_not_rewritten_as_futu(self) -> None:
@@ -131,6 +225,10 @@ class AlertQuoteVerifierTests(unittest.TestCase):
 
 def rows(*values):
     return [{"hhmm": hhmm, "price": price} for hhmm, price in values]
+
+
+def tick_rows(*values):
+    return [{"time": timestamp, "price": price} for timestamp, price in values]
 
 
 def sample_payload(leaders, event="2026-07-20T10:05:00+08:00"):

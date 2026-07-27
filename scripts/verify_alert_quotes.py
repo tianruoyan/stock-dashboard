@@ -28,10 +28,14 @@ EASTMONEY_TOKEN = "D43BF722C8E33E1B5FBF8EF4C0C8ECBE"
 TZ = timezone(timedelta(hours=8))
 MAX_VERIFY_AGE_MINUTES = 10
 MIN_SETTLE_SECONDS = 75
-VERIFIER_VERSION = "futu-opend-2026-07-27.1"
+MAX_TICK_ALIGNMENT_SECONDS = 12
+MINUTE_RANGE_MAX_WIDTH_PCT = 1.5
+RANGE_PADDING_PCT = 0.12
+VERIFIER_VERSION = "futu-opend-2026-07-27.2"
 
 
 MinuteLoader = Callable[[str], List[Dict[str, Any]]]
+TickLoader = Callable[[str], List[Dict[str, Any]]]
 
 
 def main() -> int:
@@ -105,7 +109,7 @@ def run(
 
     code_set = sorted({identity_map[name] for name in names if name in identity_map})
     minute_rows = fetch_many_minute_rows(code_set)
-    futu_minute_rows = fetch_many_futu_minute_rows(code_set, now)
+    futu_minute_rows, futu_tick_rows = fetch_many_futu_intraday_rows(code_set, now)
     before = canonical_json(payload)
     enriched = enrich_payload(
         payload,
@@ -113,6 +117,7 @@ def run(
         lambda code: minute_rows.get(code, []),
         now,
         formal_minute_loader=lambda code: futu_minute_rows.get(code, []),
+        formal_tick_loader=lambda code: futu_tick_rows.get(code, []),
     )
     after = canonical_json(enriched)
     alert_changed = before != after
@@ -125,7 +130,7 @@ def run(
         "state": "dry_run" if dry_run else "completed",
         "verified": states.count("passed"),
         "mismatched": states.count("mismatch"),
-        "pending": sum(1 for state in states if state in {"pending", "unprocessed"}),
+        "pending": sum(1 for state in states if state in {"pending", "unprocessed", "insufficient_precision"}),
         "not_backfilled": states.count("too_late_no_backfill"),
         "changed": changed,
         "alert_changed": alert_changed,
@@ -165,7 +170,7 @@ def alert_needs_live_quotes(alert: Dict[str, Any], now: datetime) -> bool:
     if (
         previous.get("fingerprint") == fingerprint
         and previous.get("verifier_version") == VERIFIER_VERSION
-        and previous.get("state") in {"passed", "mismatch", "too_late_no_backfill", "different_trade_date", "insufficient_identity"}
+        and previous.get("state") in {"passed", "mismatch", "too_late_no_backfill", "different_trade_date", "insufficient_identity", "insufficient_precision"}
     ):
         return False
     event_at = parse_datetime(alert.get("time"))
@@ -182,6 +187,7 @@ def enrich_payload(
     minute_loader: MinuteLoader,
     now: datetime,
     formal_minute_loader: MinuteLoader | None = None,
+    formal_tick_loader: TickLoader | None = None,
 ) -> Dict[str, Any]:
     result = copy.deepcopy(payload)
     alerts = result.get("alerts") if isinstance(result.get("alerts"), list) else []
@@ -199,7 +205,7 @@ def enrich_payload(
         previous = audit.get("secondary_verification") if isinstance(audit.get("secondary_verification"), dict) else {}
         previous_completed = (
             previous.get("fingerprint") == fingerprint
-            and previous.get("state") in {"passed", "mismatch", "too_late_no_backfill", "different_trade_date", "insufficient_identity"}
+            and previous.get("state") in {"passed", "mismatch", "too_late_no_backfill", "different_trade_date", "insufficient_identity", "insufficient_precision"}
         )
         if previous_completed and (
             previous.get("verifier_version") == VERIFIER_VERSION or not alert_needs_live_quotes(alert, now)
@@ -210,7 +216,14 @@ def enrich_payload(
             if previous.get("state") == "passed" and isinstance(alert.get("reason"), str):
                 alert["reason"] = rewrite_verified_alert_reason(alert["reason"])
             continue
-        verification = verify_alert(alert, identity_map, minute_loader, now, formal_minute_loader=formal_minute_loader)
+        verification = verify_alert(
+            alert,
+            identity_map,
+            minute_loader,
+            now,
+            formal_minute_loader=formal_minute_loader,
+            formal_tick_loader=formal_tick_loader,
+        )
         verification["fingerprint"] = fingerprint
         verification["verifier_version"] = VERIFIER_VERSION
         audit.update({
@@ -237,6 +250,7 @@ def verify_alert(
     minute_loader: MinuteLoader,
     now: datetime,
     formal_minute_loader: MinuteLoader | None = None,
+    formal_tick_loader: TickLoader | None = None,
 ) -> Dict[str, Any]:
     verification_source = "富途分钟行情" if formal_minute_loader is not None else "腾讯分钟行情"
     event_at = parse_datetime(alert.get("time"))
@@ -264,8 +278,14 @@ def verify_alert(
         primary = as_float(leader.get("change_pct"))
         if not name or not code or primary is None:
             continue
-        backup = minute_change(minute_loader(code), event_at, window)
-        secondary = minute_change(formal_minute_loader(code), event_at, window) if formal_minute_loader is not None else backup
+        leader_at = parse_datetime(leader.get("quote_time")) or event_at
+        leader_at = leader_at.astimezone(TZ)
+        backup = minute_change(minute_loader(code), leader_at, window)
+        secondary = None
+        if formal_tick_loader is not None:
+            secondary = tick_change(formal_tick_loader(code), leader_at, window)
+        if secondary is None:
+            secondary = minute_change(formal_minute_loader(code), leader_at, window) if formal_minute_loader is not None else backup
         if secondary is None:
             rows.append({
                 "股票": name,
@@ -275,11 +295,10 @@ def verify_alert(
                 "腾讯涨跌幅": backup.get("change_pct") if backup else None,
                 "方向一致": False,
                 "幅度一致": False,
+                "复核结论": "行情精度不足",
             })
             continue
-        direction_match = direction(primary) != 0 and direction(primary) == direction(secondary["change_pct"])
-        tolerance = 0.15
-        magnitude_match = abs(primary - secondary["change_pct"]) <= tolerance
+        assessment = assess_change_consistency(primary, secondary)
         rows.append({
             "股票": name,
             "代码": display_code(code),
@@ -288,18 +307,28 @@ def verify_alert(
             "腾讯涨跌幅": backup.get("change_pct") if backup else (secondary["change_pct"] if formal_minute_loader is None else None),
             "起始分钟": secondary["start_minute"],
             "结束分钟": secondary["end_minute"],
-            "方向一致": direction_match,
-            "幅度一致": magnitude_match,
-            "允许误差": round(tolerance, 4),
+            "对齐方式": secondary.get("alignment_label"),
+            "时间偏差秒": secondary.get("max_time_gap_seconds"),
+            "可比涨跌范围": secondary.get("change_range_pct"),
+            "方向一致": assessment["direction_match"],
+            "幅度一致": assessment["magnitude_match"],
+            "复核结论": assessment["label"],
         })
 
     comparison_field = "富途涨跌幅" if formal_minute_loader is not None else "腾讯涨跌幅"
-    comparable = [row for row in rows if row.get(comparison_field) is not None]
+    comparable = [
+        row for row in rows
+        if row.get(comparison_field) is not None and row.get("复核结论") in {"一致", "明显冲突"}
+    ]
     if len(comparable) < 2:
         return verification_result(
-            "insufficient_identity",
+            "insufficient_precision" if len(rows) >= 2 else "insufficient_identity",
             now,
-            reason="可解析且有分钟行情的代表股不足2只。",
+            reason=(
+                "至少2只代表股已识别，但外部行情无法精确对齐触发时点；维持观察，不误判为行情冲突。"
+                if len(rows) >= 2
+                else "可解析且有行情的代表股不足2只。"
+            ),
             representatives=rows,
             window=window,
             source=verification_source,
@@ -311,11 +340,11 @@ def verify_alert(
         "passed" if passed else "mismatch",
         now,
         reason=(
-            "富途分钟行情与监控源的方向、幅度在容许误差内。"
+            "富途行情已按代表股触发时点对齐，方向和价格变化相互支持。"
             if passed and formal_minute_loader is not None
             else "代表股方向与幅度达到双源一致要求。"
             if passed
-            else "富途分钟行情与监控源存在明显差异，维持待确认/失效。"
+            else "对齐同一触发时点后，代表股方向或价格变化仍存在明显冲突，维持待确认/失效。"
             if formal_minute_loader is not None
             else "腾讯分钟行情与监控源的方向或幅度不一致，维持待确认/失效。"
         ),
@@ -392,26 +421,31 @@ def fetch_many_minute_rows(codes: Iterable[str]) -> Dict[str, List[Dict[str, Any
     return result
 
 
-def fetch_many_futu_minute_rows(codes: Iterable[str], now: datetime) -> Dict[str, List[Dict[str, Any]]]:
+def fetch_many_futu_intraday_rows(
+    codes: Iterable[str],
+    now: datetime,
+) -> tuple[Dict[str, List[Dict[str, Any]]], Dict[str, List[Dict[str, Any]]]]:
     try:
         from futu import AuType, KLType, OpenQuoteContext, RET_OK, SubType, SysConfig
     except ImportError:
-        return {}
+        return {}, {}
     try:
         SysConfig.enable_console_log(False)
     except Exception:
         pass
     context = None
-    result: Dict[str, List[Dict[str, Any]]] = {}
+    minute_result: Dict[str, List[Dict[str, Any]]] = {}
+    tick_result: Dict[str, List[Dict[str, Any]]] = {}
     try:
         context = OpenQuoteContext(host="127.0.0.1", port=11111)
         mapped = {code: to_futu_code(code) for code in codes}
         futu_codes = [code for code in mapped.values() if code]
         if not futu_codes:
-            return result
+            return minute_result, tick_result
         ret, _ = context.subscribe(futu_codes, [SubType.K_1M], subscribe_push=False)
         if ret != RET_OK:
-            return result
+            return minute_result, tick_result
+        tick_ret, _ = context.subscribe(futu_codes, [SubType.TICKER], subscribe_push=False)
         observed = now.astimezone(TZ)
         for code, futu_code in mapped.items():
             if not futu_code:
@@ -431,17 +465,42 @@ def fetch_many_futu_minute_rows(codes: Iterable[str], now: datetime) -> Dict[str
                     or price <= 0
                 ):
                     continue
-                rows.append({"hhmm": timestamp.astimezone(TZ).strftime("%H%M"), "price": price})
-            result[code] = rows
+                rows.append({
+                    "hhmm": timestamp.astimezone(TZ).strftime("%H%M"),
+                    "price": price,
+                    "open": as_float(item.get("open")),
+                    "high": as_float(item.get("high")),
+                    "low": as_float(item.get("low")),
+                })
+            minute_result[code] = rows
+            if tick_ret != RET_OK:
+                continue
+            ret, data = context.get_rt_ticker(futu_code, 1000)
+            if ret != RET_OK:
+                continue
+            tick_rows = []
+            for _, item in data.iterrows():
+                timestamp = parse_datetime(item.get("time"))
+                price = as_float(item.get("price"))
+                if (
+                    timestamp is None
+                    or timestamp.astimezone(TZ).date() != observed.date()
+                    or timestamp.astimezone(TZ) > observed + timedelta(seconds=5)
+                    or price is None
+                    or price <= 0
+                ):
+                    continue
+                tick_rows.append({"time": timestamp.astimezone(TZ).isoformat(), "price": price})
+            tick_result[code] = tick_rows
     except Exception:
-        return {}
+        return minute_result, tick_result
     finally:
         if context is not None:
             try:
                 context.close()
             except Exception:
                 pass
-    return result
+    return minute_result, tick_result
 
 
 def to_futu_code(code: str) -> str:
@@ -478,7 +537,9 @@ def minute_change(rows: List[Dict[str, Any]], event_at: datetime, window: int) -
         price = as_float(row.get("price"))
         if not re.fullmatch(r"\d{4}", hhmm) or price is None or price <= 0:
             continue
-        points.append((int(hhmm[:2]) * 60 + int(hhmm[2:]), hhmm, price))
+        low = as_float(row.get("low")) or price
+        high = as_float(row.get("high")) or price
+        points.append((int(hhmm[:2]) * 60 + int(hhmm[2:]), hhmm, price, low, high))
     if not points:
         return None
     event_minute = event_at.hour * 60 + event_at.minute
@@ -488,11 +549,96 @@ def minute_change(rows: List[Dict[str, Any]], event_at: datetime, window: int) -
         return None
     if event_minute - end[0] > 1 or event_minute - window - start[0] > 1:
         return None
+    low_change = (end[3] / start[4] - 1) * 100
+    high_change = (end[4] / start[3] - 1) * 100
     return {
         "change_pct": round((end[2] / start[2] - 1) * 100, 4),
         "start_minute": start[1],
         "end_minute": end[1],
+        "alignment_method": "minute_range",
+        "alignment_label": "同一触发分钟的价格区间",
+        "max_time_gap_seconds": 59,
+        "change_range_pct": [round(min(low_change, high_change), 4), round(max(low_change, high_change), 4)],
     }
+
+
+def tick_change(rows: List[Dict[str, Any]], event_at: datetime, window: int) -> Optional[Dict[str, Any]]:
+    points = []
+    for row in rows:
+        timestamp = parse_datetime(row.get("time"))
+        price = as_float(row.get("price"))
+        if timestamp is None or price is None or price <= 0:
+            continue
+        timestamp = timestamp.astimezone(TZ)
+        if timestamp.date() == event_at.astimezone(TZ).date():
+            points.append((timestamp, price))
+    if not points:
+        return None
+    points.sort(key=lambda item: item[0])
+    end_target = event_at.astimezone(TZ)
+    start_target = end_target - timedelta(minutes=window)
+    start = nearest_point(points, start_target)
+    end = nearest_point(points, end_target)
+    if start is None or end is None or start[0] >= end[0]:
+        return None
+    start_gap = abs((start[0] - start_target).total_seconds())
+    end_gap = abs((end[0] - end_target).total_seconds())
+    max_gap = max(start_gap, end_gap)
+    if max_gap > MAX_TICK_ALIGNMENT_SECONDS:
+        return None
+    neighborhood_seconds = max(3.0, min(float(MAX_TICK_ALIGNMENT_SECONDS), max_gap + 3.0))
+    start_prices = prices_near(points, start_target, neighborhood_seconds) or [start[1]]
+    end_prices = prices_near(points, end_target, neighborhood_seconds) or [end[1]]
+    low_change = (min(end_prices) / max(start_prices) - 1) * 100
+    high_change = (max(end_prices) / min(start_prices) - 1) * 100
+    return {
+        "change_pct": round((end[1] / start[1] - 1) * 100, 4),
+        "start_minute": start[0].strftime("%H:%M:%S"),
+        "end_minute": end[0].strftime("%H:%M:%S"),
+        "alignment_method": "tick_aligned",
+        "alignment_label": "逐笔行情同一时点对齐",
+        "max_time_gap_seconds": round(max_gap, 3),
+        "change_range_pct": [round(min(low_change, high_change), 4), round(max(low_change, high_change), 4)],
+    }
+
+
+def assess_change_consistency(primary: float, secondary: Dict[str, Any]) -> Dict[str, Any]:
+    secondary_change = as_float(secondary.get("change_pct"))
+    raw_range = secondary.get("change_range_pct")
+    if secondary_change is None or not isinstance(raw_range, list) or len(raw_range) != 2:
+        return {"direction_match": False, "magnitude_match": False, "label": "行情精度不足"}
+    low = as_float(raw_range[0])
+    high = as_float(raw_range[1])
+    if low is None or high is None:
+        return {"direction_match": False, "magnitude_match": False, "label": "行情精度不足"}
+    low, high = min(low, high), max(low, high)
+    interval_width = high - low
+    aligned_ticks = secondary.get("alignment_method") == "tick_aligned"
+    if not aligned_ticks and interval_width > MINUTE_RANGE_MAX_WIDTH_PCT:
+        return {"direction_match": False, "magnitude_match": False, "label": "行情精度不足"}
+    compatible = low - RANGE_PADDING_PCT <= primary <= high + RANGE_PADDING_PCT
+    point_direction_match = direction(primary) != 0 and direction(primary) == direction(secondary_change)
+    range_direction_match = compatible and (
+        (primary > 0.05 and high > 0.05)
+        or (primary < -0.05 and low < -0.05)
+        or abs(primary) <= 0.05
+    )
+    direction_match = point_direction_match if aligned_ticks else range_direction_match
+    if compatible and direction_match:
+        return {"direction_match": True, "magnitude_match": True, "label": "一致"}
+    distance = low - primary if primary < low else primary - high if primary > high else 0.0
+    obvious_conflict = direction(primary) != 0 and direction(secondary_change) != 0 and direction(primary) != direction(secondary_change)
+    if obvious_conflict or distance > 0.3:
+        return {"direction_match": False, "magnitude_match": False, "label": "明显冲突"}
+    return {"direction_match": direction_match, "magnitude_match": False, "label": "行情精度不足"}
+
+
+def nearest_point(points: List[Any], target: datetime) -> Optional[Any]:
+    return min(points, key=lambda point: abs((point[0] - target).total_seconds())) if points else None
+
+
+def prices_near(points: List[Any], target: datetime, seconds: float) -> List[float]:
+    return [price for timestamp, price in points if abs((timestamp - target).total_seconds()) <= seconds]
 
 
 def latest_point(points: List[Any], target: int) -> Optional[Any]:

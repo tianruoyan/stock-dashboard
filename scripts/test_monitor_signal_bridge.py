@@ -13,7 +13,7 @@ def theme_record(timestamp: str, side: str = "up", speed: float = 1.8) -> dict:
     day_change = 10.0 if side == "up" else -10.0
     scored = {
         "metrics": {
-            "tick": {"symbol": "688012", "name": "中微公司", "change_pct": day_change},
+            "tick": {"symbol": "688012", "name": "中微公司", "change_pct": day_change, "timestamp": timestamp},
             "speed_pct": stock_speed,
             "amount_ratio": 6.2,
         },
@@ -55,6 +55,7 @@ class MonitorSignalBridgeTests(unittest.TestCase):
         self.assertEqual(alert["confirmation_level"], "candidate")
         self.assertEqual(alert["leaders"][0]["code"], "688012")
         self.assertEqual(alert["leaders"][0]["change_pct"], 1.8)
+        self.assertEqual(alert["leaders"][0]["quote_time"], "2026-07-22T10:01:02")
         self.assertEqual(alert["quote_audit"]["provider"], "本地盘中监控")
         self.assertFalse(alert["quote_audit"]["sanity_checks"]["cross_source_verified"])
 

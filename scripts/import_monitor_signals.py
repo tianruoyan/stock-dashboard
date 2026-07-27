@@ -396,6 +396,7 @@ def representative_leaders(kind: str, details: dict[str, Any], side: str) -> lis
             "name": name,
             "code": str(tick.get("symbol") or ""),
             "change_pct": round(speed or 0.0, 4),
+            "quote_time": tick.get("timestamp"),
             "score": round(score, 2) if score is not None else None,
             "factors": factors,
         })
