@@ -1,8 +1,8 @@
 {
-  "timestamp": "2026-07-28T08:44:10+08:00",
+  "timestamp": "2026-07-28T09:18:22+08:00",
   "current_signal_date": "2026-07-28",
   "status": "degraded",
-  "summary": "发现 130 个降级/需复核项（122 个价格/行情复核，9 个背景复核），核心结论可看但必须按影响分层使用。",
+  "summary": "发现 128 个降级/需复核项（122 个价格/行情复核，7 个背景复核），核心结论可看但必须按影响分层使用。",
   "issues": [
     {
       "severity": "warning",
@@ -1164,24 +1164,6 @@
       "message": "theme-shifts 日期不是当前交易日：2026-07-27",
       "impact_level": "background_review",
       "decision_action": "仅作背景复核，不单独阻断交易判断"
-    },
-    {
-      "severity": "warning",
-      "file": "data-trust.json",
-      "path": "",
-      "code": "stale_data_trust",
-      "message": "data-trust 日期不是当前交易日：2026-07-27",
-      "impact_level": "background_review",
-      "decision_action": "仅作背景复核，不单独阻断交易判断"
-    },
-    {
-      "severity": "warning",
-      "file": "monitoring-coverage.json",
-      "path": "",
-      "code": "stale_monitoring_coverage",
-      "message": "monitoring-coverage 日期不是当前交易日：2026-07-27",
-      "impact_level": "background_review",
-      "decision_action": "仅作背景复核，不单独阻断交易判断"
     }
   ],
   "action_plan": [
@@ -1233,9 +1215,9 @@
       "priority": 4,
       "impact_level": "background_review",
       "label": "背景来源复核",
-      "file": "data-trust.json",
-      "code": "stale_data_trust",
-      "problem": "data-trust 日期不是当前交易日：2026-07-27",
+      "file": "intraday.json",
+      "code": "stale_timestamp",
+      "problem": "时间戳不是当前交易日：2026-07-27T15:21:10+08:00",
       "decision_action": "仅作背景复核，不单独阻断交易判断",
       "next_step": "补官方/交易所/公司公告来源；未补齐前不升级为核心依据。",
       "unblock_condition": "官方来源补齐或确认不影响交易触发。"
@@ -1244,9 +1226,9 @@
       "priority": 4,
       "impact_level": "background_review",
       "label": "背景来源复核",
-      "file": "intraday.json",
+      "file": "midday.json",
       "code": "stale_timestamp",
-      "problem": "时间戳不是当前交易日：2026-07-27T15:21:10+08:00",
+      "problem": "时间戳不是当前交易日：2026-07-27T11:36:30+08:00",
       "decision_action": "仅作背景复核，不单独阻断交易判断",
       "next_step": "补官方/交易所/公司公告来源；未补齐前不升级为核心依据。",
       "unblock_condition": "官方来源补齐或确认不影响交易触发。"
@@ -1254,12 +1236,12 @@
   ],
   "counts": {
     "critical": 0,
-    "warning": 130,
+    "warning": 128,
     "info": 1,
     "blocking": 0,
     "price_review": 122,
     "signal_review": 0,
-    "background_review": 9
+    "background_review": 7
   },
   "rules": [
     "异常文本、JSON解析失败、必需文件缺失为 critical。",
