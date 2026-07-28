@@ -1,143 +1,75 @@
 {
-  "timestamp": "2026-07-28T11:14:35+08:00",
+  "timestamp": "2026-07-28T11:16:35+08:00",
   "alerts": [
     {
-      "id": "20260728-111310-style-cxmt-watch-invalidated",
-      "time": "2026-07-28T11:13:10+08:00",
-      "sector": "长鑫存储IPO映射",
-      "type": "小登提醒[watch]",
-      "reason": "长鑫存储IPO映射触发观察拉动，北方华创维持涨停、江丰电子和中微公司仍在高位，说明半导体设备/材料抱团仍有盘前消息兑现痕迹；但底池3分钟涨跌幅为-1.60%，成交放大仅4.59x，且日志虽然写“≥2只涨停”但没有可审计limit_up_count，因此不升级为机会候选，仅作为invalidated观察提示。判断为消息兑现但扩散不足。",
+      "id": "20260728-111453-risk-tech-hardware-invalidated",
+      "time": "2026-07-28T11:14:53+08:00",
+      "sector": "科技硬件链",
+      "type": "小登提醒[risk]",
+      "reason": "科技硬件链先触发快速回落，澜起科技、中际旭创、兆易创新领跌，CPO/存储/硬件链仍有盘前风险线拖累；但本地监控显示底池3分钟涨跌幅为+0.80%而非明确下跌，成交放大4.29x低于risk candidate 5x门槛，且没有可审计limit_down_count，因此不升级为risk candidate。判断为消息预期落空/冲高回落中的局部抛压。",
       "leaders": [
         {
-          "name": "北方华创",
+          "name": "澜起科技",
+          "change_pct": 0.94,
+          "score": 49.2,
+          "factors": [
+            "3分钟+0.94%",
+            "成交8.31x",
+            "日内-6.58%"
+          ]
+        },
+        {
+          "name": "中际旭创",
+          "change_pct": 1.57,
+          "score": 41.4,
+          "factors": [
+            "3分钟+1.57%",
+            "成交3.53x",
+            "日内-12.01%"
+          ]
+        },
+        {
+          "name": "兆易创新",
           "change_pct": 0.0,
-          "score": 65.0,
+          "score": 39.9,
           "factors": [
             "3分钟0.00%",
-            "成交8.04x",
-            "日内+10.00%"
-          ]
-        },
-        {
-          "name": "江丰电子",
-          "change_pct": -1.73,
-          "score": 40.2,
-          "factors": [
-            "3分钟-1.73%",
-            "成交2.85x",
-            "日内+10.57%"
-          ]
-        },
-        {
-          "name": "中微公司",
-          "change_pct": -2.29,
-          "score": 39.0,
-          "factors": [
-            "3分钟-2.29%",
-            "成交3.45x",
-            "日内+9.65%"
+            "成交2.96x",
+            "日内-10.00%"
           ]
         }
       ],
-      "signal_type": "观察信号",
+      "signal_type": "风险提示",
       "is_old_economy": false,
-      "alert_class": "style",
+      "alert_class": "risk",
       "confirmation_level": "invalidated",
       "source_watch_id": null,
       "quote_audit": {
-        "provider": "本地盘中监控、富途行情（腾讯备用）",
-        "quote_time": "2026-07-28T11:13:10+08:00",
-        "pct_field": "three_minute_change_pct",
-        "sample_count": 3,
-        "max_abs_leader_change_pct": 2.29,
+        "provider": "local_monitor_realtime",
+        "quote_time": "2026-07-28T11:14:53+08:00",
+        "pct_field": "three_minute_drawdown_pct_local_monitor",
+        "sample_count": 10,
+        "max_abs_leader_change_pct": 1.57,
         "sanity_checks": {
           "cross_source_verified": false,
-          "up_ratio_pct": 100,
-          "volume_expand_x": 4.59,
-          "relative_volume_vs_yesterday_x": 1.86,
+          "down_ratio_pct": 90,
+          "volume_expand_x": 4.29,
+          "relative_volume_vs_yesterday_x": 1.87,
           "has_laggard_diffusion": true,
           "limit_up_count": 0,
           "limit_down_count": 0,
-          "invalidated_reason": "3分钟涨跌幅为负且成交放大低于opportunity candidate门槛，缺少可审计limit_up_count>=2"
-        },
-        "secondary_source": "富途行情",
-        "secondary_verification": {
-          "state": "mismatch",
-          "checked_at": "2026-07-28T11:15:31+08:00",
-          "source": "富途行情",
-          "reason": "对齐同一触发时点后，代表股方向或价格变化仍存在明显冲突，维持待确认/失效。",
-          "representatives": [
-            {
-              "股票": "北方华创",
-              "代码": "002371.SZ",
-              "监控涨跌幅": 0.0,
-              "富途涨跌幅": 0.1717,
-              "腾讯涨跌幅": 0.0337,
-              "起始分钟": "11:10:09",
-              "结束分钟": "11:13:09",
-              "对齐方式": "逐笔行情同一时点对齐",
-              "时间偏差秒": 1.0,
-              "可比涨跌范围": [
-                0.1663,
-                0.2299
-              ],
-              "方向一致": false,
-              "幅度一致": false,
-              "复核结论": "行情精度不足"
-            },
-            {
-              "股票": "江丰电子",
-              "代码": "300666.SZ",
-              "监控涨跌幅": -1.73,
-              "富途涨跌幅": -0.0044,
-              "腾讯涨跌幅": -0.0741,
-              "起始分钟": "11:10:09",
-              "结束分钟": "11:13:09",
-              "对齐方式": "逐笔行情同一时点对齐",
-              "时间偏差秒": 1.0,
-              "可比涨跌范围": [
-                -0.1787,
-                0.0917
-              ],
-              "方向一致": false,
-              "幅度一致": false,
-              "复核结论": "明显冲突"
-            },
-            {
-              "股票": "中微公司",
-              "代码": "688012.SH",
-              "监控涨跌幅": -2.29,
-              "富途涨跌幅": 0.4878,
-              "腾讯涨跌幅": 0.4209,
-              "起始分钟": "11:10:09",
-              "结束分钟": "11:13:08",
-              "对齐方式": "逐笔行情同一时点对齐",
-              "时间偏差秒": 1.67,
-              "可比涨跌范围": [
-                0.3776,
-                0.5159
-              ],
-              "方向一致": false,
-              "幅度一致": false,
-              "复核结论": "明显冲突"
-            }
-          ],
-          "window_minutes": 3,
-          "direction_agreement_ratio": 0.0,
-          "magnitude_agreement_ratio": 0.0,
-          "fingerprint": "6d1559a89c4b4c95be84",
-          "verifier_version": "futu-opend-2026-07-27.3"
+          "invalidated_reason": "3分钟方向与回落标签矛盾，成交放大低于5x，且缺少可审计limit_down_count>=2"
         }
       },
-      "valid_until": "2026-07-28T11:19:35+08:00",
+      "valid_until": "2026-07-28T11:21:35+08:00",
       "source_status": "invalidated"
     },
     {
-      "id": "20260728-111349-style-equipment-platform-watch-invalidated",
-      "time": "2026-07-28T11:13:49+08:00",
-      "sector": "半导体设备平台",
+      "id": "20260728-111518-style-tech-hardware-watch-invalidated",
+      "time": "2026-07-28T11:15:18+08:00",
+      "sector": "科技硬件链",
       "type": "小登提醒[watch]",
-      "reason": "半导体设备平台触发观察拉动，北方华创/中微公司仍是设备平台核心，对应盘前半导体设备材料观察线；但底池3分钟涨跌幅为-0.45%，仅靠涨停结构文字触发，缺少可审计limit_up_count，且中微公司3分钟回落，说明消息兑现但扩散不足，不升级为机会候选。",
+      "reason": "科技硬件链随后又触发观察拉动，北方华创/中微公司维持设备平台高位，中际旭创短线修复；但底池3分钟涨跌幅为-0.16%，并没有主动推进，且日志虽写“≥2只涨停”但缺少可审计limit_up_count，因此仅作为invalidated观察提示。判断为消息兑现但扩散不足，科技硬件链仍是设备材料抱团强、CPO/存储拖累明显的分化结构。",
       "leaders": [
         {
           "name": "北方华创",
@@ -145,26 +77,28 @@
           "score": 65.0,
           "factors": [
             "3分钟0.00%",
-            "成交6.68x",
+            "成交12.74x",
             "日内+10.00%"
           ]
         },
         {
           "name": "中微公司",
-          "change_pct": -0.91,
-          "score": 45.2,
+          "change_pct": 0.04,
+          "score": 41.5,
           "factors": [
-            "3分钟-0.91%",
-            "成交3.91x",
-            "日内+10.50%"
+            "3分钟+0.04%",
+            "成交4.52x",
+            "日内+10.38%"
           ]
         },
         {
-          "name": "华海清科",
-          "score": 50.7,
+          "name": "中际旭创",
+          "change_pct": 0.13,
+          "score": 39.3,
           "factors": [
-            "同属设备材料中军观察",
-            "上一轮扩散后需看承接"
+            "3分钟+0.13%",
+            "成交5.57x",
+            "日内+7.22%"
           ]
         }
       ],
@@ -174,83 +108,24 @@
       "confirmation_level": "invalidated",
       "source_watch_id": null,
       "quote_audit": {
-        "provider": "本地盘中监控、富途行情（腾讯备用）",
-        "quote_time": "2026-07-28T11:13:49+08:00",
+        "provider": "local_monitor_realtime",
+        "quote_time": "2026-07-28T11:15:18+08:00",
         "pct_field": "three_minute_change_pct",
-        "sample_count": 2,
-        "max_abs_leader_change_pct": 0.91,
+        "sample_count": 10,
+        "max_abs_leader_change_pct": 0.13,
         "sanity_checks": {
           "cross_source_verified": false,
           "up_ratio_pct": 100,
-          "volume_expand_x": 5.29,
-          "relative_volume_vs_yesterday_x": 1.89,
+          "volume_expand_x": 5.45,
+          "relative_volume_vs_yesterday_x": 1.66,
           "has_laggard_diffusion": true,
           "limit_up_count": 0,
           "limit_down_count": 0,
-          "invalidated_reason": "3分钟涨跌幅为负，且缺少可审计limit_up_count>=2，不满足opportunity candidate短周期价格门槛"
-        },
-        "secondary_source": "富途行情",
-        "secondary_verification": {
-          "state": "insufficient_precision",
-          "checked_at": "2026-07-28T11:15:31+08:00",
-          "source": "富途行情",
-          "reason": "至少2只代表股已识别，但外部行情无法精确对齐触发时点；维持观察，不误判为行情冲突。",
-          "representatives": [
-            {
-              "股票": "北方华创",
-              "代码": "002371.SZ",
-              "监控涨跌幅": 0.0,
-              "富途涨跌幅": 0.4285,
-              "腾讯涨跌幅": 0.0337,
-              "起始分钟": "11:10:48",
-              "结束分钟": "11:13:48",
-              "对齐方式": "逐笔行情同一时点对齐",
-              "时间偏差秒": 1.0,
-              "可比涨跌范围": [
-                0.2567,
-                0.4326
-              ],
-              "方向一致": false,
-              "幅度一致": false,
-              "复核结论": "行情精度不足"
-            },
-            {
-              "股票": "中微公司",
-              "代码": "688012.SH",
-              "监控涨跌幅": -0.91,
-              "富途涨跌幅": 0.4273,
-              "腾讯涨跌幅": 0.4209,
-              "起始分钟": "11:10:48",
-              "结束分钟": "11:13:48",
-              "对齐方式": "逐笔行情同一时点对齐",
-              "时间偏差秒": 0.65,
-              "可比涨跌范围": [
-                0.2183,
-                0.468
-              ],
-              "方向一致": false,
-              "幅度一致": false,
-              "复核结论": "明显冲突"
-            }
-          ],
-          "window_minutes": 3,
-          "fingerprint": "1b45f4e3ff61974f8f1e",
-          "verifier_version": "futu-opend-2026-07-27.3"
+          "invalidated_reason": "底池3分钟涨跌幅为负，缺少可审计limit_up_count>=2，不满足opportunity candidate短周期价格门槛"
         }
       },
-      "valid_until": "2026-07-28T11:19:35+08:00",
+      "valid_until": "2026-07-28T11:21:35+08:00",
       "source_status": "invalidated"
     }
-  ],
-  "quote_audit": {
-    "provider": "本地盘中监控、富途行情（腾讯备用）",
-    "quote_time": "2026-07-28T11:13:49+08:00",
-    "pct_field": "各异动卡标注的短周期涨跌幅",
-    "sanity_checks": {
-      "sample_count": 2,
-      "max_abs_leader_change_pct": 2.29,
-      "cross_source_verified": false,
-      "verified_alert_count": 0
-    }
-  }
+  ]
 }
