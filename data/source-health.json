@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-07-28T09:21:00+08:00",
+  "timestamp": "2026-07-28T09:31:00+08:00",
   "sources": {
     "tencent_http": {
       "status": "ok",
@@ -4057,6 +4057,40 @@
       "errors": [
         "盘中高波动，只代表真实采集时点，不回填后续或历史窗口"
       ]
+    },
+    "tencent_all_a_open_auction_20260728": {
+      "status": "ok",
+      "last_check": "2026-07-28T09:31:00+08:00",
+      "usage": "全A涨跌停宽度、观察池竞价及有效分母",
+      "detail": "有效报价5449只，明确涨跌停分母5448只；涨停13、跌停3。",
+      "sample_count": 5449,
+      "errors": []
+    },
+    "tencent_index_auction_20260728": {
+      "status": "ok",
+      "last_check": "2026-07-28T09:31:00+08:00",
+      "usage": "五大指数开盘及竞价成交额",
+      "detail": "上证-0.91%、深证-2.25%、创业板-3.12%、科创50-2.88%、沪深300-1.67%；沪深竞价额合计约237.85亿元。",
+      "sample_count": 5,
+      "errors": []
+    },
+    "a_share_code_master_auction_20260728": {
+      "status": "ok",
+      "last_check": "2026-07-28T09:31:00+08:00",
+      "usage": "全A腾讯批量查询代码主表",
+      "detail": "证券代码主表5533只，腾讯返回有效开盘报价5449只。",
+      "sample_count": 5533,
+      "errors": []
+    },
+    "eastmoney_hk_auction_retry_0929_20260728": {
+      "status": "failed_preserve_previous",
+      "last_check": "2026-07-28T09:31:00+08:00",
+      "usage": "港股竞价最终复核",
+      "detail": "接口空响应；未覆盖09:18已核验港股竞价快照。",
+      "sample_count": 0,
+      "errors": [
+        "Empty reply from server；继续使用09:18快照并标注指示价/零成交样本"
+      ]
     }
   },
   "last_publish_attempt": "pending_20260717_0830_premarket_publish",
@@ -4242,7 +4276,7 @@
     "errors": []
   },
   "overall_status": "degraded",
-  "last_codex_note": "9:15盘前所需美股、日韩、港股代表股竞价、中概和期货均已核验；恒生指数/恒生科技指数没有有效竞价涨跌，已明确留空并按代表股成交量降权。",
+  "last_codex_note": "9:25集合竞价已用交易所日历、腾讯全A固定开盘价、精确涨跌停价和指数竞价金额完成核验；港股结构源09:29重试空返回，保留09:18有效快照并降权。",
   "eastmoney_structure_pools_intraday_1000_20260717": {
     "status": "ok",
     "last_check": "2026-07-17T10:02:40+08:00",
@@ -4977,6 +5011,44 @@
     "evidence": "日经约-4.28%、KOSPI约-8.04%；日韩设备与存储龙头约跌8.7%-10.9%。",
     "errors": [
       "盘中高波动，只代表真实采集时点，不回填后续或历史窗口"
+    ]
+  },
+  "tencent_all_a_open_auction_20260728": {
+    "status": "ok",
+    "checked_at": "2026-07-28T09:31:00+08:00",
+    "market_time": "2026-07-28 09:25固定开盘价；采集完成09:28:55",
+    "usage": "全A涨跌停宽度、观察池竞价及有效分母",
+    "sample_count": 5449,
+    "evidence": "有效报价5449只，明确涨跌停分母5448只；涨停13、跌停3。",
+    "errors": []
+  },
+  "tencent_index_auction_20260728": {
+    "status": "ok",
+    "checked_at": "2026-07-28T09:31:00+08:00",
+    "market_time": "2026-07-28 09:25固定开盘价",
+    "usage": "五大指数开盘及竞价成交额",
+    "sample_count": 5,
+    "evidence": "上证-0.91%、深证-2.25%、创业板-3.12%、科创50-2.88%、沪深300-1.67%；沪深竞价额合计约237.85亿元。",
+    "errors": []
+  },
+  "a_share_code_master_auction_20260728": {
+    "status": "ok",
+    "checked_at": "2026-07-28T09:31:00+08:00",
+    "market_time": "2026-07-28盘前证券主表",
+    "usage": "全A腾讯批量查询代码主表",
+    "sample_count": 5533,
+    "evidence": "证券代码主表5533只，腾讯返回有效开盘报价5449只。",
+    "errors": []
+  },
+  "eastmoney_hk_auction_retry_0929_20260728": {
+    "status": "failed_preserve_previous",
+    "checked_at": "2026-07-28T09:31:00+08:00",
+    "market_time": "2026-07-28 09:29重试",
+    "usage": "港股竞价最终复核",
+    "sample_count": 0,
+    "evidence": "接口空响应；未覆盖09:18已核验港股竞价快照。",
+    "errors": [
+      "Empty reply from server；继续使用09:18快照并标注指示价/零成交样本"
     ]
   }
 }
