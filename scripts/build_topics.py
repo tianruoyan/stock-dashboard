@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import json
+from datetime import datetime
 from pathlib import Path
 from typing import Any
 
@@ -47,6 +48,16 @@ def integer(value: Any) -> int:
         return 0
 
 
+def parse_timestamp(value: Any) -> datetime | None:
+    text = str(value or "").strip().replace("Z", "+00:00")
+    if not text:
+        return None
+    try:
+        return datetime.fromisoformat(text)
+    except ValueError:
+        return None
+
+
 def main() -> int:
     topics = load_json(TOPICS_PATH)
     postmarket = load_json(POSTMARKET_PATH)
@@ -54,6 +65,15 @@ def main() -> int:
     rows = [item for item in as_list(topics.get("topics")) if isinstance(item, dict)]
     if not source_as_of or not rows:
         print("topics-refresh: waiting - 专题或盘后数据不可用")
+        return 0
+
+    source_time = parse_timestamp(source_as_of)
+    topics_time = parse_timestamp(topics.get("timestamp"))
+    if source_time and topics_time and source_time <= topics_time:
+        print(
+            "topics-refresh: waiting - 盘后证据不晚于当前专题，"
+            f"保留{topics.get('timestamp')}盘中结论"
+        )
         return 0
 
     breadth = as_dict(postmarket.get("market_breadth"))
@@ -74,7 +94,7 @@ def main() -> int:
         special_limit = limit_industries.get("专用设备", 0)
         general_limit = limit_industries.get("通用设备", 0)
         updates["机器人/工业自动化"] = {
-            "status": "观察线/分化",
+            "status": "观察",
             "conclusion": (
                 "机械设备收盘明显活跃，但专用设备和通用设备的涨停中混有电网、"
                 "油服和军工，机器人主线尚未确认。"
@@ -101,7 +121,7 @@ def main() -> int:
         industries = as_dict(medical_theme.get("industries"))
         representatives = "、".join(str(value) for value in as_list(medical_theme.get("representatives"))[:6])
         updates["医药修复链"] = {
-            "status": "修复观察",
+            "status": "观察",
             "conclusion": (
                 f"医药收盘出现{limit_count}只涨停、{strong_count}只涨超5%，低位修复已经出现；"
                 f"但涨停主要分布在中药{integer(industries.get('中药Ⅱ'))}只、"
