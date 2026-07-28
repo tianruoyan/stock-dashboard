@@ -1,8 +1,8 @@
 {
-  "timestamp": "2026-07-28T14:53:33+08:00",
+  "timestamp": "2026-07-28T14:55:02+08:00",
   "current_signal_date": "2026-07-28",
   "status": "degraded",
-  "summary": "发现 138 个降级/需复核项（137 个价格/行情复核，2 个背景复核），核心结论可看但必须按影响分层使用。",
+  "summary": "发现 136 个降级/需复核项（135 个价格/行情复核，2 个背景复核），核心结论可看但必须按影响分层使用。",
   "issues": [
     {
       "severity": "warning",
@@ -145,15 +145,6 @@
       "path": "",
       "code": "historical_alert_without_trusted_source",
       "message": "盘中异动缺少可信源证明；当前阶段只降权参考，不阻断整站发布",
-      "impact_level": "price_review",
-      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
-    },
-    {
-      "severity": "warning",
-      "file": "alert.json",
-      "path": "quote_audit.sanity_checks",
-      "code": "alert_quote_audit_mismatch",
-      "message": "quote_audit 样本数小于 alerts 数量",
       "impact_level": "price_review",
       "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
     },
@@ -1245,15 +1236,6 @@
       "message": "tencent_hk_delayed_intraday_0948_20260728: 恒指+0.40%、恒科+1.48%；兆易H-11.43%、澜起H-9.19%、智谱-15.69%，仅按09:48延迟时点使用。",
       "impact_level": "price_review",
       "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
-    },
-    {
-      "severity": "warning",
-      "file": "cross-file",
-      "path": "国际复材",
-      "code": "stock_pct_cross_file_conflict",
-      "message": "国际复材 跨文件涨跌幅差异过大：alert.json -0.3% vs intraday.json 20.0%",
-      "impact_level": "price_review",
-      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
     }
   ],
   "action_plan": [
@@ -1264,17 +1246,6 @@
       "file": "alert.json",
       "code": "historical_alert_without_trusted_source",
       "problem": "盘中异动缺少可信源证明；当前阶段只降权参考，不阻断整站发布",
-      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核",
-      "next_step": "用第二行情源复核涨跌幅、quote_time 和代表股方向；未确认前只做验证。",
-      "unblock_condition": "price_review=0 或相关来源标记 trusted/cross verified。"
-    },
-    {
-      "priority": 2,
-      "impact_level": "price_review",
-      "label": "二次行情复核",
-      "file": "cross-file",
-      "code": "stock_pct_cross_file_conflict",
-      "problem": "国际复材 跨文件涨跌幅差异过大：alert.json -0.3% vs intraday.json 20.0%",
       "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核",
       "next_step": "用第二行情源复核涨跌幅、quote_time 和代表股方向；未确认前只做验证。",
       "unblock_condition": "price_review=0 或相关来源标记 trusted/cross verified。"
@@ -1322,14 +1293,25 @@
       "decision_action": "仅作背景复核，不单独阻断交易判断",
       "next_step": "补官方/交易所/公司公告来源；未补齐前不升级为核心依据。",
       "unblock_condition": "官方来源补齐或确认不影响交易触发。"
+    },
+    {
+      "priority": 4,
+      "impact_level": "background_review",
+      "label": "背景来源复核",
+      "file": "evening-sentiment.json",
+      "code": "evening_not_current",
+      "problem": "晚间舆情不是当前交易日，不参与今日总控",
+      "decision_action": "仅作背景复核，不单独阻断交易判断",
+      "next_step": "补官方/交易所/公司公告来源；未补齐前不升级为核心依据。",
+      "unblock_condition": "官方来源补齐或确认不影响交易触发。"
     }
   ],
   "counts": {
     "critical": 0,
-    "warning": 138,
+    "warning": 136,
     "info": 1,
     "blocking": 0,
-    "price_review": 137,
+    "price_review": 135,
     "signal_review": 0,
     "background_review": 2
   },
