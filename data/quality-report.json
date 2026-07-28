@@ -1,8 +1,8 @@
 {
-  "timestamp": "2026-07-28T11:19:44+08:00",
+  "timestamp": "2026-07-28T11:21:38+08:00",
   "current_signal_date": "2026-07-28",
   "status": "degraded",
-  "summary": "发现 135 个降级/需复核项（133 个价格/行情复核，3 个背景复核），核心结论可看但必须按影响分层使用。",
+  "summary": "发现 134 个降级/需复核项（132 个价格/行情复核，3 个背景复核），核心结论可看但必须按影响分层使用。",
   "issues": [
     {
       "severity": "warning",
@@ -133,18 +133,9 @@
     {
       "severity": "warning",
       "file": "alert.json",
-      "path": "",
-      "code": "historical_alert_without_trusted_source",
-      "message": "盘中异动缺少可信源证明；当前阶段只降权参考，不阻断整站发布",
-      "impact_level": "price_review",
-      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
-    },
-    {
-      "severity": "warning",
-      "file": "alert.json",
-      "path": "",
-      "code": "historical_alert_missing_quote_audit",
-      "message": "alert.json 存在盘中异动但缺少 quote_audit；当前阶段只降权参考，不阻断整站发布",
+      "path": "quote_audit.sanity_checks",
+      "code": "historical_alert_not_cross_verified",
+      "message": "行情污染源仍降级，历史 alert 未交叉验证，只降权复盘参考",
       "impact_level": "price_review",
       "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
     },
@@ -1235,8 +1226,8 @@
       "impact_level": "price_review",
       "label": "二次行情复核",
       "file": "alert.json",
-      "code": "historical_alert_without_trusted_source",
-      "problem": "盘中异动缺少可信源证明；当前阶段只降权参考，不阻断整站发布",
+      "code": "historical_alert_not_cross_verified",
+      "problem": "行情污染源仍降级，历史 alert 未交叉验证，只降权复盘参考",
       "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核",
       "next_step": "用第二行情源复核涨跌幅、quote_time 和代表股方向；未确认前只做验证。",
       "unblock_condition": "price_review=0 或相关来源标记 trusted/cross verified。"
@@ -1299,10 +1290,10 @@
   ],
   "counts": {
     "critical": 0,
-    "warning": 135,
+    "warning": 134,
     "info": 1,
     "blocking": 0,
-    "price_review": 133,
+    "price_review": 132,
     "signal_review": 0,
     "background_review": 3
   },
