@@ -321,7 +321,7 @@ def convert_record(record: dict[str, Any]) -> Optional[dict[str, Any]]:
         "is_old_economy": kind.startswith("old_deng"),
         "source_watch_id": sector,
         "quote_audit": audit,
-        "source_status": "monitor_live_unverified",
+        "source_status": "degraded_partial" if confirmation == "candidate" else "monitor_live_unverified",
         "valid_until": (timestamp + timedelta(minutes=5)).replace(microsecond=0).isoformat(),
         "trigger_rule": "；".join(str(item) for item in rules if item),
     }
@@ -333,6 +333,11 @@ def convert_record(record: dict[str, Any]) -> Optional[dict[str, Any]]:
         theme = details.get("theme") if isinstance(details.get("theme"), dict) else {}
         alert["limit_up_count"] = limit_count(theme, up=True)
         alert["limit_down_count"] = limit_count(theme, up=False)
+        sanity = alert.setdefault("quote_audit", {}).setdefault("sanity_checks", {})
+        if alert["limit_up_count"] >= 2:
+            sanity["limit_up_count_valid"] = True
+        if alert["limit_down_count"] >= 2:
+            sanity["limit_down_count_valid"] = True
     return alert
 
 
