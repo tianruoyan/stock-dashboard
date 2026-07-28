@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-07-28T10:11:45+08:00",
+  "timestamp": "2026-07-28T10:12:45+08:00",
   "source_status": "monitor_live",
   "alerts": [
     {
@@ -1114,7 +1114,7 @@
         "secondary_source": "富途行情",
         "secondary_verification": {
           "state": "insufficient_precision",
-          "checked_at": "2026-07-28T10:11:15+08:00",
+          "checked_at": "2026-07-28T10:13:19+08:00",
           "source": "富途行情",
           "reason": "至少2只代表股已识别，但外部行情无法精确对齐触发时点；维持观察，不误判为行情冲突。",
           "representatives": [
@@ -1234,7 +1234,7 @@
       "is_old_economy": false,
       "source_watch_id": "机器人/工业自动化",
       "quote_audit": {
-        "provider": "本地盘中监控",
+        "provider": "本地盘中监控、富途行情（腾讯备用）",
         "quote_time": "2026-07-28T10:11:08+08:00",
         "pct_field": "3分钟涨跌幅",
         "sample_count": 3,
@@ -1250,10 +1250,124 @@
         "direction_ratio": 0.6667,
         "volume_ratio": 8.2154,
         "relative_volume_vs_yesterday": 2.8174,
-        "missing_confirmation": "等待富途行情按触发时点交叉核验；通过前只作候选或观察，不作为确认交易信号。"
+        "missing_confirmation": "等待富途行情按触发时点交叉核验；通过前只作候选或观察，不作为确认交易信号。",
+        "secondary_source": "富途行情",
+        "secondary_verification": {
+          "state": "insufficient_identity",
+          "checked_at": "2026-07-28T10:13:19+08:00",
+          "source": "富途行情",
+          "reason": "可解析且有行情的代表股不足2只。",
+          "representatives": [
+            {
+              "股票": "埃斯顿",
+              "代码": "002747.SZ",
+              "监控涨跌幅": -1.0456,
+              "富途涨跌幅": -1.0456,
+              "腾讯涨跌幅": -0.9515,
+              "起始分钟": "10:08:03",
+              "结束分钟": "10:11:03",
+              "对齐方式": "逐笔行情同一时点对齐",
+              "时间偏差秒": 0.148,
+              "可比涨跌范围": [
+                -1.0456,
+                -0.9826
+              ],
+              "方向一致": true,
+              "幅度一致": true,
+              "复核结论": "一致"
+            }
+          ],
+          "window_minutes": 3,
+          "fingerprint": "b479d94c19117494145e",
+          "verifier_version": "futu-opend-2026-07-27.3"
+        }
       },
       "source_status": "monitor_live_unverified",
       "valid_until": "2026-07-28T10:16:08+08:00",
+      "trigger_rule": "小登底池回落预警：板块行情缺失时，底池3分钟平均跌幅≥1.0%，下跌占比≥60%，且成交放大≥5x",
+      "alert_class": "risk",
+      "confirmation_level": "candidate",
+      "limit_up_count": 0,
+      "limit_down_count": 0
+    },
+    {
+      "id": "monitor-20260728-101236-57168f53c20e",
+      "time": "2026-07-28T10:12:36+08:00",
+      "sector": "CMP/靶材/材料耗材",
+      "type": "小登题材快速回落",
+      "reason": "触发规则：小登底池回落预警：板块行情缺失时，底池3分钟平均跌幅≥1.0%，下跌占比≥60%，且成交放大≥5x\n异动性质：快速回落。价格下行和下跌占比触发回落提醒，优先按风险扩散处理。\n结论：CMP/靶材/材料耗材题材回落，有扩散，江丰电子是主要拖累。\n题材：CMP/靶材/材料耗材，当前领跌股：江丰电子 / 安集科技 / 华海清科。\n强度：底池样本 3分钟涨跌幅 -1.06%，下跌占比 67%，弱势股 2 只。\n成交：3分钟放大 5.40x，较昨同期 2.01x，风险扩散明显。\n当前领跌股分数：江丰电子(33.4)，安集科技(31.6)，华海清科(25.7)。\n主要贡献因子：江丰电子: 3分钟涨跌幅 -1.32%，成交放大 4.24x，日内涨幅 -1.96%；安集科技: 3分钟涨跌幅 -0.71%，成交放大 9.81x，日内涨幅 0.32%；华海清科: 3分钟涨跌幅 -1.15%，成交放大 2.14x，日内涨幅 -1.71%\n观察点：领跌是否止跌、后排是否继续补跌、放量是否变成抛压。\n风险提示：这是题材强度分析，不构成买卖建议。",
+      "leaders": [
+        {
+          "name": "江丰电子",
+          "code": "300666",
+          "change_pct": -1.3164,
+          "quote_time": "2026-07-28T10:12:27.429792",
+          "score": 33.4,
+          "factors": [
+            "3分钟-1.32%",
+            "成交放大4.24x",
+            "日内-1.96%"
+          ]
+        },
+        {
+          "name": "安集科技",
+          "code": "688019",
+          "change_pct": -0.7099,
+          "quote_time": "2026-07-28T10:12:27.429792",
+          "score": 31.62,
+          "factors": [
+            "3分钟-0.71%",
+            "成交放大9.81x",
+            "日内+0.32%"
+          ]
+        },
+        {
+          "name": "华海清科",
+          "code": "688120",
+          "change_pct": -1.1484,
+          "quote_time": "2026-07-28T10:12:27.429792",
+          "score": 25.73,
+          "factors": [
+            "3分钟-1.15%",
+            "成交放大2.14x",
+            "日内-1.71%"
+          ]
+        }
+      ],
+      "signal_type": "风险提示",
+      "is_old_economy": false,
+      "source_watch_id": "CMP/靶材/材料耗材",
+      "quote_audit": {
+        "provider": "本地盘中监控、富途行情（腾讯备用）",
+        "quote_time": "2026-07-28T10:12:36+08:00",
+        "pct_field": "3分钟涨跌幅",
+        "sample_count": 3,
+        "max_abs_leader_change_pct": 1.3164,
+        "sanity_checks": {
+          "cross_source_verified": false,
+          "price_move_valid": true,
+          "volume_valid": true,
+          "direction_ratio_valid": true,
+          "limit_down_count_valid": false
+        },
+        "board_3m_change_pct": -1.0582,
+        "direction_ratio": 0.6667,
+        "volume_ratio": 5.3956,
+        "relative_volume_vs_yesterday": 2.0099,
+        "missing_confirmation": "等待富途行情按触发时点交叉核验；通过前只作候选或观察，不作为确认交易信号。",
+        "secondary_source": "富途行情",
+        "secondary_verification": {
+          "state": "pending",
+          "checked_at": "2026-07-28T10:13:19+08:00",
+          "source": "富途行情",
+          "reason": "等待触发分钟行情完整落盘。",
+          "representatives": [],
+          "fingerprint": "7d233b7a7cf87d259de4",
+          "verifier_version": "futu-opend-2026-07-27.3"
+        }
+      },
+      "source_status": "monitor_live_unverified",
+      "valid_until": "2026-07-28T10:17:36+08:00",
       "trigger_rule": "小登底池回落预警：板块行情缺失时，底池3分钟平均跌幅≥1.0%，下跌占比≥60%，且成交放大≥5x",
       "alert_class": "risk",
       "confirmation_level": "candidate",
@@ -1263,10 +1377,10 @@
   ],
   "quote_audit": {
     "provider": "本地盘中监控、富途行情（腾讯备用）",
-    "quote_time": "2026-07-28T10:11:08+08:00",
-    "pct_field": "各异动卡标注的3分钟涨跌幅",
+    "quote_time": "2026-07-28T10:12:36+08:00",
+    "pct_field": "各异动卡标注的短周期涨跌幅",
     "sanity_checks": {
-      "sample_count": 14,
+      "sample_count": 15,
       "max_abs_leader_change_pct": 4.7115,
       "cross_source_verified": false,
       "verified_alert_count": 1
