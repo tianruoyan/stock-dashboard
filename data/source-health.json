@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-07-28T10:11:17+08:00",
+  "timestamp": "2026-07-28T10:41:02+08:00",
   "sources": {
     "tencent_http": {
       "status": "ok",
@@ -3802,7 +3802,7 @@
     },
     "futu_minute_alert_verifier": {
       "status": "ok",
-      "last_check": "2026-07-28T10:39:50+08:00",
+      "last_check": "2026-07-28T10:40:52+08:00",
       "usage": "盘中异动代表股第二行情源交叉验证",
       "detail": "富途行情按触发时点复核4张异动卡：2张相互支持、1张明显冲突、1张精度不足；精度不足只维持观察，不计作冲突。",
       "sample_count": 11,
@@ -4171,7 +4171,7 @@
   },
   "last_publish_attempt": "pending_20260717_0830_premarket_publish",
   "status": "degraded",
-  "last_error": "港股免费行情延迟约15分钟；缺少沪深成交额与前一交易日相同时点的同口径比较。",
+  "last_error": "东财概念榜10:36代理连接失败，保留10:06已核验快照；港股免费行情约延迟15分钟。",
   "tencent_a_close_postmarket_20260716": {
     "status": "ok",
     "last_check": "2026-07-16T15:18:57+08:00",
@@ -5208,6 +5208,50 @@
     "usage": "港股指数和A/H映射的15分钟延迟结构",
     "sample_count": 18,
     "evidence": "恒指+0.40%、恒科+1.48%；兆易H-11.43%、澜起H-9.19%、智谱-15.69%，仅按09:48延迟时点使用。",
+    "errors": [
+      "free quote delayed about 15 minutes"
+    ]
+  },
+  "tencent_all_a_intraday_1033_20260728": {
+    "status": "ok",
+    "last_check": "2026-07-28T10:41:02+08:00",
+    "usage": "全A现价涨跌停、炸板、宽度与重点股",
+    "detail": "有效报价5533只；涨停56、跌停8、炸板14，上涨2883、下跌2467、跌超5%为226只。",
+    "sample_count": 5533,
+    "errors": []
+  },
+  "tencent_index_industry_intraday_1034_20260728": {
+    "status": "ok",
+    "last_check": "2026-07-28T10:41:02+08:00",
+    "usage": "五大指数、成交额与98行业排名",
+    "detail": "创业板-4.90%、科创50-3.21%；沪深成交约9828.51亿元，行业末位为通信设备、元件、电子、其他电子和半导体。",
+    "sample_count": 103,
+    "errors": []
+  },
+  "eastmoney_limit_pool_intraday_1034_20260728": {
+    "status": "ok",
+    "last_check": "2026-07-28T10:41:02+08:00",
+    "usage": "非ST涨停行业分布、连板高度与20cm结构",
+    "detail": "结构池52只；IT服务4、软件4、光学光电4、汽车零部4；最高爱丽家居6板，4只20cm及1只北交所30cm。",
+    "sample_count": 52,
+    "errors": []
+  },
+  "eastmoney_concept_ranking_intraday_1036_20260728": {
+    "status": "failed_preserve_previous",
+    "last_check": "2026-07-28T10:41:02+08:00",
+    "usage": "概念涨跌和宽度增量复核",
+    "detail": "代理连接失败；未覆盖10:06已核验概念快照，10:30主线只采用当前涨停结构和腾讯行业行情。",
+    "sample_count": 0,
+    "errors": [
+      "HTTPSConnectionPool(host='79.push2.eastmoney.com', port=443): Max retries exceeded with url: /api/qt/clist/get?pn=1&pz=100&po=1&np=1&ut=bd1d9ddb04089700cf9c27f6f7426281&fltt=2&invt=2&fid=f12&fs=m%3A90+t%3A3+f%3A%2150&fields=f2%2Cf3%2Cf4%2Cf8%2Cf12%2Cf14%2Cf15%2Cf16%2Cf17%2Cf18%2Cf20%2Cf21%2Cf24%2Cf25%2Cf22%2Cf33%2Cf11%2Cf62%2Cf128%2Cf124%2Cf107%2Cf104%2Cf105%2Cf136 (Caused by ProxyError('Unable to connect to proxy', RemoteDisconnected('Remote end closed connection without response')))"
+    ]
+  },
+  "tencent_hk_delayed_intraday_1018_20260728": {
+    "status": "degraded",
+    "last_check": "2026-07-28T10:41:02+08:00",
+    "usage": "港股指数和A/H映射的15分钟延迟结构",
+    "detail": "恒指+0.75%、恒科+1.55%；兆易H-13.41%、智谱-15.93%、中兴H-1.87%，仅按10:18延迟时点使用。",
+    "sample_count": 18,
     "errors": [
       "free quote delayed about 15 minutes"
     ]
