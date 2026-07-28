@@ -1,18 +1,9 @@
 {
-  "timestamp": "2026-07-28T13:37:12+08:00",
+  "timestamp": "2026-07-28T13:39:16+08:00",
   "current_signal_date": "2026-07-28",
   "status": "degraded",
-  "summary": "发现 133 个降级/需复核项（1 个交易阻断，131 个价格/行情复核，2 个背景复核），核心结论可看但必须按影响分层使用。",
+  "summary": "发现 133 个降级/需复核项（132 个价格/行情复核，2 个背景复核），核心结论可看但必须按影响分层使用。",
   "issues": [
-    {
-      "severity": "warning",
-      "file": "alert.json",
-      "path": "",
-      "code": "invalidated_source",
-      "message": "行情源最近一次刷新失败，程序会在网络恢复后自动重试。",
-      "impact_level": "blocking",
-      "decision_action": "对应信号等待重产，页面必须显示阻断"
-    },
     {
       "severity": "warning",
       "file": "postmarket.json",
@@ -127,6 +118,15 @@
       "path": "hk_auction.mapping_chain[5]",
       "code": "bad_change_pct",
       "message": "hk_auction.mapping_chain[5] change_pct 非数字：-3.37% / -0.33%，该字段忽略并降权",
+      "impact_level": "price_review",
+      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
+    },
+    {
+      "severity": "warning",
+      "file": "alert.json",
+      "path": "quote_audit.sanity_checks",
+      "code": "historical_alert_not_cross_verified",
+      "message": "行情污染源仍降级，历史 alert 未交叉验证，只降权复盘参考",
       "impact_level": "price_review",
       "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
     },
@@ -1213,15 +1213,15 @@
   ],
   "action_plan": [
     {
-      "priority": 1,
-      "impact_level": "blocking",
-      "label": "先修复阻断",
+      "priority": 2,
+      "impact_level": "price_review",
+      "label": "二次行情复核",
       "file": "alert.json",
-      "code": "invalidated_source",
-      "problem": "行情源最近一次刷新失败，程序会在网络恢复后自动重试。",
-      "decision_action": "对应信号等待重产，页面必须显示阻断",
-      "next_step": "暂停对应交易触发；等待污染批次撤下、可信行情源恢复并重产 JSON。",
-      "unblock_condition": "quality-report blocking=0，相关文件不再 invalidated/missing。"
+      "code": "historical_alert_not_cross_verified",
+      "problem": "行情污染源仍降级，历史 alert 未交叉验证，只降权复盘参考",
+      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核",
+      "next_step": "用第二行情源复核涨跌幅、quote_time 和代表股方向；未确认前只做验证。",
+      "unblock_condition": "price_review=0 或相关来源标记 trusted/cross verified。"
     },
     {
       "priority": 2,
@@ -1272,8 +1272,8 @@
     "critical": 0,
     "warning": 133,
     "info": 1,
-    "blocking": 1,
-    "price_review": 131,
+    "blocking": 0,
+    "price_review": 132,
     "signal_review": 0,
     "background_review": 2
   },
