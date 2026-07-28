@@ -1,6 +1,6 @@
 {
-  "timestamp": "2026-07-28T13:50:18+08:00",
-  "source_status": "degraded_partial",
+  "timestamp": "2026-07-28T13:53:22+08:00",
+  "source_status": "monitor_live",
   "alerts": [
     {
       "id": "monitor-20260728-133108-a3b48f047f12",
@@ -1872,7 +1872,7 @@
         "secondary_source": "富途行情",
         "secondary_verification": {
           "state": "insufficient_precision",
-          "checked_at": "2026-07-28T13:52:08+08:00",
+          "checked_at": "2026-07-28T13:53:11+08:00",
           "source": "富途行情",
           "reason": "至少2只代表股已识别，但外部行情无法精确对齐触发时点；维持观察，不误判为行情冲突。",
           "representatives": [
@@ -2276,7 +2276,7 @@
         "secondary_source": "富途行情",
         "secondary_verification": {
           "state": "insufficient_precision",
-          "checked_at": "2026-07-28T13:52:08+08:00",
+          "checked_at": "2026-07-28T13:53:11+08:00",
           "source": "富途行情",
           "reason": "至少2只代表股已识别，但外部行情无法精确对齐触发时点；维持观察，不误判为行情冲突。",
           "representatives": [
@@ -2396,13 +2396,13 @@
       "is_old_economy": false,
       "source_watch_id": "科技硬件链",
       "quote_audit": {
-        "provider": "本地盘中监控",
+        "provider": "本地盘中监控、富途行情（腾讯备用）",
         "quote_time": "2026-07-28T13:51:47+08:00",
         "pct_field": "3分钟涨跌幅",
         "sample_count": 3,
         "max_abs_leader_change_pct": 0.4118,
         "sanity_checks": {
-          "cross_source_verified": false,
+          "cross_source_verified": true,
           "price_move_valid": false,
           "volume_valid": false,
           "direction_ratio_valid": true,
@@ -2412,7 +2412,75 @@
         "direction_ratio": 0.9,
         "volume_ratio": 4.5475,
         "relative_volume_vs_yesterday": 1.4035,
-        "missing_confirmation": "等待富途行情按触发时点交叉核验；通过前只作候选或观察，不作为确认交易信号。"
+        "missing_confirmation": "等待富途行情按触发时点交叉核验；通过前只作候选或观察，不作为确认交易信号。",
+        "secondary_source": "富途行情",
+        "secondary_verification": {
+          "state": "passed",
+          "checked_at": "2026-07-28T13:53:11+08:00",
+          "source": "富途行情",
+          "reason": "富途行情已按代表股触发时点对齐，方向和价格变化相互支持。",
+          "representatives": [
+            {
+              "股票": "新易盛",
+              "代码": "300502.SZ",
+              "监控涨跌幅": -0.4118,
+              "富途涨跌幅": -0.4573,
+              "腾讯涨跌幅": -0.6301,
+              "起始分钟": "13:48:48",
+              "结束分钟": "13:51:48",
+              "对齐方式": "逐笔行情同一时点对齐",
+              "时间偏差秒": 0.759,
+              "可比涨跌范围": [
+                -0.505,
+                -0.4285
+              ],
+              "方向一致": true,
+              "幅度一致": true,
+              "复核结论": "一致"
+            },
+            {
+              "股票": "兆易创新",
+              "代码": "603986.SH",
+              "监控涨跌幅": 0.0,
+              "富途涨跌幅": 0.0,
+              "腾讯涨跌幅": 0.0,
+              "起始分钟": "13:48:49",
+              "结束分钟": "13:51:47",
+              "对齐方式": "逐笔行情同一时点对齐",
+              "时间偏差秒": 1.939,
+              "可比涨跌范围": [
+                0.0,
+                0.0
+              ],
+              "方向一致": false,
+              "幅度一致": false,
+              "复核结论": "行情精度不足"
+            },
+            {
+              "股票": "澜起科技",
+              "代码": "688008.SH",
+              "监控涨跌幅": 0.0864,
+              "富途涨跌幅": 0.1008,
+              "腾讯涨跌幅": 0.0192,
+              "起始分钟": "13:48:46",
+              "结束分钟": "13:51:46",
+              "对齐方式": "逐笔行情同一时点对齐",
+              "时间偏差秒": 0.931,
+              "可比涨跌范围": [
+                0.0672,
+                0.1008
+              ],
+              "方向一致": true,
+              "幅度一致": true,
+              "复核结论": "一致"
+            }
+          ],
+          "window_minutes": 3,
+          "direction_agreement_ratio": 1.0,
+          "magnitude_agreement_ratio": 1.0,
+          "fingerprint": "8cd0b4820dff8dfdbb66",
+          "verifier_version": "futu-opend-2026-07-27.3"
+        }
       },
       "source_status": "degraded_partial",
       "valid_until": "2026-07-28T13:56:47+08:00",
@@ -2470,13 +2538,13 @@
       "is_old_economy": false,
       "source_watch_id": "光模块/CPO",
       "quote_audit": {
-        "provider": "本地盘中监控",
+        "provider": "本地盘中监控、富途行情（腾讯备用）",
         "quote_time": "2026-07-28T13:51:47+08:00",
         "pct_field": "3分钟涨跌幅",
         "sample_count": 3,
         "max_abs_leader_change_pct": 0.4118,
         "sanity_checks": {
-          "cross_source_verified": false,
+          "cross_source_verified": true,
           "price_move_valid": false,
           "volume_valid": false,
           "direction_ratio_valid": true,
@@ -2486,7 +2554,75 @@
         "direction_ratio": 1.0,
         "volume_ratio": 4.8816,
         "relative_volume_vs_yesterday": 1.911,
-        "missing_confirmation": "等待富途行情按触发时点交叉核验；通过前只作候选或观察，不作为确认交易信号。"
+        "missing_confirmation": "等待富途行情按触发时点交叉核验；通过前只作候选或观察，不作为确认交易信号。",
+        "secondary_source": "富途行情",
+        "secondary_verification": {
+          "state": "passed",
+          "checked_at": "2026-07-28T13:53:11+08:00",
+          "source": "富途行情",
+          "reason": "富途行情已按代表股触发时点对齐，方向和价格变化相互支持。",
+          "representatives": [
+            {
+              "股票": "光迅科技",
+              "代码": "002281.SZ",
+              "监控涨跌幅": -0.1204,
+              "富途涨跌幅": -0.0459,
+              "腾讯涨跌幅": -0.3204,
+              "起始分钟": "13:48:48",
+              "结束分钟": "13:51:48",
+              "对齐方式": "逐笔行情同一时点对齐",
+              "时间偏差秒": 0.759,
+              "可比涨跌范围": [
+                -0.0459,
+                -0.0115
+              ],
+              "方向一致": false,
+              "幅度一致": false,
+              "复核结论": "行情精度不足"
+            },
+            {
+              "股票": "新易盛",
+              "代码": "300502.SZ",
+              "监控涨跌幅": -0.4118,
+              "富途涨跌幅": -0.4573,
+              "腾讯涨跌幅": -0.6301,
+              "起始分钟": "13:48:48",
+              "结束分钟": "13:51:48",
+              "对齐方式": "逐笔行情同一时点对齐",
+              "时间偏差秒": 0.759,
+              "可比涨跌范围": [
+                -0.505,
+                -0.4285
+              ],
+              "方向一致": true,
+              "幅度一致": true,
+              "复核结论": "一致"
+            },
+            {
+              "股票": "光库科技",
+              "代码": "300620.SZ",
+              "监控涨跌幅": -0.1524,
+              "富途涨跌幅": -0.4015,
+              "腾讯涨跌幅": -0.189,
+              "起始分钟": "13:48:45",
+              "结束分钟": "13:51:48",
+              "对齐方式": "逐笔行情同一时点对齐",
+              "时间偏差秒": 2.241,
+              "可比涨跌范围": [
+                -0.4153,
+                -0.24
+              ],
+              "方向一致": true,
+              "幅度一致": true,
+              "复核结论": "一致"
+            }
+          ],
+          "window_minutes": 3,
+          "direction_agreement_ratio": 1.0,
+          "magnitude_agreement_ratio": 1.0,
+          "fingerprint": "ec2cbaf2e971713c950b",
+          "verifier_version": "futu-opend-2026-07-27.3"
+        }
       },
       "source_status": "degraded_partial",
       "valid_until": "2026-07-28T13:56:47+08:00",
@@ -2544,7 +2680,7 @@
       "is_old_economy": false,
       "source_watch_id": "8192超节点/昇腾算力",
       "quote_audit": {
-        "provider": "本地盘中监控",
+        "provider": "本地盘中监控、富途行情（腾讯备用）",
         "quote_time": "2026-07-28T13:51:47+08:00",
         "pct_field": "3分钟涨跌幅",
         "sample_count": 3,
@@ -2560,7 +2696,73 @@
         "direction_ratio": 1.0,
         "volume_ratio": 4.2775,
         "relative_volume_vs_yesterday": 1.7249,
-        "missing_confirmation": "等待富途行情按触发时点交叉核验；通过前只作候选或观察，不作为确认交易信号。"
+        "missing_confirmation": "等待富途行情按触发时点交叉核验；通过前只作候选或观察，不作为确认交易信号。",
+        "secondary_source": "富途行情",
+        "secondary_verification": {
+          "state": "insufficient_precision",
+          "checked_at": "2026-07-28T13:53:11+08:00",
+          "source": "富途行情",
+          "reason": "至少2只代表股已识别，但外部行情无法精确对齐触发时点；维持观察，不误判为行情冲突。",
+          "representatives": [
+            {
+              "股票": "生益科技",
+              "代码": "600183.SH",
+              "监控涨跌幅": 0.0,
+              "富途涨跌幅": 0.0,
+              "腾讯涨跌幅": 0.0,
+              "起始分钟": "13:48:47",
+              "结束分钟": "13:51:46",
+              "对齐方式": "逐笔行情同一时点对齐",
+              "时间偏差秒": 0.371,
+              "可比涨跌范围": [
+                0.0,
+                0.0
+              ],
+              "方向一致": false,
+              "幅度一致": false,
+              "复核结论": "行情精度不足"
+            },
+            {
+              "股票": "光迅科技",
+              "代码": "002281.SZ",
+              "监控涨跌幅": -0.1204,
+              "富途涨跌幅": -0.0459,
+              "腾讯涨跌幅": -0.3204,
+              "起始分钟": "13:48:48",
+              "结束分钟": "13:51:48",
+              "对齐方式": "逐笔行情同一时点对齐",
+              "时间偏差秒": 0.759,
+              "可比涨跌范围": [
+                -0.0459,
+                -0.0115
+              ],
+              "方向一致": false,
+              "幅度一致": false,
+              "复核结论": "行情精度不足"
+            },
+            {
+              "股票": "新易盛",
+              "代码": "300502.SZ",
+              "监控涨跌幅": -0.4118,
+              "富途涨跌幅": -0.4573,
+              "腾讯涨跌幅": -0.6301,
+              "起始分钟": "13:48:48",
+              "结束分钟": "13:51:48",
+              "对齐方式": "逐笔行情同一时点对齐",
+              "时间偏差秒": 0.759,
+              "可比涨跌范围": [
+                -0.505,
+                -0.4285
+              ],
+              "方向一致": true,
+              "幅度一致": true,
+              "复核结论": "一致"
+            }
+          ],
+          "window_minutes": 3,
+          "fingerprint": "9ba96569a87196974818",
+          "verifier_version": "futu-opend-2026-07-27.3"
+        }
       },
       "source_status": "degraded_partial",
       "valid_until": "2026-07-28T13:56:47+08:00",
@@ -2579,7 +2781,7 @@
       "sample_count": 20,
       "max_abs_leader_change_pct": 3.3557,
       "cross_source_verified": false,
-      "verified_alert_count": 6
+      "verified_alert_count": 8
     }
   },
   "note": "异动来自本地短周期监控；候选卡须经富途行情按触发时点复核后才能升级。"
