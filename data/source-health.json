@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-07-28T13:07:02+08:00",
+  "timestamp": "2026-07-28T13:41:05+08:00",
   "sources": {
     "tencent_http": {
       "status": "ok",
@@ -3802,10 +3802,10 @@
     },
     "futu_minute_alert_verifier": {
       "status": "ok",
-      "last_check": "2026-07-28T13:39:02+08:00",
+      "last_check": "2026-07-28T13:41:12+08:00",
       "usage": "盘中异动代表股第二行情源交叉验证",
-      "detail": "富途行情按触发时点复核5张异动卡：1张相互支持、0张明显冲突、4张精度不足；精度不足只维持观察，不计作冲突。",
-      "sample_count": 15,
+      "detail": "富途行情按触发时点复核7张异动卡：2张相互支持、0张明显冲突、5张精度不足；精度不足只维持观察，不计作冲突。",
+      "sample_count": 21,
       "errors": []
     },
     "tencent_a_quote_intraday_0945": {
@@ -4171,7 +4171,7 @@
   },
   "last_publish_attempt": "pending_20260717_0830_premarket_publish",
   "status": "degraded",
-  "last_error": "东财概念榜13:02再次连接失败，概念宽度降级参考11:04快照；港股最新可用为11:59午间数据。",
+  "last_error": "东财概念榜13:34再次连接失败，概念宽度降级参考11:04快照；港股最新可用为13:17延时快照。",
   "tencent_a_close_postmarket_20260716": {
     "status": "ok",
     "last_check": "2026-07-16T15:18:57+08:00",
@@ -5384,6 +5384,50 @@
     "sample_count": 18,
     "errors": [
       "13:01 query returned Hong Kong 11:59 lunch snapshot; not a synchronized afternoon quote"
+    ]
+  },
+  "tencent_all_a_intraday_1332_20260728": {
+    "status": "ok",
+    "last_check": "2026-07-28T13:41:05+08:00",
+    "usage": "13:30全A涨跌停、炸板、宽度与重点股",
+    "detail": "有效报价5533只；涨停63、跌停26、炸板24，上涨2430、下跌2915、跌超5%为517只。",
+    "sample_count": 5533,
+    "errors": []
+  },
+  "tencent_index_industry_intraday_1332_20260728": {
+    "status": "ok",
+    "last_check": "2026-07-28T13:41:05+08:00",
+    "usage": "13:30五大指数、成交额与98行业排名",
+    "detail": "创业板-6.36%、科创50-5.49%；沪深成交约15016.44亿元，消费居前、通信设备和元件居末。",
+    "sample_count": 103,
+    "errors": []
+  },
+  "eastmoney_limit_pool_intraday_1332_20260728": {
+    "status": "ok",
+    "last_check": "2026-07-28T13:41:05+08:00",
+    "usage": "13:30非ST涨停行业分布、连板与高弹性结构",
+    "detail": "返回57只；IT服务5、软件5、光学4、汽车零部4；最高爱丽家居6板，3只20cm及1只北交所30cm。",
+    "sample_count": 57,
+    "errors": []
+  },
+  "eastmoney_concept_ranking_intraday_1334_20260728": {
+    "status": "failed",
+    "last_check": "2026-07-28T13:41:05+08:00",
+    "usage": "13:30概念涨跌与宽度",
+    "detail": "首次请求时代理连接被远端关闭，未形成数据；未将空结果用于结论，降级参考11:04最后有效快照。",
+    "sample_count": 0,
+    "errors": [
+      "HTTPSConnectionPool(host='79.push2.eastmoney.com', port=443): Max retries exceeded with url: /api/qt/clist/get?pn=1&pz=100&po=1&np=1&ut=bd1d9ddb04089700cf9c27f6f7426281&fltt=2&invt=2&fid=f12&fs=m%3A90+t%3A3+f%3A%2150&fields=f2%2Cf3%2Cf4%2Cf8%2Cf12%2Cf14%2Cf15%2Cf16%2Cf17%2Cf18%2Cf20%2Cf21%2Cf24%2Cf25%2Cf22%2Cf33%2Cf11%2Cf62%2Cf128%2Cf124%2Cf107%2Cf104%2Cf105%2Cf136 (Caused by ProxyError('Unable to connect to proxy', RemoteDisconnected('Remote end closed connection without response')))"
+    ]
+  },
+  "tencent_hk_delayed_intraday_1317_20260728": {
+    "status": "degraded",
+    "last_check": "2026-07-28T13:41:05+08:00",
+    "usage": "13:30港股A/H映射",
+    "detail": "13:32查询返回13:17快照：恒指-0.02%、恒科+0.14%；兆易H-16.19%、智谱-17.33%、中兴H-2.68%。",
+    "sample_count": 18,
+    "errors": [
+      "Hong Kong quote is about 15 minutes behind the A-share checkpoint; used only for mapping"
     ]
   }
 }
