@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-07-28T09:31:00+08:00",
+  "timestamp": "2026-07-28T09:43:41+08:00",
   "sources": {
     "tencent_http": {
       "status": "ok",
@@ -4091,11 +4091,45 @@
       "errors": [
         "Empty reply from server；继续使用09:18快照并标注指示价/零成交样本"
       ]
+    },
+    "tencent_all_a_intraday_0937_20260728": {
+      "status": "ok",
+      "last_check": "2026-07-28T09:43:41+08:00",
+      "usage": "全A现价涨跌停宽度、重点板块核心和竞价封板留存",
+      "detail": "有效报价5533只，明确涨跌停分母5532只；涨停30、跌停3，上涨2817、下跌2478。",
+      "sample_count": 5533,
+      "errors": []
+    },
+    "eastmoney_concept_ranking_intraday_0937_20260728": {
+      "status": "ok",
+      "last_check": "2026-07-28T09:43:41+08:00",
+      "usage": "概念涨跌与上涨/下跌宽度",
+      "detail": "单次串行请求返回概念榜30/495；光刻机(胶)+2.71%、75涨22跌，显示技术+1.39%、30涨17跌。",
+      "sample_count": 30,
+      "errors": []
+    },
+    "tencent_hk_continuous_intraday_0937_20260728": {
+      "status": "degraded",
+      "last_check": "2026-07-28T09:43:41+08:00",
+      "usage": "港股连续竞价与A/H映射探针",
+      "detail": "18个港股指数/个股探针均未刷新到09:30后，未用于盘中共振判断；仅保留竞价值。",
+      "sample_count": 18,
+      "errors": [
+        "quote timestamps stale before continuous trading"
+      ]
+    },
+    "local_intraday_market_service_0933_20260728": {
+      "status": "ok",
+      "last_check": "2026-07-28T09:43:41+08:00",
+      "usage": "五大指数与腾讯98行业排名",
+      "detail": "五大指数均较竞价开盘跌幅收敛；行业前五为包装印刷、渔业、酒店餐饮、白色家电、文娱用品，后五含元件、通信设备、半导体。",
+      "sample_count": 103,
+      "errors": []
     }
   },
   "last_publish_attempt": "pending_20260717_0830_premarket_publish",
   "status": "degraded",
-  "last_error": null,
+  "last_error": "港股腾讯报价未刷新到09:30后连续竞价；保留09:20至09:22竞价快照并降权。",
   "tencent_a_close_postmarket_20260716": {
     "status": "ok",
     "last_check": "2026-07-16T15:18:57+08:00",
@@ -4276,7 +4310,7 @@
     "errors": []
   },
   "overall_status": "degraded",
-  "last_codex_note": "9:25集合竞价已用交易所日历、腾讯全A固定开盘价、精确涨跌停价和指数竞价金额完成核验；港股结构源09:29重试空返回，保留09:18有效快照并降权。",
+  "last_codex_note": "09:37开盘更新已用腾讯全A、重点股、无模型指数行业快照及东财单次概念榜核验；港股探针仍停留竞价时点，未冒充连续竞价。",
   "eastmoney_structure_pools_intraday_1000_20260717": {
     "status": "ok",
     "last_check": "2026-07-17T10:02:40+08:00",
@@ -5050,5 +5084,43 @@
     "errors": [
       "Empty reply from server；继续使用09:18快照并标注指示价/零成交样本"
     ]
+  },
+  "tencent_all_a_intraday_0937_20260728": {
+    "status": "ok",
+    "checked_at": "2026-07-28T09:43:41+08:00",
+    "market_time": "2026-07-28 09:37:06至09:37:11",
+    "usage": "全A现价涨跌停宽度、重点板块核心和竞价封板留存",
+    "sample_count": 5533,
+    "evidence": "有效报价5533只，明确涨跌停分母5532只；涨停30、跌停3，上涨2817、下跌2478。",
+    "errors": []
+  },
+  "eastmoney_concept_ranking_intraday_0937_20260728": {
+    "status": "ok",
+    "checked_at": "2026-07-28T09:43:41+08:00",
+    "market_time": "采集时间2026-07-28 09:37:57",
+    "usage": "概念涨跌与上涨/下跌宽度",
+    "sample_count": 30,
+    "evidence": "单次串行请求返回概念榜30/495；光刻机(胶)+2.71%、75涨22跌，显示技术+1.39%、30涨17跌。",
+    "errors": []
+  },
+  "tencent_hk_continuous_intraday_0937_20260728": {
+    "status": "degraded",
+    "checked_at": "2026-07-28T09:43:41+08:00",
+    "market_time": "返回时间停留2026-07-28 09:20:13至09:22:52",
+    "usage": "港股连续竞价与A/H映射探针",
+    "sample_count": 18,
+    "evidence": "18个港股指数/个股探针均未刷新到09:30后，未用于盘中共振判断；仅保留竞价值。",
+    "errors": [
+      "quote timestamps stale before continuous trading"
+    ]
+  },
+  "local_intraday_market_service_0933_20260728": {
+    "status": "ok",
+    "checked_at": "2026-07-28T09:43:41+08:00",
+    "market_time": "2026-07-28 09:33:24至09:33:27",
+    "usage": "五大指数与腾讯98行业排名",
+    "sample_count": 103,
+    "evidence": "五大指数均较竞价开盘跌幅收敛；行业前五为包装印刷、渔业、酒店餐饮、白色家电、文娱用品，后五含元件、通信设备、半导体。",
+    "errors": []
   }
 }
