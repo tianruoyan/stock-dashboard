@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-07-27T16:15:38+08:00",
+  "timestamp": "2026-07-28T08:42:00+08:00",
   "sources": {
     "tencent_http": {
       "status": "ok",
@@ -3977,6 +3977,50 @@
       "errors": [
         "可靠全量概念排行不可用"
       ]
+    },
+    "tencent_us_overnight_0830_20260728": {
+      "status": "ok_cross_checked",
+      "last_check": "2026-07-28T08:42:00+08:00",
+      "usage": "美股三大指数与AI/交换机代表股隔夜映射",
+      "detail": "道指+0.51%、标普+0.02%、纳指-0.18%；NVIDIA-4.99%、AMD-5.17%、Micron-2.25%、Broadcom+0.34%。",
+      "sample_count": 10,
+      "errors": []
+    },
+    "yahoo_japan_korea_0830_20260728": {
+      "status": "recovered_ok",
+      "last_check": "2026-07-28T08:42:00+08:00",
+      "usage": "日韩指数、设备与存储科技链早盘映射",
+      "detail": "日经225约-3.28%、KOSPI约-6.50%；Tokyo Electron约-9.39%、Samsung Electronics约-7.68%、SK hynix约-9.69%。",
+      "sample_count": 9,
+      "errors": [
+        "盘中波动较大；结论仅对应08:18附近真实快照，不外推为后续时点"
+      ]
+    },
+    "sina_global_indices_0830_20260728": {
+      "status": "ok_cross_check",
+      "last_check": "2026-07-28T08:42:00+08:00",
+      "usage": "日韩指数方向交叉核验",
+      "detail": "与Yahoo/Tencent同向显示日经、KOSPI显著下跌；因采样时点不同不混用具体涨幅。",
+      "sample_count": 2,
+      "errors": []
+    },
+    "cninfo_incremental_0830_20260728": {
+      "status": "ok",
+      "last_check": "2026-07-28T08:42:00+08:00",
+      "usage": "配置池与专题股票公告增量扫描",
+      "detail": "全市场公告去重1320条，109个监测代码命中13条；实质增量为中际旭创H股定价、工业富联回购、德明利解禁及不减持承诺。",
+      "sample_count": 1320,
+      "errors": []
+    },
+    "official_web_scan_0830_20260728": {
+      "status": "ok",
+      "last_check": "2026-07-28T08:42:00+08:00",
+      "usage": "H1-H5官媒、公司官网和产业证据核验",
+      "detail": "新华社存储价格与长鑫经营数据、Intel-蓝思玻璃基合作、NVIDIA-SSI、AMD-韩国政府、NVIDIA/NAVER/Brookfield扩产均已核验。",
+      "sample_count": 6,
+      "errors": [
+        "未发现TGV/MicroLED量产收入及电子布最新价格排产的官方新增证据"
+      ]
     }
   },
   "last_publish_attempt": "pending_20260717_0830_premarket_publish",
@@ -4162,7 +4206,7 @@
     "errors": []
   },
   "overall_status": "degraded",
-  "last_codex_note": "A股收盘终值、全A宽度、结构池、申万归类和尾盘分钟均可用；仅全量概念榜与港股未收盘映射降级。",
+  "last_codex_note": "8:30假设验证所需美股、日韩早盘、巨潮公告与官方产业证据均可用；港股竞价尚未开始，按阶段性缺失留待9:15，不以旧数据补写。",
   "eastmoney_structure_pools_intraday_1000_20260717": {
     "status": "ok",
     "last_check": "2026-07-17T10:02:40+08:00",
@@ -4808,6 +4852,55 @@
     "evidence": "初始hkHSI/hkHSTECH接口持续返回延迟快照；切换同一腾讯源r_hk实时接口后取得16:08收盘终值，延迟快照未用于终值。",
     "errors": [
       "约15分钟时效延迟"
+    ]
+  },
+  "tencent_us_overnight_0830_20260728": {
+    "status": "ok_cross_checked",
+    "checked_at": "2026-07-28T08:42:00+08:00",
+    "market_time": "2026-07-27 US close",
+    "usage": "美股三大指数与AI/交换机代表股隔夜映射",
+    "sample_count": 10,
+    "evidence": "道指+0.51%、标普+0.02%、纳指-0.18%；NVIDIA-4.99%、AMD-5.17%、Micron-2.25%、Broadcom+0.34%。",
+    "errors": []
+  },
+  "yahoo_japan_korea_0830_20260728": {
+    "status": "recovered_ok",
+    "checked_at": "2026-07-28T08:42:00+08:00",
+    "market_time": "2026-07-28 08:18附近 CST",
+    "usage": "日韩指数、设备与存储科技链早盘映射",
+    "sample_count": 9,
+    "evidence": "日经225约-3.28%、KOSPI约-6.50%；Tokyo Electron约-9.39%、Samsung Electronics约-7.68%、SK hynix约-9.69%。",
+    "errors": [
+      "盘中波动较大；结论仅对应08:18附近真实快照，不外推为后续时点"
+    ]
+  },
+  "sina_global_indices_0830_20260728": {
+    "status": "ok_cross_check",
+    "checked_at": "2026-07-28T08:42:00+08:00",
+    "market_time": "2026-07-28 08:32附近 CST",
+    "usage": "日韩指数方向交叉核验",
+    "sample_count": 2,
+    "evidence": "与Yahoo/Tencent同向显示日经、KOSPI显著下跌；因采样时点不同不混用具体涨幅。",
+    "errors": []
+  },
+  "cninfo_incremental_0830_20260728": {
+    "status": "ok",
+    "checked_at": "2026-07-28T08:42:00+08:00",
+    "market_time": "2026-07-27 20:00至2026-07-28 08:30",
+    "usage": "配置池与专题股票公告增量扫描",
+    "sample_count": 1320,
+    "evidence": "全市场公告去重1320条，109个监测代码命中13条；实质增量为中际旭创H股定价、工业富联回购、德明利解禁及不减持承诺。",
+    "errors": []
+  },
+  "official_web_scan_0830_20260728": {
+    "status": "ok",
+    "checked_at": "2026-07-28T08:42:00+08:00",
+    "market_time": "截至2026-07-28 08:30 CST",
+    "usage": "H1-H5官媒、公司官网和产业证据核验",
+    "sample_count": 6,
+    "evidence": "新华社存储价格与长鑫经营数据、Intel-蓝思玻璃基合作、NVIDIA-SSI、AMD-韩国政府、NVIDIA/NAVER/Brookfield扩产均已核验。",
+    "errors": [
+      "未发现TGV/MicroLED量产收入及电子布最新价格排产的官方新增证据"
     ]
   }
 }
