@@ -1,9 +1,9 @@
 {
-  "timestamp": "2026-07-28T09:18:23+08:00",
+  "timestamp": "2026-07-28T09:22:42+08:00",
   "current_signal_date": "2026-07-28",
   "quality_gate": {
     "status": "degraded",
-    "summary": "发现 128 个降级/需复核项（122 个价格/行情复核，7 个背景复核），核心结论可看但必须按影响分层使用。",
+    "summary": "发现 136 个降级/需复核项（130 个价格/行情复核，7 个背景复核），核心结论可看但必须按影响分层使用。",
     "decision_flags": [
       "行情/涨跌幅需二次源复核",
       "盘中异动源降级，alert 类信号降权",
@@ -11,10 +11,10 @@
       "行情源降级，需复核涨跌幅"
     ],
     "blocking_count": 0,
-    "price_review_count": 122,
+    "price_review_count": 130,
     "background_review_count": 7
   },
-  "summary": "当前时段尚无可用盘面结论。 数据质量：发现 128 个降级/需复核项（122 个价格/行情复核，7 个背景复核），核心结论可看但必须按影响分层使用。",
+  "summary": "当前时段尚无可用盘面结论。 数据质量：发现 136 个降级/需复核项（130 个价格/行情复核，7 个背景复核），核心结论可看但必须按影响分层使用。",
   "observation_coverage": {
     "summary": "独立盘面/盘后扫描 1 条，但缺少纯主动新线。",
     "independent_count": 1,
@@ -30,7 +30,7 @@
     "stance": "风险优先，只做验证",
     "action": "不把候选方向当交易机会；先看风险收敛、数据恢复和核心承接。",
     "reasons": [
-      "发现 128 个降级/需复核项（122 个价格/行情复核，7 个背景复核），核心结论可看但必须按影响分层使用。",
+      "发现 136 个降级/需复核项（130 个价格/行情复核，7 个背景复核），核心结论可看但必须按影响分层使用。",
       "A/B级风险 1 条",
       "可用机会 0 条，降权候选 8 条",
       "先处理：二次行情复核（alert.json）"
@@ -39,13 +39,13 @@
       "数据质量降级"
     ],
     "upgrade_watch": [
-      "#1 待触发：机器人/工业自动化：题材3分钟涨跌幅>=1.5%，方向占比>=70%，成交放大>=5x。 数据质量恢复或二次行情源确认前，不升级为可用机会。",
-      "#2 待触发：金融/消费防御：核心股低开后放量收复开盘价或跌幅明显收敛。 数据质量恢复或二次行情源确认前，不升级为可用机会。",
-      "#3 待触发：半导体制造：核心股低开后放量收复开盘价或跌幅明显收敛。 数据质量恢复或二次行情源确认前，不升级为可用机会。"
+      "#1 待触发：中概情绪映射下的互联网/消费电子相对抗跌：核心股低开后放量收复开盘价或跌幅明显收敛。 数据质量恢复或二次行情源确认前，不升级为可用机会。",
+      "#2 待触发：机器人/工业自动化：题材3分钟涨跌幅>=1.5%，方向占比>=70%，成交放大>=5x。 数据质量恢复或二次行情源确认前，不升级为可用机会。",
+      "#3 待触发：金融/消费防御：核心股低开后放量收复开盘价或跌幅明显收敛。 数据质量恢复或二次行情源确认前，不升级为可用机会。"
     ],
     "verification_focus": [
-      "题材3分钟涨跌幅>=1.5%，方向占比>=70%，成交放大>=5x",
-      "核心股低开后放量收复开盘价或跌幅明显收敛"
+      "核心股低开后放量收复开盘价或跌幅明显收敛",
+      "题材3分钟涨跌幅>=1.5%，方向占比>=70%，成交放大>=5x"
     ],
     "quality_actions": [
       {
@@ -75,6 +75,12 @@
     ],
     "verification_queue": [
       {
+        "title": "待触发：中概情绪映射下的互联网/消费电子相对抗跌",
+        "grade": "D",
+        "use_action": "仅复核",
+        "reason": "核心股低开后放量收复开盘价或跌幅明显收敛"
+      },
+      {
         "title": "待触发：机器人/工业自动化",
         "grade": "D",
         "use_action": "仅复核",
@@ -96,16 +102,16 @@
         "title": "待触发：半导体设备材料",
         "grade": "D",
         "use_action": "仅复核",
-        "reason": "题材3分钟涨跌幅>=1.5%，方向占比>=70%，成交放大>=5x"
-      },
-      {
-        "title": "待触发：交换机/高速以太网",
-        "grade": "D",
-        "use_action": "仅复核",
-        "reason": "题材3分钟涨跌幅>=1.5%，方向占比>=70%，成交放大>=5x"
+        "reason": "核心股低开后放量收复开盘价或跌幅明显收敛"
       }
     ],
     "disabled_signals": [
+      {
+        "title": "待触发：中概情绪映射下的互联网/消费电子相对抗跌",
+        "grade": "D",
+        "use_action": "仅复核",
+        "reason": "核心股低开后放量收复开盘价或跌幅明显收敛"
+      },
       {
         "title": "待触发：机器人/工业自动化",
         "grade": "D",
@@ -117,16 +123,60 @@
         "grade": "D",
         "use_action": "仅复核",
         "reason": "核心股低开后放量收复开盘价或跌幅明显收敛"
-      },
-      {
-        "title": "待触发：半导体制造",
-        "grade": "D",
-        "use_action": "仅复核",
-        "reason": "核心股低开后放量收复开盘价或跌幅明显收敛"
       }
     ]
   },
   "opportunities": [
+    {
+      "title": "待触发：中概情绪映射下的互联网/消费电子相对抗跌",
+      "type": "opportunity_watch",
+      "trigger_reason": "盘前/晚间注意点已转为盘中追踪清单，等待实时行情触发。",
+      "conclusion": "防御型分化开盘：中资风险偏好改善提供底部支撑，但全球与港股科技硬件同步走弱。最可能相对受益的是小米/消费电子映射和低位防御轮动；最大风险是存储、AI算力、CPO、交换机及半导体设备材料的高弹性筹码集中释放。",
+      "confidence": "low",
+      "evidence": [],
+      "source_files": [
+        "opportunity-watch.json"
+      ],
+      "watch_next": [
+        "核心股低开后放量收复开盘价或跌幅明显收敛",
+        "同题材后排不再扩大负反馈，跌停/炸板数量下降",
+        "板块ETF或指数不再创新低并出现承接"
+      ],
+      "invalidation": "核心股继续放量下跌",
+      "tags": [
+        "科技硬件链",
+        "风控"
+      ],
+      "quality_flags": [
+        "行情/涨跌幅需二次源复核",
+        "盘中异动源降级，alert 类信号降权",
+        "港股收盘窗口可能非终值",
+        "行情源降级，需复核涨跌幅"
+      ],
+      "tone": "good",
+      "discovery_type": "premarket_watch_queue",
+      "evidence_score": 21,
+      "missing_evidence": [
+        "缺少可核验证据",
+        "数据源降级需二次确认"
+      ],
+      "next_action": "核心股低开后放量收复开盘价或跌幅明显收敛",
+      "observation_source": "数据派生",
+      "independent_observation": false,
+      "signal_score": 12,
+      "signal_grade": "D",
+      "use_action": "仅复核",
+      "use_reasons": [
+        "缺少证据",
+        "有下一步验证",
+        "有证伪条件",
+        "有来源文件",
+        "数据质量降权"
+      ],
+      "upgrade_rank": 1,
+      "upgrade_priority": "仅复核",
+      "upgrade_condition": "核心股低开后放量收复开盘价或跌幅明显收敛。 数据质量恢复或二次行情源确认前，不升级为可用机会。"
+    },
     {
       "title": "待触发：机器人/工业自动化",
       "type": "opportunity_watch",
@@ -174,7 +224,7 @@
         "有来源文件",
         "数据质量降权"
       ],
-      "upgrade_rank": 1,
+      "upgrade_rank": 2,
       "upgrade_priority": "仅复核",
       "upgrade_condition": "题材3分钟涨跌幅>=1.5%，方向占比>=70%，成交放大>=5x。 数据质量恢复或二次行情源确认前，不升级为可用机会。"
     },
@@ -225,7 +275,7 @@
         "有来源文件",
         "数据质量降权"
       ],
-      "upgrade_rank": 2,
+      "upgrade_rank": 3,
       "upgrade_priority": "仅复核",
       "upgrade_condition": "核心股低开后放量收复开盘价或跌幅明显收敛。 数据质量恢复或二次行情源确认前，不升级为可用机会。"
     },
@@ -275,7 +325,7 @@
         "有来源文件",
         "数据质量降权"
       ],
-      "upgrade_rank": 3,
+      "upgrade_rank": 4,
       "upgrade_priority": "仅复核",
       "upgrade_condition": "核心股低开后放量收复开盘价或跌幅明显收敛。 数据质量恢复或二次行情源确认前，不升级为可用机会。"
     },
@@ -283,18 +333,19 @@
       "title": "待触发：半导体设备材料",
       "type": "opportunity_watch",
       "trigger_reason": "盘前/晚间注意点已转为盘中追踪清单，等待实时行情触发。",
-      "conclusion": "8:30预判科技高弹性方向受压；待9:15港股与9:25 A股竞价确认，当前不填写未发生的涨跌停统计。；半导体设备材料；观察；材料按强化、设备按观察分别验证；出现第二只设备封板、订单或业绩证据后才升级整线。；材料3只封板、设备至纯科技2板，中科飞测+8.96%；半导体行业仅+1.10%，整线仍是内部轮动。",
+      "conclusion": "防御型分化开盘：中资风险偏好改善提供底部支撑，但全球与港股科技硬件同步走弱。最可能相对受益的是小米/消费电子映射和低位防御轮动；最大风险是存储、AI算力、CPO、交换机及半导体设备材料的高弹性筹码集中释放。；半导体设备材料；观察；材料按强化、设备按观察分别验证；出现第二只设备封板、订单或业绩证据后才升级整线。；材料3只封板、设备至纯科技2板，中科飞测+8.…",
       "confidence": "low",
       "evidence": [],
       "source_files": [
         "opportunity-watch.json"
       ],
       "watch_next": [
-        "题材3分钟涨跌幅>=1.5%，方向占比>=70%，成交放大>=5x",
-        "板块内出现批量涨停/封板或后排扩散",
-        "核心股、ETF、后排扩散同向确认"
+        "核心股低开后放量收复开盘价或跌幅明显收敛",
+        "同题材后排不再扩大负反馈，跌停/炸板数量下降",
+        "板块ETF或指数不再创新低并出现承接",
+        "题材3分钟涨跌幅>=1.5%，方向占比>=70%，成交放大>=5x"
       ],
-      "invalidation": "核心股高开低走或冲高回落",
+      "invalidation": "核心股继续放量下跌",
       "tags": [
         "科技硬件链",
         "风控"
@@ -312,7 +363,7 @@
         "缺少可核验证据",
         "数据源降级需二次确认"
       ],
-      "next_action": "题材3分钟涨跌幅>=1.5%，方向占比>=70%，成交放大>=5x",
+      "next_action": "核心股低开后放量收复开盘价或跌幅明显收敛",
       "observation_source": "数据派生",
       "independent_observation": false,
       "signal_score": 12,
@@ -325,9 +376,9 @@
         "有来源文件",
         "数据质量降权"
       ],
-      "upgrade_rank": 4,
+      "upgrade_rank": 5,
       "upgrade_priority": "仅复核",
-      "upgrade_condition": "题材3分钟涨跌幅>=1.5%，方向占比>=70%，成交放大>=5x。 数据质量恢复或二次行情源确认前，不升级为可用机会。"
+      "upgrade_condition": "核心股低开后放量收复开盘价或跌幅明显收敛。 数据质量恢复或二次行情源确认前，不升级为可用机会。"
     },
     {
       "title": "待触发：交换机/高速以太网",
@@ -376,7 +427,7 @@
         "有来源文件",
         "数据质量降权"
       ],
-      "upgrade_rank": 5,
+      "upgrade_rank": 6,
       "upgrade_priority": "仅复核",
       "upgrade_condition": "题材3分钟涨跌幅>=1.5%，方向占比>=70%，成交放大>=5x。 数据质量恢复或二次行情源确认前，不升级为可用机会。"
     },
@@ -427,7 +478,7 @@
         "有来源文件",
         "数据质量降权"
       ],
-      "upgrade_rank": 6,
+      "upgrade_rank": 7,
       "upgrade_priority": "仅复核",
       "upgrade_condition": "核心股低开后放量收复开盘价或跌幅明显收敛。 数据质量恢复或二次行情源确认前，不升级为可用机会。"
     },
@@ -435,58 +486,7 @@
       "title": "待触发：存储/HBM",
       "type": "opportunity_watch",
       "trigger_reason": "盘前/晚间注意点已转为盘中追踪清单，等待实时行情触发。",
-      "conclusion": "8:30预判科技高弹性方向受压；待9:15港股与9:25 A股竞价确认，当前不填写未发生的涨跌停统计。；韩国半导体供应链与美国科技企业的大规模AI产业合作报道继续发酵。；与今日Samsung、SK hynix早盘上涨形成局部共振，对A股存储/HBM只是观察加分项。；Micron / Samsung Electronics / SK hynix；美日韩存储股…",
-      "confidence": "low",
-      "evidence": [],
-      "source_files": [
-        "opportunity-watch.json"
-      ],
-      "watch_next": [
-        "题材3分钟涨跌幅>=1.5%，方向占比>=70%，成交放大>=5x",
-        "板块内出现批量涨停/封板或后排扩散",
-        "核心股、ETF、后排扩散同向确认",
-        "核心股低开后放量收复开盘价或跌幅明显收敛"
-      ],
-      "invalidation": "核心股高开低走或冲高回落",
-      "tags": [
-        "科技硬件链",
-        "风控"
-      ],
-      "quality_flags": [
-        "行情/涨跌幅需二次源复核",
-        "盘中异动源降级，alert 类信号降权",
-        "港股收盘窗口可能非终值",
-        "行情源降级，需复核涨跌幅"
-      ],
-      "tone": "good",
-      "discovery_type": "premarket_watch_queue",
-      "evidence_score": 21,
-      "missing_evidence": [
-        "缺少可核验证据",
-        "数据源降级需二次确认"
-      ],
-      "next_action": "题材3分钟涨跌幅>=1.5%，方向占比>=70%，成交放大>=5x",
-      "observation_source": "数据派生",
-      "independent_observation": false,
-      "signal_score": 12,
-      "signal_grade": "D",
-      "use_action": "仅复核",
-      "use_reasons": [
-        "缺少证据",
-        "有下一步验证",
-        "有证伪条件",
-        "有来源文件",
-        "数据质量降权"
-      ],
-      "upgrade_rank": 7,
-      "upgrade_priority": "仅复核",
-      "upgrade_condition": "题材3分钟涨跌幅>=1.5%，方向占比>=70%，成交放大>=5x。 数据质量恢复或二次行情源确认前，不升级为可用机会。"
-    },
-    {
-      "title": "待触发：CPO/光模块",
-      "type": "opportunity_watch",
-      "trigger_reason": "盘前/晚间注意点已转为盘中追踪清单，等待实时行情触发。",
-      "conclusion": "NVIDIA与Safe Superintelligence宣布长期战略合作，NVIDIA投资并提供下一代Vera Rubin平台，SSI称算力将提升一个数量级。；继续验证全球AI算力投入，但NVIDIA隔夜-4.99%，产业逻辑与交易确认明显背离。；国产算力、服务器、CPO、交换机；算力合作扩张→GPU与网络需求预期…；媒体称NVIDIA正讨论为OpenA…",
+      "conclusion": "韩国半导体供应链与美国科技企业的大规模AI产业合作报道继续发酵。；与今日Samsung、SK hynix早盘上涨形成局部共振，对A股存储/HBM只是观察加分项。；Micron / Samsung Electronics / SK hynix；美日韩存储股同步承压；存储/HBM：兆易创新、澜起科技、江波龙、佰维存储、德明利；海外同行情绪传导；与长鑫科技国产扩…",
       "confidence": "low",
       "evidence": [],
       "source_files": [
@@ -539,7 +539,7 @@
       "title": "数据质量降级",
       "type": "data_quality",
       "trigger_reason": "风控兜底触发：市场宽度、数据质量或回撤条件触发风险优先。",
-      "conclusion": "发现 128 个降级/需复核项（122 个价格/行情复核，7 个背景复核），核心结论可看但必须按影响分层使用。",
+      "conclusion": "发现 136 个降级/需复核项（130 个价格/行情复核，7 个背景复核），核心结论可看但必须按影响分层使用。",
       "confidence": "high",
       "evidence": [
         "时间戳不是当前交易日：2026-07-27T15:05:08+08:00",
@@ -580,6 +580,47 @@
     }
   ],
   "verifications": [
+    {
+      "title": "盘中追踪：中概情绪映射下的互联网/消费电子相对抗跌",
+      "type": "opportunity_watch",
+      "trigger_reason": "盘前/晚间注意点已转为盘中追踪清单，等待实时行情触发。",
+      "conclusion": "防御型分化开盘：中资风险偏好改善提供底部支撑，但全球与港股科技硬件同步走弱。最可能相对受益的是小米/消费电子映射和低位防御轮动；最大风险是存储、AI算力、CPO、交换机及半导体设备材料的高弹性筹码集中释放。",
+      "confidence": "low",
+      "evidence": [],
+      "source_files": [
+        "opportunity-watch.json"
+      ],
+      "watch_next": [
+        "核心股低开后放量收复开盘价或跌幅明显收敛",
+        "同题材后排不再扩大负反馈，跌停/炸板数量下降",
+        "板块ETF或指数不再创新低并出现承接"
+      ],
+      "invalidation": "核心股继续放量下跌",
+      "tags": [
+        "科技硬件链",
+        "风控"
+      ],
+      "quality_flags": [],
+      "tone": "neutral",
+      "discovery_type": "premarket_watch_queue",
+      "evidence_score": 28,
+      "missing_evidence": [
+        "缺少可核验证据"
+      ],
+      "next_action": "核心股低开后放量收复开盘价或跌幅明显收敛",
+      "observation_source": "数据派生",
+      "independent_observation": false,
+      "signal_score": 47,
+      "signal_grade": "D",
+      "use_action": "仅复核",
+      "use_reasons": [
+        "缺少证据",
+        "有下一步验证",
+        "有证伪条件",
+        "有来源文件",
+        "有证据缺口"
+      ]
+    },
     {
       "title": "盘中追踪：机器人/工业自动化",
       "type": "opportunity_watch",
@@ -709,18 +750,19 @@
       "title": "盘中追踪：半导体设备材料",
       "type": "opportunity_watch",
       "trigger_reason": "盘前/晚间注意点已转为盘中追踪清单，等待实时行情触发。",
-      "conclusion": "8:30预判科技高弹性方向受压；待9:15港股与9:25 A股竞价确认，当前不填写未发生的涨跌停统计。；半导体设备材料；观察；材料按强化、设备按观察分别验证；出现第二只设备封板、订单或业绩证据后才升级整线。；材料3只封板、设备至纯科技2板，中科飞测+8.96%；半导体行业仅+1.10%，整线仍是内…",
+      "conclusion": "防御型分化开盘：中资风险偏好改善提供底部支撑，但全球与港股科技硬件同步走弱。最可能相对受益的是小米/消费电子映射和低位防御轮动；最大风险是存储、AI算力、CPO、交换机及半导体设备材料的高弹性筹码集中释放。；半导体设备材料；观察；材料按强化、设备按观察分别验证；出现第二只设备封板、订单或业绩证据后…",
       "confidence": "low",
       "evidence": [],
       "source_files": [
         "opportunity-watch.json"
       ],
       "watch_next": [
-        "题材3分钟涨跌幅>=1.5%，方向占比>=70%，成交放大>=5x",
-        "板块内出现批量涨停/封板或后排扩散",
-        "核心股、ETF、后排扩散同向确认"
+        "核心股低开后放量收复开盘价或跌幅明显收敛",
+        "同题材后排不再扩大负反馈，跌停/炸板数量下降",
+        "板块ETF或指数不再创新低并出现承接",
+        "题材3分钟涨跌幅>=1.5%，方向占比>=70%，成交放大>=5x"
       ],
-      "invalidation": "核心股高开低走或冲高回落",
+      "invalidation": "核心股继续放量下跌",
       "tags": [
         "科技硬件链",
         "风控"
@@ -732,7 +774,7 @@
       "missing_evidence": [
         "缺少可核验证据"
       ],
-      "next_action": "题材3分钟涨跌幅>=1.5%，方向占比>=70%，成交放大>=5x",
+      "next_action": "核心股低开后放量收复开盘价或跌幅明显收敛",
       "observation_source": "数据派生",
       "independent_observation": false,
       "signal_score": 47,
@@ -775,48 +817,6 @@
         "缺少可核验证据"
       ],
       "next_action": "题材3分钟涨跌幅>=1.5%，方向占比>=70%，成交放大>=5x",
-      "observation_source": "数据派生",
-      "independent_observation": false,
-      "signal_score": 47,
-      "signal_grade": "D",
-      "use_action": "仅复核",
-      "use_reasons": [
-        "缺少证据",
-        "有下一步验证",
-        "有证伪条件",
-        "有来源文件",
-        "有证据缺口"
-      ]
-    },
-    {
-      "title": "盘中追踪：半导体材料",
-      "type": "opportunity_watch",
-      "trigger_reason": "盘前/晚间注意点已转为盘中追踪清单，等待实时行情触发。",
-      "conclusion": "存储/HBM在普涨日仍弱，科技链内部风险未清零；全市场94%有效样本上涨时，A/H存储核心仍下跌，可能压制半导体、AI硬件和高弹性科技竞价。；[\"A/H兆易、澜起是否同步止跌。\", \"半导体材料强势不能替代存储/HBM确认。\", \"若核心继续放量下跌，科技链仓位优先级下调。\"]；[{\"type\":…",
-      "confidence": "low",
-      "evidence": [],
-      "source_files": [
-        "opportunity-watch.json"
-      ],
-      "watch_next": [
-        "核心股低开后放量收复开盘价或跌幅明显收敛",
-        "同题材后排不再扩大负反馈，跌停/炸板数量下降",
-        "板块ETF或指数不再创新低并出现承接",
-        "题材3分钟涨跌幅>=1.5%，方向占比>=70%，成交放大>=5x"
-      ],
-      "invalidation": "核心股继续放量下跌",
-      "tags": [
-        "科技硬件链",
-        "风控"
-      ],
-      "quality_flags": [],
-      "tone": "neutral",
-      "discovery_type": "premarket_watch_queue",
-      "evidence_score": 28,
-      "missing_evidence": [
-        "缺少可核验证据"
-      ],
-      "next_action": "核心股低开后放量收复开盘价或跌幅明显收敛",
       "observation_source": "数据派生",
       "independent_observation": false,
       "signal_score": 47,
