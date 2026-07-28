@@ -1,8 +1,8 @@
 {
-  "timestamp": "2026-07-28T13:17:37+08:00",
+  "timestamp": "2026-07-28T13:19:04+08:00",
   "current_signal_date": "2026-07-28",
   "status": "degraded",
-  "summary": "发现 135 个降级/需复核项（134 个价格/行情复核，2 个背景复核），核心结论可看但必须按影响分层使用。",
+  "summary": "发现 134 个降级/需复核项（133 个价格/行情复核，2 个背景复核），核心结论可看但必须按影响分层使用。",
   "issues": [
     {
       "severity": "warning",
@@ -118,15 +118,6 @@
       "path": "hk_auction.mapping_chain[5]",
       "code": "bad_change_pct",
       "message": "hk_auction.mapping_chain[5] change_pct 非数字：-3.37% / -0.33%，该字段忽略并降权",
-      "impact_level": "price_review",
-      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
-    },
-    {
-      "severity": "warning",
-      "file": "watchlist-quotes.json",
-      "path": "stocks[15]",
-      "code": "watchlist_limit_down_like",
-      "message": "锐捷网络 接近跌停 -10.43，需确认是否真实",
       "impact_level": "price_review",
       "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
     },
@@ -1264,17 +1255,6 @@
       "unblock_condition": "price_review=0 或相关来源标记 trusted/cross verified。"
     },
     {
-      "priority": 2,
-      "impact_level": "price_review",
-      "label": "二次行情复核",
-      "file": "watchlist-quotes.json",
-      "code": "watchlist_limit_down_like",
-      "problem": "锐捷网络 接近跌停 -10.43，需确认是否真实",
-      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核",
-      "next_step": "用第二行情源复核涨跌幅、quote_time 和代表股方向；未确认前只做验证。",
-      "unblock_condition": "price_review=0 或相关来源标记 trusted/cross verified。"
-    },
-    {
       "priority": 4,
       "impact_level": "background_review",
       "label": "背景来源复核",
@@ -1299,10 +1279,10 @@
   ],
   "counts": {
     "critical": 0,
-    "warning": 135,
+    "warning": 134,
     "info": 1,
     "blocking": 0,
-    "price_review": 134,
+    "price_review": 133,
     "signal_review": 0,
     "background_review": 2
   },
