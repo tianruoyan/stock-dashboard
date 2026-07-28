@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-07-28T09:43:41+08:00",
+  "timestamp": "2026-07-28T10:11:17+08:00",
   "sources": {
     "tencent_http": {
       "status": "ok",
@@ -3802,10 +3802,10 @@
     },
     "futu_minute_alert_verifier": {
       "status": "ok",
-      "last_check": "2026-07-28T10:05:12+08:00",
+      "last_check": "2026-07-28T10:11:15+08:00",
       "usage": "盘中异动代表股第二行情源交叉验证",
-      "detail": "富途行情按触发时点复核1张异动卡：1张相互支持、0张明显冲突、0张精度不足；精度不足只维持观察，不计作冲突。",
-      "sample_count": 3,
+      "detail": "富途行情按触发时点复核2张异动卡：1张相互支持、0张明显冲突、1张精度不足；精度不足只维持观察，不计作冲突。",
+      "sample_count": 6,
       "errors": []
     },
     "tencent_a_quote_intraday_0945": {
@@ -4125,11 +4125,53 @@
       "detail": "五大指数均较竞价开盘跌幅收敛；行业前五为包装印刷、渔业、酒店餐饮、白色家电、文娱用品，后五含元件、通信设备、半导体。",
       "sample_count": 103,
       "errors": []
+    },
+    "tencent_all_a_intraday_1004_20260728": {
+      "status": "ok",
+      "last_check": "2026-07-28T10:11:17+08:00",
+      "usage": "全A现价涨跌停、炸板、宽度与重点股",
+      "detail": "有效报价5533只、明确涨跌停分母5532只；涨停50、跌停4、炸板11，上涨3547、下跌1835。",
+      "sample_count": 5533,
+      "errors": []
+    },
+    "local_intraday_market_service_1003_20260728": {
+      "status": "ok",
+      "last_check": "2026-07-28T10:11:17+08:00",
+      "usage": "五大指数、成交额与98行业排名",
+      "detail": "创业板-3.48%、科创50-1.63%；沪深成交7214.14亿元。行业前五为商用车、休闲食品、渔业、一般零售、乘用车，末位为通信设备和元件。",
+      "sample_count": 103,
+      "errors": []
+    },
+    "eastmoney_limit_pool_intraday_1004_20260728": {
+      "status": "ok",
+      "last_check": "2026-07-28T10:11:17+08:00",
+      "usage": "涨停行业分布、连板高度与20cm结构",
+      "detail": "结构池45只；IT服务4、软件3、光学光电4、汽车零部件4；最高爱丽家居6板，3只20cm及1只北交所30cm。",
+      "sample_count": 45,
+      "errors": []
+    },
+    "eastmoney_concept_ranking_intraday_1006_20260728": {
+      "status": "ok",
+      "last_check": "2026-07-28T10:11:17+08:00",
+      "usage": "概念涨跌、宽度与资金方向",
+      "detail": "返回概念榜50/495；数据确权+2.97%、财税数字化+2.65%、AI语料+2.56%、AI应用+1.89%。",
+      "sample_count": 50,
+      "errors": []
+    },
+    "tencent_hk_delayed_intraday_0948_20260728": {
+      "status": "degraded",
+      "last_check": "2026-07-28T10:11:17+08:00",
+      "usage": "港股指数和A/H映射的15分钟延迟结构",
+      "detail": "恒指+0.40%、恒科+1.48%；兆易H-11.43%、澜起H-9.19%、智谱-15.69%，仅按09:48延迟时点使用。",
+      "sample_count": 18,
+      "errors": [
+        "free quote delayed about 15 minutes"
+      ]
     }
   },
   "last_publish_attempt": "pending_20260717_0830_premarket_publish",
   "status": "degraded",
-  "last_error": "港股腾讯报价未刷新到09:30后连续竞价；保留09:20至09:22竞价快照并降权。",
+  "last_error": "港股免费行情延迟约15分钟；缺少沪深成交额与前一交易日相同时点的同口径比较。",
   "tencent_a_close_postmarket_20260716": {
     "status": "ok",
     "last_check": "2026-07-16T15:18:57+08:00",
@@ -4310,7 +4352,7 @@
     "errors": []
   },
   "overall_status": "degraded",
-  "last_codex_note": "09:37开盘更新已用腾讯全A、重点股、无模型指数行业快照及东财单次概念榜核验；港股探针仍停留竞价时点，未冒充连续竞价。",
+  "last_codex_note": "10:00盘中更新已用腾讯全A与重点股、无模型指数行业快照、东财涨停结构池和概念榜核验；港股为15分钟延迟行情，按延迟时点使用。",
   "eastmoney_structure_pools_intraday_1000_20260717": {
     "status": "ok",
     "last_check": "2026-07-17T10:02:40+08:00",
@@ -5122,5 +5164,52 @@
     "sample_count": 103,
     "evidence": "五大指数均较竞价开盘跌幅收敛；行业前五为包装印刷、渔业、酒店餐饮、白色家电、文娱用品，后五含元件、通信设备、半导体。",
     "errors": []
+  },
+  "tencent_all_a_intraday_1004_20260728": {
+    "status": "ok",
+    "checked_at": "2026-07-28T10:11:17+08:00",
+    "market_time": "2026-07-28 10:03:54至10:03:59",
+    "usage": "全A现价涨跌停、炸板、宽度与重点股",
+    "sample_count": 5533,
+    "evidence": "有效报价5533只、明确涨跌停分母5532只；涨停50、跌停4、炸板11，上涨3547、下跌1835。",
+    "errors": []
+  },
+  "local_intraday_market_service_1003_20260728": {
+    "status": "ok",
+    "checked_at": "2026-07-28T10:11:17+08:00",
+    "market_time": "2026-07-28 10:03:33至10:03:39",
+    "usage": "五大指数、成交额与98行业排名",
+    "sample_count": 103,
+    "evidence": "创业板-3.48%、科创50-1.63%；沪深成交7214.14亿元。行业前五为商用车、休闲食品、渔业、一般零售、乘用车，末位为通信设备和元件。",
+    "errors": []
+  },
+  "eastmoney_limit_pool_intraday_1004_20260728": {
+    "status": "ok",
+    "checked_at": "2026-07-28T10:11:17+08:00",
+    "market_time": "采集时间约2026-07-28 10:04",
+    "usage": "涨停行业分布、连板高度与20cm结构",
+    "sample_count": 45,
+    "evidence": "结构池45只；IT服务4、软件3、光学光电4、汽车零部件4；最高爱丽家居6板，3只20cm及1只北交所30cm。",
+    "errors": []
+  },
+  "eastmoney_concept_ranking_intraday_1006_20260728": {
+    "status": "ok",
+    "checked_at": "2026-07-28T10:11:17+08:00",
+    "market_time": "采集时间约2026-07-28 10:06；与结构池请求间隔71秒",
+    "usage": "概念涨跌、宽度与资金方向",
+    "sample_count": 50,
+    "evidence": "返回概念榜50/495；数据确权+2.97%、财税数字化+2.65%、AI语料+2.56%、AI应用+1.89%。",
+    "errors": []
+  },
+  "tencent_hk_delayed_intraday_0948_20260728": {
+    "status": "degraded",
+    "checked_at": "2026-07-28T10:11:17+08:00",
+    "market_time": "2026-07-28 09:47:58至09:48:57；采集约10:04",
+    "usage": "港股指数和A/H映射的15分钟延迟结构",
+    "sample_count": 18,
+    "evidence": "恒指+0.40%、恒科+1.48%；兆易H-11.43%、澜起H-9.19%、智谱-15.69%，仅按09:48延迟时点使用。",
+    "errors": [
+      "free quote delayed about 15 minutes"
+    ]
   }
 }
