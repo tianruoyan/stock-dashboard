@@ -1,8 +1,8 @@
 {
-  "timestamp": "2026-07-28T10:42:26+08:00",
+  "timestamp": "2026-07-28T10:48:54+08:00",
   "current_signal_date": "2026-07-28",
   "status": "degraded",
-  "summary": "发现 139 个降级/需复核项（137 个价格/行情复核，3 个背景复核），核心结论可看但必须按影响分层使用。",
+  "summary": "发现 136 个降级/需复核项（134 个价格/行情复核，3 个背景复核），核心结论可看但必须按影响分层使用。",
   "issues": [
     {
       "severity": "warning",
@@ -1236,33 +1236,6 @@
       "message": "tencent_hk_delayed_intraday_0948_20260728: 恒指+0.40%、恒科+1.48%；兆易H-11.43%、澜起H-9.19%、智谱-15.69%，仅按09:48延迟时点使用。",
       "impact_level": "price_review",
       "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
-    },
-    {
-      "severity": "warning",
-      "file": "cross-file",
-      "path": "中国巨石",
-      "code": "stock_pct_cross_file_conflict",
-      "message": "中国巨石 跨文件涨跌幅差异过大：alert.json -1.2665% vs intraday.json 9.99%",
-      "impact_level": "price_review",
-      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
-    },
-    {
-      "severity": "warning",
-      "file": "cross-file",
-      "path": "国际复材",
-      "code": "stock_pct_cross_file_conflict",
-      "message": "国际复材 跨文件涨跌幅差异过大：alert.json -1.5569% vs intraday.json 20.0%",
-      "impact_level": "price_review",
-      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
-    },
-    {
-      "severity": "warning",
-      "file": "cross-file",
-      "path": "山东玻纤",
-      "code": "stock_pct_cross_file_conflict",
-      "message": "山东玻纤 跨文件涨跌幅差异过大：alert.json -1.2821% vs intraday.json 9.99%",
-      "impact_level": "price_review",
-      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
     }
   ],
   "action_plan": [
@@ -1273,17 +1246,6 @@
       "file": "alert.json",
       "code": "historical_alert_not_cross_verified",
       "problem": "行情污染源仍降级，历史 alert 未交叉验证，只降权复盘参考",
-      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核",
-      "next_step": "用第二行情源复核涨跌幅、quote_time 和代表股方向；未确认前只做验证。",
-      "unblock_condition": "price_review=0 或相关来源标记 trusted/cross verified。"
-    },
-    {
-      "priority": 2,
-      "impact_level": "price_review",
-      "label": "二次行情复核",
-      "file": "cross-file",
-      "code": "stock_pct_cross_file_conflict",
-      "problem": "中国巨石 跨文件涨跌幅差异过大：alert.json -1.2665% vs intraday.json 9.99%",
       "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核",
       "next_step": "用第二行情源复核涨跌幅、quote_time 和代表股方向；未确认前只做验证。",
       "unblock_condition": "price_review=0 或相关来源标记 trusted/cross verified。"
@@ -1331,14 +1293,25 @@
       "decision_action": "仅作背景复核，不单独阻断交易判断",
       "next_step": "补官方/交易所/公司公告来源；未补齐前不升级为核心依据。",
       "unblock_condition": "官方来源补齐或确认不影响交易触发。"
+    },
+    {
+      "priority": 4,
+      "impact_level": "background_review",
+      "label": "背景来源复核",
+      "file": "postmarket.json",
+      "code": "stale_timestamp",
+      "problem": "时间戳不是当前交易日：2026-07-27T16:15:38+08:00",
+      "decision_action": "仅作背景复核，不单独阻断交易判断",
+      "next_step": "补官方/交易所/公司公告来源；未补齐前不升级为核心依据。",
+      "unblock_condition": "官方来源补齐或确认不影响交易触发。"
     }
   ],
   "counts": {
     "critical": 0,
-    "warning": 139,
+    "warning": 136,
     "info": 1,
     "blocking": 0,
-    "price_review": 137,
+    "price_review": 134,
     "signal_review": 0,
     "background_review": 3
   },
