@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-07-29T10:20:45+08:00",
+  "timestamp": "2026-07-29T10:23:15+08:00",
   "source_status": "monitor_live",
   "alerts": [
     {
@@ -1619,11 +1619,69 @@
         "missing_confirmation": "等待富途行情按触发时点交叉核验；通过前只作候选或观察，不作为确认交易信号。",
         "secondary_source": "富途行情",
         "secondary_verification": {
-          "state": "pending",
-          "checked_at": "2026-07-29T10:21:51+08:00",
+          "state": "mismatch",
+          "checked_at": "2026-07-29T10:22:54+08:00",
           "source": "富途行情",
-          "reason": "等待触发分钟行情完整落盘。",
-          "representatives": [],
+          "reason": "对齐同一触发时点后，代表股方向或价格变化仍存在明显冲突，维持待确认/失效。",
+          "representatives": [
+            {
+              "股票": "盛科通信-U",
+              "代码": "688702.SH",
+              "监控涨跌幅": -2.3091,
+              "富途涨跌幅": -1.181,
+              "腾讯涨跌幅": -1.0977,
+              "起始分钟": "10:17:44",
+              "结束分钟": "10:20:43",
+              "对齐方式": "逐笔行情同一时点对齐",
+              "时间偏差秒": 0.969,
+              "可比涨跌范围": [
+                -1.184,
+                -0.8769
+              ],
+              "方向一致": false,
+              "幅度一致": false,
+              "复核结论": "明显冲突"
+            },
+            {
+              "股票": "锐捷网络",
+              "代码": "301165.SZ",
+              "监控涨跌幅": -1.1889,
+              "富途涨跌幅": -0.7184,
+              "腾讯涨跌幅": -1.2548,
+              "起始分钟": "10:17:45",
+              "结束分钟": "10:20:45",
+              "对齐方式": "逐笔行情同一时点对齐",
+              "时间偏差秒": 0.491,
+              "可比涨跌范围": [
+                -0.7666,
+                -0.6121
+              ],
+              "方向一致": false,
+              "幅度一致": false,
+              "复核结论": "明显冲突"
+            },
+            {
+              "股票": "共进股份",
+              "代码": "603118.SH",
+              "监控涨跌幅": -0.802,
+              "富途涨跌幅": -0.559,
+              "腾讯涨跌幅": -0.9248,
+              "起始分钟": "10:17:45",
+              "结束分钟": "10:20:45",
+              "对齐方式": "逐笔行情同一时点对齐",
+              "时间偏差秒": 1.331,
+              "可比涨跌范围": [
+                -0.6211,
+                -0.4348
+              ],
+              "方向一致": true,
+              "幅度一致": false,
+              "复核结论": "行情精度不足"
+            }
+          ],
+          "window_minutes": 3,
+          "direction_agreement_ratio": 0.0,
+          "magnitude_agreement_ratio": 0.0,
           "fingerprint": "65ab6640c4848b6900c0",
           "verifier_version": "futu-opend-2026-07-27.3"
         }
@@ -1635,415 +1693,12 @@
       "confirmation_level": "candidate",
       "limit_up_count": 0,
       "limit_down_count": 2
-    },
-    {
-      "time": "2026-07-29T10:18:05+08:00",
-      "sector": "覆铜板",
-      "type": "小登题材快速回落",
-      "reason": "触发规则：小登底池回落预警：底池3分钟平均跌幅≥1.0%，下跌占比≥60%，且成交放大≥5x。\n异动性质：快速回落。价格下行和下跌占比触发回落提醒，优先按风险扩散处理。\n结论：覆铜板题材回落，有扩散，金安国纪是主要拖累。\n题材：覆铜板，当前领跌股：金安国纪 / 华正新材 / 生益科技。\n强度：底池样本 3分钟涨跌幅 -1.00%，下跌占比 100%。\n成交：3分钟放大 10.21x，较昨同期 1.28x，风险扩散明显。\n当前领跌股分数：金安国纪(53.1)，华正新材(43.8)，生益科技(42.0)。",
-      "leaders": [
-        {
-          "name": "金安国纪",
-          "change_pct": -0.8,
-          "score": 53.1,
-          "factors": [
-            "3分钟-0.80%",
-            "成交12.26x",
-            "日内-5.34%"
-          ]
-        },
-        {
-          "name": "华正新材",
-          "change_pct": -1.08,
-          "score": 43.8,
-          "factors": [
-            "3分钟-1.08%",
-            "成交12.97x",
-            "日内-1.65%"
-          ]
-        },
-        {
-          "name": "生益科技",
-          "change_pct": -1.24,
-          "score": 42.0,
-          "factors": [
-            "3分钟-1.24%",
-            "成交7.93x",
-            "日内-2.93%"
-          ]
-        }
-      ],
-      "signal_type": "风险提示",
-      "is_old_economy": false,
-      "alert_class": "risk",
-      "confirmation_level": "candidate",
-      "source_watch_id": "PCB-电子布",
-      "source_status": "degraded_partial",
-      "valid_until": "2026-07-29T10:23:05+08:00",
-      "quote_audit": {
-        "provider": "本地盘中监控",
-        "quote_time": "2026-07-29T10:18:05+08:00",
-        "pct_field": "3分钟涨跌幅",
-        "sample_count": 3,
-        "max_abs_leader_change_pct": 1.24,
-        "sanity_checks": {
-          "cross_source_verified": false,
-          "price_move_valid": true,
-          "volume_valid": true,
-          "direction_ratio_valid": true,
-          "limit_up_count_valid": false,
-          "limit_down_count_valid": false
-        },
-        "board_3m_change_pct": -1.0,
-        "up_ratio_pct": 0,
-        "down_ratio_pct": 100,
-        "volume_ratio": 10.21,
-        "relative_volume_vs_yesterday": 1.28,
-        "missing_confirmation": "已满足risk candidate最低门槛；还差腾讯/通达信等第二行情源按触发时点交叉核验，通过前不标确认。"
-      },
-      "id": "monitor-20260729-101805-1799c21ffeef"
-    },
-    {
-      "time": "2026-07-29T10:18:39+08:00",
-      "sector": "液冷",
-      "type": "小登题材快速回落",
-      "reason": "触发规则：小登底池回落预警：底池3分钟平均跌幅≥1.0%，下跌占比≥60%，且成交放大≥5x。\n异动性质：快速回落。价格下行和下跌占比触发回落提醒，优先按风险扩散处理。\n结论：液冷题材回落，有扩散，申菱环境是主要拖累。\n题材：液冷，当前领跌股：申菱环境 / 英维克 / 同飞股份。\n强度：底池样本 3分钟涨跌幅 -1.23%，下跌占比 100%。\n成交：3分钟放大 20.00x，较昨同期 2.17x，风险扩散明显。\n当前领跌股分数：申菱环境(77.1)，英维克(75.5)，同飞股份(65.5)。",
-      "leaders": [
-        {
-          "name": "申菱环境",
-          "change_pct": -1.9,
-          "score": 77.1,
-          "factors": [
-            "3分钟-1.90%",
-            "成交20.00x",
-            "日内-9.87%"
-          ]
-        },
-        {
-          "name": "英维克",
-          "change_pct": -1.76,
-          "score": 75.5,
-          "factors": [
-            "3分钟-1.76%",
-            "成交20.00x",
-            "日内-8.46%"
-          ]
-        },
-        {
-          "name": "同飞股份",
-          "change_pct": -1.78,
-          "score": 65.5,
-          "factors": [
-            "3分钟-1.78%",
-            "成交20.00x",
-            "日内-5.27%"
-          ]
-        }
-      ],
-      "signal_type": "风险提示",
-      "is_old_economy": false,
-      "alert_class": "risk",
-      "confirmation_level": "candidate",
-      "source_watch_id": "液冷",
-      "source_status": "degraded_partial",
-      "valid_until": "2026-07-29T10:23:39+08:00",
-      "quote_audit": {
-        "provider": "本地盘中监控",
-        "quote_time": "2026-07-29T10:18:39+08:00",
-        "pct_field": "3分钟涨跌幅",
-        "sample_count": 3,
-        "max_abs_leader_change_pct": 1.9,
-        "sanity_checks": {
-          "cross_source_verified": false,
-          "price_move_valid": true,
-          "volume_valid": true,
-          "direction_ratio_valid": true,
-          "limit_up_count_valid": false,
-          "limit_down_count_valid": false
-        },
-        "board_3m_change_pct": -1.23,
-        "up_ratio_pct": 0,
-        "down_ratio_pct": 100,
-        "volume_ratio": 20.0,
-        "relative_volume_vs_yesterday": 2.17,
-        "missing_confirmation": "已满足risk candidate最低门槛；还差腾讯/通达信等第二行情源按触发时点交叉核验，通过前不标确认。"
-      },
-      "id": "monitor-20260729-101839-756982241553"
-    },
-    {
-      "time": "2026-07-29T10:19:41+08:00",
-      "sector": "交换机/高速以太网",
-      "type": "小登题材快速回落",
-      "reason": "触发规则：小登底池回落预警：底池3分钟平均跌幅≥1.0%，下跌占比≥60%，且成交放大≥5x。\n异动性质：快速回落。价格下行和下跌占比触发回落提醒，优先按风险扩散处理。\n结论：交换机/高速以太网题材回落，有扩散，紫光股份是主要拖累。\n题材：交换机/高速以太网，当前领跌股：紫光股份 / 盛科通信 / 共进股份。\n强度：底池样本 3分钟涨跌幅 -1.24%，下跌占比 71%。\n成交：3分钟放大 10.66x，较昨同期 1.87x，风险扩散明显。\n当前领跌股分数：紫光股份(48.7)，盛科通信(45.3)，共进股份(39.7)。",
-      "leaders": [
-        {
-          "name": "紫光股份",
-          "change_pct": -1.9,
-          "score": 48.7,
-          "factors": [
-            "3分钟-1.90%",
-            "成交13.85x",
-            "日内-1.47%"
-          ]
-        },
-        {
-          "name": "盛科通信",
-          "change_pct": -1.8,
-          "score": 45.3,
-          "factors": [
-            "3分钟-1.80%",
-            "成交10.79x",
-            "日内-1.99%"
-          ]
-        },
-        {
-          "name": "共进股份",
-          "change_pct": -1.2,
-          "score": 39.7,
-          "factors": [
-            "3分钟-1.20%",
-            "成交15.72x",
-            "日内-0.57%"
-          ]
-        }
-      ],
-      "signal_type": "风险提示",
-      "is_old_economy": false,
-      "alert_class": "risk",
-      "confirmation_level": "candidate",
-      "source_watch_id": "交换机-高速以太网",
-      "source_status": "degraded_partial",
-      "valid_until": "2026-07-29T10:24:41+08:00",
-      "quote_audit": {
-        "provider": "本地盘中监控",
-        "quote_time": "2026-07-29T10:19:41+08:00",
-        "pct_field": "3分钟涨跌幅",
-        "sample_count": 7,
-        "max_abs_leader_change_pct": 1.9,
-        "sanity_checks": {
-          "cross_source_verified": false,
-          "price_move_valid": true,
-          "volume_valid": true,
-          "direction_ratio_valid": true,
-          "limit_up_count_valid": false,
-          "limit_down_count_valid": false
-        },
-        "board_3m_change_pct": -1.24,
-        "up_ratio_pct": 29,
-        "down_ratio_pct": 71,
-        "volume_ratio": 10.66,
-        "relative_volume_vs_yesterday": 1.87,
-        "missing_confirmation": "已满足risk candidate最低门槛；还差腾讯/通达信等第二行情源按触发时点交叉核验，通过前不标确认。"
-      },
-      "id": "monitor-20260729-101941-307b13769346"
-    },
-    {
-      "time": "2026-07-29T10:19:47+08:00",
-      "sector": "8192超节点/昇腾算力",
-      "type": "小登题材快速回落",
-      "reason": "触发规则：小登底池回落预警：底池3分钟平均跌幅≥1.0%，下跌占比≥60%，且成交放大≥5x。\n异动性质：快速回落。价格下行和下跌占比触发回落提醒，优先按风险扩散处理。\n结论：8192超节点/昇腾算力题材回落，有扩散，高新发展是主要拖累。\n题材：8192超节点/昇腾算力，当前领跌股：高新发展 / 申菱环境 / 英维克。\n强度：底池样本 3分钟涨跌幅 -1.11%，下跌占比 100%。\n成交：3分钟放大 5.67x，较昨同期 1.91x，风险扩散明显。\n当前领跌股分数：高新发展(70.4)，申菱环境(64.5)，英维克(60.6)。",
-      "leaders": [
-        {
-          "name": "高新发展",
-          "change_pct": -1.32,
-          "score": 70.4,
-          "factors": [
-            "3分钟-1.32%",
-            "成交20.00x",
-            "日内-9.23%"
-          ]
-        },
-        {
-          "name": "申菱环境",
-          "change_pct": -2.38,
-          "score": 64.5,
-          "factors": [
-            "3分钟-2.38%",
-            "成交2.73x",
-            "日内-10.46%"
-          ]
-        },
-        {
-          "name": "英维克",
-          "change_pct": -2.04,
-          "score": 60.6,
-          "factors": [
-            "3分钟-2.04%",
-            "成交2.76x",
-            "日内-9.05%"
-          ]
-        }
-      ],
-      "signal_type": "风险提示",
-      "is_old_economy": false,
-      "alert_class": "risk",
-      "confirmation_level": "candidate",
-      "source_watch_id": "算力",
-      "source_status": "degraded_partial",
-      "valid_until": "2026-07-29T10:24:47+08:00",
-      "quote_audit": {
-        "provider": "本地盘中监控",
-        "quote_time": "2026-07-29T10:19:47+08:00",
-        "pct_field": "3分钟涨跌幅",
-        "sample_count": 11,
-        "max_abs_leader_change_pct": 2.38,
-        "sanity_checks": {
-          "cross_source_verified": false,
-          "price_move_valid": true,
-          "volume_valid": true,
-          "direction_ratio_valid": true,
-          "limit_up_count_valid": false,
-          "limit_down_count_valid": false
-        },
-        "board_3m_change_pct": -1.11,
-        "up_ratio_pct": 0,
-        "down_ratio_pct": 100,
-        "volume_ratio": 5.67,
-        "relative_volume_vs_yesterday": 1.91,
-        "missing_confirmation": "已满足risk candidate最低门槛；还差腾讯/通达信等第二行情源按触发时点交叉核验，通过前不标确认。"
-      },
-      "id": "monitor-20260729-101947-40ff7c80642c"
-    },
-    {
-      "time": "2026-07-29T10:20:25+08:00",
-      "sector": "化学制药",
-      "type": "小登题材快速回落",
-      "reason": "触发规则：小登底池回落预警：底池3分钟平均跌幅≥1.0%，下跌占比≥60%，且成交放大≥5x。\n异动性质：快速回落。价格下行和下跌占比触发回落提醒，优先按风险扩散处理。\n结论：化学制药题材回落，有扩散，科伦药业是主要拖累。\n题材：化学制药，当前领跌股：科伦药业 / 普洛药业 / 恒瑞医药。\n强度：底池样本 3分钟涨跌幅 -1.07%，下跌占比 100%。\n成交：3分钟放大 10.88x，较昨同期 1.46x，风险扩散明显。\n当前领跌股分数：科伦药业(62.4)，普洛药业(41.1)，恒瑞医药(26.7)。",
-      "leaders": [
-        {
-          "name": "科伦药业",
-          "change_pct": -1.52,
-          "score": 62.4,
-          "factors": [
-            "3分钟-1.52%",
-            "成交15.43x",
-            "日内-5.23%"
-          ]
-        },
-        {
-          "name": "普洛药业",
-          "change_pct": -1.06,
-          "score": 41.1,
-          "factors": [
-            "3分钟-1.06%",
-            "成交12.43x",
-            "日内-2.10%"
-          ]
-        },
-        {
-          "name": "恒瑞医药",
-          "change_pct": -0.62,
-          "score": 26.7,
-          "factors": [
-            "3分钟-0.62%",
-            "成交4.78x",
-            "日内-2.45%"
-          ]
-        }
-      ],
-      "signal_type": "风险提示",
-      "is_old_economy": false,
-      "alert_class": "risk",
-      "confirmation_level": "candidate",
-      "source_watch_id": "化学制药",
-      "source_status": "degraded_partial",
-      "valid_until": "2026-07-29T10:25:25+08:00",
-      "quote_audit": {
-        "provider": "本地盘中监控",
-        "quote_time": "2026-07-29T10:20:25+08:00",
-        "pct_field": "3分钟涨跌幅",
-        "sample_count": 3,
-        "max_abs_leader_change_pct": 1.52,
-        "sanity_checks": {
-          "cross_source_verified": false,
-          "price_move_valid": true,
-          "volume_valid": true,
-          "direction_ratio_valid": true,
-          "limit_up_count_valid": false,
-          "limit_down_count_valid": false
-        },
-        "board_3m_change_pct": -1.07,
-        "up_ratio_pct": 0,
-        "down_ratio_pct": 100,
-        "volume_ratio": 10.88,
-        "relative_volume_vs_yesterday": 1.46,
-        "missing_confirmation": "已满足risk candidate最低门槛；还差腾讯/通达信等第二行情源按触发时点交叉核验，通过前不标确认。"
-      },
-      "id": "monitor-20260729-102025-ea35464f1b60"
-    },
-    {
-      "time": "2026-07-29T10:19:08+08:00",
-      "sector": "电子布",
-      "type": "小登题材观察拉动",
-      "reason": "触发规则：小登股异动：板块内出现≥2只涨停。\n异动性质：观察性拉动。有短线拉动，但尚未同时满足上涨攻势确认条件。\n结论：电子布触发观察性异动，强度不足以直接定义为拉起。\n题材：电子布，当前动态龙头：宏和科技 / 国际复材 / 山东玻纤。\n强度：底池样本 3分钟涨跌幅 -0.77%，上涨占比 100%，强势股 0 只。\n成交：3分钟放大 5.02x，较昨同期 4.29x，有后排扩散。\n当前动态龙头分数：宏和科技(52.6)，国际复材(49.2)，山东玻纤(42.2)。",
-      "leaders": [
-        {
-          "name": "宏和科技",
-          "change_pct": 0.0,
-          "score": 52.6,
-          "factors": [
-            "3分钟0.00%",
-            "成交3.94x",
-            "日内+10.00%"
-          ]
-        },
-        {
-          "name": "国际复材",
-          "change_pct": -0.85,
-          "score": 49.2,
-          "factors": [
-            "3分钟-0.85%",
-            "成交6.50x",
-            "日内+13.77%"
-          ]
-        },
-        {
-          "name": "山东玻纤",
-          "change_pct": -1.04,
-          "score": 42.2,
-          "factors": [
-            "3分钟-1.04%",
-            "成交8.75x",
-            "日内+5.27%"
-          ]
-        }
-      ],
-      "signal_type": "机会观察",
-      "is_old_economy": false,
-      "alert_class": "opportunity",
-      "confirmation_level": "invalidated",
-      "source_watch_id": "PCB-电子布",
-      "source_status": "degraded_partial",
-      "valid_until": "2026-07-29T10:24:08+08:00",
-      "quote_audit": {
-        "provider": "本地盘中监控",
-        "quote_time": "2026-07-29T10:19:08+08:00",
-        "pct_field": "3分钟涨跌幅",
-        "sample_count": 3,
-        "max_abs_leader_change_pct": 1.04,
-        "sanity_checks": {
-          "cross_source_verified": false,
-          "price_move_valid": false,
-          "volume_valid": true,
-          "direction_ratio_valid": false,
-          "limit_up_count_valid": false,
-          "limit_down_count_valid": false
-        },
-        "board_3m_change_pct": -0.77,
-        "up_ratio_pct": 100,
-        "down_ratio_pct": 0,
-        "volume_ratio": 5.02,
-        "relative_volume_vs_yesterday": 4.29,
-        "missing_confirmation": "等待腾讯/通达信等第二行情源按触发时点交叉核验；通过前只标候选/观察，不标确认。",
-        "invalidated_reason": "3分钟均值为下跌，与观察拉动方向矛盾；涨停结构缺少可审计limit_up_count>=2字段，只作观察。"
-      },
-      "id": "monitor-20260729-101908-8930a7a1a7cd"
     }
   ],
   "quote_audit": {
     "provider": "本地盘中监控、富途行情（腾讯备用）",
     "quote_time": "2026-07-29T10:20:51+08:00",
-    "pct_field": "各异动卡标注的短周期涨跌幅",
+    "pct_field": "各异动卡标注的3分钟涨跌幅",
     "sanity_checks": {
       "sample_count": 13,
       "max_abs_leader_change_pct": 4.3732,
