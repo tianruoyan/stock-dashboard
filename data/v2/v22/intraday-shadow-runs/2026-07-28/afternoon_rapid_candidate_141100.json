@@ -1,0 +1,55 @@
+{
+  "schema_version": 1,
+  "version": "2026-07-25.s2.3",
+  "mode": "shadow_only",
+  "state": "failed",
+  "trade_date": "2026-07-28",
+  "checkpoint": {
+    "id": "afternoon_rapid_candidate_141100",
+    "label": "午后快速候选 14:11"
+  },
+  "observed_at": "2026-07-28T14:11:02+08:00",
+  "steps": [
+    {
+      "name": "intraday-indices",
+      "returncode": 0,
+      "state": "completed",
+      "stdout_tail": "{\"status\": \"ok\", \"updated\": \"/Users/sweet_orange/stock-dashboard-v2-local/data/intraday.json\", \"market_data_as_of\": \"2026-07-28T14:11:04+08:00\", \"indices\": 5, \"industries\": 98}",
+      "stderr_tail": ""
+    },
+    {
+      "name": "public-inputs",
+      "returncode": 0,
+      "state": "completed",
+      "stdout_tail": "{\"state\": \"usable\", \"trade_date\": \"2026-07-28\", \"collectors\": {\"microcap\": \"updated\", \"sentiment\": \"updated\", \"official_events\": \"updated\"}}",
+      "stderr_tail": ""
+    },
+    {
+      "name": "market-facts",
+      "returncode": 1,
+      "state": "failed",
+      "stdout_tail": "{\"state\": \"failed\", \"error\": \"JSONDecodeError:No value to decode\"}",
+      "stderr_tail": ""
+    }
+  ],
+  "trigger_capture": {
+    "created_snapshot_count": 2,
+    "total_snapshot_count": 401,
+    "hold_count": 36,
+    "summary": "新增2个可审计触发行情快照。"
+  },
+  "same_day_comparison": {
+    "allowed": false,
+    "reason": "V2证据属于2026-07-23，V2.2市场事实属于2026-07-28；交易日未统一，暂不比较命中率。"
+  },
+  "summary": "盘中影子检查失败，保留上一次成功结果。",
+  "guardrails": {
+    "v1_modified": false,
+    "production_behavior_changed": false,
+    "automatic_trading": false,
+    "automatic_user_asset_mutation": false,
+    "automatic_model_promotion": false,
+    "automatic_v1_shutdown": false,
+    "historical_trigger_backfill": false
+  }
+}

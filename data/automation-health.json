@@ -1,17 +1,17 @@
 {
-  "timestamp": "2026-07-27T16:19:48+08:00",
+  "timestamp": "2026-07-29T16:23:22+08:00",
   "current_signal_date": "2026-07-27",
-  "target_trade_date": "2026-07-27",
+  "target_trade_date": "2026-07-29",
   "calendar_version": "cn-sse-2026-1",
   "calendar_state": "postmarket",
   "overall_status": "blocked",
-  "summary": "3 个自动化产出异常：盘前简报、盘中异动、午盘分析。",
+  "summary": "6 个自动化产出异常：盘前简报、盘中全景、盘中异动、午盘分析。",
   "counts": {
     "ok": 1,
-    "late": 3,
+    "late": 6,
     "missing": 0,
     "invalidated": 0,
-    "waiting": 3
+    "waiting": 0
   },
   "processes": [
     {
@@ -44,16 +44,21 @@
       "due": "15:05",
       "deadline": "2026-07-27T16:35:00+08:00",
       "timestamp": "2026-07-23T15:20:16+08:00",
-      "status": "waiting",
+      "status": "late",
       "blocking": false,
-      "action": "等待当日产出",
+      "action": "重跑该自动化",
       "reason": "时间戳不是当前交易日：2026-07-23T15:20:16+08:00",
-      "failure_type": "not_due",
-      "diagnosis": "尚未到该自动化的计划产出窗口。",
+      "failure_type": "stale_or_time_anomaly",
+      "diagnosis": "时间戳不是当前交易日：2026-07-23T15:20:16+08:00",
       "next_actions": [
-        "到 15:05 后再检查是否产出。"
+        "核对文件 timestamp 是否由自动化真实写入。",
+        "重跑自动化，避免使用上一交易日或异常超前数据。"
       ],
-      "related_sources": []
+      "related_sources": [
+        "ths_sina_or_akshare_quote_decode",
+        "eastmoney_hk_akshare",
+        "tencent_hk_auction_http"
+      ]
     },
     {
       "id": "alerts",
@@ -108,16 +113,21 @@
       "due": "15:30",
       "deadline": "2026-07-27T16:30:00+08:00",
       "timestamp": "2026-07-23T16:14:44+08:00",
-      "status": "waiting",
+      "status": "late",
       "blocking": false,
-      "action": "等待当日产出",
+      "action": "重跑该自动化",
       "reason": "时间戳不是当前交易日：2026-07-23T16:14:44+08:00",
-      "failure_type": "not_due",
-      "diagnosis": "尚未到该自动化的计划产出窗口。",
+      "failure_type": "stale_or_time_anomaly",
+      "diagnosis": "时间戳不是当前交易日：2026-07-23T16:14:44+08:00",
       "next_actions": [
-        "到 15:30 后再检查是否产出。"
+        "核对文件 timestamp 是否由自动化真实写入。",
+        "重跑自动化，避免使用上一交易日或异常超前数据。"
       ],
-      "related_sources": []
+      "related_sources": [
+        "ths_sina_or_akshare_quote_decode",
+        "eastmoney_hk_akshare",
+        "tencent_hk_auction_http"
+      ]
     },
     {
       "id": "evening",
@@ -125,17 +135,22 @@
       "file": "data/evening-sentiment.json",
       "due": "20:00",
       "deadline": "2026-07-27T21:30:00+08:00",
-      "timestamp": "2026-07-23T21:49:34+08:00",
-      "status": "waiting",
+      "timestamp": "2026-07-29T05:06:37+08:00",
+      "status": "late",
       "blocking": false,
-      "action": "等待产出",
-      "reason": "计划 20:00 后产出",
-      "failure_type": "not_due",
-      "diagnosis": "尚未到该自动化的计划产出窗口。",
+      "action": "重跑该自动化",
+      "reason": "时间戳不是当前交易日：2026-07-29T05:06:37+08:00",
+      "failure_type": "stale_or_time_anomaly",
+      "diagnosis": "时间戳不是当前交易日：2026-07-29T05:06:37+08:00",
       "next_actions": [
-        "到 20:00 后再检查是否产出。"
+        "核对文件 timestamp 是否由自动化真实写入。",
+        "重跑自动化，避免使用上一交易日或异常超前数据。"
       ],
-      "related_sources": []
+      "related_sources": [
+        "ths_sina_or_akshare_quote_decode",
+        "eastmoney_hk_akshare",
+        "tencent_hk_auction_http"
+      ]
     },
     {
       "id": "topics",
@@ -157,9 +172,9 @@
     }
   ],
   "next_session_readiness": {
-    "target_trade_date": "2026-07-27",
+    "target_trade_date": "2026-07-29",
     "status": "overdue",
-    "summary": "2026-07-27 有 3 个产出已过窗口未更新。",
+    "summary": "2026-07-29 有 3 个产出已过窗口未更新。",
     "pending_count": 3,
     "ready_count": 1,
     "overdue_count": 3,
@@ -169,7 +184,7 @@
         "label": "盘前简报",
         "file": "data/premarket.json",
         "due": "09:25",
-        "deadline": "2026-07-27T09:45:00+08:00",
+        "deadline": "2026-07-29T09:45:00+08:00",
         "timestamp": "2026-07-23T09:30:24+08:00",
         "file_date": "2026-07-23",
         "status": "overdue",
@@ -181,7 +196,7 @@
         "label": "盘中全景",
         "file": "data/intraday.json",
         "due": "15:05",
-        "deadline": "2026-07-27T16:35:00+08:00",
+        "deadline": "2026-07-29T16:35:00+08:00",
         "timestamp": "2026-07-23T15:20:16+08:00",
         "file_date": "2026-07-23",
         "status": "pending",
@@ -193,7 +208,7 @@
         "label": "盘中异动",
         "file": "data/alert.json",
         "due": "15:00",
-        "deadline": "2026-07-27T15:05:00+08:00",
+        "deadline": "2026-07-29T15:05:00+08:00",
         "timestamp": "2026-07-23T15:05:03+08:00",
         "file_date": "2026-07-23",
         "status": "overdue",
@@ -205,7 +220,7 @@
         "label": "午盘分析",
         "file": "data/midday.json",
         "due": "11:30",
-        "deadline": "2026-07-27T12:00:00+08:00",
+        "deadline": "2026-07-29T12:00:00+08:00",
         "timestamp": "2026-07-23T11:44:02+08:00",
         "file_date": "2026-07-23",
         "status": "overdue",
@@ -217,7 +232,7 @@
         "label": "盘后复盘",
         "file": "data/postmarket.json",
         "due": "15:30",
-        "deadline": "2026-07-27T16:30:00+08:00",
+        "deadline": "2026-07-29T16:30:00+08:00",
         "timestamp": "2026-07-23T16:14:44+08:00",
         "file_date": "2026-07-23",
         "status": "pending",
@@ -229,24 +244,24 @@
         "label": "晚间舆情",
         "file": "data/evening-sentiment.json",
         "due": "20:00",
-        "deadline": "2026-07-27T21:30:00+08:00",
-        "timestamp": "2026-07-23T21:49:34+08:00",
-        "file_date": "2026-07-23",
-        "status": "pending",
-        "action": "等待产出",
-        "reason": "计划 20:00 后产出"
+        "deadline": "2026-07-29T21:30:00+08:00",
+        "timestamp": "2026-07-29T05:06:37+08:00",
+        "file_date": "2026-07-29",
+        "status": "ready",
+        "action": "已产出",
+        "reason": "目标交易日文件已更新"
       },
       {
         "id": "topics",
         "label": "专题跟踪",
         "file": "data/topics.json",
         "due": "15:30",
-        "deadline": "2026-07-27T18:30:00+08:00",
+        "deadline": "2026-07-29T18:30:00+08:00",
         "timestamp": "2026-07-27T10:23:01+08:00",
         "file_date": "2026-07-27",
-        "status": "ready",
-        "action": "已产出",
-        "reason": "目标交易日文件已更新"
+        "status": "pending",
+        "action": "等待宽限",
+        "reason": "已到计划时间，宽限至 18:30"
       }
     ]
   },

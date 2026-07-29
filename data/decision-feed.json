@@ -1,11 +1,11 @@
 {
-  "timestamp": "2026-07-27T16:19:48+08:00",
+  "timestamp": "2026-07-29T16:23:22+08:00",
   "current_signal_date": "2026-07-27",
-  "target_trade_date": "2026-07-27",
+  "target_trade_date": "2026-07-29",
   "calendar_version": "cn-sse-2026-1",
   "quality_gate": {
     "status": "degraded",
-    "summary": "发现 40 个降级/需复核项（1 个交易阻断，20 个价格/行情复核，1 个信号复核，20 个背景复核），核心结论可看但必须按影响分层使用。",
+    "summary": "发现 38 个降级/需复核项（1 个交易阻断，20 个价格/行情复核，1 个信号复核，18 个背景复核），核心结论可看但必须按影响分层使用。",
     "decision_flags": [
       "行情/涨跌幅需二次源复核",
       "盘中异动源降级，alert 类信号降权",
@@ -14,13 +14,13 @@
     ],
     "blocking_count": 1,
     "price_review_count": 20,
-    "background_review_count": 20
+    "background_review_count": 18
   },
-  "summary": "当前时段尚无可用盘面结论。 数据质量：发现 40 个降级/需复核项（1 个交易阻断，20 个价格/行情复核，1 个信号复核，20 个背景复核），核心结论可看但必须按影响分层使用。",
+  "summary": "当前时段尚无可用盘面结论。 数据质量：发现 38 个降级/需复核项（1 个交易阻断，20 个价格/行情复核，1 个信号复核，18 个背景复核），核心结论可看但必须按影响分层使用。",
   "observation_coverage": {
-    "summary": "独立盘面/盘后扫描 5 条，但缺少纯主动新线。",
-    "independent_count": 5,
-    "inherited_count": 19,
+    "summary": "独立盘面/盘后扫描 6 条，但缺少纯主动新线。",
+    "independent_count": 6,
+    "inherited_count": 18,
     "active_market_count": 0,
     "postmarket_scan_count": 0,
     "topic_inherited_count": 7,
@@ -32,7 +32,7 @@
     "stance": "风险优先，只做验证",
     "action": "不把候选方向当交易机会；先看风险收敛、数据恢复和核心承接。",
     "reasons": [
-      "发现 40 个降级/需复核项（1 个交易阻断，20 个价格/行情复核，1 个信号复核，20 个背景复核），核心结论可看但必须按影响分层使用。",
+      "发现 38 个降级/需复核项（1 个交易阻断，20 个价格/行情复核，1 个信号复核，18 个背景复核），核心结论可看但必须按影响分层使用。",
       "A/B级风险 8 条",
       "风险优先冲突 1 条",
       "可用机会 0 条，降权候选 8 条"
@@ -43,12 +43,13 @@
       "半导体材料"
     ],
     "upgrade_watch": [
-      "#1 待触发：金融/消费防御：核心股低开后放量收复开盘价或跌幅明显收敛。 数据质量恢复或二次行情源确认前，不升级为可用机会。",
-      "#2 待触发：存储/HBM：核心股低开后放量收复开盘价或跌幅明显收敛。 数据质量恢复或二次行情源确认前，不升级为可用机会。",
-      "#3 待触发：半导体材料：早期候选：核心股从低位重新站回分时均价/开盘价，且同题材至少2只代表股同步转强。 数据质量恢复或二次行情源确认前，不升级为可用机会。"
+      "#1 待触发：存储/HBM：核心股低开后放量收复开盘价或跌幅明显收敛。 数据质量恢复或二次行情源确认前，不升级为可用机会。",
+      "#2 待触发：半导体材料：早期候选：核心股从低位重新站回分时均价/开盘价，且同题材至少2只代表股同步转强。 数据质量恢复或二次行情源确认前，不升级为可用机会。",
+      "#3 待触发：机器人/工业自动化：题材3分钟涨跌幅>=1.5%，方向占比>=70%，成交放大>=5x。 数据质量恢复或二次行情源确认前，不升级为可用机会。"
     ],
     "verification_focus": [
-      "核心股低开后放量收复开盘价或跌幅明显收敛"
+      "核心股低开后放量收复开盘价或跌幅明显收敛",
+      "题材3分钟涨跌幅>=1.5%，方向占比>=70%，成交放大>=5x"
     ],
     "quality_actions": [
       {
@@ -66,7 +67,7 @@
     ]
   },
   "signal_queue": {
-    "summary": "无可用机会，4 条风险优先，5 条只做验证，3 条禁用直用。",
+    "summary": "无可用机会，4 条风险优先，5 条只做验证，4 条禁用直用。",
     "active_opportunities": [],
     "trackable_risks": [
       {
@@ -96,12 +97,6 @@
     ],
     "verification_queue": [
       {
-        "title": "待触发：金融/消费防御",
-        "grade": "C",
-        "use_action": "降权观察",
-        "reason": "核心股低开后放量收复开盘价或跌幅明显收敛"
-      },
-      {
         "title": "待触发：存储/HBM",
         "grade": "C",
         "use_action": "降权观察",
@@ -114,13 +109,19 @@
         "reason": "早期候选：核心股从低位重新站回分时均价/开盘价，且同题材至少2只代表股同步转强"
       },
       {
-        "title": "待触发：创新药/CRO",
+        "title": "待触发：机器人/工业自动化",
+        "grade": "C",
+        "use_action": "降权观察",
+        "reason": "题材3分钟涨跌幅>=1.5%，方向占比>=70%，成交放大>=5x"
+      },
+      {
+        "title": "待触发：PCB/电子布",
         "grade": "C",
         "use_action": "降权观察",
         "reason": "核心股低开后放量收复开盘价或跌幅明显收敛"
       },
       {
-        "title": "待触发：半导体设备材料",
+        "title": "待触发：港股科网AI应用映射",
         "grade": "C",
         "use_action": "降权观察",
         "reason": "核心股低开后放量收复开盘价或跌幅明显收敛"
@@ -143,64 +144,16 @@
         "grade": "D",
         "use_action": "仅复核",
         "reason": "工业富联继续放量、服务器核心止跌后再判断主线。"
+      },
+      {
+        "title": "主线变化：港股科网AI应用映射",
+        "grade": "D",
+        "use_action": "仅复核",
+        "reason": "A股应用端需独立涨停扩散；腾讯、美团上涨只能作风险偏好证据，不能替代智谱、商汤与A股模型股确认。"
       }
     ]
   },
   "opportunities": [
-    {
-      "title": "待触发：金融/消费防御",
-      "type": "opportunity_watch",
-      "trigger_reason": "盘前/晚间注意点已转为盘中追踪清单，等待实时行情触发。",
-      "conclusion": "金融/消费防御；强化；周期资源与科技形成跷跷板，风格切换风险维持；金融仅护盘、消费防御未共振。；次日验证A股资源/电网是否延续，并看券商+保险或汽车两条是否承接港股强势。；A股资源与电网强，港股建设银行H+2.22%、中信证券H+1.78%，汽车三核心同步红盘；科技制造A/H共弱，风格切换风险进一步确认。",
-      "confidence": "low",
-      "evidence": [
-        "{'evidence_id': 'evidence_40487dc89c26273e', 'scope': 'theme', 'mapped_theme_ids': ['old_deng_rotation'], 'summary': '金融/消费防御', 'source_phase': '专题', 'accepted': True, 'rejection_…",
-        "{'evidence_id': 'evidence_abca7c12519f79a1', 'scope': 'theme', 'mapped_theme_ids': ['old_deng_rotation'], 'summary': '金融仅护盘、消费防御未共振', 'source_phase': '专题', 'accepted': True, 'reje…",
-        "{'evidence_id': 'evidence_6255d328c421df98', 'scope': 'theme', 'mapped_theme_ids': ['old_deng_rotation'], 'summary': '次日验证A股资源/电网是否延续，并看券商+保险或汽车两条是否承接港股强势', 'source_phase': '专题', …",
-        "{'evidence_id': 'evidence_5001b36241a6391e', 'scope': 'theme', 'mapped_theme_ids': ['old_deng_rotation'], 'summary': 'A股资源与电网强，港股建设银行H+2.22%、中信证券H+1.78%，汽车三核心同步红盘', 'source_phase'…"
-      ],
-      "source_files": [
-        "opportunity-watch.json"
-      ],
-      "watch_next": [
-        "核心股低开后放量收复开盘价或跌幅明显收敛",
-        "同题材后排不再扩大负反馈，跌停/炸板数量下降",
-        "板块ETF或指数不再创新低并出现承接"
-      ],
-      "invalidation": "核心股继续放量下跌",
-      "tags": [
-        "金融/消费防御",
-        "风控"
-      ],
-      "quality_flags": [
-        "行情/涨跌幅需二次源复核",
-        "盘中异动源降级，alert 类信号降权",
-        "机会信号需降权转验证",
-        "交易阻断项未修复，相关信号不可直接用"
-      ],
-      "tone": "good",
-      "discovery_type": "premarket_watch_queue",
-      "evidence_score": 98,
-      "missing_evidence": [
-        "数据源降级需二次确认"
-      ],
-      "next_action": "核心股低开后放量收复开盘价或跌幅明显收敛",
-      "observation_source": "数据派生",
-      "independent_observation": false,
-      "signal_score": 57,
-      "signal_grade": "C",
-      "use_action": "降权观察",
-      "use_reasons": [
-        "有可核验证据",
-        "有下一步验证",
-        "有证伪条件",
-        "有来源文件",
-        "数据质量降权"
-      ],
-      "upgrade_rank": 1,
-      "upgrade_priority": "优先验证",
-      "upgrade_condition": "核心股低开后放量收复开盘价或跌幅明显收敛。 数据质量恢复或二次行情源确认前，不升级为可用机会。"
-    },
     {
       "title": "待触发：存储/HBM",
       "type": "opportunity_watch",
@@ -253,7 +206,7 @@
         "有来源文件",
         "数据质量降权"
       ],
-      "upgrade_rank": 2,
+      "upgrade_rank": 1,
       "upgrade_priority": "优先验证",
       "upgrade_condition": "核心股低开后放量收复开盘价或跌幅明显收敛。 数据质量恢复或二次行情源确认前，不升级为可用机会。"
     },
@@ -309,86 +262,33 @@
         "有来源文件",
         "数据质量降权"
       ],
-      "upgrade_rank": 3,
+      "upgrade_rank": 2,
       "upgrade_priority": "优先验证",
       "upgrade_condition": "早期候选：核心股从低位重新站回分时均价/开盘价，且同题材至少2只代表股同步转强。 数据质量恢复或二次行情源确认前，不升级为可用机会。"
     },
     {
-      "title": "待触发：创新药/CRO",
+      "title": "待触发：机器人/工业自动化",
       "type": "opportunity_watch",
       "trigger_reason": "盘前/晚间注意点已转为盘中追踪清单，等待实时行情触发。",
-      "conclusion": "回避/降级集合；弱化；新能源/电池/资源链是今晚主要风险线，风险较7月8日收敛但没有反转。；旧风险集合转为历史触发；只保留医药、家居等41只跌停尾部监测。；指数和科技链已V形转强，跌停由124只收缩至41只；旧的科技普跌结论失效，但尾部风险未清零。；创新药/CRO；风险；医药封板增至约9只并新增中药分支，仍是全市场强主线；昭衍、润达炸板构成后排分歧。；观察…",
+      "conclusion": "机器人/Physical AI；观察；舜宇保持强势且地平线修复，并与A股机器视觉、伺服、减速器扩散时再升级。；港股舜宇+2.15%、地平线-3.79%；比亚迪H、小鹏、理想红盘，汽车强于机器人芯片，仍是分化观察。；机器人/工业自动化；观察；自动化与通用设备随科技链首日修复，强度低于半导体和CPO。；等待A股核心中军与港股地平线同步修复，单看汽车或光学样本不…",
       "confidence": "low",
       "evidence": [
-        "{'evidence_id': 'evidence_7d3a6d81b26c6270', 'scope': 'theme', 'mapped_theme_ids': ['medicine_repair'], 'summary': '只保留医药、家居等41只跌停尾部监测', 'source_phase': '专题', 'accepted': True, 'r…",
-        "{'evidence_id': 'evidence_5f0714b242b33ebf', 'scope': 'theme', 'mapped_theme_ids': ['medicine_repair'], 'summary': '创新药/CRO', 'source_phase': '专题', 'accepted': True, 'rejection_re…",
-        "{'evidence_id': 'evidence_8fa0c0be4a8f5225', 'scope': 'theme', 'mapped_theme_ids': ['medicine_repair'], 'summary': '医药封板增至约9只并新增中药分支，仍是全市场强主线', 'source_phase': '专题', 'accepted': T…",
-        "{'evidence_id': 'evidence_a322e6c35a6e642e', 'scope': 'theme', 'mapped_theme_ids': ['medicine_repair'], 'summary': '观察医疗服务和化学制药跌幅能否收窄2个百分点、港股创新药是否止跌', 'source_phase': '专题', 'accep…",
-        "{'evidence_id': 'evidence_38b2abc9fff39c41', 'scope': 'theme', 'mapped_theme_ids': ['medicine_repair'], 'summary': '医疗服务-7.10%、化学制药-6.06%、生物制品-5.55%', 'source_phase': '专题', 'accep…"
+        "{'evidence_id': 'evidence_8c791d4df2cc8a34', 'scope': 'theme', 'mapped_theme_ids': ['robotics_automation'], 'summary': '机器人/Physical AI', 'source_phase': '专题', 'accepted': True, '…",
+        "{'evidence_id': 'evidence_311da7fedf3644f9', 'scope': 'theme', 'mapped_theme_ids': ['robotics_automation'], 'summary': '舜宇保持强势且地平线修复，并与A股机器视觉、伺服、减速器扩散时再升级', 'source_phase': '专题', …",
+        "{'evidence_id': 'evidence_4cf23523fa7da854', 'scope': 'theme', 'mapped_theme_ids': ['robotics_automation'], 'summary': '比亚迪H、小鹏、理想红盘，汽车强于机器人芯片，仍是分化观察', 'source_phase': '专题', 'acce…",
+        "{'evidence_id': 'evidence_0eb23131c8ff488f', 'scope': 'theme', 'mapped_theme_ids': ['robotics_automation'], 'summary': '机器人/工业自动化', 'source_phase': '专题', 'accepted': True, 'reject…",
+        "{'evidence_id': 'evidence_bb4a600863390f58', 'scope': 'theme', 'mapped_theme_ids': ['robotics_automation'], 'summary': '自动化与通用设备随科技链首日修复，强度低于半导体和CPO', 'source_phase': '专题', 'accep…"
       ],
       "source_files": [
         "opportunity-watch.json"
       ],
       "watch_next": [
-        "核心股低开后放量收复开盘价或跌幅明显收敛",
-        "同题材后排不再扩大负反馈，跌停/炸板数量下降",
-        "板块ETF或指数不再创新低并出现承接"
+        "题材3分钟涨跌幅>=1.5%，方向占比>=70%，成交放大>=5x",
+        "板块内出现批量涨停/封板或后排扩散",
+        "核心股、ETF、后排扩散同向确认",
+        "核心股低开后放量收复开盘价或跌幅明显收敛"
       ],
-      "invalidation": "核心股继续放量下跌",
-      "tags": [
-        "创新药/CRO",
-        "风控"
-      ],
-      "quality_flags": [
-        "行情/涨跌幅需二次源复核",
-        "盘中异动源降级，alert 类信号降权",
-        "机会信号需降权转验证",
-        "交易阻断项未修复，相关信号不可直接用"
-      ],
-      "tone": "good",
-      "discovery_type": "premarket_watch_queue",
-      "evidence_score": 83,
-      "missing_evidence": [
-        "数据源降级需二次确认"
-      ],
-      "next_action": "核心股低开后放量收复开盘价或跌幅明显收敛",
-      "observation_source": "数据派生",
-      "independent_observation": false,
-      "signal_score": 57,
-      "signal_grade": "C",
-      "use_action": "降权观察",
-      "use_reasons": [
-        "有可核验证据",
-        "有下一步验证",
-        "有证伪条件",
-        "有来源文件",
-        "数据质量降权"
-      ],
-      "upgrade_rank": 4,
-      "upgrade_priority": "观察验证",
-      "upgrade_condition": "核心股低开后放量收复开盘价或跌幅明显收敛。 数据质量恢复或二次行情源确认前，不升级为可用机会。"
-    },
-    {
-      "title": "待触发：半导体设备材料",
-      "type": "opportunity_watch",
-      "trigger_reason": "盘前/晚间注意点已转为盘中追踪清单，等待实时行情触发。",
-      "conclusion": "上午判定为分化偏修复，盘前科技假设部分确认。9:30后若交换机/服务器后排扩散、设备材料核心齐升且跌停继续收缩，才可升级为进攻；若高开回落且跌停扩宽，则回到退潮风险。；科创50大跌背离宽度修复，科技线仍需风控；宽基小涨且上涨家数较多时，科创50仍跌3.78%，说明科技成长链条和前期高弹性方向未同步修复，直接影响次日半导体、CPO、存储和AI硬件仓位优先级。…",
-      "confidence": "low",
-      "evidence": [
-        "{'evidence_id': 'evidence_793d2b7430e518d8', 'scope': 'theme', 'mapped_theme_ids': ['semiconductor_equipment_materials'], 'summary': '9:25半导体设备材料、存储/HBM、CPO核心是否停止低开低走', 'source_ph…",
-        "{'evidence_id': 'evidence_f52e0bab91293769', 'scope': 'theme', 'mapped_theme_ids': ['semiconductor_equipment_materials'], 'summary': '没有客户、订单和收入证据不升级半导体设备材料', 'source_phase': '晚间P…",
-        "{'evidence_id': 'evidence_a0a93fa779d3bd58', 'scope': 'theme', 'mapped_theme_ids': ['semiconductor_equipment_materials'], 'summary': 'AMD Advancing AI主题演讲在北京时间7月24日00:30开始，Intel Q…",
-        "{'evidence_id': 'evidence_fa945cb8d9b2ad8f', 'scope': 'theme', 'mapped_theme_ids': ['semiconductor_equipment_materials'], 'summary': '半导体设备材料', 'source_phase': '专题', 'accepted': T…"
-      ],
-      "source_files": [
-        "opportunity-watch.json"
-      ],
-      "watch_next": [
-        "核心股低开后放量收复开盘价或跌幅明显收敛",
-        "同题材后排不再扩大负反馈，跌停/炸板数量下降",
-        "板块ETF或指数不再创新低并出现承接"
-      ],
-      "invalidation": "核心股继续放量下跌",
+      "invalidation": "核心股高开低走或冲高回落",
       "tags": [
         "科技硬件链",
         "机器人/工业自动化",
@@ -406,7 +306,7 @@
       "missing_evidence": [
         "数据源降级需二次确认"
       ],
-      "next_action": "核心股低开后放量收复开盘价或跌幅明显收敛",
+      "next_action": "题材3分钟涨跌幅>=1.5%，方向占比>=70%，成交放大>=5x",
       "observation_source": "数据派生",
       "independent_observation": false,
       "signal_score": 57,
@@ -419,22 +319,22 @@
         "有来源文件",
         "数据质量降权"
       ],
-      "upgrade_rank": 5,
+      "upgrade_rank": 3,
       "upgrade_priority": "观察验证",
-      "upgrade_condition": "核心股低开后放量收复开盘价或跌幅明显收敛。 数据质量恢复或二次行情源确认前，不升级为可用机会。"
+      "upgrade_condition": "题材3分钟涨跌幅>=1.5%，方向占比>=70%，成交放大>=5x。 数据质量恢复或二次行情源确认前，不升级为可用机会。"
     },
     {
-      "title": "待触发：CPO/光模块",
+      "title": "待触发：PCB/电子布",
       "type": "opportunity_watch",
       "trigger_reason": "盘前/晚间注意点已转为盘中追踪清单，等待实时行情触发。",
-      "conclusion": "上午判定为分化偏修复，盘前科技假设部分确认。9:30后若交换机/服务器后排扩散、设备材料核心齐升且跌停继续收缩，才可升级为进攻；若高开回落且跌停扩宽，则回到退潮风险。；7月22日美股道指基本持平，标普500跌0.14%、纳指跌0.57%；美光收跌约1.2%，英伟达、博通和AMD逆势上涨。；对A股AI网络、服务器是选择性映射，对存储是高位分歧提醒。；英伟达/…",
+      "conclusion": "电子布/玻纤轮动；资金博弈；等待两中军同步翻红、PCB至少5只红盘且东山跌幅收窄至-3%以内。；中国巨石-0.88%、国际复材-2.12%，修复样本4只微红；PCB仅沪电+1.32%，多数核心收绿。尾盘有承接但只是板块弱修复。；电子布；资金博弈；只观察核心同步翻红、主力回流和跌幅收敛，单股回拉不升级。；上游弱修复、PCB多数收绿且无涨停扩散，反抽观察不是强…",
       "confidence": "low",
       "evidence": [
-        "{'evidence_id': 'evidence_33b7c02b8f0f7641', 'scope': 'global', 'mapped_theme_ids': [], 'summary': '7月22日美股道指基本持平，标普500跌0.14%、纳指跌0.57%', 'source_phase': '盘前', 'accepted': True, 'r…",
-        "{'evidence_id': 'evidence_958990f4e95aef47', 'scope': 'theme', 'mapped_theme_ids': ['cpo_optical'], 'summary': '英伟达/博通/AMD -> 交换机、服务器、CPO', 'source_phase': '盘前', 'accepted': True,…",
-        "{'evidence_id': 'evidence_a93be232eafb6a15', 'scope': 'theme', 'mapped_theme_ids': ['cpo_optical'], 'summary': '非路由器交换机：紫光股份、锐捷网络、盛科通信\", \"交换机ODM：菲菱科思、共进股份、工业富联\", \"AI服务器/CPO：中科曙光、浪…",
-        "{'evidence_id': 'evidence_5238404379a5d27d', 'scope': 'theme', 'mapped_theme_ids': ['cpo_optical'], 'summary': '宽基小涨且上涨家数较多时，科创50仍跌3.78%，说明科技成长链条和前期高弹性方向未同步修复，直接影响次日半导体、CPO、存储和AI硬…",
-        "{'evidence_id': 'evidence_1c9d6ca6bd5dc8bf', 'scope': 'theme', 'mapped_theme_ids': ['cpo_optical'], 'summary': '9:25半导体设备材料、存储/HBM、CPO核心是否停止低开低走', 'source_phase': '晚间P0', 'accepte…"
+        "{'evidence_id': 'evidence_2c46f088ad0b3577', 'scope': 'theme', 'mapped_theme_ids': ['pcb_electronic_fabric'], 'summary': '电子布/玻纤轮动', 'source_phase': '专题', 'accepted': True, 'rejec…",
+        "{'evidence_id': 'evidence_43159931cc8fa919', 'scope': 'theme', 'mapped_theme_ids': ['pcb_electronic_fabric'], 'summary': '等待两中军同步翻红、PCB至少5只红盘且东山跌幅收窄至-3%以内', 'source_phase': '专题', …",
+        "{'evidence_id': 'evidence_4abf4f8b8217835d', 'scope': 'theme', 'mapped_theme_ids': ['pcb_electronic_fabric'], 'summary': '中国巨石-0.88%、国际复材-2.12%，修复样本4只微红', 'source_phase': '专题', 'a…",
+        "{'evidence_id': 'evidence_88893780959ee92b', 'scope': 'theme', 'mapped_theme_ids': ['pcb_electronic_fabric'], 'summary': 'PCB仅沪电+1.32%，多数核心收绿', 'source_phase': '专题', 'accepted': T…",
+        "{'evidence_id': 'evidence_6de8cd52e0adecb0', 'scope': 'theme', 'mapped_theme_ids': ['pcb_electronic_fabric'], 'summary': '电子布', 'source_phase': '专题', 'accepted': True, 'rejection_…"
       ],
       "source_files": [
         "opportunity-watch.json"
@@ -475,7 +375,61 @@
         "有来源文件",
         "数据质量降权"
       ],
-      "upgrade_rank": 6,
+      "upgrade_rank": 4,
+      "upgrade_priority": "观察验证",
+      "upgrade_condition": "核心股低开后放量收复开盘价或跌幅明显收敛。 数据质量恢复或二次行情源确认前，不升级为可用机会。"
+    },
+    {
+      "title": "待触发：港股科网AI应用映射",
+      "type": "opportunity_watch",
+      "trigger_reason": "盘前/晚间注意点已转为盘中追踪清单，等待实时行情触发。",
+      "conclusion": "隔夜美股芯片股收跌，AI硬件次日先防守；隔夜美股收盘美光科技-8.85%、超威半导体-8.15%；该方向已进入次日预案，但仍需A股代表股确认。；[\"已取得隔夜正式收盘；9:25继续看A股代表股是否跟跌或出现抗跌。\", \"若A股存储、光模块和算力代表股继续批量低开，先回避，不抄底。\"]；[{\"type\": \"external_quote\", \"source\"…",
+      "confidence": "low",
+      "evidence": [
+        "{'evidence_id': 'evidence_819d49c130b323fa', 'scope': 'theme', 'mapped_theme_ids': ['hk_internet_ai_app_mapping'], 'summary': 'type\": \"external_quote\", \"source\": \"腾讯美股公开行情\", \"time…",
+        "{'evidence_id': 'evidence_71502aa604a50b29', 'scope': 'theme', 'mapped_theme_ids': ['hk_internet_ai_app_mapping'], 'summary': 'type\": \"external_quote\", \"source\": \"腾讯美股公开行情\", \"time…",
+        "{'evidence_id': 'evidence_97e33027d5012461', 'scope': 'theme', 'mapped_theme_ids': ['hk_internet_ai_app_mapping'], 'summary': '腾讯、美团上涨只能作风险偏好证据，不能替代智谱、商汤与A股模型股确认', 'source_phase':…",
+        "{'evidence_id': 'evidence_86458ffd82481c8e', 'scope': 'theme', 'mapped_theme_ids': ['hk_internet_ai_app_mapping'], 'summary': '恒科+0.65%，腾讯+1.04%、美团+4.36%，但智谱-0.34%、商汤-0.71%', 'sou…"
+      ],
+      "source_files": [
+        "opportunity-watch.json"
+      ],
+      "watch_next": [
+        "核心股低开后放量收复开盘价或跌幅明显收敛",
+        "同题材后排不再扩大负反馈，跌停/炸板数量下降",
+        "板块ETF或指数不再创新低并出现承接"
+      ],
+      "invalidation": "核心股继续放量下跌",
+      "tags": [
+        "科技硬件链",
+        "风控"
+      ],
+      "quality_flags": [
+        "行情/涨跌幅需二次源复核",
+        "盘中异动源降级，alert 类信号降权",
+        "机会信号需降权转验证",
+        "交易阻断项未修复，相关信号不可直接用"
+      ],
+      "tone": "good",
+      "discovery_type": "premarket_watch_queue",
+      "evidence_score": 83,
+      "missing_evidence": [
+        "数据源降级需二次确认"
+      ],
+      "next_action": "核心股低开后放量收复开盘价或跌幅明显收敛",
+      "observation_source": "数据派生",
+      "independent_observation": false,
+      "signal_score": 57,
+      "signal_grade": "C",
+      "use_action": "降权观察",
+      "use_reasons": [
+        "有可核验证据",
+        "有下一步验证",
+        "有证伪条件",
+        "有来源文件",
+        "数据质量降权"
+      ],
+      "upgrade_rank": 5,
       "upgrade_priority": "观察验证",
       "upgrade_condition": "核心股低开后放量收复开盘价或跌幅明显收敛。 数据质量恢复或二次行情源确认前，不升级为可用机会。"
     },
@@ -523,7 +477,7 @@
         "有来源文件",
         "数据质量降权"
       ],
-      "upgrade_rank": 7,
+      "upgrade_rank": 6,
       "upgrade_priority": "仅复核",
       "upgrade_condition": "次日验证A股资源/电网是否延续，并看券商+保险或汽车两条是否承接港股强势。 数据质量恢复或二次行情源确认前，不升级为可用机会。"
     },
@@ -571,9 +525,55 @@
         "有来源文件",
         "数据质量降权"
       ],
-      "upgrade_rank": 8,
+      "upgrade_rank": 7,
       "upgrade_priority": "仅复核",
       "upgrade_condition": "工业富联继续放量、服务器核心止跌后再判断主线。 数据质量恢复或二次行情源确认前，不升级为可用机会。"
+    },
+    {
+      "title": "主线变化：港股科网AI应用映射",
+      "type": "theme_shift",
+      "trigger_reason": "主线变化扫描触发：升温/降温/抱团/风险状态出现边际变化。",
+      "conclusion": "港股科网AI应用映射 有新出现或轮动增强迹象，需看次日扩散确认。",
+      "confidence": "low",
+      "evidence": [
+        "恒科+0.65%，腾讯+1.04%、美团+4.36%，但智谱-0.34%、商汤-0.71%；平台互联网强、国产模型弱。"
+      ],
+      "source_files": [
+        "topics.json"
+      ],
+      "watch_next": [
+        "A股应用端需独立涨停扩散；腾讯、美团上涨只能作风险偏好证据，不能替代智谱、商汤与A股模型股确认。"
+      ],
+      "invalidation": "港股科网AI应用映射 需要次日竞价、量能和后排扩散共同确认。",
+      "tags": [],
+      "quality_flags": [
+        "行情/涨跌幅需二次源复核",
+        "盘中异动源降级，alert 类信号降权",
+        "机会信号需降权转验证",
+        "交易阻断项未修复，相关信号不可直接用"
+      ],
+      "tone": "good",
+      "discovery_type": "theme_shift_scan",
+      "evidence_score": 67,
+      "missing_evidence": [
+        "数据源降级需二次确认"
+      ],
+      "next_action": "A股应用端需独立涨停扩散；腾讯、美团上涨只能作风险偏好证据，不能替代智谱、商汤与A股模型股确认。",
+      "observation_source": "主线变化扫描",
+      "independent_observation": true,
+      "signal_score": 36,
+      "signal_grade": "D",
+      "use_action": "仅复核",
+      "use_reasons": [
+        "有可核验证据",
+        "有下一步验证",
+        "有证伪条件",
+        "有来源文件",
+        "数据质量降权"
+      ],
+      "upgrade_rank": 8,
+      "upgrade_priority": "仅复核",
+      "upgrade_condition": "A股应用端需独立涨停扩散；腾讯、美团上涨只能作风险偏好证据，不能替代智谱、商汤与A股模型股确认。 数据质量恢复或二次行情源确认前，不升级为可用机会。"
     }
   ],
   "risks": [
@@ -581,7 +581,7 @@
       "title": "数据质量降级",
       "type": "data_quality",
       "trigger_reason": "风控兜底触发：市场宽度、数据质量或回撤条件触发风险优先。",
-      "conclusion": "发现 40 个降级/需复核项（1 个交易阻断，20 个价格/行情复核，1 个信号复核，20 个背景复核），核心结论可看但必须按影响分层使用。",
+      "conclusion": "发现 38 个降级/需复核项（1 个交易阻断，20 个价格/行情复核，1 个信号复核，18 个背景复核），核心结论可看但必须按影响分层使用。",
       "confidence": "high",
       "evidence": [
         "时间戳不是当前交易日：2026-07-23T15:05:03+08:00",
@@ -989,36 +989,39 @@
       ]
     },
     {
-      "title": "盘中追踪：金融/消费防御",
+      "title": "盘中追踪：机器人/工业自动化",
       "type": "opportunity_watch",
       "trigger_reason": "盘前/晚间注意点已转为盘中追踪清单，等待实时行情触发。",
-      "conclusion": "金融/消费防御；强化；周期资源与科技形成跷跷板，风格切换风险维持；金融仅护盘、消费防御未共振。；次日验证A股资源/电网是否延续，并看券商+保险或汽车两条是否承接港股强势。；A股资源与电网强，港股建设银行H+2.22%、中信证券H+1.78%，汽车三核心同步红盘；科技制造A/H共弱，风格切换风险进一步…",
+      "conclusion": "机器人/Physical AI；观察；舜宇保持强势且地平线修复，并与A股机器视觉、伺服、减速器扩散时再升级。；港股舜宇+2.15%、地平线-3.79%；比亚迪H、小鹏、理想红盘，汽车强于机器人芯片，仍是分化观察。；机器人/工业自动化；观察；自动化与通用设备随科技链首日修复，强度低于半导体和CPO。…",
       "confidence": "low",
       "evidence": [
-        "{'evidence_id': 'evidence_40487dc89c26273e', 'scope': 'theme', 'mapped_theme_ids': ['old_deng_rotation'], 'summary': '金融/消费防御', 'source_phase': '专题', 'accepted': True, 'rejection_…",
-        "{'evidence_id': 'evidence_abca7c12519f79a1', 'scope': 'theme', 'mapped_theme_ids': ['old_deng_rotation'], 'summary': '金融仅护盘、消费防御未共振', 'source_phase': '专题', 'accepted': True, 'reje…",
-        "{'evidence_id': 'evidence_6255d328c421df98', 'scope': 'theme', 'mapped_theme_ids': ['old_deng_rotation'], 'summary': '次日验证A股资源/电网是否延续，并看券商+保险或汽车两条是否承接港股强势', 'source_phase': '专题', …",
-        "{'evidence_id': 'evidence_5001b36241a6391e', 'scope': 'theme', 'mapped_theme_ids': ['old_deng_rotation'], 'summary': 'A股资源与电网强，港股建设银行H+2.22%、中信证券H+1.78%，汽车三核心同步红盘', 'source_phase'…"
+        "{'evidence_id': 'evidence_8c791d4df2cc8a34', 'scope': 'theme', 'mapped_theme_ids': ['robotics_automation'], 'summary': '机器人/Physical AI', 'source_phase': '专题', 'accepted': True, '…",
+        "{'evidence_id': 'evidence_311da7fedf3644f9', 'scope': 'theme', 'mapped_theme_ids': ['robotics_automation'], 'summary': '舜宇保持强势且地平线修复，并与A股机器视觉、伺服、减速器扩散时再升级', 'source_phase': '专题', …",
+        "{'evidence_id': 'evidence_4cf23523fa7da854', 'scope': 'theme', 'mapped_theme_ids': ['robotics_automation'], 'summary': '比亚迪H、小鹏、理想红盘，汽车强于机器人芯片，仍是分化观察', 'source_phase': '专题', 'acce…",
+        "{'evidence_id': 'evidence_0eb23131c8ff488f', 'scope': 'theme', 'mapped_theme_ids': ['robotics_automation'], 'summary': '机器人/工业自动化', 'source_phase': '专题', 'accepted': True, 'reject…",
+        "{'evidence_id': 'evidence_bb4a600863390f58', 'scope': 'theme', 'mapped_theme_ids': ['robotics_automation'], 'summary': '自动化与通用设备随科技链首日修复，强度低于半导体和CPO', 'source_phase': '专题', 'accep…"
       ],
       "source_files": [
         "opportunity-watch.json"
       ],
       "watch_next": [
-        "核心股低开后放量收复开盘价或跌幅明显收敛",
-        "同题材后排不再扩大负反馈，跌停/炸板数量下降",
-        "板块ETF或指数不再创新低并出现承接"
+        "题材3分钟涨跌幅>=1.5%，方向占比>=70%，成交放大>=5x",
+        "板块内出现批量涨停/封板或后排扩散",
+        "核心股、ETF、后排扩散同向确认",
+        "核心股低开后放量收复开盘价或跌幅明显收敛"
       ],
-      "invalidation": "核心股继续放量下跌",
+      "invalidation": "核心股高开低走或冲高回落",
       "tags": [
-        "金融/消费防御",
+        "科技硬件链",
+        "机器人/工业自动化",
         "风控"
       ],
       "quality_flags": [],
       "tone": "neutral",
       "discovery_type": "premarket_watch_queue",
-      "evidence_score": 100,
+      "evidence_score": 90,
       "missing_evidence": [],
-      "next_action": "核心股低开后放量收复开盘价或跌幅明显收敛",
+      "next_action": "题材3分钟涨跌幅>=1.5%，方向占比>=70%，成交放大>=5x",
       "observation_source": "数据派生",
       "independent_observation": false,
       "signal_score": 92,
@@ -1033,17 +1036,17 @@
       ]
     },
     {
-      "title": "盘中追踪：创新药/CRO",
+      "title": "盘中追踪：PCB/电子布",
       "type": "opportunity_watch",
       "trigger_reason": "盘前/晚间注意点已转为盘中追踪清单，等待实时行情触发。",
-      "conclusion": "回避/降级集合；弱化；新能源/电池/资源链是今晚主要风险线，风险较7月8日收敛但没有反转。；旧风险集合转为历史触发；只保留医药、家居等41只跌停尾部监测。；指数和科技链已V形转强，跌停由124只收缩至41只；旧的科技普跌结论失效，但尾部风险未清零。；创新药/CRO；风险；医药封板增至约9只并新增中药分…",
+      "conclusion": "电子布/玻纤轮动；资金博弈；等待两中军同步翻红、PCB至少5只红盘且东山跌幅收窄至-3%以内。；中国巨石-0.88%、国际复材-2.12%，修复样本4只微红；PCB仅沪电+1.32%，多数核心收绿。尾盘有承接但只是板块弱修复。；电子布；资金博弈；只观察核心同步翻红、主力回流和跌幅收敛，单股回拉不升…",
       "confidence": "low",
       "evidence": [
-        "{'evidence_id': 'evidence_7d3a6d81b26c6270', 'scope': 'theme', 'mapped_theme_ids': ['medicine_repair'], 'summary': '只保留医药、家居等41只跌停尾部监测', 'source_phase': '专题', 'accepted': True, 'r…",
-        "{'evidence_id': 'evidence_5f0714b242b33ebf', 'scope': 'theme', 'mapped_theme_ids': ['medicine_repair'], 'summary': '创新药/CRO', 'source_phase': '专题', 'accepted': True, 'rejection_re…",
-        "{'evidence_id': 'evidence_8fa0c0be4a8f5225', 'scope': 'theme', 'mapped_theme_ids': ['medicine_repair'], 'summary': '医药封板增至约9只并新增中药分支，仍是全市场强主线', 'source_phase': '专题', 'accepted': T…",
-        "{'evidence_id': 'evidence_a322e6c35a6e642e', 'scope': 'theme', 'mapped_theme_ids': ['medicine_repair'], 'summary': '观察医疗服务和化学制药跌幅能否收窄2个百分点、港股创新药是否止跌', 'source_phase': '专题', 'accep…",
-        "{'evidence_id': 'evidence_38b2abc9fff39c41', 'scope': 'theme', 'mapped_theme_ids': ['medicine_repair'], 'summary': '医疗服务-7.10%、化学制药-6.06%、生物制品-5.55%', 'source_phase': '专题', 'accep…"
+        "{'evidence_id': 'evidence_2c46f088ad0b3577', 'scope': 'theme', 'mapped_theme_ids': ['pcb_electronic_fabric'], 'summary': '电子布/玻纤轮动', 'source_phase': '专题', 'accepted': True, 'rejec…",
+        "{'evidence_id': 'evidence_43159931cc8fa919', 'scope': 'theme', 'mapped_theme_ids': ['pcb_electronic_fabric'], 'summary': '等待两中军同步翻红、PCB至少5只红盘且东山跌幅收窄至-3%以内', 'source_phase': '专题', …",
+        "{'evidence_id': 'evidence_4abf4f8b8217835d', 'scope': 'theme', 'mapped_theme_ids': ['pcb_electronic_fabric'], 'summary': '中国巨石-0.88%、国际复材-2.12%，修复样本4只微红', 'source_phase': '专题', 'a…",
+        "{'evidence_id': 'evidence_88893780959ee92b', 'scope': 'theme', 'mapped_theme_ids': ['pcb_electronic_fabric'], 'summary': 'PCB仅沪电+1.32%，多数核心收绿', 'source_phase': '专题', 'accepted': T…",
+        "{'evidence_id': 'evidence_6de8cd52e0adecb0', 'scope': 'theme', 'mapped_theme_ids': ['pcb_electronic_fabric'], 'summary': '电子布', 'source_phase': '专题', 'accepted': True, 'rejection_…"
       ],
       "source_files": [
         "opportunity-watch.json"
@@ -1051,11 +1054,12 @@
       "watch_next": [
         "核心股低开后放量收复开盘价或跌幅明显收敛",
         "同题材后排不再扩大负反馈，跌停/炸板数量下降",
-        "板块ETF或指数不再创新低并出现承接"
+        "板块ETF或指数不再创新低并出现承接",
+        "题材3分钟涨跌幅>=1.5%，方向占比>=70%，成交放大>=5x"
       ],
       "invalidation": "核心股继续放量下跌",
       "tags": [
-        "创新药/CRO",
+        "科技硬件链",
         "风控"
       ],
       "quality_flags": [],
@@ -1081,12 +1085,9 @@
       "title": "盘中追踪：半导体设备材料",
       "type": "opportunity_watch",
       "trigger_reason": "盘前/晚间注意点已转为盘中追踪清单，等待实时行情触发。",
-      "conclusion": "上午判定为分化偏修复，盘前科技假设部分确认。9:30后若交换机/服务器后排扩散、设备材料核心齐升且跌停继续收缩，才可升级为进攻；若高开回落且跌停扩宽，则回到退潮风险。；科创50大跌背离宽度修复，科技线仍需风控；宽基小涨且上涨家数较多时，科创50仍跌3.78%，说明科技成长链条和前期高弹性方向未同步…",
+      "conclusion": "上午判定为分化偏修复，盘前科技假设部分确认。9:30后若交换机/服务器后排扩散、设备材料核心齐升且跌停继续收缩，才可升级为进攻；若高开回落且跌停扩宽，则回到退潮风险。；半导体设备材料；风险；半导体收窄至-1%以内且设备材料至少3只翻红再评估。；半导体-2.75%、科创50-2.35%，无封板扩散。",
       "confidence": "low",
       "evidence": [
-        "{'evidence_id': 'evidence_793d2b7430e518d8', 'scope': 'theme', 'mapped_theme_ids': ['semiconductor_equipment_materials'], 'summary': '9:25半导体设备材料、存储/HBM、CPO核心是否停止低开低走', 'source_ph…",
-        "{'evidence_id': 'evidence_f52e0bab91293769', 'scope': 'theme', 'mapped_theme_ids': ['semiconductor_equipment_materials'], 'summary': '没有客户、订单和收入证据不升级半导体设备材料', 'source_phase': '晚间P…",
-        "{'evidence_id': 'evidence_a0a93fa779d3bd58', 'scope': 'theme', 'mapped_theme_ids': ['semiconductor_equipment_materials'], 'summary': 'AMD Advancing AI主题演讲在北京时间7月24日00:30开始，Intel Q…",
         "{'evidence_id': 'evidence_fa945cb8d9b2ad8f', 'scope': 'theme', 'mapped_theme_ids': ['semiconductor_equipment_materials'], 'summary': '半导体设备材料', 'source_phase': '专题', 'accepted': T…"
       ],
       "source_files": [
@@ -1100,26 +1101,24 @@
       "invalidation": "核心股继续放量下跌",
       "tags": [
         "科技硬件链",
-        "机器人/工业自动化",
         "风控"
       ],
       "quality_flags": [],
       "tone": "neutral",
       "discovery_type": "premarket_watch_queue",
-      "evidence_score": 90,
+      "evidence_score": 74,
       "missing_evidence": [],
       "next_action": "核心股低开后放量收复开盘价或跌幅明显收敛",
       "observation_source": "数据派生",
       "independent_observation": false,
-      "signal_score": 92,
-      "signal_grade": "A",
-      "use_action": "可跟踪",
+      "signal_score": 71,
+      "signal_grade": "B",
+      "use_action": "等待确认",
       "use_reasons": [
         "有可核验证据",
         "有下一步验证",
         "有证伪条件",
-        "有来源文件",
-        "证据链较完整"
+        "有来源文件"
       ]
     },
     {
