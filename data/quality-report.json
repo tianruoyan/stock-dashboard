@@ -1,8 +1,8 @@
 {
-  "timestamp": "2026-07-29T10:06:50+08:00",
+  "timestamp": "2026-07-29T10:07:48+08:00",
   "current_signal_date": "2026-07-29",
   "status": "degraded",
-  "summary": "发现 147 个降级/需复核项（140 个价格/行情复核，1 个信号复核，7 个背景复核），核心结论可看但必须按影响分层使用。",
+  "summary": "发现 148 个降级/需复核项（141 个价格/行情复核，1 个信号复核，7 个背景复核），核心结论可看但必须按影响分层使用。",
   "issues": [
     {
       "severity": "warning",
@@ -199,6 +199,15 @@
       "path": "",
       "code": "historical_alert_without_trusted_source",
       "message": "盘中异动缺少可信源证明；当前阶段只降权参考，不阻断整站发布",
+      "impact_level": "price_review",
+      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
+    },
+    {
+      "severity": "warning",
+      "file": "alert.json",
+      "path": "quote_audit.sanity_checks",
+      "code": "alert_quote_audit_mismatch",
+      "message": "quote_audit 样本数小于 alerts 数量",
       "impact_level": "price_review",
       "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
     },
@@ -1407,10 +1416,10 @@
   ],
   "counts": {
     "critical": 0,
-    "warning": 147,
+    "warning": 148,
     "info": 1,
     "blocking": 0,
-    "price_review": 140,
+    "price_review": 141,
     "signal_review": 1,
     "background_review": 7
   },
