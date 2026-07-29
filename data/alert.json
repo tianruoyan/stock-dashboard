@@ -2414,7 +2414,7 @@
         "secondary_source": "富途行情",
         "secondary_verification": {
           "state": "insufficient_precision",
-          "checked_at": "2026-07-29T11:29:19+08:00",
+          "checked_at": "2026-07-29T11:30:21+08:00",
           "source": "富途行情",
           "reason": "至少2只代表股已识别，但外部行情无法精确对齐触发时点；维持观察，不误判为行情冲突。",
           "representatives": [
@@ -2664,13 +2664,13 @@
       "is_old_economy": false,
       "source_watch_id": "半导体零部件弹性",
       "quote_audit": {
-        "provider": "本地盘中监控",
+        "provider": "本地盘中监控、富途行情（腾讯备用）",
         "quote_time": "2026-07-29T11:28:37+08:00",
         "pct_field": "3分钟涨跌幅",
         "sample_count": 2,
         "max_abs_leader_change_pct": 0.4786,
         "sanity_checks": {
-          "cross_source_verified": false,
+          "cross_source_verified": true,
           "price_move_valid": false,
           "volume_valid": false,
           "direction_ratio_valid": true,
@@ -2680,7 +2680,57 @@
         "direction_ratio": 0.6962,
         "volume_ratio": 1.3455,
         "relative_volume_vs_yesterday": null,
-        "missing_confirmation": "等待富途行情按触发时点交叉核验；通过前只作候选或观察，不作为确认交易信号。"
+        "missing_confirmation": "等待富途行情按触发时点交叉核验；通过前只作候选或观察，不作为确认交易信号。",
+        "secondary_source": "富途行情",
+        "secondary_verification": {
+          "state": "passed",
+          "checked_at": "2026-07-29T11:30:21+08:00",
+          "source": "富途行情",
+          "reason": "富途行情已按代表股触发时点对齐，方向和价格变化相互支持。",
+          "representatives": [
+            {
+              "股票": "新莱应材",
+              "代码": "300260.SZ",
+              "监控涨跌幅": -0.4786,
+              "富途涨跌幅": -0.6234,
+              "腾讯涨跌幅": -0.5201,
+              "起始分钟": "11:25:30",
+              "结束分钟": "11:28:30",
+              "对齐方式": "逐笔行情同一时点对齐",
+              "时间偏差秒": 0.36,
+              "可比涨跌范围": [
+                -0.6234,
+                -0.4578
+              ],
+              "方向一致": true,
+              "幅度一致": true,
+              "复核结论": "一致"
+            },
+            {
+              "股票": "富创精密",
+              "代码": "688409.SH",
+              "监控涨跌幅": -0.1952,
+              "富途涨跌幅": -0.6158,
+              "腾讯涨跌幅": -0.5976,
+              "起始分钟": "11:25:32",
+              "结束分钟": "11:28:29",
+              "对齐方式": "逐笔行情同一时点对齐",
+              "时间偏差秒": 3.25,
+              "可比涨跌范围": [
+                -0.8414,
+                -0.2805
+              ],
+              "方向一致": true,
+              "幅度一致": true,
+              "复核结论": "一致"
+            }
+          ],
+          "window_minutes": 3,
+          "direction_agreement_ratio": 1.0,
+          "magnitude_agreement_ratio": 1.0,
+          "fingerprint": "13cb56718e4c0d5613a8",
+          "verifier_version": "futu-opend-2026-07-27.3"
+        }
       },
       "source_status": "degraded_partial",
       "valid_until": "2026-07-29T11:33:37+08:00",
@@ -2695,7 +2745,7 @@
       "time": "2026-07-29T11:27:00+08:00",
       "sector": "交换机/高速以太网",
       "type": "小登提醒题材快速回落",
-      "reason": "交换机/高速以太网出现正式回落提醒；3分钟-0.01%，下跌占比86%，成交放大1.95x，较昨同期1.24x，limit_down_count=2。未达risk candidate完整短周期门槛，保留风险观察。",
+      "reason": "交换机/高速以太网出现正式回落提醒；3分钟-0.01%，下跌占比86%，成交放大1.95x，较昨同期1.24x，limit_down_count=2。未达风险候选完整短周期门槛，保留风险观察。",
       "leaders": [
         {
           "name": "锐捷网络",
@@ -2734,7 +2784,7 @@
       "confirmation_level": "invalidated",
       "source_watch_id": null,
       "quote_audit": {
-        "provider": "local_monitor",
+        "provider": "本地盘中监控、富途行情（腾讯备用）",
         "quote_time": "2026-07-29T11:27:00+08:00",
         "pct_field": "3分钟涨跌幅",
         "sample_count": null,
@@ -2747,6 +2797,74 @@
           "volume_expand_x": 1.95,
           "relative_yesterday_x": 1.24,
           "missing_confirmation": "未完成双源行情核验；若为invalidated则3分钟跌幅/成交/方向占比未同时达到risk candidate最低门槛。"
+        },
+        "secondary_source": "富途行情",
+        "secondary_verification": {
+          "state": "mismatch",
+          "checked_at": "2026-07-29T11:30:21+08:00",
+          "source": "富途行情",
+          "reason": "对齐同一触发时点后，代表股方向或价格变化仍存在明显冲突，维持待确认/失效。",
+          "representatives": [
+            {
+              "股票": "锐捷网络",
+              "代码": "301165.SZ",
+              "监控涨跌幅": -0.25,
+              "富途涨跌幅": 0.1405,
+              "腾讯涨跌幅": -0.01,
+              "起始分钟": "11:24:00",
+              "结束分钟": "11:27:00",
+              "对齐方式": "逐笔行情同一时点对齐",
+              "时间偏差秒": 0.0,
+              "可比涨跌范围": [
+                -0.01,
+                0.422
+              ],
+              "方向一致": false,
+              "幅度一致": false,
+              "复核结论": "明显冲突"
+            },
+            {
+              "股票": "共进股份",
+              "代码": "603118.SH",
+              "监控涨跌幅": -0.13,
+              "富途涨跌幅": -0.5664,
+              "腾讯涨跌幅": -0.6914,
+              "起始分钟": "11:24:00",
+              "结束分钟": "11:26:59",
+              "对齐方式": "逐笔行情同一时点对齐",
+              "时间偏差秒": 0.72,
+              "可比涨跌范围": [
+                -0.6914,
+                -0.5664
+              ],
+              "方向一致": false,
+              "幅度一致": false,
+              "复核结论": "明显冲突"
+            },
+            {
+              "股票": "菲菱科思",
+              "代码": "301191.SZ",
+              "监控涨跌幅": 0.21,
+              "富途涨跌幅": 0.1414,
+              "腾讯涨跌幅": 0.1414,
+              "起始分钟": "11:24:00",
+              "结束分钟": "11:27:00",
+              "对齐方式": "逐笔行情同一时点对齐",
+              "时间偏差秒": 0.0,
+              "可比涨跌范围": [
+                0.0544,
+                0.1414
+              ],
+              "方向一致": true,
+              "幅度一致": true,
+              "复核结论": "一致"
+            }
+          ],
+          "window_minutes": 3,
+          "direction_agreement_ratio": 0.3333,
+          "magnitude_agreement_ratio": 0.3333,
+          "fingerprint": "9bdaf28ed6873daf6618",
+          "verifier_version": "futu-opend-2026-07-27.3"
         }
       },
       "valid_until": "2026-07-29T11:32:00+08:00",
@@ -2758,7 +2876,7 @@
       "time": "2026-07-29T11:28:25+08:00",
       "sector": "覆铜板",
       "type": "小登提醒题材快速回落",
-      "reason": "覆铜板出现正式回落提醒；3分钟-0.38%，下跌占比100%，成交放大7.43x，较昨同期1.36x，limit_down_count=2。未达risk candidate完整短周期门槛，保留风险观察。",
+      "reason": "覆铜板出现正式回落提醒；3分钟-0.38%，下跌占比100%，成交放大7.43x，较昨同期1.36x，limit_down_count=2。未达风险候选完整短周期门槛，保留风险观察。",
       "leaders": [
         {
           "name": "华正新材",
@@ -2797,7 +2915,7 @@
       "confirmation_level": "invalidated",
       "source_watch_id": null,
       "quote_audit": {
-        "provider": "local_monitor",
+        "provider": "本地盘中监控、富途行情（腾讯备用）",
         "quote_time": "2026-07-29T11:28:25+08:00",
         "pct_field": "3分钟涨跌幅",
         "sample_count": null,
@@ -2810,6 +2928,74 @@
           "volume_expand_x": 7.43,
           "relative_yesterday_x": 1.36,
           "missing_confirmation": "未完成双源行情核验；若为invalidated则3分钟跌幅/成交/方向占比未同时达到risk candidate最低门槛。"
+        },
+        "secondary_source": "富途行情",
+        "secondary_verification": {
+          "state": "mismatch",
+          "checked_at": "2026-07-29T11:30:21+08:00",
+          "source": "富途行情",
+          "reason": "对齐同一触发时点后，代表股方向或价格变化仍存在明显冲突，维持待确认/失效。",
+          "representatives": [
+            {
+              "股票": "华正新材",
+              "代码": "603186.SH",
+              "监控涨跌幅": -0.64,
+              "富途涨跌幅": -0.1095,
+              "腾讯涨跌幅": 0.0,
+              "起始分钟": "11:25:24",
+              "结束分钟": "11:28:25",
+              "对齐方式": "逐笔行情同一时点对齐",
+              "时间偏差秒": 0.91,
+              "可比涨跌范围": [
+                -0.1095,
+                -0.1003
+              ],
+              "方向一致": false,
+              "幅度一致": false,
+              "复核结论": "明显冲突"
+            },
+            {
+              "股票": "生益科技",
+              "代码": "600183.SH",
+              "监控涨跌幅": -0.27,
+              "富途涨跌幅": -0.106,
+              "腾讯涨跌幅": -0.1351,
+              "起始分钟": "11:25:24",
+              "结束分钟": "11:28:24",
+              "对齐方式": "逐笔行情同一时点对齐",
+              "时间偏差秒": 0.32,
+              "可比涨跌范围": [
+                -0.1253,
+                -0.0868
+              ],
+              "方向一致": true,
+              "幅度一致": false,
+              "复核结论": "行情精度不足"
+            },
+            {
+              "股票": "金安国纪",
+              "代码": "002636.SZ",
+              "监控涨跌幅": -0.27,
+              "富途涨跌幅": -0.1326,
+              "腾讯涨跌幅": -0.1327,
+              "起始分钟": "11:25:24",
+              "结束分钟": "11:28:24",
+              "对齐方式": "逐笔行情同一时点对齐",
+              "时间偏差秒": 1.0,
+              "可比涨跌范围": [
+                -0.246,
+                -0.0758
+              ],
+              "方向一致": true,
+              "幅度一致": true,
+              "复核结论": "一致"
+            }
+          ],
+          "window_minutes": 3,
+          "direction_agreement_ratio": 0.5,
+          "magnitude_agreement_ratio": 0.5,
+          "fingerprint": "39469a2607cd74974e30",
+          "verifier_version": "futu-opend-2026-07-27.3"
         }
       },
       "valid_until": "2026-07-29T11:33:25+08:00",
@@ -2821,7 +3007,7 @@
       "time": "2026-07-29T11:28:37+08:00",
       "sector": "半导体零部件弹性",
       "type": "小登提醒题材快速回落",
-      "reason": "半导体零部件弹性出现正式回落提醒；3分钟-0.10%，下跌占比70%，成交放大1.35x，limit_down_count=2。未达risk candidate完整短周期门槛，保留风险观察。",
+      "reason": "半导体零部件弹性出现正式回落提醒；3分钟-0.10%，下跌占比70%，成交放大1.35x，limit_down_count=2。未达风险候选完整短周期门槛，保留风险观察。",
       "leaders": [
         {
           "name": "新莱应材",
@@ -2850,7 +3036,7 @@
       "confirmation_level": "invalidated",
       "source_watch_id": null,
       "quote_audit": {
-        "provider": "local_monitor",
+        "provider": "本地盘中监控、富途行情（腾讯备用）",
         "quote_time": "2026-07-29T11:28:37+08:00",
         "pct_field": "3分钟涨跌幅",
         "sample_count": null,
@@ -2863,6 +3049,56 @@
           "volume_expand_x": 1.35,
           "relative_yesterday_x": null,
           "missing_confirmation": "未完成双源行情核验；若为invalidated则3分钟跌幅/成交/方向占比未同时达到risk candidate最低门槛。"
+        },
+        "secondary_source": "富途行情",
+        "secondary_verification": {
+          "state": "mismatch",
+          "checked_at": "2026-07-29T11:30:21+08:00",
+          "source": "富途行情",
+          "reason": "对齐同一触发时点后，代表股方向或价格变化仍存在明显冲突，维持待确认/失效。",
+          "representatives": [
+            {
+              "股票": "新莱应材",
+              "代码": "300260.SZ",
+              "监控涨跌幅": -0.48,
+              "富途涨跌幅": -0.437,
+              "腾讯涨跌幅": -0.5201,
+              "起始分钟": "11:25:36",
+              "结束分钟": "11:28:36",
+              "对齐方式": "逐笔行情同一时点对齐",
+              "时间偏差秒": 1.0,
+              "可比涨跌范围": [
+                -0.4578,
+                -0.437
+              ],
+              "方向一致": true,
+              "幅度一致": true,
+              "复核结论": "一致"
+            },
+            {
+              "股票": "富创精密",
+              "代码": "688409.SH",
+              "监控涨跌幅": -0.2,
+              "富途涨跌幅": -1.1554,
+              "腾讯涨跌幅": -0.5976,
+              "起始分钟": "11:25:37",
+              "结束分钟": "11:28:37",
+              "对齐方式": "逐笔行情同一时点对齐",
+              "时间偏差秒": 0.76,
+              "可比涨跌范围": [
+                -1.1798,
+                -1.0885
+              ],
+              "方向一致": false,
+              "幅度一致": false,
+              "复核结论": "明显冲突"
+            }
+          ],
+          "window_minutes": 3,
+          "direction_agreement_ratio": 0.5,
+          "magnitude_agreement_ratio": 0.5,
+          "fingerprint": "5e43d766b840a76531bd",
+          "verifier_version": "futu-opend-2026-07-27.3"
         }
       },
       "valid_until": "2026-07-29T11:33:37+08:00",
@@ -2873,12 +3109,12 @@
   "quote_audit": {
     "provider": "本地盘中监控、富途行情（腾讯备用）",
     "quote_time": "2026-07-29T11:28:37+08:00",
-    "pct_field": "各异动卡标注的3分钟涨跌幅",
+    "pct_field": "各异动卡标注的短周期涨跌幅",
     "sanity_checks": {
-      "sample_count": 20,
+      "sample_count": 23,
       "max_abs_leader_change_pct": 2.3091,
       "cross_source_verified": false,
-      "verified_alert_count": 3
+      "verified_alert_count": 4
     }
   },
   "note": "异动来自本地短周期监控；候选卡须经富途行情按触发时点复核后才能升级。"
