@@ -1,6 +1,6 @@
 {
-  "timestamp": "2026-07-29T14:35:43+08:00",
-  "source_status": "monitor_live",
+  "timestamp": "2026-07-29T14:36:16+08:00",
+  "source_status": "degraded_partial",
   "alerts": [
     {
       "id": "monitor-20260729-110239-25ce071cfd70",
@@ -2617,18 +2617,158 @@
       "confirmation_level": "candidate",
       "limit_up_count": 0,
       "limit_down_count": 2
+    },
+    {
+      "id": "20260729-143521-risk-packaging",
+      "time": "2026-07-29T14:35:21+08:00",
+      "sector": "封装",
+      "type": "小登题材快速回落",
+      "reason": "封装触发快速回落提醒：板块整体3分钟涨跌幅-0.03%，下跌占比88%，成交放大6.50x，风险扩散明显；当前领跌为长电科技、甬矽电子、通富微电。盘前封装未列为强主线，主要跟随半导体扩产/存储映射修复；尾盘回落说明扩散承接不足，判断为消息预期落空/冲高回落。门禁审计：3分钟跌幅-0.03%未达到风险候选所需>=1.0%，且缺少可审计至少2只跌停的板块证据。",
+      "leaders": [
+        {
+          "name": "长电科技",
+          "change_pct": -0.2,
+          "score": 53.3,
+          "factors": [
+            "3分钟涨跌幅-0.20%",
+            "成交放大16.27x",
+            "日内涨幅-7.09%"
+          ]
+        },
+        {
+          "name": "甬矽电子",
+          "change_pct": -0.06,
+          "score": 44.3,
+          "factors": [
+            "3分钟涨跌幅-0.06%",
+            "成交放大8.01x",
+            "日内涨幅-11.78%"
+          ]
+        },
+        {
+          "name": "通富微电",
+          "change_pct": 0.0,
+          "score": 41.4,
+          "factors": [
+            "3分钟涨跌幅0.00%",
+            "成交放大6.32x",
+            "日内涨幅-10.00%"
+          ]
+        }
+      ],
+      "signal_type": "风险提示",
+      "is_old_economy": false,
+      "source_watch_id": "packaging",
+      "quote_audit": {
+        "provider": "本地盘中监控、富途行情（腾讯备用）",
+        "quote_time": "2026-07-29T14:35:21+08:00",
+        "pct_field": "3分钟涨跌幅",
+        "sample_count": 3,
+        "max_abs_leader_change_pct": 0.2,
+        "sanity_checks": {
+          "sample_count": 3,
+          "max_abs_leader_change_pct": 0.2,
+          "cross_source_verified": false,
+          "candidate_gate_passed": false,
+          "gate_failure_reason": "3分钟跌幅-0.03%未达到risk candidate所需>=1.0%，缺少可审计limit_down_count>=2。"
+        },
+        "secondary_source": "富途行情",
+        "secondary_verification": {
+          "state": "insufficient_precision",
+          "checked_at": "2026-07-29T14:37:11+08:00",
+          "source": "富途行情",
+          "reason": "至少2只代表股已识别，但外部行情无法精确对齐触发时点；维持观察，不误判为行情冲突。",
+          "representatives": [
+            {
+              "股票": "长电科技",
+              "代码": "600584.SH",
+              "监控涨跌幅": -0.2,
+              "富途涨跌幅": -0.111,
+              "腾讯涨跌幅": -0.1248,
+              "起始分钟": "14:32:21",
+              "结束分钟": "14:35:21",
+              "对齐方式": "逐笔行情同一时点对齐",
+              "时间偏差秒": 0.55,
+              "可比涨跌范围": [
+                -0.111,
+                -0.0833
+              ],
+              "方向一致": true,
+              "幅度一致": true,
+              "复核结论": "一致"
+            },
+            {
+              "股票": "甬矽电子",
+              "代码": "688362.SH",
+              "监控涨跌幅": -0.06,
+              "富途涨跌幅": -0.3766,
+              "腾讯涨跌幅": -0.4699,
+              "起始分钟": "14:32:20",
+              "结束分钟": "14:35:20",
+              "对齐方式": "逐笔行情同一时点对齐",
+              "时间偏差秒": 0.57,
+              "可比涨跌范围": [
+                -0.3766,
+                -0.3296
+              ],
+              "方向一致": true,
+              "幅度一致": false,
+              "复核结论": "行情精度不足"
+            },
+            {
+              "股票": "通富微电",
+              "代码": "002156.SZ",
+              "监控涨跌幅": 0.0,
+              "富途涨跌幅": -0.0161,
+              "腾讯涨跌幅": -0.0161,
+              "起始分钟": "14:32:21",
+              "结束分钟": "14:35:21",
+              "对齐方式": "逐笔行情同一时点对齐",
+              "时间偏差秒": 0.0,
+              "可比涨跌范围": [
+                -0.0161,
+                0.0
+              ],
+              "方向一致": false,
+              "幅度一致": false,
+              "复核结论": "行情精度不足"
+            }
+          ],
+          "window_minutes": 3,
+          "fingerprint": "80698d60f5b90a871765",
+          "verifier_version": "futu-opend-2026-07-27.3"
+        }
+      },
+      "source_status": "invalidated",
+      "valid_until": "2026-07-29T14:40:21+08:00",
+      "trigger_rule": "小登股异动：板块内出现>=2只跌停；审计后未满足候选门禁",
+      "alert_class": "risk",
+      "confirmation_level": "invalidated",
+      "limit_up_count": 0,
+      "limit_down_count": 0,
+      "metrics": {
+        "three_minute_change_pct": -0.03,
+        "down_ratio_pct": 88,
+        "up_ratio_pct": 12,
+        "volume_expand_x": 6.5,
+        "relative_yesterday_x": null,
+        "diffusion": "风险扩散明显"
+      },
+      "premarket_match": "封装跟随半导体扩产/存储映射修复，盘前无强主线确认，尾盘回落说明扩散承接不足。",
+      "market_interpretation": "消息预期落空/冲高回落",
+      "raw_log_line": "[14:35:21] 小登提醒：封装 题材快速回落 [risk]"
     }
   ],
   "quote_audit": {
     "provider": "本地盘中监控、富途行情（腾讯备用）",
-    "quote_time": "2026-07-29T13:21:58+08:00",
-    "pct_field": "各异动卡标注的3分钟涨跌幅",
+    "quote_time": "2026-07-29T14:35:21+08:00",
+    "pct_field": "各异动卡标注的短周期涨跌幅",
     "sanity_checks": {
-      "sample_count": 20,
+      "sample_count": 21,
       "max_abs_leader_change_pct": 3.129,
       "cross_source_verified": false,
       "verified_alert_count": 3
     }
   },
-  "note": "异动来自本地短周期监控；候选卡须经富途行情按触发时点复核后才能升级。"
+  "note": "14:35:21 封装快速回落来自本地短周期监控；未满足risk candidate门禁。"
 }
