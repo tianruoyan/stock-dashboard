@@ -230,6 +230,14 @@ def merge_index_rows(existing: Any, fresh: List[Dict[str, Any]]) -> List[Dict[st
     return merged
 
 
+def normalize_index_section(existing: Any) -> Dict[str, Any]:
+    if isinstance(existing, dict):
+        return dict(existing)
+    if isinstance(existing, list):
+        return {"a_share_indices": existing}
+    return {}
+
+
 def write_atomic(path: Path, payload: Dict[str, Any]) -> None:
     tmp = path.with_suffix(path.suffix + ".tmp")
     tmp.write_text(json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
@@ -245,7 +253,8 @@ def update(path: Path) -> Dict[str, Any]:
     quote_as_of = latest_quote_time(indices).isoformat(timespec="seconds")
 
     payload["indices"] = merge_index_rows(payload.get("indices"), indices)
-    index_section = payload.setdefault("index", {})
+    index_section = normalize_index_section(payload.get("index"))
+    payload["index"] = index_section
     index_section["snapshot_time"] = quote_as_of
     index_section["a_share_indices"] = merge_index_rows(index_section.get("a_share_indices"), indices)
 

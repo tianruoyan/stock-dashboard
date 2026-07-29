@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-07-29T09:38:23+08:00",
+  "timestamp": "2026-07-29T16:44:42+08:00",
   "sources": {
     "tencent_http": {
       "status": "ok",
@@ -4492,7 +4492,7 @@
   },
   "last_publish_attempt": "pending_20260717_0830_premarket_publish",
   "status": "degraded",
-  "last_error": "09:36 A股全市场、指数、行业、概念及专项行情完整；港股报价仍停留在09:20竞价时点，已降级为方向参考，不作为连续交易共振证据。",
+  "last_error": "10:00至15:05盘中/午盘分析因本地index字段类型错误缺失；16:32已修复采集器并补齐当前收盘事实，历史窗口按不追溯原则保留缺口。",
   "tencent_a_close_postmarket_20260716": {
     "status": "ok",
     "last_check": "2026-07-16T15:18:57+08:00",
@@ -4673,7 +4673,7 @@
     "errors": []
   },
   "overall_status": "degraded",
-  "last_codex_note": "8:30早报已用AP正式收盘、KLA/Teradyne官方财报、巨潮2138条公告全量分页及日韩双源行情核验；缺失项明确置空，未伪造事实。",
+  "last_codex_note": "收盘数据源已恢复：腾讯指数/行业/专项、东财结构池与强弱分组、腾讯分钟尾盘、腾讯/新浪港股双源均成功；仅历史分析窗口降级。",
   "eastmoney_structure_pools_intraday_1000_20260717": {
     "status": "ok",
     "last_check": "2026-07-17T10:02:40+08:00",
@@ -5951,6 +5951,78 @@
     "usage": "港股收盘双源核对",
     "detail": "恒指、恒科及腾讯、兆易、华虹、中芯、智谱、商汤、五一视界、中兴与腾讯行情一致。",
     "sample_count": 10,
+    "errors": []
+  },
+  "local_intraday_market_service_close_recovery_20260729": {
+    "status": "ok_with_historical_gap",
+    "last_check": "2026-07-29T16:44:42+08:00",
+    "market_time": "2026-07-29T15:00:00+08:00",
+    "usage": "恢复本地指数/行业/观察池收盘行情",
+    "detail": "修复intraday.index数组/对象类型兼容后，11项测试通过；腾讯返回5指数、98行业、20只观察池收盘行情。10:00后历史窗口不追溯。",
+    "sample_count": 123,
+    "errors": []
+  },
+  "tencent_index_industry_close_20260729": {
+    "status": "ok",
+    "last_check": "2026-07-29T16:44:42+08:00",
+    "market_time": "2026-07-29T15:00:00+08:00",
+    "usage": "五大指数、成交额与98行业收盘排名",
+    "detail": "沪深成交约22965.79亿元；休闲食品、专业连锁、小家电居前，半导体、电子化学品、计算机设备居后。",
+    "sample_count": 103,
+    "errors": []
+  },
+  "eastmoney_limit_pool_close_20260729": {
+    "status": "ok",
+    "last_check": "2026-07-29T16:44:42+08:00",
+    "market_time": "2026-07-29T15:00:00+08:00",
+    "usage": "非ST涨停、跌停、炸板、连板与20cm结构",
+    "detail": "返回81涨停、9跌停、14炸板；最高爱丽家居7板，8只20cm封板。",
+    "sample_count": 104,
+    "errors": []
+  },
+  "eastmoney_strength_groups_close_20260729": {
+    "status": "ok",
+    "last_check": "2026-07-29T16:44:42+08:00",
+    "market_time": "2026-07-29T15:00:00+08:00",
+    "usage": "5%-8%、8%以上、跌超5%及行业集中度",
+    "detail": "剔除ST、退市及N/C新股后，5%-8%为171只、8%以上111只、跌超5%为169只。",
+    "sample_count": 451,
+    "errors": []
+  },
+  "eastmoney_concept_ranking_close_20260729": {
+    "status": "ok",
+    "last_check": "2026-07-29T16:44:42+08:00",
+    "market_time": "2026-07-29T15:00:00+08:00",
+    "usage": "收盘概念前20名",
+    "detail": "乳业+5.40%、代糖+4.39%、电子竞技+3.04%、汽车整车+3.20%、雅下水电+2.80%。",
+    "sample_count": 20,
+    "errors": []
+  },
+  "tencent_minute_closing_auction_1455_1500_20260729": {
+    "status": "ok",
+    "last_check": "2026-07-29T16:44:42+08:00",
+    "market_time": "2026-07-29 14:55至15:00",
+    "usage": "五大指数与12只关键样本尾盘/收盘竞价校验",
+    "detail": "宽基尾盘基本横盘，科创50回落0.35%；中国巨石和国际复材回拉，但PCB与半导体未同步。",
+    "sample_count": 17,
+    "errors": []
+  },
+  "tencent_hk_close_20260729": {
+    "status": "ok",
+    "last_check": "2026-07-29T16:44:42+08:00",
+    "market_time": "2026-07-29T16:08:46+08:00",
+    "usage": "港股正式收盘指数与A/H映射",
+    "detail": "恒指+1.96%、恒科+2.84%；腾讯+4.29%、小米+8.95%，澜起-2.88%、兆易-3.24%、中芯-2.75%。",
+    "sample_count": 17,
+    "errors": []
+  },
+  "sina_hk_close_crosscheck_20260729": {
+    "status": "ok",
+    "last_check": "2026-07-29T16:44:42+08:00",
+    "market_time": "2026-07-29T16:09:15+08:00",
+    "usage": "港股收盘双源核对",
+    "detail": "恒指、恒科及15只关键映射股与腾讯行情一致；澜起H代码按公司官网确认为06809。",
+    "sample_count": 17,
     "errors": []
   }
 }

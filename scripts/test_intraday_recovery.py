@@ -8,7 +8,7 @@ from pathlib import Path
 from unittest.mock import patch
 
 from intraday_recovery import TZ, assess_freshness, is_trading_day, recover, retry_delay_seconds
-from update_intraday_market import merge_index_rows, parse_quote_time
+from update_intraday_market import merge_index_rows, normalize_index_section, parse_quote_time
 
 
 def payload(quote_time: str) -> dict:
@@ -58,6 +58,14 @@ class IntradayRecoveryTests(unittest.TestCase):
         existing = [{"code": "sh000001", "change_pct": 9.9}]
         fresh = [{"code": "sh000001", "pct": 0.5, "change_pct": 0.5}]
         self.assertEqual(merge_index_rows(existing, fresh)[0]["change_pct"], 0.5)
+
+    def test_normalize_index_section_preserves_legacy_rows(self) -> None:
+        rows = [{"code": "sh000001", "change_pct": 0.5}]
+        self.assertEqual(normalize_index_section(rows), {"a_share_indices": rows})
+
+    def test_normalize_index_section_keeps_mapping(self) -> None:
+        section = {"summary": "close"}
+        self.assertEqual(normalize_index_section(section), section)
 
     def test_quote_time_parser(self) -> None:
         self.assertEqual(parse_quote_time("20260722103015").strftime("%F %T"), "2026-07-22 10:30:15")
