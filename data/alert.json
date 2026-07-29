@@ -1,6 +1,6 @@
 {
-  "timestamp": "2026-07-29T14:03:39+08:00",
-  "source_status": "monitor_live",
+  "timestamp": "2026-07-29T14:04:16+08:00",
+  "source_status": "degraded_partial",
   "alerts": [
     {
       "id": "monitor-20260729-110239-25ce071cfd70",
@@ -2617,18 +2617,92 @@
       "confirmation_level": "candidate",
       "limit_up_count": 0,
       "limit_down_count": 2
+    },
+    {
+      "id": "20260729-140352-watch-electronic-cloth",
+      "time": "2026-07-29T14:03:52+08:00",
+      "sector": "电子布",
+      "type": "小登题材观察拉动",
+      "reason": "电子布触发观察性拉动：底池样本3分钟涨跌幅0.44%，上涨占比100%，3分钟成交放大4.13x，较昨同期1.29x，当前动态龙头为宏和科技、国际复材、山东玻纤；盘前将电子布/玻纤列为风险线和资金博弈线，要求PCB核心放量翻红、跌停减少和板块跌幅收敛，本次仅见局部弱修复，尚未构成有效反抽确认。还差3分钟涨幅>=1.5%且成交>=5x，或>=1.0%且成交>=8x；若按涨停结构触发，还需可审计limit_up_count>=2。",
+      "leaders": [
+        {
+          "name": "宏和科技",
+          "change_pct": 0.0,
+          "score": 53.3,
+          "factors": [
+            "3分钟涨跌幅0.00%",
+            "成交放大4.44x",
+            "日内涨幅10.00%"
+          ]
+        },
+        {
+          "name": "国际复材",
+          "change_pct": 1.14,
+          "score": 49.6,
+          "factors": [
+            "3分钟涨跌幅1.14%",
+            "成交放大1.57x",
+            "日内涨幅10.04%"
+          ]
+        },
+        {
+          "name": "山东玻纤",
+          "change_pct": 0.39,
+          "score": 47.7,
+          "factors": [
+            "3分钟涨跌幅0.39%",
+            "成交放大9.27x",
+            "日内涨幅5.68%"
+          ]
+        }
+      ],
+      "signal_type": "观察提示",
+      "is_old_economy": false,
+      "source_watch_id": "electronic-cloth",
+      "quote_audit": {
+        "provider": "本地盘中监控",
+        "quote_time": "2026-07-29T14:03:52+08:00",
+        "pct_field": "3分钟涨跌幅",
+        "sample_count": 3,
+        "max_abs_leader_change_pct": 1.14,
+        "sanity_checks": {
+          "sample_count": 3,
+          "max_abs_leader_change_pct": 1.14,
+          "cross_source_verified": false,
+          "candidate_gate_passed": false,
+          "gate_failure_reason": "3分钟涨幅0.44%低于1.0/1.5%门槛，成交放大4.13x低于5x门槛；触发规则声称≥2只涨停，但日志只给出强势股1只，缺少可审计limit_up_count>=2。"
+        }
+      },
+      "source_status": "invalidated",
+      "valid_until": "2026-07-29T14:08:52+08:00",
+      "trigger_rule": "小登股异动：板块内出现≥2只涨停；审计后未满足候选门禁",
+      "alert_class": "opportunity",
+      "confirmation_level": "invalidated",
+      "limit_up_count": 1,
+      "limit_down_count": 0,
+      "metrics": {
+        "three_minute_change_pct": 0.44,
+        "up_ratio_pct": 100,
+        "down_ratio_pct": 0,
+        "volume_expand_x": 4.13,
+        "relative_yesterday_x": 1.29,
+        "diffusion": "有后排扩散但强势股仅1只"
+      },
+      "premarket_match": "风险线/资金博弈线：电子布/玻纤弱修复，不是有效反抽；需核心放量翻红、跌停减少和板块跌幅收敛。",
+      "market_interpretation": "消息兑现但扩散不足",
+      "raw_log_line": "[14:03:52] 小登提醒：电子布 题材观察拉动 [watch]"
     }
   ],
   "quote_audit": {
-    "provider": "本地盘中监控、富途行情（腾讯备用）",
-    "quote_time": "2026-07-29T13:21:58+08:00",
+    "provider": "本地盘中监控",
+    "quote_time": "2026-07-29T14:03:52+08:00",
     "pct_field": "各异动卡标注的短周期涨跌幅",
     "sanity_checks": {
-      "sample_count": 20,
-      "max_abs_leader_change_pct": 3.129,
+      "sample_count": 21,
+      "max_abs_leader_change_pct": 1.14,
       "cross_source_verified": false,
-      "verified_alert_count": 3
+      "verified_alert_count": 0
     }
   },
-  "note": "异动来自本地短周期监控；候选卡须经富途行情按触发时点复核后才能升级。"
+  "note": "异动来自本地短周期监控；本轮电子布观察提醒未满足候选门禁，作为历史触发/观察提示展示。"
 }
