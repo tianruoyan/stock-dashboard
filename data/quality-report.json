@@ -1,18 +1,9 @@
 {
-  "timestamp": "2026-07-29T09:39:57+08:00",
+  "timestamp": "2026-07-29T09:44:01+08:00",
   "current_signal_date": "2026-07-29",
   "status": "degraded",
-  "summary": "发现 146 个降级/需复核项（139 个价格/行情复核，8 个背景复核），核心结论可看但必须按影响分层使用。",
+  "summary": "发现 147 个降级/需复核项（140 个价格/行情复核，1 个信号复核，7 个背景复核），核心结论可看但必须按影响分层使用。",
   "issues": [
-    {
-      "severity": "warning",
-      "file": "intraday.json",
-      "path": "",
-      "code": "stale_timestamp",
-      "message": "时间戳不是当前交易日：2026-07-28T16:31:59+08:00",
-      "impact_level": "background_review",
-      "decision_action": "仅作背景复核，不单独阻断交易判断"
-    },
     {
       "severity": "warning",
       "file": "midday.json",
@@ -192,6 +183,15 @@
       "message": "sentiment_indicator.method 缺失",
       "impact_level": "background_review",
       "decision_action": "仅作背景复核，不单独阻断交易判断"
+    },
+    {
+      "severity": "warning",
+      "file": "intraday.json",
+      "path": "index",
+      "code": "schema_contract_type",
+      "message": "index 类型错误：期望 dict，实际 list",
+      "impact_level": "signal_review",
+      "decision_action": "机会信号必须降权并转入验证"
     },
     {
       "severity": "warning",
@@ -1326,6 +1326,15 @@
       "message": "tencent_hk_auction_premarket_0915_20260729: 09:18复核仍为09:00-09:03早段指示价；腾讯+2.86%、阿里+1.79%、小米+2.53%，但成交仅76/73/100股；药明康德+3.45%、竞价量6.98万股；恒指/恒科未形成有效涨跌。",
       "impact_level": "price_review",
       "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
+    },
+    {
+      "severity": "warning",
+      "file": "source-health.json",
+      "path": "",
+      "code": "source_degraded",
+      "message": "tencent_hk_delayed_auction_0920_20260729: 17项报价时间停留在09:20，仅作为竞价方向，未用于09:36连续共振判断。",
+      "impact_level": "price_review",
+      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
     }
   ],
   "action_plan": [
@@ -1374,15 +1383,15 @@
       "unblock_condition": "price_review=0 或相关来源标记 trusted/cross verified。"
     },
     {
-      "priority": 4,
-      "impact_level": "background_review",
-      "label": "背景来源复核",
+      "priority": 3,
+      "impact_level": "signal_review",
+      "label": "信号结构复核",
       "file": "intraday.json",
-      "code": "stale_timestamp",
-      "problem": "时间戳不是当前交易日：2026-07-28T16:31:59+08:00",
-      "decision_action": "仅作背景复核，不单独阻断交易判断",
-      "next_step": "补官方/交易所/公司公告来源；未补齐前不升级为核心依据。",
-      "unblock_condition": "官方来源补齐或确认不影响交易触发。"
+      "code": "schema_contract_type",
+      "problem": "index 类型错误：期望 dict，实际 list",
+      "decision_action": "机会信号必须降权并转入验证",
+      "next_step": "修正字段结构、证据、触发原因和升级条件；未通过前降权展示。",
+      "unblock_condition": "signal_review=0，decision-feed/核心 JSON 契约通过。"
     },
     {
       "priority": 4,
@@ -1398,12 +1407,12 @@
   ],
   "counts": {
     "critical": 0,
-    "warning": 146,
+    "warning": 147,
     "info": 1,
     "blocking": 0,
-    "price_review": 139,
-    "signal_review": 0,
-    "background_review": 8
+    "price_review": 140,
+    "signal_review": 1,
+    "background_review": 7
   },
   "rules": [
     "异常文本、JSON解析失败、必需文件缺失为 critical。",
