@@ -1,6 +1,6 @@
 {
-  "timestamp": "2026-07-29T14:13:41+08:00",
-  "source_status": "monitor_live",
+  "timestamp": "2026-07-29T14:15:46+08:00",
+  "source_status": "degraded_partial",
   "alerts": [
     {
       "id": "monitor-20260729-110239-25ce071cfd70",
@@ -2617,18 +2617,160 @@
       "confirmation_level": "candidate",
       "limit_up_count": 0,
       "limit_down_count": 2
+    },
+    {
+      "id": "20260729-141422-risk-supercapacitor",
+      "time": "2026-07-29T14:14:22+08:00",
+      "sector": "超级电容",
+      "type": "小登题材快速回落",
+      "reason": "超级电容触发快速回落提醒：板块整体3分钟涨跌幅-0.12%，下跌占比80%，成交放大4.07x，风险扩散明显；当前领跌为艾华集团、江海股份、元力股份。盘前科技消息汇总未把超级电容列为强主线或观察线，本次更像无明确盘前消息支撑的资金试盘转弱。门禁审计：3分钟跌幅-0.12%未达到风险候选所需>=1.0%，成交放大4.07x低于5x；触发规则声称≥2只跌停，但缺少可审计至少2只跌停的板块证据。",
+      "leaders": [
+        {
+          "name": "艾华集团",
+          "change_pct": -0.53,
+          "score": 60.2,
+          "factors": [
+            "3分钟涨跌幅-0.53%",
+            "成交放大12.42x",
+            "日内涨幅-9.63%"
+          ]
+        },
+        {
+          "name": "江海股份",
+          "change_pct": 0.0,
+          "score": 38.1,
+          "factors": [
+            "3分钟涨跌幅0.00%",
+            "成交放大3.36x",
+            "日内涨幅-9.99%"
+          ]
+        },
+        {
+          "name": "元力股份",
+          "change_pct": -0.11,
+          "score": 34.3,
+          "factors": [
+            "3分钟涨跌幅-0.11%",
+            "成交放大8.42x",
+            "日内涨幅-4.28%"
+          ]
+        }
+      ],
+      "signal_type": "风险提示",
+      "is_old_economy": false,
+      "source_watch_id": "supercapacitor",
+      "quote_audit": {
+        "provider": "本地盘中监控、富途行情（腾讯备用）",
+        "quote_time": "2026-07-29T14:14:22+08:00",
+        "pct_field": "3分钟涨跌幅",
+        "sample_count": 3,
+        "max_abs_leader_change_pct": 0.53,
+        "sanity_checks": {
+          "sample_count": 3,
+          "max_abs_leader_change_pct": 0.53,
+          "cross_source_verified": false,
+          "candidate_gate_passed": false,
+          "gate_failure_reason": "3分钟跌幅-0.12%未达到risk candidate所需>=1.0%，成交放大4.07x低于5x；缺少可审计limit_down_count>=2。"
+        },
+        "secondary_source": "富途行情",
+        "secondary_verification": {
+          "state": "mismatch",
+          "checked_at": "2026-07-29T14:16:50+08:00",
+          "source": "富途行情",
+          "reason": "对齐同一触发时点后，代表股方向或价格变化仍存在明显冲突，维持待确认/失效。",
+          "representatives": [
+            {
+              "股票": "艾华集团",
+              "代码": "603989.SH",
+              "监控涨跌幅": -0.53,
+              "富途涨跌幅": 0.314,
+              "腾讯涨跌幅": 0.0392,
+              "起始分钟": "14:11:22",
+              "结束分钟": "14:14:21",
+              "对齐方式": "逐笔行情同一时点对齐",
+              "时间偏差秒": 0.83,
+              "可比涨跌范围": [
+                0.2747,
+                0.3534
+              ],
+              "方向一致": false,
+              "幅度一致": false,
+              "复核结论": "明显冲突"
+            },
+            {
+              "股票": "江海股份",
+              "代码": "002484.SZ",
+              "监控涨跌幅": 0.0,
+              "富途涨跌幅": 0.4278,
+              "腾讯涨跌幅": 0.0822,
+              "起始分钟": "14:11:21",
+              "结束分钟": "14:14:21",
+              "对齐方式": "逐笔行情同一时点对齐",
+              "时间偏差秒": 1.0,
+              "可比涨跌范围": [
+                0.3949,
+                0.5265
+              ],
+              "方向一致": false,
+              "幅度一致": false,
+              "复核结论": "明显冲突"
+            },
+            {
+              "股票": "元力股份",
+              "代码": "300174.SZ",
+              "监控涨跌幅": -0.11,
+              "富途涨跌幅": 0.0,
+              "腾讯涨跌幅": -0.1135,
+              "起始分钟": "14:11:21",
+              "结束分钟": "14:14:21",
+              "对齐方式": "逐笔行情同一时点对齐",
+              "时间偏差秒": 1.0,
+              "可比涨跌范围": [
+                -0.0568,
+                0.0568
+              ],
+              "方向一致": false,
+              "幅度一致": false,
+              "复核结论": "行情精度不足"
+            }
+          ],
+          "window_minutes": 3,
+          "direction_agreement_ratio": 0.0,
+          "magnitude_agreement_ratio": 0.0,
+          "fingerprint": "28d2c108747e6e6dcb90",
+          "verifier_version": "futu-opend-2026-07-27.3"
+        }
+      },
+      "source_status": "invalidated",
+      "valid_until": "2026-07-29T14:19:22+08:00",
+      "trigger_rule": "小登股异动：板块内出现≥2只跌停；审计后未满足候选门禁",
+      "alert_class": "risk",
+      "confirmation_level": "invalidated",
+      "limit_up_count": 0,
+      "limit_down_count": 0,
+      "metrics": {
+        "three_minute_change_pct": -0.12,
+        "down_ratio_pct": 80,
+        "up_ratio_pct": 20,
+        "volume_expand_x": 4.07,
+        "relative_yesterday_x": null,
+        "diffusion": "风险扩散明显"
+      },
+      "premarket_match": "盘前强主线/观察线未覆盖超级电容；科技高波动风险背景下，按无明确消息支撑的资金试盘转弱处理。",
+      "market_interpretation": "无消息支撑的资金试盘",
+      "raw_log_line": "[14:14:22] 小登提醒：超级电容 题材快速回落 [risk]"
     }
   ],
   "quote_audit": {
     "provider": "本地盘中监控、富途行情（腾讯备用）",
-    "quote_time": "2026-07-29T13:21:58+08:00",
+    "quote_time": "2026-07-29T14:14:22+08:00",
     "pct_field": "各异动卡标注的短周期涨跌幅",
     "sanity_checks": {
-      "sample_count": 20,
+      "sample_count": 21,
       "max_abs_leader_change_pct": 3.129,
       "cross_source_verified": false,
       "verified_alert_count": 3
     }
   },
-  "note": "异动来自本地短周期监控；候选卡须经富途行情按触发时点复核后才能升级。"
+  "note": "14:14:22 超级电容快速回落来自本地短周期监控；未满足risk候选门禁，作为风险历史触发展示。"
 }
