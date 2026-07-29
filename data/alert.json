@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-07-29T11:21:23+08:00",
+  "timestamp": "2026-07-29T11:22:15+08:00",
   "source_status": "monitor_live",
   "alerts": [
     {
@@ -2376,7 +2376,7 @@
         "secondary_source": "富途行情",
         "secondary_verification": {
           "state": "insufficient_precision",
-          "checked_at": "2026-07-29T11:22:00+08:00",
+          "checked_at": "2026-07-29T11:23:03+08:00",
           "source": "富途行情",
           "reason": "至少2只代表股已识别，但外部行情无法精确对齐触发时点；维持观察，不误判为行情冲突。",
           "representatives": [
@@ -2657,11 +2657,69 @@
         "missing_confirmation": "等待富途行情按触发时点交叉核验；通过前只作候选或观察，不作为确认交易信号。",
         "secondary_source": "富途行情",
         "secondary_verification": {
-          "state": "pending",
-          "checked_at": "2026-07-29T11:22:00+08:00",
+          "state": "mismatch",
+          "checked_at": "2026-07-29T11:23:03+08:00",
           "source": "富途行情",
-          "reason": "等待触发分钟行情完整落盘。",
-          "representatives": [],
+          "reason": "对齐同一触发时点后，代表股方向或价格变化仍存在明显冲突，维持待确认/失效。",
+          "representatives": [
+            {
+              "股票": "甬矽电子",
+              "代码": "688362.SH",
+              "监控涨跌幅": -1.2268,
+              "富途涨跌幅": -0.683,
+              "腾讯涨跌幅": -0.9949,
+              "起始分钟": "11:17:43",
+              "结束分钟": "11:20:43",
+              "对齐方式": "逐笔行情同一时点对齐",
+              "时间偏差秒": 0.51,
+              "可比涨跌范围": [
+                -0.7163,
+                -0.6664
+              ],
+              "方向一致": false,
+              "幅度一致": false,
+              "复核结论": "明显冲突"
+            },
+            {
+              "股票": "长电科技",
+              "代码": "600584.SH",
+              "监控涨跌幅": -0.3543,
+              "富途涨跌幅": -0.3546,
+              "腾讯涨跌幅": -0.3684,
+              "起始分钟": "11:17:44",
+              "结束分钟": "11:20:45",
+              "对齐方式": "逐笔行情同一时点对齐",
+              "时间偏差秒": 1.65,
+              "可比涨跌范围": [
+                -0.3829,
+                -0.3262
+              ],
+              "方向一致": true,
+              "幅度一致": true,
+              "复核结论": "一致"
+            },
+            {
+              "股票": "通富微电",
+              "代码": "002156.SZ",
+              "监控涨跌幅": 0.0,
+              "富途涨跌幅": 0.0,
+              "腾讯涨跌幅": 0.0,
+              "起始分钟": "11:17:45",
+              "结束分钟": "11:20:45",
+              "对齐方式": "逐笔行情同一时点对齐",
+              "时间偏差秒": 1.06,
+              "可比涨跌范围": [
+                0.0,
+                0.0
+              ],
+              "方向一致": false,
+              "幅度一致": false,
+              "复核结论": "行情精度不足"
+            }
+          ],
+          "window_minutes": 3,
+          "direction_agreement_ratio": 0.5,
+          "magnitude_agreement_ratio": 0.5,
           "fingerprint": "d02b098cd0b92d5400d9",
           "verifier_version": "futu-opend-2026-07-27.3"
         }
@@ -2673,6 +2731,132 @@
       "confirmation_level": "candidate",
       "limit_up_count": 0,
       "limit_down_count": 2
+    },
+    {
+      "id": "monitor-20260729-112051-dc9a1c561407",
+      "time": "2026-07-29T11:20:51+08:00",
+      "sector": "封装",
+      "type": "小登提醒题材快速回落",
+      "reason": "封装出现正式回落提醒；3分钟-0.31%，下跌占比81%，成交放大2.76x，limit_down_count=2。短周期跌幅/成交未达risk candidate门槛，保留风险观察。",
+      "leaders": [
+        {
+          "name": "甬矽电子",
+          "score": 66.7,
+          "change_pct": -1.23,
+          "factors": [
+            "3分钟涨跌幅 -1.23%",
+            "成交放大 3.62x",
+            "日内涨幅 -13.01%"
+          ]
+        },
+        {
+          "name": "长电科技",
+          "score": 58.2,
+          "change_pct": -0.35,
+          "factors": [
+            "3分钟涨跌幅 -0.35%",
+            "成交放大 3.86x",
+            "日内涨幅 -8.47%"
+          ]
+        },
+        {
+          "name": "通富微电",
+          "score": 48.2,
+          "change_pct": 0.0,
+          "factors": [
+            "3分钟涨跌幅 0.00%",
+            "成交放大 3.03x",
+            "日内涨幅 -10.00%"
+          ]
+        }
+      ],
+      "signal_type": "风险观察",
+      "is_old_economy": false,
+      "alert_class": "risk",
+      "confirmation_level": "invalidated",
+      "source_watch_id": null,
+      "quote_audit": {
+        "provider": "local_monitor",
+        "quote_time": "2026-07-29T11:20:51+08:00",
+        "pct_field": "3分钟涨跌幅",
+        "sample_count": null,
+        "max_abs_leader_change_pct": 1.23,
+        "sanity_checks": {
+          "cross_source_verified": false,
+          "limit_up_count": 0,
+          "limit_down_count": 2,
+          "down_ratio_pct": 81.0,
+          "volume_expand_x": 2.76,
+          "relative_yesterday_x": null,
+          "missing_confirmation": "3分钟跌幅或成交放大未达到risk candidate最低门槛，且未完成双源行情核验。"
+        }
+      },
+      "valid_until": "2026-07-29T11:25:51+08:00",
+      "source_status": "degraded_partial",
+      "raw_log_line": "[11:20:51] 小登提醒：封装 题材快速回落 [risk]"
+    },
+    {
+      "id": "monitor-20260729-112207-51440669a418",
+      "time": "2026-07-29T11:22:07+08:00",
+      "sector": "8192超节点/昇腾算力",
+      "type": "小登提醒题材快速回落",
+      "reason": "8192超节点/昇腾算力出现正式回落提醒；3分钟-0.39%，下跌占比88%，成交放大4.40x，limit_down_count=2。短周期跌幅/成交未达risk candidate门槛，保留风险观察。",
+      "leaders": [
+        {
+          "name": "申菱环境",
+          "score": 60.6,
+          "change_pct": -0.53,
+          "factors": [
+            "3分钟涨跌幅 -0.53%",
+            "成交放大 10.63x",
+            "日内涨幅 -11.78%"
+          ]
+        },
+        {
+          "name": "光迅科技",
+          "score": 51.4,
+          "change_pct": -0.61,
+          "factors": [
+            "3分钟涨跌幅 -0.61%",
+            "成交放大 6.12x",
+            "日内涨幅 -7.80%"
+          ]
+        },
+        {
+          "name": "生益科技",
+          "score": 49.0,
+          "change_pct": -0.33,
+          "factors": [
+            "3分钟涨跌幅 -0.33%",
+            "成交放大 6.24x",
+            "日内涨幅 -9.98%"
+          ]
+        }
+      ],
+      "signal_type": "风险观察",
+      "is_old_economy": false,
+      "alert_class": "risk",
+      "confirmation_level": "invalidated",
+      "source_watch_id": null,
+      "quote_audit": {
+        "provider": "local_monitor",
+        "quote_time": "2026-07-29T11:22:07+08:00",
+        "pct_field": "3分钟涨跌幅",
+        "sample_count": null,
+        "max_abs_leader_change_pct": 0.61,
+        "sanity_checks": {
+          "cross_source_verified": false,
+          "limit_up_count": 0,
+          "limit_down_count": 2,
+          "down_ratio_pct": 88.0,
+          "volume_expand_x": 4.4,
+          "relative_yesterday_x": 2.18,
+          "missing_confirmation": "3分钟跌幅或成交放大未达到risk candidate最低门槛，且未完成双源行情核验。"
+        }
+      },
+      "valid_until": "2026-07-29T11:27:07+08:00",
+      "source_status": "degraded_partial",
+      "raw_log_line": "[11:22:07] 小登提醒：8192超节点/昇腾算力 题材快速回落 [risk]"
     }
   ],
   "quote_audit": {
