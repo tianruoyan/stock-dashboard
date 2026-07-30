@@ -1,1049 +1,445 @@
 {
-  "timestamp": "2026-07-29T09:29:35+08:00",
-  "phase": "9:25 A股集合竞价总结",
+  "timestamp": "2026-07-30T09:05:27+08:00",
+  "phase": "8:30 扩产+技术迭代假设验证早报",
   "data_status": {
-    "overall": "verified_with_declared_scope",
+    "overall": "verified_with_declared_secondary_fallbacks",
     "usable": [
-      "腾讯财经HTTP 09:25最终开盘价、明确上下限价、竞价成交额",
-      "5265只有效开盘且上下限价明确的A股样本",
-      "五大指数09:28-09:29开盘终值",
-      "配置池竞价高低开与成交额",
-      "前一交易日9:25竞价统计作为同口径比较"
+      "腾讯财经前一交易日A/H收盘与隔夜美股报价",
+      "AP美股三大指数、微软与Meta财报报道",
+      "SK hynix官方二季度业绩稿",
+      "新浪日韩指数与腾讯日韩科技股早盘报价",
+      "巨潮资讯2026-07-29至07-30全量2023份公告扫描",
+      "工信部/商务部/发改委官网增量检索"
     ],
     "missing": [
-      "无最终开盘或无明确上下限价的新股不计入涨跌停分母",
-      "9:25尚无开盘后炸板率、连板封单稳定性和持续成交承接",
-      "港股仍未进入连续竞价，A/H仅使用早段竞价映射"
+      "微软与Meta当季官方结果页正文未在采集窗口稳定取得，精确财报数据采用AP交叉报道",
+      "三星电子二季度正式结果定于韩国时间10:00发布，当前仅使用已公布业绩指引与早盘报价",
+      "8:30前无A股竞价涨跌停与成交数据"
     ],
-    "status": "a_share_auction_0925_verified",
-    "collected_at": "2026-07-29T09:29:35+08:00",
-    "market_data_as_of": "A股集合竞价终值；腾讯报价时间09:28:36至09:29:21，采集09:29:35"
+    "status": "premarket_hypothesis_verified_with_nonblocking_degradation",
+    "collected_at": "2026-07-30T09:05:27+08:00",
+    "market_data_as_of": "A/H昨收；美股2026-07-29收盘；日韩指数08:41、代表股08:18-08:23快照"
   },
-  "summary": "A股竞价是指数修复、情绪宽度偏弱的分化开局：科创50高开0.66%领涨，但明确涨跌停价口径仅8涨停、5跌停，涨停:跌停为1.60:1；竞价额约156.02亿元，较前一交易日约237.85亿元缩量34.4%。软件/数据是最集中候选，CRO完成单股A/H确认，科技硬件未形成板块共振。",
-  "strategy": "上午按分化修复而非进攻开盘处理。优先跟踪软件/数据能否从传智教育、国安股份扩散，药明康德能否带动CRO；半导体设备、存储、交换机、电子布只看开盘后成组放量，不追单股高开。若涨停扩张且跌停收缩、科创50保持强势，可上调风险偏好；反之维持防御。",
+  "summary": "产业端确认AI内存扩产和客户锁单，交易端却继续重估AI硬件回报率；今日只能把HBM/设备列为强逻辑观察，把交换机和高估值硬件列为风险线。",
+  "strategy": "防御型开盘预案。产业景气与股价风险分开处理：半导体设备、测试和存储只看2至3只核心同步放量；兆易创新先处理回购/增持P0竞价，不把资本动作当经营改善；交换机、CPO和电子布均需全板块承接后再升级。",
   "weekend_news": [],
   "us_overnight": {
-    "conclusion": "道指+1.0%、标普500+0.2%、纳指-0.2%，油价回落和传统板块轮动托住宽基，但Micron、AMD等芯片股大跌。日韩早盘表现为韩国存储相对修复、日本设备与测试强分化，对A股宽基中性、科技硬件偏压制。",
+    "conclusion": "道指-2.19%、标普500-1.52%、纳指-1.74%，油价跳升、通胀与利率路径不确定叠加AI硬件回报率担忧，形成明确风险外溢。微软财报后因Azure增长强而盘后上涨，Meta因利润/自由现金流承压盘后下跌，说明市场只奖励能兑现收入和现金流的扩产。",
     "indices": [
       {
         "name": "道琼斯工业指数",
-        "close": 52747.32,
-        "change_pct": 1.0,
-        "source": "AP"
+        "close": 51594.14,
+        "change_pct": -2.19,
+        "source": "腾讯财经/AP"
       },
       {
         "name": "标普500",
-        "close": 7428.78,
-        "change_pct": 0.2,
-        "source": "AP"
+        "close": 7316.15,
+        "change_pct": -1.52,
+        "source": "腾讯财经/AP"
       },
       {
         "name": "纳斯达克综合指数",
-        "close": 24876.91,
-        "change_pct": -0.2,
-        "source": "AP"
+        "close": 24442.94,
+        "change_pct": -1.74,
+        "source": "腾讯财经/AP"
       }
     ],
-    "reason": "传统行业轮动和油价回落支撑宽基；AI资本开支可持续性、中国低成本AI竞争与估值压力继续压制芯片。",
+    "reason": "Brent原油上涨7.3%至88美元上方，市场担心通胀与利率；同时AI高位股继续被检验资本回报，美光、AMD、Arista和Marvell大跌。",
     "japan_korea": {
-      "nikkei225_change_pct": 0.58,
-      "kospi_change_pct": 1.44,
-      "samsung_change_pct": 3.86,
-      "sk_hynix_change_pct": 0.19,
-      "tokyo_electron_change_pct": -4.6,
-      "advantest_change_pct": 3.12,
-      "judgement": "08:38指数快照仍偏强；08:51-08:56代表股显示Samsung +3.86%、SK hynix仅+0.19%，Tokyo Electron -4.60%、SCREEN -13.33%、Advantest +3.12%，属于韩国存储修复和日本设备/测试剧烈分化，不是亚洲科技全面共振。"
+      "nikkei225_change_pct": 0.62,
+      "kospi_change_pct": -0.74,
+      "samsung_change_pct": 1.92,
+      "sk_hynix_change_pct": -4.71,
+      "tokyo_electron_change_pct": 4.5,
+      "advantest_change_pct": 15.12,
+      "judgement": "08:41指数表现一强一弱；08:18-08:23代表股中日本设备/测试反弹、韩国存储明显分化，属于结构修复，不是亚洲科技全面共振。",
+      "source_status": "新浪指数+腾讯个股，采样时点不同，仅用于方向判断。"
     },
-    "impact_to_a_share": "中性偏压制。韩国存储只提供局部修复候选，美股存储/算力和日本设备负反馈要求A股用竞价宽度与自主成交确认，不能把海外产业景气直接当作A股交易主线。",
+    "impact_to_a_share": "对A股宽基偏压制、科技硬件显著压制。SK hynix的订单与量产可支持HBM/设备产业逻辑，但美股和韩国股价反馈要求A股用竞价宽度、成交与低位扩散自行确认。",
     "mapping_chain": [
       {
         "source_asset": "Micron / NVIDIA / Broadcom / AMD",
-        "change_pct": "-8.85% / +0.25% / -0.60% / -8.15%",
-        "reason": "Micron与AMD遭遇显著抛压，NVIDIA微涨不足以抵消存储与算力风险，Broadcom小跌",
-        "a_share_mapping": "存储/HBM、AI算力、半导体材料与测试",
-        "mapping_logic": "海外同行情绪传导与技术路线对标；聚辰、兆易、澜起、江波龙及设备测试股须凭A股自身成交和板块扩散确认"
+        "change_pct": "-9.94% / -3.55% / -2.78% / -5.51%",
+        "reason": "AI硬件与存储继续成片杀估值",
+        "a_share_mapping": "兆易创新、澜起科技、聚辰股份、江波龙、北方华创、中微公司",
+        "mapping_logic": "海外同业情绪传导；SK hynix官方订单/量产只确认产业，不替代A股资金承接"
       },
       {
-        "source_asset": "Arista / Cisco / Broadcom / Marvell / NVIDIA",
-        "change_pct": "-0.61% / +0.88% / -0.60% / -7.77% / +0.25%",
-        "reason": "整机、交换芯片和GPU网络生态内部显著分化，Marvell跌幅突出",
+        "source_asset": "Arista / Cisco / Marvell",
+        "change_pct": "-6.92% / -2.68% / -6.34%",
+        "reason": "交换机整机、网络平台和交换芯片同步承压",
         "a_share_mapping": "紫光股份、锐捷网络、中兴通讯、菲菱科思、共进股份、工业富联、盛科通信-U",
-        "mapping_logic": "技术路线和情绪映射，不代表A股订单；海外没有形成交换机全链共振，交换机主线未确认"
+        "mapping_logic": "技术路线与情绪映射；不代表A股订单，交换机主线未确认"
       },
       {
-        "source_asset": "Samsung Electronics / SK hynix",
-        "change_pct": "+3.86% / +0.19%",
-        "reason": "Samsung延续修复，SK hynix接近平盘，韩国存储修复强度已明显分化",
-        "a_share_mapping": "聚辰股份、兆易创新、澜起科技、江波龙、佰维存储",
-        "mapping_logic": "产业链情绪传导；只有A/H核心同步放量且后排扩散，才能从观察线升级"
+        "source_asset": "Microsoft",
+        "change_pct": "常规时段-0.71%，财报后盘后约+9%",
+        "reason": "季度收入900亿美元、Azure增长43%、季度资本开支410亿美元，收入兑现缓解回报率担忧",
+        "a_share_mapping": "AI服务器、光通信、数据中心电力与液冷",
+        "mapping_logic": "下游资本开支和需求映射；只有国内订单、收入、毛利与现金流可确认H4"
       },
       {
-        "source_asset": "Tokyo Electron / SCREEN / Advantest / Disco",
-        "change_pct": "-4.60% / -13.33% / +3.12% / -0.86%",
-        "reason": "日本设备股显著承压，测试股相对强，分支而非行业共振",
-        "a_share_mapping": "北方华创、中微公司、华海清科、长川科技、中科飞测",
-        "mapping_logic": "设备与测试技术路线对标；A股需至少2至3只核心同步放量并与科创50共振"
+        "source_asset": "Meta",
+        "change_pct": "常规时段-1.31%，财报后盘后下跌",
+        "reason": "资本开支维持高位，但自由现金流同比大幅下降，市场继续惩罚回报率不清",
+        "a_share_mapping": "CPO、服务器、交换机及数据中心硬件",
+        "mapping_logic": "资本开支利多与回报率约束并存，提示BOM/token成本存在估值天花板"
       }
     ]
   },
   "hk_auction": {
-    "window": "2026-07-29 09:00-09:03早段竞价指示价；09:18复核仍未刷新，恒指/恒科尚未形成有效竞价涨跌",
-    "indices": [
-      {
-        "name": "恒生指数",
-        "change_pct": null,
-        "note": "行情仍显示前收，未形成可用竞价涨跌"
-      },
-      {
-        "name": "恒生科技指数",
-        "change_pct": null,
-        "note": "行情仍显示前收，未形成可用竞价涨跌"
-      }
-    ],
-    "sectors": [
-      "互联网平台早段指示价偏强，但成交量极小",
-      "半导体指示价涨跌互现，多数零成交",
-      "AI应用内部强分化，五一视界指示价显著偏弱",
-      "创新药内部混合，药明康德竞价量相对有效",
-      "通信硬件偏弱，联想和中兴指示价下跌"
-    ],
-    "stocks": [
-      {
-        "name": "腾讯控股",
-        "code": "0700.HK",
-        "change_pct": 2.86,
-        "auction_volume": 76,
-        "category": "互联网平台",
-        "quote_time": "09:02",
-        "validity": "极小成交，仅作情绪候选"
-      },
-      {
-        "name": "阿里巴巴-W",
-        "code": "9988.HK",
-        "change_pct": 1.79,
-        "auction_volume": 73,
-        "category": "互联网平台",
-        "quote_time": "09:02",
-        "validity": "极小成交，仅作情绪候选"
-      },
-      {
-        "name": "小米集团-W",
-        "code": "1810.HK",
-        "change_pct": 2.53,
-        "auction_volume": 100,
-        "category": "消费电子",
-        "quote_time": "09:02",
-        "validity": "极小成交，仅作情绪候选"
-      },
-      {
-        "name": "澜起科技",
-        "code": "6809.HK",
-        "change_pct": 1.66,
-        "auction_volume": 0,
-        "category": "半导体",
-        "quote_time": "09:00-09:03",
-        "validity": "零成交指示价"
-      },
-      {
-        "name": "兆易创新",
-        "code": "3986.HK",
-        "change_pct": -0.22,
-        "auction_volume": 0,
-        "category": "半导体",
-        "quote_time": "09:00-09:03",
-        "validity": "零成交指示价"
-      },
-      {
-        "name": "华虹半导体",
-        "code": "1347.HK",
-        "change_pct": -0.51,
-        "auction_volume": 0,
-        "category": "半导体",
-        "quote_time": "09:00-09:03",
-        "validity": "零成交指示价"
-      },
-      {
-        "name": "中芯国际",
-        "code": "0981.HK",
-        "change_pct": 1.16,
-        "auction_volume": 0,
-        "category": "半导体",
-        "quote_time": "09:00-09:03",
-        "validity": "零成交指示价"
-      },
-      {
-        "name": "智谱",
-        "code": "2513.HK",
-        "change_pct": 0.77,
-        "auction_volume": 0,
-        "category": "AI应用",
-        "quote_time": "09:00-09:03",
-        "validity": "零成交指示价"
-      },
-      {
-        "name": "商汤-W",
-        "code": "0020.HK",
-        "change_pct": 2.14,
-        "auction_volume": 0,
-        "category": "AI应用",
-        "quote_time": "09:00-09:03",
-        "validity": "零成交指示价"
-      },
-      {
-        "name": "五一视界",
-        "code": "6651.HK",
-        "change_pct": -11.03,
-        "auction_volume": 0,
-        "category": "Physical AI",
-        "quote_time": "09:00-09:03",
-        "validity": "零成交指示价，方向风险候选"
-      },
-      {
-        "name": "药明康德",
-        "code": "2359.HK",
-        "change_pct": 3.45,
-        "auction_volume": 69800,
-        "category": "CRO",
-        "quote_time": "09:02",
-        "validity": "重点样本中唯一较有意义的竞价量"
-      },
-      {
-        "name": "康方生物",
-        "code": "9926.HK",
-        "change_pct": -7.92,
-        "auction_volume": 0,
-        "category": "创新药",
-        "quote_time": "09:00-09:03",
-        "validity": "零成交指示价"
-      },
-      {
-        "name": "药明生物",
-        "code": "2269.HK",
-        "change_pct": 0.0,
-        "auction_volume": 0,
-        "category": "CXO",
-        "quote_time": "09:00-09:03",
-        "validity": "零成交指示价"
-      },
-      {
-        "name": "联想集团",
-        "code": "0992.HK",
-        "change_pct": -1.37,
-        "auction_volume": 1199,
-        "category": "数据中心硬件",
-        "quote_time": "09:02",
-        "validity": "有少量成交，方向偏弱"
-      },
-      {
-        "name": "中兴通讯",
-        "code": "0763.HK",
-        "change_pct": -1.41,
-        "auction_volume": 0,
-        "category": "通信设备",
-        "quote_time": "09:00-09:03",
-        "validity": "零成交指示价"
-      }
-    ],
-    "sentiment": "早段信号是互联网平台偏强、半导体与AI应用分化、硬件偏弱、CRO个股有承接。由于恒指/恒科未形成有效涨跌且多数样本零成交，这只能作为9:25映射候选，不能确认港股共振。",
-    "mapping_chain": [
-      {
-        "source_asset": "澜起科技H / 兆易创新H / 华虹半导体",
-        "change_pct": "+1.66% / -0.22% / -0.51%",
-        "reason": "半导体指示价分化且均为零成交",
-        "a_share_mapping": "存储接口、存储芯片、晶圆代工及半导体材料设备",
-        "mapping_logic": "A/H同股与产业链情绪传导；零成交不构成方向确认"
-      },
-      {
-        "source_asset": "智谱 / 商汤-W",
-        "change_pct": "+0.77% / +2.14%",
-        "reason": "AI应用早段指示价偏强但零成交",
-        "a_share_mapping": "大模型、AI应用、数据要素",
-        "mapping_logic": "情绪传导；只有A股应用端涨停扩散才可确认"
-      },
-      {
-        "source_asset": "药明康德H / 康方生物 / 药明生物",
-        "change_pct": "+3.45% / -7.92% / 0.00%",
-        "reason": "药明康德有6.98万股竞价量，创新药样本则分化",
-        "a_share_mapping": "A股CRO、创新药",
-        "mapping_logic": "A/H同股承接与行业情绪传导；更偏CRO个股验证，不是整个创新药板块共振"
-      },
-      {
-        "source_asset": "五一视界",
-        "change_pct": "-11.03%",
-        "reason": "Physical AI早段指示价显著偏弱，但为零成交",
-        "a_share_mapping": "数字孪生、空间智能、Physical AI",
-        "mapping_logic": "情绪风险映射；9:30后港股有效成交和A股扩散决定是否证伪"
-      },
-      {
-        "source_asset": "联想集团 / 中兴通讯H",
-        "change_pct": "-1.37% / -1.41%",
-        "reason": "数据中心硬件与通信设备指示价偏弱",
-        "a_share_mapping": "服务器、交换机整机/ODM、通信设备",
-        "mapping_logic": "A/H情绪传导；叠加海外交换链分化，交换机主线未确认"
-      }
-    ]
+    "window": "08:30早报时港股竞价尚未开始",
+    "indices": [],
+    "sectors": [],
+    "stocks": [],
+    "sentiment": "待9:15按真实竞价更新",
+    "mapping_chain": []
   },
   "overnight_news": [
     {
-      "text": "KLA FY2026 Q4收入36.58亿美元，下一季指引40亿美元±2亿美元；公司称AI、存储复杂度和先进封装推动过程控制需求。",
-      "source": "https://ir.kla.com/news-events/press-releases/detail/518/kla-corporation-reports-fiscal-2026-fourth-quarter-and-full",
-      "tag": "半导体设备",
-      "impact": "提高设备产业需求确认度，但库存和应收同比上升、海外芯片交易仍弱；映射北方华创、中微公司、华海清科，只作产业证据。",
-      "mapping": "过程控制/晶圆厂资本开支→A股设备平台与CMP设备",
-      "logic_chain": "海外需求确认→国内订单映射待证→竞价至少3只核心同步才确认"
+      "text": "SK hynix二季度收入79.3187万亿韩元、营业利润60.5426万亿韩元；HBM4二季度已开始量产出货、下半年爬坡，并已与约10家客户签署长期协议。",
+      "source": "https://news.skhynix.com/en/q2-2026-business-results/",
+      "tag": "HBM/扩产/客户验证",
+      "impact": "确认全球AI内存需求、客户锁单与量产节点，利于A股设备、测试、先进封装和HBM材料产业映射；但SK hynix早盘下跌，交易端仍需A股自主确认。",
+      "mapping": [
+        "半导体设备",
+        "测试设备",
+        "HBM材料",
+        "先进封装"
+      ],
+      "logic_chain": "客户长协+HBM4量产→供给扩张与设备需求→A股订单/收入/毛利待验证"
     },
     {
-      "text": "Teradyne Q2收入13.29亿美元、连续第二季创纪录；存储测试受DRAM和NAND需求推动，Q3指引12亿至13亿美元。",
-      "source": "https://investors.teradyne.com/news-events/press-releases/detail/445/teradyne-reports-second-quarter-2026-results",
-      "tag": "半导体测试/存储",
-      "impact": "利好测试设备与存储接口产业验证，映射长川科技、华峰测控、聚辰股份；不代表A股订单已落地。",
-      "mapping": "存储测试景气→测试设备/接口芯片",
-      "logic_chain": "海外测试收入→国内路线映射→中报订单与毛利验证"
+      "text": "微软季度收入900亿美元、Azure增长43%、季度资本开支410亿美元；Meta维持高额AI资本开支但自由现金流同比大幅下降，盘后股价反应一强一弱。",
+      "source": "https://apnews.com/article/f7dff4fb9d51a2bdec56a13e5da1053d",
+      "tag": "AI资本开支/回报率",
+      "impact": "确认AI基础设施需求仍强，同时强化“扩产必须由收入和现金流证明”的筛选，利多不能无差别映射到A股硬件。",
+      "mapping": [
+        "AI服务器",
+        "CPO",
+        "交换机",
+        "电力/液冷"
+      ],
+      "logic_chain": "Capex增长→硬件需求；收入/现金流差异→估值分化与BOM/token成本约束"
     },
     {
-      "text": "聚辰股份预计上半年营收同比+4.71%、归母净利+156.07%，但扣非净利同比-47.30%；DDR5 SPD二季度出货加快，VPD芯片通过目标客户测试认证。",
-      "source": "https://static.cninfo.com.cn/finalpage/2026-07-29/1225445366.PDF",
-      "tag": "个股公告/存储",
-      "impact": "客户验证和出货是H3/H4正证据，扣非下滑和非经常损益占比较高限制升级。",
-      "mapping": "DDR5/CXL接口→存储芯片与测试链",
-      "logic_chain": "客户测试+出货增长→产业确认增强→利润质量约束估值",
-      "stock": "聚辰股份",
-      "announcement_type": "半年度业绩预增",
-      "announcement_date": "2026-07-29",
-      "exchange_source": "巨潮资讯/上交所披露"
+      "text": "兆易创新董事长提议公司回购A股10亿至20亿元并注销；实控人拟增持不低于10亿元，但实施期自2026年12月13日开始；此前44亿元减持计划已完成，实控人承诺未来12个月不减持。",
+      "source": "https://static.cninfo.com.cn/finalpage/2026-07-30/1225447343.PDF",
+      "tag": "兆易创新/回购增持/P0",
+      "impact": "可能显著影响A/H竞价和存储链情绪，但回购尚待审批、增持有延后实施窗口，不能视作订单或盈利改善。",
+      "mapping": [
+        "兆易创新A/H",
+        "存储芯片",
+        "半导体情绪"
+      ],
+      "logic_chain": "资本动作稳预期→竞价情绪修复候选→需成交承接与存储板块扩散确认"
     },
     {
-      "text": "中际旭创董事长提议以自有或自筹资金回购40亿至80亿元股份，用于股权激励或员工持股计划；方案尚待董事会审议。",
-      "source": "https://static.cninfo.com.cn/finalpage/2026-07-29/1225445769.pdf",
-      "tag": "个股公告/CPO",
-      "impact": "可能改善单股情绪与流动性预期，但属于资本动作，不是订单、量产或毛利验证。",
-      "mapping": "CPO核心情绪锚→光模块链反抽观察",
-      "logic_chain": "回购提议→公司级承接预期→板块扩散仍待竞价",
-      "stock": "中际旭创",
-      "announcement_type": "回购提议",
-      "announcement_date": "2026-07-29",
-      "exchange_source": "巨潮资讯/深交所披露"
-    },
-    {
-      "text": "沪硅产业回复年报问询：2025年300mm硅片销量增长26%，但平均售价下降8.83%、毛利率-14.99%；2025年归母亏损15.08亿元并计提较大资产减值。",
-      "source": "https://static.cninfo.com.cn/finalpage/2026-07-29/1225445535.PDF",
-      "tag": "个股公告/半导体材料",
-      "impact": "验证扩产爬坡与盈利错位，硅片链维持风险/观察，不因国产替代叙事升级。",
-      "mapping": "半导体硅片→材料扩产盈利质量",
-      "logic_chain": "销量扩张→价格竞争/负毛利→订单、利用率与毛利须同步改善",
-      "stock": "沪硅产业",
-      "announcement_type": "年报问询回复",
-      "announcement_date": "2026-07-29",
-      "exchange_source": "巨潮资讯/上交所披露"
-    },
-    {
-      "text": "美股收盘道指+1.0%、标普500+0.2%、纳指-0.2%；Micron -8.9%、AMD -8.1%、Applied Materials -7.8%，资金从AI芯片向传统板块轮动。",
-      "source": "https://apnews.com/article/stock-markets-ai-chips-oil-a880057323bd065c325ad19b23de0cf3",
-      "tag": "海外市场",
-      "impact": "宽基不弱但科技硬件风险仍外溢，A股开盘更可能分化而非全面进攻。",
-      "mapping": "美股芯片→A股存储、算力、设备、CPO",
-      "logic_chain": "AI资本开支持续性担忧→芯片估值压缩→A股高弹性科技承压"
+      "text": "隔夜美股AI硬件链继续下跌：Micron -9.94%、AMD -5.51%、Arista -6.92%、Marvell -6.34%，三大指数同步收跌。",
+      "source": "https://apnews.com/article/wall-street-stocks-dow-nasdaq-a483060a0aa9c24c50f589b0b7713497",
+      "tag": "全球科技风险/P0",
+      "impact": "压制A股存储、AI算力、交换机和高估值硬件开盘风险偏好；若A股竞价不受影响，反而构成相对强度验证。",
+      "mapping": [
+        "存储/HBM",
+        "AI算力",
+        "交换机/高速以太网",
+        "半导体设备"
+      ],
+      "logic_chain": "海外成片杀估值→A股情绪传导→用竞价宽度与核心承接验证是否脱钩"
     }
   ],
   "a_share_mapping": {
-    "semiconductor_equipment": "北方华创、中微公司、华海清科、长川科技、中科飞测：看至少2至3只核心同步放量和科创50共振。",
-    "memory_hbm": "聚辰、兆易、澜起、江波龙、佰维：产业证据与海外交易负反馈并存，先看竞价质量。",
-    "ai_compute": "中际旭创回购仅作情绪锚；CPO、服务器、交换机需板块扩散，不追单股。",
-    "cro_innovation_drug": "药明康德A/H承接优先验证，创新药整体仍需更多样本同步。",
-    "physical_ai": "五一视界偏弱指示价映射情绪风险，等待港股有效成交与A股扩散复核。"
+    "semiconductor_equipment": "北方华创、中微公司、华海清科、长川科技、中科飞测：SK hynix扩产提供产业映射，必须由A股订单、业绩和2至3只核心同步放量确认。",
+    "memory_hbm": "兆易、澜起、聚辰、江波龙：产业确认与海外股价负反馈并存；兆易另受回购/增持P0影响，先看是否扩散。",
+    "ai_compute": "微软/Meta资本开支仍强，但只有国内订单、收入、毛利、库存和现金流能确认H4。",
+    "switch_ethernet": "Arista、Cisco、Marvell同步下跌，紫光、锐捷、中兴、菲菱、共进、工业富联、盛科维持风险观察。",
+    "glass_pcb": "中国巨石、国际复材和PCB核心昨仅弱修复，无新价格、利润或排产证据。"
   },
   "hk_mapping": {
-    "internet": "腾讯、阿里、小米早段指示价偏强但量极小，映射A股平台经济和消费电子情绪，不构成主线确认。",
-    "semiconductor": "澜起、兆易、华虹、中芯指示价分化且零成交，半导体A/H共振未确认。",
-    "ai_application": "智谱、商汤指示价偏强但零成交；五一视界显著偏弱，AI应用内部风险差扩大。",
-    "pharma": "药明康德有较有效竞价量，CRO优于创新药整体，但康方等零成交指示价不作定论。",
-    "hardware": "联想有少量成交下跌、中兴零成交偏弱，服务器和交换机映射偏压制。"
+    "status": "08:30港股竞价未开始",
+    "previous_close": "恒指+1.96%、恒生科技+2.84%，但澜起H-2.88%、兆易H-3.24%、华虹-1.08%、中芯-2.75%，指数修复未传导至半导体。",
+    "next_check": "9:15复核兆易H对资本动作的竞价反应，以及半导体/AI应用是否与A股共振。"
   },
-  "strong_lines": [],
+  "strong_lines": [
+    "HBM4量产与客户长协确认的AI内存扩产逻辑",
+    "微软Azure增长与资本开支确认的AI基础设施需求（仅产业逻辑）"
+  ],
   "watch_lines": [
-    "软件/数据/网络安全：2只涨停并有多只5%以上高开，是竞价最集中方向；开盘后扩散才能升级主线。",
-    "CRO/医疗：药明康德A/H同股承接、中红医疗20cm涨停，属于观察线偏强。",
-    "消费防御：酒店、家居、食品与白酒权重同向，延续昨日防御风格，但券商未共振。",
-    "半导体设备：中微+1.92%、圣晖涨停提供局部修复，北方/华海接近平开，暂不构成主线。"
+    "半导体设备/测试的A股订单与成组承接",
+    "兆易创新资本动作后的存储链扩散",
+    "玻璃基/TGV/MicroLED商业化证据"
   ],
   "risk_lines": [
-    "存储/HBM：聚辰-0.65%、兆易-4.47%，盘前产业证据没有转化为板块竞价确认。",
-    "交换机/高速以太网：七核心仅共进、盛科、中兴小幅高开，紫光和锐捷偏弱，交换机主线未确认。",
-    "电子布/玻纤：上游小幅修复但PCB核心继续低开，定性为板块弱修复/反抽观察，不是有效反抽。",
-    "科技高波动：竞价额缩量且高位硬件仍有深度低开，需防开盘冲高回落。"
+    "全球AI硬件估值继续下杀",
+    "交换机/高速以太网海外整机与芯片同步承压",
+    "电子布/玻纤缺少价格、利润和排产新增证据"
   ],
   "opening_plan": [
-    "强主线：当前无竞价级强主线；软件/数据若涨停扩至3只以上、后排放量且炸板不扩大，再升级。",
-    "观察线：CRO/医疗看药明康德和中红医疗能否带动更多同题材翻红；单股强不升级整体创新药。",
-    "资金博弈线：电子布、PCB、CPO只看核心放量翻红、跌停减少和板块跌幅收敛，不满足则放弃弱反弹。",
-    "风险线：兆易、新莱、通富、锐捷等若开盘继续放量下跌，降低科技反抽博弈频率。",
-    "情绪门槛：下一时点须看到涨停增加、跌停减少且科创50维持强势，才能从分化修复转向进攻。"
+    "9:15先核验港股兆易H、澜起H、华虹和中芯是否形成半导体共振。",
+    "9:25看兆易资本动作是否带动至少2至3只存储核心同步高开并有竞价额承接。",
+    "设备/测试只有2至3只核心同步放量且科创50相对强，才从产业强逻辑升级交易观察。",
+    "交换机若整机、ODM、交换芯片仍不同步，继续风险线；只涨CPO不算确认。",
+    "电子布只有上游与PCB至少两层同步修复，才从资金博弈线升级。"
   ],
   "sources": [
     {
-      "name": "AP：7月28日美股收盘",
-      "url": "https://apnews.com/article/stock-markets-ai-chips-oil-a880057323bd065c325ad19b23de0cf3",
-      "type": "权威行情/新闻"
-    },
-    {
-      "name": "KLA FY2026 Q4官方业绩",
-      "url": "https://ir.kla.com/news-events/press-releases/detail/518/kla-corporation-reports-fiscal-2026-fourth-quarter-and-full",
-      "type": "公司官方公告"
-    },
-    {
-      "name": "Teradyne 2026 Q2官方业绩",
-      "url": "https://investors.teradyne.com/news-events/press-releases/detail/445/teradyne-reports-second-quarter-2026-results",
-      "type": "公司官方公告"
-    },
-    {
-      "name": "聚辰股份2026年半年度业绩预增",
-      "url": "https://static.cninfo.com.cn/finalpage/2026-07-29/1225445366.PDF",
-      "type": "交易所公告"
-    },
-    {
-      "name": "中际旭创董事长提议回购",
-      "url": "https://static.cninfo.com.cn/finalpage/2026-07-29/1225445769.pdf",
-      "type": "交易所公告"
-    },
-    {
-      "name": "沪硅产业年报问询回复",
-      "url": "https://static.cninfo.com.cn/finalpage/2026-07-29/1225445535.PDF",
-      "type": "交易所公告"
-    },
-    {
-      "name": "新浪全球指数与腾讯日韩代表股",
-      "url": "https://hq.sinajs.cn/",
-      "type": "高频行情源",
-      "note": "08:38指数、08:11-08:16代表股交叉核验"
-    },
-    {
-      "name": "巨潮资讯公告检索",
-      "url": "https://www.cninfo.com.cn/new/commonUrl/pageOfSearch?url=disclosure/list/search",
-      "type": "交易所信息披露"
-    },
-    {
-      "name": "腾讯美股、日韩、港股竞价与中概行情",
+      "name": "腾讯财经HTTP",
       "url": "https://qt.gtimg.cn/",
-      "type": "高频行情源",
-      "note": "港股为09:00-09:03早段指示价，09:18复核；多数零成交已降级处理"
+      "usage": "A/H昨收、隔夜美股及日韩代表股行情",
+      "status": "ok"
     },
     {
-      "name": "新浪A50、恒指及美股指数期货",
-      "url": "https://hq.sinajs.cn/",
-      "type": "高频行情源",
-      "note": "09:16快照，按当前值相对接口参考值计算"
+      "name": "Associated Press美股收盘",
+      "url": "https://apnews.com/article/wall-street-stocks-dow-nasdaq-a483060a0aa9c24c50f589b0b7713497",
+      "usage": "三大指数与风险原因",
+      "status": "ok"
     },
     {
-      "name": "Nasdaq Golden Dragon China Index历史页",
-      "url": "https://indexes.nasdaq.com/Index/History/HXC",
-      "type": "官方指数页",
-      "note": "未提供可交叉核验的当日精确涨幅，未写入指数结论"
+      "name": "SK hynix官方二季度业绩",
+      "url": "https://news.skhynix.com/en/q2-2026-business-results/",
+      "usage": "客户长协、HBM4量产、收入利润和产能计划",
+      "status": "ok"
+    },
+    {
+      "name": "AP微软财报",
+      "url": "https://apnews.com/article/f7dff4fb9d51a2bdec56a13e5da1053d",
+      "usage": "Azure、资本开支与盘后反应",
+      "status": "ok_secondary"
+    },
+    {
+      "name": "AP Meta财报",
+      "url": "https://apnews.com/article/bcbc62dde6d2cac724e3b3385fcabeab",
+      "usage": "自由现金流与盘后反应",
+      "status": "ok_secondary"
+    },
+    {
+      "name": "巨潮资讯兆易创新公告",
+      "url": "https://static.cninfo.com.cn/finalpage/2026-07-30/1225447343.PDF",
+      "usage": "回购提议、增持窗口与风险提示",
+      "status": "ok"
+    },
+    {
+      "name": "工信部/商务部/发改委官网",
+      "usage": "20:00至8:30政策增量",
+      "status": "ok_no_p0_increment"
     }
   ],
   "disclaimer": "仅作研究跟踪，不构成投资建议。",
   "overnight_sentiment": {
-    "china_adr": {
-      "judgement": "中概样本分化偏正，互联网和消费相对强，但科技ETF偏弱，外资对中资情绪并非全面进攻。",
-      "quotes": [
-        "KWEB +1.15%",
-        "CQQQ -2.41%",
-        "Alibaba +0.17%",
-        "PDD +1.01%",
-        "JD.com +2.71%",
-        "NetEase +2.89%",
-        "Li Auto +4.68%"
-      ],
-      "note": "未取得可交叉核验的金龙指数当日精确涨幅，不以样本替代指数。"
-    },
-    "futures": {
-      "a50": {
-        "change_pct": -0.37,
-        "method": "14642相对参考值约14696",
-        "as_of": "09:16:54"
-      },
-      "hang_seng": {
-        "change_pct": 0.85,
-        "method": "25547.43相对参考值约25332",
-        "as_of": "09:16:59"
-      },
-      "nasdaq_100": {
-        "change_pct": -0.07,
-        "method": "27902.65相对参考值约27922",
-        "as_of": "09:16"
-      },
-      "sp500": {
-        "change_pct": 0.05,
-        "method": "7469.05相对参考值约7465.25",
-        "as_of": "09:16"
-      },
-      "judgement": "A50偏弱、恒指期货偏强，A/H开盘方向存在分歧；美股期指接近平盘。"
-    },
+    "us_equities": "风险外溢：三大指数与AI硬件链同步下跌。",
+    "earnings_split": "微软以Azure和收入兑现获得盘后正反馈；Meta高投入但现金流承压获得负反馈。",
+    "asia_early": "日经反弹、KOSPI转弱；日本设备/测试强、韩国存储分化。",
     "opening_alerts": [
-      "聚辰股份：DDR5 SPD出货加速且VPD通过目标客户测试，但扣非利润同比下降47.30%，属于有产业证据、盈利质量分化。",
-      "中际旭创：董事长提议40亿至80亿元回购，尚待董事会审议，只能作为CPO情绪锚。",
-      "沪硅产业：300mm硅片量增价跌、毛利率-14.99%，扩产盈利质量继续承压。",
-      "KLA与Teradyne财报确认AI、存储和先进封装需求，但海外芯片交易负反馈说明产业景气不能直接替代A股资金确认。"
+      "兆易创新回购/增持P0",
+      "Micron/Arista/Marvell海外负反馈",
+      "SK hynix HBM4量产和约10家客户长协"
     ],
-    "opening_judgement": "分化型偏防御。中资互联网情绪有支撑，但AI硬件、交换芯片和Physical AI风险更突出。"
+    "opening_judgement": "防御型，产业逻辑可跟踪但交易确认门槛提高。"
   },
   "market_context": {
-    "open_style": "分化型",
+    "open_style": "防御型",
     "benefit_themes": [
-      "软件/数据/网络安全的竞价延续候选",
-      "CRO与医疗修复的A/H承接候选",
-      "消费/酒店/家居防御线",
-      "科创50与半导体设备局部修复"
+      "HBM4扩产映射的设备/测试观察",
+      "兆易创新资本动作驱动的存储情绪修复候选",
+      "微软Azure兑现映射的AI基础设施低位分支"
     ],
     "risk_points": [
-      "涨停数较前一交易日竞价13只降至8只，跌停由3只增至5只",
-      "竞价额约156.02亿元，较前一交易日缩量34.4%",
-      "兆易创新-4.47%、新莱应材-4.72%、通富微电-4.52%，科技修复内部负反馈仍重",
-      "交换机核心紫光-1.49%、锐捷-2.95%，整机/ODM/芯片未共振",
-      "PCB核心东山精密-5.09%、沪电-1.99%、生益-1.33%，电子布上游小幅修复未传导下游"
+      "美股三大指数与AI硬件链同步下跌",
+      "交换机整机与芯片海外共振走弱",
+      "油价跳升加重通胀/利率担忧",
+      "兆易回购尚待审批且增持延后实施"
     ],
-    "limit_up_count": 8,
-    "limit_down_count": 5,
-    "limit_diff": 3,
-    "limit_ratio": 1.6,
-    "limit_denominator": 5265,
-    "limit_up_pct": 0.1519,
-    "limit_down_pct": 0.095,
-    "sentiment_judgement": "指数修复但竞价宽度和量能不足，上午定性为分化修复、非进攻。较前一交易日开盘，涨停收缩且跌停扩张，风险偏好尚未真正回暖。"
+    "limit_up_count": null,
+    "limit_down_count": null,
+    "limit_diff": null,
+    "limit_ratio": null,
+    "sentiment_judgement": "8:30尚无A股竞价统计；按外盘定为防御型预案，9:25再以真实涨跌停和竞价额修正。"
   },
   "a_share_auction": {
-    "window": "2026-07-29 09:25集合竞价终值，09:29:35采集；未使用09:30后连续竞价价格",
-    "source": "腾讯财经HTTP",
-    "scope": "取得5265只有效开盘且上下限价明确的A股样本；无最终开盘、无明确上下限价或尚未形成开盘的新股不计入分母",
-    "indices": [
-      {
-        "name": "上证指数",
-        "code": "sh000001",
-        "open": 3823.29,
-        "change_pct": 0.26,
-        "auction_amount_yi": 80.3531,
-        "quote_time": "20260729092900",
-        "source": "腾讯财经HTTP"
-      },
-      {
-        "name": "深证成指",
-        "code": "sz399001",
-        "open": 13498.75,
-        "change_pct": -0.08,
-        "auction_amount_yi": 75.1799,
-        "quote_time": "20260729092921",
-        "source": "腾讯财经HTTP"
-      },
-      {
-        "name": "创业板指",
-        "code": "sz399006",
-        "open": 3333.48,
-        "change_pct": 0.19,
-        "auction_amount_yi": 32.9105,
-        "quote_time": "20260729092836",
-        "source": "腾讯财经HTTP"
-      },
-      {
-        "name": "科创50",
-        "code": "sh000688",
-        "open": 1704.58,
-        "change_pct": 0.66,
-        "auction_amount_yi": 10.047,
-        "quote_time": "20260729092900",
-        "source": "腾讯财经HTTP"
-      },
-      {
-        "name": "沪深300",
-        "code": "sh000300",
-        "open": 4582.09,
-        "change_pct": 0.28,
-        "auction_amount_yi": 58.8736,
-        "quote_time": "20260729092900",
-        "source": "腾讯财经HTTP"
-      }
-    ],
-    "auction_amount_yi": 156.02,
-    "previous_trade_day_auction_amount_yi": 237.85,
-    "auction_amount_change_pct": -34.4,
-    "limit_up_count": 8,
-    "limit_down_count": 5,
-    "limit_diff": 3,
-    "limit_denominator": 5265,
-    "limit_up_pct": 0.1519,
-    "limit_down_pct": 0.095,
-    "limit_ratio": 1.6,
-    "previous_trade_day": {
-      "limit_up_count": 13,
-      "limit_down_count": 3,
-      "limit_diff": 10,
-      "limit_ratio": 4.33,
-      "comparison": "涨停减少5只、跌停增加2只、比值由4.33降至1.60，竞价情绪较前一交易日开盘收缩。"
-    },
-    "limit_up_stocks": [
-      {
-        "name": "传智教育",
-        "code": "003032",
-        "open_pct": 9.97,
-        "auction_amount_yi": 0.4417
-      },
-      {
-        "name": "国安股份",
-        "code": "000839",
-        "open_pct": 10.11,
-        "auction_amount_yi": 0.3993
-      },
-      {
-        "name": "华天酒店",
-        "code": "000428",
-        "open_pct": 10.08,
-        "auction_amount_yi": 0.2947
-      },
-      {
-        "name": "圣晖集成",
-        "code": "603163",
-        "open_pct": 10.01,
-        "auction_amount_yi": 0.2173
-      },
-      {
-        "name": "中红医疗",
-        "code": "300981",
-        "open_pct": 19.98,
-        "auction_amount_yi": 0.1557
-      },
-      {
-        "name": "明新旭腾",
-        "code": "605068",
-        "open_pct": 9.99,
-        "auction_amount_yi": 0.1528
-      },
-      {
-        "name": "高争民爆",
-        "code": "002827",
-        "open_pct": 10.0,
-        "auction_amount_yi": 0.1431
-      },
-      {
-        "name": "爱丽家居",
-        "code": "603221",
-        "open_pct": 9.98,
-        "auction_amount_yi": 0.0417
-      }
-    ],
-    "limit_down_stocks": [
-      {
-        "name": "立新能源",
-        "code": "001258",
-        "open_pct": -10.0,
-        "auction_amount_yi": 0.6729
-      },
-      {
-        "name": "国新能源",
-        "code": "600617",
-        "open_pct": -10.11,
-        "auction_amount_yi": 0.1887
-      },
-      {
-        "name": "百合花",
-        "code": "603823",
-        "open_pct": -10.0,
-        "auction_amount_yi": 0.0672
-      },
-      {
-        "name": "云创退",
-        "code": "920305",
-        "open_pct": -28.07,
-        "auction_amount_yi": 0.0072
-      },
-      {
-        "name": "豪尔赛",
-        "code": "002963",
-        "open_pct": -10.01,
-        "auction_amount_yi": 0.0034
-      }
-    ],
-    "theme_distribution": [
-      {
-        "name": "软件/数据/网络安全",
-        "status": "竞价最强候选，尚待开盘扩散确认",
-        "evidence": [
-          "传智教育、国安股份封涨停",
-          "绿盟科技+8.09%、科蓝软件+7.14%、荣联科技+6.61%、天融信+5.50%、南天信息+4.62%"
-        ]
-      },
-      {
-        "name": "消费/酒店/家居",
-        "status": "防御线延续候选",
-        "evidence": [
-          "华天酒店、爱丽家居封涨停",
-          "嘉美包装+9.44%、一鸣食品+6.12%，贵州茅台+1.05%"
-        ]
-      },
-      {
-        "name": "医疗/CRO",
-        "status": "观察线偏强，A/H单股确认",
-        "evidence": [
-          "中红医疗20cm涨停",
-          "药明康德A股+3.87%，与港股早段+3.45%且6.98万股竞价量形成同股确认",
-          "创新医疗+5.45%、蓝帆医疗+6.35%"
-        ]
-      },
-      {
-        "name": "半导体设备/洁净室",
-        "status": "单股与分支修复，不构成主线",
-        "evidence": [
-          "圣晖集成封涨停、中微公司+1.92%、中芯国际+1.18%",
-          "北方华创仅+0.08%、华海清科+0.05%，安集科技-1.60%、新莱应材-4.72%"
-        ]
-      }
-    ],
-    "watchlist_snapshot": {
-      "semiconductor": [
-        {
-          "name": "北方华创",
-          "code": "002371",
-          "open_pct": 0.08,
-          "auction_amount_yi": 1.2298
-        },
-        {
-          "name": "中微公司",
-          "code": "688012",
-          "open_pct": 1.92,
-          "auction_amount_yi": 1.0036
-        },
-        {
-          "name": "华海清科",
-          "code": "688120",
-          "open_pct": 0.05,
-          "auction_amount_yi": 0.1721
-        },
-        {
-          "name": "安集科技",
-          "code": "688019",
-          "open_pct": -1.6,
-          "auction_amount_yi": 0.1067
-        },
-        {
-          "name": "江丰电子",
-          "code": "300666",
-          "open_pct": 0.16,
-          "auction_amount_yi": 0.22
-        },
-        {
-          "name": "富创精密",
-          "code": "688409",
-          "open_pct": 0.57,
-          "auction_amount_yi": 0.1715
-        },
-        {
-          "name": "新莱应材",
-          "code": "300260",
-          "open_pct": -4.72,
-          "auction_amount_yi": 0.3988
-        },
-        {
-          "name": "南大光电",
-          "code": "300346",
-          "open_pct": -1.59,
-          "auction_amount_yi": 0.599
-        },
-        {
-          "name": "晶瑞电材",
-          "code": "300655",
-          "open_pct": -0.8,
-          "auction_amount_yi": 0.117
-        }
-      ],
-      "memory": [
-        {
-          "name": "聚辰股份",
-          "code": "688123",
-          "open_pct": -0.65,
-          "auction_amount_yi": 0.0543
-        },
-        {
-          "name": "兆易创新",
-          "code": "603986",
-          "open_pct": -4.47,
-          "auction_amount_yi": 5.116
-        },
-        {
-          "name": "澜起科技",
-          "code": "688008",
-          "open_pct": 0.66,
-          "auction_amount_yi": 0.8839
-        },
-        {
-          "name": "江波龙",
-          "code": "301308",
-          "open_pct": 1.45,
-          "auction_amount_yi": 0.5229
-        }
-      ],
-      "switch": [
-        {
-          "name": "紫光股份",
-          "code": "000938",
-          "open_pct": -1.49,
-          "auction_amount_yi": 1.4824
-        },
-        {
-          "name": "锐捷网络",
-          "code": "301165",
-          "open_pct": -2.95,
-          "auction_amount_yi": 0.3983
-        },
-        {
-          "name": "中兴通讯",
-          "code": "000063",
-          "open_pct": 0.51,
-          "auction_amount_yi": 0.1814
-        },
-        {
-          "name": "菲菱科思",
-          "code": "301191",
-          "open_pct": 0.08,
-          "auction_amount_yi": 0.0198
-        },
-        {
-          "name": "共进股份",
-          "code": "603118",
-          "open_pct": 0.52,
-          "auction_amount_yi": 0.7099
-        },
-        {
-          "name": "工业富联",
-          "code": "601138",
-          "open_pct": 0.0,
-          "auction_amount_yi": 0.2274
-        },
-        {
-          "name": "盛科通信-U",
-          "code": "688702",
-          "open_pct": 0.55,
-          "auction_amount_yi": 0.2138
-        }
-      ],
-      "glass_pcb": [
-        {
-          "name": "中国巨石",
-          "code": "600176",
-          "open_pct": 1.06,
-          "auction_amount_yi": 0.4517
-        },
-        {
-          "name": "国际复材",
-          "code": "301526",
-          "open_pct": 0.07,
-          "auction_amount_yi": 0.3665
-        },
-        {
-          "name": "山东玻纤",
-          "code": "605006",
-          "open_pct": 1.14,
-          "auction_amount_yi": 0.0172
-        },
-        {
-          "name": "长海股份",
-          "code": "300196",
-          "open_pct": 0.0,
-          "auction_amount_yi": 0.0076
-        },
-        {
-          "name": "宏和科技",
-          "code": "603256",
-          "open_pct": -0.01,
-          "auction_amount_yi": 0.2351
-        },
-        {
-          "name": "生益科技",
-          "code": "600183",
-          "open_pct": -1.33,
-          "auction_amount_yi": 0.7778
-        },
-        {
-          "name": "沪电股份",
-          "code": "002463",
-          "open_pct": -1.99,
-          "auction_amount_yi": 0.5084
-        }
-      ]
-    },
-    "hypothesis_verdict": {
-      "status": "部分确认",
-      "note": "盘前‘分化型偏防御’得到确认；CRO的药明康德A/H同股承接确认，软件/数据延续超出盘前核心候选。存储接口/测试未确认：聚辰-0.65%、兆易-4.47%，仅江波龙+1.45%、澜起+0.66%；半导体设备、交换机、电子布均未达到2至3只核心同步放量门槛。"
-    }
+    "window": "8:30尚未进入A股集合竞价终值窗口",
+    "source": null,
+    "scope": "待9:25更新",
+    "indices": [],
+    "auction_amount_yi": null,
+    "limit_up_count": null,
+    "limit_down_count": null,
+    "limit_diff": null,
+    "limit_ratio": null,
+    "theme_distribution": [],
+    "watchlist_snapshot": {}
   },
   "hypothesis_validation": {
-    "as_of": "2026-07-29T09:29:35+08:00",
-    "one_sentence": "竞价确认指数与CRO局部修复，但涨停宽度、竞价量能和科技硬件扩散不足，产业证据尚未转化为全面交易主线。",
-    "classification": "部分确认：分化预判与CRO确认，存储/设备/交换机未形成交易确认",
+    "as_of": "2026-07-30T09:05:27+08:00",
+    "one_sentence": "AI内存客户长协、HBM4量产和云厂商资本开支确认扩产需求，但全球硬件股继续重估回报率，故“扩产+技术迭代”只获部分确认，不能等同全面交易主线。",
+    "classification": "H1/H2部分确认；H3/H4/H5暂未验证",
     "hypotheses": [
       {
         "id": "H1",
         "question": "BOM涨价是否有天花板",
         "status": "部分确认",
         "evidence": [
-          "聚辰公告称存储颗粒供应紧张、价格大涨已令PC和手机终端短期承压，直接证明BOM传导开始压制终端需求。"
+          "微软Azure增长43%、季度资本开支410亿美元并获盘后正反馈，说明能用收入证明回报时市场可以承受高投入。",
+          "Meta高资本开支同时自由现金流同比下降91%、盘后下跌；Micron等AI硬件大跌，说明成本和回报率已形成估值天花板。"
         ],
         "counter_evidence": [
-          "Teradyne的DRAM与NAND测试收入仍创强势表现，说明涨价尚未终止上游资本投入。"
+          "SK hynix二季度DRAM与NAND价格显著环比上涨，仍实现创纪录收入和利润，供需景气尚未结束。"
         ],
         "missing_evidence": [
-          "最新DRAM/NAND合约价、终端销量、库存周转与客户议价条款。"
+          "最新终端BOM占比、PC/手机销量、合约价与客户议价数据。"
         ],
-        "invalidate": "若终端需求继续下修且库存上升、价格仍涨，则BOM天花板约束强化；若量价与终端出货同步改善，则该约束减弱。"
+        "invalidate": "若高价格仍伴随终端出货、云收入和现金流同步增长，BOM天花板约束减弱；若现金流继续恶化则强化。"
       },
       {
         "id": "H2",
         "question": "市场是否从紧缺涨价切向扩产解决紧缺",
         "status": "部分确认",
         "evidence": [
-          "KLA称AI、存储复杂度与先进封装推动过程控制需求，并给出下一季40亿美元收入指引；Teradyne称半导体测试创纪录、DRAM和NAND需求强。"
+          "SK hynix官方确认HBM4二季度已量产出货、下半年爬坡，与约10家客户签署长期协议，并将强化产能。",
+          "微软季度资本开支410亿美元，Azure增长43%，下游需求与扩产投入同时存在。"
         ],
         "counter_evidence": [
-          "沪硅产业披露2025年300mm硅片均价下降8.83%、毛利率-14.99%，扩产爬坡尚未转成盈利；昨日A/H设备与硬件成组下跌。"
+          "美股AI硬件、韩国SK hynix股价仍受压，A股半导体昨日行业-1.80%、科创50-0.87%，交易端尚未认可为主线。"
         ],
         "missing_evidence": [
-          "国内晶圆厂设备招标、A股公司新增订单、产能利用率和经营现金流。"
+          "国内晶圆厂招标、设备订单、产能利用率、收入和毛利。"
         ],
-        "invalidate": "设备资本开支增长若不能转化为A股订单、收入和毛利，或板块仅单股反弹，则不升级。"
+        "invalidate": "若扩产不能转化为国内设备/材料订单和盈利，或盘面只有单股，H2不得升级确认。"
       },
       {
         "id": "H3",
         "question": "玻璃基/TGV/MicroLED是否有客户验证、订单、量产或收入占比",
         "status": "暂未验证",
         "evidence": [
-          "20:00至8:30官方与公司公告扫描未取得新的TGV、玻璃基板或MicroLED客户订单、量产及收入占比证据。"
+          "20:00至8:30官方、公司和交易所增量扫描未取得新的客户验收、订单、量产或收入占比证据。"
         ],
         "counter_evidence": [
-          "既有合作与技术路线仍在，但没有新增商业化节点。"
+          "既有送样和技术路线仍可研究，但不等于商业化。"
         ],
         "missing_evidence": [
-          "客户验收、量产良率、订单金额、收入占比和毛利。"
+          "客户名称/验收、量产良率、订单金额、收入占比和毛利。"
         ],
-        "invalidate": "若后续仍只有送样或概念映射而无商业化数据，继续保持观察，不得升级。"
+        "invalidate": "继续只有研发或概念映射而无商业化数据，则维持观察。"
       },
       {
         "id": "H4",
         "question": "国产算力中报/三四季度能见度是否被订单、库存、授信、物料、收入和毛利验证",
         "status": "暂未验证",
         "evidence": [
-          "中际旭创董事长提议40亿至80亿元回购，金额较大但仍待董事会审议，属于资本动作而非订单；昨日本地收盘证据显示CPO、交换机、服务器ODM成组承压。"
+          "微软和Meta确认全球AI资本开支仍高，属于外部需求背景。"
         ],
         "counter_evidence": [
-          "Teradyne和KLA验证海外AI基础设施投资仍在，不能直接等同于国内整机或交换机订单。"
+          "昨日A股计算机设备-1.59%，交换机核心负反馈；海外资本开支不能直接等同国内订单。"
         ],
         "missing_evidence": [
-          "国内订单、库存、授信、关键物料、收入、毛利及经营现金流的半年报交叉验证。"
+          "国内订单、库存、授信、关键物料、收入、毛利与经营现金流。"
         ],
-        "invalidate": "若中报收入、毛利与现金流不匹配，或只有回购驱动单股反弹而无硬件扩散，则H4继续不成立。"
+        "invalidate": "若中报收入、毛利和现金流不匹配，或只有海外映射而无国内订单，继续不成立。"
       },
       {
         "id": "H5",
         "question": "电子布/玻纤涨价链是否仍有价格、利润、排产和资金承接验证",
-        "status": "证伪",
+        "status": "暂未验证",
         "evidence": [
-          "昨日中国巨石-8.47%、国际复材-6.39%、山东玻纤-6.01%、宏和科技-7.30%，中材科技跌停；胜宏科技-11.93%，沪电股份与生益科技跌停，资金承接条件失败。"
+          "昨日中国巨石+2.13%、国际复材+4.61%，出现弱修复。"
         ],
         "counter_evidence": [
-          "二排兴业股份、国风新材封板，但上游中军与PCB核心没有同步，属于二排补涨。"
+          "宏和科技、山东玻纤及PCB核心未形成同步扩散；20:00后无新的官方价格、利润或排产证据。"
         ],
         "missing_evidence": [
-          "新的官方价格、利润、排产数据，以及2至3只上游核心与PCB中军同步放量修复。"
+          "价格、吨盈利、排产、库存及上游与PCB两层资金共振。"
         ],
-        "invalidate": "仅当上游与PCB至少两层同步翻红、跌停减少且主力资金回流，才从风险线恢复为资金博弈线。"
+        "invalidate": "若中国巨石/国际复材冲高回落且PCB核心继续弱，转回风险线；仅2至3只核心同步放量才上调。"
       }
     ],
     "sector_ratings": {
       "strong_logic": [
         {
-          "name": "半导体设备/测试的产业需求",
-          "reason": "KLA与Teradyne财报确认AI、存储及先进封装需求；但海外芯片交易仍弱，只是产业强逻辑，A股交易主线待竞价与开盘验证。"
+          "name": "AI内存/HBM4扩产与设备测试",
+          "reason": "客户长协、量产和下游资本开支均有硬证据；交易端受全球杀估值压制，只是产业强逻辑。"
         }
       ],
       "watch_lines": [
         {
-          "name": "存储接口/测试",
-          "reason": "聚辰DDR5 SPD出货环比加速、VPD芯片通过目标客户测试认证，韩国存储股早盘反弹；但聚辰扣非净利润同比下降47.30%，不能只看归母高增。"
+          "name": "半导体设备/测试/材料",
+          "reason": "映射SK hynix扩产，需国内订单、业绩与至少2至3只核心同步承接。"
         },
         {
           "name": "玻璃基/TGV/MicroLED",
-          "reason": "无新增客户、订单、量产或收入占比，继续预期型观察。"
+          "reason": "无新增商业化节点，继续预期型观察。"
         }
       ],
       "funds_game": [
         {
-          "name": "半导体设备与零部件超跌修复",
-          "reason": "昨日核心普跌后有海外基本面支撑，但只有至少3只核心同步放量、科创50收敛且炸板不扩大，才构成有效反抽。"
+          "name": "兆易创新及存储链事件修复",
+          "reason": "10亿至20亿元回购提议和不低于10亿元增持计划可能稳情绪，但审批与实施窗口限制明显。"
         },
         {
-          "name": "CPO回购驱动反抽",
-          "reason": "中际旭创回购提议可能形成情绪锚，但回购尚待审批且不替代订单、毛利及板块扩散。"
+          "name": "电子布/PCB弱修复",
+          "reason": "上游昨有回拉但下游未共振，属于反抽观察，不是强主线。"
         }
       ],
       "risk_lines": [
         {
-          "name": "交换机/数据中心硬件",
-          "reason": "A股整机、ODM与交换芯片昨日未共振，海外芯片股亦偏弱，交换机主线未确认。"
+          "name": "交换机/高速以太网",
+          "reason": "Arista、Cisco、Marvell同步下跌，A股整机/ODM/交换芯片昨日也未共振。"
         },
         {
-          "name": "电子布/玻纤+PCB",
-          "reason": "上游中军与PCB核心同步重挫，二排封板不构成修复。"
-        },
-        {
-          "name": "硅片扩产盈利质量",
-          "reason": "沪硅产业300mm硅片价格下降、负毛利且连续亏损，扩产不等于盈利兑现。"
+          "name": "高估值AI硬件",
+          "reason": "Micron、AMD、NVIDIA、Broadcom成片下跌，回报率与利率风险共同压制。"
         }
       ]
     },
     "focus_stocks": [
       {
+        "name": "兆易创新",
+        "rating": "P0资金博弈",
+        "reason": "回购10亿至20亿元仍是提议，实控人增持不低于10亿元要到12月13日后实施；先看A/H竞价和存储扩散，不按经营反转处理。"
+      },
+      {
         "name": "北方华创/中微公司/华海清科",
         "rating": "观察",
-        "reason": "KLA过程控制指引提供产业映射，但A股新增订单与盘面扩散未确认。"
+        "reason": "SK hynix扩产提供产业映射，国内订单、收入、毛利和科创50承接未确认。"
       },
       {
-        "name": "长川科技",
-        "rating": "观察",
-        "reason": "Teradyne存储测试高景气提供路线映射，仍需中报订单、毛利和至少2只测试设备同向确认。"
-      },
-      {
-        "name": "聚辰股份",
+        "name": "长川科技/中科飞测",
         "rating": "观察偏强",
-        "reason": "DDR5 SPD二季度出货加速、VPD通过目标客户测试；但归母高增主要受4.32亿元非经常损益推动，扣非利润同比下降。"
+        "reason": "HBM4量产与存储扩产利于测试需求，但需业绩和板块宽度验证。"
       },
       {
-        "name": "沪硅产业",
+        "name": "江丰电子/安集科技",
+        "rating": "观察",
+        "reason": "扩产映射材料消耗，尚缺新增订单和毛利改善证据。"
+      },
+      {
+        "name": "紫光股份/锐捷网络/盛科通信-U",
         "rating": "风险",
-        "reason": "销量增长但300mm均价降8.83%、毛利率-14.99%，扩产与盈利出现明显错位。"
-      },
-      {
-        "name": "中际旭创",
-        "rating": "资金博弈",
-        "reason": "40亿至80亿元回购提议提供公司级承接预期，尚待董事会审议且不构成CPO板块需求确认。"
+        "reason": "海外整机与交换芯片同步下跌，昨日A股交换机链未扩散。"
       },
       {
         "name": "中国巨石/国际复材/宏和科技",
-        "rating": "风险",
-        "reason": "昨日核心同步下跌，须与PCB中军共同修复才可恢复观察。"
+        "rating": "资金博弈",
+        "reason": "上游昨有弱修复，但电子布与PCB核心未共振且无新价格/排产证据。"
       }
     ],
     "today_verify": [
-      "9:25竞价看半导体设备/测试是否至少3只核心同步高开或收复昨日跌幅，而非单股脉冲。",
-      "看聚辰、兆易、澜起、江波龙等存储链能否与Samsung、SK hynix反弹共振，并有成交额承接。",
-      "看中际旭创回购提议能否带动新易盛、天孚通信等CPO核心共同修复；只有中际单强仍属情绪锚。",
-      "看电子布上游与PCB核心是否两层同步翻红、跌停减少；否则H5继续证伪。",
-      "看科创50、创业板与恒生科技是否收敛昨日负反馈。"
+      "9:15看港股兆易H能否把资本动作扩散到澜起、华虹、中芯，而非单股跳空。",
+      "9:25看兆易A股竞价额、涨停/跌停宽度及存储链至少2至3只核心同步程度。",
+      "设备/测试需北方华创、中微、华海清科、长川/中科飞测中至少2至3只放量走强。",
+      "交换机只有整机、ODM、交换芯片同步且通信设备进入前排才解除风险。",
+      "电子布需中国巨石、国际复材与PCB核心两层共振；否则只作反抽观察。"
     ],
     "disclaimer": "仅作研究跟踪，不构成投资建议。"
   },
   "overnight_increment_coverage": {
-    "window": "2026-07-28 20:00至2026-07-29 08:30",
-    "announcement_scan": "巨潮资讯2026-07-28至07-29公告全量分页扫描2138条、72页无报错；覆盖103个配置A股代码与148个专题名称，窗口内命中26条，筛出8条关键词公告，实质性影响为中际旭创回购提议、聚辰中报预增、沪硅年报问询回复。",
-    "watchlist_result": "未发现配置核心池新增确定性大额订单或产能投产公告；资本动作、业绩质量和问询回复分别处理。",
-    "policy_scan": "工信部、商务部、发改委增量扫描未发现20:00至8:30新增半导体/AI/机器人/新材料P0政策。",
+    "window": "2026-07-29 20:00至2026-07-30 08:30；采集延续至08:58完成核验",
+    "announcement_scan": "巨潮资讯2026-07-29至07-30全量2023份公告、68页覆盖完成；配置/专题池重点新增为兆易创新回购、增持、不减持及减持完成公告，北京君正小比例高管减持完成不列开盘重大事件。",
+    "watchlist_result": "兆易创新资本动作列P0；未发现配置核心池新增确定性大额订单或投产公告。",
+    "policy_scan": "工信部、商务部、发改委未检出窗口内新增半导体、AI、机器人、新材料或出口管制P0政策。",
+    "global_scan": "SK hynix官方二季报新增HBM4量产和客户长协；微软/Meta财报显示AI资本开支延续但回报率分化。",
     "degraded_items": [
-      "Seagate与NXP当季正式结果页在8:30前未取得可复核正文，未采用二手精确数据；Naver KOSPI接口409，由新浪全球指数与腾讯代表股交叉替代。"
+      "微软与Meta官方当季结果页正文未稳定取得，采用AP事实交叉；三星二季度正式结果在08:30后发布，未提前引用。"
     ],
-    "note": "缺失数据不补写，财报日历不等同于已发布结果。"
+    "note": "未补写7月29日20:00缺失的完整晚间文件；本次只生成当前8:30增量，所有市场时点与采集时点如实记录。"
   }
 }

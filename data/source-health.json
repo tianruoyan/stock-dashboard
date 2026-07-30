@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-07-29T16:44:42+08:00",
+  "timestamp": "2026-07-30T09:05:27+08:00",
   "sources": {
     "tencent_http": {
       "status": "ok",
@@ -4492,7 +4492,7 @@
   },
   "last_publish_attempt": "pending_20260717_0830_premarket_publish",
   "status": "degraded",
-  "last_error": "10:00至15:05盘中/午盘分析因本地index字段类型错误缺失；16:32已修复采集器并补齐当前收盘事实，历史窗口按不追溯原则保留缺口。",
+  "last_error": "微软与Meta官方当季结果页正文未稳定取得，已用AP权威报道替代；不影响H1/H2分级，但精确公司口径待后续复核。",
   "tencent_a_close_postmarket_20260716": {
     "status": "ok",
     "last_check": "2026-07-16T15:18:57+08:00",
@@ -4673,7 +4673,7 @@
     "errors": []
   },
   "overall_status": "degraded",
-  "last_codex_note": "收盘数据源已恢复：腾讯指数/行业/专项、东财结构池与强弱分组、腾讯分钟尾盘、腾讯/新浪港股双源均成功；仅历史分析窗口降级。",
+  "last_codex_note": "8:30核心证据已核验：A/H昨收、隔夜美股、日韩早盘、SK hynix官方二季报与巨潮2023份公告可用；微软/Meta官方正文不可用由AP替代，三星二季报尚未到发布时间。",
   "eastmoney_structure_pools_intraday_1000_20260717": {
     "status": "ok",
     "last_check": "2026-07-17T10:02:40+08:00",
@@ -6023,6 +6023,68 @@
     "usage": "港股收盘双源核对",
     "detail": "恒指、恒科及15只关键映射股与腾讯行情一致；澜起H代码按公司官网确认为06809。",
     "sample_count": 17,
+    "errors": []
+  },
+  "tencent_ap_us_close_0830_20260730": {
+    "status": "ok",
+    "last_check": "2026-07-30T09:05:27+08:00",
+    "market_time": "2026-07-29 US close",
+    "usage": "三大指数与AI硬件链收盘",
+    "detail": "道指-2.19%、标普-1.52%、纳指-1.74%；Micron -9.94%、NVIDIA -3.55%、AMD -5.51%、Arista -6.92%、Marvell -6.34%。",
+    "sample_count": 11,
+    "errors": []
+  },
+  "sina_tencent_japan_korea_0830_20260730": {
+    "status": "ok",
+    "last_check": "2026-07-30T09:05:27+08:00",
+    "market_time": "指数08:41；代表股08:18-08:23",
+    "usage": "日韩指数和科技链早盘",
+    "detail": "日经+0.62%、KOSPI-0.74%；Tokyo Electron +4.50%、Advantest +15.12%、Samsung +1.92%、SK hynix -4.71%，设备/测试反弹而存储分化。",
+    "sample_count": 8,
+    "errors": []
+  },
+  "sk_hynix_q2_official_0830_20260730": {
+    "status": "ok",
+    "last_check": "2026-07-30T09:05:27+08:00",
+    "usage": "AI内存客户、量产、价格、利润与扩产验证",
+    "detail": "官方Q2收入79.3187万亿韩元、营业利润60.5426万亿韩元；HBM4二季度量产出货、下半年爬坡，约10家客户长协。",
+    "sample_count": 1,
+    "errors": []
+  },
+  "cninfo_increment_0830_20260730": {
+    "status": "ok_recovered",
+    "last_check": "2026-07-30T09:05:27+08:00",
+    "usage": "20:00至8:30观察池与专题公告",
+    "detail": "2026-07-29至07-30全量2023份、68页；两页首次超时后单页重试成功。重大新增为兆易创新回购提议、增持计划、不减持承诺及既有减持完成。",
+    "sample_count": 2023,
+    "errors": [
+      "pages 32 and 48 initial timeout; recovered by retry"
+    ]
+  },
+  "official_policy_increment_0830_20260730": {
+    "status": "ok_empty",
+    "last_check": "2026-07-30T09:05:27+08:00",
+    "usage": "工信部/商务部/发改委政策增量",
+    "detail": "未检出窗口内新增半导体、AI、机器人、新材料或出口管制P0政策。",
+    "sample_count": 3,
+    "errors": []
+  },
+  "microsoft_meta_results_0830_20260730": {
+    "status": "degraded_recovered",
+    "last_check": "2026-07-30T09:05:27+08:00",
+    "usage": "AI资本开支、云收入和现金流回报率",
+    "detail": "官方结果页正文未稳定取得；AP核验微软季度收入900亿美元、Azure+43%、资本开支410亿美元，Meta自由现金流同比下降91%，盘后反应分化。",
+    "sample_count": 2,
+    "errors": [
+      "official result body unavailable/403; AP fallback used"
+    ]
+  },
+  "samsung_q2_pending_0830_20260730": {
+    "status": "pending_not_due",
+    "last_check": "2026-07-30T09:05:27+08:00",
+    "usage": "韩国存储二季度结果",
+    "detail": "三星官网显示韩国时间10:00举行二季度业绩发布，8:30窗口尚未到时；未提前引用未发布结果。",
+    "sample_count": 0,
     "errors": []
   }
 }
