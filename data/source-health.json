@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-07-30T09:05:27+08:00",
+  "timestamp": "2026-07-30T09:26:01+08:00",
   "sources": {
     "tencent_http": {
       "status": "ok",
@@ -4672,7 +4672,7 @@
     "sample_count": 15,
     "errors": []
   },
-  "overall_status": "degraded",
+  "overall_status": "ok_with_market_phase_limits",
   "last_codex_note": "8:30核心证据已核验：A/H昨收、隔夜美股、日韩早盘、SK hynix官方二季报与巨潮2023份公告可用；微软/Meta官方正文不可用由AP替代，三星二季报尚未到发布时间。",
   "eastmoney_structure_pools_intraday_1000_20260717": {
     "status": "ok",
@@ -6085,6 +6085,55 @@
     "usage": "韩国存储二季度结果",
     "detail": "三星官网显示韩国时间10:00举行二季度业绩发布，8:30窗口尚未到时；未提前引用未发布结果。",
     "sample_count": 0,
+    "errors": []
+  },
+  "tencent_hk_auction_0915_20260730": {
+    "status": "ok_with_index_auction_limit",
+    "last_check": "2026-07-30T09:26:01+08:00",
+    "market_time": "2026-07-30 09:00-09:06",
+    "usage": "9:15港股竞价、A/H与题材映射",
+    "detail": "个股指示价有效：澜起H+3.86%、华虹+3.80%、药明康德H+3.40%、百济神州+4.47%、五一视界+3.26%；智谱-3.19%、中兴H-1.20%。恒指/恒科指数竞价字段未形成有效涨跌，未以0%冒充开盘。",
+    "sample_count": 22,
+    "errors": [
+      "HSI/HSTECH indicative index fields did not provide a valid auction change; futures used for direction only"
+    ]
+  },
+  "tencent_japan_korea_0915_20260730": {
+    "status": "ok",
+    "last_check": "2026-07-30T09:26:01+08:00",
+    "market_time": "指数约09:18；代表股08:53-09:03",
+    "usage": "9:15日韩科技链共振判断",
+    "detail": "日经+1.49%、KOSPI+0.07%；Tokyo Electron+5.78%、Advantest+11.47%、SCREEN+4.73%、Disco+2.53%，Samsung 0.00%、SK hynix-5.50%。",
+    "sample_count": 9,
+    "errors": []
+  },
+  "tencent_china_adr_0915_20260730": {
+    "status": "ok",
+    "last_check": "2026-07-30T09:26:01+08:00",
+    "market_time": "2026-07-29 US close",
+    "usage": "中概股整体与外资中资情绪",
+    "detail": "KWEB+1.79%、阿里-0.14%、京东+1.29%、拼多多+3.05%、百度+0.33%；中概互联网整体偏正面。",
+    "sample_count": 5,
+    "errors": []
+  },
+  "sina_global_futures_0915_20260730": {
+    "status": "ok_delayed_execution_check",
+    "last_check": "2026-07-30T09:26:01+08:00",
+    "market_time": "2026-07-30 09:21-09:23",
+    "usage": "A50、恒指、纳指100与标普500期货开盘方向",
+    "detail": "按当前值相对接口参考价计算：A50约-0.46%、恒指期货约+0.48%、纳指100期货约+0.96%、标普500期货约+0.42%。采集晚于09:15触发，只作延迟执行校验。",
+    "sample_count": 4,
+    "errors": [
+      "collection occurred after the 09:15 trigger; values are not backfilled as an exact 09:15 snapshot"
+    ]
+  },
+  "samsung_q2_live_event_0915_20260730": {
+    "status": "pending_live_release",
+    "last_check": "2026-07-30T09:26:01+08:00",
+    "market_time": "2026-07-30 10:00 KST event start",
+    "usage": "三星二季度业绩与存储/晶圆代工验证",
+    "detail": "三星官方业绩会已到计划时点，但正式二季度材料尚未稳定出现在IR页面；仅保留7月7日官方指引销售171万亿韩元、营业利润89.4万亿韩元，不提前引用未发布分部数据。",
+    "sample_count": 1,
     "errors": []
   }
 }
