@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-07-30T12:14:09+08:00",
+  "timestamp": "2026-07-30T19:44:02+08:00",
   "sources": {
     "tencent_http": {
       "status": "ok",
@@ -4666,6 +4666,76 @@
       "errors": [
         "governed snapshot stale for midday quotes",
         "no user-confirmed assets migrated"
+      ]
+    },
+    "sina_a_close_full_scan_20260730": {
+      "status": "ok",
+      "last_check": "2026-07-30T19:44:02+08:00",
+      "usage": "全A收盘宽度与5%/8%强弱分组",
+      "detail": "56页均成功；原始有效5527只，剔除ST/退市/N/C代理样本后5318只。",
+      "sample_count": 5318,
+      "errors": []
+    },
+    "eastmoney_close_pools_20260730": {
+      "status": "ok",
+      "last_check": "2026-07-30T19:44:02+08:00",
+      "usage": "收盘涨停、跌停、炸板及前5交易日连续性",
+      "detail": "非ST涨停52、跌停74、炸板19；前5交易日涨停池逐日查询完成。",
+      "sample_count": 145,
+      "errors": []
+    },
+    "eastmoney_industry_rank_close_20260730": {
+      "status": "degraded_partial",
+      "last_check": "2026-07-30T19:44:02+08:00",
+      "usage": "收盘行业排行",
+      "detail": "首次降序请求成功取得行业前排；后续升降序复核被远端断开。行业后排沿用腾讯14:53:46最后可核验快照并明确时点。",
+      "sample_count": 100,
+      "errors": [
+        "RemoteDisconnected on follow-up rank requests"
+      ]
+    },
+    "tencent_a_close_20260730": {
+      "status": "ok",
+      "last_check": "2026-07-30T19:44:02+08:00",
+      "usage": "A股最终指数与重点样本收盘",
+      "detail": "五大指数及重点样本取得最终收盘数据。",
+      "sample_count": 5,
+      "errors": []
+    },
+    "tencent_minute_close_auction_20260730": {
+      "status": "ok",
+      "last_check": "2026-07-30T19:44:02+08:00",
+      "usage": "14:55-15:00尾盘/收盘竞价校验",
+      "detail": "5个指数与14个代表样本取得14:55和15:00累计成交及价格。",
+      "sample_count": 19,
+      "errors": []
+    },
+    "tencent_hk_close_20260730": {
+      "status": "ok_with_timestamp_note",
+      "last_check": "2026-07-30T19:44:02+08:00",
+      "usage": "港股收盘与A/H映射",
+      "detail": "恒科及9只重点个股约16:08终值；恒指为18:31晚间校正时间戳，已单独标注。",
+      "sample_count": 11,
+      "errors": []
+    },
+    "intraday_window_1330_20260730": {
+      "status": "missed_not_backfilled",
+      "last_check": "2026-07-30T19:44:02+08:00",
+      "usage": "恢复缺口审计",
+      "detail": "实际执行恢复时已跨至收盘后，未使用14:53或收盘行情伪造13:30结论。",
+      "sample_count": 0,
+      "errors": [
+        "13:30 analytical snapshot unavailable"
+      ]
+    },
+    "v2_shadow_current_day_20260730": {
+      "status": "stale_degraded",
+      "last_check": "2026-07-30T19:44:02+08:00",
+      "usage": "V2只读辅助",
+      "detail": "V2当日事实仍停留在早盘且存在降级，只用于行动语言一致性，不进入收盘行情证据。",
+      "sample_count": 0,
+      "errors": [
+        "current-day governed snapshot stale"
       ]
     }
   },

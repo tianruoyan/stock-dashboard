@@ -1,8 +1,8 @@
 {
-  "timestamp": "2026-07-30T15:55:27+08:00",
+  "timestamp": "2026-07-30T19:45:31+08:00",
   "current_signal_date": "2026-07-30",
   "status": "degraded",
-  "summary": "发现 211 个降级/需复核项（258 个价格/行情复核，2 个背景复核），核心结论可看但必须按影响分层使用。",
+  "summary": "发现 211 个降级/需复核项（255 个价格/行情复核，5 个背景复核），核心结论可看但必须按影响分层使用。",
   "issues": [
     {
       "severity": "warning",
@@ -555,15 +555,6 @@
     },
     {
       "severity": "warning",
-      "file": "postmarket.json",
-      "path": "",
-      "code": "stale_timestamp",
-      "message": "时间戳不是当前交易日：2026-07-29T16:46:40+08:00",
-      "impact_level": "background_review",
-      "decision_action": "仅作背景复核，不单独阻断交易判断"
-    },
-    {
-      "severity": "warning",
       "file": "premarket.json",
       "path": "us_overnight.mapping_chain[0]",
       "code": "bad_change_pct",
@@ -687,6 +678,42 @@
       "message": "共进股份 接近跌停 -9.98，需确认是否真实",
       "impact_level": "price_review",
       "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
+    },
+    {
+      "severity": "warning",
+      "file": "postmarket.json",
+      "path": "",
+      "code": "missing_sentiment_indicator_field",
+      "message": "sentiment_indicator.score 缺失",
+      "impact_level": "background_review",
+      "decision_action": "仅作背景复核，不单独阻断交易判断"
+    },
+    {
+      "severity": "warning",
+      "file": "postmarket.json",
+      "path": "",
+      "code": "missing_sentiment_indicator_field",
+      "message": "sentiment_indicator.level 缺失",
+      "impact_level": "background_review",
+      "decision_action": "仅作背景复核，不单独阻断交易判断"
+    },
+    {
+      "severity": "warning",
+      "file": "postmarket.json",
+      "path": "",
+      "code": "missing_sentiment_indicator_field",
+      "message": "sentiment_indicator.components 缺失",
+      "impact_level": "background_review",
+      "decision_action": "仅作背景复核，不单独阻断交易判断"
+    },
+    {
+      "severity": "warning",
+      "file": "postmarket.json",
+      "path": "",
+      "code": "missing_sentiment_indicator_field",
+      "message": "sentiment_indicator.method 缺失",
+      "impact_level": "background_review",
+      "decision_action": "仅作背景复核，不单独阻断交易判断"
     },
     {
       "severity": "warning",
@@ -2316,33 +2343,6 @@
       "message": "v2_cockpit_midday_context_1009_20260730: 最新可审计快照为10:09且整体降级，只用于确认风险释放/不追的治理边界，不作为11:30现价证据；尚无已迁入用户确认资产。",
       "impact_level": "price_review",
       "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
-    },
-    {
-      "severity": "warning",
-      "file": "cross-file",
-      "path": "紫光股份",
-      "code": "stock_pct_cross_file_conflict",
-      "message": "紫光股份 跨文件涨跌幅差异过大：intraday.json -9.99% vs alert.json 0.0%",
-      "impact_level": "price_review",
-      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
-    },
-    {
-      "severity": "warning",
-      "file": "cross-file",
-      "path": "菲菱科思",
-      "code": "stock_pct_cross_file_conflict",
-      "message": "菲菱科思 跨文件涨跌幅差异过大：intraday.json -11.36% vs alert.json 0.2163%",
-      "impact_level": "price_review",
-      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
-    },
-    {
-      "severity": "warning",
-      "file": "cross-file",
-      "path": "生益科技",
-      "code": "stock_pct_cross_file_conflict",
-      "message": "生益科技 跨文件涨跌幅差异过大：intraday.json -9.13% vs alert.json -0.2238%",
-      "impact_level": "price_review",
-      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
     }
   ],
   "action_plan": [
@@ -2353,17 +2353,6 @@
       "file": "alert.json",
       "code": "bad_alert_leader_pct",
       "problem": "当前领跌股分数：南亚新材 change_pct 非数字：None",
-      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核",
-      "next_step": "用第二行情源复核涨跌幅、quote_time 和代表股方向；未确认前只做验证。",
-      "unblock_condition": "price_review=0 或相关来源标记 trusted/cross verified。"
-    },
-    {
-      "priority": 2,
-      "impact_level": "price_review",
-      "label": "二次行情复核",
-      "file": "cross-file",
-      "code": "stock_pct_cross_file_conflict",
-      "problem": "紫光股份 跨文件涨跌幅差异过大：intraday.json -9.99% vs alert.json 0.0%",
       "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核",
       "next_step": "用第二行情源复核涨跌幅、quote_time 和代表股方向；未确认前只做验证。",
       "unblock_condition": "price_review=0 或相关来源标记 trusted/cross verified。"
@@ -2411,6 +2400,17 @@
       "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核",
       "next_step": "用第二行情源复核涨跌幅、quote_time 和代表股方向；未确认前只做验证。",
       "unblock_condition": "price_review=0 或相关来源标记 trusted/cross verified。"
+    },
+    {
+      "priority": 2,
+      "impact_level": "price_review",
+      "label": "二次行情复核",
+      "file": "watchlist-quotes.json",
+      "code": "watchlist_limit_down_like",
+      "problem": "紫光股份 接近跌停 -9.99，需确认是否真实",
+      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核",
+      "next_step": "用第二行情源复核涨跌幅、quote_time 和代表股方向；未确认前只做验证。",
+      "unblock_condition": "price_review=0 或相关来源标记 trusted/cross verified。"
     }
   ],
   "counts": {
@@ -2418,9 +2418,9 @@
     "warning": 211,
     "info": 1,
     "blocking": 0,
-    "price_review": 258,
+    "price_review": 255,
     "signal_review": 0,
-    "background_review": 2
+    "background_review": 5
   },
   "rules": [
     "异常文本、JSON解析失败、必需文件缺失为 critical。",
