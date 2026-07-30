@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-07-30T19:44:02+08:00",
+  "timestamp": "2026-07-30T20:10:00+08:00",
   "sources": {
     "tencent_http": {
       "status": "ok",
@@ -4737,6 +4737,60 @@
       "errors": [
         "current-day governed snapshot stale"
       ]
+    },
+    "cninfo_evening_full_scan_20260730": {
+      "status": "ok_with_duplicate",
+      "last_check": "2026-07-30T20:10:00+08:00",
+      "usage": "103只A股公告逐一交叉与重大事件识别",
+      "detail": "API报告1093条，分页取回1093条、1092个唯一ID；55条配置池匹配，9条关键词候选。",
+      "sample_count": 1093,
+      "errors": [
+        "1 duplicate announcement id"
+      ]
+    },
+    "cninfo_pdf_review_evening_20260730": {
+      "status": "ok",
+      "last_check": "2026-07-30T20:10:00+08:00",
+      "usage": "富满微中报、澜起回购、晶瑞转债公告原文核验",
+      "detail": "使用官方PDF逐项提取收入、利润、现金流、产能利用率、回购金额和转债触发条件。",
+      "sample_count": 3,
+      "errors": []
+    },
+    "official_policy_evening_20260730": {
+      "status": "ok_no_p0",
+      "last_check": "2026-07-30T20:10:00+08:00",
+      "usage": "工信部/商务部/发改委/国务院政策扫描",
+      "detail": "截至20:00无足以改变次日竞价优先级的新增P0政策。",
+      "sample_count": 4,
+      "errors": []
+    },
+    "global_official_ir_evening_20260730": {
+      "status": "ok_with_pending_events",
+      "last_check": "2026-07-30T20:10:00+08:00",
+      "usage": "全球标杆财报、产品与事件日历",
+      "detail": "已核验Lam、KLA、Samsung正式材料；Apple与Amazon结果尚待美国盘后发布。",
+      "sample_count": 7,
+      "errors": [
+        "Apple/Amazon results pending after 20:00"
+      ]
+    },
+    "us_premarket_evening_20260730": {
+      "status": "ok_premarket_only",
+      "last_check": "2026-07-30T20:10:00+08:00",
+      "usage": "美股AI硬件、设备与交换机风险快照",
+      "detail": "19:48-19:53报价覆盖NVDA/AMD/AVGO/MU/ANET/MRVL/LRCX/KLAC及AAPL/AMZN/MSFT/META；尚非正式收盘。",
+      "sample_count": 12,
+      "errors": [
+        "market not open; quotes can change"
+      ]
+    },
+    "samsung_q2_official_evening_20260730": {
+      "status": "ok",
+      "last_check": "2026-07-30T20:10:00+08:00",
+      "usage": "HBM/存储/晶圆代工产业验证",
+      "detail": "官方Q2材料确认HBM4销售扩大、HBM4E向主要客户送样及服务器内存需求。",
+      "sample_count": 1,
+      "errors": []
     }
   },
   "last_publish_attempt": "pending_20260717_0830_premarket_publish",
@@ -4921,8 +4975,8 @@
     "sample_count": 15,
     "errors": []
   },
-  "overall_status": "ok_with_hk_delay_and_v2_shadow_stale",
-  "last_codex_note": "10:00盘中全A当前快照完整：新浪5533个代码、腾讯5533只报价；普通股涨停42、另1只ST涨停，跌停4+1只ST，炸板7。科技硬件放量风险与消费/整车/软件扩散均有全市场证据。",
+  "overall_status": "degraded",
+  "last_codex_note": "20:00晚间全量扫描完成；CNINFO有1条重复记录，美国市场仍为盘前，Apple/Amazon结果待8:30补齐。",
   "eastmoney_structure_pools_intraday_1000_20260717": {
     "status": "ok",
     "last_check": "2026-07-17T10:02:40+08:00",
@@ -6569,5 +6623,59 @@
     "errors": [
       "免费港股报价相对A股检查点延迟约15分钟"
     ]
+  },
+  "cninfo_evening_full_scan_20260730": {
+    "status": "ok_with_duplicate",
+    "last_check": "2026-07-30T20:10:00+08:00",
+    "usage": "103只A股公告逐一交叉与重大事件识别",
+    "detail": "API报告1093条，分页取回1093条、1092个唯一ID；55条配置池匹配，9条关键词候选。",
+    "sample_count": 1093,
+    "errors": [
+      "1 duplicate announcement id"
+    ]
+  },
+  "cninfo_pdf_review_evening_20260730": {
+    "status": "ok",
+    "last_check": "2026-07-30T20:10:00+08:00",
+    "usage": "富满微中报、澜起回购、晶瑞转债公告原文核验",
+    "detail": "使用官方PDF逐项提取收入、利润、现金流、产能利用率、回购金额和转债触发条件。",
+    "sample_count": 3,
+    "errors": []
+  },
+  "official_policy_evening_20260730": {
+    "status": "ok_no_p0",
+    "last_check": "2026-07-30T20:10:00+08:00",
+    "usage": "工信部/商务部/发改委/国务院政策扫描",
+    "detail": "截至20:00无足以改变次日竞价优先级的新增P0政策。",
+    "sample_count": 4,
+    "errors": []
+  },
+  "global_official_ir_evening_20260730": {
+    "status": "ok_with_pending_events",
+    "last_check": "2026-07-30T20:10:00+08:00",
+    "usage": "全球标杆财报、产品与事件日历",
+    "detail": "已核验Lam、KLA、Samsung正式材料；Apple与Amazon结果尚待美国盘后发布。",
+    "sample_count": 7,
+    "errors": [
+      "Apple/Amazon results pending after 20:00"
+    ]
+  },
+  "us_premarket_evening_20260730": {
+    "status": "ok_premarket_only",
+    "last_check": "2026-07-30T20:10:00+08:00",
+    "usage": "美股AI硬件、设备与交换机风险快照",
+    "detail": "19:48-19:53报价覆盖NVDA/AMD/AVGO/MU/ANET/MRVL/LRCX/KLAC及AAPL/AMZN/MSFT/META；尚非正式收盘。",
+    "sample_count": 12,
+    "errors": [
+      "market not open; quotes can change"
+    ]
+  },
+  "samsung_q2_official_evening_20260730": {
+    "status": "ok",
+    "last_check": "2026-07-30T20:10:00+08:00",
+    "usage": "HBM/存储/晶圆代工产业验证",
+    "detail": "官方Q2材料确认HBM4销售扩大、HBM4E向主要客户送样及服务器内存需求。",
+    "sample_count": 1,
+    "errors": []
   }
 }
