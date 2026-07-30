@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-07-30T10:22:06+08:00",
+  "timestamp": "2026-07-30T10:24:23+08:00",
   "sources": {
     "tencent_http": {
       "status": "ok",
@@ -4510,13 +4510,14 @@
       ]
     },
     "intraday_monitor_realtime_quote": {
-      "status": "failed_decode",
-      "last_check": "2026-07-30T10:22:06+08:00",
+      "status": "degraded_recovered",
+      "last_check": "2026-07-30T10:24:23+08:00",
       "usage": "盘中老登/小登监控实时行情刷新与正式提醒候选生成",
-      "detail": "monitor.log连续出现行情源异常：No value to decode；本轮保留日志正式提醒解释，但alert.json已由本地监控置为invalidated，未生成当前可用candidate/confirmed机会。",
-      "sample_count": 0,
+      "detail": "monitor.log在10:20/10:22出现No value to decode后恢复生成monitor_live候选；alert.json当前包含本地短周期候选，但cross_source_verified=false，需富途/腾讯按触发时点复核后才能升级confirmed。",
+      "sample_count": 20,
       "errors": [
-        "No value to decode"
+        "10:20:07 No value to decode",
+        "10:22:06 No value to decode"
       ]
     }
   },
