@@ -5,7 +5,7 @@ import unittest
 from datetime import datetime
 from pathlib import Path
 
-from import_monitor_signals import TZ, convert_record, live_payload, market_mode, preserve_quote_verifications, read_signal_records, should_refresh
+from import_monitor_signals import TZ, convert_record, live_payload, market_mode, preserve_quote_verifications, read_signal_records, should_refresh, unavailable_payload
 
 
 def theme_record(timestamp: str, side: str = "up", speed: float = 1.8) -> dict:
@@ -103,6 +103,33 @@ class MonitorSignalBridgeTests(unittest.TestCase):
         payload = live_payload([], datetime(2026, 7, 22, 10, 4, tzinfo=TZ))
         self.assertEqual(payload["source_status"], "monitor_live_no_trigger")
         self.assertIn("监控运行正常", payload["note"])
+        self.assertEqual(payload["alerts"], [])
+
+    def test_transient_failure_preserves_same_day_valid_alerts(self) -> None:
+        alert = convert_record(theme_record("2026-07-22T10:01:02"))
+        previous = {
+            "timestamp": "2026-07-22T10:02:00+08:00",
+            "source_status": "monitor_live",
+            "alerts": [alert],
+            "quote_audit": {"provider": "本地盘中监控"},
+        }
+        payload = unavailable_payload(
+            datetime(2026, 7, 22, 10, 5, tzinfo=TZ),
+            "行情源最近一次刷新失败。",
+            previous,
+        )
+        self.assertEqual(payload["source_status"], "monitor_waiting_update")
+        self.assertEqual(payload["timestamp"], previous["timestamp"])
+        self.assertEqual(payload["alerts"], previous["alerts"])
+        self.assertIn("保留今天最近一次有效异动", payload["note"])
+
+    def test_failure_without_same_day_valid_alerts_remains_unavailable(self) -> None:
+        payload = unavailable_payload(
+            datetime(2026, 7, 22, 10, 5, tzinfo=TZ),
+            "行情源最近一次刷新失败。",
+            {"timestamp": "2026-07-21T14:55:00+08:00", "source_status": "monitor_live", "alerts": [{}]},
+        )
+        self.assertEqual(payload["source_status"], "invalidated")
         self.assertEqual(payload["alerts"], [])
 
     def test_verified_trading_day_is_closed_after_monitor_shutdown(self) -> None:

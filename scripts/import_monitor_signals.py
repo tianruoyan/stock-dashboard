@@ -99,7 +99,7 @@ def run_bridge(args: argparse.Namespace, now: datetime) -> dict[str, Any]:
 
     previous = read_json(args.output)
     if not health["healthy"]:
-        payload = unavailable_payload(now, health["reason"])
+        payload = unavailable_payload(now, health["reason"], previous)
         changed = write_if_changed(args.output, payload, previous)
         if changed:
             PENDING_PATH.touch()
@@ -545,7 +545,25 @@ def live_payload(alerts: list[dict[str, Any]], now: datetime) -> dict[str, Any]:
     }
 
 
-def unavailable_payload(now: datetime, reason: str) -> dict[str, Any]:
+def unavailable_payload(now: datetime, reason: str, previous: Optional[dict[str, Any]] = None) -> dict[str, Any]:
+    previous = previous if isinstance(previous, dict) else {}
+    previous_time = parse_datetime(previous.get("timestamp"))
+    previous_alerts = [item for item in previous.get("alerts") or [] if isinstance(item, dict)]
+    same_trade_date = bool(previous_time and previous_time.astimezone(TZ).date() == now.date())
+    can_preserve = (
+        same_trade_date
+        and bool(previous_alerts)
+        and previous.get("source_status") != "invalidated"
+    )
+    if can_preserve:
+        payload = copy.deepcopy(previous)
+        payload["source_status"] = "monitor_waiting_update"
+        payload["monitor_checked_at"] = now.replace(microsecond=0).isoformat()
+        payload["note"] = (
+            "行情暂时中断，已保留今天最近一次有效异动；卡片仍显示实际触发时间，"
+            "恢复后会自动更新。"
+        )
+        return payload
     return {
         "timestamp": now.replace(microsecond=0).isoformat(),
         "source_status": "invalidated",
@@ -563,6 +581,9 @@ def should_refresh(previous: dict[str, Any], current: dict[str, Any], now: datet
         return True
     if current.get("source_status") == "monitor_session_closed":
         return False
+    if current.get("source_status") == "monitor_waiting_update":
+        checked_at = parse_datetime(previous.get("monitor_checked_at"))
+        return checked_at is None or now - checked_at.astimezone(TZ) >= timedelta(minutes=HEARTBEAT_MINUTES)
     timestamp = parse_datetime(previous.get("timestamp"))
     return timestamp is None or now - timestamp.astimezone(TZ) >= timedelta(minutes=HEARTBEAT_MINUTES)
 
