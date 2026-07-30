@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-07-30T09:26:01+08:00",
+  "timestamp": "2026-07-30T09:52:11+08:00",
   "sources": {
     "tencent_http": {
       "status": "ok",
@@ -3802,7 +3802,7 @@
     },
     "futu_minute_alert_verifier": {
       "status": "ok",
-      "last_check": "2026-07-30T09:52:11+08:00",
+      "last_check": "2026-07-30T09:54:14+08:00",
       "usage": "盘中异动代表股第二行情源交叉验证",
       "detail": "富途行情按触发时点复核16张异动卡：4张相互支持、10张明显冲突、2张精度不足；精度不足只维持观察，不计作冲突。",
       "sample_count": 46,
@@ -4492,7 +4492,7 @@
   },
   "last_publish_attempt": "pending_20260717_0830_premarket_publish",
   "status": "degraded",
-  "last_error": "微软与Meta官方当季结果页正文未稳定取得，已用AP权威报道替代；不影响H1/H2分级，但精确公司口径待后续复核。",
+  "last_error": "新浪节点count返回5533，但分页去重取得5333个代码，存在200个代码覆盖差；腾讯对5333个代码均返回报价，5327只具有有效开盘及明确上下限。竞价成交额仅有09:30首分钟累计代理值160.76亿元，已明确降级，未冒充交易所纯竞价额。",
   "tencent_a_close_postmarket_20260716": {
     "status": "ok",
     "last_check": "2026-07-16T15:18:57+08:00",
@@ -4672,8 +4672,8 @@
     "sample_count": 15,
     "errors": []
   },
-  "overall_status": "ok_with_market_phase_limits",
-  "last_codex_note": "8:30核心证据已核验：A/H昨收、隔夜美股、日韩早盘、SK hynix官方二季报与巨潮2023份公告可用；微软/Meta官方正文不可用由AP替代，三星二季报尚未到发布时间。",
+  "overall_status": "ok_with_partial_universe_and_turnover_proxy",
+  "last_codex_note": "2026-07-30 09:25竞价已用腾讯固定开盘字段重建：5327只有效样本，涨停8、跌停4，上涨1063、下跌3690；指数开盘与观察池竞价可核验。",
   "eastmoney_structure_pools_intraday_1000_20260717": {
     "status": "ok",
     "last_check": "2026-07-17T10:02:40+08:00",
@@ -6146,6 +6146,46 @@
     "errors": [
       "09:29:27 行情源异常 [watch]: No value to decode",
       "09:30:30 行情源异常 [watch]: No value to decode"
+    ]
+  },
+  "sina_all_a_code_master_auction_reconstruction_20260730": {
+    "status": "partial_coverage",
+    "checked_at": "2026-07-30T09:52:11+08:00",
+    "market_time": "2026-07-30 09:25",
+    "usage": "全A竞价代码主表",
+    "sample_count": 5333,
+    "evidence": "新浪节点count为5533，分页去重得到5333个代码；覆盖差已披露，不将5333冒充完整5533。",
+    "errors": [
+      "节点count与分页去重代码数相差200"
+    ]
+  },
+  "tencent_all_a_open_auction_20260730": {
+    "status": "ok_reconstructed_from_fixed_open",
+    "checked_at": "2026-07-30T09:52:11+08:00",
+    "market_time": "2026-07-30 09:25固定开盘价",
+    "usage": "全A涨跌停宽度、市场广度与观察池竞价",
+    "sample_count": 5327,
+    "evidence": "5333个代码全部返回报价，5327只有效开盘且上下限价明确；涨停8、跌停4，上涨1063、下跌3690、平盘574。",
+    "errors": []
+  },
+  "tencent_index_open_auction_20260730": {
+    "status": "ok",
+    "checked_at": "2026-07-30T09:52:11+08:00",
+    "market_time": "2026-07-30 09:25固定开盘价",
+    "usage": "五大指数竞价开盘",
+    "sample_count": 5,
+    "evidence": "上证-0.43%、深成指-0.93%、创业板-1.40%、科创50-1.51%、沪深300-0.74%。",
+    "errors": []
+  },
+  "tencent_minute_auction_turnover_proxy_20260730": {
+    "status": "degraded_proxy",
+    "checked_at": "2026-07-30T09:52:11+08:00",
+    "market_time": "2026-07-30 09:30首分钟",
+    "usage": "集合竞价成交活跃度代理，不用于交易所纯竞价额断言",
+    "sample_count": 2,
+    "evidence": "上证指数09:30累计约69.73亿元、深证成指约91.03亿元，合计约160.76亿元；包含开盘后首分钟。",
+    "errors": [
+      "无法获得交易所单列纯集合竞价成交额"
     ]
   }
 }
