@@ -1,17 +1,26 @@
 {
-  "timestamp": "2026-07-30T10:17:16+08:00",
+  "timestamp": "2026-07-30T10:19:19+08:00",
   "current_signal_date": "2026-07-30",
   "status": "degraded",
-  "summary": "发现 144 个降级/需复核项（139 个价格/行情复核，6 个背景复核），核心结论可看但必须按影响分层使用。",
+  "summary": "发现 145 个降级/需复核项（143 个价格/行情复核，3 个背景复核），核心结论可看但必须按影响分层使用。",
   "issues": [
     {
       "severity": "warning",
       "file": "intraday.json",
-      "path": "",
-      "code": "stale_timestamp",
-      "message": "时间戳不是当前交易日：2026-07-29T09:38:23+08:00",
-      "impact_level": "background_review",
-      "decision_action": "仅作背景复核，不单独阻断交易判断"
+      "path": "market_snapshot.limit_down_pool[3]",
+      "code": "watchlist_limit_down_like",
+      "message": "共进股份 接近跌停 -9.98，需确认是否真实",
+      "impact_level": "price_review",
+      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
+    },
+    {
+      "severity": "warning",
+      "file": "intraday.json",
+      "path": "switch_chain_special.ranking[6]",
+      "code": "watchlist_limit_down_like",
+      "message": "共进股份 接近跌停 -9.98，需确认是否真实",
+      "impact_level": "price_review",
+      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
     },
     {
       "severity": "warning",
@@ -138,15 +147,6 @@
       "message": "hk_auction.mapping_chain[4] change_pct 非数字：成组上涨，该字段忽略并降权",
       "impact_level": "price_review",
       "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
-    },
-    {
-      "severity": "warning",
-      "file": "topics.json",
-      "path": "",
-      "code": "stale_timestamp",
-      "message": "时间戳不是当前交易日：2026-07-29T16:44:42+08:00",
-      "impact_level": "background_review",
-      "decision_action": "仅作背景复核，不单独阻断交易判断"
     },
     {
       "severity": "warning",
@@ -1302,12 +1302,21 @@
     },
     {
       "severity": "warning",
-      "file": "theme-shifts.json",
-      "path": "",
-      "code": "stale_theme_shifts",
-      "message": "theme-shifts 日期不是当前交易日：2026-07-29",
-      "impact_level": "background_review",
-      "decision_action": "仅作背景复核，不单独阻断交易判断"
+      "file": "cross-file",
+      "path": "共进股份",
+      "code": "stock_pct_cross_file_conflict",
+      "message": "共进股份 跨文件涨跌幅差异过大：intraday.json -9.98% vs intraday.json 0.12%",
+      "impact_level": "price_review",
+      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
+    },
+    {
+      "severity": "warning",
+      "file": "cross-file",
+      "path": "紫光股份",
+      "code": "stock_pct_cross_file_conflict",
+      "message": "紫光股份 跨文件涨跌幅差异过大：intraday.json -9.46% vs alert.json 0.238%",
+      "impact_level": "price_review",
+      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
     }
   ],
   "action_plan": [
@@ -1318,6 +1327,28 @@
       "file": "alert.json",
       "code": "historical_alert_without_trusted_source",
       "problem": "盘中异动缺少可信源证明；当前阶段只降权参考，不阻断整站发布",
+      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核",
+      "next_step": "用第二行情源复核涨跌幅、quote_time 和代表股方向；未确认前只做验证。",
+      "unblock_condition": "price_review=0 或相关来源标记 trusted/cross verified。"
+    },
+    {
+      "priority": 2,
+      "impact_level": "price_review",
+      "label": "二次行情复核",
+      "file": "cross-file",
+      "code": "stock_pct_cross_file_conflict",
+      "problem": "共进股份 跨文件涨跌幅差异过大：intraday.json -9.98% vs intraday.json 0.12%",
+      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核",
+      "next_step": "用第二行情源复核涨跌幅、quote_time 和代表股方向；未确认前只做验证。",
+      "unblock_condition": "price_review=0 或相关来源标记 trusted/cross verified。"
+    },
+    {
+      "priority": 2,
+      "impact_level": "price_review",
+      "label": "二次行情复核",
+      "file": "intraday.json",
+      "code": "watchlist_limit_down_like",
+      "problem": "共进股份 接近跌停 -9.98，需确认是否真实",
       "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核",
       "next_step": "用第二行情源复核涨跌幅、quote_time 和代表股方向；未确认前只做验证。",
       "unblock_condition": "price_review=0 或相关来源标记 trusted/cross verified。"
@@ -1354,38 +1385,16 @@
       "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核",
       "next_step": "用第二行情源复核涨跌幅、quote_time 和代表股方向；未确认前只做验证。",
       "unblock_condition": "price_review=0 或相关来源标记 trusted/cross verified。"
-    },
-    {
-      "priority": 4,
-      "impact_level": "background_review",
-      "label": "背景来源复核",
-      "file": "intraday.json",
-      "code": "stale_timestamp",
-      "problem": "时间戳不是当前交易日：2026-07-29T09:38:23+08:00",
-      "decision_action": "仅作背景复核，不单独阻断交易判断",
-      "next_step": "补官方/交易所/公司公告来源；未补齐前不升级为核心依据。",
-      "unblock_condition": "官方来源补齐或确认不影响交易触发。"
-    },
-    {
-      "priority": 4,
-      "impact_level": "background_review",
-      "label": "背景来源复核",
-      "file": "midday.json",
-      "code": "stale_timestamp",
-      "problem": "时间戳不是当前交易日：2026-07-28T11:39:02+08:00",
-      "decision_action": "仅作背景复核，不单独阻断交易判断",
-      "next_step": "补官方/交易所/公司公告来源；未补齐前不升级为核心依据。",
-      "unblock_condition": "官方来源补齐或确认不影响交易触发。"
     }
   ],
   "counts": {
     "critical": 0,
-    "warning": 144,
+    "warning": 145,
     "info": 1,
     "blocking": 0,
-    "price_review": 139,
+    "price_review": 143,
     "signal_review": 0,
-    "background_review": 6
+    "background_review": 3
   },
   "rules": [
     "异常文本、JSON解析失败、必需文件缺失为 critical。",

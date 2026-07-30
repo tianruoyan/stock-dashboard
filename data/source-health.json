@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-07-30T09:51:31+08:00",
+  "timestamp": "2026-07-30T10:14:00+08:00",
   "sources": {
     "tencent_http": {
       "status": "ok",
@@ -3802,7 +3802,7 @@
     },
     "futu_minute_alert_verifier": {
       "status": "ok",
-      "last_check": "2026-07-30T10:16:16+08:00",
+      "last_check": "2026-07-30T10:18:22+08:00",
       "usage": "盘中异动代表股第二行情源交叉验证",
       "detail": "富途行情按触发时点复核10张异动卡：2张相互支持、6张明显冲突、2张精度不足；精度不足只维持观察，不计作冲突。",
       "sample_count": 30,
@@ -4512,7 +4512,7 @@
   },
   "last_publish_attempt": "pending_20260717_0830_premarket_publish",
   "status": "degraded",
-  "last_error": "新浪节点count返回5533，但分页去重取得5333个代码，存在200个代码覆盖差；腾讯对5333个代码均返回报价，5327只具有有效开盘及明确上下限。竞价成交额仅有09:30首分钟累计代理值160.76亿元，已明确降级，未冒充交易所纯竞价额。",
+  "last_error": "港股腾讯行情最新仅到09:56，按延迟方向参考；V2影子驾驶舱仍停留在2026-07-29收盘，只作历史约束。A股当前全市场、指数、行业、概念和结构池数据可用。",
   "tencent_a_close_postmarket_20260716": {
     "status": "ok",
     "last_check": "2026-07-16T15:18:57+08:00",
@@ -4692,8 +4692,8 @@
     "sample_count": 15,
     "errors": []
   },
-  "overall_status": "ok_with_partial_universe_and_turnover_proxy",
-  "last_codex_note": "2026-07-30 09:25竞价已用腾讯固定开盘字段重建：5327只有效样本，涨停8、跌停4，上涨1063、下跌3690；指数开盘与观察池竞价可核验。",
+  "overall_status": "ok_with_hk_delay_and_v2_shadow_stale",
+  "last_codex_note": "10:00盘中全A当前快照完整：新浪5533个代码、腾讯5533只报价；普通股涨停42、另1只ST涨停，跌停4+1只ST，炸板7。科技硬件放量风险与消费/整车/软件扩散均有全市场证据。",
   "eastmoney_structure_pools_intraday_1000_20260717": {
     "status": "ok",
     "last_check": "2026-07-17T10:02:40+08:00",
@@ -6206,6 +6206,73 @@
     "evidence": "上证指数09:30累计约69.73亿元、深证成指约91.03亿元，合计约160.76亿元；包含开盘后首分钟。",
     "errors": [
       "无法获得交易所单列纯集合竞价成交额"
+    ]
+  },
+  "sina_all_a_intraday_1010_20260730": {
+    "status": "ok",
+    "checked_at": "2026-07-30T10:14:00+08:00",
+    "market_time": "2026-07-30 10:09-10:10",
+    "usage": "全A当前代码主表",
+    "sample_count": 5533,
+    "evidence": "节点count与分页去重均为5533，早盘分页覆盖缺口在当前快照已恢复。",
+    "errors": []
+  },
+  "tencent_all_a_intraday_1010_20260730": {
+    "status": "ok",
+    "checked_at": "2026-07-30T10:14:00+08:00",
+    "market_time": "2026-07-30 10:09:40-10:10:09",
+    "usage": "全A宽度、涨跌停、成交额与专项代表股",
+    "sample_count": 5533,
+    "evidence": "上涨3331、下跌2060、平盘142；涨超5%有135只、跌超5%有309只；涨停含ST 43、跌停含ST 5。",
+    "errors": []
+  },
+  "eastmoney_structure_pools_intraday_1011_20260730": {
+    "status": "ok",
+    "checked_at": "2026-07-30T10:14:00+08:00",
+    "market_time": "2026-07-30 约10:11",
+    "usage": "普通股涨停池、炸板池、连板与行业归属",
+    "sample_count": 49,
+    "evidence": "普通股封板42只、炸板7只，炸板率14.29%；爱丽家居8连板，4只20cm封板。",
+    "errors": []
+  },
+  "eastmoney_concept_ranking_intraday_1005_20260730": {
+    "status": "ok",
+    "checked_at": "2026-07-30T10:14:00+08:00",
+    "market_time": "2026-07-30 约10:05",
+    "usage": "概念排行、涨跌宽度与资金方向",
+    "sample_count": 30,
+    "evidence": "酿酒、汽车整车、白酒、财税数字化、农药兽药居前；白酒43涨2跌，财税数字化35涨6跌，汽车整车25涨1跌。",
+    "errors": []
+  },
+  "tencent_index_industry_intraday_1013_20260730": {
+    "status": "ok",
+    "checked_at": "2026-07-30T10:14:00+08:00",
+    "market_time": "2026-07-30 10:13:30",
+    "usage": "指数、行业排行与成交代理",
+    "sample_count": 103,
+    "evidence": "创业板-3.57%、科创50-3.55%；行业前排商用车/酒店/白酒，后排通信设备/元件/半导体/电子化学品。",
+    "errors": []
+  },
+  "tencent_hk_delayed_intraday_0956_20260730": {
+    "status": "degraded_stale",
+    "checked_at": "2026-07-30T10:14:00+08:00",
+    "market_time": "2026-07-30 09:56",
+    "usage": "A/H方向映射，仅作延迟参考",
+    "sample_count": 13,
+    "evidence": "恒指-0.32%、恒科-1.15%；澜起H+0.59%、兆易H+3.76%，华虹-5.41%、中芯-2.98%、智谱-4.74%、中兴H-1.20%。",
+    "errors": [
+      "相对A股10:10快照延迟约14分钟"
+    ]
+  },
+  "v2_governed_context_intraday_1000_20260730": {
+    "status": "stale_history_only",
+    "checked_at": "2026-07-30T10:14:00+08:00",
+    "market_time": "2026-07-29收盘",
+    "usage": "只读影子历史约束，不参与今日行动结论",
+    "sample_count": 0,
+    "evidence": "影子驾驶舱交易日仍为2026-07-29，未误作今日机会。",
+    "errors": [
+      "未产出2026-07-30当前检查点"
     ]
   }
 }
