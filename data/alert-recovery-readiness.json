@@ -1,12 +1,12 @@
 {
-  "timestamp": "2026-07-30T10:27:33+08:00",
+  "timestamp": "2026-07-30T10:28:53+08:00",
   "current_signal_date": "2026-07-30",
-  "status": "ready_to_recover",
-  "summary": "旧盘中异动批次已撤下；可信行情源可用于重产，但必须带交叉验证审计。",
+  "status": "candidate_visible",
+  "summary": "盘中候选异动证据完整，可展示为待确认；未通过双源核验前不得升级为确认机会。",
   "alert_state": {
-    "source_status": "invalidated",
-    "active_count": 0,
-    "note": "行情源最近一次刷新失败，程序会在网络恢复后自动重试。"
+    "source_status": "monitor_live",
+    "active_count": 20,
+    "note": "异动来自本地短周期监控；候选卡须经富途行情按触发时点复核后才能升级。"
   },
   "trusted_sources": [
     {
@@ -60,9 +60,8 @@
     ]
   },
   "next_actions": [
-    "用 tencent_http 作为 A股涨跌幅主源，重新生成 data/alert.json。",
-    "用 eastmoney_push2_akshare 只补涨停池/跌停池/炸板池结构，不做全市场高频轮询。",
-    "写入 quote_audit 并确认 cross_source_verified=true 后再触发推送。"
+    "前台按候选异动展示，并明确还差双源确认。",
+    "补齐第二行情源后，只有满足确认条件的条目才能升级为 confirmed。"
   ],
   "rules": [
     "该文件供自动化进程和构建门禁使用，不进入交易主页面。",
