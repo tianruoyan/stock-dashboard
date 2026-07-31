@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-07-31T09:46:15+08:00",
+  "timestamp": "2026-07-31T10:09:50+08:00",
   "sources": {
     "tencent_http": {
       "status": "ok",
@@ -3799,7 +3799,7 @@
     },
     "futu_minute_alert_verifier": {
       "status": "ok",
-      "last_check": "2026-07-31T10:08:08+08:00",
+      "last_check": "2026-07-31T10:09:16+08:00",
       "usage": "盘中异动代表股第二行情源交叉验证",
       "detail": "富途行情按触发时点复核20张异动卡：4张相互支持、2张明显冲突、14张精度不足；精度不足只维持观察，不计作冲突。",
       "sample_count": 58,
@@ -4930,11 +4930,46 @@
       "detail": "取得14个实时快照；恒指-0.66%、恒科+0.03%，港股半导体大涨。",
       "sample_count": 14,
       "errors": []
+    },
+    "tencent_a_intraday_20260731_1004": {
+      "status": "ok",
+      "last_check": "2026-07-31T10:09:50+08:00",
+      "usage": "10:04全A现价涨跌停、宽度、五大指数、98行业与专项",
+      "detail": "沪深A股5552只有效现价；106涨停、0跌停、30只触板打开。",
+      "sample_count": 5552,
+      "errors": []
+    },
+    "eastmoney_structure_intraday_20260731_1004": {
+      "status": "ok",
+      "last_check": "2026-07-31T10:09:50+08:00",
+      "usage": "10:04非ST涨停/跌停/炸板/连板结构",
+      "detail": "102涨停、0跌停、24炸板；10只20cm，元件13只、半导体8只。",
+      "sample_count": 126,
+      "errors": []
+    },
+    "eastmoney_concept_intraday_20260731_1005": {
+      "status": "degraded",
+      "last_check": "2026-07-31T10:09:50+08:00",
+      "usage": "10:00概念排行复采",
+      "detail": "连续两次RemoteDisconnected；保留09:38同日上午最后有效快照，不将其冒充10:00当前值。",
+      "sample_count": 0,
+      "errors": [
+        "attempt1 RemoteDisconnected",
+        "attempt2 RemoteDisconnected"
+      ]
+    },
+    "futu_hk_intraday_20260731_1005": {
+      "status": "ok",
+      "last_check": "2026-07-31T10:09:50+08:00",
+      "usage": "10:05港股指数、半导体、AI应用、互联网与中兴H实时行情",
+      "detail": "14个实时快照；恒指-0.41%、恒科+0.38%，港股半导体和智谱保持强势。",
+      "sample_count": 14,
+      "errors": []
     }
   },
   "last_publish_attempt": "pending_20260717_0830_premarket_publish",
   "status": "ok_with_partial_degradation",
-  "last_error": "东财概念榜09:40复采断开；本轮09:38有效快照完整，核心腾讯/东财结构/Futu源均正常。",
+  "last_error": "东财概念榜10:00连续两次断开；腾讯全A、东财结构池和Futu正常，主线结论未依赖失效概念源。",
   "tencent_a_close_postmarket_20260716": {
     "status": "ok",
     "last_check": "2026-07-16T15:18:57+08:00",
@@ -5115,7 +5150,7 @@
     "errors": []
   },
   "overall_status": "degraded",
-  "last_codex_note": "09:40开盘版已按真实时点补产；未把09:40行情伪写为09:30。",
+  "last_codex_note": "10:00盘中版使用10:03-10:06真实行情，已记录概念源降级。",
   "eastmoney_structure_pools_intraday_1000_20260717": {
     "status": "ok",
     "last_check": "2026-07-17T10:02:40+08:00",
