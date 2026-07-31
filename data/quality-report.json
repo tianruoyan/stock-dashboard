@@ -1,18 +1,9 @@
 {
-  "timestamp": "2026-07-31T16:30:09+08:00",
+  "timestamp": "2026-07-31T17:50:46+08:00",
   "current_signal_date": "2026-07-31",
   "status": "degraded",
-  "summary": "发现 148 个降级/需复核项（143 个价格/行情复核，6 个背景复核），核心结论可看但必须按影响分层使用。",
+  "summary": "发现 142 个降级/需复核项（142 个价格/行情复核，1 个背景复核），核心结论可看但必须按影响分层使用。",
   "issues": [
-    {
-      "severity": "warning",
-      "file": "postmarket.json",
-      "path": "",
-      "code": "stale_timestamp",
-      "message": "时间戳不是当前交易日：2026-07-30T19:44:02+08:00",
-      "impact_level": "background_review",
-      "decision_action": "仅作背景复核，不单独阻断交易判断"
-    },
     {
       "severity": "warning",
       "file": "premarket.json",
@@ -84,42 +75,6 @@
       "message": "hk_auction.mapping_chain[2] change_pct 非数字：约+1.7% / 0.0% / +0.5% / +1.2%，该字段忽略并降权",
       "impact_level": "price_review",
       "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
-    },
-    {
-      "severity": "warning",
-      "file": "postmarket.json",
-      "path": "",
-      "code": "missing_sentiment_indicator_field",
-      "message": "sentiment_indicator.score 缺失",
-      "impact_level": "background_review",
-      "decision_action": "仅作背景复核，不单独阻断交易判断"
-    },
-    {
-      "severity": "warning",
-      "file": "postmarket.json",
-      "path": "",
-      "code": "missing_sentiment_indicator_field",
-      "message": "sentiment_indicator.level 缺失",
-      "impact_level": "background_review",
-      "decision_action": "仅作背景复核，不单独阻断交易判断"
-    },
-    {
-      "severity": "warning",
-      "file": "postmarket.json",
-      "path": "",
-      "code": "missing_sentiment_indicator_field",
-      "message": "sentiment_indicator.components 缺失",
-      "impact_level": "background_review",
-      "decision_action": "仅作背景复核，不单独阻断交易判断"
-    },
-    {
-      "severity": "warning",
-      "file": "postmarket.json",
-      "path": "",
-      "code": "missing_sentiment_indicator_field",
-      "message": "sentiment_indicator.method 缺失",
-      "impact_level": "background_review",
-      "decision_action": "仅作背景复核，不单独阻断交易判断"
     },
     {
       "severity": "warning",
@@ -1335,15 +1290,6 @@
       "message": "eastmoney_concept_intraday_20260731_1104: 请求RemoteDisconnected；保留10:49同日上午最后有效概念榜，不将其冒充11:00当前值。",
       "impact_level": "price_review",
       "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
-    },
-    {
-      "severity": "warning",
-      "file": "cross-file",
-      "path": "锐捷网络",
-      "code": "stock_pct_cross_file_conflict",
-      "message": "锐捷网络 跨文件涨跌幅差异过大：alert.json -0.1236% vs intraday.json 13.57%",
-      "impact_level": "price_review",
-      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
     }
   ],
   "action_plan": [
@@ -1354,17 +1300,6 @@
       "file": "alert.json",
       "code": "historical_alert_without_trusted_source",
       "problem": "盘中异动缺少可信源证明；当前阶段只降权参考，不阻断整站发布",
-      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核",
-      "next_step": "用第二行情源复核涨跌幅、quote_time 和代表股方向；未确认前只做验证。",
-      "unblock_condition": "price_review=0 或相关来源标记 trusted/cross verified。"
-    },
-    {
-      "priority": 2,
-      "impact_level": "price_review",
-      "label": "二次行情复核",
-      "file": "cross-file",
-      "code": "stock_pct_cross_file_conflict",
-      "problem": "锐捷网络 跨文件涨跌幅差异过大：alert.json -0.1236% vs intraday.json 13.57%",
       "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核",
       "next_step": "用第二行情源复核涨跌幅、quote_time 和代表股方向；未确认前只做验证。",
       "unblock_condition": "price_review=0 或相关来源标记 trusted/cross verified。"
@@ -1395,17 +1330,6 @@
       "priority": 4,
       "impact_level": "background_review",
       "label": "背景来源复核",
-      "file": "postmarket.json",
-      "code": "stale_timestamp",
-      "problem": "时间戳不是当前交易日：2026-07-30T19:44:02+08:00",
-      "decision_action": "仅作背景复核，不单独阻断交易判断",
-      "next_step": "补官方/交易所/公司公告来源；未补齐前不升级为核心依据。",
-      "unblock_condition": "官方来源补齐或确认不影响交易触发。"
-    },
-    {
-      "priority": 4,
-      "impact_level": "background_review",
-      "label": "背景来源复核",
       "file": "evening-sentiment.json",
       "code": "evening_not_current",
       "problem": "晚间舆情不是当前交易日，不参与今日总控",
@@ -1416,12 +1340,12 @@
   ],
   "counts": {
     "critical": 0,
-    "warning": 148,
+    "warning": 142,
     "info": 1,
     "blocking": 0,
-    "price_review": 143,
+    "price_review": 142,
     "signal_review": 0,
-    "background_review": 6
+    "background_review": 1
   },
   "rules": [
     "异常文本、JSON解析失败、必需文件缺失为 critical。",

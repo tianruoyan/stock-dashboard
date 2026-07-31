@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-07-31T11:34:30+08:00",
+  "timestamp": "2026-07-31T17:48:46+08:00",
   "sources": {
     "tencent_http": {
       "status": "ok",
@@ -5053,7 +5053,7 @@
   },
   "last_publish_attempt": "pending_20260717_0830_premarket_publish",
   "status": "ok_with_partial_degradation",
-  "last_error": "东方财富概念排行11:31再次RemoteDisconnected；腾讯全A/指数/行业/专项、东财结构池和港股行情正常。",
+  "last_error": "15:05盘后分析窗口缺失；16:30按正式收盘与尾盘数据补产当前复盘。午盘概念排行失效，盘后未引用旧概念幅度。",
   "tencent_a_close_postmarket_20260716": {
     "status": "ok",
     "last_check": "2026-07-16T15:18:57+08:00",
@@ -5234,7 +5234,7 @@
     "errors": []
   },
   "overall_status": "degraded",
-  "last_codex_note": "11:30午盘版仅保留10:49同日上午最后有效概念榜并标旧，主线结论使用当前全A宽度、行业、结构池和成交证据。",
+  "last_codex_note": "A/H正式收盘核心行情、全A宽度、涨跌停结构和14:54-15:00尾盘完整；保留15:05缺口，不伪造历史时点。",
   "eastmoney_structure_pools_intraday_1000_20260717": {
     "status": "ok",
     "last_check": "2026-07-17T10:02:40+08:00",
@@ -6990,5 +6990,69 @@
     "detail": "交易日历为开市日，11:31:08恢复状态为数据正常；午盘按真实当前时点生成。",
     "sample_count": 1,
     "errors": []
+  },
+  "tencent_all_a_close_20260731": {
+    "status": "ok",
+    "last_check": "2026-07-31T17:48:46+08:00",
+    "market_time": "2026-07-31T15:00:00+08:00",
+    "usage": "全A收盘宽度、5%/8%分组、成交排序与专项",
+    "detail": "有效报价5534只；剔除口径涨5%-8% 535只、8%以上321只、跌超5% 13只。",
+    "sample_count": 5534,
+    "errors": []
+  },
+  "eastmoney_close_structure_20260731": {
+    "status": "ok",
+    "last_check": "2026-07-31T17:48:46+08:00",
+    "market_time": "2026-07-31T15:00:00+08:00",
+    "usage": "非ST涨停、跌停、炸板、连板与行业分布",
+    "detail": "涨停99、跌停0、炸板107；最高9板、20cm封板11只。",
+    "sample_count": 206,
+    "errors": []
+  },
+  "tencent_index_industry_close_20260731": {
+    "status": "ok",
+    "last_check": "2026-07-31T17:48:46+08:00",
+    "market_time": "2026-07-31T15:00:00+08:00",
+    "usage": "五大指数与98行业收盘",
+    "detail": "IT服务+6.31%、自动化设备+6.05%、软件开发+6.01%居前；保险、厨电、白电居后。",
+    "sample_count": 103,
+    "errors": []
+  },
+  "tencent_minute_closing_auction_20260731": {
+    "status": "ok",
+    "last_check": "2026-07-31T17:48:46+08:00",
+    "market_time": "2026-07-31T14:54:00+08:00/2026-07-31T15:00:00+08:00",
+    "usage": "14:54-15:00尾盘/收盘竞价校验",
+    "detail": "5个指数与24只代表股取得完整尾盘窗口；指数全回落，AI封板稳定，硬件多数走弱。",
+    "sample_count": 29,
+    "errors": []
+  },
+  "tencent_hk_close_20260731": {
+    "status": "ok",
+    "last_check": "2026-07-31T17:48:46+08:00",
+    "market_time": "2026-07-31T16:08:47+08:00",
+    "usage": "港股指数与A/H AI、半导体、通信、医药收盘映射",
+    "detail": "恒指+0.10%、恒科+0.53%；智谱+14.56%、五一视界+11.95%、小米-7.28%。",
+    "sample_count": 18,
+    "errors": []
+  },
+  "sw_level1_mapping_close_20260731": {
+    "status": "ok_recent_snapshot",
+    "last_check": "2026-07-31T17:48:46+08:00",
+    "market_time": "2026-07-28T15:07:32+08:00",
+    "usage": "涨幅5%-8%、8%以上和跌超5%样本的申万一级行业集中度",
+    "detail": "最近有效申万分类映射5199只，当前有效样本覆盖93.8%。",
+    "sample_count": 5199,
+    "errors": []
+  },
+  "postmarket_window_1505_20260731": {
+    "status": "missed_not_backfilled",
+    "last_check": "2026-07-31T17:48:46+08:00",
+    "usage": "恢复缺口审计",
+    "detail": "15:05分析窗口缺失；当前仅补产16:30可核验的A/H正式收盘复盘，不伪造15:05历史结论。",
+    "sample_count": 0,
+    "errors": [
+      "15:05 analytical snapshot unavailable"
+    ]
   }
 }
