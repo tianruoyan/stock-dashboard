@@ -1,6 +1,6 @@
 {
   "timestamp": "2026-07-31T10:15:29+08:00",
-  "source_status": "monitor_live",
+  "source_status": "monitor_waiting_update",
   "alerts": [
     {
       "id": "monitor-20260731-100128-3ec337966efd",
@@ -2729,10 +2729,10 @@
         "missing_confirmation": "等待富途行情按触发时点交叉核验；通过前只作候选或观察，不作为确认交易信号。",
         "secondary_source": "富途行情",
         "secondary_verification": {
-          "state": "pending",
-          "checked_at": "2026-07-31T10:15:29+08:00",
+          "state": "too_late_no_backfill",
+          "checked_at": "2026-07-31T10:31:03+08:00",
           "source": "富途行情",
-          "reason": "等待触发分钟行情完整落盘。",
+          "reason": "超过实时核验窗口，不事后补成已确认。",
           "representatives": [],
           "fingerprint": "51f9a4fcd89dc8b08f4e",
           "verifier_version": "futu-opend-2026-07-27.3"
@@ -2758,5 +2758,6 @@
       "verified_alert_count": 5
     }
   },
-  "note": "异动来自本地短周期监控；候选卡须经富途行情按触发时点复核后才能升级。"
+  "note": "行情暂时中断，已保留今天最近一次有效异动；卡片仍显示实际触发时间，恢复后会自动更新。",
+  "monitor_checked_at": "2026-07-31T10:31:00+08:00"
 }
