@@ -1,9 +1,18 @@
 {
-  "timestamp": "2026-07-30T21:04:48+08:00",
-  "current_signal_date": "2026-07-30",
+  "timestamp": "2026-07-31T08:45:01+08:00",
+  "current_signal_date": "2026-07-31",
   "status": "degraded",
-  "summary": "发现 211 个降级/需复核项（255 个价格/行情复核，4 个背景复核），核心结论可看但必须按影响分层使用。",
+  "summary": "发现 208 个降级/需复核项（246 个价格/行情复核，11 个背景复核），核心结论可看但必须按影响分层使用。",
   "issues": [
+    {
+      "severity": "warning",
+      "file": "alert.json",
+      "path": "",
+      "code": "stale_timestamp",
+      "message": "时间戳不是当前交易日：2026-07-30T15:45:49+08:00",
+      "impact_level": "background_review",
+      "decision_action": "仅作背景复核，不单独阻断交易判断"
+    },
     {
       "severity": "warning",
       "file": "alert.json",
@@ -439,6 +448,15 @@
     {
       "severity": "warning",
       "file": "intraday.json",
+      "path": "",
+      "code": "stale_timestamp",
+      "message": "时间戳不是当前交易日：2026-07-30T12:14:09+08:00",
+      "impact_level": "background_review",
+      "decision_action": "仅作背景复核，不单独阻断交易判断"
+    },
+    {
+      "severity": "warning",
+      "file": "intraday.json",
       "path": "switch_special.ranking[3]",
       "code": "watchlist_limit_down_like",
       "message": "共进股份 接近跌停 -9.98，需确认是否真实",
@@ -529,6 +547,15 @@
     {
       "severity": "warning",
       "file": "midday.json",
+      "path": "",
+      "code": "stale_timestamp",
+      "message": "时间戳不是当前交易日：2026-07-30T12:14:09+08:00",
+      "impact_level": "background_review",
+      "decision_action": "仅作背景复核，不单独阻断交易判断"
+    },
+    {
+      "severity": "warning",
+      "file": "midday.json",
       "path": "switch_chain_special.ranking[3]",
       "code": "watchlist_limit_down_like",
       "message": "共进股份 接近跌停 -9.98，需确认是否真实",
@@ -555,19 +582,19 @@
     },
     {
       "severity": "warning",
-      "file": "premarket.json",
-      "path": "us_overnight.mapping_chain[0]",
-      "code": "bad_change_pct",
-      "message": "us_overnight.mapping_chain[0] change_pct 非数字：-9.94% / -3.55% / -2.78% / -5.51%，该字段忽略并降权",
-      "impact_level": "price_review",
-      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
+      "file": "postmarket.json",
+      "path": "",
+      "code": "stale_timestamp",
+      "message": "时间戳不是当前交易日：2026-07-30T19:44:02+08:00",
+      "impact_level": "background_review",
+      "decision_action": "仅作背景复核，不单独阻断交易判断"
     },
     {
       "severity": "warning",
       "file": "premarket.json",
       "path": "us_overnight.mapping_chain[1]",
       "code": "bad_change_pct",
-      "message": "us_overnight.mapping_chain[1] change_pct 非数字：+5.78% / +11.47% / +4.73% / +2.53%，该字段忽略并降权",
+      "message": "us_overnight.mapping_chain[1] change_pct 非数字：约+18.0% / +6.0%，该字段忽略并降权",
       "impact_level": "price_review",
       "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
     },
@@ -576,7 +603,7 @@
       "file": "premarket.json",
       "path": "us_overnight.mapping_chain[2]",
       "code": "bad_change_pct",
-      "message": "us_overnight.mapping_chain[2] change_pct 非数字：0.00% / -5.50%，该字段忽略并降权",
+      "message": "us_overnight.mapping_chain[2] change_pct 非数字：约+8.3% / +12.2% / +4.8%，该字段忽略并降权",
       "impact_level": "price_review",
       "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
     },
@@ -585,79 +612,7 @@
       "file": "premarket.json",
       "path": "us_overnight.mapping_chain[3]",
       "code": "bad_change_pct",
-      "message": "us_overnight.mapping_chain[3] change_pct 非数字：-6.92% / -2.68% / -6.34%，该字段忽略并降权",
-      "impact_level": "price_review",
-      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
-    },
-    {
-      "severity": "warning",
-      "file": "premarket.json",
-      "path": "us_overnight.mapping_chain[4]",
-      "code": "bad_change_pct",
-      "message": "us_overnight.mapping_chain[4] change_pct 非数字：微软财报后上涨，Meta盘后承压，该字段忽略并降权",
-      "impact_level": "price_review",
-      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
-    },
-    {
-      "severity": "warning",
-      "file": "premarket.json",
-      "path": "hk_auction.indices[0]",
-      "code": "bad_change_pct",
-      "message": "恒生指数 change_pct 非数字：None，该字段忽略并降权",
-      "impact_level": "price_review",
-      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
-    },
-    {
-      "severity": "warning",
-      "file": "premarket.json",
-      "path": "hk_auction.indices[1]",
-      "code": "bad_change_pct",
-      "message": "恒生科技指数 change_pct 非数字：None，该字段忽略并降权",
-      "impact_level": "price_review",
-      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
-    },
-    {
-      "severity": "warning",
-      "file": "premarket.json",
-      "path": "hk_auction.mapping_chain[0]",
-      "code": "bad_change_pct",
-      "message": "hk_auction.mapping_chain[0] change_pct 非数字：分化，该字段忽略并降权",
-      "impact_level": "price_review",
-      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
-    },
-    {
-      "severity": "warning",
-      "file": "premarket.json",
-      "path": "hk_auction.mapping_chain[1]",
-      "code": "bad_change_pct",
-      "message": "hk_auction.mapping_chain[1] change_pct 非数字：偏弱/持平，该字段忽略并降权",
-      "impact_level": "price_review",
-      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
-    },
-    {
-      "severity": "warning",
-      "file": "premarket.json",
-      "path": "hk_auction.mapping_chain[2]",
-      "code": "bad_change_pct",
-      "message": "hk_auction.mapping_chain[2] change_pct 非数字：成组上涨，该字段忽略并降权",
-      "impact_level": "price_review",
-      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
-    },
-    {
-      "severity": "warning",
-      "file": "premarket.json",
-      "path": "hk_auction.mapping_chain[3]",
-      "code": "bad_change_pct",
-      "message": "hk_auction.mapping_chain[3] change_pct 非数字：单股上涨，该字段忽略并降权",
-      "impact_level": "price_review",
-      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
-    },
-    {
-      "severity": "warning",
-      "file": "premarket.json",
-      "path": "hk_auction.mapping_chain[4]",
-      "code": "bad_change_pct",
-      "message": "hk_auction.mapping_chain[4] change_pct 非数字：成组上涨，该字段忽略并降权",
+      "message": "us_overnight.mapping_chain[3] change_pct 非数字：盘后约+9%，该字段忽略并降权",
       "impact_level": "price_review",
       "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
     },
@@ -1164,6 +1119,15 @@
       "message": "中际旭创 change_pct 非数字：None",
       "impact_level": "price_review",
       "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
+    },
+    {
+      "severity": "info",
+      "file": "evening-sentiment.json",
+      "path": "",
+      "code": "evening_not_current",
+      "message": "晚间舆情不是当前交易日，不参与今日总控",
+      "impact_level": "background_review",
+      "decision_action": "仅作背景复核，不单独阻断交易判断"
     },
     {
       "severity": "warning",
@@ -2334,6 +2298,24 @@
       "message": "v2_cockpit_midday_context_1009_20260730: 最新可审计快照为10:09且整体降级，只用于确认风险释放/不追的治理边界，不作为11:30现价证据；尚无已迁入用户确认资产。",
       "impact_level": "price_review",
       "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
+    },
+    {
+      "severity": "warning",
+      "file": "data-trust.json",
+      "path": "",
+      "code": "stale_data_trust",
+      "message": "data-trust 日期不是当前交易日：2026-07-30",
+      "impact_level": "background_review",
+      "decision_action": "仅作背景复核，不单独阻断交易判断"
+    },
+    {
+      "severity": "warning",
+      "file": "monitoring-coverage.json",
+      "path": "",
+      "code": "stale_monitoring_coverage",
+      "message": "monitoring-coverage 日期不是当前交易日：2026-07-30",
+      "impact_level": "background_review",
+      "decision_action": "仅作背景复核，不单独阻断交易判断"
     }
   ],
   "action_plan": [
@@ -2376,7 +2358,7 @@
       "label": "二次行情复核",
       "file": "premarket.json",
       "code": "bad_change_pct",
-      "problem": "us_overnight.mapping_chain[0] change_pct 非数字：-9.94% / -3.55% / -2.78% / -5.51%，该字段忽略并降权",
+      "problem": "us_overnight.mapping_chain[1] change_pct 非数字：约+18.0% / +6.0%，该字段忽略并降权",
       "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核",
       "next_step": "用第二行情源复核涨跌幅、quote_time 和代表股方向；未确认前只做验证。",
       "unblock_condition": "price_review=0 或相关来源标记 trusted/cross verified。"
@@ -2406,12 +2388,12 @@
   ],
   "counts": {
     "critical": 48,
-    "warning": 211,
-    "info": 0,
+    "warning": 208,
+    "info": 1,
     "blocking": 0,
-    "price_review": 255,
+    "price_review": 246,
     "signal_review": 0,
-    "background_review": 4
+    "background_review": 11
   },
   "rules": [
     "异常文本、JSON解析失败、必需文件缺失为 critical。",

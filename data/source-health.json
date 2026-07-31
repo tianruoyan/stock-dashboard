@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-07-30T20:10:00+08:00",
+  "timestamp": "2026-07-31T08:40:11+08:00",
   "sources": {
     "tencent_http": {
       "status": "ok",
@@ -59,17 +59,14 @@
       ]
     },
     "cninfo_watchlist_announcement_scan": {
-      "status": "degraded_recovered",
-      "last_check": "2026-07-19T20:25:20+08:00",
-      "usage": "20:00配置股票池+专题池公告全量扫描",
-      "detail": "合并96个配置代码与138个去重名称；扫描7月17日1200份、7月18日1020份、7月19日0份公告，命中35份、22只股票。首次长区间请求遇到504，按日期逐页重跑后最终覆盖完整、分页错误0。",
-      "sample_count": 138,
-      "market_announcement_count": 2220,
-      "announcement_count": 35,
-      "hit_stock_count": 22,
-      "errors": [
-        "initial range scan: CNINFO HTTP 504; recovered by date-scoped paginated retry"
-      ]
+      "status": "ok",
+      "last_check": "2026-07-31T08:40:11+08:00",
+      "usage": "20:00至8:30配置股票池+专题池公告增量扫描",
+      "detail": "按77页完成2026-07-30至07-31共2310份公告全量扫描；配置/专题池103个代码命中86份，提炼拓荆募投、甬矽回购、华正/宏和/长电/通富异常波动及诺德半年报。",
+      "sample_count": 103,
+      "market_announcement_count": 2310,
+      "announcement_count": 86,
+      "errors": []
     },
     "sina_announcement_page_sample": {
       "status": "ok_empty",
@@ -97,13 +94,13 @@
       ]
     },
     "yahoo_finance_quote_api": {
-      "status": "failed_rate_limited",
-      "last_check": "2026-07-15T09:18:56+08:00",
-      "usage": "日韩盘前个股补充行情",
-      "detail": "query1.finance.yahoo.com返回Edge: Too Many Requests；未采用其数据，日韩改用东财单指数、新浪与Naver。",
-      "sample_count": 0,
+      "status": "ok_recovered",
+      "last_check": "2026-07-31T08:40:11+08:00",
+      "usage": "美股收盘/盘后及日本早盘指数与科技股交叉行情",
+      "detail": "成功取得三大指数、12只美股科技样本、日经225与东京电子行情；Micron单股复权字段与AP收盘涨幅有差异，最终采用AP约+18.4%，未采用冲突字段。",
+      "sample_count": 17,
       "errors": [
-        "429 Too Many Requests"
+        "Micron分钟图复权字段与AP收盘涨幅冲突，已降级采用AP权威收盘值"
       ]
     },
     "stooq_quote_csv": {
@@ -4790,6 +4787,30 @@
       "usage": "HBM/存储/晶圆代工产业验证",
       "detail": "官方Q2材料确认HBM4销售扩大、HBM4E向主要客户送样及服务器内存需求。",
       "sample_count": 1,
+      "errors": []
+    },
+    "naver_korea_realtime": {
+      "status": "ok",
+      "last_check": "2026-07-31T08:40:11+08:00",
+      "usage": "韩国指数、三星电子与SK hynix实时交叉行情",
+      "detail": "08:39北京时间取得KOSPI +14.75%、三星+21.74%、SK hynix+25.42%，与Yahoo方向一致；因杠杆产品和权重集中放大波动，仅作高波动快照。",
+      "sample_count": 3,
+      "errors": []
+    },
+    "sec_company_filings_scan": {
+      "status": "ok",
+      "last_check": "2026-07-31T08:40:11+08:00",
+      "usage": "Apple与Amazon正式季度结果",
+      "detail": "SEC 8-K附件核验Apple收入/毛利/关税退款及Amazon AWS、资本开支、自由现金流和Trainium承诺。",
+      "sample_count": 2,
+      "errors": []
+    },
+    "official_policy_increment_scan": {
+      "status": "ok_no_p0_increment",
+      "last_check": "2026-07-31T08:40:11+08:00",
+      "usage": "工信部、商务部、发改委20:00至8:30政策增量",
+      "detail": "未检出窗口内新增半导体、AI、机器人、新材料或出口管制P0政策。",
+      "sample_count": 3,
       "errors": []
     }
   },
