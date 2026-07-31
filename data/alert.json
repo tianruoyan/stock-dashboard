@@ -2293,11 +2293,31 @@
         "missing_confirmation": "等待富途行情按触发时点交叉核验；通过前只作候选或观察，不作为确认交易信号。",
         "secondary_source": "富途行情",
         "secondary_verification": {
-          "state": "pending",
-          "checked_at": "2026-07-31T11:17:32+08:00",
+          "state": "insufficient_identity",
+          "checked_at": "2026-07-31T11:18:35+08:00",
           "source": "富途行情",
-          "reason": "等待触发分钟行情完整落盘。",
-          "representatives": [],
+          "reason": "可解析且有行情的代表股不足2只。",
+          "representatives": [
+            {
+              "股票": "埃斯顿",
+              "代码": "002747.SZ",
+              "监控涨跌幅": 0.4411,
+              "富途涨跌幅": 0.7826,
+              "腾讯涨跌幅": 0.2375,
+              "起始分钟": "11:13:33",
+              "结束分钟": "11:16:33",
+              "对齐方式": "逐笔行情同一时点对齐",
+              "时间偏差秒": 0.31,
+              "可比涨跌范围": [
+                0.6805,
+                0.7826
+              ],
+              "方向一致": true,
+              "幅度一致": false,
+              "复核结论": "行情精度不足"
+            }
+          ],
+          "window_minutes": 3,
           "fingerprint": "9ebf484d7939e49f3167",
           "verifier_version": "futu-opend-2026-07-27.3"
         }
@@ -2364,7 +2384,7 @@
         "sample_count": 3,
         "max_abs_leader_change_pct": 1.0876,
         "sanity_checks": {
-          "cross_source_verified": false,
+          "cross_source_verified": true,
           "price_move_valid": false,
           "volume_valid": false,
           "direction_ratio_valid": true,
@@ -2378,11 +2398,51 @@
         "missing_confirmation": "等待富途行情按触发时点交叉核验；通过前只作候选或观察，不作为确认交易信号。",
         "secondary_source": "富途行情",
         "secondary_verification": {
-          "state": "pending",
-          "checked_at": "2026-07-31T11:17:32+08:00",
+          "state": "passed",
+          "checked_at": "2026-07-31T11:18:35+08:00",
           "source": "富途行情",
-          "reason": "等待触发分钟行情完整落盘。",
-          "representatives": [],
+          "reason": "富途行情已按代表股触发时点对齐，方向和价格变化相互支持。",
+          "representatives": [
+            {
+              "股票": "锐捷网络",
+              "代码": "301165.SZ",
+              "监控涨跌幅": 1.0876,
+              "富途涨跌幅": 1.0144,
+              "腾讯涨跌幅": 1.1159,
+              "起始分钟": "11:14:12",
+              "结束分钟": "11:17:12",
+              "对齐方式": "逐笔行情同一时点对齐",
+              "时间偏差秒": 0.841,
+              "可比涨跌范围": [
+                0.9695,
+                1.2398
+              ],
+              "方向一致": true,
+              "幅度一致": true,
+              "复核结论": "一致"
+            },
+            {
+              "股票": "菲菱科思",
+              "代码": "301191.SZ",
+              "监控涨跌幅": 0.3913,
+              "富途涨跌幅": 0.5411,
+              "腾讯涨跌幅": 0.4378,
+              "起始分钟": "11:14:12",
+              "结束分钟": "11:17:12",
+              "对齐方式": "逐笔行情同一时点对齐",
+              "时间偏差秒": 0.841,
+              "可比涨跌范围": [
+                0.4835,
+                0.6102
+              ],
+              "方向一致": true,
+              "幅度一致": true,
+              "复核结论": "一致"
+            }
+          ],
+          "window_minutes": 3,
+          "direction_agreement_ratio": 1.0,
+          "magnitude_agreement_ratio": 1.0,
           "fingerprint": "4744b9f6fe0bee03812c",
           "verifier_version": "futu-opend-2026-07-27.3"
         }
@@ -2404,7 +2464,7 @@
       "sample_count": 20,
       "max_abs_leader_change_pct": 1.6359,
       "cross_source_verified": false,
-      "verified_alert_count": 2
+      "verified_alert_count": 3
     }
   },
   "note": "异动来自本地短周期监控；候选卡须经富途行情按触发时点复核后才能升级。"
