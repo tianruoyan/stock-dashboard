@@ -1,9 +1,9 @@
 {
-  "timestamp": "2026-07-31T09:25:22+08:00",
+  "timestamp": "2026-07-31T09:26:12+08:00",
   "current_signal_date": "2026-07-31",
   "quality_gate": {
     "status": "degraded",
-    "summary": "发现 204 个降级/需复核项（244 个价格/行情复核，9 个背景复核），核心结论可看但必须按影响分层使用。",
+    "summary": "发现 158 个降级/需复核项（151 个价格/行情复核，8 个背景复核），核心结论可看但必须按影响分层使用。",
     "decision_flags": [
       "行情/涨跌幅需二次源复核",
       "盘中异动源降级，alert 类信号降权",
@@ -11,10 +11,10 @@
       "行情源降级，需复核涨跌幅"
     ],
     "blocking_count": 0,
-    "price_review_count": 244,
-    "background_review_count": 9
+    "price_review_count": 151,
+    "background_review_count": 8
   },
-  "summary": "当前时段尚无可用盘面结论。 数据质量：发现 204 个降级/需复核项（244 个价格/行情复核，9 个背景复核），核心结论可看但必须按影响分层使用。",
+  "summary": "当前时段尚无可用盘面结论。 数据质量：发现 158 个降级/需复核项（151 个价格/行情复核，8 个背景复核），核心结论可看但必须按影响分层使用。",
   "observation_coverage": {
     "summary": "独立盘面/盘后扫描 7 条，但缺少纯主动新线。",
     "independent_count": 7,
@@ -30,7 +30,7 @@
     "stance": "风险优先，只做验证",
     "action": "不把候选方向当交易机会；先看风险收敛、数据恢复和核心承接。",
     "reasons": [
-      "发现 204 个降级/需复核项（244 个价格/行情复核，9 个背景复核），核心结论可看但必须按影响分层使用。",
+      "发现 158 个降级/需复核项（151 个价格/行情复核，8 个背景复核），核心结论可看但必须按影响分层使用。",
       "A/B级风险 8 条",
       "风险优先冲突 3 条",
       "可用机会 0 条，降权候选 8 条"
@@ -51,13 +51,13 @@
     "quality_actions": [
       {
         "label": "二次行情复核",
-        "file": "alert.json",
+        "file": "intraday.json",
         "next_step": "用第二行情源复核涨跌幅、quote_time 和代表股方向；未确认前只做验证。",
         "unblock_condition": "price_review=0 或相关来源标记 trusted/cross verified。"
       },
       {
         "label": "二次行情复核",
-        "file": "intraday.json",
+        "file": "midday.json",
         "next_step": "用第二行情源复核涨跌幅、quote_time 和代表股方向；未确认前只做验证。",
         "unblock_condition": "price_review=0 或相关来源标记 trusted/cross verified。"
       }
@@ -545,13 +545,12 @@
       "title": "数据质量降级",
       "type": "data_quality",
       "trigger_reason": "风控兜底触发：市场宽度、数据质量或回撤条件触发风险优先。",
-      "conclusion": "发现 204 个降级/需复核项（244 个价格/行情复核，9 个背景复核），核心结论可看但必须按影响分层使用。",
+      "conclusion": "发现 158 个降级/需复核项（151 个价格/行情复核，8 个背景复核），核心结论可看但必须按影响分层使用。",
       "confidence": "high",
       "evidence": [
-        "时间戳不是当前交易日：2026-07-30T15:45:49+08:00",
-        "当前领跌股分数：南亚新材 change_pct 非数字：None，该字段忽略并降权",
-        "金安国纪 change_pct 非数字：None，该字段忽略并降权",
-        "华正新材 change_pct 非数字：None，该字段忽略并降权"
+        "时间戳不是当前交易日：2026-07-30T12:14:09+08:00",
+        "共进股份 接近跌停 -9.98，需确认是否真实",
+        "紫光股份 接近跌停 -9.99，需确认是否真实"
       ],
       "source_files": [
         "quality-report.json",
@@ -568,7 +567,7 @@
       "quality_flags": [],
       "tone": "risk",
       "discovery_type": "risk_guardrail",
-      "evidence_score": 90,
+      "evidence_score": 88,
       "missing_evidence": [],
       "next_action": "污染 alert 修复前，盘中异动信号必须降权；观察池个股涨跌幅以已审计源为准。",
       "observation_source": "系统风控扫描",
@@ -874,6 +873,47 @@
   ],
   "verifications": [
     {
+      "title": "盘中追踪：Physical AI观察线",
+      "type": "opportunity_watch",
+      "trigger_reason": "盘前/晚间注意点已转为盘中追踪清单，等待实时行情触发。",
+      "conclusion": "外部风险偏好强修复，港股半导体竞价确认情绪映射；A股是否由风险释放转为可交易修复，必须等9:25涨跌停宽度、科创50与核心股成组竞价。",
+      "confidence": "low",
+      "evidence": [],
+      "source_files": [
+        "opportunity-watch.json"
+      ],
+      "watch_next": [
+        "核心股低开后放量收复开盘价或跌幅明显收敛",
+        "同题材后排不再扩大负反馈，跌停/炸板数量下降",
+        "板块ETF或指数不再创新低并出现承接"
+      ],
+      "invalidation": "核心股继续放量下跌",
+      "tags": [
+        "科技硬件链",
+        "风控"
+      ],
+      "quality_flags": [],
+      "tone": "neutral",
+      "discovery_type": "premarket_watch_queue",
+      "evidence_score": 28,
+      "missing_evidence": [
+        "缺少可核验证据"
+      ],
+      "next_action": "核心股低开后放量收复开盘价或跌幅明显收敛",
+      "observation_source": "数据派生",
+      "independent_observation": false,
+      "signal_score": 47,
+      "signal_grade": "D",
+      "use_action": "仅复核",
+      "use_reasons": [
+        "缺少证据",
+        "有下一步验证",
+        "有证伪条件",
+        "有来源文件",
+        "有证据缺口"
+      ]
+    },
+    {
       "title": "盘中追踪：半导体材料",
       "type": "opportunity_watch",
       "trigger_reason": "盘前/晚间注意点已转为盘中追踪清单，等待实时行情触发。",
@@ -1044,48 +1084,7 @@
       "title": "盘中追踪：交换机/高速以太网",
       "type": "opportunity_watch",
       "trigger_reason": "盘前/晚间注意点已转为盘中追踪清单，等待实时行情触发。",
-      "conclusion": "外盘提振，但A股盘面确认尚缺。；Amazon Q2净销售额2006亿美元、AWS收入422亿美元同比+37%；公司将2026年资本开支预期提高至2200亿美元，但过去12个月自由现金流由正182亿美元转为负76亿美元。；确认AI基础设施扩产和云需求，同时验证资本开支对现金流的约束；利多不能无差别映…",
-      "confidence": "low",
-      "evidence": [],
-      "source_files": [
-        "opportunity-watch.json"
-      ],
-      "watch_next": [
-        "题材3分钟涨跌幅>=1.5%，方向占比>=70%，成交放大>=5x",
-        "板块内出现批量涨停/封板或后排扩散",
-        "核心股、ETF、后排扩散同向确认",
-        "核心股低开后放量收复开盘价或跌幅明显收敛"
-      ],
-      "invalidation": "核心股高开低走或冲高回落",
-      "tags": [
-        "风控"
-      ],
-      "quality_flags": [],
-      "tone": "neutral",
-      "discovery_type": "premarket_watch_queue",
-      "evidence_score": 28,
-      "missing_evidence": [
-        "缺少可核验证据"
-      ],
-      "next_action": "题材3分钟涨跌幅>=1.5%，方向占比>=70%，成交放大>=5x",
-      "observation_source": "数据派生",
-      "independent_observation": false,
-      "signal_score": 47,
-      "signal_grade": "D",
-      "use_action": "仅复核",
-      "use_reasons": [
-        "缺少证据",
-        "有下一步验证",
-        "有证伪条件",
-        "有来源文件",
-        "有证据缺口"
-      ]
-    },
-    {
-      "title": "盘中追踪：半导体设备",
-      "type": "opportunity_watch",
-      "trigger_reason": "盘前/晚间注意点已转为盘中追踪清单，等待实时行情触发。",
-      "conclusion": "外盘提振，但A股盘面确认尚缺。；美股收盘强修复：道指约+1.2%、标普500约+1.7%、纳指约+2.8%；Micron约+18.4%、Lam约+18.0%、AMD约+12.9%，AI硬件从盘前恐慌转为成组反弹。；提振A股设备、存储和算力情绪，但前一日A股科技跌停扩散，必须由竞价宽度确认。；[\"半…",
+      "conclusion": "Amazon Q2净销售额2006亿美元、AWS收入422亿美元同比+37%；公司将2026年资本开支预期提高至2200亿美元，但过去12个月自由现金流由正182亿美元转为负76亿美元。；确认AI基础设施扩产和云需求，同时验证资本开支对现金流的约束；利多不能无差别映射。；[\"AI服务器\", \"交换…",
       "confidence": "low",
       "evidence": [],
       "source_files": [
