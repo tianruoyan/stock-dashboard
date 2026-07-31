@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-07-31T09:33:21+08:00",
+  "timestamp": "2026-07-31T09:46:15+08:00",
   "sources": {
     "tencent_http": {
       "status": "ok",
@@ -3799,7 +3799,7 @@
     },
     "futu_minute_alert_verifier": {
       "status": "ok",
-      "last_check": "2026-07-31T09:45:11+08:00",
+      "last_check": "2026-07-31T09:46:14+08:00",
       "usage": "盘中异动代表股第二行情源交叉验证",
       "detail": "富途行情按触发时点复核19张异动卡：0张相互支持、10张明显冲突、9张精度不足；精度不足只维持观察，不计作冲突。",
       "sample_count": 41,
@@ -4896,11 +4896,45 @@
       "detail": "配置池A股逐项使用腾讯固定open字段核验；7月半导体扩产样本39只中38只高开，中位数约+7.28%。",
       "sample_count": 46,
       "errors": []
+    },
+    "tencent_a_intraday_20260731_0940": {
+      "status": "ok",
+      "last_check": "2026-07-31T09:46:15+08:00",
+      "usage": "09:40全A现价涨跌停、宽度、五大指数、98行业、配置池与专项",
+      "detail": "沪深A股5552只有效现价；44涨停、0跌停、15只触板打开；指数和专项报价时间09:39:54至09:40:24。",
+      "sample_count": 5552,
+      "errors": []
+    },
+    "eastmoney_structure_intraday_20260731_0938": {
+      "status": "ok",
+      "last_check": "2026-07-31T09:46:15+08:00",
+      "usage": "09:38非ST涨停/跌停/炸板/连板结构",
+      "detail": "42涨停、0跌停、6炸板；5只20cm，元件8只为最集中行业。",
+      "sample_count": 48,
+      "errors": []
+    },
+    "eastmoney_concept_intraday_20260731_0938": {
+      "status": "ok_then_degraded",
+      "last_check": "2026-07-31T09:46:15+08:00",
+      "usage": "09:38概念排行",
+      "detail": "09:38取得完整概念榜；09:40复采远端断开，保留本轮最后有效09:38快照，不使用旧交易日数据。",
+      "sample_count": 100,
+      "errors": [
+        "09:40 RemoteDisconnected: Remote end closed connection without response"
+      ]
+    },
+    "futu_hk_intraday_20260731_0939": {
+      "status": "ok",
+      "last_check": "2026-07-31T09:46:15+08:00",
+      "usage": "09:39港股指数、半导体、AI应用、互联网及中兴H实时行情",
+      "detail": "取得14个实时快照；恒指-0.66%、恒科+0.03%，港股半导体大涨。",
+      "sample_count": 14,
+      "errors": []
     }
   },
   "last_publish_attempt": "pending_20260717_0830_premarket_publish",
-  "status": "degraded",
-  "last_error": "港股腾讯行情最新仅到09:56，按延迟方向参考；V2影子驾驶舱仍停留在2026-07-29收盘，只作历史约束。A股当前全市场、指数、行业、概念和结构池数据可用。",
+  "status": "ok_with_partial_degradation",
+  "last_error": "东财概念榜09:40复采断开；本轮09:38有效快照完整，核心腾讯/东财结构/Futu源均正常。",
   "tencent_a_close_postmarket_20260716": {
     "status": "ok",
     "last_check": "2026-07-16T15:18:57+08:00",
@@ -5081,7 +5115,7 @@
     "errors": []
   },
   "overall_status": "degraded",
-  "last_codex_note": "9:25竞价已用Sina代码主表和腾讯固定open字段完成全A重建；行情与恢复状态正常，未使用采集时点现价冒充竞价。",
+  "last_codex_note": "09:40开盘版已按真实时点补产；未把09:40行情伪写为09:30。",
   "eastmoney_structure_pools_intraday_1000_20260717": {
     "status": "ok",
     "last_check": "2026-07-17T10:02:40+08:00",
