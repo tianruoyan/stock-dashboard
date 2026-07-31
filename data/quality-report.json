@@ -1,8 +1,8 @@
 {
-  "timestamp": "2026-07-31T09:56:07+08:00",
+  "timestamp": "2026-07-31T09:56:27+08:00",
   "current_signal_date": "2026-07-31",
   "status": "degraded",
-  "summary": "发现 154 个降级/需复核项（148 个价格/行情复核，7 个背景复核），核心结论可看但必须按影响分层使用。",
+  "summary": "发现 155 个降级/需复核项（149 个价格/行情复核，7 个背景复核），核心结论可看但必须按影响分层使用。",
   "issues": [
     {
       "severity": "warning",
@@ -136,6 +136,15 @@
       "path": "hk_auction.mapping_chain[2]",
       "code": "bad_change_pct",
       "message": "hk_auction.mapping_chain[2] change_pct 非数字：约+1.7% / 0.0% / +0.5% / +1.2%，该字段忽略并降权",
+      "impact_level": "price_review",
+      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
+    },
+    {
+      "severity": "warning",
+      "file": "watchlist-quotes.json",
+      "path": "stocks[6]",
+      "code": "watchlist_extreme_change",
+      "message": "智谱 涨跌幅 27.15，需回查源",
       "impact_level": "price_review",
       "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
     },
@@ -1470,10 +1479,10 @@
   ],
   "counts": {
     "critical": 0,
-    "warning": 154,
+    "warning": 155,
     "info": 1,
     "blocking": 0,
-    "price_review": 148,
+    "price_review": 149,
     "signal_review": 0,
     "background_review": 7
   },
