@@ -1,15 +1,15 @@
 {
-  "timestamp": "2026-07-31T16:29:38+08:00",
+  "timestamp": "2026-07-31T16:30:09+08:00",
   "current_signal_date": "2026-07-31",
   "target_trade_date": "2026-07-31",
-  "overall_status": "waiting",
-  "summary": "2 个自动化尚未到产出窗口：盘后复盘、晚间舆情。",
+  "overall_status": "degraded",
+  "summary": "1 个自动化产出异常：盘后复盘。",
   "counts": {
     "ok": 5,
-    "late": 0,
+    "late": 1,
     "missing": 0,
     "invalidated": 0,
-    "waiting": 2
+    "waiting": 1
   },
   "processes": [
     {
@@ -91,16 +91,21 @@
       "due": "15:30",
       "deadline": "2026-07-31T16:30:00+08:00",
       "timestamp": "2026-07-30T19:44:02+08:00",
-      "status": "waiting",
+      "status": "late",
       "blocking": false,
-      "action": "等待当日产出",
+      "action": "重跑该自动化",
       "reason": "时间戳不是当前交易日：2026-07-30T19:44:02+08:00",
-      "failure_type": "not_due",
-      "diagnosis": "尚未到该自动化的计划产出窗口。",
+      "failure_type": "stale_or_time_anomaly",
+      "diagnosis": "时间戳不是当前交易日：2026-07-30T19:44:02+08:00",
       "next_actions": [
-        "到 15:30 后再检查是否产出。"
+        "核对文件 timestamp 是否由自动化真实写入。",
+        "重跑自动化，避免使用上一交易日或异常超前数据。"
       ],
-      "related_sources": []
+      "related_sources": [
+        "ths_sina_or_akshare_quote_decode",
+        "eastmoney_hk_akshare",
+        "tencent_hk_auction_http"
+      ]
     },
     {
       "id": "evening",
@@ -141,11 +146,11 @@
   ],
   "next_session_readiness": {
     "target_trade_date": "2026-07-31",
-    "status": "pending",
-    "summary": "2026-07-31 开盘链路待产出：盘后复盘 15:30。",
-    "pending_count": 2,
+    "status": "overdue",
+    "summary": "2026-07-31 有 1 个产出已过窗口未更新。",
+    "pending_count": 1,
     "ready_count": 5,
-    "overdue_count": 0,
+    "overdue_count": 1,
     "items": [
       {
         "id": "premarket",
@@ -203,9 +208,9 @@
         "deadline": "2026-07-31T16:30:00+08:00",
         "timestamp": "2026-07-30T19:44:02+08:00",
         "file_date": "2026-07-30",
-        "status": "pending",
-        "action": "等待宽限",
-        "reason": "已到计划时间，宽限至 16:30"
+        "status": "overdue",
+        "action": "需要重跑",
+        "reason": "目标交易日尚未产出：当前文件日期 2026-07-30"
       },
       {
         "id": "evening",
