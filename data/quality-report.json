@@ -1,45 +1,9 @@
 {
-  "timestamp": "2026-07-31T16:25:32+08:00",
+  "timestamp": "2026-07-31T16:29:38+08:00",
   "current_signal_date": "2026-07-31",
   "status": "degraded",
-  "summary": "发现 152 个降级/需复核项（146 个价格/行情复核，7 个背景复核），核心结论可看但必须按影响分层使用。",
+  "summary": "发现 148 个降级/需复核项（143 个价格/行情复核，6 个背景复核），核心结论可看但必须按影响分层使用。",
   "issues": [
-    {
-      "severity": "warning",
-      "file": "midday.json",
-      "path": "",
-      "code": "stale_timestamp",
-      "message": "时间戳不是当前交易日：2026-07-30T12:14:09+08:00",
-      "impact_level": "background_review",
-      "decision_action": "仅作背景复核，不单独阻断交易判断"
-    },
-    {
-      "severity": "warning",
-      "file": "midday.json",
-      "path": "switch_chain_special.ranking[3]",
-      "code": "watchlist_limit_down_like",
-      "message": "共进股份 接近跌停 -9.98，需确认是否真实",
-      "impact_level": "price_review",
-      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
-    },
-    {
-      "severity": "warning",
-      "file": "midday.json",
-      "path": "switch_chain_special.ranking[4]",
-      "code": "watchlist_limit_down_like",
-      "message": "紫光股份 接近跌停 -9.99，需确认是否真实",
-      "impact_level": "price_review",
-      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
-    },
-    {
-      "severity": "warning",
-      "file": "midday.json",
-      "path": "electronic_cloth_fiberglass_watch.repair_samples[2]",
-      "code": "watchlist_limit_down_like",
-      "message": "宏和科技 接近跌停 -10.0，需确认是否真实",
-      "impact_level": "price_review",
-      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
-    },
     {
       "severity": "warning",
       "file": "postmarket.json",
@@ -1377,7 +1341,7 @@
       "file": "cross-file",
       "path": "锐捷网络",
       "code": "stock_pct_cross_file_conflict",
-      "message": "锐捷网络 跨文件涨跌幅差异过大：alert.json -0.1236% vs intraday.json 10.97%",
+      "message": "锐捷网络 跨文件涨跌幅差异过大：alert.json -0.1236% vs intraday.json 13.57%",
       "impact_level": "price_review",
       "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
     }
@@ -1400,18 +1364,7 @@
       "label": "二次行情复核",
       "file": "cross-file",
       "code": "stock_pct_cross_file_conflict",
-      "problem": "锐捷网络 跨文件涨跌幅差异过大：alert.json -0.1236% vs intraday.json 10.97%",
-      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核",
-      "next_step": "用第二行情源复核涨跌幅、quote_time 和代表股方向；未确认前只做验证。",
-      "unblock_condition": "price_review=0 或相关来源标记 trusted/cross verified。"
-    },
-    {
-      "priority": 2,
-      "impact_level": "price_review",
-      "label": "二次行情复核",
-      "file": "midday.json",
-      "code": "watchlist_limit_down_like",
-      "problem": "共进股份 接近跌停 -9.98，需确认是否真实",
+      "problem": "锐捷网络 跨文件涨跌幅差异过大：alert.json -0.1236% vs intraday.json 13.57%",
       "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核",
       "next_step": "用第二行情源复核涨跌幅、quote_time 和代表股方向；未确认前只做验证。",
       "unblock_condition": "price_review=0 或相关来源标记 trusted/cross verified。"
@@ -1442,9 +1395,20 @@
       "priority": 4,
       "impact_level": "background_review",
       "label": "背景来源复核",
-      "file": "midday.json",
+      "file": "postmarket.json",
       "code": "stale_timestamp",
-      "problem": "时间戳不是当前交易日：2026-07-30T12:14:09+08:00",
+      "problem": "时间戳不是当前交易日：2026-07-30T19:44:02+08:00",
+      "decision_action": "仅作背景复核，不单独阻断交易判断",
+      "next_step": "补官方/交易所/公司公告来源；未补齐前不升级为核心依据。",
+      "unblock_condition": "官方来源补齐或确认不影响交易触发。"
+    },
+    {
+      "priority": 4,
+      "impact_level": "background_review",
+      "label": "背景来源复核",
+      "file": "evening-sentiment.json",
+      "code": "evening_not_current",
+      "problem": "晚间舆情不是当前交易日，不参与今日总控",
       "decision_action": "仅作背景复核，不单独阻断交易判断",
       "next_step": "补官方/交易所/公司公告来源；未补齐前不升级为核心依据。",
       "unblock_condition": "官方来源补齐或确认不影响交易触发。"
@@ -1452,12 +1416,12 @@
   ],
   "counts": {
     "critical": 0,
-    "warning": 152,
+    "warning": 148,
     "info": 1,
     "blocking": 0,
-    "price_review": 146,
+    "price_review": 143,
     "signal_review": 0,
-    "background_review": 7
+    "background_review": 6
   },
   "rules": [
     "异常文本、JSON解析失败、必需文件缺失为 critical。",
