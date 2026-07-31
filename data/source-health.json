@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-07-31T09:23:30+08:00",
+  "timestamp": "2026-07-31T09:33:21+08:00",
   "sources": {
     "tencent_http": {
       "status": "ok",
@@ -3799,10 +3799,10 @@
     },
     "futu_minute_alert_verifier": {
       "status": "ok",
-      "last_check": "2026-07-30T13:14:58+08:00",
+      "last_check": "2026-07-31T09:33:12+08:00",
       "usage": "盘中异动代表股第二行情源交叉验证",
-      "detail": "富途行情按触发时点复核20张异动卡：2张相互支持、5张明显冲突、13张精度不足；精度不足只维持观察，不计作冲突。",
-      "sample_count": 34,
+      "detail": "富途行情按触发时点复核10张异动卡：0张相互支持、0张明显冲突、10张精度不足；精度不足只维持观察，不计作冲突。",
+      "sample_count": 0,
       "errors": []
     },
     "tencent_a_quote_intraday_0945": {
@@ -4858,6 +4858,44 @@
       "errors": [
         "no Singapore futures entitlement"
       ]
+    },
+    "sina_all_a_code_master_auction_20260731": {
+      "status": "ok",
+      "last_check": "2026-07-31T09:33:21+08:00",
+      "market_time": "2026-07-31T09:25:00+08:00",
+      "usage": "全A竞价代码主表",
+      "detail": "60页范围查询在第56页结束，取得5533只A股代码，无分页错误。",
+      "sample_count": 5533,
+      "errors": []
+    },
+    "tencent_all_a_open_auction_20260731": {
+      "status": "ok",
+      "last_check": "2026-07-31T09:33:21+08:00",
+      "market_time": "2026-07-31T09:25:00+08:00",
+      "usage": "全A固定开盘价、涨跌停、市场宽度与竞价成交额",
+      "detail": "5533只全部返回；5487只有效开盘且上下限价明确。涨停25、跌停13，高开3386、低开1755；批量采集时点09:28:24-09:29:25。",
+      "sample_count": 5533,
+      "errors": [
+        "46只新股、停牌或无明确上下限价样本不计入涨跌停分母"
+      ]
+    },
+    "tencent_index_open_auction_20260731": {
+      "status": "ok",
+      "last_check": "2026-07-31T09:33:21+08:00",
+      "market_time": "2026-07-31T09:25:00+08:00",
+      "usage": "五大指数固定开盘价",
+      "detail": "上证+0.76%、深成指+3.04%、创业板+5.15%、科创50+8.37%、沪深300+1.63%。",
+      "sample_count": 5,
+      "errors": []
+    },
+    "config_watchlist_open_auction_20260731": {
+      "status": "ok",
+      "last_check": "2026-07-31T09:33:21+08:00",
+      "market_time": "2026-07-31T09:25:00+08:00",
+      "usage": "配置池与专题核心竞价强弱",
+      "detail": "配置池A股逐项使用腾讯固定open字段核验；7月半导体扩产样本39只中38只高开，中位数约+7.28%。",
+      "sample_count": 46,
+      "errors": []
     }
   },
   "last_publish_attempt": "pending_20260717_0830_premarket_publish",
@@ -5043,7 +5081,7 @@
     "errors": []
   },
   "overall_status": "degraded",
-  "last_codex_note": "9:15盘前数据已核验；港股最终配对、日韩和美股可用。SGX A50期货直连无权限，透明降级为A50 CFD方向代理；日本行情约延时15分钟。",
+  "last_codex_note": "9:25竞价已用Sina代码主表和腾讯固定open字段完成全A重建；行情与恢复状态正常，未使用采集时点现价冒充竞价。",
   "eastmoney_structure_pools_intraday_1000_20260717": {
     "status": "ok",
     "last_check": "2026-07-17T10:02:40+08:00",
