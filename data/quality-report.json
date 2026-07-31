@@ -1,8 +1,8 @@
 {
-  "timestamp": "2026-07-31T09:49:56+08:00",
+  "timestamp": "2026-07-31T09:51:59+08:00",
   "current_signal_date": "2026-07-31",
   "status": "degraded",
-  "summary": "发现 151 个降级/需复核项（145 个价格/行情复核，7 个背景复核），核心结论可看但必须按影响分层使用。",
+  "summary": "发现 153 个降级/需复核项（147 个价格/行情复核，7 个背景复核），核心结论可看但必须按影响分层使用。",
   "issues": [
     {
       "severity": "warning",
@@ -1371,6 +1371,24 @@
       "message": "v2_cockpit_midday_context_1009_20260730: 最新可审计快照为10:09且整体降级，只用于确认风险释放/不追的治理边界，不作为11:30现价证据；尚无已迁入用户确认资产。",
       "impact_level": "price_review",
       "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
+    },
+    {
+      "severity": "warning",
+      "file": "cross-file",
+      "path": "锐捷网络",
+      "code": "stock_pct_cross_file_conflict",
+      "message": "锐捷网络 跨文件涨跌幅差异过大：alert.json 0.7537% vs intraday.json 10.69%",
+      "impact_level": "price_review",
+      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
+    },
+    {
+      "severity": "warning",
+      "file": "cross-file",
+      "path": "菲菱科思",
+      "code": "stock_pct_cross_file_conflict",
+      "message": "菲菱科思 跨文件涨跌幅差异过大：alert.json -0.1885% vs intraday.json 8.1%",
+      "impact_level": "price_review",
+      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
     }
   ],
   "action_plan": [
@@ -1381,6 +1399,17 @@
       "file": "alert.json",
       "code": "historical_alert_without_trusted_source",
       "problem": "盘中异动缺少可信源证明；当前阶段只降权参考，不阻断整站发布",
+      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核",
+      "next_step": "用第二行情源复核涨跌幅、quote_time 和代表股方向；未确认前只做验证。",
+      "unblock_condition": "price_review=0 或相关来源标记 trusted/cross verified。"
+    },
+    {
+      "priority": 2,
+      "impact_level": "price_review",
+      "label": "二次行情复核",
+      "file": "cross-file",
+      "code": "stock_pct_cross_file_conflict",
+      "problem": "锐捷网络 跨文件涨跌幅差异过大：alert.json 0.7537% vs intraday.json 10.69%",
       "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核",
       "next_step": "用第二行情源复核涨跌幅、quote_time 和代表股方向；未确认前只做验证。",
       "unblock_condition": "price_review=0 或相关来源标记 trusted/cross verified。"
@@ -1428,25 +1457,14 @@
       "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核",
       "next_step": "用第二行情源复核涨跌幅、quote_time 和代表股方向；未确认前只做验证。",
       "unblock_condition": "price_review=0 或相关来源标记 trusted/cross verified。"
-    },
-    {
-      "priority": 4,
-      "impact_level": "background_review",
-      "label": "背景来源复核",
-      "file": "midday.json",
-      "code": "stale_timestamp",
-      "problem": "时间戳不是当前交易日：2026-07-30T12:14:09+08:00",
-      "decision_action": "仅作背景复核，不单独阻断交易判断",
-      "next_step": "补官方/交易所/公司公告来源；未补齐前不升级为核心依据。",
-      "unblock_condition": "官方来源补齐或确认不影响交易触发。"
     }
   ],
   "counts": {
     "critical": 0,
-    "warning": 151,
+    "warning": 153,
     "info": 1,
     "blocking": 0,
-    "price_review": 145,
+    "price_review": 147,
     "signal_review": 0,
     "background_review": 7
   },
