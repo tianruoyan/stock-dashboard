@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-08-01T20:03:05+08:00",
+  "timestamp": "2026-08-02T20:00:29+08:00",
   "sources": {
     "tencent_http": {
       "status": "ok",
@@ -60,12 +60,12 @@
     },
     "cninfo_watchlist_announcement_scan": {
       "status": "ok",
-      "last_check": "2026-08-01T20:03:05+08:00",
+      "last_check": "2026-08-02T20:00:29+08:00",
       "usage": "20:00配置观察池公告全市场交叉扫描",
-      "detail": "完整读取2026-07-31至2026-08-01共2962条、99页公告；103个境内观察代码命中45条，重大事项已进入晚间P0/news。",
+      "detail": "完整读取2026-08-01至2026-08-02共1466条、49页公告；103个境内观察代码命中9条，均为前一晚已覆盖事项，8月2日无新增重大命中。",
       "sample_count": 103,
-      "market_announcement_count": 2962,
-      "announcement_count": 45,
+      "market_announcement_count": 1466,
+      "announcement_count": 9,
       "errors": []
     },
     "sina_announcement_page_sample": {
@@ -598,21 +598,19 @@
     },
     "official_policy_evening_scan": {
       "status": "ok_empty",
-      "last_check": "2026-08-01T20:03:05+08:00",
+      "last_check": "2026-08-02T20:00:29+08:00",
       "usage": "工信部/发改委/商务部/中国政府网20:00政策扫描",
-      "detail": "未检出8月1日新增且足以改变周一竞价优先级的半导体、AI、机器人、新材料或出口管制P0。",
+      "detail": "未检出8月2日新增且足以改变周一竞价优先级的半导体、AI、机器人、新材料或出口管制P0。",
       "sample_count": 4,
       "errors": []
     },
     "global_benchmark_evening_scan": {
-      "status": "ok_degraded_recovered",
-      "last_check": "2026-08-01T20:03:05+08:00",
-      "usage": "25个配置专题的全球标杆、正式财报、周五收盘和事件日历",
-      "detail": "Amazon/Apple正式结果和18个海外核心行情样本可用；一次定向事件日历搜索超时，未使用未完成结果，已由正式公司页面和可核验行情替代。",
+      "status": "ok",
+      "last_check": "2026-08-02T20:00:29+08:00",
+      "usage": "25个配置专题的全球标杆、正式新闻与事件日历",
+      "detail": "按25个专题复核全球标杆；周末无新增交易或公司级P0，新增核验FMS 2026于8月4日至6日举行，按预期事件观察。",
       "sample_count": 25,
-      "errors": [
-        "targeted Arista/NVIDIA/Broadcom/Marvell earnings-calendar web search timed out; incomplete result discarded"
-      ]
+      "errors": []
     },
     "premarket_0830_web_scan": {
       "status": "degraded_partial",
@@ -963,12 +961,12 @@
     },
     "hkex_evening_watchlist_scan": {
       "status": "degraded",
-      "last_check": "2026-07-11T20:19:06+08:00",
-      "usage": "20:00晚间观察池5只港股公告扫描",
-      "detail": "港交所官方活跃证券表曾成功返回，但后续批量标题页请求出现间歇性SSL EOF；已用港交所官方站内标题检索和域名搜索交叉核查，未发现7月10日至11日重大新增，不将降级结果表述为绝对无公告。",
-      "sample_count": 5,
+      "last_check": "2026-08-02T20:00:29+08:00",
+      "usage": "20:00两只配置港股公告扫描",
+      "detail": "港交所官方域名定向检索未见8月2日重大新增，但未取得可审计的批量披露清单，不表述为绝对无公告。",
+      "sample_count": 2,
       "errors": [
-        "HKEX batch title search intermittent SSLError: EOF occurred in violation of protocol"
+        "bulk HKEX disclosure list not available in current scan workflow"
       ]
     },
     "official_policy_weekend_scan": {
@@ -5051,11 +5049,21 @@
       "detail": "取得2个港股指数和11只映射样本实时快照；恒指-0.06%、恒科+0.91%，商汤和金山软件涨幅扩大。",
       "sample_count": 13,
       "errors": []
+    },
+    "longbridge_evening_scan": {
+      "status": "degraded_fallback_ok",
+      "last_check": "2026-08-02T20:00:29+08:00",
+      "usage": "全球证券行情与新闻优先查询",
+      "detail": "Longbridge CLI已安装但当前未认证，未使用其返回任何行情或新闻；改由巨潮、港交所官方域名、公司正式页面与权威网页源完成证据链。",
+      "sample_count": 0,
+      "errors": [
+        "Authentication failed: Not authenticated"
+      ]
     }
   },
   "last_publish_attempt": "pending_20260717_0830_premarket_publish",
-  "status": "ok_with_partial_degradation",
-  "last_error": "15:05盘后分析窗口缺失；16:30按正式收盘与尾盘数据补产当前复盘。午盘概念排行失效，盘后未引用旧概念幅度。",
+  "status": "degraded_fallback_ok",
+  "last_error": "Longbridge未认证、港交所批量披露清单不可用；均已采用官方或权威替代源，不影响本轮P0结论。",
   "tencent_a_close_postmarket_20260716": {
     "status": "ok",
     "last_check": "2026-07-16T15:18:57+08:00",
