@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-07-31T17:48:46+08:00",
+  "timestamp": "2026-08-01T20:03:05+08:00",
   "sources": {
     "tencent_http": {
       "status": "ok",
@@ -60,12 +60,12 @@
     },
     "cninfo_watchlist_announcement_scan": {
       "status": "ok",
-      "last_check": "2026-07-31T08:40:11+08:00",
-      "usage": "20:00至8:30配置股票池+专题池公告增量扫描",
-      "detail": "按77页完成2026-07-30至07-31共2310份公告全量扫描；配置/专题池103个代码命中86份，提炼拓荆募投、甬矽回购、华正/宏和/长电/通富异常波动及诺德半年报。",
+      "last_check": "2026-08-01T20:03:05+08:00",
+      "usage": "20:00配置观察池公告全市场交叉扫描",
+      "detail": "完整读取2026-07-31至2026-08-01共2962条、99页公告；103个境内观察代码命中45条，重大事项已进入晚间P0/news。",
       "sample_count": 103,
-      "market_announcement_count": 2310,
-      "announcement_count": 86,
+      "market_announcement_count": 2962,
+      "announcement_count": 45,
       "errors": []
     },
     "sina_announcement_page_sample": {
@@ -94,14 +94,12 @@
       ]
     },
     "yahoo_finance_quote_api": {
-      "status": "ok_recovered",
-      "last_check": "2026-07-31T08:40:11+08:00",
-      "usage": "美股收盘/盘后及日本早盘指数与科技股交叉行情",
-      "detail": "成功取得三大指数、12只美股科技样本、日经225与东京电子行情；Micron单股复权字段与AP收盘涨幅有差异，最终采用AP约+18.4%，未采用冲突字段。",
-      "sample_count": 17,
-      "errors": [
-        "Micron分钟图复权字段与AP收盘涨幅冲突，已降级采用AP权威收盘值"
-      ]
+      "status": "ok",
+      "last_check": "2026-08-01T20:03:05+08:00",
+      "usage": "周五美股科技、网络、设备、光互联与液冷收盘交叉行情",
+      "detail": "取得Amazon、Apple、NVIDIA、AMD、Broadcom、Micron、Arista、Cisco、Marvell、Lam、KLA、AMAT、ASML、Entegris、Coherent、Lumentum、Vertiv和TSM有效收盘。",
+      "sample_count": 18,
+      "errors": []
     },
     "stooq_quote_csv": {
       "status": "failed",
@@ -600,17 +598,21 @@
     },
     "official_policy_evening_scan": {
       "status": "ok_empty",
-      "last_check": "2026-07-09T20:12:00+08:00",
-      "usage": "20:00晚间工信部/发改委/商务部政策P0扫描",
-      "detail": "未发现可直接升级半导体/AI/机器人/新材料的新增官方P0；政策结论不引用未核实传闻。",
+      "last_check": "2026-08-01T20:03:05+08:00",
+      "usage": "工信部/发改委/商务部/中国政府网20:00政策扫描",
+      "detail": "未检出8月1日新增且足以改变周一竞价优先级的半导体、AI、机器人、新材料或出口管制P0。",
+      "sample_count": 4,
       "errors": []
     },
     "global_benchmark_evening_scan": {
-      "status": "watch_only",
-      "last_check": "2026-07-09T20:12:00+08:00",
-      "usage": "20:00晚间全球标杆企业与事件窗口扫描",
-      "detail": "ASML/NVIDIA/SK hynix/Samsung等仅形成8:30待复核观察项，未取得足以升级P0的新增官方硬公告。",
-      "errors": []
+      "status": "ok_degraded_recovered",
+      "last_check": "2026-08-01T20:03:05+08:00",
+      "usage": "25个配置专题的全球标杆、正式财报、周五收盘和事件日历",
+      "detail": "Amazon/Apple正式结果和18个海外核心行情样本可用；一次定向事件日历搜索超时，未使用未完成结果，已由正式公司页面和可核验行情替代。",
+      "sample_count": 25,
+      "errors": [
+        "targeted Arista/NVIDIA/Broadcom/Marvell earnings-calendar web search timed out; incomplete result discarded"
+      ]
     },
     "premarket_0830_web_scan": {
       "status": "degraded_partial",
