@@ -1,8 +1,8 @@
 {
-  "timestamp": "2026-08-03T22:07:48+08:00",
+  "timestamp": "2026-08-03T22:15:09+08:00",
   "current_signal_date": "2026-08-03",
   "status": "degraded",
-  "summary": "发现 149 个降级/需复核项（143 个价格/行情复核，6 个背景复核），核心结论可看但必须按影响分层使用。",
+  "summary": "发现 147 个降级/需复核项（144 个价格/行情复核，3 个背景复核），核心结论可看但必须按影响分层使用。",
   "issues": [
     {
       "severity": "warning",
@@ -25,11 +25,11 @@
     {
       "severity": "warning",
       "file": "postmarket.json",
-      "path": "",
-      "code": "stale_timestamp",
-      "message": "时间戳不是当前交易日：2026-07-31T17:48:46+08:00",
-      "impact_level": "background_review",
-      "decision_action": "仅作背景复核，不单独阻断交易判断"
+      "path": "hotspots[2].stocks[2]",
+      "code": "watchlist_limit_down_like",
+      "message": "兆易创新 接近跌停 -10.0，需确认是否真实",
+      "impact_level": "price_review",
+      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
     },
     {
       "severity": "warning",
@@ -120,15 +120,6 @@
       "message": "时间戳不是当前交易日：2026-08-02T20:00:29+08:00",
       "impact_level": "price_review",
       "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
-    },
-    {
-      "severity": "warning",
-      "file": "topics.json",
-      "path": "",
-      "code": "stale_timestamp",
-      "message": "时间戳不是当前交易日：2026-07-31T17:49:47+08:00",
-      "impact_level": "background_review",
-      "decision_action": "仅作背景复核，不单独阻断交易判断"
     },
     {
       "severity": "warning",
@@ -1335,18 +1326,20 @@
       "message": "eastmoney_concept_intraday_20260731_1104: 请求RemoteDisconnected；保留10:49同日上午最后有效概念榜，不将其冒充11:00当前值。",
       "impact_level": "price_review",
       "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
-    },
-    {
-      "severity": "warning",
-      "file": "theme-shifts.json",
-      "path": "",
-      "code": "stale_theme_shifts",
-      "message": "theme-shifts 日期不是当前交易日：2026-07-31",
-      "impact_level": "background_review",
-      "decision_action": "仅作背景复核，不单独阻断交易判断"
     }
   ],
   "action_plan": [
+    {
+      "priority": 2,
+      "impact_level": "price_review",
+      "label": "二次行情复核",
+      "file": "postmarket.json",
+      "code": "watchlist_limit_down_like",
+      "problem": "兆易创新 接近跌停 -10.0，需确认是否真实",
+      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核",
+      "next_step": "用第二行情源复核涨跌幅、quote_time 和代表股方向；未确认前只做验证。",
+      "unblock_condition": "price_review=0 或相关来源标记 trusted/cross verified。"
+    },
     {
       "priority": 2,
       "impact_level": "price_review",
@@ -1401,27 +1394,16 @@
       "decision_action": "仅作背景复核，不单独阻断交易判断",
       "next_step": "补官方/交易所/公司公告来源；未补齐前不升级为核心依据。",
       "unblock_condition": "官方来源补齐或确认不影响交易触发。"
-    },
-    {
-      "priority": 4,
-      "impact_level": "background_review",
-      "label": "背景来源复核",
-      "file": "postmarket.json",
-      "code": "stale_timestamp",
-      "problem": "时间戳不是当前交易日：2026-07-31T17:48:46+08:00",
-      "decision_action": "仅作背景复核，不单独阻断交易判断",
-      "next_step": "补官方/交易所/公司公告来源；未补齐前不升级为核心依据。",
-      "unblock_condition": "官方来源补齐或确认不影响交易触发。"
     }
   ],
   "counts": {
     "critical": 0,
-    "warning": 149,
+    "warning": 147,
     "info": 0,
     "blocking": 0,
-    "price_review": 143,
+    "price_review": 144,
     "signal_review": 0,
-    "background_review": 6
+    "background_review": 3
   },
   "rules": [
     "异常文本、JSON解析失败、必需文件缺失为 critical。",
