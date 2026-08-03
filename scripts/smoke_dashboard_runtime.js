@@ -435,21 +435,27 @@ async function main() {
 
 function checkWatchlistQuoteSemantics(document, issues) {
   const watchlist = readJsonIfExists("config/watchlist.json");
+  const watchlistQuotes = readJsonIfExists("data/watchlist-quotes.json");
   const intraday = readJsonIfExists("data/intraday.json");
   const premarket = readJsonIfExists("data/premarket.json");
   const rendered = normalizeRenderedText(document.getElementById("watchlist-decision")?.collectHtml() || "");
   const watchRows = Array.isArray(watchlist.watch_only?.stocks) ? watchlist.watch_only.stocks : [];
   const signalDate = value => String(value || "").match(/\d{4}-\d{2}-\d{2}/)?.[0] || "";
   const latestDate = [
+    watchlistQuotes,
     premarket,
     intraday,
     readJsonIfExists("data/midday.json"),
     readJsonIfExists("data/topics.json"),
     readJsonIfExists("data/postmarket.json")
   ].map(data => signalDate(data.timestamp)).filter(Boolean).sort().at(-1) || "";
-  const currentRows = signalDate(intraday.timestamp) === latestDate && Array.isArray(intraday.hk_market?.stocks)
-    ? intraday.hk_market.stocks
-    : [];
+  const currentRows = [];
+  if (signalDate(watchlistQuotes.timestamp) === latestDate && Array.isArray(watchlistQuotes.stocks)) {
+    currentRows.push(...watchlistQuotes.stocks);
+  }
+  if (signalDate(intraday.timestamp) === latestDate && Array.isArray(intraday.hk_market?.stocks)) {
+    currentRows.push(...intraday.hk_market.stocks);
+  }
   const indicativeRows = signalDate(premarket.timestamp) === latestDate && Array.isArray(premarket.hk_auction?.stocks)
     ? premarket.hk_auction.stocks
     : [];

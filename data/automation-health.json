@@ -1,12 +1,12 @@
 {
-  "timestamp": "2026-08-02T20:06:07+08:00",
-  "current_signal_date": "2026-07-31",
-  "target_trade_date": "2026-08-02",
+  "timestamp": "2026-08-03T22:07:48+08:00",
+  "current_signal_date": "2026-08-03",
+  "target_trade_date": "2026-08-03",
   "overall_status": "degraded",
-  "summary": "1 个自动化产出异常：晚间舆情。",
+  "summary": "5 个自动化产出异常：盘前简报、盘中全景、午盘分析、盘后复盘。",
   "counts": {
-    "ok": 6,
-    "late": 1,
+    "ok": 2,
+    "late": 5,
     "missing": 0,
     "invalidated": 0,
     "waiting": 0
@@ -17,44 +17,54 @@
       "label": "盘前简报",
       "file": "data/premarket.json",
       "due": "09:25",
-      "deadline": "2026-07-31T09:45:00+08:00",
+      "deadline": "2026-08-03T09:45:00+08:00",
       "timestamp": "2026-07-31T09:33:21+08:00",
-      "status": "ok",
+      "status": "late",
       "blocking": false,
-      "action": "正常使用",
-      "reason": "当日产出已到位",
-      "failure_type": "none",
-      "diagnosis": "产出正常，未发现自动化层异常。",
+      "action": "重跑该自动化",
+      "reason": "时间戳不是当前交易日：2026-07-31T09:33:21+08:00",
+      "failure_type": "stale_or_time_anomaly",
+      "diagnosis": "时间戳不是当前交易日：2026-07-31T09:33:21+08:00",
       "next_actions": [
-        "正常读取；仍需结合数据质量卡判断是否降权。"
+        "核对文件 timestamp 是否由自动化真实写入。",
+        "重跑自动化，避免使用上一交易日或异常超前数据。"
       ],
-      "related_sources": []
+      "related_sources": [
+        "ths_sina_or_akshare_quote_decode",
+        "eastmoney_hk_akshare",
+        "tencent_hk_auction_http"
+      ]
     },
     {
       "id": "intraday",
       "label": "盘中全景",
       "file": "data/intraday.json",
       "due": "15:05",
-      "deadline": "2026-07-31T16:35:00+08:00",
+      "deadline": "2026-08-03T16:35:00+08:00",
       "timestamp": "2026-07-31T17:48:46+08:00",
-      "status": "ok",
+      "status": "late",
       "blocking": false,
-      "action": "正常使用",
-      "reason": "当日产出已到位",
-      "failure_type": "none",
-      "diagnosis": "产出正常，未发现自动化层异常。",
+      "action": "重跑该自动化",
+      "reason": "时间戳不是当前交易日：2026-07-31T17:48:46+08:00",
+      "failure_type": "stale_or_time_anomaly",
+      "diagnosis": "时间戳不是当前交易日：2026-07-31T17:48:46+08:00",
       "next_actions": [
-        "正常读取；仍需结合数据质量卡判断是否降权。"
+        "核对文件 timestamp 是否由自动化真实写入。",
+        "重跑自动化，避免使用上一交易日或异常超前数据。"
       ],
-      "related_sources": []
+      "related_sources": [
+        "ths_sina_or_akshare_quote_decode",
+        "eastmoney_hk_akshare",
+        "tencent_hk_auction_http"
+      ]
     },
     {
       "id": "alerts",
       "label": "盘中异动",
       "file": "data/alert.json",
       "due": "15:00",
-      "deadline": "2026-07-31T15:05:00+08:00",
-      "timestamp": "2026-07-31T16:24:46+08:00",
+      "deadline": "2026-08-03T15:05:00+08:00",
+      "timestamp": "2026-08-03T15:15:38+08:00",
       "status": "ok",
       "blocking": false,
       "action": "正常使用",
@@ -71,50 +81,14 @@
       "label": "午盘分析",
       "file": "data/midday.json",
       "due": "11:30",
-      "deadline": "2026-07-31T12:00:00+08:00",
+      "deadline": "2026-08-03T12:00:00+08:00",
       "timestamp": "2026-07-31T11:34:30+08:00",
-      "status": "ok",
-      "blocking": false,
-      "action": "正常使用",
-      "reason": "当日产出已到位",
-      "failure_type": "none",
-      "diagnosis": "产出正常，未发现自动化层异常。",
-      "next_actions": [
-        "正常读取；仍需结合数据质量卡判断是否降权。"
-      ],
-      "related_sources": []
-    },
-    {
-      "id": "postmarket",
-      "label": "盘后复盘",
-      "file": "data/postmarket.json",
-      "due": "15:30",
-      "deadline": "2026-07-31T16:30:00+08:00",
-      "timestamp": "2026-07-31T17:48:46+08:00",
-      "status": "ok",
-      "blocking": false,
-      "action": "正常使用",
-      "reason": "当日产出已到位",
-      "failure_type": "none",
-      "diagnosis": "产出正常，未发现自动化层异常。",
-      "next_actions": [
-        "正常读取；仍需结合数据质量卡判断是否降权。"
-      ],
-      "related_sources": []
-    },
-    {
-      "id": "evening",
-      "label": "晚间舆情",
-      "file": "data/evening-sentiment.json",
-      "due": "20:00",
-      "deadline": "2026-07-31T21:30:00+08:00",
-      "timestamp": "2026-08-02T20:00:29+08:00",
       "status": "late",
       "blocking": false,
       "action": "重跑该自动化",
-      "reason": "时间戳不是当前交易日：2026-08-02T20:00:29+08:00",
+      "reason": "时间戳不是当前交易日：2026-07-31T11:34:30+08:00",
       "failure_type": "stale_or_time_anomaly",
-      "diagnosis": "时间戳不是当前交易日：2026-08-02T20:00:29+08:00",
+      "diagnosis": "时间戳不是当前交易日：2026-07-31T11:34:30+08:00",
       "next_actions": [
         "核对文件 timestamp 是否由自动化真实写入。",
         "重跑自动化，避免使用上一交易日或异常超前数据。"
@@ -126,12 +100,35 @@
       ]
     },
     {
-      "id": "topics",
-      "label": "专题跟踪",
-      "file": "data/topics.json",
+      "id": "postmarket",
+      "label": "盘后复盘",
+      "file": "data/postmarket.json",
       "due": "15:30",
-      "deadline": "2026-07-31T18:30:00+08:00",
-      "timestamp": "2026-07-31T17:49:47+08:00",
+      "deadline": "2026-08-03T16:30:00+08:00",
+      "timestamp": "2026-07-31T17:48:46+08:00",
+      "status": "late",
+      "blocking": false,
+      "action": "重跑该自动化",
+      "reason": "时间戳不是当前交易日：2026-07-31T17:48:46+08:00",
+      "failure_type": "stale_or_time_anomaly",
+      "diagnosis": "时间戳不是当前交易日：2026-07-31T17:48:46+08:00",
+      "next_actions": [
+        "核对文件 timestamp 是否由自动化真实写入。",
+        "重跑自动化，避免使用上一交易日或异常超前数据。"
+      ],
+      "related_sources": [
+        "ths_sina_or_akshare_quote_decode",
+        "eastmoney_hk_akshare",
+        "tencent_hk_auction_http"
+      ]
+    },
+    {
+      "id": "evening",
+      "label": "晚间舆情",
+      "file": "data/evening-sentiment.json",
+      "due": "20:00",
+      "deadline": "2026-08-03T21:30:00+08:00",
+      "timestamp": "2026-08-03T22:07:04+08:00",
       "status": "ok",
       "blocking": false,
       "action": "正常使用",
@@ -142,22 +139,45 @@
         "正常读取；仍需结合数据质量卡判断是否降权。"
       ],
       "related_sources": []
+    },
+    {
+      "id": "topics",
+      "label": "专题跟踪",
+      "file": "data/topics.json",
+      "due": "15:30",
+      "deadline": "2026-08-03T18:30:00+08:00",
+      "timestamp": "2026-07-31T17:49:47+08:00",
+      "status": "late",
+      "blocking": false,
+      "action": "重跑该自动化",
+      "reason": "时间戳不是当前交易日：2026-07-31T17:49:47+08:00",
+      "failure_type": "stale_or_time_anomaly",
+      "diagnosis": "时间戳不是当前交易日：2026-07-31T17:49:47+08:00",
+      "next_actions": [
+        "核对文件 timestamp 是否由自动化真实写入。",
+        "重跑自动化，避免使用上一交易日或异常超前数据。"
+      ],
+      "related_sources": [
+        "ths_sina_or_akshare_quote_decode",
+        "eastmoney_hk_akshare",
+        "tencent_hk_auction_http"
+      ]
     }
   ],
   "next_session_readiness": {
-    "target_trade_date": "2026-08-02",
+    "target_trade_date": "2026-08-03",
     "status": "overdue",
-    "summary": "2026-08-02 有 6 个产出已过窗口未更新。",
+    "summary": "2026-08-03 有 5 个产出已过窗口未更新。",
     "pending_count": 0,
-    "ready_count": 1,
-    "overdue_count": 6,
+    "ready_count": 2,
+    "overdue_count": 5,
     "items": [
       {
         "id": "premarket",
         "label": "盘前简报",
         "file": "data/premarket.json",
         "due": "09:25",
-        "deadline": "2026-08-02T09:45:00+08:00",
+        "deadline": "2026-08-03T09:45:00+08:00",
         "timestamp": "2026-07-31T09:33:21+08:00",
         "file_date": "2026-07-31",
         "status": "overdue",
@@ -169,7 +189,7 @@
         "label": "盘中全景",
         "file": "data/intraday.json",
         "due": "15:05",
-        "deadline": "2026-08-02T16:35:00+08:00",
+        "deadline": "2026-08-03T16:35:00+08:00",
         "timestamp": "2026-07-31T17:48:46+08:00",
         "file_date": "2026-07-31",
         "status": "overdue",
@@ -181,19 +201,19 @@
         "label": "盘中异动",
         "file": "data/alert.json",
         "due": "15:00",
-        "deadline": "2026-08-02T15:05:00+08:00",
-        "timestamp": "2026-07-31T16:24:46+08:00",
-        "file_date": "2026-07-31",
-        "status": "overdue",
-        "action": "需要重跑",
-        "reason": "目标交易日尚未产出：当前文件日期 2026-07-31"
+        "deadline": "2026-08-03T15:05:00+08:00",
+        "timestamp": "2026-08-03T15:15:38+08:00",
+        "file_date": "2026-08-03",
+        "status": "ready",
+        "action": "已产出",
+        "reason": "目标交易日文件已更新"
       },
       {
         "id": "midday",
         "label": "午盘分析",
         "file": "data/midday.json",
         "due": "11:30",
-        "deadline": "2026-08-02T12:00:00+08:00",
+        "deadline": "2026-08-03T12:00:00+08:00",
         "timestamp": "2026-07-31T11:34:30+08:00",
         "file_date": "2026-07-31",
         "status": "overdue",
@@ -205,7 +225,7 @@
         "label": "盘后复盘",
         "file": "data/postmarket.json",
         "due": "15:30",
-        "deadline": "2026-08-02T16:30:00+08:00",
+        "deadline": "2026-08-03T16:30:00+08:00",
         "timestamp": "2026-07-31T17:48:46+08:00",
         "file_date": "2026-07-31",
         "status": "overdue",
@@ -217,9 +237,9 @@
         "label": "晚间舆情",
         "file": "data/evening-sentiment.json",
         "due": "20:00",
-        "deadline": "2026-08-02T21:30:00+08:00",
-        "timestamp": "2026-08-02T20:00:29+08:00",
-        "file_date": "2026-08-02",
+        "deadline": "2026-08-03T21:30:00+08:00",
+        "timestamp": "2026-08-03T22:07:04+08:00",
+        "file_date": "2026-08-03",
         "status": "ready",
         "action": "已产出",
         "reason": "目标交易日文件已更新"
@@ -229,7 +249,7 @@
         "label": "专题跟踪",
         "file": "data/topics.json",
         "due": "15:30",
-        "deadline": "2026-08-02T18:30:00+08:00",
+        "deadline": "2026-08-03T18:30:00+08:00",
         "timestamp": "2026-07-31T17:49:47+08:00",
         "file_date": "2026-07-31",
         "status": "overdue",

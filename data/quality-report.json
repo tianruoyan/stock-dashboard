@@ -1,18 +1,9 @@
 {
-  "timestamp": "2026-08-02T20:06:07+08:00",
-  "current_signal_date": "2026-08-02",
+  "timestamp": "2026-08-03T22:07:48+08:00",
+  "current_signal_date": "2026-08-03",
   "status": "degraded",
-  "summary": "发现 150 个降级/需复核项（142 个价格/行情复核，8 个背景复核），核心结论可看但必须按影响分层使用。",
+  "summary": "发现 149 个降级/需复核项（143 个价格/行情复核，6 个背景复核），核心结论可看但必须按影响分层使用。",
   "issues": [
-    {
-      "severity": "warning",
-      "file": "alert.json",
-      "path": "",
-      "code": "stale_timestamp",
-      "message": "时间戳不是当前交易日：2026-07-31T16:24:46+08:00",
-      "impact_level": "background_review",
-      "decision_action": "仅作背景复核，不单独阻断交易判断"
-    },
     {
       "severity": "warning",
       "file": "intraday.json",
@@ -123,6 +114,15 @@
     },
     {
       "severity": "warning",
+      "file": "source-health.json",
+      "path": "",
+      "code": "stale_timestamp",
+      "message": "时间戳不是当前交易日：2026-08-02T20:00:29+08:00",
+      "impact_level": "price_review",
+      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
+    },
+    {
+      "severity": "warning",
       "file": "topics.json",
       "path": "",
       "code": "stale_timestamp",
@@ -132,19 +132,19 @@
     },
     {
       "severity": "warning",
-      "file": "alert.json",
-      "path": "",
-      "code": "historical_alert_without_trusted_source",
-      "message": "盘中异动缺少可信源证明；当前阶段只降权参考，不阻断整站发布",
+      "file": "watchlist-quotes.json",
+      "path": "stocks[1]",
+      "code": "watchlist_limit_down_like",
+      "message": "科创半导体ETF华夏 接近跌停 -9.89，需确认是否真实",
       "impact_level": "price_review",
       "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
     },
     {
       "severity": "warning",
-      "file": "alert.json",
-      "path": "quote_audit.sanity_checks",
-      "code": "historical_alert_not_cross_verified",
-      "message": "行情污染源仍降级，历史 alert 未交叉验证，只降权复盘参考",
+      "file": "watchlist-quotes.json",
+      "path": "stocks[18]",
+      "code": "watchlist_limit_down_like",
+      "message": "中微公司 接近跌停 -9.93，需确认是否真实",
       "impact_level": "price_review",
       "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
     },
@@ -1338,15 +1338,6 @@
     },
     {
       "severity": "warning",
-      "file": "automation-health.json",
-      "path": "",
-      "code": "stale_automation_health",
-      "message": "automation-health 日期不是当前交易日：2026-07-31",
-      "impact_level": "background_review",
-      "decision_action": "仅作背景复核，不单独阻断交易判断"
-    },
-    {
-      "severity": "warning",
       "file": "theme-shifts.json",
       "path": "",
       "code": "stale_theme_shifts",
@@ -1356,17 +1347,6 @@
     }
   ],
   "action_plan": [
-    {
-      "priority": 2,
-      "impact_level": "price_review",
-      "label": "二次行情复核",
-      "file": "alert.json",
-      "code": "historical_alert_without_trusted_source",
-      "problem": "盘中异动缺少可信源证明；当前阶段只降权参考，不阻断整站发布",
-      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核",
-      "next_step": "用第二行情源复核涨跌幅、quote_time 和代表股方向；未确认前只做验证。",
-      "unblock_condition": "price_review=0 或相关来源标记 trusted/cross verified。"
-    },
     {
       "priority": 2,
       "impact_level": "price_review",
@@ -1383,33 +1363,22 @@
       "impact_level": "price_review",
       "label": "二次行情复核",
       "file": "source-health.json",
-      "code": "source_degraded",
-      "problem": "A股补充行情源解码异常，盘中异动和个股涨跌幅需以已审计源复核。",
+      "code": "stale_timestamp",
+      "problem": "时间戳不是当前交易日：2026-08-02T20:00:29+08:00",
       "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核",
       "next_step": "用第二行情源复核涨跌幅、quote_time 和代表股方向；未确认前只做验证。",
       "unblock_condition": "price_review=0 或相关来源标记 trusted/cross verified。"
     },
     {
-      "priority": 4,
-      "impact_level": "background_review",
-      "label": "背景来源复核",
-      "file": "alert.json",
-      "code": "stale_timestamp",
-      "problem": "时间戳不是当前交易日：2026-07-31T16:24:46+08:00",
-      "decision_action": "仅作背景复核，不单独阻断交易判断",
-      "next_step": "补官方/交易所/公司公告来源；未补齐前不升级为核心依据。",
-      "unblock_condition": "官方来源补齐或确认不影响交易触发。"
-    },
-    {
-      "priority": 4,
-      "impact_level": "background_review",
-      "label": "背景来源复核",
-      "file": "automation-health.json",
-      "code": "stale_automation_health",
-      "problem": "automation-health 日期不是当前交易日：2026-07-31",
-      "decision_action": "仅作背景复核，不单独阻断交易判断",
-      "next_step": "补官方/交易所/公司公告来源；未补齐前不升级为核心依据。",
-      "unblock_condition": "官方来源补齐或确认不影响交易触发。"
+      "priority": 2,
+      "impact_level": "price_review",
+      "label": "二次行情复核",
+      "file": "watchlist-quotes.json",
+      "code": "watchlist_limit_down_like",
+      "problem": "科创半导体ETF华夏 接近跌停 -9.89，需确认是否真实",
+      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核",
+      "next_step": "用第二行情源复核涨跌幅、quote_time 和代表股方向；未确认前只做验证。",
+      "unblock_condition": "price_review=0 或相关来源标记 trusted/cross verified。"
     },
     {
       "priority": 4,
@@ -1421,16 +1390,38 @@
       "decision_action": "仅作背景复核，不单独阻断交易判断",
       "next_step": "补官方/交易所/公司公告来源；未补齐前不升级为核心依据。",
       "unblock_condition": "官方来源补齐或确认不影响交易触发。"
+    },
+    {
+      "priority": 4,
+      "impact_level": "background_review",
+      "label": "背景来源复核",
+      "file": "midday.json",
+      "code": "stale_timestamp",
+      "problem": "时间戳不是当前交易日：2026-07-31T11:34:30+08:00",
+      "decision_action": "仅作背景复核，不单独阻断交易判断",
+      "next_step": "补官方/交易所/公司公告来源；未补齐前不升级为核心依据。",
+      "unblock_condition": "官方来源补齐或确认不影响交易触发。"
+    },
+    {
+      "priority": 4,
+      "impact_level": "background_review",
+      "label": "背景来源复核",
+      "file": "postmarket.json",
+      "code": "stale_timestamp",
+      "problem": "时间戳不是当前交易日：2026-07-31T17:48:46+08:00",
+      "decision_action": "仅作背景复核，不单独阻断交易判断",
+      "next_step": "补官方/交易所/公司公告来源；未补齐前不升级为核心依据。",
+      "unblock_condition": "官方来源补齐或确认不影响交易触发。"
     }
   ],
   "counts": {
     "critical": 0,
-    "warning": 150,
+    "warning": 149,
     "info": 0,
     "blocking": 0,
-    "price_review": 142,
+    "price_review": 143,
     "signal_review": 0,
-    "background_review": 8
+    "background_review": 6
   },
   "rules": [
     "异常文本、JSON解析失败、必需文件缺失为 critical。",

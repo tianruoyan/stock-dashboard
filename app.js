@@ -673,8 +673,24 @@ function inferPositionRange(style, decisionGate = null) {
   return { range: "30%-50%", note: "跟随核心结论：方向未明，保持机动。" };
 }
 
+function parseTimestampMs(value) {
+  if (!value) return 0;
+  const raw = String(value).trim();
+  const compact = raw.match(/^(\d{4})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})$/);
+  if (compact) {
+    const [, y, m, d, hh, mm, ss] = compact;
+    return Date.parse(`${y}-${m}-${d}T${hh}:${mm}:${ss}+08:00`) || 0;
+  }
+  const slash = raw.match(/^(\d{4})\/(\d{2})\/(\d{2})\s+(\d{2}):(\d{2}):(\d{2})$/);
+  if (slash) {
+    const [, y, m, d, hh, mm, ss] = slash;
+    return Date.parse(`${y}-${m}-${d}T${hh}:${mm}:${ss}+08:00`) || 0;
+  }
+  return Date.parse(raw) || 0;
+}
+
 function latestTimestamp(items) {
-  return items.map(d => d?.timestamp).filter(Boolean).sort((a, b) => Date.parse(b) - Date.parse(a))[0] || "";
+  return items.map(d => d?.timestamp).filter(Boolean).sort((a, b) => parseTimestampMs(b) - parseTimestampMs(a))[0] || "";
 }
 
 function currentDayData(data) {
@@ -2145,7 +2161,7 @@ function exactStockQuote(stock, data) {
   visit(data, data.timestamp || "");
   matches.sort((a, b) => {
     if (a.codeMatched !== b.codeMatched) return a.codeMatched ? -1 : 1;
-    return (Date.parse(b.quoteTime || "") || 0) - (Date.parse(a.quoteTime || "") || 0);
+    return parseTimestampMs(b.quoteTime) - parseTimestampMs(a.quoteTime);
   });
   return matches[0] || null;
 }
