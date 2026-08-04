@@ -1743,7 +1743,7 @@
         "secondary_source": "富途行情",
         "secondary_verification": {
           "state": "insufficient_precision",
-          "checked_at": "2026-08-04T13:49:25+08:00",
+          "checked_at": "2026-08-04T13:50:29+08:00",
           "source": "富途行情",
           "reason": "至少2只代表股已识别，但外部行情无法精确对齐触发时点；维持观察，不误判为行情冲突。",
           "representatives": [
@@ -1884,7 +1884,7 @@
         "secondary_source": "富途行情",
         "secondary_verification": {
           "state": "insufficient_precision",
-          "checked_at": "2026-08-04T13:49:25+08:00",
+          "checked_at": "2026-08-04T13:50:29+08:00",
           "source": "富途行情",
           "reason": "至少2只代表股已识别，但外部行情无法精确对齐触发时点；维持观察，不误判为行情冲突。",
           "representatives": [
@@ -2025,7 +2025,7 @@
         "secondary_source": "富途行情",
         "secondary_verification": {
           "state": "insufficient_precision",
-          "checked_at": "2026-08-04T13:49:25+08:00",
+          "checked_at": "2026-08-04T13:50:29+08:00",
           "source": "富途行情",
           "reason": "至少2只代表股已识别，但外部行情无法精确对齐触发时点；维持观察，不误判为行情冲突。",
           "representatives": [
@@ -2452,7 +2452,7 @@
         "secondary_source": "富途行情",
         "secondary_verification": {
           "state": "insufficient_precision",
-          "checked_at": "2026-08-04T13:49:25+08:00",
+          "checked_at": "2026-08-04T13:50:29+08:00",
           "source": "富途行情",
           "reason": "至少2只代表股已识别，但外部行情无法精确对齐触发时点；维持观察，不误判为行情冲突。",
           "representatives": [
@@ -2593,7 +2593,7 @@
         "secondary_source": "富途行情",
         "secondary_verification": {
           "state": "insufficient_precision",
-          "checked_at": "2026-08-04T13:49:25+08:00",
+          "checked_at": "2026-08-04T13:50:29+08:00",
           "source": "富途行情",
           "reason": "至少2只代表股已识别，但外部行情无法精确对齐触发时点；维持观察，不误判为行情冲突。",
           "representatives": [
@@ -2713,13 +2713,13 @@
       "is_old_economy": false,
       "source_watch_id": "电子布",
       "quote_audit": {
-        "provider": "本地盘中监控",
+        "provider": "本地盘中监控、富途行情（腾讯备用）",
         "quote_time": "2026-08-04T13:48:43+08:00",
         "pct_field": "3分钟涨跌幅",
         "sample_count": 3,
         "max_abs_leader_change_pct": 0.7232,
         "sanity_checks": {
-          "cross_source_verified": false,
+          "cross_source_verified": true,
           "price_move_valid": false,
           "volume_valid": true,
           "direction_ratio_valid": true,
@@ -2730,7 +2730,75 @@
         "direction_ratio": 1.0,
         "volume_ratio": 5.4829,
         "relative_volume_vs_yesterday": 1.1943,
-        "missing_confirmation": "等待富途行情按触发时点交叉核验；通过前只作候选或观察，不作为确认交易信号。"
+        "missing_confirmation": "等待富途行情按触发时点交叉核验；通过前只作候选或观察，不作为确认交易信号。",
+        "secondary_source": "富途行情",
+        "secondary_verification": {
+          "state": "passed",
+          "checked_at": "2026-08-04T13:50:29+08:00",
+          "source": "富途行情",
+          "reason": "富途行情已按代表股触发时点对齐，方向和价格变化相互支持。",
+          "representatives": [
+            {
+              "股票": "国际复材",
+              "代码": "301526.SZ",
+              "监控涨跌幅": 0.7232,
+              "富途涨跌幅": 0.7897,
+              "腾讯涨跌幅": 0.2954,
+              "起始分钟": "13:45:45",
+              "结束分钟": "13:48:45",
+              "对齐方式": "逐笔行情同一时点对齐",
+              "时间偏差秒": 1.422,
+              "可比涨跌范围": [
+                0.3617,
+                0.7897
+              ],
+              "方向一致": true,
+              "幅度一致": true,
+              "复核结论": "一致"
+            },
+            {
+              "股票": "宏和科技",
+              "代码": "603256.SH",
+              "监控涨跌幅": 0.0,
+              "富途涨跌幅": 0.0,
+              "腾讯涨跌幅": 0.0,
+              "起始分钟": "13:45:44",
+              "结束分钟": "13:48:43",
+              "对齐方式": "逐笔行情同一时点对齐",
+              "时间偏差秒": 1.112,
+              "可比涨跌范围": [
+                0.0,
+                0.0
+              ],
+              "方向一致": false,
+              "幅度一致": false,
+              "复核结论": "行情精度不足"
+            },
+            {
+              "股票": "长海股份",
+              "代码": "300196.SZ",
+              "监控涨跌幅": 0.1217,
+              "富途涨跌幅": 0.0608,
+              "腾讯涨跌幅": 0.0608,
+              "起始分钟": "13:45:45",
+              "结束分钟": "13:48:42",
+              "对齐方式": "逐笔行情同一时点对齐",
+              "时间偏差秒": 1.578,
+              "可比涨跌范围": [
+                0.0,
+                0.1217
+              ],
+              "方向一致": true,
+              "幅度一致": true,
+              "复核结论": "一致"
+            }
+          ],
+          "window_minutes": 3,
+          "direction_agreement_ratio": 1.0,
+          "magnitude_agreement_ratio": 1.0,
+          "fingerprint": "3818eb77ef2f5a5974b3",
+          "verifier_version": "futu-opend-2026-07-27.3"
+        }
       },
       "source_status": "degraded_partial",
       "valid_until": "2026-08-04T13:53:43+08:00",
@@ -2744,12 +2812,12 @@
   "quote_audit": {
     "provider": "本地盘中监控、富途行情（腾讯备用）",
     "quote_time": "2026-08-04T13:48:43+08:00",
-    "pct_field": "各异动卡标注的3分钟涨跌幅",
+    "pct_field": "各异动卡标注的短周期涨跌幅",
     "sanity_checks": {
       "sample_count": 20,
       "max_abs_leader_change_pct": 5.63,
       "cross_source_verified": false,
-      "verified_alert_count": 7
+      "verified_alert_count": 8
     }
   },
   "note": "异动来自本地短周期监控；候选卡须经富途行情按触发时点复核后才能升级。"
