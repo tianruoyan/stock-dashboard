@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-08-04T09:39:14+08:00",
+  "timestamp": "2026-08-04T09:43:14+08:00",
   "source_status": "monitor_live",
   "alerts": [
     {
@@ -1716,7 +1716,7 @@
         "secondary_source": "富途行情",
         "secondary_verification": {
           "state": "insufficient_precision",
-          "checked_at": "2026-08-04T09:41:11+08:00",
+          "checked_at": "2026-08-04T09:43:15+08:00",
           "source": "富途行情",
           "reason": "至少2只代表股已识别，但外部行情无法精确对齐触发时点；维持观察，不误判为行情冲突。",
           "representatives": [
@@ -1787,14 +1787,99 @@
       "confirmation_level": "candidate",
       "limit_up_count": 0,
       "limit_down_count": 0
+    },
+    {
+      "id": "monitor-20260804-094301-480d3dd30784",
+      "time": "2026-08-04T09:43:01+08:00",
+      "sector": "光模块/CPO",
+      "type": "小登题材短周期拉动",
+      "reason": "触发规则：小登股异动：板块内出现≥2只涨停\n异动性质：观察性拉动。有短线拉动，但尚未同时满足上涨攻势确认条件。\n结论：光模块/CPO触发观察性异动，强度不足以直接定义为拉起。\n题材：光模块/CPO，当前动态龙头：新易盛 / 光库科技 / 天孚通信。\n强度：底池样本 3分钟涨跌幅 0.69%，上涨占比 100%，强势股 1 只。\n成交：3分钟放大 6.28x，较昨同期 6.85x，有后排扩散。\n当前动态龙头分数：新易盛(65.7)，光库科技(53.8)，天孚通信(53.5)。\n主要贡献因子：新易盛: 3分钟涨跌幅 0.96%，成交放大 6.69x，日内涨幅 7.35%；光库科技: 3分钟涨跌幅 0.74%，成交放大 5.09x，日内涨幅 13.31%；天孚通信: 3分钟涨跌幅 0.72%，成交放大 5.09x，日内涨幅 10.41%\n观察点：龙头是否维持日内高位、后排是否继续补涨、成交是否继续放大。\n风险提示：这是题材强度分析，不构成买卖建议。",
+      "leaders": [
+        {
+          "name": "新易盛",
+          "code": "300502",
+          "change_pct": 0.9642,
+          "quote_time": "2026-08-04T09:43:01.645164",
+          "score": 65.69,
+          "factors": [
+            "3分钟+0.96%",
+            "成交放大6.69x",
+            "日内+7.35%"
+          ]
+        },
+        {
+          "name": "光库科技",
+          "code": "300620",
+          "change_pct": 0.7425,
+          "quote_time": "2026-08-04T09:43:01.645164",
+          "score": 53.79,
+          "factors": [
+            "3分钟+0.74%",
+            "成交放大5.09x",
+            "日内+13.31%"
+          ]
+        },
+        {
+          "name": "天孚通信",
+          "code": "300394",
+          "change_pct": 0.7176,
+          "quote_time": "2026-08-04T09:43:01.645164",
+          "score": 53.49,
+          "factors": [
+            "3分钟+0.72%",
+            "成交放大5.09x",
+            "日内+10.41%"
+          ]
+        }
+      ],
+      "signal_type": "机会观察",
+      "is_old_economy": false,
+      "source_watch_id": "光模块/CPO",
+      "quote_audit": {
+        "provider": "本地盘中监控、富途行情（腾讯备用）",
+        "quote_time": "2026-08-04T09:43:01+08:00",
+        "pct_field": "3分钟涨跌幅",
+        "sample_count": 3,
+        "max_abs_leader_change_pct": 0.9642,
+        "sanity_checks": {
+          "cross_source_verified": false,
+          "price_move_valid": false,
+          "volume_valid": true,
+          "direction_ratio_valid": true,
+          "limit_down_count_valid": false,
+          "limit_up_count_valid": true
+        },
+        "board_3m_change_pct": 0.6904,
+        "direction_ratio": 1.0,
+        "volume_ratio": 6.2826,
+        "relative_volume_vs_yesterday": 6.8544,
+        "missing_confirmation": "等待富途行情按触发时点交叉核验；通过前只作候选或观察，不作为确认交易信号。",
+        "secondary_source": "富途行情",
+        "secondary_verification": {
+          "state": "pending",
+          "checked_at": "2026-08-04T09:43:15+08:00",
+          "source": "富途行情",
+          "reason": "等待触发分钟行情完整落盘。",
+          "representatives": [],
+          "fingerprint": "c314c84c1283f5460270",
+          "verifier_version": "futu-opend-2026-07-27.3"
+        }
+      },
+      "source_status": "degraded_partial",
+      "valid_until": "2026-08-04T09:48:01+08:00",
+      "trigger_rule": "小登股异动：板块内出现≥2只涨停",
+      "alert_class": "opportunity",
+      "confirmation_level": "candidate",
+      "limit_up_count": 2,
+      "limit_down_count": 0
     }
   ],
   "quote_audit": {
     "provider": "本地盘中监控、富途行情（腾讯备用）",
-    "quote_time": "2026-08-04T09:38:04+08:00",
+    "quote_time": "2026-08-04T09:43:01+08:00",
     "pct_field": "各异动卡标注的短周期涨跌幅",
     "sanity_checks": {
-      "sample_count": 14,
+      "sample_count": 15,
       "max_abs_leader_change_pct": 4.7389,
       "cross_source_verified": false,
       "verified_alert_count": 2
