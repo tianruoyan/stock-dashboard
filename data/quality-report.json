@@ -1,8 +1,8 @@
 {
-  "timestamp": "2026-08-04T10:08:51+08:00",
+  "timestamp": "2026-08-04T10:10:12+08:00",
   "current_signal_date": "2026-08-04",
   "status": "degraded",
-  "summary": "发现 139 个降级/需复核项（137 个价格/行情复核，3 个背景复核），核心结论可看但必须按影响分层使用。",
+  "summary": "发现 140 个降级/需复核项（138 个价格/行情复核，3 个背景复核），核心结论可看但必须按影响分层使用。",
   "issues": [
     {
       "severity": "warning",
@@ -1263,6 +1263,15 @@
       "message": "eastmoney_concept_intraday_20260731_1104: 请求RemoteDisconnected；保留10:49同日上午最后有效概念榜，不将其冒充11:00当前值。",
       "impact_level": "price_review",
       "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
+    },
+    {
+      "severity": "warning",
+      "file": "cross-file",
+      "path": "光库科技",
+      "code": "stock_pct_cross_file_conflict",
+      "message": "光库科技 跨文件涨跌幅差异过大：alert.json 0.7425% vs intraday.json 13.3%",
+      "impact_level": "price_review",
+      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
     }
   ],
   "action_plan": [
@@ -1273,6 +1282,17 @@
       "file": "alert.json",
       "code": "historical_alert_without_trusted_source",
       "problem": "盘中异动缺少可信源证明；当前阶段只降权参考，不阻断整站发布",
+      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核",
+      "next_step": "用第二行情源复核涨跌幅、quote_time 和代表股方向；未确认前只做验证。",
+      "unblock_condition": "price_review=0 或相关来源标记 trusted/cross verified。"
+    },
+    {
+      "priority": 2,
+      "impact_level": "price_review",
+      "label": "二次行情复核",
+      "file": "cross-file",
+      "code": "stock_pct_cross_file_conflict",
+      "problem": "光库科技 跨文件涨跌幅差异过大：alert.json 0.7425% vs intraday.json 13.3%",
       "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核",
       "next_step": "用第二行情源复核涨跌幅、quote_time 和代表股方向；未确认前只做验证。",
       "unblock_condition": "price_review=0 或相关来源标记 trusted/cross verified。"
@@ -1320,25 +1340,14 @@
       "decision_action": "仅作背景复核，不单独阻断交易判断",
       "next_step": "补官方/交易所/公司公告来源；未补齐前不升级为核心依据。",
       "unblock_condition": "官方来源补齐或确认不影响交易触发。"
-    },
-    {
-      "priority": 4,
-      "impact_level": "background_review",
-      "label": "背景来源复核",
-      "file": "postmarket.json",
-      "code": "stale_timestamp",
-      "problem": "时间戳不是当前交易日：2026-08-03T22:12:45+08:00",
-      "decision_action": "仅作背景复核，不单独阻断交易判断",
-      "next_step": "补官方/交易所/公司公告来源；未补齐前不升级为核心依据。",
-      "unblock_condition": "官方来源补齐或确认不影响交易触发。"
     }
   ],
   "counts": {
     "critical": 0,
-    "warning": 139,
+    "warning": 140,
     "info": 1,
     "blocking": 0,
-    "price_review": 137,
+    "price_review": 138,
     "signal_review": 0,
     "background_review": 3
   },
