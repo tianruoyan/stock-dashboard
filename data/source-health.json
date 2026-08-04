@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-08-04T13:35:00+08:00",
+  "timestamp": "2026-08-04T14:05:00+08:00",
   "sources": {
     "tencent_http": {
       "status": "ok",
@@ -3799,7 +3799,7 @@
     },
     "futu_minute_alert_verifier": {
       "status": "ok",
-      "last_check": "2026-08-04T14:05:40+08:00",
+      "last_check": "2026-08-04T14:06:44+08:00",
       "usage": "盘中异动代表股第二行情源交叉验证",
       "detail": "富途行情按触发时点复核20张异动卡：6张相互支持、0张明显冲突、14张精度不足；精度不足只维持观察，不计作冲突。",
       "sample_count": 60,
@@ -5323,10 +5323,77 @@
       "detail": "没有当前且经本地规范化的机构观点，未引用原始长桥输出。",
       "sample_count": 0,
       "errors": []
+    },
+    "tencent_a_intraday_20260804_1401": {
+      "status": "ok",
+      "last_check": "2026-08-04T14:05:00+08:00",
+      "market_time": "2026-08-04T14:01:57+08:00",
+      "usage": "五大指数、98行业及全部盘中专项",
+      "detail": "指数行情时点14:01:00，重点样本时点14:01:30至14:01:57。",
+      "sample_count": 90,
+      "errors": []
+    },
+    "eastmoney_structure_intraday_20260804_1401": {
+      "status": "ok",
+      "last_check": "2026-08-04T14:05:00+08:00",
+      "market_time": "2026-08-04T14:01:00+08:00",
+      "usage": "非ST涨停、跌停、炸板、连板、20cm与行业分布",
+      "detail": "涨停134、跌停0、炸板8；最高7板、13只20cm。",
+      "sample_count": 142,
+      "errors": []
+    },
+    "eastmoney_concept_intraday_20260804_1401": {
+      "status": "degraded_persistent",
+      "last_check": "2026-08-04T14:05:00+08:00",
+      "market_time": "2026-08-04T14:01:00+08:00",
+      "usage": "概念排行当前复采",
+      "detail": "代理连接被远端关闭；连续三个有效窗口失败，保留11:04同交易日最后有效概念榜并显著降权。",
+      "sample_count": 0,
+      "errors": [
+        "ProxyError: Remote end closed connection without response"
+      ]
+    },
+    "tencent_hk_intraday_20260804_1346": {
+      "status": "ok_delayed",
+      "last_check": "2026-08-04T14:05:00+08:00",
+      "market_time": "2026-08-04T13:46:00+08:00",
+      "usage": "恒指、恒生科技和重点A/H映射",
+      "detail": "免费行情约延迟15分钟，只作方向映射。",
+      "sample_count": 14,
+      "errors": [
+        "港股免费行情约延迟15分钟"
+      ]
+    },
+    "intraday_recovery_state_20260804_1400": {
+      "status": "ok",
+      "last_check": "2026-08-04T13:59:57+08:00",
+      "usage": "断网恢复状态核验",
+      "detail": "恢复状态为数据正常、failure_count=0。",
+      "sample_count": 1,
+      "errors": []
+    },
+    "v2_cockpit_context_20260804_1400": {
+      "status": "stale_degraded",
+      "last_check": "2026-08-04T14:05:00+08:00",
+      "usage": "治理层风险和用户资产边界",
+      "detail": "最新可审计快照仍为8月3日收盘，只用于风险边界。",
+      "sample_count": 0,
+      "errors": [
+        "governed snapshot stale",
+        "no user-confirmed assets migrated"
+      ]
+    },
+    "longbridge_institutional_shadow_20260804_1400": {
+      "status": "not_used_no_current_normalized_output",
+      "last_check": "2026-08-04T14:05:00+08:00",
+      "usage": "长桥机构分析边界复核",
+      "detail": "没有当前且经本地规范化的机构观点，未引用原始长桥输出。",
+      "sample_count": 0,
+      "errors": []
     }
   },
   "last_publish_attempt": "pending_20260717_0830_premarket_publish",
-  "status": "degraded_fallback_ok",
+  "status": "degraded",
   "last_error": "午盘概念排行接口连续两次Empty reply；未编造午盘概念宽度。腾讯A/H行情和东方财富涨跌停结构有效，可支撑当前主要结论。V2受治理快照仍为8月3日收盘，未用于今天实时机会。",
   "tencent_a_close_postmarket_20260716": {
     "status": "ok",
@@ -5507,8 +5574,8 @@
     "sample_count": 15,
     "errors": []
   },
-  "overall_status": "degraded",
-  "last_codex_note": "A/H正式收盘核心行情、全A宽度、涨跌停结构和14:54-15:00尾盘完整；保留15:05缺口，不伪造历史时点。",
+  "overall_status": "核心A股行情与结构池正常，概念排行持续降级，港股行情延迟",
+  "last_codex_note": "14:00更新采用14:01可核验A股行情和结构池；概念榜只保留11:04同日最后有效快照并显著降权，未补造当前概念排行。",
   "eastmoney_structure_pools_intraday_1000_20260717": {
     "status": "ok",
     "last_check": "2026-07-17T10:02:40+08:00",
@@ -7509,7 +7576,15 @@
       "等待下一次V2受治理捕获"
     ]
   },
-  "current_run_summary": "11:30午盘A/H行情、行业和涨跌停/炸板结构有效；东方财富概念排行连续两次Empty reply，保留11:04最后有效快照并降权。mootdx未安装、V2治理快照陈旧，总体维持degraded。",
+  "current_run_summary": {
+    "status": "degraded_noncritical",
+    "last_check": "2026-08-04T14:05:00+08:00",
+    "detail": "A股指数、行业、专项样本与涨跌停结构有效；东方财富概念排行连续三个有效窗口失败，港股免费行情延迟约15分钟。",
+    "errors": [
+      "东方财富概念排行代理连接被远端关闭",
+      "港股免费行情约延迟15分钟"
+    ]
+  },
   "tencent_a_midday_20260804_1134": {
     "status": "ok",
     "last_check": "2026-08-04T11:35:00+08:00",
@@ -7568,6 +7643,73 @@
     "last_check": "2026-08-04T11:35:00+08:00",
     "usage": "规范化机构研究补充",
     "detail": "本轮没有当前且已通过本地shadow规范化的长桥机构观点，未调用账户、交易、自选或原始长桥行情输出。",
+    "sample_count": 0,
+    "errors": []
+  },
+  "tencent_a_intraday_20260804_1401": {
+    "status": "ok",
+    "last_check": "2026-08-04T14:05:00+08:00",
+    "market_time": "2026-08-04T14:01:57+08:00",
+    "usage": "五大指数、98行业及全部盘中专项",
+    "detail": "指数行情时点14:01:00，重点样本时点14:01:30至14:01:57。",
+    "sample_count": 90,
+    "errors": []
+  },
+  "eastmoney_structure_intraday_20260804_1401": {
+    "status": "ok",
+    "last_check": "2026-08-04T14:05:00+08:00",
+    "market_time": "2026-08-04T14:01:00+08:00",
+    "usage": "非ST涨停、跌停、炸板、连板、20cm与行业分布",
+    "detail": "涨停134、跌停0、炸板8；最高7板、13只20cm。",
+    "sample_count": 142,
+    "errors": []
+  },
+  "eastmoney_concept_intraday_20260804_1401": {
+    "status": "degraded_persistent",
+    "last_check": "2026-08-04T14:05:00+08:00",
+    "market_time": "2026-08-04T14:01:00+08:00",
+    "usage": "概念排行当前复采",
+    "detail": "代理连接被远端关闭；连续三个有效窗口失败，保留11:04同交易日最后有效概念榜并显著降权，不将其冒充当前值。",
+    "sample_count": 0,
+    "errors": [
+      "ProxyError: Remote end closed connection without response"
+    ]
+  },
+  "tencent_hk_intraday_20260804_1346": {
+    "status": "ok_delayed",
+    "last_check": "2026-08-04T14:05:00+08:00",
+    "market_time": "2026-08-04T13:46:00+08:00",
+    "usage": "恒指、恒生科技和半导体、AI、医药、互联网、中兴H映射",
+    "detail": "2个港股指数与12只样本有效；免费行情约延迟15分钟，只作方向映射。",
+    "sample_count": 14,
+    "errors": [
+      "港股免费行情约延迟15分钟"
+    ]
+  },
+  "intraday_recovery_state_20260804_1400": {
+    "status": "ok",
+    "last_check": "2026-08-04T13:59:57+08:00",
+    "usage": "断网恢复状态核验",
+    "detail": "恢复状态为数据正常、failure_count=0；本轮按14:01当前行情产出。",
+    "sample_count": 1,
+    "errors": []
+  },
+  "v2_cockpit_context_20260804_1400": {
+    "status": "stale_degraded",
+    "last_check": "2026-08-04T14:05:00+08:00",
+    "usage": "治理层风险和用户资产边界",
+    "detail": "最新可审计快照仍为8月3日收盘，尚无已迁入用户确认资产，只用于权限和风险边界。",
+    "sample_count": 0,
+    "errors": [
+      "governed snapshot stale",
+      "no user-confirmed assets migrated"
+    ]
+  },
+  "longbridge_institutional_shadow_20260804_1400": {
+    "status": "not_used_no_current_normalized_output",
+    "last_check": "2026-08-04T14:05:00+08:00",
+    "usage": "长桥机构分析边界复核",
+    "detail": "没有当前且经本地规范化的机构观点，未引用原始长桥输出。",
     "sample_count": 0,
     "errors": []
   }
