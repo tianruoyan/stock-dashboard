@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-08-02T20:00:29+08:00",
+  "timestamp": "2026-08-04T08:39:00+08:00",
   "sources": {
     "tencent_http": {
       "status": "ok",
@@ -5063,7 +5063,7 @@
   },
   "last_publish_attempt": "pending_20260717_0830_premarket_publish",
   "status": "degraded_fallback_ok",
-  "last_error": "Longbridge未认证、港交所批量披露清单不可用；均已采用官方或权威替代源，不影响本轮P0结论。",
+  "last_error": "8:30日本/韩国早盘接口返回HTTP 429，未使用过期行情；Longbridge新闻详情连接重置，但报价、评级与新闻检索可用。将在9:15重新核验。",
   "tencent_a_close_postmarket_20260716": {
     "status": "ok",
     "last_check": "2026-07-16T15:18:57+08:00",
@@ -7064,5 +7064,45 @@
     "errors": [
       "15:05 analytical snapshot unavailable"
     ]
+  },
+  "longbridge_skill_0830_20260804": {
+    "status": "usable_with_degradation",
+    "purpose": "仅引用机构研究观点并做只读shadow规范化；未调用账户、持仓、订单或自选能力",
+    "usable": [
+      "美股重点标的报价",
+      "NVDA/MU机构评级",
+      "机构新闻检索"
+    ],
+    "degraded": [
+      "AMD/AVGO评级触发频率限制",
+      "新闻详情连接重置"
+    ],
+    "normalized_import": "accepted=1, review_required=0, rejected=0, mode=shadow_reference_only",
+    "checked_at": "2026-08-04T08:39:00+08:00"
+  },
+  "tencent_global_0830_20260804": {
+    "status": "usable",
+    "coverage": [
+      "美股三大指数收盘",
+      "重点美股科技股",
+      "港股上一交易日收盘"
+    ],
+    "checked_at": "2026-08-04T08:35:00+08:00"
+  },
+  "yahoo_japan_korea_0830_20260804": {
+    "status": "degraded",
+    "error": "HTTP 429",
+    "handling": "不使用过期数据，不生成日韩早盘伪事实，9:15重新核验",
+    "checked_at": "2026-08-04T08:36:00+08:00"
+  },
+  "official_web_scan_0830_20260804": {
+    "status": "usable",
+    "coverage": [
+      "Micron官方扩产",
+      "Intel与蓝思玻璃基板合作",
+      "商汤官方算力运营披露",
+      "AP隔夜美股复盘"
+    ],
+    "checked_at": "2026-08-04T08:38:00+08:00"
   }
 }
