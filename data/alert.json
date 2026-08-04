@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-08-04T09:47:15+08:00",
+  "timestamp": "2026-08-04T09:49:15+08:00",
   "source_status": "monitor_live",
   "alerts": [
     {
@@ -1998,11 +1998,69 @@
         "missing_confirmation": "等待富途行情按触发时点交叉核验；通过前只作候选或观察，不作为确认交易信号。",
         "secondary_source": "富途行情",
         "secondary_verification": {
-          "state": "pending",
-          "checked_at": "2026-08-04T09:47:21+08:00",
+          "state": "mismatch",
+          "checked_at": "2026-08-04T09:48:22+08:00",
           "source": "富途行情",
-          "reason": "等待触发分钟行情完整落盘。",
-          "representatives": [],
+          "reason": "对齐同一触发时点后，代表股方向或价格变化仍存在明显冲突，维持待确认/失效。",
+          "representatives": [
+            {
+              "股票": "长川科技",
+              "代码": "300604.SZ",
+              "监控涨跌幅": 3.517,
+              "富途涨跌幅": 1.4964,
+              "腾讯涨跌幅": 1.8142,
+              "起始分钟": "09:43:51",
+              "结束分钟": "09:46:51",
+              "对齐方式": "逐笔行情同一时点对齐",
+              "时间偏差秒": 0.816,
+              "可比涨跌范围": [
+                1.4537,
+                1.7305
+              ],
+              "方向一致": false,
+              "幅度一致": false,
+              "复核结论": "明显冲突"
+            },
+            {
+              "股票": "澜起科技",
+              "代码": "688008.SH",
+              "监控涨跌幅": 1.7459,
+              "富途涨跌幅": 0.3891,
+              "腾讯涨跌幅": 0.188,
+              "起始分钟": "09:43:51",
+              "结束分钟": "09:46:51",
+              "对齐方式": "逐笔行情同一时点对齐",
+              "时间偏差秒": 0.216,
+              "可比涨跌范围": [
+                0.3284,
+                0.5925
+              ],
+              "方向一致": false,
+              "幅度一致": false,
+              "复核结论": "明显冲突"
+            },
+            {
+              "股票": "华海诚科",
+              "代码": "688535.SH",
+              "监控涨跌幅": 1.0766,
+              "富途涨跌幅": 0.1775,
+              "腾讯涨跌幅": 0.1784,
+              "起始分钟": "09:43:52",
+              "结束分钟": "09:46:52",
+              "对齐方式": "逐笔行情同一时点对齐",
+              "时间偏差秒": 0.724,
+              "可比涨跌范围": [
+                -0.0708,
+                0.4265
+              ],
+              "方向一致": false,
+              "幅度一致": false,
+              "复核结论": "明显冲突"
+            }
+          ],
+          "window_minutes": 3,
+          "direction_agreement_ratio": 0.0,
+          "magnitude_agreement_ratio": 0.0,
           "fingerprint": "a53cd25632013c66c4c1",
           "verifier_version": "futu-opend-2026-07-27.3"
         }
@@ -2012,15 +2070,323 @@
       "trigger_rule": "小登风格轮动：同一大风格下≥3个关联板块同向急拉",
       "alert_class": "style",
       "confirmation_level": "candidate"
+    },
+    {
+      "id": "monitor-20260804-094803-a2a9125d3f5c",
+      "time": "2026-08-04T09:48:03+08:00",
+      "sector": "传说游资票走势关联",
+      "type": "小登题材短周期拉动",
+      "reason": "触发规则：小登股异动：3分钟平均涨跌幅≥1.5%，上涨占比≥70%，且成交放大≥5x；小登底池拉起预警：板块行情缺失时，底池3分钟平均涨幅≥1.5%，上涨占比≥70%，且成交放大≥5x\n异动性质：上涨攻势中的拉起。3分钟价格推进、上涨占比、强势股数量和前排日内状态同时确认。\n结论：传说游资票走势关联上涨攻势较强且扩散较好，中京电子领涨。\n题材：传说游资票走势关联，当前动态龙头：中京电子 / 太极实业 / 宏昌电子。\n强度：底池样本 3分钟涨跌幅 1.74%，上涨占比 100%，强势股 3 只。\n成交：3分钟放大 6.48x，较昨同期 5.27x，有后排扩散。\n当前动态龙头分数：中京电子(100.0)，太极实业(33.2)，宏昌电子(24.5)。\n主要贡献因子：中京电子: 3分钟涨跌幅 6.40%，成交放大 20.00x，日内涨幅 9.97%；太极实业: 3分钟涨跌幅 0.91%，成交放大 4.26x，日内涨幅 1.66%；宏昌电子: 3分钟涨跌幅 0.83%，成交放大 2.04x，日内涨幅 3.49%\n观察点：龙头是否维持日内高位、后排是否继续补涨、成交是否继续放大。\n风险提示：这是题材强度分析，不构成买卖建议。",
+      "leaders": [
+        {
+          "name": "中京电子",
+          "code": "002579",
+          "change_pct": 6.4022,
+          "quote_time": "2026-08-04T09:48:03.826731",
+          "score": 100.0,
+          "factors": [
+            "3分钟+6.40%",
+            "成交放大20.00x",
+            "日内+9.97%"
+          ]
+        },
+        {
+          "name": "太极实业",
+          "code": "600667",
+          "change_pct": 0.9146,
+          "quote_time": "2026-08-04T09:48:03.826731",
+          "score": 33.24,
+          "factors": [
+            "3分钟+0.91%",
+            "成交放大4.26x",
+            "日内+1.66%"
+          ]
+        },
+        {
+          "name": "宏昌电子",
+          "code": "603002",
+          "change_pct": 0.8292,
+          "quote_time": "2026-08-04T09:48:03.826731",
+          "score": 24.49,
+          "factors": [
+            "3分钟+0.83%",
+            "成交放大2.04x",
+            "日内+3.49%"
+          ]
+        }
+      ],
+      "signal_type": "机会观察",
+      "is_old_economy": false,
+      "source_watch_id": "传说游资票走势关联",
+      "quote_audit": {
+        "provider": "本地盘中监控、富途行情（腾讯备用）",
+        "quote_time": "2026-08-04T09:48:03+08:00",
+        "pct_field": "3分钟涨跌幅",
+        "sample_count": 3,
+        "max_abs_leader_change_pct": 6.4022,
+        "sanity_checks": {
+          "cross_source_verified": false,
+          "price_move_valid": true,
+          "volume_valid": true,
+          "direction_ratio_valid": true,
+          "limit_down_count_valid": false
+        },
+        "board_3m_change_pct": 1.7373,
+        "direction_ratio": 1.0,
+        "volume_ratio": 6.4755,
+        "relative_volume_vs_yesterday": 5.2688,
+        "missing_confirmation": "等待富途行情按触发时点交叉核验；通过前只作候选或观察，不作为确认交易信号。",
+        "secondary_source": "富途行情",
+        "secondary_verification": {
+          "state": "insufficient_precision",
+          "checked_at": "2026-08-04T09:49:24+08:00",
+          "source": "富途行情",
+          "reason": "至少2只代表股已识别，但外部行情无法精确对齐触发时点；维持观察，不误判为行情冲突。",
+          "representatives": [
+            {
+              "股票": "中京电子",
+              "代码": "002579.SZ",
+              "监控涨跌幅": 6.4022,
+              "富途涨跌幅": 5.8296,
+              "腾讯涨跌幅": 6.0198,
+              "起始分钟": "09:45:03",
+              "结束分钟": "09:48:03",
+              "对齐方式": "逐笔行情同一时点对齐",
+              "时间偏差秒": 0.827,
+              "可比涨跌范围": [
+                5.8296,
+                6.1151
+              ],
+              "方向一致": true,
+              "幅度一致": false,
+              "复核结论": "行情精度不足"
+            },
+            {
+              "股票": "太极实业",
+              "代码": "600667.SH",
+              "监控涨跌幅": 0.9146,
+              "富途涨跌幅": 1.2195,
+              "腾讯涨跌幅": 1.1585,
+              "起始分钟": "09:45:03",
+              "结束分钟": "09:48:03",
+              "对齐方式": "逐笔行情同一时点对齐",
+              "时间偏差秒": 0.137,
+              "可比涨跌范围": [
+                1.0962,
+                1.2195
+              ],
+              "方向一致": true,
+              "幅度一致": false,
+              "复核结论": "行情精度不足"
+            },
+            {
+              "股票": "宏昌电子",
+              "代码": "603002.SH",
+              "监控涨跌幅": 0.8292,
+              "富途涨跌幅": 0.6612,
+              "腾讯涨跌幅": 0.5785,
+              "起始分钟": "09:45:02",
+              "结束分钟": "09:48:02",
+              "对齐方式": "逐笔行情同一时点对齐",
+              "时间偏差秒": 1.497,
+              "可比涨跌范围": [
+                0.5785,
+                0.6612
+              ],
+              "方向一致": true,
+              "幅度一致": false,
+              "复核结论": "行情精度不足"
+            }
+          ],
+          "window_minutes": 3,
+          "fingerprint": "73620a75f377a200df84",
+          "verifier_version": "futu-opend-2026-07-27.3"
+        }
+      },
+      "source_status": "degraded_partial",
+      "valid_until": "2026-08-04T09:53:03+08:00",
+      "trigger_rule": "小登股异动：3分钟平均涨跌幅≥1.5%，上涨占比≥70%，且成交放大≥5x；小登底池拉起预警：板块行情缺失时，底池3分钟平均涨幅≥1.5%，上涨占比≥70%，且成交放大≥5x",
+      "alert_class": "opportunity",
+      "confirmation_level": "candidate",
+      "limit_up_count": 1,
+      "limit_down_count": 0
+    },
+    {
+      "id": "monitor-20260804-094851-c56988245067",
+      "time": "2026-08-04T09:48:51+08:00",
+      "sector": "CMP/靶材/材料耗材",
+      "type": "小登题材短周期拉动",
+      "reason": "触发规则：小登底池扩散预警：板块行情缺失时，底池3分钟平均涨幅≥1.0%，上涨占比≥60%，成交放大≥8x，且至少2只样本明显推进\n异动性质：上涨攻势中的拉起。3分钟价格推进、上涨占比、强势股数量和前排日内状态同时确认。\n结论：CMP/靶材/材料耗材处在上涨攻势中的拉起，有扩散，江丰电子暂为核心。\n题材：CMP/靶材/材料耗材，当前动态龙头：江丰电子 / 安集科技 / 华海清科。\n强度：底池样本 3分钟涨跌幅 1.15%，上涨占比 100%，强势股 3 只。\n成交：3分钟放大 9.01x，较昨同期 2.05x，有后排扩散。\n当前动态龙头分数：江丰电子(47.5)，安集科技(40.3)，华海清科(39.3)。\n主要贡献因子：江丰电子: 3分钟涨跌幅 1.48%，成交放大 7.56x，日内涨幅 4.23%；安集科技: 3分钟涨跌幅 0.92%，成交放大 9.53x，日内涨幅 2.22%；华海清科: 3分钟涨跌幅 1.05%，成交放大 9.95x，日内涨幅 0.84%\n观察点：龙头是否维持日内高位、后排是否继续补涨、成交是否继续放大。\n风险提示：这是题材强度分析，不构成买卖建议。",
+      "leaders": [
+        {
+          "name": "江丰电子",
+          "code": "300666",
+          "change_pct": 1.4788,
+          "quote_time": "2026-08-04T09:48:51.793284",
+          "score": 47.47,
+          "factors": [
+            "3分钟+1.48%",
+            "成交放大7.56x",
+            "日内+4.23%"
+          ]
+        },
+        {
+          "name": "安集科技",
+          "code": "688019",
+          "change_pct": 0.9194,
+          "quote_time": "2026-08-04T09:48:51.793284",
+          "score": 40.32,
+          "factors": [
+            "3分钟+0.92%",
+            "成交放大9.53x",
+            "日内+2.22%"
+          ]
+        },
+        {
+          "name": "华海清科",
+          "code": "688120",
+          "change_pct": 1.0462,
+          "quote_time": "2026-08-04T09:48:51.793284",
+          "score": 39.31,
+          "factors": [
+            "3分钟+1.05%",
+            "成交放大9.95x",
+            "日内+0.84%"
+          ]
+        }
+      ],
+      "signal_type": "机会观察",
+      "is_old_economy": false,
+      "source_watch_id": "CMP/靶材/材料耗材",
+      "quote_audit": {
+        "provider": "本地盘中监控、富途行情（腾讯备用）",
+        "quote_time": "2026-08-04T09:48:51+08:00",
+        "pct_field": "3分钟涨跌幅",
+        "sample_count": 3,
+        "max_abs_leader_change_pct": 1.4788,
+        "sanity_checks": {
+          "cross_source_verified": false,
+          "price_move_valid": true,
+          "volume_valid": true,
+          "direction_ratio_valid": true,
+          "limit_down_count_valid": false
+        },
+        "board_3m_change_pct": 1.1481,
+        "direction_ratio": 1.0,
+        "volume_ratio": 9.0138,
+        "relative_volume_vs_yesterday": 2.0546,
+        "missing_confirmation": "等待富途行情按触发时点交叉核验；通过前只作候选或观察，不作为确认交易信号。",
+        "secondary_source": "富途行情",
+        "secondary_verification": {
+          "state": "pending",
+          "checked_at": "2026-08-04T09:49:24+08:00",
+          "source": "富途行情",
+          "reason": "等待触发分钟行情完整落盘。",
+          "representatives": [],
+          "fingerprint": "9e54727ca38f0e5ef6b2",
+          "verifier_version": "futu-opend-2026-07-27.3"
+        }
+      },
+      "source_status": "degraded_partial",
+      "valid_until": "2026-08-04T09:53:51+08:00",
+      "trigger_rule": "小登底池扩散预警：板块行情缺失时，底池3分钟平均涨幅≥1.0%，上涨占比≥60%，成交放大≥8x，且至少2只样本明显推进",
+      "alert_class": "opportunity",
+      "confirmation_level": "candidate",
+      "limit_up_count": 0,
+      "limit_down_count": 0
+    },
+    {
+      "id": "monitor-20260804-094851-55fda8c9088c",
+      "time": "2026-08-04T09:48:51+08:00",
+      "sector": "电子布",
+      "type": "小登题材短周期拉动",
+      "reason": "触发规则：小登股异动：3分钟平均涨跌幅≥1.5%，上涨占比≥70%，且成交放大≥5x；小登底池拉起预警：板块行情缺失时，底池3分钟平均涨幅≥1.5%，上涨占比≥70%，且成交放大≥5x\n异动性质：上涨攻势中的拉起。3分钟价格推进、上涨占比、强势股数量和前排日内状态同时确认。\n结论：电子布上涨攻势较强且扩散较好，山东玻纤领涨。\n题材：电子布，当前动态龙头：山东玻纤 / 国际复材 / 长海股份。\n强度：底池样本 3分钟涨跌幅 1.67%，上涨占比 100%，强势股 5 只。\n成交：3分钟放大 6.73x，较昨同期 2.93x，有后排扩散。\n当前动态龙头分数：山东玻纤(65.0)，国际复材(59.0)，长海股份(43.9)。\n主要贡献因子：山东玻纤: 3分钟涨跌幅 1.78%，成交放大 11.57x，日内涨幅 3.71%；国际复材: 3分钟涨跌幅 2.50%，成交放大 8.28x，日内涨幅 4.41%；长海股份: 3分钟涨跌幅 1.13%，成交放大 4.97x，日内涨幅 3.28%\n观察点：龙头是否维持日内高位、后排是否继续补涨、成交是否继续放大。\n风险提示：这是题材强度分析，不构成买卖建议。",
+      "leaders": [
+        {
+          "name": "山东玻纤",
+          "code": "605006",
+          "change_pct": 1.7785,
+          "quote_time": "2026-08-04T09:48:51.793284",
+          "score": 65.02,
+          "factors": [
+            "3分钟+1.78%",
+            "成交放大11.57x",
+            "日内+3.71%"
+          ]
+        },
+        {
+          "name": "国际复材",
+          "code": "301526",
+          "change_pct": 2.5,
+          "quote_time": "2026-08-04T09:48:51.793284",
+          "score": 58.98,
+          "factors": [
+            "3分钟+2.50%",
+            "成交放大8.28x",
+            "日内+4.41%"
+          ]
+        },
+        {
+          "name": "长海股份",
+          "code": "300196",
+          "change_pct": 1.1321,
+          "quote_time": "2026-08-04T09:48:51.793284",
+          "score": 43.9,
+          "factors": [
+            "3分钟+1.13%",
+            "成交放大4.97x",
+            "日内+3.28%"
+          ]
+        }
+      ],
+      "signal_type": "机会观察",
+      "is_old_economy": false,
+      "source_watch_id": "电子布",
+      "quote_audit": {
+        "provider": "本地盘中监控、富途行情（腾讯备用）",
+        "quote_time": "2026-08-04T09:48:51+08:00",
+        "pct_field": "3分钟涨跌幅",
+        "sample_count": 3,
+        "max_abs_leader_change_pct": 2.5,
+        "sanity_checks": {
+          "cross_source_verified": false,
+          "price_move_valid": true,
+          "volume_valid": true,
+          "direction_ratio_valid": true,
+          "limit_down_count_valid": false
+        },
+        "board_3m_change_pct": 1.6734,
+        "direction_ratio": 1.0,
+        "volume_ratio": 6.73,
+        "relative_volume_vs_yesterday": 2.9303,
+        "missing_confirmation": "等待富途行情按触发时点交叉核验；通过前只作候选或观察，不作为确认交易信号。",
+        "secondary_source": "富途行情",
+        "secondary_verification": {
+          "state": "pending",
+          "checked_at": "2026-08-04T09:49:24+08:00",
+          "source": "富途行情",
+          "reason": "等待触发分钟行情完整落盘。",
+          "representatives": [],
+          "fingerprint": "952465fa87f240b5a58c",
+          "verifier_version": "futu-opend-2026-07-27.3"
+        }
+      },
+      "source_status": "degraded_partial",
+      "valid_until": "2026-08-04T09:53:51+08:00",
+      "trigger_rule": "小登股异动：3分钟平均涨跌幅≥1.5%，上涨占比≥70%，且成交放大≥5x；小登底池拉起预警：板块行情缺失时，底池3分钟平均涨幅≥1.5%，上涨占比≥70%，且成交放大≥5x",
+      "alert_class": "opportunity",
+      "confirmation_level": "candidate",
+      "limit_up_count": 0,
+      "limit_down_count": 0
     }
   ],
   "quote_audit": {
     "provider": "本地盘中监控、富途行情（腾讯备用）",
-    "quote_time": "2026-08-04T09:46:51+08:00",
+    "quote_time": "2026-08-04T09:48:51+08:00",
     "pct_field": "各异动卡标注的短周期涨跌幅",
     "sanity_checks": {
-      "sample_count": 16,
-      "max_abs_leader_change_pct": 4.7389,
+      "sample_count": 19,
+      "max_abs_leader_change_pct": 6.4022,
       "cross_source_verified": false,
       "verified_alert_count": 3
     }
