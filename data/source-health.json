@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-08-04T11:05:00+08:00",
+  "timestamp": "2026-08-04T11:35:00+08:00",
   "sources": {
     "tencent_http": {
       "status": "ok",
@@ -5195,7 +5195,7 @@
   },
   "last_publish_attempt": "pending_20260717_0830_premarket_publish",
   "status": "degraded_fallback_ok",
-  "last_error": "mootdx/通达信TCP仍不可用；本轮腾讯A/H实时行情、东方财富涨跌停结构池和概念排行均有效，可支撑当前结论。V2受治理快照仍为8月3日收盘，未用于今天实时机会。",
+  "last_error": "午盘概念排行接口连续两次Empty reply；未编造午盘概念宽度。腾讯A/H行情和东方财富涨跌停结构有效，可支撑当前主要结论。V2受治理快照仍为8月3日收盘，未用于今天实时机会。",
   "tencent_a_close_postmarket_20260716": {
     "status": "ok",
     "last_check": "2026-07-16T15:18:57+08:00",
@@ -7377,5 +7377,66 @@
       "等待下一次V2受治理捕获"
     ]
   },
-  "current_run_summary": "11:00 A/H实时行情、涨跌停/炸板结构和概念排行均取得；东方财富概念接口首次Empty reply后重试恢复。mootdx未安装、V2治理快照陈旧，总体维持degraded。"
+  "current_run_summary": "11:30午盘A/H行情、行业和涨跌停/炸板结构有效；东方财富概念排行连续两次Empty reply，保留11:04最后有效快照并降权。mootdx未安装、V2治理快照陈旧，总体维持degraded。",
+  "tencent_a_midday_20260804_1134": {
+    "status": "ok",
+    "last_check": "2026-08-04T11:35:00+08:00",
+    "usage": "A股午盘指数、行业与专项样本",
+    "detail": "5个指数、98个行业与专项样本返回11:31至11:34有效行情；沪深成交额按上证与深证字段合计13606.72亿元。",
+    "sample_count": 98,
+    "errors": []
+  },
+  "tencent_hk_midday_20260804_1134": {
+    "status": "ok",
+    "last_check": "2026-08-04T11:35:00+08:00",
+    "usage": "港股午前指数及A/H映射",
+    "detail": "恒指、恒科及半导体、AI模型、医药、互联网样本取得11:32至11:34有效报价。",
+    "sample_count": 14,
+    "errors": []
+  },
+  "eastmoney_structure_midday_20260804_1133": {
+    "status": "ok",
+    "last_check": "2026-08-04T11:33:00+08:00",
+    "usage": "涨停、跌停、炸板、连板与行业分布",
+    "detail": "串行取得涨停84、跌停0、炸板11；最高7板、8只20cm封板。",
+    "sample_count": 95,
+    "errors": []
+  },
+  "eastmoney_concept_midday_20260804_1134": {
+    "status": "failed_preserve_last_valid",
+    "last_check": "2026-08-04T11:34:00+08:00",
+    "usage": "午盘概念排行补充",
+    "detail": "接口连续两次Empty reply；保留11:04最后有效概念快照并降权，不将其冒充11:30数据。",
+    "sample_count": 0,
+    "errors": [
+      "curl: (52) Empty reply from server",
+      "retry: curl: (52) Empty reply from server"
+    ]
+  },
+  "intraday_recovery_state_20260804_1132": {
+    "status": "ok",
+    "last_check": "2026-08-04T11:32:43+08:00",
+    "usage": "交易日与恢复状态核验",
+    "detail": "状态为数据正常、阶段午间补偿，行情时间11:30:03，失败次数0。",
+    "sample_count": 1,
+    "errors": []
+  },
+  "v2_governed_context_midday_1130_20260804": {
+    "status": "degraded_stale",
+    "last_check": "2026-08-04T11:35:00+08:00",
+    "usage": "权限与历史风险边界",
+    "detail": "受治理快照仍为8月3日收盘，用户确认资产0；不作为8月4日午盘实时机会依据。",
+    "sample_count": 0,
+    "errors": [
+      "governed snapshot stale"
+    ]
+  },
+  "longbridge_institutional_shadow_midday_20260804": {
+    "status": "not_available_current",
+    "last_check": "2026-08-04T11:35:00+08:00",
+    "usage": "规范化机构研究补充",
+    "detail": "本轮没有当前且已通过本地shadow规范化的长桥机构观点，未调用账户、交易、自选或原始长桥行情输出。",
+    "sample_count": 0,
+    "errors": []
+  }
 }
