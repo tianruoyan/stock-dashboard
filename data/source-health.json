@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-08-04T14:36:00+08:00",
+  "timestamp": "2026-08-04T15:08:00+08:00",
   "sources": {
     "tencent_http": {
       "status": "ok",
@@ -5457,11 +5457,90 @@
       "detail": "没有当前且经本地规范化的机构观点，未引用原始长桥输出。",
       "sample_count": 0,
       "errors": []
+    },
+    "tencent_a_close_postmarket_20260804": {
+      "status": "ok",
+      "last_check": "2026-08-04T15:08:00+08:00",
+      "market_time": "2026-08-04T15:05:43+08:00",
+      "usage": "A股指数、行业、代表股收盘",
+      "detail": "五大指数和关键专项样本取得收盘报价；两市成交约22135.92亿元。",
+      "errors": []
+    },
+    "sina_all_a_close_postmarket_20260804": {
+      "status": "ok",
+      "last_check": "2026-08-04T15:08:00+08:00",
+      "market_time": "2026-08-04 15:04:51 CST",
+      "usage": "全A 5%/8%不重叠宽度",
+      "detail": "取得5535只沪深京A股；剔除ST/退市和N/C新股后有效5323只，5%至不足8%为487只，8%以上373只。",
+      "sample_count": 5535,
+      "errors": []
+    },
+    "sw_level1_mapping_close_20260804": {
+      "status": "ok_partial_coverage",
+      "last_check": "2026-08-04T15:08:00+08:00",
+      "usage": "涨超5%与8%以上样本申万一级行业映射",
+      "detail": "31个一级行业成分映射5201只；未覆盖主要为北交所，保留为未映射。",
+      "sample_count": 5201,
+      "errors": []
+    },
+    "eastmoney_structure_postmarket_20260804": {
+      "status": "ok",
+      "last_check": "2026-08-04T15:08:00+08:00",
+      "market_time": "2026-08-04 close",
+      "usage": "涨停、跌停、炸板和行业分布",
+      "detail": "清洗后涨停138、跌停0、炸板15，最高7板，20cm封板16只。",
+      "errors": []
+    },
+    "eastmoney_concept_postmarket_20260804": {
+      "status": "failed_degraded",
+      "last_check": "2026-08-04T15:08:00+08:00",
+      "usage": "概念排行",
+      "detail": "push2概念排行连续第五个有效窗口远端断连；未使用旧榜补写，题材归因改用结构池、申万行业与代表股。",
+      "errors": [
+        "ProxyError: remote closed connection"
+      ]
+    },
+    "tencent_minute_closing_auction_20260804": {
+      "status": "ok",
+      "last_check": "2026-08-04T15:08:00+08:00",
+      "market_time": "2026-08-04 14:55-15:00 CST",
+      "usage": "收盘竞价与尾盘资金校验",
+      "detail": "5个指数与22个代表样本取得14:55和15:00价格及累计成交；五大指数均小幅收涨。",
+      "errors": []
+    },
+    "tencent_hk_delayed_postmarket_20260804": {
+      "status": "ok_delayed",
+      "last_check": "2026-08-04T15:08:00+08:00",
+      "market_time": "2026-08-04 14:53:01 CST",
+      "usage": "A/H尾盘映射",
+      "detail": "恒指-0.72%、恒生科技+0.02%、智谱+9.89%、华虹宏力+5.99%、中芯国际+4.82%、药明生物+4.33%。",
+      "errors": []
+    },
+    "intraday_recovery_state_postmarket_20260804": {
+      "status": "ok",
+      "last_check": "2026-08-04T15:08:00+08:00",
+      "usage": "断网恢复状态",
+      "detail": "收盘阶段行情恢复服务无失败，最新可核验A股行情时间15:02:06。",
+      "errors": []
+    },
+    "v2_cockpit_context_postmarket_20260804": {
+      "status": "degraded_stale",
+      "last_check": "2026-08-04T15:08:00+08:00",
+      "usage": "只读风险与权限边界",
+      "detail": "受治理V2快照仍停留在2026-08-03收盘，仅用于风险边界，不作为8月4日实时事实。",
+      "errors": []
+    },
+    "longbridge_institutional_shadow_postmarket_20260804": {
+      "status": "unavailable_no_current_normalized_output",
+      "last_check": "2026-08-04T15:08:00+08:00",
+      "usage": "外部机构观点补充",
+      "detail": "未发现符合本地只读shadow规范的当期Longbridge机构分析产物，本轮不引用原始长桥观点。",
+      "errors": []
     }
   },
   "last_publish_attempt": "pending_20260717_0830_premarket_publish",
-  "status": "degraded",
-  "last_error": "午盘概念排行接口连续两次Empty reply；未编造午盘概念宽度。腾讯A/H行情和东方财富涨跌停结构有效，可支撑当前主要结论。V2受治理快照仍为8月3日收盘，未用于今天实时机会。",
+  "status": "degraded_non_core",
+  "last_error": "东方财富概念排行接口收盘时段仍远端断连；核心收盘、全A宽度、行业和结构池均已核验。",
   "tencent_a_close_postmarket_20260716": {
     "status": "ok",
     "last_check": "2026-07-16T15:18:57+08:00",
