@@ -1,8 +1,8 @@
 {
-  "timestamp": "2026-08-04T14:20:56+08:00",
+  "timestamp": "2026-08-04T14:21:20+08:00",
   "current_signal_date": "2026-08-04",
   "status": "degraded",
-  "summary": "发现 140 个降级/需复核项（138 个价格/行情复核，1 个信号复核，2 个背景复核），核心结论可看但必须按影响分层使用。",
+  "summary": "发现 139 个降级/需复核项（138 个价格/行情复核，2 个背景复核），核心结论可看但必须按影响分层使用。",
   "issues": [
     {
       "severity": "warning",
@@ -39,15 +39,6 @@
       "message": "us_overnight.mapping_chain[1] change_pct 非数字：+2.52% / +3.31% / -0.11%，该字段忽略并降权",
       "impact_level": "price_review",
       "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
-    },
-    {
-      "severity": "warning",
-      "file": "intraday.json",
-      "path": "index",
-      "code": "schema_contract_type",
-      "message": "index 类型错误：期望 dict，实际 list",
-      "impact_level": "signal_review",
-      "decision_action": "机会信号必须降权并转入验证"
     },
     {
       "severity": "warning",
@@ -1320,17 +1311,6 @@
       "unblock_condition": "price_review=0 或相关来源标记 trusted/cross verified。"
     },
     {
-      "priority": 3,
-      "impact_level": "signal_review",
-      "label": "信号结构复核",
-      "file": "intraday.json",
-      "code": "schema_contract_type",
-      "problem": "index 类型错误：期望 dict，实际 list",
-      "decision_action": "机会信号必须降权并转入验证",
-      "next_step": "修正字段结构、证据、触发原因和升级条件；未通过前降权展示。",
-      "unblock_condition": "signal_review=0，decision-feed/核心 JSON 契约通过。"
-    },
-    {
       "priority": 4,
       "impact_level": "background_review",
       "label": "背景来源复核",
@@ -1340,15 +1320,26 @@
       "decision_action": "仅作背景复核，不单独阻断交易判断",
       "next_step": "补官方/交易所/公司公告来源；未补齐前不升级为核心依据。",
       "unblock_condition": "官方来源补齐或确认不影响交易触发。"
+    },
+    {
+      "priority": 4,
+      "impact_level": "background_review",
+      "label": "背景来源复核",
+      "file": "evening-sentiment.json",
+      "code": "evening_not_current",
+      "problem": "晚间舆情不是当前交易日，不参与今日总控",
+      "decision_action": "仅作背景复核，不单独阻断交易判断",
+      "next_step": "补官方/交易所/公司公告来源；未补齐前不升级为核心依据。",
+      "unblock_condition": "官方来源补齐或确认不影响交易触发。"
     }
   ],
   "counts": {
     "critical": 0,
-    "warning": 140,
+    "warning": 139,
     "info": 1,
     "blocking": 0,
     "price_review": 138,
-    "signal_review": 1,
+    "signal_review": 0,
     "background_review": 2
   },
   "rules": [
