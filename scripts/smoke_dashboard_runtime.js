@@ -474,8 +474,15 @@ function checkWatchlistQuoteSemantics(document, issues) {
   for (const stock of watchRows) {
     const current = currentRows.find(row => normalizeCode(row.code) && normalizeCode(row.code) === normalizeCode(stock.code));
     if (!current || !Number.isFinite(Number(current.pct ?? current.change_pct))) continue;
+    const duplicateName = watchRows.filter(row => String(row.name || "") === String(stock.name || "")).length > 1;
+    const stockCode = normalizeCode(stock.code);
+    const renderedName = duplicateName
+      ? stockCode.startsWith("hk")
+        ? `${stock.name}（H股）`
+        : `${stock.name}（A股）`
+      : stock.name;
     const expected = pctLabel(current.pct ?? current.change_pct);
-    if (expected && !rendered.includes(`${stock.name}强势·${expected}`) && Number(current.pct ?? current.change_pct) >= 3) {
+    if (expected && !rendered.includes(`${renderedName}强势·${expected}`) && Number(current.pct ?? current.change_pct) >= 3) {
       issues.push(issue("critical", "watchlist_latest_quote_not_used", `${stock.name}观察池未使用同代码最新行情${expected}`, "watchlist-decision"));
     }
     const indicative = indicativeRows.find(row =>
@@ -483,7 +490,7 @@ function checkWatchlistQuoteSemantics(document, issues) {
       /无成交|指示价|未成交|待成交/.test(`${row.status || ""} ${row.quote_state || ""}`)
     );
     const staleLabel = pctLabel(indicative?.change_pct ?? indicative?.pct);
-    if (staleLabel && staleLabel !== expected && rendered.includes(`${stock.name}强势·${staleLabel}`)) {
+    if (staleLabel && staleLabel !== expected && rendered.includes(`${renderedName}强势·${staleLabel}`)) {
       issues.push(issue("critical", "watchlist_indicative_quote_pollution", `${stock.name}观察池误用了无成交指示价${staleLabel}`, "watchlist-decision"));
     }
   }
