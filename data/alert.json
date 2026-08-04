@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-08-04T09:43:14+08:00",
+  "timestamp": "2026-08-04T09:47:15+08:00",
   "source_status": "monitor_live",
   "alerts": [
     {
@@ -1716,7 +1716,7 @@
         "secondary_source": "富途行情",
         "secondary_verification": {
           "state": "insufficient_precision",
-          "checked_at": "2026-08-04T09:45:18+08:00",
+          "checked_at": "2026-08-04T09:47:21+08:00",
           "source": "富途行情",
           "reason": "至少2只代表股已识别，但外部行情无法精确对齐触发时点；维持观察，不误判为行情冲突。",
           "representatives": [
@@ -1930,14 +1930,96 @@
       "confirmation_level": "candidate",
       "limit_up_count": 2,
       "limit_down_count": 0
+    },
+    {
+      "id": "monitor-20260804-094651-4c7ba791f05d",
+      "time": "2026-08-04T09:46:51+08:00",
+      "sector": "7月半导体扩产组合",
+      "type": "风格共振回暖",
+      "reason": "触发规则：小登风格轮动：同一大风格下≥3个关联板块同向急拉\n结论：7月半导体扩产组合 出现回暖信号，3个关联板块5分钟窗口内同向急拉。\n关联板块：覆铜板 5分钟涨跌幅 1.93%，上涨 100%/下跌 0%，成交 8.28x；电子布 5分钟涨跌幅 1.52%，上涨 100%/下跌 0%，成交 8.70x；高带宽内存 5分钟涨跌幅 1.50%，上涨 100%/下跌 0%，成交 7.68x\n观察点：是否继续扩散到同风格后排，成交放大是否伴随价格延续。\n风险提示：这是风格级盘面信号，不构成买卖建议。",
+      "leaders": [
+        {
+          "name": "长川科技",
+          "code": "300604",
+          "change_pct": 3.517,
+          "quote_time": "2026-08-04T09:46:51.815626",
+          "score": 85.43,
+          "factors": [
+            "3分钟+3.52%",
+            "成交放大11.55x",
+            "日内+4.57%"
+          ]
+        },
+        {
+          "name": "澜起科技",
+          "code": "688008",
+          "change_pct": 1.7459,
+          "quote_time": "2026-08-04T09:46:51.815626",
+          "score": 54.21,
+          "factors": [
+            "3分钟+1.75%",
+            "成交放大8.01x",
+            "日内+4.62%"
+          ]
+        },
+        {
+          "name": "华海诚科",
+          "code": "688535",
+          "change_pct": 1.0766,
+          "quote_time": "2026-08-04T09:46:51.815626",
+          "score": 36.69,
+          "factors": [
+            "3分钟+1.08%",
+            "成交放大6.50x",
+            "日内+3.48%"
+          ]
+        }
+      ],
+      "signal_type": "风格观察",
+      "is_old_economy": false,
+      "source_watch_id": "7月半导体扩产组合",
+      "quote_audit": {
+        "provider": "本地盘中监控、富途行情（腾讯备用）",
+        "quote_time": "2026-08-04T09:46:51+08:00",
+        "pct_field": "3分钟涨跌幅",
+        "sample_count": 3,
+        "max_abs_leader_change_pct": 3.517,
+        "sanity_checks": {
+          "cross_source_verified": false,
+          "price_move_valid": true,
+          "volume_valid": true,
+          "direction_ratio_valid": true,
+          "limit_down_count_valid": false
+        },
+        "board_3m_change_pct": 1.9342,
+        "direction_ratio": 1.0,
+        "volume_ratio": 8.6955,
+        "relative_volume_vs_yesterday": null,
+        "missing_confirmation": "等待富途行情按触发时点交叉核验；通过前只作候选或观察，不作为确认交易信号。",
+        "secondary_source": "富途行情",
+        "secondary_verification": {
+          "state": "pending",
+          "checked_at": "2026-08-04T09:47:21+08:00",
+          "source": "富途行情",
+          "reason": "等待触发分钟行情完整落盘。",
+          "representatives": [],
+          "fingerprint": "a53cd25632013c66c4c1",
+          "verifier_version": "futu-opend-2026-07-27.3"
+        }
+      },
+      "source_status": "degraded_partial",
+      "valid_until": "2026-08-04T09:51:51+08:00",
+      "trigger_rule": "小登风格轮动：同一大风格下≥3个关联板块同向急拉",
+      "alert_class": "style",
+      "confirmation_level": "candidate"
     }
   ],
   "quote_audit": {
     "provider": "本地盘中监控、富途行情（腾讯备用）",
-    "quote_time": "2026-08-04T09:43:01+08:00",
+    "quote_time": "2026-08-04T09:46:51+08:00",
     "pct_field": "各异动卡标注的短周期涨跌幅",
     "sanity_checks": {
-      "sample_count": 15,
+      "sample_count": 16,
       "max_abs_leader_change_pct": 4.7389,
       "cross_source_verified": false,
       "verified_alert_count": 3
