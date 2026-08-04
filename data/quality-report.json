@@ -1,8 +1,8 @@
 {
-  "timestamp": "2026-08-04T13:07:47+08:00",
+  "timestamp": "2026-08-04T13:09:28+08:00",
   "current_signal_date": "2026-08-04",
   "status": "degraded",
-  "summary": "发现 139 个降级/需复核项（138 个价格/行情复核，2 个背景复核），核心结论可看但必须按影响分层使用。",
+  "summary": "发现 140 个降级/需复核项（139 个价格/行情复核，2 个背景复核），核心结论可看但必须按影响分层使用。",
   "issues": [
     {
       "severity": "warning",
@@ -1257,10 +1257,19 @@
     },
     {
       "severity": "warning",
+      "file": "source-health.json",
+      "path": "",
+      "code": "source_degraded",
+      "message": "eastmoney_concept_intraday_20260804_1302: 请求返回Empty reply；保留11:04同交易日最后有效概念榜，不将其冒充13:00当前值。",
+      "impact_level": "price_review",
+      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
+    },
+    {
+      "severity": "warning",
       "file": "cross-file",
       "path": "锐捷网络",
       "code": "stock_pct_cross_file_conflict",
-      "message": "锐捷网络 跨文件涨跌幅差异过大：intraday.json -1.64% vs intraday.json 15.69%",
+      "message": "锐捷网络 跨文件涨跌幅差异过大：intraday.json -1.51% vs intraday.json 15.69%",
       "impact_level": "price_review",
       "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
     }
@@ -1283,7 +1292,7 @@
       "label": "二次行情复核",
       "file": "cross-file",
       "code": "stock_pct_cross_file_conflict",
-      "problem": "锐捷网络 跨文件涨跌幅差异过大：intraday.json -1.64% vs intraday.json 15.69%",
+      "problem": "锐捷网络 跨文件涨跌幅差异过大：intraday.json -1.51% vs intraday.json 15.69%",
       "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核",
       "next_step": "用第二行情源复核涨跌幅、quote_time 和代表股方向；未确认前只做验证。",
       "unblock_condition": "price_review=0 或相关来源标记 trusted/cross verified。"
@@ -1335,10 +1344,10 @@
   ],
   "counts": {
     "critical": 0,
-    "warning": 139,
+    "warning": 140,
     "info": 1,
     "blocking": 0,
-    "price_review": 138,
+    "price_review": 139,
     "signal_review": 0,
     "background_review": 2
   },
