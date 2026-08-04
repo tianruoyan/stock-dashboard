@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-08-04T09:30:00+08:00",
+  "timestamp": "2026-08-04T09:35:00+08:00",
   "sources": {
     "tencent_http": {
       "status": "ok",
@@ -3799,7 +3799,7 @@
     },
     "futu_minute_alert_verifier": {
       "status": "ok",
-      "last_check": "2026-08-04T09:36:57+08:00",
+      "last_check": "2026-08-04T09:38:00+08:00",
       "usage": "盘中异动代表股第二行情源交叉验证",
       "detail": "富途行情按触发时点复核8张异动卡：2张相互支持、2张明显冲突、4张精度不足；精度不足只维持观察，不计作冲突。",
       "sample_count": 12,
@@ -5063,7 +5063,7 @@
   },
   "last_publish_attempt": "pending_20260717_0830_premarket_publish",
   "status": "degraded_fallback_ok",
-  "last_error": "集合竞价固定open字段与涨跌停池可用；163.21亿元为腾讯指数累计成交额代理，非交易所单列纯竞价额，且缺少前一日同口径比较。未把09:30后现价回填为竞价价。",
+  "last_error": "A股腾讯实时行情和东方财富结构池有效；港股腾讯返回约09:19延时快照，Longbridge公开交叉报价仍为零变动/极低成交，未将港股正式开盘数据用于A/H共振判断。",
   "tencent_a_close_postmarket_20260716": {
     "status": "ok",
     "last_check": "2026-07-16T15:18:57+08:00",
@@ -7168,6 +7168,34 @@
     "detail": "设备核心分化，交换机七核心全部高开但弱于CPO；玻纤与PCB多数高开，国际复材低开。所有竞价涨幅使用固定open/昨收计算。",
     "errors": [
       "09:30后只读取固定open字段，不采用连续竞价现价作为竞价事实"
+    ]
+  },
+  "tencent_a_open_0934_20260804": {
+    "status": "ok",
+    "last_check": "2026-08-04T09:35:00+08:00",
+    "market_time": "2026-08-04T09:34:30+08:00",
+    "usage": "开盘指数、行业排行、观察池与专项样本",
+    "detail": "取得五大指数、行业前后排及交换机、CPO、半导体、电子布/玻纤、PCB和风格雷达有效报价。",
+    "sample_count": 69,
+    "errors": []
+  },
+  "eastmoney_structure_open_0934_20260804": {
+    "status": "ok",
+    "last_check": "2026-08-04T09:35:00+08:00",
+    "market_time": "2026-08-04T09:34:00+08:00",
+    "usage": "非ST涨停、跌停、炸板、连板和行业分布",
+    "detail": "涨停15、跌停0、炸板1；最高7板，2只20cm涨停。",
+    "sample_count": 16,
+    "errors": []
+  },
+  "longbridge_hk_open_crosscheck_0934_20260804": {
+    "status": "degraded_not_used",
+    "last_check": "2026-08-04T09:35:00+08:00",
+    "usage": "港股正式开盘公开行情交叉核验",
+    "detail": "腾讯、阿里、华虹、药明生物等公开报价仍显示0%或极低成交，与正式连续竞价预期不符，未作为当前港股事实。",
+    "sample_count": 6,
+    "errors": [
+      "正式连续竞价快照未确认"
     ]
   }
 }

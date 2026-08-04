@@ -1,18 +1,9 @@
 {
-  "timestamp": "2026-08-04T09:37:53+08:00",
+  "timestamp": "2026-08-04T09:38:48+08:00",
   "current_signal_date": "2026-08-04",
   "status": "degraded",
-  "summary": "发现 142 个降级/需复核项（137 个价格/行情复核，6 个背景复核），核心结论可看但必须按影响分层使用。",
+  "summary": "发现 139 个降级/需复核项（137 个价格/行情复核，3 个背景复核），核心结论可看但必须按影响分层使用。",
   "issues": [
-    {
-      "severity": "warning",
-      "file": "intraday.json",
-      "path": "",
-      "code": "stale_timestamp",
-      "message": "时间戳不是当前交易日：2026-07-31T17:48:46+08:00",
-      "impact_level": "background_review",
-      "decision_action": "仅作背景复核，不单独阻断交易判断"
-    },
     {
       "severity": "warning",
       "file": "midday.json",
@@ -57,15 +48,6 @@
       "message": "us_overnight.mapping_chain[1] change_pct 非数字：+2.52% / +3.31% / -0.11%，该字段忽略并降权",
       "impact_level": "price_review",
       "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
-    },
-    {
-      "severity": "warning",
-      "file": "topics.json",
-      "path": "",
-      "code": "stale_timestamp",
-      "message": "时间戳不是当前交易日：2026-08-03T22:12:45+08:00",
-      "impact_level": "background_review",
-      "decision_action": "仅作背景复核，不单独阻断交易判断"
     },
     {
       "severity": "warning",
@@ -1281,15 +1263,6 @@
       "message": "eastmoney_concept_intraday_20260731_1104: 请求RemoteDisconnected；保留10:49同日上午最后有效概念榜，不将其冒充11:00当前值。",
       "impact_level": "price_review",
       "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
-    },
-    {
-      "severity": "warning",
-      "file": "theme-shifts.json",
-      "path": "",
-      "code": "stale_theme_shifts",
-      "message": "theme-shifts 日期不是当前交易日：2026-08-03",
-      "impact_level": "background_review",
-      "decision_action": "仅作背景复核，不单独阻断交易判断"
     }
   ],
   "action_plan": [
@@ -1341,9 +1314,9 @@
       "priority": 4,
       "impact_level": "background_review",
       "label": "背景来源复核",
-      "file": "intraday.json",
+      "file": "midday.json",
       "code": "stale_timestamp",
-      "problem": "时间戳不是当前交易日：2026-07-31T17:48:46+08:00",
+      "problem": "时间戳不是当前交易日：2026-07-31T11:34:30+08:00",
       "decision_action": "仅作背景复核，不单独阻断交易判断",
       "next_step": "补官方/交易所/公司公告来源；未补齐前不升级为核心依据。",
       "unblock_condition": "官方来源补齐或确认不影响交易触发。"
@@ -1352,9 +1325,9 @@
       "priority": 4,
       "impact_level": "background_review",
       "label": "背景来源复核",
-      "file": "midday.json",
+      "file": "postmarket.json",
       "code": "stale_timestamp",
-      "problem": "时间戳不是当前交易日：2026-07-31T11:34:30+08:00",
+      "problem": "时间戳不是当前交易日：2026-08-03T22:12:45+08:00",
       "decision_action": "仅作背景复核，不单独阻断交易判断",
       "next_step": "补官方/交易所/公司公告来源；未补齐前不升级为核心依据。",
       "unblock_condition": "官方来源补齐或确认不影响交易触发。"
@@ -1362,12 +1335,12 @@
   ],
   "counts": {
     "critical": 0,
-    "warning": 142,
+    "warning": 139,
     "info": 1,
     "blocking": 0,
     "price_review": 137,
     "signal_review": 0,
-    "background_review": 6
+    "background_review": 3
   },
   "rules": [
     "异常文本、JSON解析失败、必需文件缺失为 critical。",
