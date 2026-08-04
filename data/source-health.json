@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-08-04T10:06:00+08:00",
+  "timestamp": "2026-08-04T10:35:00+08:00",
   "sources": {
     "tencent_http": {
       "status": "ok",
@@ -3799,10 +3799,10 @@
     },
     "futu_minute_alert_verifier": {
       "status": "ok",
-      "last_check": "2026-08-04T10:33:06+08:00",
+      "last_check": "2026-08-04T10:39:11+08:00",
       "usage": "盘中异动代表股第二行情源交叉验证",
-      "detail": "富途行情按触发时点复核19张异动卡：7张相互支持、9张明显冲突、3张精度不足；精度不足只维持观察，不计作冲突。",
-      "sample_count": 57,
+      "detail": "富途行情按触发时点复核20张异动卡：8张相互支持、7张明显冲突、5张精度不足；精度不足只维持观察，不计作冲突。",
+      "sample_count": 60,
       "errors": []
     },
     "tencent_a_quote_intraday_0945": {
@@ -5059,6 +5059,71 @@
       "errors": [
         "Authentication failed: Not authenticated"
       ]
+    },
+    "tencent_a_intraday_20260804_1033": {
+      "status": "ok",
+      "last_check": "2026-08-04T10:35:00+08:00",
+      "market_time": "2026-08-04T10:33:24+08:00",
+      "usage": "五大指数、98行业、交换机、CPO、半导体、电子布/玻纤、PCB和风格雷达",
+      "detail": "取得5个指数、行业前后排及重点专项样本；指数和样本报价时点10:31:46至10:33:24。",
+      "sample_count": 80,
+      "errors": []
+    },
+    "eastmoney_structure_intraday_20260804_1030": {
+      "status": "ok",
+      "last_check": "2026-08-04T10:35:00+08:00",
+      "market_time": "2026-08-04T10:30:00+08:00",
+      "usage": "非ST涨停、跌停、炸板、连板和行业分布",
+      "detail": "涨停51、跌停0、炸板8；最高7板、4只20cm。",
+      "sample_count": 59,
+      "errors": []
+    },
+    "eastmoney_concept_intraday_20260804_1034": {
+      "status": "ok_recovered_after_retry",
+      "last_check": "2026-08-04T10:35:00+08:00",
+      "market_time": "2026-08-04T10:34:00+08:00",
+      "usage": "概念排行、涨跌宽度和主力净流入",
+      "detail": "首次请求返回Empty reply；使用相同官方行情接口重试后取得100条当前概念排行。",
+      "sample_count": 100,
+      "errors": [
+        "initial curl (52) Empty reply from server; recovered on retry"
+      ]
+    },
+    "tencent_hk_intraday_20260804_1033": {
+      "status": "ok",
+      "last_check": "2026-08-04T10:35:00+08:00",
+      "market_time": "2026-08-04T10:33:12+08:00",
+      "usage": "恒指、恒生科技及半导体、AI应用、医药、互联网和中兴H映射",
+      "detail": "取得2个港股指数和12只映射样本有效行情；免费HTTP行情仅作方向映射。",
+      "sample_count": 14,
+      "errors": []
+    },
+    "intraday_recovery_state_20260804_1030": {
+      "status": "ok",
+      "last_check": "2026-08-04T10:30:31+08:00",
+      "usage": "盘中断网恢复状态核验",
+      "detail": "状态为数据正常、failure_count=0；本轮按10:31-10:33当前行情产出。",
+      "sample_count": 1,
+      "errors": []
+    },
+    "v2_cockpit_context_20260804_1030": {
+      "status": "stale_degraded",
+      "last_check": "2026-08-04T10:35:00+08:00",
+      "usage": "治理层风险与用户资产边界复核",
+      "detail": "最新可审计快照仍为8月3日收盘且无已迁入用户确认资产，只用于风险边界，不进入10:30行情事实。",
+      "sample_count": 0,
+      "errors": [
+        "governed snapshot stale",
+        "no user-confirmed assets migrated"
+      ]
+    },
+    "longbridge_institutional_shadow_20260804_1030": {
+      "status": "not_used_no_current_normalized_output",
+      "last_check": "2026-08-04T10:35:00+08:00",
+      "usage": "长桥机构分析引用边界复核",
+      "detail": "本轮没有当前且经import_longbridge_analysis.py规范化的机构观点，未引用原始长桥输出。",
+      "sample_count": 0,
+      "errors": []
     }
   },
   "last_publish_attempt": "pending_20260717_0830_premarket_publish",
@@ -7244,5 +7309,6 @@
     "errors": [
       "等待下一次V2受治理捕获"
     ]
-  }
+  },
+  "current_run_summary": "10:30 A/H实时行情、全市场涨跌停/炸板结构和概念排行均取得；东方财富概念接口首次Empty reply后重试恢复。mootdx未安装、V2治理快照陈旧，因此总体维持degraded。"
 }
