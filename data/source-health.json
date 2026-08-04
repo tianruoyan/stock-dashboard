@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-08-04T16:34:00+08:00",
+  "timestamp": "2026-08-04T20:16:00+08:00",
   "sources": {
     "tencent_http": {
       "status": "ok",
@@ -60,12 +60,13 @@
     },
     "cninfo_watchlist_announcement_scan": {
       "status": "ok",
-      "last_check": "2026-08-02T20:00:29+08:00",
-      "usage": "20:00配置观察池公告全市场交叉扫描",
-      "detail": "完整读取2026-08-01至2026-08-02共1466条、49页公告；103个境内观察代码命中9条，均为前一晚已覆盖事项，8月2日无新增重大命中。",
-      "sample_count": 103,
-      "market_announcement_count": 1466,
-      "announcement_count": 9,
+      "last_check": "2026-08-04T20:16:00+08:00",
+      "usage": "20:00配置观察池与专题样本公告全市场扫描及PDF原文核验",
+      "detail": "读取2026-08-04全市场1514条、51页公告；139个可识别配置名称命中42条、27家公司，写入5项具研究意义的公司公告，例行事项已剔除。",
+      "sample_count": 139,
+      "market_announcement_count": 1514,
+      "announcement_count": 42,
+      "matched_securities": 27,
       "errors": []
     },
     "sina_announcement_page_sample": {
@@ -76,11 +77,11 @@
       "errors": []
     },
     "official_policy_global_web_scan": {
-      "status": "ok",
-      "last_check": "2026-07-19T20:25:20+08:00",
-      "usage": "20:00全球标杆、政策、事件日历与突发扫描",
-      "detail": "核验台积电Q2及资本开支、WAIC主席声明、商务部氦气政策、特斯拉7月22日财报日历和全球AI交易降温；未发现7月19日新增设备/材料标杆公司级P0。",
-      "sample_count": 31,
+      "status": "ok_with_pending_us_results",
+      "last_check": "2026-08-04T20:16:00+08:00",
+      "usage": "20:00政策、全球标杆、事件日历与突发扫描",
+      "detail": "核验工信部智能驾驶/光伏标准，AMD与Arista官方财报日历、Marvell/FMS官方事件；AMD和Arista财报尚未公布，留待8:30增量扫描。",
+      "sample_count": 25,
       "errors": []
     },
     "tencent_hk_auction_http": {
@@ -5564,6 +5565,22 @@
       "usage": "恒指、恒生科技及半导体、AI应用、医药、互联网和中兴H正式收盘终值",
       "detail": "腾讯与新浪终值一致：恒指-0.60%、恒科+0.21%；半导体H股和药明系强，智谱+7.45%，中兴H+1.50%。",
       "sample_count": 16,
+      "errors": []
+    },
+    "v2_local_theme_validator": {
+      "status": "ok_empty_no_direct_match",
+      "last_check": "2026-08-04T20:16:00+08:00",
+      "usage": "今晚新增主题的本地V2研究库反证检查",
+      "detail": "半导体设备业绩、FMS/CXL、智能驾驶国标和光伏国标均未返回直接本地研究库匹配；该空结果作为数据缺口，未以旧标签替代官方原文。",
+      "sample_count": 4,
+      "errors": []
+    },
+    "longbridge_analysis_shadow_reference": {
+      "status": "ok_reference_only",
+      "last_check": "2026-08-04T20:16:00+08:00",
+      "usage": "DRAM/HBM机构观点与反证背景，只读shadow引用",
+      "detail": "读取1条已规范化Longbridge机构内容参考；底层排序模型未披露，仅作外部观点，不独立满足G0或改变V1行动。",
+      "sample_count": 1,
       "errors": []
     }
   },

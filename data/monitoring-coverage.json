@@ -1,12 +1,12 @@
 {
-  "timestamp": "2026-08-04T16:36:02+08:00",
+  "timestamp": "2026-08-04T20:18:32+08:00",
   "current_signal_date": "2026-08-04",
   "overall_status": "degraded",
-  "summary": "6 个监测维度需降权，1 个背景维度需复核。",
+  "summary": "6 个监测维度需降权，0 个背景维度需复核。",
   "counts": {
     "critical": 0,
     "warning": 6,
-    "info": 1
+    "info": 0
   },
   "blind_spots": [
     {
@@ -94,24 +94,6 @@
       ]
     },
     {
-      "id": "evening-sentiment-stale",
-      "title": "晚间舆情过期",
-      "severity": "info",
-      "conclusion": "晚间公告、P0 舆情和隔夜事件不是当前交易日，不能参与今日总控。",
-      "impacted_decisions": [
-        "次日竞价风险可能缺少最新公告校验",
-        "个股突发公告需要额外扫描"
-      ],
-      "evidence": [
-        "数据交易日不是当前交易日：2026-08-03"
-      ],
-      "fallback_action": "只作历史背景；盘前必须重新跑 8:30 增量扫描和个股公告检查。",
-      "fallback_checks": [],
-      "source_files": [
-        "data/evening-sentiment.json"
-      ]
-    },
-    {
       "id": "opportunity-radar-downgraded",
       "title": "机会雷达仅作候选",
       "severity": "warning",
@@ -121,7 +103,7 @@
         "风险栏优先级高于机会栏"
       ],
       "evidence": [
-        "发现 139 个降级/需复核项（137 个价格/行情复核，3 个背景复核），核心结论可看但必须按影响分层使用。"
+        "发现 139 个降级/需复核项（137 个价格/行情复核，2 个背景复核），核心结论可看但必须按影响分层使用。"
       ],
       "fallback_action": "只跟踪验证条件；若风险项不收敛，不升级任何机会。",
       "fallback_checks": [],
