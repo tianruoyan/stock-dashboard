@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-08-04T09:20:00+08:00",
+  "timestamp": "2026-08-04T09:30:00+08:00",
   "sources": {
     "tencent_http": {
       "status": "ok",
@@ -5063,7 +5063,7 @@
   },
   "last_publish_attempt": "pending_20260717_0830_premarket_publish",
   "status": "degraded_fallback_ok",
-  "last_error": "港股09:00-09:03竞价多数科技样本无成交或成交极低；旧映射将6865误作澜起科技，已按港交所公告校正为6809并排除福莱特玻璃。未用无效指示价推断正式开盘。",
+  "last_error": "集合竞价固定open字段与涨跌停池可用；163.21亿元为腾讯指数累计成交额代理，非交易所单列纯竞价额，且缺少前一日同口径比较。未把09:30后现价回填为竞价价。",
   "tencent_a_close_postmarket_20260716": {
     "status": "ok",
     "last_check": "2026-07-16T15:18:57+08:00",
@@ -7134,5 +7134,40 @@
     "status": "usable",
     "purpose": "仅作公开行情交叉核验，未调用账户、持仓、订单、自选或社区发布能力",
     "detail": "美股与港股上一收盘交叉核验通过；港股竞价字段同样显示多数样本无有效成交。"
+  },
+  "tencent_index_open_auction_20260804": {
+    "status": "usable",
+    "market_time": "2026-08-04T09:25:00+08:00",
+    "collected_at": "2026-08-04T09:27:28+08:00",
+    "detail": "上证+0.18%、深成指+0.93%、创业板+1.54%、科创50+1.08%、沪深300+0.52%；沪深指数累计成交额字段合计163.21亿元。",
+    "errors": [
+      "成交额仅作竞价活跃度代理，非交易所单列纯竞价额",
+      "缺少前一交易日同口径值"
+    ]
+  },
+  "eastmoney_structure_pools_auction_20260804": {
+    "status": "usable",
+    "market_time": "2026-08-04T09:25:00+08:00",
+    "collected_at": "2026-08-04T09:27:00+08:00",
+    "detail": "涨停7、跌停0；最高5板高争民爆，20cm一只欣天科技。",
+    "sample_count": 7,
+    "errors": []
+  },
+  "config_watchlist_open_auction_20260804": {
+    "status": "usable",
+    "market_time": "2026-08-04T09:25:00+08:00",
+    "collected_at": "2026-08-04T09:27:28+08:00",
+    "detail": "配置池18只A股样本全部高开；中际+4.16%、新易盛+3.79%、沪电+2.35%、澜起A+2.14%、锐捷+1.95%。",
+    "sample_count": 18,
+    "errors": []
+  },
+  "tencent_theme_samples_auction_20260804": {
+    "status": "usable",
+    "market_time": "2026-08-04T09:25:00+08:00",
+    "collected_at": "2026-08-04T09:28:00+08:00至09:30:00+08:00",
+    "detail": "设备核心分化，交换机七核心全部高开但弱于CPO；玻纤与PCB多数高开，国际复材低开。所有竞价涨幅使用固定open/昨收计算。",
+    "errors": [
+      "09:30后只读取固定open字段，不采用连续竞价现价作为竞价事实"
+    ]
   }
 }
