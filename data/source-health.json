@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-08-05T09:53:44+08:00",
+  "timestamp": "2026-08-05T09:56:36+08:00",
   "sources": {
     "tencent_http": {
       "status": "ok",
@@ -3800,9 +3800,9 @@
     },
     "futu_minute_alert_verifier": {
       "status": "ok",
-      "last_check": "2026-08-05T09:53:03+08:00",
+      "last_check": "2026-08-05T09:56:06+08:00",
       "usage": "盘中异动代表股第二行情源交叉验证",
-      "detail": "富途行情按触发时点复核19张异动卡：0张相互支持、19张明显冲突、0张精度不足；精度不足只维持观察，不计作冲突。",
+      "detail": "富途行情按触发时点复核19张异动卡：0张相互支持、18张明显冲突、1张精度不足；精度不足只维持观察，不计作冲突。",
       "sample_count": 55,
       "errors": []
     },
@@ -5585,13 +5585,14 @@
     },
     "monitor_akshare_realtime_20260805_0932": {
       "status": "degraded_flapping_preserve_alert",
-      "last_check": "2026-08-05T09:53:44+08:00",
+      "last_check": "2026-08-05T09:56:36+08:00",
       "usage": "老登/小登盘中观察池与题材强度实时刷新",
-      "detail": "09:52至09:53连续多轮出现No value to decode，实时行情链路仍间歇失败；监控进程存活且日志持续更新。保留上一版alert.json，不生成或升级任何信号，等待下一轮自动重试。",
-      "sample_count": 0,
+      "detail": "09:54:22短暂恢复并生成交换机/高速以太网候选；随后09:55:28再次No value to decode，09:56:36出现Response ended prematurely。链路继续间歇波动，候选维持degraded_partial且仅作待确认。",
+      "sample_count": 3,
       "errors": [
-        "No value to decode（09:52至09:53连续复发）",
-        "本轮行情解码失败，未形成可用实时样本"
+        "No value to decode（09:55:28复发）",
+        "Response ended prematurely（09:56:36）",
+        "富途时点复核精度不足，未通过双源确认"
       ]
     }
   },
