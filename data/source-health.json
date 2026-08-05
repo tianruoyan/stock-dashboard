@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-08-05T11:35:00+08:00",
+  "timestamp": "2026-08-05T13:03:00+08:00",
   "sources": {
     "tencent_http": {
       "status": "ok",
@@ -3800,7 +3800,7 @@
     },
     "futu_minute_alert_verifier": {
       "status": "ok",
-      "last_check": "2026-08-05T13:03:28+08:00",
+      "last_check": "2026-08-05T13:04:31+08:00",
       "usage": "盘中异动代表股第二行情源交叉验证",
       "detail": "富途行情按触发时点复核18张异动卡：2张相互支持、13张明显冲突、3张精度不足；精度不足只维持观察，不计作冲突。",
       "sample_count": 50,
@@ -5911,6 +5911,84 @@
     "longbridge_analysis_shadow_midday_20260805_1130": {
       "status": "reference_only",
       "last_check": "2026-08-05T11:35:00+08:00",
+      "usage": "规范化外部机构观点与反证背景",
+      "detail": "读取3条规范化只读参考，最新观察时间08:49；不调用账户、持仓或交易能力，不独立改变V1行动。",
+      "sample_count": 3,
+      "errors": []
+    },
+    "tencent_a_intraday_20260805_1301": {
+      "status": "ok",
+      "last_check": "2026-08-05T13:03:00+08:00",
+      "market_time": "2026-08-05T13:01:34+08:00",
+      "usage": "五大指数、98行业、配置观察池及专项样本",
+      "detail": "指数与行业13:01，代表股补核至13:01:34；两市成交约17189.89亿元。",
+      "sample_count": 98,
+      "errors": []
+    },
+    "eastmoney_structure_intraday_20260805_1301": {
+      "status": "ok",
+      "last_check": "2026-08-05T13:03:00+08:00",
+      "market_time": "2026-08-05T13:01:00+08:00",
+      "usage": "涨停、跌停、炸板、连板、20cm与行业分布",
+      "detail": "涨停95、跌停1、炸板17；最高8板、10只20cm。",
+      "sample_count": 113,
+      "errors": []
+    },
+    "eastmoney_concept_intraday_20260805_1302": {
+      "status": "ok",
+      "last_check": "2026-08-05T13:03:00+08:00",
+      "market_time": "2026-08-05T13:02:00+08:00",
+      "usage": "概念排行、涨跌宽度与领涨股",
+      "detail": "取得503个概念；HBM、中芯概念、存储芯片、光刻机和先进封装位于前排。",
+      "sample_count": 503,
+      "errors": []
+    },
+    "tencent_hk_intraday_20260805_1159": {
+      "status": "ok_delayed",
+      "last_check": "2026-08-05T13:03:00+08:00",
+      "market_time": "2026-08-05T11:59:59+08:00",
+      "usage": "恒指、恒科与半导体、AI及中兴H映射",
+      "detail": "港股指数13:01，个股免费行情仍为11:59，仅作方向映射。",
+      "sample_count": 8,
+      "errors": [
+        "港股个股免费行情约延迟"
+      ]
+    },
+    "intraday_recovery_state_20260805_1300": {
+      "status": "degraded_status_lag",
+      "last_check": "2026-08-05T13:03:00+08:00",
+      "usage": "下午交易恢复状态",
+      "detail": "状态标记数据正常、failure_count=0，但记录行情时点仍为11:35；腾讯直连已取得13:01有效行情，未用旧值冒充。",
+      "sample_count": 1,
+      "errors": [
+        "recovery status quote_time lag"
+      ]
+    },
+    "monitor_alert_verifier_20260805_1300": {
+      "status": "degraded_mismatch",
+      "last_check": "2026-08-05T13:00:26+08:00",
+      "usage": "短周期候选双源复核",
+      "detail": "20条候选中2条通过、14条失配、2条待核，其余不满足完整确认条件；未通过者不升级。",
+      "sample_count": 20,
+      "errors": [
+        "14 cross-source mismatches",
+        "2 pending"
+      ]
+    },
+    "v2_cockpit_context_20260805_1300": {
+      "status": "stale_degraded",
+      "last_check": "2026-08-05T13:03:00+08:00",
+      "usage": "只读权限与风险边界",
+      "detail": "受治理V2快照仍为8月4日，用户确认资产0；不作为8月5日13:00事实。",
+      "sample_count": 0,
+      "errors": [
+        "governed snapshot stale",
+        "no user-confirmed assets migrated"
+      ]
+    },
+    "longbridge_analysis_shadow_20260805_1300": {
+      "status": "reference_only",
+      "last_check": "2026-08-05T13:03:00+08:00",
       "usage": "规范化外部机构观点与反证背景",
       "detail": "读取3条规范化只读参考，最新观察时间08:49；不调用账户、持仓或交易能力，不独立改变V1行动。",
       "sample_count": 3,
@@ -8305,5 +8383,5 @@
     "sample_count": 0,
     "errors": []
   },
-  "summary": "午盘核心行情和全市场结构可用；概念排行、V2旧快照与多数短周期候选降权，不影响核心结构结论。"
+  "summary": "13:00核心A股行情、结构池和概念排行可用；港股个股延时、恢复状态记录滞后及V2旧快照已降权。"
 }
