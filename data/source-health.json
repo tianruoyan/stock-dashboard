@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-08-05T11:27:49+08:00",
+  "timestamp": "2026-08-05T11:35:00+08:00",
   "sources": {
     "tencent_http": {
       "status": "ok",
@@ -5837,6 +5837,84 @@
       "detail": "读取3条规范化只读参考，最新观察时间08:49；事实候选仍需本地独立核验，不独立改变V1行动。",
       "sample_count": 3,
       "errors": []
+    },
+    "tencent_a_midday_20260805_1130": {
+      "status": "ok",
+      "last_check": "2026-08-05T11:35:00+08:00",
+      "market_time": "2026-08-05T11:31:03+08:00",
+      "usage": "五大指数、98行业、配置观察池及盘中专项样本",
+      "detail": "两市半日成交约16896.97亿元，五大指数与重点样本有效；代表股午间缓存补核至11:33。",
+      "sample_count": 98,
+      "errors": []
+    },
+    "eastmoney_structure_midday_20260805_1130": {
+      "status": "ok",
+      "last_check": "2026-08-05T11:35:00+08:00",
+      "market_time": "2026-08-05T11:30:00+08:00",
+      "usage": "涨停、跌停、炸板、连板、20cm与行业分布",
+      "detail": "涨停90、跌停1、炸板15；最高8板、10只20cm。",
+      "sample_count": 106,
+      "errors": []
+    },
+    "tencent_hk_midday_20260805_1118": {
+      "status": "ok_delayed",
+      "last_check": "2026-08-05T11:35:00+08:00",
+      "market_time": "2026-08-05T11:18:07+08:00",
+      "usage": "恒指、恒科与半导体、AI和中兴H映射",
+      "detail": "恒指+0.06%、恒科+0.93%；港股个股免费行情约延迟15分钟，只作方向映射。",
+      "sample_count": 9,
+      "errors": [
+        "港股个股免费行情约延迟15分钟",
+        "五一视界代码身份未可靠核验，未采用错误报价"
+      ]
+    },
+    "eastmoney_concept_midday_20260805_1130": {
+      "status": "failed_degraded",
+      "last_check": "2026-08-05T11:35:00+08:00",
+      "usage": "概念排行当前复采",
+      "detail": "11:02复采ProxyError，午盘未用10:10旧榜冒充当前；主线按结构池、腾讯行业和代表股判断。",
+      "sample_count": 0,
+      "errors": [
+        "ProxyError: remote end closed connection"
+      ]
+    },
+    "intraday_recovery_state_midday_20260805_1130": {
+      "status": "ok",
+      "last_check": "2026-08-05T11:30:45+08:00",
+      "usage": "午间恢复状态",
+      "detail": "已自动补充最新行情，failure_count=0，quote_time=11:30:03。",
+      "sample_count": 1,
+      "errors": []
+    },
+    "monitor_alert_verifier_midday_20260805_1133": {
+      "status": "degraded_mismatch",
+      "last_check": "2026-08-05T11:33:21+08:00",
+      "usage": "短周期候选双源复核",
+      "detail": "20条候选中2条通过、14条失配、2条待核，其余不具备完整确认条件；未通过者不升级为机会。",
+      "sample_count": 20,
+      "errors": [
+        "14 cross-source mismatches",
+        "2 pending"
+      ]
+    },
+    "v2_cockpit_context_midday_20260805_1130": {
+      "status": "stale_degraded",
+      "last_check": "2026-08-05T11:35:00+08:00",
+      "usage": "只读权限和风险边界",
+      "detail": "受治理V2快照仍为8月4日，用户确认资产0；不作为8月5日午盘事实。",
+      "sample_count": 0,
+      "errors": [
+        "governed snapshot stale",
+        "no user-confirmed assets migrated"
+      ]
+    },
+    "longbridge_analysis_shadow_midday_20260805_1130": {
+      "status": "reference_only",
+      "last_check": "2026-08-05T11:35:00+08:00",
+      "usage": "规范化外部机构观点与反证背景",
+      "detail": "读取3条规范化只读参考，最新观察时间08:49；不调用账户、持仓或交易能力，不独立改变V1行动。",
+      "sample_count": 3,
+      "errors": []
     }
   },
   "last_publish_attempt": "pending_20260717_0830_premarket_publish",
@@ -8226,5 +8304,6 @@
     "detail": "没有当前且经本地规范化的机构观点，未引用原始长桥输出。",
     "sample_count": 0,
     "errors": []
-  }
+  },
+  "summary": "午盘核心行情和全市场结构可用；概念排行、V2旧快照与多数短周期候选降权，不影响核心结构结论。"
 }
