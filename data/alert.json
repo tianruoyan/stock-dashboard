@@ -2642,7 +2642,7 @@
       "is_old_economy": false,
       "source_watch_id": "长鑫存储IPO映射",
       "quote_audit": {
-        "provider": "本地盘中监控",
+        "provider": "本地盘中监控、富途行情（腾讯备用）",
         "quote_time": "2026-08-05T13:00:56+08:00",
         "pct_field": "3分钟涨跌幅",
         "sample_count": 3,
@@ -2659,7 +2659,49 @@
         "direction_ratio": 0.9769,
         "volume_ratio": 20.0,
         "relative_volume_vs_yesterday": null,
-        "missing_confirmation": "等待富途行情按触发时点交叉核验；通过前只作候选或观察，不作为确认交易信号。"
+        "missing_confirmation": "等待富途行情按触发时点交叉核验；通过前只作候选或观察，不作为确认交易信号。",
+        "secondary_source": "富途行情",
+        "secondary_verification": {
+          "state": "insufficient_precision",
+          "checked_at": "2026-08-05T13:03:28+08:00",
+          "source": "富途行情",
+          "reason": "至少2只代表股已识别，但外部行情无法精确对齐触发时点；维持观察，不误判为行情冲突。",
+          "representatives": [
+            {
+              "股票": "江丰电子",
+              "代码": "300666.SZ",
+              "监控涨跌幅": 0.0763,
+              "富途涨跌幅": null,
+              "腾讯涨跌幅": null,
+              "方向一致": false,
+              "幅度一致": false,
+              "复核结论": "行情精度不足"
+            },
+            {
+              "股票": "北方华创",
+              "代码": "002371.SZ",
+              "监控涨跌幅": -0.3778,
+              "富途涨跌幅": null,
+              "腾讯涨跌幅": null,
+              "方向一致": false,
+              "幅度一致": false,
+              "复核结论": "行情精度不足"
+            },
+            {
+              "股票": "中微公司",
+              "代码": "688012.SH",
+              "监控涨跌幅": 0.0,
+              "富途涨跌幅": null,
+              "腾讯涨跌幅": null,
+              "方向一致": false,
+              "幅度一致": false,
+              "复核结论": "行情精度不足"
+            }
+          ],
+          "window_minutes": 3,
+          "fingerprint": "e53d7b3d8f1ff79f2092",
+          "verifier_version": "futu-opend-2026-07-27.3"
+        }
       },
       "source_status": "degraded_partial",
       "valid_until": "2026-08-05T13:05:56+08:00",
@@ -2673,7 +2715,7 @@
   "quote_audit": {
     "provider": "本地盘中监控、富途行情（腾讯备用）",
     "quote_time": "2026-08-05T13:00:56+08:00",
-    "pct_field": "各异动卡标注的3分钟涨跌幅",
+    "pct_field": "各异动卡标注的短周期涨跌幅",
     "sanity_checks": {
       "sample_count": 20,
       "max_abs_leader_change_pct": 4.0989,
