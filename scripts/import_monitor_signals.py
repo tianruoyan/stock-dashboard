@@ -319,7 +319,7 @@ def convert_record(record: dict[str, Any]) -> Optional[dict[str, Any]]:
         "leaders": leaders,
         "signal_type": signal_type,
         "is_old_economy": kind.startswith("old_deng"),
-        "source_watch_id": sector,
+        "source_watch_id": source_watch_id(sector),
         "quote_audit": audit,
         "source_status": "degraded_partial" if confirmation == "candidate" else "monitor_live_unverified",
         "valid_until": (timestamp + timedelta(minutes=5)).replace(microsecond=0).isoformat(),
@@ -356,6 +356,19 @@ def sector_name(record: dict[str, Any], details: dict[str, Any]) -> str:
     if isinstance(directions, list) and directions:
         return "传统权重风格"
     return ""
+
+
+def source_watch_id(sector: str) -> str:
+    aliases = {
+        "长鑫存储IPO映射": "存储-HBM",
+        "高带宽内存": "存储-HBM",
+        "覆铜板": "PCB-电子布",
+        "电子布": "PCB-电子布",
+        "交换机/高速以太网": "交换机-高速以太网",
+        "半导体零部件弹性": "半导体设备材料",
+        "科技硬件链": "半导体设备材料",
+    }
+    return aliases.get(sector, sector)
 
 
 def representative_leaders(kind: str, details: dict[str, Any], side: str) -> list[dict[str, Any]]:
@@ -419,7 +432,7 @@ def classify_record(kind: str, details: dict[str, Any], side: str) -> tuple[str,
     if kind == "small_deng":
         theme = details.get("theme") if isinstance(details.get("theme"), dict) else {}
         hard = details.get("move_context") == "attack" or limit_count(theme, up=True) >= 2 or theme_threshold(theme, "up")
-        return ("opportunity", "机会观察", "candidate") if hard else ("", "题材观察", "")
+        return ("opportunity", "🎯交易信号", "candidate") if hard else ("", "题材观察", "")
     return "", "放量观察", ""
 
 
