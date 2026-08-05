@@ -3800,7 +3800,7 @@
     },
     "futu_minute_alert_verifier": {
       "status": "ok",
-      "last_check": "2026-08-05T13:07:43+08:00",
+      "last_check": "2026-08-05T13:08:47+08:00",
       "usage": "盘中异动代表股第二行情源交叉验证",
       "detail": "富途行情按触发时点复核18张异动卡：2张相互支持、13张明显冲突、3张精度不足；精度不足只维持观察，不计作冲突。",
       "sample_count": 50,
@@ -8383,5 +8383,17 @@
     "sample_count": 0,
     "errors": []
   },
-  "summary": "13:00核心A股行情、结构池和概念排行可用；港股个股延时、恢复状态记录滞后及V2旧快照已降权。"
+  "summary": "13:05覆铜板提醒已按结构计数保留candidate；代表股跨源仅部分一致，未升级确认。",
+  "monitor_quote_audit_20260805_130542": {
+    "status": "degraded_partial",
+    "last_check": "2026-08-05T13:08:31+08:00",
+    "market_time": "2026-08-05T13:05:42+08:00",
+    "usage": "覆铜板正式提醒的3分钟代表股跨源复核",
+    "detail": "本地监控候选由可审计limit_up_count=2支撑；富途/腾讯同窗复核仅金安国纪一致，华正新材精度不足，南亚新材方向与幅度明显冲突，因此保持candidate，不升级confirmed。",
+    "sample_count": 3,
+    "errors": [
+      "cross_source_verified=false",
+      "南亚新材跨源明显冲突"
+    ]
+  }
 }
