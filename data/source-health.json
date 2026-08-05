@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-08-05T16:12:00+08:00",
+  "timestamp": "2026-08-05T20:27:00+08:00",
   "sources": {
     "tencent_http": {
       "status": "ok",
@@ -59,15 +59,16 @@
       ]
     },
     "cninfo_watchlist_announcement_scan": {
-      "status": "ok",
-      "last_check": "2026-08-04T20:16:00+08:00",
+      "status": "ok_after_retry",
+      "last_check": "2026-08-05T20:27:00+08:00",
       "usage": "20:00配置观察池与专题样本公告全市场扫描及PDF原文核验",
-      "detail": "读取2026-08-04全市场1514条、51页公告；139个可识别配置名称命中42条、27家公司，写入5项具研究意义的公司公告，例行事项已剔除。",
-      "sample_count": 139,
-      "market_announcement_count": 1514,
-      "announcement_count": 42,
-      "matched_securities": 27,
-      "errors": []
+      "detail": "首轮分页不完整后重试成功；完整读取2026-08-05全市场1120条、38页公告，148个配置名称命中32条，7项非例行公司事项进入news。",
+      "sample_count": 148,
+      "market_announcement_count": 1120,
+      "announcement_count": 32,
+      "errors": [
+        "initial incomplete response; retry completed"
+      ]
     },
     "sina_announcement_page_sample": {
       "status": "ok_empty",
@@ -77,10 +78,10 @@
       "errors": []
     },
     "official_policy_global_web_scan": {
-      "status": "ok_with_pending_us_results",
-      "last_check": "2026-08-04T20:16:00+08:00",
+      "status": "ok_with_pending_us_close",
+      "last_check": "2026-08-05T20:27:00+08:00",
       "usage": "20:00政策、全球标杆、事件日历与突发扫描",
-      "detail": "核验工信部智能驾驶/光伏标准，AMD与Arista官方财报日历、Marvell/FMS官方事件；AMD和Arista财报尚未公布，留待8:30增量扫描。",
+      "detail": "核验AMD、Arista官方财报与1.6T产品；工信部/商务部/发改委和全球设备材料龙头未发现同日新增开盘级事项。美股现金收盘待8:30补核。",
       "sample_count": 25,
       "errors": []
     },
@@ -6176,11 +6177,29 @@
       "errors": [
         "免费港股个股快照约延迟15分钟"
       ]
+    },
+    "us_premarket_evening_20260805": {
+      "status": "ok_premarket_not_close",
+      "last_check": "2026-08-05T20:10:15+08:00",
+      "usage": "AMD、Arista、NVIDIA、Broadcom财报后首个美股盘前情绪快照",
+      "detail": "AMD约+7.2%、Arista约+3.1%、NVIDIA约+2.5%、Broadcom约+6.6%；仅作盘前快照，不写成现金收盘。",
+      "sample_count": 4,
+      "errors": []
+    },
+    "pdf_text_extraction_evening_20260805": {
+      "status": "degraded_fallback_success",
+      "last_check": "2026-08-05T20:27:00+08:00",
+      "usage": "华天、埃斯顿、江丰、恒瑞、温氏和异常波动公告原文核对",
+      "detail": "系统pdftotext不可用，使用工作区自带只读pypdf解析完成金额、业绩、审批和风险条款核对。",
+      "sample_count": 8,
+      "errors": [
+        "pdftotext: command not found"
+      ]
     }
   },
   "last_publish_attempt": "pending_20260717_0830_premarket_publish",
   "status": "degraded_non_core",
-  "last_error": "东方财富概念排行接口收盘时段仍远端断连；核心收盘、全A宽度、行业和结构池均已核验。",
+  "last_error": "非核心工具缺口：pdftotext未安装；已用只读PDF解析回退成功。美股尚未收盘属于时间窗口待核验，不是数据源失败。",
   "tencent_a_close_postmarket_20260716": {
     "status": "ok",
     "last_check": "2026-07-16T15:18:57+08:00",
@@ -6360,7 +6379,7 @@
     "sample_count": 15,
     "errors": []
   },
-  "overall_status": "核心A股行情与结构池正常，概念排行持续降级，港股行情延迟",
+  "overall_status": "20:00公告、官方事件和海外财报扫描完整；盘中既有概念排行/港股延迟降级仍保留。",
   "last_codex_note": "14:30更新采用14:31-14:33可核验A股行情和结构池；概念榜只保留11:04同日最后有效快照并显著降权，未补造当前概念排行。",
   "eastmoney_structure_pools_intraday_1000_20260717": {
     "status": "ok",
@@ -8363,12 +8382,18 @@
     ]
   },
   "current_run_summary": {
-    "status": "degraded_noncritical",
-    "last_check": "2026-08-04T14:36:00+08:00",
-    "detail": "A股指数、行业、专项样本与涨跌停结构有效；东方财富概念排行连续四个有效窗口失败，港股免费行情延迟约15分钟。",
+    "status": "ok_with_noncritical_fallback",
+    "last_check": "2026-08-05T20:27:00+08:00",
+    "detail": "巨潮重试后完整取得1120条/38页，配置命中32条；AMD、Arista官方财报和盘前快照有效。pdftotext缺失已由工作区只读PDF解析库补位，未形成事实缺口；美股现金收盘待8:30增量核验。",
     "errors": [
-      "东方财富概念排行远端断开连接",
-      "港股免费行情约延迟15分钟"
+      "巨潮首轮分页不完整，重试成功",
+      "pdftotext未安装，工作区PDF解析库回退成功"
+    ],
+    "source_keys": [
+      "cninfo_watchlist_announcement_scan",
+      "official_policy_global_web_scan",
+      "us_premarket_evening_20260805",
+      "pdf_text_extraction_evening_20260805"
     ]
   },
   "tencent_a_midday_20260804_1134": {
