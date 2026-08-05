@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-08-05T09:32:53+08:00",
+  "timestamp": "2026-08-05T09:36:49+08:00",
   "sources": {
     "tencent_http": {
       "status": "ok",
@@ -3800,10 +3800,10 @@
     },
     "futu_minute_alert_verifier": {
       "status": "ok",
-      "last_check": "2026-08-05T09:35:48+08:00",
+      "last_check": "2026-08-05T09:39:23+08:00",
       "usage": "盘中异动代表股第二行情源交叉验证",
-      "detail": "富途行情按触发时点复核15张异动卡：0张相互支持、15张明显冲突、0张精度不足；精度不足只维持观察，不计作冲突。",
-      "sample_count": 45,
+      "detail": "富途行情按触发时点复核17张异动卡：0张相互支持、17张明显冲突、0张精度不足；精度不足只维持观察，不计作冲突。",
+      "sample_count": 51,
       "errors": []
     },
     "tencent_a_quote_intraday_0945": {
@@ -5584,14 +5584,14 @@
       "errors": []
     },
     "monitor_akshare_realtime_20260805_0932": {
-      "status": "failed_current_preserve_alert",
-      "last_check": "2026-08-05T09:32:53+08:00",
+      "status": "degraded_flapping_preserve_alert",
+      "last_check": "2026-08-05T09:35:24+08:00",
       "usage": "老登/小登盘中观察池与题材强度实时刷新",
-      "detail": "09:26:12至09:32:53已连续6轮出现No value to decode；板块整体行情不可用，小登正式提醒降级，放量正式提醒暂停。守护进程仍存活且日志持续更新，保留上一版alert.json并等待下一轮自动重试。",
-      "sample_count": 0,
+      "detail": "09:26至09:32连续失败后，09:33取得单源候选行情并生成待确认提醒；09:35:24再次出现No value to decode。行情链路处于间歇性恢复，候选保留degraded_partial，全部不得在cross_source_verified=false时升级confirmed。",
+      "sample_count": 18,
       "errors": [
-        "No value to decode",
-        "板块整体行情暂不可用"
+        "No value to decode（间歇复发）",
+        "09:33多数代表股富途时点核验mismatch"
       ]
     }
   },
