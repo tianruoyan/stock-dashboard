@@ -373,6 +373,8 @@ def source_watch_id(sector: str) -> str:
         "交换机/高速以太网": "交换机-高速以太网",
         "半导体零部件弹性": "半导体设备材料",
         "科技硬件链": "半导体设备材料",
+        "硅片": "半导体材料",
+        "8192超节点/昇腾算力": "AI算力",
     }
     return aliases.get(sector, sector)
 
