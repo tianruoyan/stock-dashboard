@@ -1,18 +1,9 @@
 {
-  "timestamp": "2026-08-05T15:07:12+08:00",
+  "timestamp": "2026-08-05T15:35:18+08:00",
   "current_signal_date": "2026-08-05",
   "status": "degraded",
-  "summary": "发现 142 个降级/需复核项（139 个价格/行情复核，4 个背景复核），核心结论可看但必须按影响分层使用。",
+  "summary": "发现 141 个降级/需复核项（141 个价格/行情复核，1 个背景复核），核心结论可看但必须按影响分层使用。",
   "issues": [
-    {
-      "severity": "warning",
-      "file": "postmarket.json",
-      "path": "",
-      "code": "stale_timestamp",
-      "message": "时间戳不是当前交易日：2026-08-04T16:34:00+08:00",
-      "impact_level": "background_review",
-      "decision_action": "仅作背景复核，不单独阻断交易判断"
-    },
     {
       "severity": "warning",
       "file": "premarket.json",
@@ -48,24 +39,6 @@
       "message": "恒生科技指数 change_pct 非数字：None，该字段忽略并降权",
       "impact_level": "price_review",
       "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
-    },
-    {
-      "severity": "warning",
-      "file": "postmarket.json",
-      "path": "",
-      "code": "missing_sentiment_indicator_field",
-      "message": "sentiment_indicator.components 缺失",
-      "impact_level": "background_review",
-      "decision_action": "仅作背景复核，不单独阻断交易判断"
-    },
-    {
-      "severity": "warning",
-      "file": "postmarket.json",
-      "path": "",
-      "code": "missing_sentiment_indicator_field",
-      "message": "sentiment_indicator.method 缺失",
-      "impact_level": "background_review",
-      "decision_action": "仅作背景复核，不单独阻断交易判断"
     },
     {
       "severity": "warning",
@@ -1290,6 +1263,24 @@
       "message": "eastmoney_concept_intraday_20260804_1302: 请求返回Empty reply；保留11:04同交易日最后有效概念榜，不将其冒充13:00当前值。",
       "impact_level": "price_review",
       "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
+    },
+    {
+      "severity": "warning",
+      "file": "source-health.json",
+      "path": "",
+      "code": "source_degraded",
+      "message": "eastmoney_concept_postmarket_20260805: 15:07成功取得当日收盘概念快照；15:28复查代理失败，沿用已验证快照，不补写。",
+      "impact_level": "price_review",
+      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
+    },
+    {
+      "severity": "warning",
+      "file": "source-health.json",
+      "path": "",
+      "code": "source_degraded",
+      "message": "shenwan_industry_mapping_postmarket_20260805: 历史代码主表5203只；涨超5%样本中38只未映射，占4.98%，已单列未映射，不外推分类。",
+      "impact_level": "price_review",
+      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
     }
   ],
   "action_plan": [
@@ -1330,17 +1321,6 @@
       "priority": 4,
       "impact_level": "background_review",
       "label": "背景来源复核",
-      "file": "postmarket.json",
-      "code": "stale_timestamp",
-      "problem": "时间戳不是当前交易日：2026-08-04T16:34:00+08:00",
-      "decision_action": "仅作背景复核，不单独阻断交易判断",
-      "next_step": "补官方/交易所/公司公告来源；未补齐前不升级为核心依据。",
-      "unblock_condition": "官方来源补齐或确认不影响交易触发。"
-    },
-    {
-      "priority": 4,
-      "impact_level": "background_review",
-      "label": "背景来源复核",
       "file": "evening-sentiment.json",
       "code": "evening_not_current",
       "problem": "晚间舆情不是当前交易日，不参与今日总控",
@@ -1351,12 +1331,12 @@
   ],
   "counts": {
     "critical": 0,
-    "warning": 142,
+    "warning": 141,
     "info": 1,
     "blocking": 0,
-    "price_review": 139,
+    "price_review": 141,
     "signal_review": 0,
-    "background_review": 4
+    "background_review": 1
   },
   "rules": [
     "异常文本、JSON解析失败、必需文件缺失为 critical。",
