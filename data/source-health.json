@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-08-05T13:05:45+08:00",
+  "timestamp": "2026-08-05T13:28:18+08:00",
   "sources": {
     "tencent_http": {
       "status": "ok",
@@ -5993,6 +5993,18 @@
       "detail": "读取3条规范化只读参考，最新观察时间08:49；不调用账户、持仓或交易能力，不独立改变V1行动。",
       "sample_count": 3,
       "errors": []
+    },
+    "monitor_alert_quote_audit_20260805_1325": {
+      "status": "degraded_mismatch",
+      "last_check": "2026-08-05T13:28:18+08:00",
+      "market_time": "2026-08-05T13:25:06+08:00",
+      "usage": "交换机/高速以太网与半导体零部件弹性候选的短周期双源复核",
+      "detail": "两条候选均有limit_up_count=2的可审计结构，但未达到普通价格/成交门槛。交换机代表股中菲菱科思跨源方向明显冲突，紫光股份和工业富联精度不足；半导体零部件中新莱应材精度不足，因此两条均只保留待确认candidate。",
+      "sample_count": 5,
+      "errors": [
+        "菲菱科思跨源短周期方向明显冲突",
+        "紫光股份、工业富联、新莱应材触发时点行情精度不足"
+      ]
     }
   },
   "last_publish_attempt": "pending_20260717_0830_premarket_publish",
@@ -8383,7 +8395,7 @@
     "sample_count": 0,
     "errors": []
   },
-  "summary": "13:20科技硬件链与超级电容提醒按本地监控源及涨停结构保留candidate；跨源复核待返回，未升级确认。",
+  "summary": "13:25交换机/高速以太网与半导体零部件弹性提醒保留candidate；涨停结构可审计，但短周期价格/成交不足且跨源精度或方向存在冲突，未升级确认。",
   "monitor_quote_audit_20260805_130542": {
     "status": "degraded_partial",
     "last_check": "2026-08-05T13:08:31+08:00",
