@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-08-05T10:29:58+08:00",
+  "timestamp": "2026-08-05T10:41:39+08:00",
   "sources": {
     "tencent_http": {
       "status": "ok",
@@ -5584,14 +5584,14 @@
       "errors": []
     },
     "monitor_akshare_realtime_20260805_0932": {
-      "status": "degraded_flapping_preserve_alert",
-      "last_check": "2026-08-05T10:29:58+08:00",
+      "status": "degraded_partial",
+      "last_check": "2026-08-05T10:41:39+08:00",
       "usage": "老登/小登盘中观察池与题材强度实时刷新",
-      "detail": "行情源反复返回No value to decode，最近一次为10:28:53；10:29轮次仍在刷新中。监控进程和日志正常，保留上一版alert.json，不据失败轮次生成新提醒。",
-      "sample_count": 0,
+      "detail": "10:37:24实时行情恢复并生成机器人/工业自动化候选；本地监控样本可用，但富途触发时点仅成功核验1只且与本地幅度冲突，维持候选、不升级确认。",
+      "sample_count": 3,
       "errors": [
-        "No value to decode（最近一次10:28:53）",
-        "失败轮次未形成新的可用实时样本"
+        "富途可解析代表股不足2只",
+        "埃斯顿跨源短周期幅度明显冲突"
       ]
     },
     "tencent_a_intraday_20260805_1011": {
@@ -5679,6 +5679,84 @@
       "usage": "既有DRAM/HBM机构观点及反证背景",
       "detail": "仅使用已规范化只读shadow背景；没有当期新观点，且不独立改变V1行动。",
       "sample_count": 1,
+      "errors": []
+    },
+    "tencent_a_intraday_20260805_1031": {
+      "status": "ok",
+      "last_check": "2026-08-05T10:36:00+08:00",
+      "market_time": "2026-08-05T10:35:48+08:00",
+      "usage": "五大指数、98行业、配置观察池及盘中专项样本",
+      "detail": "指数与行业时间10:31，代表股补核至10:35；数据完整可用。",
+      "sample_count": 98,
+      "errors": []
+    },
+    "eastmoney_structure_intraday_20260805_1030": {
+      "status": "ok",
+      "last_check": "2026-08-05T10:36:00+08:00",
+      "market_time": "2026-08-05T10:30:24+08:00",
+      "usage": "非ST涨停、跌停、炸板、连板、20cm与行业分布",
+      "detail": "涨停54、跌停1、炸板23；最高8板、4只20cm。",
+      "sample_count": 78,
+      "errors": []
+    },
+    "eastmoney_concept_intraday_20260805_1030": {
+      "status": "failed_degraded",
+      "last_check": "2026-08-05T10:36:00+08:00",
+      "market_time": "2026-08-05T10:30:24+08:00",
+      "usage": "概念排行与资金扩散",
+      "detail": "本轮RemoteDisconnected；保留10:10上版只作背景，不用于10:30当前结论。",
+      "sample_count": 0,
+      "errors": [
+        "Remote end closed connection without response"
+      ]
+    },
+    "tencent_hk_intraday_20260805_1016": {
+      "status": "ok_delayed",
+      "last_check": "2026-08-05T10:36:00+08:00",
+      "market_time": "2026-08-05T10:16:02+08:00",
+      "usage": "恒指、恒生科技与半导体、AI、医药映射",
+      "detail": "免费行情约延迟15分钟，只作方向映射；恒指+0.22%、恒科+0.96%。",
+      "sample_count": 8,
+      "errors": [
+        "港股免费行情约延迟15分钟"
+      ]
+    },
+    "intraday_recovery_state_20260805_1030": {
+      "status": "ok",
+      "last_check": "2026-08-05T10:29:58+08:00",
+      "usage": "交易阶段和断网恢复状态",
+      "detail": "上午交易、数据正常、failure_count=0、quote_time=10:23:03。",
+      "sample_count": 1,
+      "errors": []
+    },
+    "monitor_alert_verifier_20260805_1030": {
+      "status": "degraded_mismatch",
+      "last_check": "2026-08-05T10:36:00+08:00",
+      "usage": "短周期异动候选双源复核",
+      "detail": "20条候选中仅1条通过、18条失配、1条精度不足；唯一通过的是CPO快速下跌风险，不采用其余候选。",
+      "sample_count": 20,
+      "errors": [
+        "18 cross-source mismatches",
+        "1 insufficient precision"
+      ]
+    },
+    "v2_cockpit_context_20260805_1030": {
+      "status": "stale_degraded",
+      "last_check": "2026-08-05T10:36:00+08:00",
+      "usage": "只读权限与风险边界",
+      "detail": "受治理V2快照仍为8月4日，且没有已迁入的用户确认资产；不作为8月5日实时事实。",
+      "sample_count": 0,
+      "errors": [
+        "governed snapshot stale",
+        "no user-confirmed assets migrated"
+      ]
+    },
+    "longbridge_analysis_shadow_20260805_1030": {
+      "status": "reference_only",
+      "last_check": "2026-08-05T10:36:00+08:00",
+      "usage": "既有规范化机构观点背景",
+      "detail": "本轮没有当期规范化Longbridge新增观点；未调用账户、持仓或交易能力，不独立改变V1行动。",
+      "sample_count": 0,
       "errors": []
     }
   },
