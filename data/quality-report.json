@@ -1,8 +1,8 @@
 {
-  "timestamp": "2026-08-05T10:37:46+08:00",
+  "timestamp": "2026-08-05T10:38:12+08:00",
   "current_signal_date": "2026-08-05",
   "status": "degraded",
-  "summary": "发现 145 个降级/需复核项（141 个价格/行情复核，5 个背景复核），核心结论可看但必须按影响分层使用。",
+  "summary": "发现 146 个降级/需复核项（142 个价格/行情复核，5 个背景复核），核心结论可看但必须按影响分层使用。",
   "issues": [
     {
       "severity": "warning",
@@ -55,6 +55,15 @@
       "path": "hk_auction.indices[1]",
       "code": "bad_change_pct",
       "message": "恒生科技指数 change_pct 非数字：None，该字段忽略并降权",
+      "impact_level": "price_review",
+      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
+    },
+    {
+      "severity": "warning",
+      "file": "watchlist-quotes.json",
+      "path": "stocks[14]",
+      "code": "watchlist_limit_down_like",
+      "message": "中际旭创 接近跌停 -9.8，需确认是否真实",
       "impact_level": "price_review",
       "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
     },
@@ -1365,6 +1374,17 @@
       "unblock_condition": "price_review=0 或相关来源标记 trusted/cross verified。"
     },
     {
+      "priority": 2,
+      "impact_level": "price_review",
+      "label": "二次行情复核",
+      "file": "watchlist-quotes.json",
+      "code": "watchlist_limit_down_like",
+      "problem": "中际旭创 接近跌停 -9.8，需确认是否真实",
+      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核",
+      "next_step": "用第二行情源复核涨跌幅、quote_time 和代表股方向；未确认前只做验证。",
+      "unblock_condition": "price_review=0 或相关来源标记 trusted/cross verified。"
+    },
+    {
       "priority": 4,
       "impact_level": "background_review",
       "label": "背景来源复核",
@@ -1374,25 +1394,14 @@
       "decision_action": "仅作背景复核，不单独阻断交易判断",
       "next_step": "补官方/交易所/公司公告来源；未补齐前不升级为核心依据。",
       "unblock_condition": "官方来源补齐或确认不影响交易触发。"
-    },
-    {
-      "priority": 4,
-      "impact_level": "background_review",
-      "label": "背景来源复核",
-      "file": "postmarket.json",
-      "code": "stale_timestamp",
-      "problem": "时间戳不是当前交易日：2026-08-04T16:34:00+08:00",
-      "decision_action": "仅作背景复核，不单独阻断交易判断",
-      "next_step": "补官方/交易所/公司公告来源；未补齐前不升级为核心依据。",
-      "unblock_condition": "官方来源补齐或确认不影响交易触发。"
     }
   ],
   "counts": {
     "critical": 0,
-    "warning": 145,
+    "warning": 146,
     "info": 1,
     "blocking": 0,
-    "price_review": 141,
+    "price_review": 142,
     "signal_review": 0,
     "background_review": 5
   },
