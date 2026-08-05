@@ -1,8 +1,8 @@
 {
-  "timestamp": "2026-08-05T14:10:07+08:00",
+  "timestamp": "2026-08-05T14:11:25+08:00",
   "current_signal_date": "2026-08-05",
   "status": "degraded",
-  "summary": "发现 146 个降级/需复核项（142 个价格/行情复核，1 个信号复核，4 个背景复核），核心结论可看但必须按影响分层使用。",
+  "summary": "发现 145 个降级/需复核项（142 个价格/行情复核，4 个背景复核），核心结论可看但必须按影响分层使用。",
   "issues": [
     {
       "severity": "warning",
@@ -84,15 +84,6 @@
       "message": "行情污染源仍降级，历史 alert 未交叉验证，只降权复盘参考",
       "impact_level": "price_review",
       "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
-    },
-    {
-      "severity": "warning",
-      "file": "alert.json",
-      "path": "alerts[18]",
-      "code": "historical_candidate_alert_evidence_weak",
-      "message": "alerts[18] 候选异动未达到最低短周期价格、方向占比和成交门槛，不得作为当前候选展示",
-      "impact_level": "signal_review",
-      "decision_action": "仅作历史复核，不得恢复为当前候选"
     },
     {
       "severity": "info",
@@ -1374,17 +1365,6 @@
       "unblock_condition": "price_review=0 或相关来源标记 trusted/cross verified。"
     },
     {
-      "priority": 3,
-      "impact_level": "signal_review",
-      "label": "信号结构复核",
-      "file": "alert.json",
-      "code": "historical_candidate_alert_evidence_weak",
-      "problem": "alerts[18] 候选异动未达到最低短周期价格、方向占比和成交门槛，不得作为当前候选展示",
-      "decision_action": "仅作历史复核，不得恢复为当前候选",
-      "next_step": "修正字段结构、证据、触发原因和升级条件；未通过前降权展示。",
-      "unblock_condition": "signal_review=0，decision-feed/核心 JSON 契约通过。"
-    },
-    {
       "priority": 4,
       "impact_level": "background_review",
       "label": "背景来源复核",
@@ -1394,15 +1374,26 @@
       "decision_action": "仅作背景复核，不单独阻断交易判断",
       "next_step": "补官方/交易所/公司公告来源；未补齐前不升级为核心依据。",
       "unblock_condition": "官方来源补齐或确认不影响交易触发。"
+    },
+    {
+      "priority": 4,
+      "impact_level": "background_review",
+      "label": "背景来源复核",
+      "file": "evening-sentiment.json",
+      "code": "evening_not_current",
+      "problem": "晚间舆情不是当前交易日，不参与今日总控",
+      "decision_action": "仅作背景复核，不单独阻断交易判断",
+      "next_step": "补官方/交易所/公司公告来源；未补齐前不升级为核心依据。",
+      "unblock_condition": "官方来源补齐或确认不影响交易触发。"
     }
   ],
   "counts": {
     "critical": 0,
-    "warning": 146,
+    "warning": 145,
     "info": 1,
     "blocking": 0,
     "price_review": 142,
-    "signal_review": 1,
+    "signal_review": 0,
     "background_review": 4
   },
   "rules": [
