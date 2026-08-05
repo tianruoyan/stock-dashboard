@@ -1,6 +1,6 @@
 {
-  "timestamp": "2026-08-05T10:07:20+08:00",
-  "source_status": "monitor_waiting_update",
+  "timestamp": "2026-08-05T10:09:23+08:00",
+  "source_status": "monitor_live",
   "alerts": [
     {
       "id": "monitor-20260805-093610-c0881fffa89b",
@@ -2670,7 +2670,7 @@
         "sample_count": 3,
         "max_abs_leader_change_pct": 1.7156,
         "sanity_checks": {
-          "cross_source_verified": false,
+          "cross_source_verified": true,
           "price_move_valid": true,
           "volume_valid": true,
           "direction_ratio_valid": true,
@@ -2683,11 +2683,69 @@
         "missing_confirmation": "等待富途行情按触发时点交叉核验；通过前只作候选或观察，不作为确认交易信号。",
         "secondary_source": "富途行情",
         "secondary_verification": {
-          "state": "pending",
-          "checked_at": "2026-08-05T10:08:10+08:00",
+          "state": "passed",
+          "checked_at": "2026-08-05T10:09:13+08:00",
           "source": "富途行情",
-          "reason": "等待触发分钟行情完整落盘。",
-          "representatives": [],
+          "reason": "富途行情已按代表股触发时点对齐，方向和价格变化相互支持。",
+          "representatives": [
+            {
+              "股票": "新易盛",
+              "代码": "300502.SZ",
+              "监控涨跌幅": -1.7156,
+              "富途涨跌幅": -0.7301,
+              "腾讯涨跌幅": -0.7025,
+              "起始分钟": "10:03:57",
+              "结束分钟": "10:06:57",
+              "对齐方式": "逐笔行情同一时点对齐",
+              "时间偏差秒": 0.248,
+              "可比涨跌范围": [
+                -0.9043,
+                -0.6202
+              ],
+              "方向一致": false,
+              "幅度一致": false,
+              "复核结论": "明显冲突"
+            },
+            {
+              "股票": "中际旭创",
+              "代码": "300308.SZ",
+              "监控涨跌幅": -1.0919,
+              "富途涨跌幅": -0.9845,
+              "腾讯涨跌幅": -0.6041,
+              "起始分钟": "10:03:57",
+              "结束分钟": "10:06:57",
+              "对齐方式": "逐笔行情同一时点对齐",
+              "时间偏差秒": 0.248,
+              "可比涨跌范围": [
+                -1.1147,
+                -0.887
+              ],
+              "方向一致": true,
+              "幅度一致": true,
+              "复核结论": "一致"
+            },
+            {
+              "股票": "光迅科技",
+              "代码": "002281.SZ",
+              "监控涨跌幅": -1.0354,
+              "富途涨跌幅": -0.8624,
+              "腾讯涨跌幅": -0.4331,
+              "起始分钟": "10:03:57",
+              "结束分钟": "10:06:57",
+              "对齐方式": "逐笔行情同一时点对齐",
+              "时间偏差秒": 0.248,
+              "可比涨跌范围": [
+                -1.0545,
+                -0.8624
+              ],
+              "方向一致": true,
+              "幅度一致": true,
+              "复核结论": "一致"
+            }
+          ],
+          "window_minutes": 3,
+          "direction_agreement_ratio": 0.6667,
+          "magnitude_agreement_ratio": 0.6667,
           "fingerprint": "0e22316b5cfc232cc9ff",
           "verifier_version": "futu-opend-2026-07-27.3"
         }
@@ -2709,9 +2767,8 @@
       "sample_count": 20,
       "max_abs_leader_change_pct": 4.0989,
       "cross_source_verified": false,
-      "verified_alert_count": 0
+      "verified_alert_count": 1
     }
   },
-  "note": "行情暂时中断，已保留今天最近一次有效异动；卡片仍显示实际触发时间，恢复后会自动更新。",
-  "monitor_checked_at": "2026-08-05T10:08:21+08:00"
+  "note": "异动来自本地短周期监控；候选卡须经富途行情按触发时点复核后才能升级。"
 }
