@@ -303,7 +303,7 @@ def convert_record(record: dict[str, Any]) -> Optional[dict[str, Any]]:
     leaders = representative_leaders(kind, details, side)
     if not sector or not leaders:
         return None
-    alert_class, signal_type, confirmation = classify_record(kind, details, side)
+    alert_class, signal_type, confirmation = classify_record(kind, details, side, sector)
     board = board_metrics(kind, details, side)
     rules = details.get("trigger_rules") if isinstance(details.get("trigger_rules"), list) else []
     reason = normalize_reason(record.get("body") or record.get("title") or "")
@@ -321,7 +321,13 @@ def convert_record(record: dict[str, Any]) -> Optional[dict[str, Any]]:
         "is_old_economy": kind.startswith("old_deng"),
         "source_watch_id": source_watch_id(sector),
         "quote_audit": audit,
-        "source_status": "degraded_partial" if confirmation == "candidate" else "monitor_live_unverified",
+        "source_status": (
+            "degraded_partial"
+            if confirmation == "candidate"
+            else "invalidated"
+            if confirmation == "invalidated"
+            else "monitor_live_unverified"
+        ),
         "valid_until": (timestamp + timedelta(minutes=5)).replace(microsecond=0).isoformat(),
         "trigger_rule": "；".join(str(item) for item in rules if item),
     }
@@ -424,12 +430,14 @@ def representative_leaders(kind: str, details: dict[str, Any], side: str) -> lis
     return leaders
 
 
-def classify_record(kind: str, details: dict[str, Any], side: str) -> tuple[str, str, str]:
+def classify_record(kind: str, details: dict[str, Any], side: str, sector: str = "") -> tuple[str, str, str]:
     if kind in {"old_deng", "old_deng_down", "style_move"}:
         return "style", "风格观察", "candidate"
     if kind == "small_deng_down":
         return "risk", "风险提示", "candidate"
     if kind == "small_deng":
+        if any(keyword in sector for keyword in ("传说", "游资", "走势关联")):
+            return "style", "舆情观察", "invalidated"
         theme = details.get("theme") if isinstance(details.get("theme"), dict) else {}
         hard = details.get("move_context") == "attack" or limit_count(theme, up=True) >= 2 or theme_threshold(theme, "up")
         return ("opportunity", "🎯交易信号", "candidate") if hard else ("", "题材观察", "")
