@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-08-06T08:44:00+08:00",
+  "timestamp": "2026-08-06T09:38:00+08:00",
   "sources": {
     "tencent_http": {
       "status": "ok",
@@ -3802,10 +3802,10 @@
     },
     "futu_minute_alert_verifier": {
       "status": "ok",
-      "last_check": "2026-08-06T09:40:47+08:00",
+      "last_check": "2026-08-06T09:41:51+08:00",
       "usage": "盘中异动代表股第二行情源交叉验证",
-      "detail": "富途行情按触发时点复核4张异动卡：1张相互支持、1张明显冲突、2张精度不足；精度不足只维持观察，不计作冲突。",
-      "sample_count": 6,
+      "detail": "富途行情按触发时点复核7张异动卡：1张相互支持、4张明显冲突、2张精度不足；精度不足只维持观察，不计作冲突。",
+      "sample_count": 13,
       "errors": []
     },
     "tencent_a_quote_intraday_0945": {
@@ -6261,6 +6261,84 @@
       "errors": [
         "scripts/validate_theme.py not found in configured V2 root"
       ]
+    },
+    "tencent_a_quote_intraday_0930_20260806": {
+      "status": "ok",
+      "last_check": "2026-08-06T09:36:03+08:00",
+      "market_time": "2026-08-06T09:34:15+08:00至2026-08-06T09:36:03+08:00",
+      "usage": "09:30开盘后指数、行业、配置观察样本及交换机/电子布专项报价",
+      "detail": "取得5个指数、98个腾讯行业代码及半导体、存储、CPO、交换机、电子布和风格雷达代表股有效连续行情。",
+      "sample_count": 98,
+      "errors": []
+    },
+    "eastmoney_structure_pools_intraday_0930_20260806": {
+      "status": "ok",
+      "last_check": "2026-08-06T09:34:30+08:00",
+      "market_time": "2026-08-06T09:34:27+08:00附近",
+      "usage": "09:30开盘后涨停、跌停、炸板、连板和行业分布",
+      "detail": "涨停21、跌停0、当前炸板0；21只涨停成分完整，最高10板、3只20cm，6只当前涨停股曾开板后回封。",
+      "sample_count": 21,
+      "errors": []
+    },
+    "eastmoney_concept_rank_intraday_0930_20260806": {
+      "status": "ok",
+      "last_check": "2026-08-06T09:35:00+08:00",
+      "market_time": "2026-08-06T09:35:00+08:00附近",
+      "usage": "09:30当前概念涨跌和主力净流入补充",
+      "detail": "概念排行返回100条；剔除昨日涨停/连板等纯历史因子后，黄金概念+1.38%、主力净流入约4.45亿元。",
+      "sample_count": 100,
+      "errors": []
+    },
+    "sina_hk_open_intraday_0935_20260806": {
+      "status": "ok",
+      "last_check": "2026-08-06T09:35:25+08:00",
+      "market_time": "2026-08-06T09:35:17+08:00至2026-08-06T09:35:25+08:00",
+      "usage": "港股指数、半导体、AI应用、互联网与创新药连续竞价映射",
+      "detail": "恒指-1.33%、恒科-1.03%；澜起H-4.96%、兆易H-5.47%、华虹-3.18%、中芯H-3.68%，药明生物+1.38%相对抗跌。",
+      "sample_count": 14,
+      "errors": []
+    },
+    "tencent_hk_open_intraday_0935_20260806": {
+      "status": "degraded_stale_preopen",
+      "last_check": "2026-08-06T09:35:25+08:00",
+      "market_time": "腾讯仍返回2026-08-06T09:20:05+08:00竞价快照",
+      "usage": "港股连续竞价复核",
+      "detail": "腾讯港股个股与指数未刷新至09:30后，未将其冒充连续行情；本轮改用新浪09:35快照。",
+      "sample_count": 0,
+      "errors": [
+        "stale at 09:20 pre-open auction"
+      ]
+    },
+    "intraday_recovery_state_20260806_0930": {
+      "status": "ok_with_quote_marker_lag",
+      "last_check": "2026-08-06T09:36:22+08:00",
+      "usage": "断网恢复状态和当前阶段核验",
+      "detail": "state=数据正常、phase=上午交易、failure_count=0；服务文件quote_time仍为09:23，本轮只补当前可核验09:34-09:36行情，不追溯伪造9:30。",
+      "sample_count": 1,
+      "errors": [
+        "recovery quote_time marker lagged at 09:23"
+      ]
+    },
+    "v2_cockpit_context_intraday_0930_20260806": {
+      "status": "stale_boundary_only",
+      "last_check": "2026-08-06T09:32:30+08:00",
+      "usage": "治理边界和用户资产迁入状态",
+      "detail": "最新受治理快照仍为8月5日收盘，未作为8月6日盘中事实；系统无已迁入用户确认资产。",
+      "sample_count": 0,
+      "errors": [
+        "current-session governed snapshot unavailable",
+        "no user-confirmed assets migrated"
+      ]
+    },
+    "longbridge_institutional_shadow_intraday_0930_20260806": {
+      "status": "stale_reference_only",
+      "last_check": "2026-08-06T09:32:30+08:00",
+      "usage": "DRAM/HBM外部机构反证背景",
+      "detail": "仅保留7月30日已规范化机构观点为背景；当前判断以本地可核验行情为准，未调用长桥账户、持仓、订单、自选或社区能力。",
+      "sample_count": 1,
+      "errors": [
+        "old reference window; not current market fact"
+      ]
     }
   },
   "last_publish_attempt": "pending_20260717_0830_premarket_publish",
@@ -8657,7 +8735,7 @@
     "sample_count": 0,
     "errors": []
   },
-  "summary": "14:22覆铜板提醒有2只可审计涨停，但板块3分钟仅+0.06%、成交2.56x，双源分钟行情待落盘，仅保留candidate。",
+  "summary": "09:30盘中更新：直接行情源可用；腾讯港股连续行情停在09:20已降级并改用新浪，恢复服务quote_time标记滞后但state正常；所有缺失均已显式标注，未编造。",
   "monitor_quote_audit_20260805_130542": {
     "status": "degraded_partial",
     "last_check": "2026-08-05T13:08:31+08:00",
