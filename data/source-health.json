@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-08-06T16:31:33+08:00",
+  "timestamp": "2026-08-06T20:16:00+08:00",
   "sources": {
     "tencent_http": {
       "status": "ok",
@@ -60,14 +60,14 @@
     },
     "cninfo_watchlist_announcement_scan": {
       "status": "ok_after_retry",
-      "last_check": "2026-08-05T20:27:00+08:00",
+      "last_check": "2026-08-06T20:16:00+08:00",
       "usage": "20:00配置观察池与专题样本公告全市场扫描及PDF原文核验",
-      "detail": "首轮分页不完整后重试成功；完整读取2026-08-05全市场1120条、38页公告，148个配置名称命中32条，7项非例行公司事项进入news。",
+      "detail": "接口元数据误报38页，主动读取第39页补齐24条；完整读取2026-08-06全市场1164条公告，148个配置名称命中35条，7项非例行公司事项进入news。",
       "sample_count": 148,
-      "market_announcement_count": 1120,
-      "announcement_count": 32,
+      "market_announcement_count": 1164,
+      "announcement_count": 35,
       "errors": [
-        "initial incomplete response; retry completed"
+        "API totalpages=38 inconsistent with totalAnnouncement=1164; page 39 returned final 24 records and completed coverage"
       ]
     },
     "sina_announcement_page_sample": {
@@ -78,11 +78,32 @@
       "errors": []
     },
     "official_policy_global_web_scan": {
-      "status": "ok_with_pending_us_close",
-      "last_check": "2026-08-05T20:27:00+08:00",
+      "status": "degraded",
+      "last_check": "2026-08-06T20:16:00+08:00",
       "usage": "20:00政策、全球标杆、事件日历与突发扫描",
-      "detail": "核验AMD、Arista官方财报与1.6T产品；工信部/商务部/发改委和全球设备材料龙头未发现同日新增开盘级事项。美股现金收盘待8:30补核。",
+      "detail": "商务部第33、34号公告及第2、3号令已由官网原文核验；全球标杆官方域名搜索混入历史页面，已剔除并降级为非穷尽扫描。本轮没有把空结果写成完全无新闻，US现金市场尚未开盘。",
       "sample_count": 25,
+      "errors": [
+        "official-domain search returned stale/historical pages for Aug 6 queries; no unverified current leader event used"
+      ]
+    },
+    "v22_theme_validation_helpers": {
+      "status": "degraded",
+      "last_check": "2026-08-06T20:16:00+08:00",
+      "usage": "产业逻辑验证的V2.2只读shadow上下文",
+      "detail": "技能引用的validate_theme.py和read_current_context.py在当前worktree缺失；改为只读核验market-environment、industry-tracking、decision-cases等受治理产物。G0仍为partial、G5为suppress，未据此升级交易结论。",
+      "sample_count": 3,
+      "errors": [
+        "missing worktrees/stock-dashboard-v2/scripts/validate_theme.py",
+        "missing worktrees/stock-dashboard-v2/scripts/read_current_context.py"
+      ]
+    },
+    "longbridge_institutional_shadow": {
+      "status": "ok_no_increment",
+      "last_check": "2026-08-06T20:16:00+08:00",
+      "usage": "Longbridge机构观点规范化shadow只读参考",
+      "detail": "规范化引用文件仅含2026-07-30存储涨价/HBM扩产旧观点，本轮无新增机构观点；未调用账户、持仓、订单、自选或社区能力。",
+      "sample_count": 1,
       "errors": []
     },
     "tencent_hk_auction_http": {
