@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-08-06T14:07:43+08:00",
+  "timestamp": "2026-08-06T14:40:18+08:00",
   "sources": {
     "tencent_http": {
       "status": "ok",
@@ -6501,11 +6501,99 @@
       "errors": [
         "no normalized current-day increment"
       ]
+    },
+    "tencent_a_intraday_1437_20260806": {
+      "status": "ok",
+      "last_check": "2026-08-06T14:40:18+08:00",
+      "market_time": "2026-08-06T14:37:13+08:00",
+      "usage": "14:30五大指数、98行业和半导体/交换机/电子布/CPO/风格样本",
+      "detail": "取得有效14:36-14:37实时报价；两市成交约23129.57亿元。",
+      "sample_count": 98,
+      "errors": []
+    },
+    "eastmoney_structure_intraday_1436_20260806": {
+      "status": "ok_serial",
+      "last_check": "2026-08-06T14:40:18+08:00",
+      "market_time": "2026-08-06T14:36:26+08:00",
+      "usage": "14:30涨停、跌停、炸板及行业分布",
+      "detail": "单次串行取得涨停76、跌停1、炸板20；最高10板、10只20cm。",
+      "sample_count": 97,
+      "errors": []
+    },
+    "eastmoney_concept_intraday_1430_20260806": {
+      "status": "degraded_preserved_last_valid",
+      "last_check": "2026-08-06T14:40:18+08:00",
+      "market_time": "最后有效2026-08-06T13:05:30+08:00",
+      "usage": "14:30概念排行与资金结构",
+      "detail": "13:33与14:03连续断连后执行限流保护，本轮未重复请求；保留13:05最后有效快照且不用于当前主线升级。",
+      "sample_count": 0,
+      "errors": [
+        "13:33 ProxyError",
+        "14:03 RemoteDisconnected",
+        "not retried after persistent failure"
+      ]
+    },
+    "sina_hk_intraday_1436_20260806": {
+      "status": "ok",
+      "last_check": "2026-08-06T14:40:18+08:00",
+      "market_time": "2026-08-06T14:36:26+08:00",
+      "usage": "恒指、恒科及港股科技/半导体映射",
+      "detail": "恒指-1.83%、恒科-2.34%，中芯H-4.49%、华虹H-3.89%。",
+      "sample_count": 8,
+      "errors": []
+    },
+    "naver_korea_intraday_1436_20260806": {
+      "status": "failed_preserved_last_valid",
+      "last_check": "2026-08-06T14:40:18+08:00",
+      "market_time": "最后有效2026-08-06T14:03:00+08:00至14:04:00+08:00",
+      "usage": "KOSPI、三星与SK海力士实时交叉验证",
+      "detail": "当前复采SSL握手超时；保留14:03-14:04最后有效快照并标注时点，不冒充14:30当前值。",
+      "sample_count": 0,
+      "errors": [
+        "SSL handshake timeout"
+      ]
+    },
+    "tencent_japan_intraday_1417_20260806": {
+      "status": "ok_delayed_reference",
+      "last_check": "2026-08-06T14:40:18+08:00",
+      "market_time": "2026-08-06T14:17:21+08:00",
+      "usage": "日本半导体设备映射",
+      "detail": "Advantest-2.55%、东京电子-5.82%，仅作跨市场方向反证。",
+      "sample_count": 2,
+      "errors": [
+        "relative to A-share snapshot about 19 minutes older"
+      ]
+    },
+    "intraday_recovery_state_20260806_1434": {
+      "status": "ok",
+      "last_check": "2026-08-06T14:34:14+08:00",
+      "usage": "断网恢复状态核验",
+      "detail": "状态为数据正常、下午交易、failure_count=0，行情时间14:20:24。",
+      "sample_count": 1,
+      "errors": []
+    },
+    "v2_cockpit_context_20260806_1430": {
+      "status": "stale_degraded",
+      "last_check": "2026-08-06T14:40:18+08:00",
+      "usage": "只读行动语言与用户资产边界",
+      "detail": "最新受治理快照为2026-08-05收盘；只用于等待确认/不追高语言和0用户资产边界，不作14:30行情事实。",
+      "sample_count": 0,
+      "errors": [
+        "governed snapshot stale"
+      ]
+    },
+    "longbridge_institutional_shadow_20260806_1430": {
+      "status": "reference_only_no_current_increment",
+      "last_check": "2026-08-06T14:40:18+08:00",
+      "usage": "长桥机构分析规范化影子复核",
+      "detail": "仅1条7月30日存储/HBM机构观点，8月6日无增量；当前A/H与韩国最后有效价格构成反证，未调用账户、持仓、订单、自选或社区能力。",
+      "sample_count": 1,
+      "errors": []
     }
   },
   "last_publish_attempt": "pending_20260717_0830_premarket_publish",
   "status": "degraded_nonblocking",
-  "last_error": "东方财富概念排行14:03远端主动断开；已保留13:05最后有效快照，未编造当前概念值。",
+  "last_error": "Naver韩国14:36 SSL握手超时；保留14:03-14:04最后有效快照。东方财富概念排行继续沿用13:05最后有效快照降权。",
   "tencent_a_close_postmarket_20260716": {
     "status": "ok",
     "last_check": "2026-07-16T15:18:57+08:00",
@@ -6685,8 +6773,8 @@
     "sample_count": 15,
     "errors": []
   },
-  "overall_status": "核心盘中行情可用；概念排行降级、V2治理快照滞后，均不阻断14:00结论。",
-  "last_codex_note": "13:00按当前可核验行情产出；行动等级为等待确认，未调用长桥账户/持仓/订单/自选，未修改用户资产。",
+  "overall_status": "核心盘中行情可用；概念排行与韩国当前复采降级、V2治理快照滞后，不阻断14:30结论。",
+  "last_codex_note": "14:30按当前可核验行情产出；行动等级为等待确认，Longbridge仅读取规范化影子引用，未调用账户/持仓/订单/自选，未修改用户资产。",
   "eastmoney_structure_pools_intraday_1000_20260717": {
     "status": "ok",
     "last_check": "2026-07-17T10:02:40+08:00",
@@ -8688,10 +8776,10 @@
     ]
   },
   "current_run_summary": {
-    "phase": "14:00盘中更新",
-    "result": "核心行情完整、概念排行降级",
-    "market_data_as_of": "2026-08-06T14:04:01+08:00",
-    "analysis_action": "不追",
+    "phase": "14:30盘中更新",
+    "result": "核心行情完整、概念排行与韩国当前复采降级",
+    "market_data_as_of": "2026-08-06T14:37:13+08:00",
+    "analysis_action": "等待确认",
     "published": false
   },
   "tencent_a_midday_20260804_1134": {
@@ -8889,7 +8977,7 @@
     "sample_count": 0,
     "errors": []
   },
-  "summary": "13:00盘中更新：腾讯A股、东方财富结构与概念、新浪港股、Naver韩国及本机恢复状态可用；日本个股报价约延迟19分钟，V2治理卡片仍为前一交易日，只作边界。",
+  "summary": "14:30盘中更新：腾讯A股/行业、东方财富结构、新浪港股、腾讯日本与本机恢复状态可用；概念排行未复采、Naver韩国当前复采超时，均保留真实最后有效时点。",
   "monitor_quote_audit_20260805_130542": {
     "status": "degraded_partial",
     "last_check": "2026-08-05T13:08:31+08:00",
