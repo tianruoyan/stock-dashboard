@@ -1,8 +1,8 @@
 {
-  "timestamp": "2026-08-06T09:37:11+08:00",
+  "timestamp": "2026-08-06T09:38:11+08:00",
   "current_signal_date": "2026-08-06",
   "status": "degraded",
-  "summary": "发现 145 个降级/需复核项（140 个价格/行情复核，6 个背景复核），核心结论可看但必须按影响分层使用。",
+  "summary": "发现 144 个降级/需复核项（139 个价格/行情复核，6 个背景复核），核心结论可看但必须按影响分层使用。",
   "issues": [
     {
       "severity": "warning",
@@ -57,15 +57,6 @@
       "message": "时间戳不是当前交易日：2026-08-05T20:27:00+08:00",
       "impact_level": "background_review",
       "decision_action": "仅作背景复核，不单独阻断交易判断"
-    },
-    {
-      "severity": "warning",
-      "file": "watchlist-quotes.json",
-      "path": "stocks[15]",
-      "code": "watchlist_limit_down_like",
-      "message": "锐捷网络 接近跌停 -10.71，需确认是否真实",
-      "impact_level": "price_review",
-      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
     },
     {
       "severity": "warning",
@@ -1354,17 +1345,6 @@
       "unblock_condition": "price_review=0 或相关来源标记 trusted/cross verified。"
     },
     {
-      "priority": 2,
-      "impact_level": "price_review",
-      "label": "二次行情复核",
-      "file": "watchlist-quotes.json",
-      "code": "watchlist_limit_down_like",
-      "problem": "锐捷网络 接近跌停 -10.71，需确认是否真实",
-      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核",
-      "next_step": "用第二行情源复核涨跌幅、quote_time 和代表股方向；未确认前只做验证。",
-      "unblock_condition": "price_review=0 或相关来源标记 trusted/cross verified。"
-    },
-    {
       "priority": 4,
       "impact_level": "background_review",
       "label": "背景来源复核",
@@ -1385,14 +1365,25 @@
       "decision_action": "仅作背景复核，不单独阻断交易判断",
       "next_step": "补官方/交易所/公司公告来源；未补齐前不升级为核心依据。",
       "unblock_condition": "官方来源补齐或确认不影响交易触发。"
+    },
+    {
+      "priority": 4,
+      "impact_level": "background_review",
+      "label": "背景来源复核",
+      "file": "postmarket.json",
+      "code": "stale_timestamp",
+      "problem": "时间戳不是当前交易日：2026-08-05T15:32:24+08:00",
+      "decision_action": "仅作背景复核，不单独阻断交易判断",
+      "next_step": "补官方/交易所/公司公告来源；未补齐前不升级为核心依据。",
+      "unblock_condition": "官方来源补齐或确认不影响交易触发。"
     }
   ],
   "counts": {
     "critical": 0,
-    "warning": 145,
+    "warning": 144,
     "info": 1,
     "blocking": 0,
-    "price_review": 140,
+    "price_review": 139,
     "signal_review": 0,
     "background_review": 6
   },
