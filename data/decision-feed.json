@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-08-06T16:36:46+08:00",
+  "timestamp": "2026-08-06T16:41:19+08:00",
   "current_signal_date": "2026-08-06",
   "quality_gate": {
     "status": "degraded",
@@ -16,14 +16,15 @@
   },
   "summary": "A股收盘结构不变：电子材料/封装、通信与煤炭为国内强线，交换机和电子布/玻纤为观察线偏强；港股正式收盘恒指-1.49%、恒科-2.28%，科技外部映射偏弱，创新药仅相对抗跌。 数据质量：发现 139 个降级/需复核项（139 个价格/行情复核，1 个背景复核），核心结论可看但必须按影响分层使用。",
   "observation_coverage": {
-    "summary": "主动扫描捕捉 2 条：通信设备+数字身份/支付安全 / 汽车/医药/外部存储映射",
+    "summary": "主动扫描捕捉 3 条：新线观察：贵金属/小金属 / 通信设备+数字身份/支付安全 / 汽车/医药/外部存储映射",
     "independent_count": 15,
     "inherited_count": 9,
-    "active_market_count": 2,
-    "postmarket_scan_count": 9,
+    "active_market_count": 3,
+    "postmarket_scan_count": 8,
     "topic_inherited_count": 3,
     "verification_count": 2,
     "active_titles": [
+      "新线观察：贵金属/小金属",
       "通信设备+数字身份/支付安全",
       "汽车/医药/外部存储映射"
     ],
@@ -44,9 +45,9 @@
       "通信设备/网络安全；交换机子线"
     ],
     "upgrade_watch": [
-      "#1 电子化学品/半导体材料与封装：看核心个股、ETF、后排扩散和尾盘承接是否同向确认。 数据质量恢复或二次行情源确认前，不升级为可用机会。",
-      "#2 半导体材料：看A股电子化学品封板留存和材料核心承接；港股半导体弱势下不把国内材料扩散外推为A/H共振。 数据质量恢复或二次行情源确认前，不升级为可用机会。",
-      "#3 CMP/靶材/材料耗材：看材料封板留存、江丰/安集/南大承接和业绩兑现。 数据质量恢复或二次行情源确认前，不升级为可用机会。"
+      "#1 新线观察：贵金属/小金属：看核心个股、ETF、后排扩散和尾盘承接是否同向确认。 数据质量恢复或二次行情源确认前，不升级为可用机会。",
+      "#2 电子化学品/半导体材料与封装：看核心个股、ETF、后排扩散和尾盘承接是否同向确认。 数据质量恢复或二次行情源确认前，不升级为可用机会。",
+      "#3 半导体材料：看A股电子化学品封板留存和材料核心承接；港股半导体弱势下不把国内材料扩散外推为A/H共振。 数据质量恢复或二次行情源确认前，不升级为可用机会。"
     ],
     "verification_focus": [
       "核心股低开后放量收复开盘价或跌幅明显收敛"
@@ -97,6 +98,12 @@
     ],
     "verification_queue": [
       {
+        "title": "新线观察：贵金属/小金属",
+        "grade": "C",
+        "use_action": "降权观察",
+        "reason": "看核心个股、ETF、后排扩散和尾盘承接是否同向确认。"
+      },
+      {
         "title": "电子化学品/半导体材料与封装",
         "grade": "C",
         "use_action": "降权观察",
@@ -119,12 +126,6 @@
         "grade": "C",
         "use_action": "降权观察",
         "reason": "看至少4只封板留存和中军承接；不追午后加速。"
-      },
-      {
-        "title": "半导体设备平台",
-        "grade": "C",
-        "use_action": "降权观察",
-        "reason": "看北方、中微、拓荆能否继续同步强于科创50并出现本体封板。"
       }
     ],
     "disabled_signals": [
@@ -136,6 +137,58 @@
     ]
   },
   "opportunities": [
+    {
+      "title": "新线观察：贵金属/小金属",
+      "type": "unplanned_theme",
+      "trigger_reason": "非预设盘面扫描触发：贵金属/小金属不在既有专题精确清单中，但出现涨停池/强势组/轮动增强证据。",
+      "conclusion": "8月5日首次集中，今天为连续活跃第2日；行业仍居前，但涨超5%宽度收缩至11只，多只高位样本炸板。",
+      "confidence": "low",
+      "evidence": [
+        "云南锗业 同日涨跌停结构证据点名；未补写未经核验的收盘价和涨跌幅。",
+        "盛达资源 同日证据用于风险分层，不作为强主线代表股。",
+        "中钨高新 同日证据用于风险分层，不作为强主线代表股。",
+        "江南新材 同日证据用于风险分层，不作为强主线代表股。",
+        "8月5日首次集中，今天为连续活跃第2日；行业仍居前，但涨超5%宽度收缩至11只，多只高位样本炸板。"
+      ],
+      "source_files": [
+        "postmarket.json"
+      ],
+      "watch_next": [
+        "看核心个股、ETF、后排扩散和尾盘承接是否同向确认。"
+      ],
+      "invalidation": "贵金属/小金属次日不能继续高开承接、涨停池收缩或代表股冲高回落，则只按一日轮动处理。",
+      "tags": [
+        "风控"
+      ],
+      "quality_flags": [
+        "行情/涨跌幅需二次源复核",
+        "盘中异动源降级，alert 类信号降权",
+        "港股收盘窗口可能非终值",
+        "行情源降级，需复核涨跌幅"
+      ],
+      "tone": "good",
+      "discovery_type": "active_market_scan",
+      "evidence_score": 98,
+      "missing_evidence": [
+        "数据源降级需二次确认"
+      ],
+      "next_action": "看核心个股、ETF、后排扩散和尾盘承接是否同向确认。",
+      "observation_source": "主动盘面扫描",
+      "independent_observation": true,
+      "signal_score": 57,
+      "signal_grade": "C",
+      "use_action": "降权观察",
+      "use_reasons": [
+        "有可核验证据",
+        "有下一步验证",
+        "有证伪条件",
+        "有来源文件",
+        "数据质量降权"
+      ],
+      "upgrade_rank": 1,
+      "upgrade_priority": "优先验证",
+      "upgrade_condition": "看核心个股、ETF、后排扩散和尾盘承接是否同向确认。 数据质量恢复或二次行情源确认前，不升级为可用机会。"
+    },
     {
       "title": "电子化学品/半导体材料与封装",
       "type": "theme",
@@ -185,7 +238,7 @@
         "有来源文件",
         "数据质量降权"
       ],
-      "upgrade_rank": 1,
+      "upgrade_rank": 2,
       "upgrade_priority": "优先验证",
       "upgrade_condition": "看核心个股、ETF、后排扩散和尾盘承接是否同向确认。 数据质量恢复或二次行情源确认前，不升级为可用机会。"
     },
@@ -237,7 +290,7 @@
         "有来源文件",
         "数据质量降权"
       ],
-      "upgrade_rank": 2,
+      "upgrade_rank": 3,
       "upgrade_priority": "优先验证",
       "upgrade_condition": "看A股电子化学品封板留存和材料核心承接；港股半导体弱势下不把国内材料扩散外推为A/H共振。 数据质量恢复或二次行情源确认前，不升级为可用机会。"
     },
@@ -288,7 +341,7 @@
         "有来源文件",
         "数据质量降权"
       ],
-      "upgrade_rank": 3,
+      "upgrade_rank": 4,
       "upgrade_priority": "优先验证",
       "upgrade_condition": "看材料封板留存、江丰/安集/南大承接和业绩兑现。 数据质量恢复或二次行情源确认前，不升级为可用机会。"
     },
@@ -338,7 +391,7 @@
         "有来源文件",
         "数据质量降权"
       ],
-      "upgrade_rank": 4,
+      "upgrade_rank": 5,
       "upgrade_priority": "优先验证",
       "upgrade_condition": "看至少4只封板留存和中军承接；不追午后加速。 数据质量恢复或二次行情源确认前，不升级为可用机会。"
     },
@@ -388,7 +441,7 @@
         "有来源文件",
         "数据质量降权"
       ],
-      "upgrade_rank": 5,
+      "upgrade_rank": 6,
       "upgrade_priority": "优先验证",
       "upgrade_condition": "看北方、中微、拓荆能否继续同步强于科创50并出现本体封板。 数据质量恢复或二次行情源确认前，不升级为可用机会。"
     },
@@ -439,7 +492,7 @@
         "有来源文件",
         "数据质量降权"
       ],
-      "upgrade_rank": 6,
+      "upgrade_rank": 7,
       "upgrade_priority": "观察验证",
       "upgrade_condition": "看核心个股、ETF、后排扩散和尾盘承接是否同向确认。 数据质量恢复或二次行情源确认前，不升级为可用机会。"
     },
@@ -465,58 +518,6 @@
       "invalidation": "煤炭/高股息周期核心股冲高回落、ETF转弱或后排不扩散，则机会降级为观察。",
       "tags": [
         "风控"
-      ],
-      "quality_flags": [
-        "行情/涨跌幅需二次源复核",
-        "盘中异动源降级，alert 类信号降权",
-        "港股收盘窗口可能非终值",
-        "行情源降级，需复核涨跌幅"
-      ],
-      "tone": "good",
-      "discovery_type": "postmarket_theme_scan",
-      "evidence_score": 83,
-      "missing_evidence": [
-        "数据源降级需二次确认"
-      ],
-      "next_action": "看核心个股、ETF、后排扩散和尾盘承接是否同向确认。",
-      "observation_source": "盘后结构扫描",
-      "independent_observation": true,
-      "signal_score": 57,
-      "signal_grade": "C",
-      "use_action": "降权观察",
-      "use_reasons": [
-        "有可核验证据",
-        "有下一步验证",
-        "有证伪条件",
-        "有来源文件",
-        "数据质量降权"
-      ],
-      "upgrade_rank": 7,
-      "upgrade_priority": "观察验证",
-      "upgrade_condition": "看核心个股、ETF、后排扩散和尾盘承接是否同向确认。 数据质量恢复或二次行情源确认前，不升级为可用机会。"
-    },
-    {
-      "title": "电子布/玻纤+PCB",
-      "type": "theme",
-      "trigger_reason": "盘后主线扫描触发：热点持续性、代表股和尾盘校验进入次日观察。",
-      "conclusion": "8月4日PCB强、8月5日上游轮动，今天为连续活跃第3日；上游与PCB继续共振，但只有景旺封板，尚未达到多股涨停的准主线标准。",
-      "confidence": "low",
-      "evidence": [
-        "中国巨石 3.82%",
-        "国际复材 2.95%",
-        "山东玻纤 4.19%",
-        "宏和科技 7.7%",
-        "东材科技 6.18%"
-      ],
-      "source_files": [
-        "postmarket.json"
-      ],
-      "watch_next": [
-        "看核心个股、ETF、后排扩散和尾盘承接是否同向确认。"
-      ],
-      "invalidation": "电子布/玻纤+PCB核心股冲高回落、ETF转弱或后排不扩散，则机会降级为观察。",
-      "tags": [
-        "科技硬件链"
       ],
       "quality_flags": [
         "行情/涨跌幅需二次源复核",
@@ -771,6 +772,10 @@
       "conclusion": "若次日贵金属和小金属跌出行业前10且云南锗业开板，按退潮处理；高位资源股不因单日成交放大自动升级。",
       "confidence": "high",
       "evidence": [
+        "云南锗业 同日涨跌停结构证据点名；未补写未经核验的收盘价和涨跌幅。",
+        "盛达资源 同日证据用于风险分层，不作为强主线代表股。",
+        "中钨高新 同日证据用于风险分层，不作为强主线代表股。",
+        "江南新材 同日证据用于风险分层，不作为强主线代表股。",
         "8月5日首次集中，今天为连续活跃第2日；行业仍居前，但涨超5%宽度收缩至11只，多只高位样本炸板。"
       ],
       "source_files": [
@@ -786,22 +791,20 @@
       "quality_flags": [],
       "tone": "risk",
       "discovery_type": "postmarket_risk_scan",
-      "evidence_score": 67,
-      "missing_evidence": [
-        "缺少代表股验证"
-      ],
+      "evidence_score": 100,
+      "missing_evidence": [],
       "next_action": "看核心个股、ETF、后排扩散和尾盘承接是否同向确认。",
       "observation_source": "盘后结构扫描",
       "independent_observation": true,
-      "signal_score": 79,
-      "signal_grade": "B",
-      "use_action": "等待确认",
+      "signal_score": 100,
+      "signal_grade": "A",
+      "use_action": "可跟踪",
       "use_reasons": [
         "有可核验证据",
         "有下一步验证",
         "有证伪条件",
         "有来源文件",
-        "有证据缺口"
+        "证据链较完整"
       ]
     },
     {
@@ -811,6 +814,10 @@
       "conclusion": "医疗服务-2.20%、乘用车-1.96%、商用车-1.92%；港股科技与日韩存储设备弱势构成反证，弱线不抢反弹。",
       "confidence": "high",
       "evidence": [
+        "医疗服务 -2.2%",
+        "乘用车 -1.96%",
+        "中芯国际H -4.49%",
+        "华虹半导体H -3.89%",
         "汽车和医药由前日分化继续走弱；存储/HBM虽有A股材料分支修复，但港股半导体与韩国存储链未共振。"
       ],
       "source_files": [
@@ -828,17 +835,16 @@
       "quality_flags": [],
       "tone": "risk",
       "discovery_type": "postmarket_risk_scan",
-      "evidence_score": 40,
+      "evidence_score": 83,
       "missing_evidence": [
-        "缺少量化盘口证据",
         "缺少代表股验证"
       ],
       "next_action": "看核心个股、ETF、后排扩散和尾盘承接是否同向确认。",
       "observation_source": "盘后结构扫描",
       "independent_observation": true,
-      "signal_score": 74,
-      "signal_grade": "B",
-      "use_action": "等待确认",
+      "signal_score": 100,
+      "signal_grade": "A",
+      "use_action": "可跟踪",
       "use_reasons": [
         "有可核验证据",
         "有下一步验证",
@@ -1210,6 +1216,20 @@
   ],
   "conflicts": [
     {
+      "theme": "贵金属/小金属",
+      "sections": [
+        "opportunities",
+        "risks"
+      ],
+      "verdict": "风险优先，只做验证",
+      "severity": "risk_first",
+      "action": "先按风险栏处理；只有风险收敛、核心股承接和数据质量恢复后，才允许从验证栏升级。",
+      "evidence": [
+        "机会：C级/降权观察，8月5日首次集中，今天为连续活跃第2日；行业仍居前，但涨超5%宽度收缩至11只，多只高位样本炸板。",
+        "风险：A级/可跟踪，若次日贵金属和小金属跌出行业前10且云南锗业开板，按退潮处理；高位资源股不因单日成交放大自动升级。"
+      ]
+    },
+    {
       "theme": "电子化学品/半导体材料与封装",
       "sections": [
         "opportunities",
@@ -1249,20 +1269,6 @@
       "evidence": [
         "机会：C级/降权观察，前5个交易日未作为稳定强主线持续出现，今天午后首次集中；7只封板与10只涨8%以上说明不是单股，但郑州煤电、晋控煤业炸板显示分歧。",
         "风险：A级/可跟踪，缺少同日权威产业催化与跨市场共振；若次日封板留存低于4只、中军兖矿/潞安/淮北低开走弱，按一日周期轮动处理。"
-      ]
-    },
-    {
-      "theme": "电子布/玻纤+PCB",
-      "sections": [
-        "opportunities",
-        "risks"
-      ],
-      "verdict": "风险优先，只做验证",
-      "severity": "risk_first",
-      "action": "先按风险栏处理；只有风险收敛、核心股承接和数据质量恢复后，才允许从验证栏升级。",
-      "evidence": [
-        "机会：C级/降权观察，8月4日PCB强、8月5日上游轮动，今天为连续活跃第3日；上游与PCB继续共振，但只有景旺封板，尚未达到多股涨停的准主线标准。",
-        "风险：A级/可跟踪，若中国巨石冲高回落且国际复材、山东玻纤、东材、中材少于3只保持强于大盘，或景旺开板、胜宏/生益/沪电同步转弱，反抽降回资金博弈。"
       ]
     }
   ],
