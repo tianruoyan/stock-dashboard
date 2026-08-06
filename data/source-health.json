@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-08-06T11:33:09+08:00",
+  "timestamp": "2026-08-06T13:07:36+08:00",
   "sources": {
     "tencent_http": {
       "status": "ok",
@@ -3802,7 +3802,7 @@
     },
     "futu_minute_alert_verifier": {
       "status": "ok",
-      "last_check": "2026-08-06T13:08:42+08:00",
+      "last_check": "2026-08-06T13:09:44+08:00",
       "usage": "盘中异动代表股第二行情源交叉验证",
       "detail": "富途行情按触发时点复核19张异动卡：9张相互支持、7张明显冲突、3张精度不足；精度不足只维持观察，不计作冲突。",
       "sample_count": 51,
@@ -6506,10 +6506,10 @@
   "last_publish_attempt": "pending_20260717_0830_premarket_publish",
   "status": "ok_with_noncritical_degradation",
   "last_error": {
-    "source": "eastmoney_concept_intraday_1106_20260806",
-    "time": "2026-08-06T11:06:15+08:00",
-    "error": "curl: (52) Empty reply from server",
-    "handling": "保留10:03同交易日最后有效概念快照并降权，未编造11:00概念资金。"
+    "source": "naver_samsung_intraday_1300_20260806",
+    "time": "2026-08-06T13:05:30+08:00",
+    "error": "initial SSL handshake timeout",
+    "handling": "单次重试于13:06成功取得三星电子-5.79%；最终链路可用，未保留缺失值。"
   },
   "tencent_a_close_postmarket_20260716": {
     "status": "ok",
@@ -6691,7 +6691,7 @@
     "errors": []
   },
   "overall_status": "ok_with_noncritical_degradation",
-  "last_codex_note": "11:00已按当前可核验行情补产；V2治理卡片与Longbridge规范化影子无当日实时增量，只保留权限边界。",
+  "last_codex_note": "13:00按当前可核验行情产出；行动等级为等待确认，未调用长桥账户/持仓/订单/自选，未修改用户资产。",
   "eastmoney_structure_pools_intraday_1000_20260717": {
     "status": "ok",
     "last_check": "2026-07-17T10:02:40+08:00",
@@ -8694,10 +8694,12 @@
   },
   "current_run_summary": {
     "status": "ok_with_noncritical_degradation",
-    "last_check": "2026-08-06T11:08:00+08:00",
-    "detail": "11:00有效行情和结构池完整，概念排行连续空返回已显式降级；当前分析由行业、涨跌停宽度、代表股与A/H/日韩映射支撑。",
+    "last_check": "2026-08-06T13:07:36+08:00",
+    "detail": "A股行情、全市场结构和概念排行完整；港股与韩国实时方向有效，日本报价显式标注延迟，三星首次超时后重试成功。",
     "errors": [
-      "Eastmoney concept ranking empty; preserved 10:03 snapshot"
+      "Tencent Japan quotes delayed about 19 minutes",
+      "current-session V2 governed card unavailable",
+      "no normalized current-day Longbridge increment"
     ]
   },
   "tencent_a_midday_20260804_1134": {
@@ -8895,7 +8897,7 @@
     "sample_count": 0,
     "errors": []
   },
-  "summary": "11:00盘中更新：腾讯A股、东方财富结构池、新浪港股、Naver韩国与本机恢复状态可用；东方财富概念排行连续空返回，保留10:03最后有效快照并降权，未编造当前概念资金。",
+  "summary": "13:00盘中更新：腾讯A股、东方财富结构与概念、新浪港股、Naver韩国及本机恢复状态可用；日本个股报价约延迟19分钟，V2治理卡片仍为前一交易日，只作边界。",
   "monitor_quote_audit_20260805_130542": {
     "status": "degraded_partial",
     "last_check": "2026-08-05T13:08:31+08:00",
@@ -9149,6 +9151,96 @@
     "market_time": "无经本地规范化的当日增量",
     "usage": "长桥机构分析模型/LongbridgeAI/官方研究观点只读引用",
     "detail": "未发现当日规范化增量；旧观点只作背景，未调用账户、持仓、订单、自选或社区能力，也未修改用户资产、V1结论或模型状态。",
+    "sample_count": 0,
+    "errors": [
+      "no normalized current-day increment"
+    ]
+  },
+  "tencent_a_intraday_1305_20260806": {
+    "status": "ok",
+    "last_check": "2026-08-06T13:07:36+08:00",
+    "market_time": "2026-08-06T13:03:41+08:00至13:04:57+08:00",
+    "usage": "13:00 A股指数、行业和半导体/交换机/电子布/CPO/风格样本",
+    "detail": "取得五大指数、行业排行及重点样本有效报价；沪深成交约17946.53亿元，科创50翻红。",
+    "sample_count": 98,
+    "errors": []
+  },
+  "eastmoney_structure_intraday_1305_20260806": {
+    "status": "ok_serial",
+    "last_check": "2026-08-06T13:07:36+08:00",
+    "market_time": "2026-08-06T13:04:00+08:00附近",
+    "usage": "13:00涨停、跌停、炸板、连板与行业分布",
+    "detail": "串行取得涨停61、跌停1、当前炸板17；最高10板、6只20cm，通信设备6只、元件5只、化学制品4只。",
+    "sample_count": 79,
+    "errors": []
+  },
+  "eastmoney_concept_intraday_1305_20260806": {
+    "status": "ok_single_check",
+    "last_check": "2026-08-06T13:07:36+08:00",
+    "market_time": "2026-08-06T13:05:30+08:00附近",
+    "usage": "13:00概念排行与主力资金结构",
+    "detail": "概念接口恢复成功；剔除昨日涨停/连板历史因子后，氦气+4.60%、工业气体+3.46%、CPO+2.65%、HBM+2.31%、中芯概念+2.28%。",
+    "sample_count": 30,
+    "errors": []
+  },
+  "sina_hk_intraday_1305_20260806": {
+    "status": "ok",
+    "last_check": "2026-08-06T13:07:36+08:00",
+    "market_time": "2026-08-06T13:05:15+08:00至13:05:23+08:00",
+    "usage": "恒指、恒科及港股半导体/互联网实时交叉验证",
+    "detail": "恒指-1.82%、恒科-2.12%；中芯H-3.90%、华虹H-3.18%、商汤-2.23%、腾讯-2.11%、小米-3.11%。",
+    "sample_count": 8,
+    "errors": []
+  },
+  "naver_korea_intraday_1306_20260806": {
+    "status": "ok_after_retry",
+    "last_check": "2026-08-06T13:07:36+08:00",
+    "market_time": "2026-08-06T13:05:00+08:00至13:06:21+08:00",
+    "usage": "KOSPI、三星电子与SK海力士实时交叉验证",
+    "detail": "KOSPI-3.85%、三星电子-5.79%、SK海力士-8.99%；三星首次SSL握手超时，单次重试成功。",
+    "sample_count": 3,
+    "errors": [
+      "initial Samsung request timed out; retry succeeded"
+    ]
+  },
+  "tencent_japan_intraday_1247_20260806": {
+    "status": "ok_delayed_explicit",
+    "last_check": "2026-08-06T13:07:36+08:00",
+    "market_time": "2026-08-06T12:46:40+08:00至12:47:03+08:00",
+    "usage": "Advantest与东京电子补充映射",
+    "detail": "Advantest-2.43%、东京电子-5.47%；报价较采集时约延迟19分钟，显式降权。",
+    "sample_count": 2,
+    "errors": [
+      "Tencent Japan quote delayed about 19 minutes"
+    ]
+  },
+  "intraday_recovery_state_20260806_1305": {
+    "status": "ok",
+    "last_check": "2026-08-06T13:07:36+08:00",
+    "market_time": "2026-08-06T13:04:57+08:00",
+    "usage": "交易时段网络与行情恢复健康校验",
+    "detail": "state=已自动补充最新行情、phase=下午交易、failure_count=0；本轮只写当前可核验13:00时点，不追溯伪造历史窗口。",
+    "sample_count": 1,
+    "errors": []
+  },
+  "v2_cockpit_context_20260806_1300": {
+    "status": "stale_boundary_only",
+    "last_check": "2026-08-06T13:07:36+08:00",
+    "market_time": "2026-08-05T15:05:45+08:00",
+    "usage": "只读行动语言、权限与用户资产边界",
+    "detail": "治理卡片仍为8月5日收盘且质量降级，只用于等待确认等行动边界；无已迁入用户确认资产。",
+    "sample_count": 0,
+    "errors": [
+      "current-session governed card unavailable",
+      "no user-confirmed assets migrated"
+    ]
+  },
+  "longbridge_institutional_shadow_20260806_1300": {
+    "status": "no_current_increment",
+    "last_check": "2026-08-06T13:07:36+08:00",
+    "market_time": "无经本地规范化的8月6日增量",
+    "usage": "长桥机构分析模型/LongbridgeAI/官方研究观点只读引用",
+    "detail": "未发现当日规范化增量；未调用账户、持仓、订单、自选或社区能力，也未修改用户资产、V1结论或模型状态。",
     "sample_count": 0,
     "errors": [
       "no normalized current-day increment"
