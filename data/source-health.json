@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-08-06T10:06:00+08:00",
+  "timestamp": "2026-08-06T10:36:00+08:00",
   "sources": {
     "tencent_http": {
       "status": "ok",
@@ -2476,10 +2476,10 @@
     },
     "tencent_a_quote_intraday_1030": {
       "status": "ok",
-      "last_check": "2026-07-20T10:37:06+08:00",
-      "usage": "10:30指数、行业排行、观察池与专项样本",
-      "detail": "腾讯HTTP返回5个指数、496个行业代码和A股代表样本10:32有效报价。",
-      "sample_count": 99,
+      "last_check": "2026-08-06T10:34:09+08:00",
+      "usage": "10:30 A股指数、行业与重点样本实时快照",
+      "detail": "五大指数全部翻红；取得行业全表及交换机、半导体、PCB/电子布、CPO、存储、资源和风格样本有效报价。",
+      "sample_count": 170,
       "errors": []
     },
     "eastmoney_limit_pool_intraday_1030": {
@@ -6366,17 +6366,17 @@
     },
     "intraday_recovery_service": {
       "status": "ok",
-      "last_check": "2026-08-06T10:01:24+08:00",
+      "last_check": "2026-08-06T10:31:40+08:00",
       "usage": "交易时段网络与行情恢复健康校验",
-      "detail": "state=数据正常，phase=上午交易，quote_time=09:53:15，failure_count=0；随后人工结构快照推进至10:04。",
+      "detail": "state=数据正常，phase=上午交易，quote_time=10:27:33，failure_count=0；随后结构与行情快照推进至10:34。",
       "sample_count": 1,
       "errors": []
     },
     "v2_governed_cockpit": {
       "status": "stale_boundary_only",
-      "last_check": "2026-08-06T10:01:00+08:00",
-      "usage": "只读风险边界与行动语言治理",
-      "detail": "最新卡片仍为2026-08-05收盘且质量降级；本轮未将其作为2026-08-06实时机会事实。",
+      "last_check": "2026-08-06T10:31:55+08:00",
+      "usage": "只读行动语言与风险边界",
+      "detail": "最新治理卡片仍为2026-08-05收盘且质量降级；没有将旧卡作为2026-08-06机会事实。",
       "sample_count": 0,
       "errors": [
         "current-day governed card unavailable"
@@ -6384,13 +6384,55 @@
     },
     "longbridge_normalized_shadow": {
       "status": "no_current_increment",
-      "last_check": "2026-08-06T10:01:00+08:00",
+      "last_check": "2026-08-06T10:31:55+08:00",
       "usage": "长桥机构分析模型/官方观点只读引用",
-      "detail": "未发现本时点经import_longbridge_analysis.py规范化的当日增量；旧观点仅保留为背景，未独立通过治理门禁或改变结论。",
+      "detail": "未发现经本地规范化的当日增量；旧机构观点只作背景，不独立通过治理门禁或修改结论。",
       "sample_count": 0,
       "errors": [
         "no normalized current-day increment"
       ]
+    },
+    "eastmoney_structure_intraday_1030": {
+      "status": "ok_serial",
+      "last_check": "2026-08-06T10:32:04+08:00",
+      "usage": "10:30涨停、跌停、炸板与行业分布",
+      "detail": "串行取得涨停55、跌停1、当前炸板7；55只中27只曾开板回封，元件5只、通信设备6只。",
+      "sample_count": 63,
+      "errors": []
+    },
+    "eastmoney_concept_intraday_1030": {
+      "status": "failed_empty_preserved",
+      "last_check": "2026-08-06T10:32:20+08:00",
+      "usage": "10:30概念排行与资金结构",
+      "detail": "push2概念排行返回空响应；保留10:03最后有效快照，不用旧资金字段升级10:30结论。",
+      "sample_count": 0,
+      "errors": [
+        "Empty reply from server"
+      ]
+    },
+    "sina_hk_intraday_1030": {
+      "status": "ok",
+      "last_check": "2026-08-06T10:34:35+08:00",
+      "usage": "恒指、恒生科技及港股科技/半导体/通信实时交叉验证",
+      "detail": "恒指-1.74%、恒科-1.41%；中芯H-2.13%、华虹+0.35%、兆易H-0.41%、澜起H-1.26%、中兴H-1.02%。",
+      "sample_count": 11,
+      "errors": []
+    },
+    "naver_korea_intraday_1030": {
+      "status": "ok",
+      "last_check": "2026-08-06T10:34:27+08:00",
+      "usage": "KOSPI、三星电子与SK海力士实时交叉验证",
+      "detail": "KOSPI-3.81%、三星电子-5.08%、SK海力士-7.67%，韩国存储负反馈仍未解除。",
+      "sample_count": 3,
+      "errors": []
+    },
+    "tencent_japan_intraday_1030": {
+      "status": "ok_delayed_explicit",
+      "last_check": "2026-08-06T10:34:20+08:00",
+      "usage": "Advantest与东京电子补充映射",
+      "detail": "数据源最新行情时点约10:17：Advantest-3.80%、东京电子-5.59%；已显式标注时点，不冒充10:34同步报价。",
+      "sample_count": 2,
+      "errors": []
     }
   },
   "last_publish_attempt": "pending_20260717_0830_premarket_publish",
