@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-08-06T11:08:00+08:00",
+  "timestamp": "2026-08-06T11:33:09+08:00",
   "sources": {
     "tencent_http": {
       "status": "ok",
@@ -6433,6 +6433,74 @@
       "detail": "数据源最新行情时点约10:17：Advantest-3.80%、东京电子-5.59%；已显式标注时点，不冒充10:34同步报价。",
       "sample_count": 2,
       "errors": []
+    },
+    "tencent_a_quote_midday_20260806": {
+      "status": "ok",
+      "last_check": "2026-08-06T11:33:09+08:00",
+      "market_time": "2026-08-06T11:30:03+08:00至11:30:06+08:00",
+      "usage": "11:30五大指数、行业和半导体/交换机/电子布/CPO/风格样本",
+      "detail": "取得午间休市真实终值；A股两市成交约17518.87亿元。",
+      "sample_count": 98,
+      "errors": []
+    },
+    "eastmoney_structure_midday_20260806": {
+      "status": "ok_serial",
+      "last_check": "2026-08-06T11:31:55+08:00",
+      "market_time": "2026-08-06T11:31:45+08:00附近",
+      "usage": "11:30涨停、跌停、炸板、连板及行业分布",
+      "detail": "串行取得涨停58、跌停1、炸板19；最高10板、5只20cm，通信设备6只封板。",
+      "sample_count": 78,
+      "errors": []
+    },
+    "eastmoney_concept_midday_20260806": {
+      "status": "degraded_preserved_last_valid",
+      "last_check": "2026-08-06T11:33:09+08:00",
+      "market_time": "最后有效2026-08-06T10:03:48+08:00",
+      "usage": "午盘概念排行与资金结构",
+      "detail": "10:30和11:00连续空返回；午盘保留10:03最后有效快照并降权，不以旧概念资金字段升级结论。",
+      "sample_count": 0,
+      "errors": [
+        "two consecutive empty responses after 10:03"
+      ]
+    },
+    "sina_hk_midday_20260806": {
+      "status": "ok",
+      "last_check": "2026-08-06T11:32:40+08:00",
+      "usage": "恒指、恒生科技及港股半导体/互联网/创新药午间交叉验证",
+      "detail": "恒指-1.93%、恒科-2.12%；中芯H-4.41%、华虹-3.39%、中兴H-2.05%，药明生物+3.25%。",
+      "sample_count": 15,
+      "errors": []
+    },
+    "intraday_recovery_midday_20260806": {
+      "status": "ok_with_service_quote_lag",
+      "last_check": "2026-08-06T11:29:47+08:00",
+      "usage": "交易时段网络与恢复状态核验",
+      "detail": "state=数据正常、phase=上午交易、failure_count=0；服务quote_time=11:19:48，本轮使用直接可核验11:30午间终值，不追溯伪造。",
+      "sample_count": 1,
+      "errors": [
+        "service quote marker lagged; direct 11:30 quotes independently verified"
+      ]
+    },
+    "v2_governed_cockpit_midday_20260806": {
+      "status": "stale_boundary_only",
+      "last_check": "2026-08-06T11:29:50+08:00",
+      "usage": "只读行动语言、风险与用户资产边界",
+      "detail": "最新治理卡片仍为2026-08-05收盘且质量降级，只用于等待确认等行动边界，不作8月6日午盘事实；无已迁入用户确认资产。",
+      "sample_count": 0,
+      "errors": [
+        "current-session governed card unavailable",
+        "no user-confirmed assets migrated"
+      ]
+    },
+    "longbridge_normalized_shadow_midday_20260806": {
+      "status": "no_current_increment",
+      "last_check": "2026-08-06T11:29:50+08:00",
+      "usage": "长桥机构分析模型/官方观点只读引用",
+      "detail": "未发现经本地规范化的8月6日机构观点增量；旧观点未独立改变午盘结论，未调用账户、持仓、订单、自选或社区能力。",
+      "sample_count": 0,
+      "errors": [
+        "no normalized current-day increment"
+      ]
     }
   },
   "last_publish_attempt": "pending_20260717_0830_premarket_publish",

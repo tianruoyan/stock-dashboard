@@ -624,7 +624,7 @@ function dashboardDecisionGate() {
       riskFirst: false,
       cls: "warn",
       title: "实时信号需确认",
-      reason: feed.quality_gate?.summary || "核心数据需复核，机会只能按验证条件升级。",
+      reason: userFacingText(feed.quality_gate?.summary || "核心数据需复核，机会只能按验证条件升级。"),
       avoid: []
     };
   }
