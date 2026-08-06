@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-08-06T09:36:44+08:00",
+  "timestamp": "2026-08-06T09:40:45+08:00",
   "source_status": "monitor_live",
   "alerts": [
     {
@@ -154,7 +154,7 @@
         "secondary_source": "富途行情",
         "secondary_verification": {
           "state": "insufficient_precision",
-          "checked_at": "2026-08-06T09:38:43+08:00",
+          "checked_at": "2026-08-06T09:40:47+08:00",
           "source": "富途行情",
           "reason": "至少2只代表股已识别，但外部行情无法精确对齐触发时点；维持观察，不误判为行情冲突。",
           "representatives": [
@@ -260,7 +260,7 @@
         "secondary_source": "富途行情",
         "secondary_verification": {
           "state": "insufficient_precision",
-          "checked_at": "2026-08-06T09:38:43+08:00",
+          "checked_at": "2026-08-06T09:40:47+08:00",
           "source": "富途行情",
           "reason": "至少2只代表股已识别，但外部行情无法精确对齐触发时点；维持观察，不误判为行情冲突。",
           "representatives": [
@@ -693,14 +693,264 @@
       "trigger_rule": "小登风格轮动：同一大风格下≥3个关联板块同向急跌",
       "alert_class": "style",
       "confirmation_level": "candidate"
+    },
+    {
+      "id": "monitor-20260806-093943-15d7c41e5bf6",
+      "time": "2026-08-06T09:39:43+08:00",
+      "sector": "封装",
+      "type": "小登题材短周期拉动",
+      "reason": "触发规则：小登股异动：3分钟平均涨跌幅≥1.5%，上涨占比≥70%，且成交放大≥5x；小登底池拉起预警：板块行情缺失时，底池3分钟平均涨幅≥1.5%，上涨占比≥70%，且成交放大≥5x；小登底池扩散预警：板块行情缺失时，底池3分钟平均涨幅≥1.0%，上涨占比≥60%，成交放大≥8x，且至少2只样本明显推进\n异动性质：上涨攻势中的拉起。3分钟价格推进、上涨占比、强势股数量和前排日内状态同时确认。\n结论：封装上涨攻势较强且扩散较好，甬矽电子领涨。\n题材：封装，当前动态龙头：甬矽电子 / 长电科技 / 通富微电。\n强度：底池样本 3分钟涨跌幅 1.58%，上涨占比 80%，强势股 4 只。\n成交：3分钟放大 9.68x，较昨同期 4.16x，有后排扩散。\n当前动态龙头分数：甬矽电子(54.8)，长电科技(51.5)，通富微电(44.6)。\n主要贡献因子：甬矽电子: 3分钟涨跌幅 2.22%，成交放大 6.36x，日内涨幅 5.96%；长电科技: 3分钟涨跌幅 1.94%，成交放大 18.86x，日内涨幅 1.93%；通富微电: 3分钟涨跌幅 1.65%，成交放大 10.92x，日内涨幅 0.12%\n观察点：龙头是否维持日内高位、后排是否继续补涨、成交是否继续放大。\n风险提示：这是题材强度分析，不构成买卖建议。",
+      "leaders": [
+        {
+          "name": "甬矽电子",
+          "code": "688362",
+          "change_pct": 2.2226,
+          "quote_time": "2026-08-06T09:39:43.387724",
+          "score": 54.83,
+          "factors": [
+            "3分钟+2.22%",
+            "成交放大6.36x",
+            "日内+5.96%"
+          ]
+        },
+        {
+          "name": "长电科技",
+          "code": "600584",
+          "change_pct": 1.9432,
+          "quote_time": "2026-08-06T09:39:43.387724",
+          "score": 51.49,
+          "factors": [
+            "3分钟+1.94%",
+            "成交放大18.86x",
+            "日内+1.93%"
+          ]
+        },
+        {
+          "name": "通富微电",
+          "code": "002156",
+          "change_pct": 1.6454,
+          "quote_time": "2026-08-06T09:39:43.387724",
+          "score": 44.61,
+          "factors": [
+            "3分钟+1.65%",
+            "成交放大10.92x",
+            "日内+0.12%"
+          ]
+        }
+      ],
+      "signal_type": "🎯交易信号",
+      "is_old_economy": false,
+      "source_watch_id": "封装",
+      "quote_audit": {
+        "provider": "本地盘中监控、富途行情（腾讯备用）",
+        "quote_time": "2026-08-06T09:39:43+08:00",
+        "pct_field": "3分钟涨跌幅",
+        "sample_count": 3,
+        "max_abs_leader_change_pct": 2.2226,
+        "sanity_checks": {
+          "cross_source_verified": false,
+          "price_move_valid": true,
+          "volume_valid": true,
+          "direction_ratio_valid": true,
+          "limit_down_count_valid": false
+        },
+        "board_3m_change_pct": 1.577,
+        "direction_ratio": 0.8,
+        "volume_ratio": 9.6761,
+        "relative_volume_vs_yesterday": 4.1625,
+        "missing_confirmation": "等待富途行情按触发时点交叉核验；通过前只作候选或观察，不作为确认交易信号。",
+        "secondary_source": "富途行情",
+        "secondary_verification": {
+          "state": "pending",
+          "checked_at": "2026-08-06T09:40:47+08:00",
+          "source": "富途行情",
+          "reason": "等待触发分钟行情完整落盘。",
+          "representatives": [],
+          "fingerprint": "c1236e6c56897c885788",
+          "verifier_version": "futu-opend-2026-07-27.3"
+        }
+      },
+      "source_status": "degraded_partial",
+      "valid_until": "2026-08-06T09:44:43+08:00",
+      "trigger_rule": "小登股异动：3分钟平均涨跌幅≥1.5%，上涨占比≥70%，且成交放大≥5x；小登底池拉起预警：板块行情缺失时，底池3分钟平均涨幅≥1.5%，上涨占比≥70%，且成交放大≥5x；小登底池扩散预警：板块行情缺失时，底池3分钟平均涨幅≥1.0%，上涨占比≥60%，成交放大≥8x，且至少2只样本明显推进",
+      "alert_class": "opportunity",
+      "confirmation_level": "candidate",
+      "limit_up_count": 0,
+      "limit_down_count": 0
+    },
+    {
+      "id": "monitor-20260806-094023-59698c31ebe1",
+      "time": "2026-08-06T09:40:23+08:00",
+      "sector": "交换机/高速以太网",
+      "type": "小登题材短周期拉动",
+      "reason": "触发规则：小登股异动：3分钟平均涨跌幅≥1.5%，上涨占比≥70%，且成交放大≥5x；小登底池拉起预警：板块行情缺失时，底池3分钟平均涨幅≥1.5%，上涨占比≥70%，且成交放大≥5x；小登底池扩散预警：板块行情缺失时，底池3分钟平均涨幅≥1.0%，上涨占比≥60%，成交放大≥8x，且至少2只样本明显推进\n异动性质：上涨攻势中的拉起。3分钟价格推进、上涨占比、强势股数量和前排日内状态同时确认。\n结论：交换机/高速以太网处在上涨攻势中的拉起，有扩散，锐捷网络暂为核心。\n题材：交换机/高速以太网，当前动态龙头：锐捷网络 / 盛科通信 / 工业富联。\n强度：底池样本 3分钟涨跌幅 1.74%，上涨占比 71%，强势股 6 只。\n成交：3分钟放大 13.39x，较昨同期 3.89x，有后排扩散。\n当前动态龙头分数：锐捷网络(50.1)，盛科通信(47.2)，工业富联(43.0)。\n主要贡献因子：锐捷网络: 3分钟涨跌幅 3.51%，成交放大 11.97x，日内涨幅 -1.25%；盛科通信: 3分钟涨跌幅 1.76%，成交放大 16.33x，日内涨幅 2.78%；工业富联: 3分钟涨跌幅 1.65%，成交放大 16.37x，日内涨幅 1.58%\n观察点：龙头是否维持日内高位、后排是否继续补涨、成交是否继续放大。\n风险提示：这是题材强度分析，不构成买卖建议。",
+      "leaders": [
+        {
+          "name": "锐捷网络",
+          "code": "301165",
+          "change_pct": 3.5118,
+          "quote_time": "2026-08-06T09:40:23.163921",
+          "score": 50.12,
+          "factors": [
+            "3分钟+3.51%",
+            "成交放大11.97x",
+            "日内-1.25%"
+          ]
+        },
+        {
+          "name": "盛科通信",
+          "code": "688702",
+          "change_pct": 1.763,
+          "quote_time": "2026-08-06T09:40:23.163921",
+          "score": 47.23,
+          "factors": [
+            "3分钟+1.76%",
+            "成交放大16.33x",
+            "日内+2.78%"
+          ]
+        },
+        {
+          "name": "工业富联",
+          "code": "601138",
+          "change_pct": 1.6548,
+          "quote_time": "2026-08-06T09:40:23.163921",
+          "score": 43.0,
+          "factors": [
+            "3分钟+1.65%",
+            "成交放大16.37x",
+            "日内+1.58%"
+          ]
+        }
+      ],
+      "signal_type": "🎯交易信号",
+      "is_old_economy": false,
+      "source_watch_id": "交换机-高速以太网",
+      "quote_audit": {
+        "provider": "本地盘中监控、富途行情（腾讯备用）",
+        "quote_time": "2026-08-06T09:40:23+08:00",
+        "pct_field": "3分钟涨跌幅",
+        "sample_count": 3,
+        "max_abs_leader_change_pct": 3.5118,
+        "sanity_checks": {
+          "cross_source_verified": false,
+          "price_move_valid": true,
+          "volume_valid": true,
+          "direction_ratio_valid": true,
+          "limit_down_count_valid": false
+        },
+        "board_3m_change_pct": 1.7388,
+        "direction_ratio": 0.7143,
+        "volume_ratio": 13.3861,
+        "relative_volume_vs_yesterday": 3.8883,
+        "missing_confirmation": "等待富途行情按触发时点交叉核验；通过前只作候选或观察，不作为确认交易信号。",
+        "secondary_source": "富途行情",
+        "secondary_verification": {
+          "state": "pending",
+          "checked_at": "2026-08-06T09:40:47+08:00",
+          "source": "富途行情",
+          "reason": "等待触发分钟行情完整落盘。",
+          "representatives": [],
+          "fingerprint": "aae5acccbd03510c8b49",
+          "verifier_version": "futu-opend-2026-07-27.3"
+        }
+      },
+      "source_status": "degraded_partial",
+      "valid_until": "2026-08-06T09:45:23+08:00",
+      "trigger_rule": "小登股异动：3分钟平均涨跌幅≥1.5%，上涨占比≥70%，且成交放大≥5x；小登底池拉起预警：板块行情缺失时，底池3分钟平均涨幅≥1.5%，上涨占比≥70%，且成交放大≥5x；小登底池扩散预警：板块行情缺失时，底池3分钟平均涨幅≥1.0%，上涨占比≥60%，成交放大≥8x，且至少2只样本明显推进",
+      "alert_class": "opportunity",
+      "confirmation_level": "candidate",
+      "limit_up_count": 0,
+      "limit_down_count": 0
+    },
+    {
+      "id": "monitor-20260806-094023-0b0862da88b2",
+      "time": "2026-08-06T09:40:23+08:00",
+      "sector": "7月半导体扩产组合",
+      "type": "风格共振回暖",
+      "reason": "触发规则：小登风格轮动：同一大风格下≥3个关联板块同向急拉\n结论：7月半导体扩产组合 出现回暖信号，3个关联板块5分钟窗口内同向急拉。\n关联板块：交换机/高速以太网 5分钟涨跌幅 2.69%，上涨 71%/下跌 29%，成交 7.11x；电子布 5分钟涨跌幅 2.01%，上涨 80%/下跌 20%，成交 5.73x；覆铜板 5分钟涨跌幅 1.68%，上涨 100%/下跌 0%，成交 5.86x\n观察点：是否继续扩散到同风格后排，成交放大是否伴随价格延续。\n风险提示：这是风格级盘面信号，不构成买卖建议。",
+      "leaders": [
+        {
+          "name": "盛科通信",
+          "code": "688702",
+          "change_pct": 3.0498,
+          "quote_time": "2026-08-06T09:40:23.163921",
+          "score": 55.94,
+          "factors": [
+            "3分钟+3.05%",
+            "成交放大6.41x",
+            "日内+2.78%"
+          ]
+        },
+        {
+          "name": "紫光股份",
+          "code": "000938",
+          "change_pct": 3.0295,
+          "quote_time": "2026-08-06T09:40:23.163921",
+          "score": 54.59,
+          "factors": [
+            "3分钟+3.03%",
+            "成交放大7.66x",
+            "日内+1.27%"
+          ]
+        },
+        {
+          "name": "工业富联",
+          "code": "601138",
+          "change_pct": 2.3071,
+          "quote_time": "2026-08-06T09:40:23.163921",
+          "score": 54.43,
+          "factors": [
+            "3分钟+2.31%",
+            "成交放大11.39x",
+            "日内+1.58%"
+          ]
+        }
+      ],
+      "signal_type": "风格观察",
+      "is_old_economy": false,
+      "source_watch_id": "7月半导体扩产组合",
+      "quote_audit": {
+        "provider": "本地盘中监控、富途行情（腾讯备用）",
+        "quote_time": "2026-08-06T09:40:23+08:00",
+        "pct_field": "3分钟涨跌幅",
+        "sample_count": 3,
+        "max_abs_leader_change_pct": 3.0498,
+        "sanity_checks": {
+          "cross_source_verified": false,
+          "price_move_valid": true,
+          "volume_valid": true,
+          "direction_ratio_valid": true,
+          "limit_down_count_valid": false
+        },
+        "board_3m_change_pct": 2.6878,
+        "direction_ratio": 1.0,
+        "volume_ratio": 7.1064,
+        "relative_volume_vs_yesterday": null,
+        "missing_confirmation": "等待富途行情按触发时点交叉核验；通过前只作候选或观察，不作为确认交易信号。",
+        "secondary_source": "富途行情",
+        "secondary_verification": {
+          "state": "pending",
+          "checked_at": "2026-08-06T09:40:47+08:00",
+          "source": "富途行情",
+          "reason": "等待触发分钟行情完整落盘。",
+          "representatives": [],
+          "fingerprint": "d879dac29c00a10e5284",
+          "verifier_version": "futu-opend-2026-07-27.3"
+        }
+      },
+      "source_status": "degraded_partial",
+      "valid_until": "2026-08-06T09:45:23+08:00",
+      "trigger_rule": "小登风格轮动：同一大风格下≥3个关联板块同向急拉",
+      "alert_class": "style",
+      "confirmation_level": "candidate"
     }
   ],
   "quote_audit": {
     "provider": "本地盘中监控、富途行情（腾讯备用）",
-    "quote_time": "2026-08-06T09:36:11+08:00",
+    "quote_time": "2026-08-06T09:40:23+08:00",
     "pct_field": "各异动卡标注的短周期涨跌幅",
     "sanity_checks": {
-      "sample_count": 6,
+      "sample_count": 9,
       "max_abs_leader_change_pct": 6.9364,
       "cross_source_verified": false,
       "verified_alert_count": 1
