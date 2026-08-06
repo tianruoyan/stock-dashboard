@@ -1,6 +1,92 @@
 {
-  "timestamp": "2026-08-06T09:29:43+08:00",
-  "source_status": "monitor_live_no_trigger",
-  "alerts": [],
-  "note": "盘中监控运行正常，当前没有达到短周期价格、成交和扩散规则门槛的新异动。"
+  "timestamp": "2026-08-06T09:32:30+08:00",
+  "source_status": "monitor_live",
+  "alerts": [
+    {
+      "id": "monitor-20260806-093149-efd6181175d9",
+      "time": "2026-08-06T09:31:49+08:00",
+      "sector": "医药修复链",
+      "type": "小登题材快速回落",
+      "reason": "触发规则：小登股异动：3分钟平均跌幅≥1.5%，下跌占比≥70%，且成交放大≥5x；小登底池回落预警：板块行情缺失时，底池3分钟平均跌幅≥1.0%，下跌占比≥60%，且成交放大≥5x\n异动性质：快速回落。价格下行和下跌占比触发回落提醒，优先按风险扩散处理。\n结论：医药修复链快速回落且风险扩散，百济神州领跌。\n题材：医药修复链，当前领跌股：百济神州 / 艾力斯 / 普洛药业。\n强度：底池样本 3分钟涨跌幅 -2.13%，下跌占比 80%，弱势股 3 只。\n成交：3分钟放大 20.00x，较昨同期 11.16x，风险扩散明显。\n当前领跌股分数：百济神州(62.4)，艾力斯(60.5)，普洛药业(45.0)。\n主要贡献因子：百济神州: 3分钟涨跌幅 -5.09%，成交放大 20.00x，日内涨幅 -0.90%；艾力斯: 3分钟涨跌幅 -2.75%，成交放大 20.00x，日内涨幅 -1.20%；普洛药业: 3分钟涨跌幅 -1.80%，成交放大 20.00x，日内涨幅 0.00%\n观察点：领跌是否止跌、后排是否继续补跌、放量是否变成抛压。\n风险提示：这是题材强度分析，不构成买卖建议。",
+      "leaders": [
+        {
+          "name": "百济神州",
+          "code": "688235",
+          "change_pct": -5.0857,
+          "quote_time": "2026-08-06T09:31:49.341644",
+          "score": 62.37,
+          "factors": [
+            "3分钟-5.09%",
+            "成交放大20.00x",
+            "日内-0.90%"
+          ]
+        },
+        {
+          "name": "艾力斯",
+          "code": "688578",
+          "change_pct": -2.746,
+          "quote_time": "2026-08-06T09:31:49.341644",
+          "score": 60.53,
+          "factors": [
+            "3分钟-2.75%",
+            "成交放大20.00x",
+            "日内-1.20%"
+          ]
+        },
+        {
+          "name": "普洛药业",
+          "code": "000739",
+          "change_pct": -1.7953,
+          "quote_time": "2026-08-06T09:31:49.341644",
+          "score": 44.95,
+          "factors": [
+            "3分钟-1.80%",
+            "成交放大20.00x",
+            "日内+0.00%"
+          ]
+        }
+      ],
+      "signal_type": "风险提示",
+      "is_old_economy": false,
+      "source_watch_id": "医药修复链",
+      "quote_audit": {
+        "provider": "本地盘中监控",
+        "quote_time": "2026-08-06T09:31:49+08:00",
+        "pct_field": "3分钟涨跌幅",
+        "sample_count": 3,
+        "max_abs_leader_change_pct": 5.0857,
+        "sanity_checks": {
+          "cross_source_verified": false,
+          "price_move_valid": true,
+          "volume_valid": true,
+          "direction_ratio_valid": true,
+          "limit_down_count_valid": false
+        },
+        "board_3m_change_pct": -2.1268,
+        "direction_ratio": 0.8,
+        "volume_ratio": 20.0,
+        "relative_volume_vs_yesterday": 11.1632,
+        "missing_confirmation": "等待富途行情按触发时点交叉核验；通过前只作候选或观察，不作为确认交易信号。"
+      },
+      "source_status": "degraded_partial",
+      "valid_until": "2026-08-06T09:36:49+08:00",
+      "trigger_rule": "小登股异动：3分钟平均跌幅≥1.5%，下跌占比≥70%，且成交放大≥5x；小登底池回落预警：板块行情缺失时，底池3分钟平均跌幅≥1.0%，下跌占比≥60%，且成交放大≥5x",
+      "alert_class": "risk",
+      "confirmation_level": "candidate",
+      "limit_up_count": 0,
+      "limit_down_count": 0
+    }
+  ],
+  "quote_audit": {
+    "provider": "本地盘中监控",
+    "quote_time": "2026-08-06T09:31:49+08:00",
+    "pct_field": "各异动卡标注的3分钟涨跌幅",
+    "sanity_checks": {
+      "sample_count": 1,
+      "max_abs_leader_change_pct": 5.0857,
+      "cross_source_verified": false,
+      "verified_alert_count": 0
+    }
+  },
+  "note": "异动来自本地短周期监控；候选卡须经富途行情按触发时点复核后才能升级。"
 }
