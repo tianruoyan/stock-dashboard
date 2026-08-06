@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-08-06T09:33:44+08:00",
+  "timestamp": "2026-08-06T09:36:44+08:00",
   "source_status": "monitor_live",
   "alerts": [
     {
@@ -154,7 +154,7 @@
         "secondary_source": "富途行情",
         "secondary_verification": {
           "state": "insufficient_precision",
-          "checked_at": "2026-08-06T09:34:34+08:00",
+          "checked_at": "2026-08-06T09:36:39+08:00",
           "source": "富途行情",
           "reason": "至少2只代表股已识别，但外部行情无法精确对齐触发时点；维持观察，不误判为行情冲突。",
           "representatives": [
@@ -260,7 +260,7 @@
         "secondary_source": "富途行情",
         "secondary_verification": {
           "state": "insufficient_precision",
-          "checked_at": "2026-08-06T09:34:34+08:00",
+          "checked_at": "2026-08-06T09:36:39+08:00",
           "source": "富途行情",
           "reason": "至少2只代表股已识别，但外部行情无法精确对齐触发时点；维持观察，不误判为行情冲突。",
           "representatives": [
@@ -375,11 +375,69 @@
         "missing_confirmation": "等待富途行情按触发时点交叉核验；通过前只作候选或观察，不作为确认交易信号。",
         "secondary_source": "富途行情",
         "secondary_verification": {
-          "state": "pending",
-          "checked_at": "2026-08-06T09:34:34+08:00",
+          "state": "mismatch",
+          "checked_at": "2026-08-06T09:35:37+08:00",
           "source": "富途行情",
-          "reason": "等待触发分钟行情完整落盘。",
-          "representatives": [],
+          "reason": "对齐同一触发时点后，代表股方向或价格变化仍存在明显冲突，维持待确认/失效。",
+          "representatives": [
+            {
+              "股票": "新易盛",
+              "代码": "300502.SZ",
+              "监控涨跌幅": -2.8087,
+              "富途涨跌幅": -3.396,
+              "腾讯涨跌幅": -2.523,
+              "起始分钟": "09:30:30",
+              "结束分钟": "09:33:30",
+              "对齐方式": "逐笔行情同一时点对齐",
+              "时间偏差秒": 0.186,
+              "可比涨跌范围": [
+                -3.5262,
+                -3.253
+              ],
+              "方向一致": false,
+              "幅度一致": false,
+              "复核结论": "明显冲突"
+            },
+            {
+              "股票": "中际旭创",
+              "代码": "300308.SZ",
+              "监控涨跌幅": -1.889,
+              "富途涨跌幅": -1.7911,
+              "腾讯涨跌幅": -1.334,
+              "起始分钟": "09:30:30",
+              "结束分钟": "09:33:30",
+              "对齐方式": "逐笔行情同一时点对齐",
+              "时间偏差秒": 0.186,
+              "可比涨跌范围": [
+                -1.8207,
+                -1.7266
+              ],
+              "方向一致": true,
+              "幅度一致": true,
+              "复核结论": "一致"
+            },
+            {
+              "股票": "天孚通信",
+              "代码": "300394.SZ",
+              "监控涨跌幅": -1.9952,
+              "富途涨跌幅": -2.9241,
+              "腾讯涨跌幅": -1.3077,
+              "起始分钟": "09:30:30",
+              "结束分钟": "09:33:30",
+              "对齐方式": "逐笔行情同一时点对齐",
+              "时间偏差秒": 0.186,
+              "可比涨跌范围": [
+                -3.1135,
+                -2.729
+              ],
+              "方向一致": false,
+              "幅度一致": false,
+              "复核结论": "明显冲突"
+            }
+          ],
+          "window_minutes": 3,
+          "direction_agreement_ratio": 0.3333,
+          "magnitude_agreement_ratio": 0.3333,
           "fingerprint": "867b13047b5eca53c3f5",
           "verifier_version": "futu-opend-2026-07-27.3"
         }
@@ -446,7 +504,7 @@
         "sample_count": 3,
         "max_abs_leader_change_pct": 1.7571,
         "sanity_checks": {
-          "cross_source_verified": false,
+          "cross_source_verified": true,
           "price_move_valid": true,
           "volume_valid": true,
           "direction_ratio_valid": true,
@@ -459,11 +517,69 @@
         "missing_confirmation": "等待富途行情按触发时点交叉核验；通过前只作候选或观察，不作为确认交易信号。",
         "secondary_source": "富途行情",
         "secondary_verification": {
-          "state": "pending",
-          "checked_at": "2026-08-06T09:34:34+08:00",
+          "state": "passed",
+          "checked_at": "2026-08-06T09:35:37+08:00",
           "source": "富途行情",
-          "reason": "等待触发分钟行情完整落盘。",
-          "representatives": [],
+          "reason": "富途行情已按代表股触发时点对齐，方向和价格变化相互支持。",
+          "representatives": [
+            {
+              "股票": "申菱环境",
+              "代码": "301018.SZ",
+              "监控涨跌幅": -1.7571,
+              "富途涨跌幅": -2.3961,
+              "腾讯涨跌幅": -1.127,
+              "起始分钟": "09:30:30",
+              "结束分钟": "09:33:30",
+              "对齐方式": "逐笔行情同一时点对齐",
+              "时间偏差秒": 0.186,
+              "可比涨跌范围": [
+                -2.4202,
+                -1.7929
+              ],
+              "方向一致": true,
+              "幅度一致": true,
+              "复核结论": "一致"
+            },
+            {
+              "股票": "同飞股份",
+              "代码": "300990.SZ",
+              "监控涨跌幅": -1.6976,
+              "富途涨跌幅": -1.7857,
+              "腾讯涨跌幅": -1.2623,
+              "起始分钟": "09:30:30",
+              "结束分钟": "09:33:30",
+              "对齐方式": "逐笔行情同一时点对齐",
+              "时间偏差秒": 0.186,
+              "可比涨跌范围": [
+                -1.9565,
+                -1.7139
+              ],
+              "方向一致": true,
+              "幅度一致": true,
+              "复核结论": "一致"
+            },
+            {
+              "股票": "英维克",
+              "代码": "002837.SZ",
+              "监控涨跌幅": -1.2403,
+              "富途涨跌幅": -1.4894,
+              "腾讯涨跌幅": -0.6783,
+              "起始分钟": "09:30:30",
+              "结束分钟": "09:33:30",
+              "对齐方式": "逐笔行情同一时点对齐",
+              "时间偏差秒": 0.186,
+              "可比涨跌范围": [
+                -1.7364,
+                -1.3359
+              ],
+              "方向一致": true,
+              "幅度一致": true,
+              "复核结论": "一致"
+            }
+          ],
+          "window_minutes": 3,
+          "direction_agreement_ratio": 1.0,
+          "magnitude_agreement_ratio": 1.0,
           "fingerprint": "d05d3359a746b0000ac8",
           "verifier_version": "futu-opend-2026-07-27.3"
         }
@@ -475,17 +591,89 @@
       "confirmation_level": "candidate",
       "limit_up_count": 0,
       "limit_down_count": 0
+    },
+    {
+      "id": "monitor-20260806-093611-eb4a60b8f06f",
+      "time": "2026-08-06T09:36:11+08:00",
+      "sector": "7月半导体扩产组合",
+      "type": "风格共振转弱",
+      "reason": "触发规则：小登风格轮动：同一大风格下≥3个关联板块同向急跌\n结论：7月半导体扩产组合 出现风格杀信号，3个关联板块5分钟窗口内同向急跌。\n关联板块：医药修复链 5分钟涨跌幅 -3.04%，上涨 0%/下跌 100%，成交 8.46x；化学制药 5分钟涨跌幅 -1.74%，上涨 0%/下跌 100%，成交 9.29x；光模块/CPO 5分钟涨跌幅 -1.63%，上涨 0%/下跌 100%，成交 6.17x\n观察点：是否继续扩散到同风格后排，成交放大是否伴随价格延续。\n风险提示：这是风格级盘面信号，不构成买卖建议。",
+      "leaders": [
+        {
+          "name": "百济神州",
+          "code": "688235",
+          "change_pct": -6.9364,
+          "quote_time": "2026-08-06T09:36:11.981682",
+          "score": 60.75,
+          "factors": [
+            "3分钟-6.94%",
+            "成交放大6.58x",
+            "日内-3.75%"
+          ]
+        },
+        {
+          "name": "艾力斯",
+          "code": "688578",
+          "change_pct": -3.0467,
+          "quote_time": "2026-08-06T09:36:11.981682",
+          "score": 54.85,
+          "factors": [
+            "3分钟-3.05%",
+            "成交放大7.84x",
+            "日内-1.77%"
+          ]
+        },
+        {
+          "name": "恒瑞医药",
+          "code": "600276",
+          "change_pct": -1.5628,
+          "quote_time": "2026-08-06T09:36:11.981682",
+          "score": 47.65,
+          "factors": [
+            "3分钟-1.56%",
+            "成交放大17.68x",
+            "日内-1.18%"
+          ]
+        }
+      ],
+      "signal_type": "风格观察",
+      "is_old_economy": false,
+      "source_watch_id": "7月半导体扩产组合",
+      "quote_audit": {
+        "provider": "本地盘中监控",
+        "quote_time": "2026-08-06T09:36:11+08:00",
+        "pct_field": "3分钟涨跌幅",
+        "sample_count": 3,
+        "max_abs_leader_change_pct": 6.9364,
+        "sanity_checks": {
+          "cross_source_verified": false,
+          "price_move_valid": true,
+          "volume_valid": true,
+          "direction_ratio_valid": true,
+          "limit_down_count_valid": false
+        },
+        "board_3m_change_pct": -3.0381,
+        "direction_ratio": 1.0,
+        "volume_ratio": 9.2872,
+        "relative_volume_vs_yesterday": null,
+        "missing_confirmation": "等待富途行情按触发时点交叉核验；通过前只作候选或观察，不作为确认交易信号。"
+      },
+      "source_status": "degraded_partial",
+      "valid_until": "2026-08-06T09:41:11+08:00",
+      "trigger_rule": "小登风格轮动：同一大风格下≥3个关联板块同向急跌",
+      "alert_class": "style",
+      "confirmation_level": "candidate"
     }
   ],
   "quote_audit": {
     "provider": "本地盘中监控、富途行情（腾讯备用）",
-    "quote_time": "2026-08-06T09:33:29+08:00",
-    "pct_field": "各异动卡标注的短周期涨跌幅",
+    "quote_time": "2026-08-06T09:36:11+08:00",
+    "pct_field": "各异动卡标注的3分钟涨跌幅",
     "sanity_checks": {
-      "sample_count": 5,
-      "max_abs_leader_change_pct": 5.0857,
+      "sample_count": 6,
+      "max_abs_leader_change_pct": 6.9364,
       "cross_source_verified": false,
-      "verified_alert_count": 0
+      "verified_alert_count": 1
     }
   },
   "note": "异动来自本地短周期监控；候选卡须经富途行情按触发时点复核后才能升级。"
