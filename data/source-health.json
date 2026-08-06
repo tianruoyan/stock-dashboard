@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-08-06T09:38:00+08:00",
+  "timestamp": "2026-08-06T10:06:00+08:00",
   "sources": {
     "tencent_http": {
       "status": "ok",
@@ -191,10 +191,10 @@
     },
     "tencent_a_quote_intraday_1000": {
       "status": "ok",
-      "last_check": "2026-07-20T10:15:06+08:00",
-      "usage": "10:00指数、行业排行、观察池与专项样本",
-      "detail": "腾讯HTTP返回5个指数、496个行业代码及A股代表样本有效报价；指数由无模型服务继续刷新至约10:10。",
-      "sample_count": 99,
+      "last_check": "2026-08-06T10:04:12+08:00",
+      "usage": "10:00 A股指数、行业与重点样本实时快照",
+      "detail": "取得五大指数、行业排行及半导体、交换机、电子布/PCB、CPO、存储和风格雷达样本；指数与个股真实行情时点约10:02。",
+      "sample_count": 90,
       "errors": []
     },
     "tencent_hk_http_intraday_1000": {
@@ -6338,6 +6338,58 @@
       "sample_count": 1,
       "errors": [
         "old reference window; not current market fact"
+      ]
+    },
+    "eastmoney_structure_intraday_1000": {
+      "status": "ok_serial",
+      "last_check": "2026-08-06T10:03:48+08:00",
+      "usage": "10:00涨停、跌停、回封反馈及行业分布",
+      "detail": "串行取得涨停41、跌停0、当前炸板0；41只中20只曾开板回封，通信设备6只封板。",
+      "sample_count": 41,
+      "errors": []
+    },
+    "eastmoney_concept_intraday_1000": {
+      "status": "ok_serial",
+      "last_check": "2026-08-06T10:03:48+08:00",
+      "usage": "10:00概念排行与主力资金结构",
+      "detail": "取得电子身份证、数字货币、6G、PCB、先进封装、HBM、玻璃基板与CPO等概念涨跌和资金字段；仅作相对强弱，不作单一结论。",
+      "sample_count": 20,
+      "errors": []
+    },
+    "tencent_hk_jp_kr_intraday_1000": {
+      "status": "ok_mixed_quote_times",
+      "last_check": "2026-08-06T10:04:12+08:00",
+      "usage": "港股早盘及日韩科技链交叉验证",
+      "detail": "恒指/恒科与港股样本时点约10:04；日韩科技样本最新可核验时点约09:42-09:47，已显式标注，不伪装为10:00同步行情。",
+      "sample_count": 18,
+      "errors": []
+    },
+    "intraday_recovery_service": {
+      "status": "ok",
+      "last_check": "2026-08-06T10:01:24+08:00",
+      "usage": "交易时段网络与行情恢复健康校验",
+      "detail": "state=数据正常，phase=上午交易，quote_time=09:53:15，failure_count=0；随后人工结构快照推进至10:04。",
+      "sample_count": 1,
+      "errors": []
+    },
+    "v2_governed_cockpit": {
+      "status": "stale_boundary_only",
+      "last_check": "2026-08-06T10:01:00+08:00",
+      "usage": "只读风险边界与行动语言治理",
+      "detail": "最新卡片仍为2026-08-05收盘且质量降级；本轮未将其作为2026-08-06实时机会事实。",
+      "sample_count": 0,
+      "errors": [
+        "current-day governed card unavailable"
+      ]
+    },
+    "longbridge_normalized_shadow": {
+      "status": "no_current_increment",
+      "last_check": "2026-08-06T10:01:00+08:00",
+      "usage": "长桥机构分析模型/官方观点只读引用",
+      "detail": "未发现本时点经import_longbridge_analysis.py规范化的当日增量；旧观点仅保留为背景，未独立通过治理门禁或改变结论。",
+      "sample_count": 0,
+      "errors": [
+        "no normalized current-day increment"
       ]
     }
   },
