@@ -1,8 +1,8 @@
 {
-  "timestamp": "2026-08-06T14:42:42+08:00",
+  "timestamp": "2026-08-06T14:44:46+08:00",
   "current_signal_date": "2026-08-06",
   "status": "degraded",
-  "summary": "发现 140 个降级/需复核项（139 个价格/行情复核，2 个背景复核），核心结论可看但必须按影响分层使用。",
+  "summary": "发现 141 个降级/需复核项（140 个价格/行情复核，2 个背景复核），核心结论可看但必须按影响分层使用。",
   "issues": [
     {
       "severity": "warning",
@@ -1272,6 +1272,15 @@
       "message": "shenwan_industry_mapping_postmarket_20260805: 历史代码主表5203只；涨超5%样本中38只未映射，占4.98%，已单列未映射，不外推分类。",
       "impact_level": "price_review",
       "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
+    },
+    {
+      "severity": "warning",
+      "file": "cross-file",
+      "path": "盛科通信-U",
+      "code": "stock_pct_cross_file_conflict",
+      "message": "盛科通信-U 跨文件涨跌幅差异过大：midday.json 4.44% vs intraday.json 20.0%",
+      "impact_level": "price_review",
+      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
     }
   ],
   "action_plan": [
@@ -1282,6 +1291,17 @@
       "file": "alert.json",
       "code": "historical_alert_without_trusted_source",
       "problem": "盘中异动缺少可信源证明；当前阶段只降权参考，不阻断整站发布",
+      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核",
+      "next_step": "用第二行情源复核涨跌幅、quote_time 和代表股方向；未确认前只做验证。",
+      "unblock_condition": "price_review=0 或相关来源标记 trusted/cross verified。"
+    },
+    {
+      "priority": 2,
+      "impact_level": "price_review",
+      "label": "二次行情复核",
+      "file": "cross-file",
+      "code": "stock_pct_cross_file_conflict",
+      "problem": "盛科通信-U 跨文件涨跌幅差异过大：midday.json 4.44% vs intraday.json 20.0%",
       "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核",
       "next_step": "用第二行情源复核涨跌幅、quote_time 和代表股方向；未确认前只做验证。",
       "unblock_condition": "price_review=0 或相关来源标记 trusted/cross verified。"
@@ -1333,10 +1353,10 @@
   ],
   "counts": {
     "critical": 0,
-    "warning": 140,
+    "warning": 141,
     "info": 1,
     "blocking": 0,
-    "price_review": 139,
+    "price_review": 140,
     "signal_review": 0,
     "background_review": 2
   },
