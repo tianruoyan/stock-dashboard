@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-08-06T14:40:18+08:00",
+  "timestamp": "2026-08-06T15:11:57+08:00",
   "sources": {
     "tencent_http": {
       "status": "ok",
@@ -6589,6 +6589,74 @@
       "detail": "仅1条7月30日存储/HBM机构观点，8月6日无增量；当前A/H与韩国最后有效价格构成反证，未调用账户、持仓、订单、自选或社区能力。",
       "sample_count": 1,
       "errors": []
+    },
+    "tencent_a_close_20260806": {
+      "status": "ok",
+      "last_check": "2026-08-06T15:11:57+08:00",
+      "usage": "A股收盘指数、行业、代表股",
+      "detail": "5个指数、98个行业及专项样本返回有效收盘行情。",
+      "sample_count": 103,
+      "errors": []
+    },
+    "sina_all_a_close_20260806": {
+      "status": "ok",
+      "last_check": "2026-08-06T15:11:57+08:00",
+      "usage": "全A收盘宽度及5%/8%不重叠分层",
+      "detail": "原始5537只、有效5327只；5%至不足8% 153只，8%以上148只。",
+      "sample_count": 5537,
+      "errors": []
+    },
+    "eastmoney_structure_close_20260806": {
+      "status": "ok",
+      "last_check": "2026-08-06T15:11:57+08:00",
+      "usage": "涨停/跌停/炸板结构",
+      "detail": "涨停79、跌停1、炸板20。",
+      "sample_count": 100,
+      "errors": []
+    },
+    "sw_level1_mapping_close_20260806": {
+      "status": "ok",
+      "last_check": "2026-08-06T15:11:57+08:00",
+      "usage": "涨超5%样本申万一级行业归类",
+      "detail": "31个一级行业、5201只成分映射；失败0。",
+      "sample_count": 5201,
+      "errors": []
+    },
+    "tencent_minute_close_20260806": {
+      "status": "ok",
+      "last_check": "2026-08-06T15:11:57+08:00",
+      "usage": "14:55-15:00收盘竞价校验",
+      "detail": "5个指数及关键主题样本分钟线有效。",
+      "sample_count": 5,
+      "errors": []
+    },
+    "eastmoney_concept_close_20260806": {
+      "status": "degraded_preserved_last_valid",
+      "last_check": "2026-08-06T15:11:57+08:00",
+      "usage": "概念排行",
+      "detail": "收盘概念排行未取得新有效快照，保留13:05最后有效值并降权，不用于独立升级主线。",
+      "sample_count": 0,
+      "errors": [
+        "close concept snapshot unavailable"
+      ]
+    },
+    "longbridge_institutional_shadow_close_20260806": {
+      "status": "ok_no_current_increment",
+      "last_check": "2026-08-06T15:11:57+08:00",
+      "usage": "外部机构观点只读影子反证",
+      "detail": "规范化影子仅有7月30日存储/HBM旧观点，本轮无当日增量，不作为当前事实或行动依据。",
+      "sample_count": 1,
+      "errors": []
+    },
+    "v2_cockpit_close_20260806": {
+      "status": "degraded_stale_boundary_only",
+      "last_check": "2026-08-06T15:11:57+08:00",
+      "usage": "治理边界与动作等级",
+      "detail": "V2快照停留8月5日收盘，仅用于用户资产为0和仅复盘边界，不用于8月6日行情事实。",
+      "sample_count": 0,
+      "errors": [
+        "governed snapshot stale"
+      ]
     }
   },
   "last_publish_attempt": "pending_20260717_0830_premarket_publish",
@@ -9444,5 +9512,16 @@
     "status": "no_current_increment",
     "checked_at": "2026-08-06T14:07:43+08:00",
     "note": "未发现经本地规范化的8月6日机构观点增量；未触碰账户、持仓、订单、自选或社区能力"
+  },
+  "current_run": {
+    "timestamp": "2026-08-06T15:11:57+08:00",
+    "phase": "A股收盘后",
+    "summary": "A股收盘核心行情与结构完整；概念排行、韩国当前值和港股正式收盘待补均已显式降级。",
+    "failed_or_degraded": [
+      "eastmoney_concept_close_20260806",
+      "v2_cockpit_close_20260806",
+      "韩国当前复采",
+      "港股正式收盘待16:15"
+    ]
   }
 }
