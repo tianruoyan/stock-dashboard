@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-08-06T16:03:05+08:00",
+  "timestamp": "2026-08-06T16:31:33+08:00",
   "sources": {
     "tencent_http": {
       "status": "ok",
@@ -6715,11 +6715,47 @@
       "detail": "V2治理快照仍为8月5日且用户确认资产为0；长桥规范化影子无8月6日增量，未调用账户、持仓、订单、自选或社区能力。",
       "sample_count": 0,
       "errors": []
+    },
+    "sina_hk_official_close_20260806": {
+      "status": "ok",
+      "checked_at": "2026-08-06T16:31:33+08:00",
+      "market_data_as_of": "2026-08-06T16:09:30+08:00",
+      "usage": "港股正式收盘终值",
+      "detail": "恒指-1.49%、恒科-2.28%，核心港股样本均为16:08-16:09终值。",
+      "sample_count": 19,
+      "errors": []
+    },
+    "tencent_hk_close_crosscheck_20260806": {
+      "status": "cross_verified",
+      "checked_at": "2026-08-06T16:31:33+08:00",
+      "market_data_as_of": "2026-08-06T16:09:30+08:00",
+      "usage": "港股正式收盘同值交叉",
+      "detail": "指数与核心样本同新浪正式终值一致；未把16:31采集时间冒充行情时间。",
+      "sample_count": 19,
+      "errors": []
+    },
+    "v2_cockpit_context_20260806_1630": {
+      "status": "ok_shadow_read_only",
+      "checked_at": "2026-08-06T16:31:33+08:00",
+      "snapshot": "2026-08-06T16:15:33+08:00",
+      "usage": "只读行动语言、权限边界与反证",
+      "detail": "收盘结论阶段、仅复盘；用户确认资产0，未执行交易或修改V1。",
+      "errors": [
+        "read_current_context.py缺失，改读治理后的cockpit-phase-view"
+      ]
+    },
+    "longbridge_institutional_shadow_20260806_1630": {
+      "status": "no_current_increment",
+      "checked_at": "2026-08-06T16:31:33+08:00",
+      "snapshot": "2026-08-06T16:15:32+08:00",
+      "usage": "外部机构观点只读shadow",
+      "detail": "规范化引用仍为7月30日存储/HBM机构观点与反证，未作为当日事实或交易依据。",
+      "errors": []
     }
   },
   "last_publish_attempt": "pending_20260717_0830_premarket_publish",
   "status": "degraded_nonblocking",
-  "last_error": "Naver韩国14:36 SSL握手超时；保留14:03-14:04最后有效快照。东方财富概念排行继续沿用13:05最后有效快照降权。",
+  "last_error": "V2技能说明中的read_current_context.py在当前worktree缺失；已只读核验治理后的16:15驾驶舱视图，未将辅助缺口用于填造行情。",
   "tencent_a_close_postmarket_20260716": {
     "status": "ok",
     "last_check": "2026-07-16T15:18:57+08:00",
@@ -6899,8 +6935,8 @@
     "sample_count": 15,
     "errors": []
   },
-  "overall_status": "核心盘中行情可用；概念排行与韩国当前复采降级、V2治理快照滞后，不阻断14:30结论。",
-  "last_codex_note": "14:30按当前可核验行情产出；行动等级为等待确认，Longbridge仅读取规范化影子引用，未调用账户/持仓/订单/自选，未修改用户资产。",
+  "overall_status": "A股收盘与港股正式收盘核心行情可用；概念排行、韩国终值及V2只读辅助存在降权，不阻断正式收盘结论。",
+  "last_codex_note": "16:30按16:08-16:09正式终值产出；Longbridge仅使用规范化机构观点shadow，不调用账户、持仓、订单、自选或社区能力，不修改用户资产。",
   "eastmoney_structure_pools_intraday_1000_20260717": {
     "status": "ok",
     "last_check": "2026-07-17T10:02:40+08:00",
@@ -8902,10 +8938,10 @@
     ]
   },
   "current_run_summary": {
-    "phase": "14:30盘中更新",
-    "result": "核心行情完整、概念排行与韩国当前复采降级",
-    "market_data_as_of": "2026-08-06T14:37:13+08:00",
-    "analysis_action": "等待确认",
+    "phase": "16:30港股正式收盘",
+    "result": "正式终值双源交叉完成，非核心辅助源降权",
+    "market_data_as_of": "2026-08-06T16:09:30+08:00",
+    "analysis_action": "仅复盘",
     "published": false
   },
   "tencent_a_midday_20260804_1134": {
@@ -9103,7 +9139,7 @@
     "sample_count": 0,
     "errors": []
   },
-  "summary": "14:30盘中更新：腾讯A股/行业、东方财富结构、新浪港股、腾讯日本与本机恢复状态可用；概念排行未复采、Naver韩国当前复采超时，均保留真实最后有效时点。",
+  "summary": "16:30港股正式收盘：新浪16:08-16:09终值与腾讯同值交叉；V2驾驶舱为shadow只读，长桥规范化机构观点无当日增量。",
   "monitor_quote_audit_20260805_130542": {
     "status": "degraded_partial",
     "last_check": "2026-08-05T13:08:31+08:00",
@@ -9572,14 +9608,49 @@
     "note": "未发现经本地规范化的8月6日机构观点增量；未触碰账户、持仓、订单、自选或社区能力"
   },
   "current_run": {
-    "timestamp": "2026-08-06T15:11:57+08:00",
-    "phase": "A股收盘后",
-    "summary": "A股收盘核心行情与结构完整；概念排行、韩国当前值和港股正式收盘待补均已显式降级。",
+    "timestamp": "2026-08-06T16:09:30+08:00",
+    "phase": "港股收盘后",
+    "summary": "港股正式终值双源核验完成；A股收盘结论未追溯改写。",
     "failed_or_degraded": [
-      "eastmoney_concept_close_20260806",
-      "v2_cockpit_close_20260806",
-      "韩国当前复采",
-      "港股正式收盘待16:15"
+      "东财概念排行沿用13:05最后有效快照",
+      "韩国仅保留最后有效时点",
+      "V2 read_current_context辅助脚本当前缺失，改读治理后的驾驶舱视图"
     ]
+  },
+  "sina_hk_official_close_20260806": {
+    "status": "ok",
+    "checked_at": "2026-08-06T16:31:33+08:00",
+    "market_data_as_of": "2026-08-06T16:09:30+08:00",
+    "usage": "港股正式收盘终值",
+    "detail": "恒指-1.49%、恒科-2.28%，核心港股样本均为16:08-16:09终值。",
+    "sample_count": 19,
+    "errors": []
+  },
+  "tencent_hk_close_crosscheck_20260806": {
+    "status": "cross_verified",
+    "checked_at": "2026-08-06T16:31:33+08:00",
+    "market_data_as_of": "2026-08-06T16:09:30+08:00",
+    "usage": "港股正式收盘同值交叉",
+    "detail": "指数与核心样本同新浪正式终值一致；未把16:31采集时间冒充行情时间。",
+    "sample_count": 19,
+    "errors": []
+  },
+  "v2_cockpit_context_20260806_1630": {
+    "status": "ok_shadow_read_only",
+    "checked_at": "2026-08-06T16:31:33+08:00",
+    "snapshot": "2026-08-06T16:15:33+08:00",
+    "usage": "只读行动语言、权限边界与反证",
+    "detail": "收盘结论阶段、仅复盘；用户确认资产0，未执行交易或修改V1。",
+    "errors": [
+      "read_current_context.py缺失，改读治理后的cockpit-phase-view"
+    ]
+  },
+  "longbridge_institutional_shadow_20260806_1630": {
+    "status": "no_current_increment",
+    "checked_at": "2026-08-06T16:31:33+08:00",
+    "snapshot": "2026-08-06T16:15:32+08:00",
+    "usage": "外部机构观点只读shadow",
+    "detail": "规范化引用仍为7月30日存储/HBM机构观点与反证，未作为当日事实或交易依据。",
+    "errors": []
   }
 }
