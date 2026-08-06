@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-08-06T09:32:30+08:00",
+  "timestamp": "2026-08-06T09:33:44+08:00",
   "source_status": "monitor_live",
   "alerts": [
     {
@@ -50,7 +50,7 @@
       "is_old_economy": false,
       "source_watch_id": "医药修复链",
       "quote_audit": {
-        "provider": "本地盘中监控",
+        "provider": "本地盘中监控、富途行情（腾讯备用）",
         "quote_time": "2026-08-06T09:31:49+08:00",
         "pct_field": "3分钟涨跌幅",
         "sample_count": 3,
@@ -66,7 +66,29 @@
         "direction_ratio": 0.8,
         "volume_ratio": 20.0,
         "relative_volume_vs_yesterday": 11.1632,
-        "missing_confirmation": "等待富途行情按触发时点交叉核验；通过前只作候选或观察，不作为确认交易信号。"
+        "missing_confirmation": "等待富途行情按触发时点交叉核验；通过前只作候选或观察，不作为确认交易信号。",
+        "secondary_source": "富途行情",
+        "secondary_verification": {
+          "state": "insufficient_identity",
+          "checked_at": "2026-08-06T09:33:32+08:00",
+          "source": "富途行情",
+          "reason": "可解析且有行情的代表股不足2只。",
+          "representatives": [
+            {
+              "股票": "普洛药业",
+              "代码": "000739.SZ",
+              "监控涨跌幅": -1.7953,
+              "富途涨跌幅": null,
+              "腾讯涨跌幅": null,
+              "方向一致": false,
+              "幅度一致": false,
+              "复核结论": "行情精度不足"
+            }
+          ],
+          "window_minutes": 3,
+          "fingerprint": "c7599a9853eba7883b50",
+          "verifier_version": "futu-opend-2026-07-27.3"
+        }
       },
       "source_status": "degraded_partial",
       "valid_until": "2026-08-06T09:36:49+08:00",
@@ -75,14 +97,392 @@
       "confirmation_level": "candidate",
       "limit_up_count": 0,
       "limit_down_count": 0
+    },
+    {
+      "id": "monitor-20260806-093234-94a80d6e8213",
+      "time": "2026-08-06T09:32:34+08:00",
+      "sector": "半导体零部件弹性",
+      "type": "小登题材短周期拉动",
+      "reason": "触发规则：小登股异动：3分钟平均涨跌幅≥1.5%，上涨占比≥70%，且成交放大≥5x；小登底池拉起预警：板块行情缺失时，底池3分钟平均涨幅≥1.5%，上涨占比≥70%，且成交放大≥5x；小登底池扩散预警：板块行情缺失时，底池3分钟平均涨幅≥1.0%，上涨占比≥60%，成交放大≥8x，且至少2只样本明显推进\n异动性质：观察性拉动。有短线拉动，但尚未同时满足上涨攻势确认条件。\n结论：半导体零部件弹性前排有拉动但未确认上涨攻势，富创精密暂为观察核心。\n题材：半导体零部件弹性，当前动态龙头：富创精密 / 新莱应材。\n强度：底池样本 3分钟涨跌幅 3.28%，上涨占比 100%，强势股 2 只。\n成交：3分钟放大 20.00x，较昨同期 5.90x，有后排扩散。\n当前动态龙头分数：富创精密(60.5)，新莱应材(60.3)。\n主要贡献因子：富创精密: 3分钟涨跌幅 3.81%，成交放大 20.00x，日内涨幅 0.21%；新莱应材: 3分钟涨跌幅 2.74%，成交放大 20.00x，日内涨幅 1.31%\n观察点：龙头是否维持日内高位、后排是否继续补涨、成交是否继续放大。\n风险提示：这是题材强度分析，不构成买卖建议。",
+      "leaders": [
+        {
+          "name": "富创精密",
+          "code": "688409",
+          "change_pct": 3.8124,
+          "quote_time": "2026-08-06T09:32:34.246743",
+          "score": 60.52,
+          "factors": [
+            "3分钟+3.81%",
+            "成交放大20.00x",
+            "日内+0.21%"
+          ]
+        },
+        {
+          "name": "新莱应材",
+          "code": "300260",
+          "change_pct": 2.7429,
+          "quote_time": "2026-08-06T09:32:34.246743",
+          "score": 60.29,
+          "factors": [
+            "3分钟+2.74%",
+            "成交放大20.00x",
+            "日内+1.31%"
+          ]
+        }
+      ],
+      "signal_type": "🎯交易信号",
+      "is_old_economy": false,
+      "source_watch_id": "半导体设备材料",
+      "quote_audit": {
+        "provider": "本地盘中监控、富途行情（腾讯备用）",
+        "quote_time": "2026-08-06T09:32:34+08:00",
+        "pct_field": "3分钟涨跌幅",
+        "sample_count": 2,
+        "max_abs_leader_change_pct": 3.8124,
+        "sanity_checks": {
+          "cross_source_verified": false,
+          "price_move_valid": true,
+          "volume_valid": true,
+          "direction_ratio_valid": true,
+          "limit_down_count_valid": false
+        },
+        "board_3m_change_pct": 3.2777,
+        "direction_ratio": 1.0,
+        "volume_ratio": 20.0,
+        "relative_volume_vs_yesterday": 5.9019,
+        "missing_confirmation": "等待富途行情按触发时点交叉核验；通过前只作候选或观察，不作为确认交易信号。",
+        "secondary_source": "富途行情",
+        "secondary_verification": {
+          "state": "insufficient_precision",
+          "checked_at": "2026-08-06T09:34:34+08:00",
+          "source": "富途行情",
+          "reason": "至少2只代表股已识别，但外部行情无法精确对齐触发时点；维持观察，不误判为行情冲突。",
+          "representatives": [
+            {
+              "股票": "富创精密",
+              "代码": "688409.SH",
+              "监控涨跌幅": 3.8124,
+              "富途涨跌幅": null,
+              "腾讯涨跌幅": null,
+              "方向一致": false,
+              "幅度一致": false,
+              "复核结论": "行情精度不足"
+            },
+            {
+              "股票": "新莱应材",
+              "代码": "300260.SZ",
+              "监控涨跌幅": 2.7429,
+              "富途涨跌幅": null,
+              "腾讯涨跌幅": null,
+              "方向一致": false,
+              "幅度一致": false,
+              "复核结论": "行情精度不足"
+            }
+          ],
+          "window_minutes": 3,
+          "fingerprint": "b0549d41c259be22ac72",
+          "verifier_version": "futu-opend-2026-07-27.3"
+        }
+      },
+      "source_status": "degraded_partial",
+      "valid_until": "2026-08-06T09:37:34+08:00",
+      "trigger_rule": "小登股异动：3分钟平均涨跌幅≥1.5%，上涨占比≥70%，且成交放大≥5x；小登底池拉起预警：板块行情缺失时，底池3分钟平均涨幅≥1.5%，上涨占比≥70%，且成交放大≥5x；小登底池扩散预警：板块行情缺失时，底池3分钟平均涨幅≥1.0%，上涨占比≥60%，成交放大≥8x，且至少2只样本明显推进",
+      "alert_class": "opportunity",
+      "confirmation_level": "candidate",
+      "limit_up_count": 0,
+      "limit_down_count": 0
+    },
+    {
+      "id": "monitor-20260806-093234-2e990b428f95",
+      "time": "2026-08-06T09:32:34+08:00",
+      "sector": "化学制药",
+      "type": "小登题材快速回落",
+      "reason": "触发规则：小登底池回落预警：板块行情缺失时，底池3分钟平均跌幅≥1.0%，下跌占比≥60%，且成交放大≥5x\n异动性质：快速回落。价格下行和下跌占比触发回落提醒，优先按风险扩散处理。\n结论：化学制药题材回落，有扩散，普洛药业是主要拖累。\n题材：化学制药，当前领跌股：普洛药业 / 科伦药业 / 恒瑞医药。\n强度：底池样本 3分钟涨跌幅 -1.35%，下跌占比 100%，弱势股 3 只。\n成交：3分钟放大 20.00x，较昨同期 7.08x，风险扩散明显。\n当前领跌股分数：普洛药业(51.5)，科伦药业(41.2)，恒瑞医药(37.5)。\n主要贡献因子：普洛药业: 3分钟涨跌幅 -2.15%，成交放大 20.00x，日内涨幅 -0.37%；科伦药业: 3分钟涨跌幅 -1.05%，成交放大 20.00x，日内涨幅 -1.05%；恒瑞医药: 3分钟涨跌幅 -0.86%，成交放大 20.00x，日内涨幅 -0.65%\n观察点：领跌是否止跌、后排是否继续补跌、放量是否变成抛压。\n风险提示：这是题材强度分析，不构成买卖建议。",
+      "leaders": [
+        {
+          "name": "普洛药业",
+          "code": "000739",
+          "change_pct": -2.1544,
+          "quote_time": "2026-08-06T09:32:34.246743",
+          "score": 51.51,
+          "factors": [
+            "3分钟-2.15%",
+            "成交放大20.00x",
+            "日内-0.37%"
+          ]
+        },
+        {
+          "name": "科伦药业",
+          "code": "002422",
+          "change_pct": -1.049,
+          "quote_time": "2026-08-06T09:32:34.246743",
+          "score": 41.17,
+          "factors": [
+            "3分钟-1.05%",
+            "成交放大20.00x",
+            "日内-1.05%"
+          ]
+        },
+        {
+          "name": "恒瑞医药",
+          "code": "600276",
+          "change_pct": -0.8574,
+          "quote_time": "2026-08-06T09:32:34.246743",
+          "score": 37.46,
+          "factors": [
+            "3分钟-0.86%",
+            "成交放大20.00x",
+            "日内-0.65%"
+          ]
+        }
+      ],
+      "signal_type": "风险提示",
+      "is_old_economy": false,
+      "source_watch_id": "化学制药",
+      "quote_audit": {
+        "provider": "本地盘中监控、富途行情（腾讯备用）",
+        "quote_time": "2026-08-06T09:32:34+08:00",
+        "pct_field": "3分钟涨跌幅",
+        "sample_count": 3,
+        "max_abs_leader_change_pct": 2.1544,
+        "sanity_checks": {
+          "cross_source_verified": false,
+          "price_move_valid": true,
+          "volume_valid": true,
+          "direction_ratio_valid": true,
+          "limit_down_count_valid": false
+        },
+        "board_3m_change_pct": -1.3536,
+        "direction_ratio": 1.0,
+        "volume_ratio": 20.0,
+        "relative_volume_vs_yesterday": 7.0826,
+        "missing_confirmation": "等待富途行情按触发时点交叉核验；通过前只作候选或观察，不作为确认交易信号。",
+        "secondary_source": "富途行情",
+        "secondary_verification": {
+          "state": "insufficient_precision",
+          "checked_at": "2026-08-06T09:34:34+08:00",
+          "source": "富途行情",
+          "reason": "至少2只代表股已识别，但外部行情无法精确对齐触发时点；维持观察，不误判为行情冲突。",
+          "representatives": [
+            {
+              "股票": "普洛药业",
+              "代码": "000739.SZ",
+              "监控涨跌幅": -2.1544,
+              "富途涨跌幅": null,
+              "腾讯涨跌幅": null,
+              "方向一致": false,
+              "幅度一致": false,
+              "复核结论": "行情精度不足"
+            },
+            {
+              "股票": "科伦药业",
+              "代码": "002422.SZ",
+              "监控涨跌幅": -1.049,
+              "富途涨跌幅": null,
+              "腾讯涨跌幅": null,
+              "方向一致": false,
+              "幅度一致": false,
+              "复核结论": "行情精度不足"
+            },
+            {
+              "股票": "恒瑞医药",
+              "代码": "600276.SH",
+              "监控涨跌幅": -0.8574,
+              "富途涨跌幅": null,
+              "腾讯涨跌幅": null,
+              "方向一致": false,
+              "幅度一致": false,
+              "复核结论": "行情精度不足"
+            }
+          ],
+          "window_minutes": 3,
+          "fingerprint": "42ae26588043be85edee",
+          "verifier_version": "futu-opend-2026-07-27.3"
+        }
+      },
+      "source_status": "degraded_partial",
+      "valid_until": "2026-08-06T09:37:34+08:00",
+      "trigger_rule": "小登底池回落预警：板块行情缺失时，底池3分钟平均跌幅≥1.0%，下跌占比≥60%，且成交放大≥5x",
+      "alert_class": "risk",
+      "confirmation_level": "candidate",
+      "limit_up_count": 0,
+      "limit_down_count": 0
+    },
+    {
+      "id": "monitor-20260806-093329-7dcd9f98d80f",
+      "time": "2026-08-06T09:33:29+08:00",
+      "sector": "光模块/CPO",
+      "type": "小登题材快速回落",
+      "reason": "触发规则：小登底池回落预警：板块行情缺失时，底池3分钟平均跌幅≥1.0%，下跌占比≥60%，且成交放大≥5x\n异动性质：快速回落。价格下行和下跌占比触发回落提醒，优先按风险扩散处理。\n结论：光模块/CPO题材回落，有扩散，新易盛是主要拖累。\n题材：光模块/CPO，当前领跌股：新易盛 / 中际旭创 / 天孚通信。\n强度：底池样本 3分钟涨跌幅 -1.48%，下跌占比 100%，弱势股 4 只。\n成交：3分钟放大 20.00x，较昨同期 4.53x，风险扩散明显。\n当前领跌股分数：新易盛(78.0)，中际旭创(72.3)，天孚通信(70.8)。\n主要贡献因子：新易盛: 3分钟涨跌幅 -2.81%，成交放大 20.00x，日内涨幅 -5.40%；中际旭创: 3分钟涨跌幅 -1.89%，成交放大 20.00x，日内涨幅 -6.72%；天孚通信: 3分钟涨跌幅 -2.00%，成交放大 20.00x，日内涨幅 -6.00%\n观察点：领跌是否止跌、后排是否继续补跌、放量是否变成抛压。\n风险提示：这是题材强度分析，不构成买卖建议。",
+      "leaders": [
+        {
+          "name": "新易盛",
+          "code": "300502",
+          "change_pct": -2.8087,
+          "quote_time": "2026-08-06T09:33:29.813917",
+          "score": 78.01,
+          "factors": [
+            "3分钟-2.81%",
+            "成交放大20.00x",
+            "日内-5.40%"
+          ]
+        },
+        {
+          "name": "中际旭创",
+          "code": "300308",
+          "change_pct": -1.889,
+          "quote_time": "2026-08-06T09:33:29.813917",
+          "score": 72.26,
+          "factors": [
+            "3分钟-1.89%",
+            "成交放大20.00x",
+            "日内-6.72%"
+          ]
+        },
+        {
+          "name": "天孚通信",
+          "code": "300394",
+          "change_pct": -1.9952,
+          "quote_time": "2026-08-06T09:33:29.813917",
+          "score": 70.76,
+          "factors": [
+            "3分钟-2.00%",
+            "成交放大20.00x",
+            "日内-6.00%"
+          ]
+        }
+      ],
+      "signal_type": "风险提示",
+      "is_old_economy": false,
+      "source_watch_id": "光模块/CPO",
+      "quote_audit": {
+        "provider": "本地盘中监控、富途行情（腾讯备用）",
+        "quote_time": "2026-08-06T09:33:29+08:00",
+        "pct_field": "3分钟涨跌幅",
+        "sample_count": 3,
+        "max_abs_leader_change_pct": 2.8087,
+        "sanity_checks": {
+          "cross_source_verified": false,
+          "price_move_valid": true,
+          "volume_valid": true,
+          "direction_ratio_valid": true,
+          "limit_down_count_valid": false
+        },
+        "board_3m_change_pct": -1.4771,
+        "direction_ratio": 1.0,
+        "volume_ratio": 20.0,
+        "relative_volume_vs_yesterday": 4.5312,
+        "missing_confirmation": "等待富途行情按触发时点交叉核验；通过前只作候选或观察，不作为确认交易信号。",
+        "secondary_source": "富途行情",
+        "secondary_verification": {
+          "state": "pending",
+          "checked_at": "2026-08-06T09:34:34+08:00",
+          "source": "富途行情",
+          "reason": "等待触发分钟行情完整落盘。",
+          "representatives": [],
+          "fingerprint": "867b13047b5eca53c3f5",
+          "verifier_version": "futu-opend-2026-07-27.3"
+        }
+      },
+      "source_status": "degraded_partial",
+      "valid_until": "2026-08-06T09:38:29+08:00",
+      "trigger_rule": "小登底池回落预警：板块行情缺失时，底池3分钟平均跌幅≥1.0%，下跌占比≥60%，且成交放大≥5x",
+      "alert_class": "risk",
+      "confirmation_level": "candidate",
+      "limit_up_count": 0,
+      "limit_down_count": 0
+    },
+    {
+      "id": "monitor-20260806-093329-b73be808c63b",
+      "time": "2026-08-06T09:33:29+08:00",
+      "sector": "液冷",
+      "type": "小登题材快速回落",
+      "reason": "触发规则：小登底池回落预警：板块行情缺失时，底池3分钟平均跌幅≥1.0%，下跌占比≥60%，且成交放大≥5x\n异动性质：快速回落。价格下行和下跌占比触发回落提醒，优先按风险扩散处理。\n结论：液冷题材回落，有扩散，申菱环境是主要拖累。\n题材：液冷，当前领跌股：申菱环境 / 同飞股份 / 英维克。\n强度：底池样本 3分钟涨跌幅 -1.08%，下跌占比 80%，弱势股 4 只。\n成交：3分钟放大 20.00x，较昨同期 4.74x，风险扩散明显。\n当前领跌股分数：申菱环境(58.0)，同飞股份(56.7)，英维克(48.3)。\n主要贡献因子：申菱环境: 3分钟涨跌幅 -1.76%，成交放大 20.00x，日内涨幅 -3.60%；同飞股份: 3分钟涨跌幅 -1.70%，成交放大 20.00x，日内涨幅 -3.45%；英维克: 3分钟涨跌幅 -1.24%，成交放大 20.00x，日内涨幅 -2.62%\n观察点：领跌是否止跌、后排是否继续补跌、放量是否变成抛压。\n风险提示：这是题材强度分析，不构成买卖建议。",
+      "leaders": [
+        {
+          "name": "申菱环境",
+          "code": "301018",
+          "change_pct": -1.7571,
+          "quote_time": "2026-08-06T09:33:29.813917",
+          "score": 58.01,
+          "factors": [
+            "3分钟-1.76%",
+            "成交放大20.00x",
+            "日内-3.60%"
+          ]
+        },
+        {
+          "name": "同飞股份",
+          "code": "300990",
+          "change_pct": -1.6976,
+          "quote_time": "2026-08-06T09:33:29.813917",
+          "score": 56.74,
+          "factors": [
+            "3分钟-1.70%",
+            "成交放大20.00x",
+            "日内-3.45%"
+          ]
+        },
+        {
+          "name": "英维克",
+          "code": "002837",
+          "change_pct": -1.2403,
+          "quote_time": "2026-08-06T09:33:29.813917",
+          "score": 48.29,
+          "factors": [
+            "3分钟-1.24%",
+            "成交放大20.00x",
+            "日内-2.62%"
+          ]
+        }
+      ],
+      "signal_type": "风险提示",
+      "is_old_economy": false,
+      "source_watch_id": "液冷",
+      "quote_audit": {
+        "provider": "本地盘中监控、富途行情（腾讯备用）",
+        "quote_time": "2026-08-06T09:33:29+08:00",
+        "pct_field": "3分钟涨跌幅",
+        "sample_count": 3,
+        "max_abs_leader_change_pct": 1.7571,
+        "sanity_checks": {
+          "cross_source_verified": false,
+          "price_move_valid": true,
+          "volume_valid": true,
+          "direction_ratio_valid": true,
+          "limit_down_count_valid": false
+        },
+        "board_3m_change_pct": -1.0806,
+        "direction_ratio": 0.8,
+        "volume_ratio": 20.0,
+        "relative_volume_vs_yesterday": 4.7422,
+        "missing_confirmation": "等待富途行情按触发时点交叉核验；通过前只作候选或观察，不作为确认交易信号。",
+        "secondary_source": "富途行情",
+        "secondary_verification": {
+          "state": "pending",
+          "checked_at": "2026-08-06T09:34:34+08:00",
+          "source": "富途行情",
+          "reason": "等待触发分钟行情完整落盘。",
+          "representatives": [],
+          "fingerprint": "d05d3359a746b0000ac8",
+          "verifier_version": "futu-opend-2026-07-27.3"
+        }
+      },
+      "source_status": "degraded_partial",
+      "valid_until": "2026-08-06T09:38:29+08:00",
+      "trigger_rule": "小登底池回落预警：板块行情缺失时，底池3分钟平均跌幅≥1.0%，下跌占比≥60%，且成交放大≥5x",
+      "alert_class": "risk",
+      "confirmation_level": "candidate",
+      "limit_up_count": 0,
+      "limit_down_count": 0
     }
   ],
   "quote_audit": {
-    "provider": "本地盘中监控",
-    "quote_time": "2026-08-06T09:31:49+08:00",
-    "pct_field": "各异动卡标注的3分钟涨跌幅",
+    "provider": "本地盘中监控、富途行情（腾讯备用）",
+    "quote_time": "2026-08-06T09:33:29+08:00",
+    "pct_field": "各异动卡标注的短周期涨跌幅",
     "sanity_checks": {
-      "sample_count": 1,
+      "sample_count": 5,
       "max_abs_leader_change_pct": 5.0857,
       "cross_source_verified": false,
       "verified_alert_count": 0
