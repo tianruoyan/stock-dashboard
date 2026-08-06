@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-08-06T20:18:57+08:00",
+  "timestamp": "2026-08-06T21:03:25+08:00",
   "current_signal_date": "2026-08-06",
   "status": "degraded",
   "summary": "发现 142 个降级/需复核项（140 个价格/行情复核，1 个信号复核，1 个背景复核），核心结论可看但必须按影响分层使用。",
@@ -26,8 +26,8 @@
       "severity": "warning",
       "file": "evening-sentiment.json",
       "path": "sentiment_summary",
-      "code": "schema_contract_missing",
-      "message": "sentiment_summary 缺失",
+      "code": "schema_contract_type",
+      "message": "sentiment_summary 类型错误：期望 dict，实际 str",
       "impact_level": "signal_review",
       "decision_action": "机会信号必须降权并转入验证"
     },
@@ -1322,8 +1322,8 @@
       "impact_level": "signal_review",
       "label": "信号结构复核",
       "file": "evening-sentiment.json",
-      "code": "schema_contract_missing",
-      "problem": "sentiment_summary 缺失",
+      "code": "schema_contract_type",
+      "problem": "sentiment_summary 类型错误：期望 dict，实际 str",
       "decision_action": "机会信号必须降权并转入验证",
       "next_step": "修正字段结构、证据、触发原因和升级条件；未通过前降权展示。",
       "unblock_condition": "signal_review=0，decision-feed/核心 JSON 契约通过。"
