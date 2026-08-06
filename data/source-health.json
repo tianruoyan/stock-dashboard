@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-08-06T10:36:00+08:00",
+  "timestamp": "2026-08-06T11:08:00+08:00",
   "sources": {
     "tencent_http": {
       "status": "ok",
@@ -6436,8 +6436,13 @@
     }
   },
   "last_publish_attempt": "pending_20260717_0830_premarket_publish",
-  "status": "degraded_non_core",
-  "last_error": "非核心工具缺口：pdftotext未安装；已用只读PDF解析回退成功。美股尚未收盘属于时间窗口待核验，不是数据源失败。",
+  "status": "ok_with_noncritical_degradation",
+  "last_error": {
+    "source": "eastmoney_concept_intraday_1106_20260806",
+    "time": "2026-08-06T11:06:15+08:00",
+    "error": "curl: (52) Empty reply from server",
+    "handling": "保留10:03同交易日最后有效概念快照并降权，未编造11:00概念资金。"
+  },
   "tencent_a_close_postmarket_20260716": {
     "status": "ok",
     "last_check": "2026-07-16T15:18:57+08:00",
@@ -6617,8 +6622,8 @@
     "sample_count": 15,
     "errors": []
   },
-  "overall_status": "20:00公告、官方事件和海外财报扫描完整；盘中既有概念排行/港股延迟降级仍保留。",
-  "last_codex_note": "14:30更新采用14:31-14:33可核验A股行情和结构池；概念榜只保留11:04同日最后有效快照并显著降权，未补造当前概念排行。",
+  "overall_status": "ok_with_noncritical_degradation",
+  "last_codex_note": "11:00已按当前可核验行情补产；V2治理卡片与Longbridge规范化影子无当日实时增量，只保留权限边界。",
   "eastmoney_structure_pools_intraday_1000_20260717": {
     "status": "ok",
     "last_check": "2026-07-17T10:02:40+08:00",
@@ -8620,18 +8625,11 @@
     ]
   },
   "current_run_summary": {
-    "status": "ok_with_noncritical_fallback",
-    "last_check": "2026-08-05T20:27:00+08:00",
-    "detail": "巨潮重试后完整取得1120条/38页，配置命中32条；AMD、Arista官方财报和盘前快照有效。pdftotext缺失已由工作区只读PDF解析库补位，未形成事实缺口；美股现金收盘待8:30增量核验。",
+    "status": "ok_with_noncritical_degradation",
+    "last_check": "2026-08-06T11:08:00+08:00",
+    "detail": "11:00有效行情和结构池完整，概念排行连续空返回已显式降级；当前分析由行业、涨跌停宽度、代表股与A/H/日韩映射支撑。",
     "errors": [
-      "巨潮首轮分页不完整，重试成功",
-      "pdftotext未安装，工作区PDF解析库回退成功"
-    ],
-    "source_keys": [
-      "cninfo_watchlist_announcement_scan",
-      "official_policy_global_web_scan",
-      "us_premarket_evening_20260805",
-      "pdf_text_extraction_evening_20260805"
+      "Eastmoney concept ranking empty; preserved 10:03 snapshot"
     ]
   },
   "tencent_a_midday_20260804_1134": {
@@ -8829,7 +8827,7 @@
     "sample_count": 0,
     "errors": []
   },
-  "summary": "09:30盘中更新：直接行情源可用；腾讯港股连续行情停在09:20已降级并改用新浪，恢复服务quote_time标记滞后但state正常；所有缺失均已显式标注，未编造。",
+  "summary": "11:00盘中更新：腾讯A股、东方财富结构池、新浪港股、Naver韩国与本机恢复状态可用；东方财富概念排行连续空返回，保留10:03最后有效快照并降权，未编造当前概念资金。",
   "monitor_quote_audit_20260805_130542": {
     "status": "degraded_partial",
     "last_check": "2026-08-05T13:08:31+08:00",
@@ -8984,6 +8982,108 @@
     "sample_count": 1,
     "errors": [
       "观点有效窗口较旧，仅作背景"
+    ]
+  },
+  "tencent_a_intraday_1105_20260806": {
+    "status": "ok",
+    "last_check": "2026-08-06T11:05:39+08:00",
+    "market_time": "2026-08-06T11:05:34+08:00至2026-08-06T11:05:39+08:00",
+    "usage": "11:00 A股指数、行业与重点样本实时快照",
+    "detail": "取得五大指数、行业排行及交换机、半导体、PCB/电子布、封装、CPO、存储、资源和风格样本有效报价；沪深成交额合计约15421.86亿元。",
+    "sample_count": 81,
+    "errors": []
+  },
+  "eastmoney_structure_intraday_1105_20260806": {
+    "status": "ok_serial",
+    "last_check": "2026-08-06T11:06:00+08:00",
+    "market_time": "2026-08-06T11:04:00+08:00至2026-08-06T11:06:00+08:00附近",
+    "usage": "11:00涨停、跌停、炸板、连板与行业分布",
+    "detail": "串行取得涨停60、跌停1、当前炸板10；60只中29只曾开板回封，通信设备7只、元件5只、半导体3只，最高10板、5只20cm。",
+    "sample_count": 71,
+    "errors": []
+  },
+  "eastmoney_concept_intraday_1106_20260806": {
+    "status": "failed_empty_preserved",
+    "last_check": "2026-08-06T11:06:15+08:00",
+    "market_time": "保留2026-08-06T10:03:48+08:00最后有效快照",
+    "usage": "11:00概念排行与资金结构",
+    "detail": "push2概念排行再次Empty reply；连续两个有效窗口失败，保留10:03最后有效概念快照并显著降权，不将旧资金字段冒充11:00数据。",
+    "sample_count": 0,
+    "errors": [
+      "curl: (52) Empty reply from server"
+    ]
+  },
+  "sina_hk_intraday_1105_20260806": {
+    "status": "ok",
+    "last_check": "2026-08-06T11:05:51+08:00",
+    "market_time": "2026-08-06T11:05:40+08:00至2026-08-06T11:05:51+08:00",
+    "usage": "恒指、恒生科技及港股科技/半导体/通信实时交叉验证",
+    "detail": "恒指-1.75%、恒科-1.63%；中芯H-2.79%、华虹-0.64%、兆易H+0.95%、澜起H-1.04%、智谱+6.72%、中兴H-1.26%。",
+    "sample_count": 11,
+    "errors": []
+  },
+  "naver_korea_intraday_1105_20260806": {
+    "status": "ok",
+    "last_check": "2026-08-06T11:05:55+08:00",
+    "market_time": "2026-08-06T11:05:00+08:00附近",
+    "usage": "KOSPI、三星电子与SK海力士实时交叉验证",
+    "detail": "KOSPI-3.81%、三星电子盘后/替代交易口径-5.49%、SK海力士-8.27%，韩国存储负反馈继续扩大。",
+    "sample_count": 3,
+    "errors": []
+  },
+  "tencent_japan_intraday_1030_20260806": {
+    "status": "ok_delayed_explicit",
+    "last_check": "2026-08-06T11:05:55+08:00",
+    "market_time": "2026-08-06T10:30:00+08:00",
+    "usage": "Advantest与东京电子补充映射",
+    "detail": "数据源最新行情时点10:30：Advantest-3.29%、东京电子-5.41%；显式标注延迟，不冒充11:05同步报价。",
+    "sample_count": 2,
+    "errors": [
+      "Tencent Japan quote delayed"
+    ]
+  },
+  "intraday_recovery_state_20260806_1103": {
+    "status": "ok",
+    "last_check": "2026-08-06T11:03:44+08:00",
+    "market_time": "2026-08-06T11:02:42+08:00",
+    "usage": "交易时段网络与行情恢复健康校验",
+    "detail": "state=数据正常，phase=上午交易，failure_count=0；本轮按11:05当前行情产出，不追溯伪造历史窗口。",
+    "sample_count": 1,
+    "errors": []
+  },
+  "monitor_quote_audit_20260806_1104": {
+    "status": "degraded_partial",
+    "last_check": "2026-08-06T11:04:02+08:00",
+    "market_time": "异动触发时点至2026-08-06T10:57:59+08:00",
+    "usage": "盘中异动代表股第二行情源交叉验证",
+    "detail": "20张异动卡中9张相互支持、10张明显冲突、1张待定；过期候选不作为11:00当前确认，结论以11:05真实行情和结构池为准。",
+    "sample_count": 20,
+    "errors": [
+      "10 cards mismatched",
+      "1 card pending"
+    ]
+  },
+  "v2_cockpit_context_20260806_1100": {
+    "status": "stale_boundary_only",
+    "last_check": "2026-08-06T11:03:30+08:00",
+    "market_time": "2026-08-05T15:05:45+08:00",
+    "usage": "只读行动语言、权限与风险边界",
+    "detail": "最新治理卡片仍为8月5日收盘且质量降级；没有将旧卡作为8月6日机会事实，用户确认资产迁入数量仍为0。",
+    "sample_count": 0,
+    "errors": [
+      "current-day governed card unavailable",
+      "no user-confirmed assets migrated"
+    ]
+  },
+  "longbridge_institutional_shadow_20260806_1100": {
+    "status": "no_current_increment",
+    "last_check": "2026-08-06T11:03:30+08:00",
+    "market_time": "无经本地规范化的当日增量",
+    "usage": "长桥机构分析模型/LongbridgeAI/官方研究观点只读引用",
+    "detail": "未发现当日规范化增量；旧观点只作背景，未调用账户、持仓、订单、自选或社区能力，也未修改用户资产、V1结论或模型状态。",
+    "sample_count": 0,
+    "errors": [
+      "no normalized current-day increment"
     ]
   }
 }
