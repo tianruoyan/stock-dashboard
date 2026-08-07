@@ -1,15 +1,15 @@
 {
-  "timestamp": "2026-08-07T14:40:06+08:00",
+  "timestamp": "2026-08-07T15:36:01+08:00",
   "current_signal_date": "2026-08-07",
   "target_trade_date": "2026-08-07",
   "overall_status": "degraded",
   "summary": "2 个自动化产出异常：盘前简报、午盘分析。",
   "counts": {
-    "ok": 0,
+    "ok": 1,
     "late": 2,
     "missing": 0,
     "invalidated": 0,
-    "waiting": 5
+    "waiting": 4
   },
   "processes": [
     {
@@ -44,8 +44,8 @@
       "timestamp": "2026-08-06T16:09:30+08:00",
       "status": "waiting",
       "blocking": false,
-      "action": "等待产出",
-      "reason": "计划 15:05 后产出",
+      "action": "等待当日产出",
+      "reason": "时间戳不是当前交易日：2026-08-06T16:09:30+08:00",
       "failure_type": "not_due",
       "diagnosis": "尚未到该自动化的计划产出窗口。",
       "next_actions": [
@@ -59,15 +59,15 @@
       "file": "data/alert.json",
       "due": "15:00",
       "deadline": "2026-08-07T15:05:00+08:00",
-      "timestamp": "2026-08-07T14:34:59+08:00",
-      "status": "waiting",
+      "timestamp": "2026-08-07T15:30:52+08:00",
+      "status": "ok",
       "blocking": false,
-      "action": "等待产出",
-      "reason": "计划 15:00 后产出",
-      "failure_type": "not_due",
-      "diagnosis": "尚未到该自动化的计划产出窗口。",
+      "action": "正常使用",
+      "reason": "当日产出已到位",
+      "failure_type": "none",
+      "diagnosis": "产出正常，未发现自动化层异常。",
       "next_actions": [
-        "到 15:00 后再检查是否产出。"
+        "正常读取；仍需结合数据质量卡判断是否降权。"
       ],
       "related_sources": []
     },
@@ -103,8 +103,8 @@
       "timestamp": "2026-08-06T16:09:30+08:00",
       "status": "waiting",
       "blocking": false,
-      "action": "等待产出",
-      "reason": "计划 15:30 后产出",
+      "action": "等待当日产出",
+      "reason": "时间戳不是当前交易日：2026-08-06T16:09:30+08:00",
       "failure_type": "not_due",
       "diagnosis": "尚未到该自动化的计划产出窗口。",
       "next_actions": [
@@ -139,8 +139,8 @@
       "timestamp": "2026-08-06T20:16:00+08:00",
       "status": "waiting",
       "blocking": false,
-      "action": "等待产出",
-      "reason": "计划 15:30 后产出",
+      "action": "等待当日产出",
+      "reason": "时间戳不是当前交易日：2026-08-06T20:16:00+08:00",
       "failure_type": "not_due",
       "diagnosis": "尚未到该自动化的计划产出窗口。",
       "next_actions": [
@@ -153,8 +153,8 @@
     "target_trade_date": "2026-08-07",
     "status": "overdue",
     "summary": "2026-08-07 有 2 个产出已过窗口未更新。",
-    "pending_count": 5,
-    "ready_count": 0,
+    "pending_count": 4,
+    "ready_count": 1,
     "overdue_count": 2,
     "items": [
       {
@@ -178,8 +178,8 @@
         "timestamp": "2026-08-06T16:09:30+08:00",
         "file_date": "2026-08-06",
         "status": "pending",
-        "action": "等待产出",
-        "reason": "计划 15:05 后产出"
+        "action": "等待宽限",
+        "reason": "已到计划时间，宽限至 16:35"
       },
       {
         "id": "alerts",
@@ -187,11 +187,11 @@
         "file": "data/alert.json",
         "due": "15:00",
         "deadline": "2026-08-07T15:05:00+08:00",
-        "timestamp": "2026-08-07T14:34:59+08:00",
+        "timestamp": "2026-08-07T15:30:52+08:00",
         "file_date": "2026-08-07",
-        "status": "pending",
-        "action": "等待产出",
-        "reason": "计划 15:00 后产出"
+        "status": "ready",
+        "action": "已产出",
+        "reason": "目标交易日文件已更新"
       },
       {
         "id": "midday",
@@ -214,8 +214,8 @@
         "timestamp": "2026-08-06T16:09:30+08:00",
         "file_date": "2026-08-06",
         "status": "pending",
-        "action": "等待产出",
-        "reason": "计划 15:30 后产出"
+        "action": "等待宽限",
+        "reason": "已到计划时间，宽限至 16:30"
       },
       {
         "id": "evening",
@@ -238,8 +238,8 @@
         "timestamp": "2026-08-06T20:16:00+08:00",
         "file_date": "2026-08-06",
         "status": "pending",
-        "action": "等待产出",
-        "reason": "计划 15:30 后产出"
+        "action": "等待宽限",
+        "reason": "已到计划时间，宽限至 18:30"
       }
     ]
   },
