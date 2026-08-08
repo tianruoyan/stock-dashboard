@@ -1,9 +1,18 @@
 {
-  "timestamp": "2026-08-07T20:16:46+08:00",
-  "current_signal_date": "2026-08-07",
+  "timestamp": "2026-08-08T20:19:53+08:00",
+  "current_signal_date": "2026-08-08",
   "status": "degraded",
-  "summary": "发现 145 个降级/需复核项（140 个价格/行情复核，5 个背景复核），核心结论可看但必须按影响分层使用。",
+  "summary": "发现 149 个降级/需复核项（140 个价格/行情复核，9 个背景复核），核心结论可看但必须按影响分层使用。",
   "issues": [
+    {
+      "severity": "warning",
+      "file": "alert.json",
+      "path": "",
+      "code": "stale_timestamp",
+      "message": "时间戳不是当前交易日：2026-08-07T15:30:52+08:00",
+      "impact_level": "background_review",
+      "decision_action": "仅作背景复核，不单独阻断交易判断"
+    },
     {
       "severity": "warning",
       "file": "intraday.json",
@@ -19,6 +28,15 @@
       "path": "",
       "code": "stale_timestamp",
       "message": "时间戳不是当前交易日：2026-08-06T11:33:09+08:00",
+      "impact_level": "background_review",
+      "decision_action": "仅作背景复核，不单独阻断交易判断"
+    },
+    {
+      "severity": "warning",
+      "file": "postmarket.json",
+      "path": "",
+      "code": "stale_timestamp",
+      "message": "时间戳不是当前交易日：2026-08-07T17:10:40+08:00",
       "impact_level": "background_review",
       "decision_action": "仅作背景复核，不单独阻断交易判断"
     },
@@ -1308,6 +1326,24 @@
       "message": "shenwan_industry_mapping_postmarket_20260805: 历史代码主表5203只；涨超5%样本中38只未映射，占4.98%，已单列未映射，不外推分类。",
       "impact_level": "price_review",
       "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
+    },
+    {
+      "severity": "warning",
+      "file": "data-trust.json",
+      "path": "",
+      "code": "stale_data_trust",
+      "message": "data-trust 日期不是当前交易日：2026-08-07",
+      "impact_level": "background_review",
+      "decision_action": "仅作背景复核，不单独阻断交易判断"
+    },
+    {
+      "severity": "warning",
+      "file": "monitoring-coverage.json",
+      "path": "",
+      "code": "stale_monitoring_coverage",
+      "message": "monitoring-coverage 日期不是当前交易日：2026-08-07",
+      "impact_level": "background_review",
+      "decision_action": "仅作背景复核，不单独阻断交易判断"
     }
   ],
   "action_plan": [
@@ -1348,31 +1384,31 @@
       "priority": 4,
       "impact_level": "background_review",
       "label": "背景来源复核",
+      "file": "alert.json",
+      "code": "stale_timestamp",
+      "problem": "时间戳不是当前交易日：2026-08-07T15:30:52+08:00",
+      "decision_action": "仅作背景复核，不单独阻断交易判断",
+      "next_step": "补官方/交易所/公司公告来源；未补齐前不升级为核心依据。",
+      "unblock_condition": "官方来源补齐或确认不影响交易触发。"
+    },
+    {
+      "priority": 4,
+      "impact_level": "background_review",
+      "label": "背景来源复核",
+      "file": "data-trust.json",
+      "code": "stale_data_trust",
+      "problem": "data-trust 日期不是当前交易日：2026-08-07",
+      "decision_action": "仅作背景复核，不单独阻断交易判断",
+      "next_step": "补官方/交易所/公司公告来源；未补齐前不升级为核心依据。",
+      "unblock_condition": "官方来源补齐或确认不影响交易触发。"
+    },
+    {
+      "priority": 4,
+      "impact_level": "background_review",
+      "label": "背景来源复核",
       "file": "intraday.json",
       "code": "stale_timestamp",
       "problem": "时间戳不是当前交易日：2026-08-06T16:09:30+08:00",
-      "decision_action": "仅作背景复核，不单独阻断交易判断",
-      "next_step": "补官方/交易所/公司公告来源；未补齐前不升级为核心依据。",
-      "unblock_condition": "官方来源补齐或确认不影响交易触发。"
-    },
-    {
-      "priority": 4,
-      "impact_level": "background_review",
-      "label": "背景来源复核",
-      "file": "midday.json",
-      "code": "stale_timestamp",
-      "problem": "时间戳不是当前交易日：2026-08-06T11:33:09+08:00",
-      "decision_action": "仅作背景复核，不单独阻断交易判断",
-      "next_step": "补官方/交易所/公司公告来源；未补齐前不升级为核心依据。",
-      "unblock_condition": "官方来源补齐或确认不影响交易触发。"
-    },
-    {
-      "priority": 4,
-      "impact_level": "background_review",
-      "label": "背景来源复核",
-      "file": "postmarket.json",
-      "code": "missing_closing_patch_field",
-      "problem": "closing_auction_patch.signals 缺失",
       "decision_action": "仅作背景复核，不单独阻断交易判断",
       "next_step": "补官方/交易所/公司公告来源；未补齐前不升级为核心依据。",
       "unblock_condition": "官方来源补齐或确认不影响交易触发。"
@@ -1380,12 +1416,12 @@
   ],
   "counts": {
     "critical": 0,
-    "warning": 145,
+    "warning": 149,
     "info": 0,
     "blocking": 0,
     "price_review": 140,
     "signal_review": 0,
-    "background_review": 5
+    "background_review": 9
   },
   "rules": [
     "异常文本、JSON解析失败、必需文件缺失为 critical。",

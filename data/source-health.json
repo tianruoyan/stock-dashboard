@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-08-07T20:11:32+08:00",
+  "timestamp": "2026-08-08T20:12:50+08:00",
   "sources": {
     "tencent_http": {
       "status": "ok",
@@ -9709,5 +9709,65 @@
     "new_items_today": 0,
     "source": "https://longbridge.com/news/294294703.md",
     "note": "仅作为不可执行外部机构观点，不替代事实、不修改用户资产。"
+  },
+  "cninfo_watchlist_announcement_scan_20260808": {
+    "status": "ok",
+    "checked_at": "2026-08-08T20:12:50+08:00",
+    "usage": "20:00全量A股公告与配置池重大事项扫描",
+    "market_announcements": 1329,
+    "pages": 44,
+    "config_derived_names": 137,
+    "matched_announcements": 68,
+    "keyword_material_announcements": 15,
+    "detail": "逐页读取当日全市场公告元数据，重点核验盛美上海、立昂微、佰维存储、华海清科、生益科技、华正新材、芯源微等PDF。",
+    "errors": []
+  },
+  "global_benchmark_evening_scan_20260808": {
+    "status": "ok",
+    "checked_at": "2026-08-08T20:12:50+08:00",
+    "market_data_as_of": "2026-08-07T16:00:00-04:00",
+    "usage": "美股正式收盘、科技硬件映射与宏观原因",
+    "detail": "AP/BLS核验三大指数及就业数据，Yahoo正式收盘核验MU、WDC、SNDK、NVDA、AVGO、AMD、ANET、CSCO、MRVL；未用盘前价格代替正式收盘。",
+    "sample_count": 9,
+    "errors": []
+  },
+  "official_policy_global_web_scan_20260808": {
+    "status": "degraded_nonblocking",
+    "checked_at": "2026-08-08T20:12:50+08:00",
+    "usage": "部委政策、全球标杆官方公告与突发事件扫描",
+    "detail": "检索工信部、发改委、商务部及半导体/AI/机器人/材料全球标杆官方页面，未取得8月7日至8日足以升级订单、量产或政策确认度的新增；部分搜索结果陈旧，结论非穷尽。",
+    "errors": [
+      "政策与突发关键词搜索存在陈旧和非权威结果，未将其用作事实或升级依据"
+    ]
+  },
+  "pdf_text_extraction_evening_20260808": {
+    "status": "degraded_fallback_success",
+    "checked_at": "2026-08-08T20:12:50+08:00",
+    "usage": "巨潮公告PDF正文取证",
+    "detail": "系统无pdftotext，改用PyPDF2 3.0.1只读提取17份重点PDF并人工核验关键数字；完成取证但记录工具降级。",
+    "sample_count": 17,
+    "errors": [
+      "pdftotext unavailable; PyPDF2 fallback used"
+    ]
+  },
+  "longbridge_institutional_shadow_20260808": {
+    "status": "ok_no_increment",
+    "checked_at": "2026-08-08T20:12:50+08:00",
+    "usage": "外部机构观点只读shadow",
+    "normalized_items": 1,
+    "new_items_today": 0,
+    "source": "https://longbridge.com/news/294294703.md",
+    "model_disclosure": "Longbridge CLI 0.26.0；底层排序模型未披露",
+    "detail": "仅保留7月30日DRAM/HBM机构观点、反证和失效条件；未替代本地事实、未修改用户资产。",
+    "errors": []
+  },
+  "longbridge_evening_quote_probe_20260808": {
+    "status": "degraded_not_used",
+    "checked_at": "2026-08-08T20:12:50+08:00",
+    "usage": "公共行情交叉探测",
+    "detail": "Longbridge CLI公共行情返回last/change字段缺失或异常，未作为行情证据；改用AP、BLS和Yahoo正式收盘数据。未调用账户、持仓、订单、自选写入或社区发布能力。",
+    "errors": [
+      "public quote last/change fields missing or anomalous"
+    ]
   }
 }
