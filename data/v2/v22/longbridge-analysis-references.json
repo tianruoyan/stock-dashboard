@@ -1,0 +1,154 @@
+{
+  "schema_version": 1,
+  "mode": "shadow_reference_only",
+  "provider": "Longbridge",
+  "policy_version": "2026-08-02.longbridge-analysis.1",
+  "batch_id": "longbridge-20260804-0830-memory-cycle",
+  "generated_at": "2026-08-10T16:15:39+08:00",
+  "input_state": "imported",
+  "reference_count": 1,
+  "references": [
+    {
+      "reference_id": "lb_reference_dcb56e609910de614360",
+      "analysis_id": "lb-skill-memory-cycle-20260730",
+      "provider": "Longbridge",
+      "product": "longbridge_skill",
+      "scope": "industry",
+      "title": "存储涨价与HBM扩产：机构观点及反向证据",
+      "source_url": "https://longbridge.com/news/294280444.md",
+      "source_host": "longbridge.com",
+      "published_at": "2026-07-30T08:52:41+08:00",
+      "observed_at": "2026-08-04T08:36:00+08:00",
+      "subjects": [
+        {
+          "type": "theme",
+          "value": "DRAM/HBM"
+        },
+        {
+          "type": "industry",
+          "value": "存储扩产"
+        }
+      ],
+      "horizon": "2026H2-2027",
+      "claims": [
+        {
+          "claim_id": "memory-price-view",
+          "claim_type": "inference",
+          "statement": "长桥技能收录的机构电话会观点认为DRAM涨价与HBM长协覆盖可能继续，但该观点不等同于已实现的价格、订单或利润。",
+          "citation_ids": [
+            "lb-gs-memory-call"
+          ],
+          "normalized_role": "external_institutional_inference",
+          "local_verification_status": "not_a_local_fact",
+          "action_permitted": false
+        },
+        {
+          "claim_id": "hbm-expectation-risk",
+          "claim_type": "counter_view",
+          "statement": "另一机构内容指出SK海力士业绩虽创新高但低于市场预期，HBM4节奏与估值压力可能造成股价和产业景气背离。",
+          "citation_ids": [
+            "lb-skhynix-counter"
+          ],
+          "normalized_role": "counter_evidence_candidate",
+          "local_verification_status": "not_a_local_fact",
+          "action_permitted": false
+        },
+        {
+          "claim_id": "a-share-non-actionable",
+          "claim_type": "trading_view",
+          "statement": "对A股只能作为扩产、设备和材料研究背景，必须等待代表股、板块宽度、订单和业绩独立确认。",
+          "citation_ids": [],
+          "normalized_role": "provider_view_non_actionable",
+          "local_verification_status": "not_a_local_fact",
+          "action_permitted": false
+        }
+      ],
+      "citations": [
+        {
+          "citation_id": "lb-gs-memory-call",
+          "title": "高盛韩国存储专家电话会：DRAM今年继续涨价，明年HBM价格预期上升",
+          "url": "https://longbridge.com/news/294280444.md",
+          "published_at": "2026-07-30T08:52:41+08:00",
+          "source_type": "institutional_view_aggregation"
+        },
+        {
+          "citation_id": "lb-skhynix-counter",
+          "title": "SK海力士财报创新高但低于预期，HBM4节奏与估值成为反证",
+          "url": "https://longbridge.com/news/294294703.md",
+          "published_at": "2026-07-30T11:11:16+08:00",
+          "source_type": "institutional_counter_view"
+        }
+      ],
+      "invalidation_conditions": [
+        "DRAM或HBM价格转跌并伴随库存上升",
+        "扩产延期或先进制程良率不达预期",
+        "A股代表股只有单股反抽且板块宽度不扩散",
+        "半年报或三季报没有出现订单、收入和毛利兑现"
+      ],
+      "model": {
+        "name": "Longbridge Skill institutional-content retrieval",
+        "version": "longbridge-cli 0.26.0",
+        "disclosure_state": "内容来源与发布时间可见，底层排序模型未披露",
+        "replayability": "declared_only"
+      },
+      "attribution": "Longbridge · longbridge_skill · Longbridge Skill institutional-content retrieval",
+      "evidence_role": "external_institutional_analysis_reference",
+      "fact_state": "provider_analysis_not_local_fact",
+      "quality_state": "usable_reference",
+      "allowed_uses": [
+        "research_context",
+        "institutional_view_attribution",
+        "explanation_reference",
+        "counter_evidence_candidate",
+        "local_verification_queue"
+      ],
+      "immutable_boundaries": {
+        "may_execute_trade": false,
+        "may_read_or_write_account": false,
+        "may_read_or_write_positions": false,
+        "may_read_or_write_watchlist": false,
+        "may_create_or_mutate_user_asset": false,
+        "may_change_user_priority_intent_or_note": false,
+        "may_satisfy_g0_market_fact_by_itself": false,
+        "may_override_g0_g7": false,
+        "may_upgrade_decision_case_by_itself": false,
+        "may_assign_stock_role_by_itself": false,
+        "may_promote_model_or_v2": false,
+        "may_change_v1_production": false,
+        "may_publish_to_longbridge_community": false
+      },
+      "required_local_checks": [
+        "核验 reported_fact 的原始引文、主体、时间和口径",
+        "用当前市场事实检查观点是否仍在有效窗口",
+        "检查本地代表股共振、市场环境、位置与可交易性",
+        "保留反向证据；不得以机构身份替代 G0—G7"
+      ],
+      "warnings": [],
+      "source_content_hash": "sha256:f73e692f9aae5803e2f1b42022b75d0a3aa956ac854a5b6d08c5c5c4b9bd4ced",
+      "provenance_hash": "sha256:343e558611dd57bdfc78ed81de86faa80afb90f6d8f5c7ca43d39b5780dde86b"
+    }
+  ],
+  "governance": {
+    "provider_role": "外部机构分析模型与观点来源；不是交易系统、行情唯一真相源或用户资产来源。",
+    "attribution_rule": "前台必须使用“长桥分析认为/长桥模型提示”等归属表达，并显示时间与来源链接。",
+    "fact_rule": "长桥 reported_fact 仍是事实候选，须经本地独立来源和质量层核验。",
+    "decision_rule": "引用可以补充研究、解释和反证，但不得独立通过 G0、升级决策案例或改变行动状态。",
+    "watchlist_rule": "长桥不接管、不读取、不同步同花顺自选，也不创建任何用户资产来源关系。",
+    "immutable_boundaries": {
+      "may_execute_trade": false,
+      "may_read_or_write_account": false,
+      "may_read_or_write_positions": false,
+      "may_read_or_write_watchlist": false,
+      "may_create_or_mutate_user_asset": false,
+      "may_change_user_priority_intent_or_note": false,
+      "may_satisfy_g0_market_fact_by_itself": false,
+      "may_override_g0_g7": false,
+      "may_upgrade_decision_case_by_itself": false,
+      "may_assign_stock_role_by_itself": false,
+      "may_promote_model_or_v2": false,
+      "may_change_v1_production": false,
+      "may_publish_to_longbridge_community": false
+    }
+  },
+  "immutable_hash": "sha256:02793072502a8c22173c1e05b0da0fe79a719a66da3cfa2b88ced78bb35308c4"
+}

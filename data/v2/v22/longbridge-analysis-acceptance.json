@@ -1,0 +1,66 @@
+{
+  "schema_version": 1,
+  "status": "passed",
+  "mode": "shadow_reference_only",
+  "provider": "Longbridge",
+  "policy_version": "2026-08-02.longbridge-analysis.1",
+  "generated_at": "2026-08-03T23:45:11+08:00",
+  "synthetic_probe_only": true,
+  "summary": {
+    "passed": 10,
+    "failed": 0
+  },
+  "checks": [
+    {
+      "check_id": "policy_shadow_only",
+      "status": "passed",
+      "detail": "接入模式必须为 shadow_reference_only。"
+    },
+    {
+      "check_id": "all_effect_boundaries_false",
+      "status": "passed",
+      "detail": "所有交易、账户、自选、用户资产、门禁和晋升权限必须为 false。"
+    },
+    {
+      "check_id": "valid_reference_accepted",
+      "status": "passed",
+      "detail": "完整、带反证和失效条件的合约样例应进入引用集。"
+    },
+    {
+      "check_id": "reported_fact_needs_local_verification",
+      "status": "passed",
+      "detail": "长桥声称的事实不能自动成为本地已核验事实。"
+    },
+    {
+      "check_id": "trading_view_non_actionable",
+      "status": "passed",
+      "detail": "长桥交易观点只能作为不可执行外部观点。"
+    },
+    {
+      "check_id": "trade_payload_rejected",
+      "status": "passed",
+      "detail": "任何订单、交易或账户字段必须被拒绝。"
+    },
+    {
+      "check_id": "counter_evidence_required",
+      "status": "passed",
+      "detail": "缺少反证的机构分析只能进入复核队列。"
+    },
+    {
+      "check_id": "public_output_has_no_private_keys",
+      "status": "passed",
+      "detail": "公开引用不得包含原始对话、账户、持仓、自选或用户字段。"
+    },
+    {
+      "check_id": "v1_v2_roles_unchanged",
+      "status": "passed",
+      "detail": "V1 继续生产主入口，V2/V2.2 继续 shadow。"
+    },
+    {
+      "check_id": "longbridge_not_watchlist_source",
+      "status": "passed",
+      "detail": "长桥不得注册为同花顺自选的替代来源。"
+    }
+  ],
+  "conclusion": "长桥仅作为可归属、可追溯的外部机构分析引用；未获得交易、自选、账户、用户资产、门禁或模型晋升权限。"
+}

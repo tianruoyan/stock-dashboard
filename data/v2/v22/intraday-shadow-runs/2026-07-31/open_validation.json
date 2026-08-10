@@ -1,0 +1,132 @@
+{
+  "schema_version": 1,
+  "version": "2026-07-25.s2.3",
+  "mode": "shadow_only",
+  "state": "completed",
+  "trade_date": "2026-07-31",
+  "checkpoint": {
+    "id": "open_validation",
+    "label": "开盘后验证"
+  },
+  "observed_at": "2026-07-31T09:35:11+08:00",
+  "steps": [
+    {
+      "name": "intraday-indices",
+      "returncode": 0,
+      "state": "completed",
+      "stdout_tail": "{\"status\": \"ok\", \"updated\": \"/Users/sweet_orange/stock-dashboard-v2-local/data/intraday.json\", \"market_data_as_of\": \"2026-07-31T09:35:12+08:00\", \"indices\": 5, \"industries\": 98}",
+      "stderr_tail": ""
+    },
+    {
+      "name": "public-inputs",
+      "returncode": 0,
+      "state": "completed",
+      "stdout_tail": "{\"state\": \"usable\", \"trade_date\": \"2026-07-31\", \"collectors\": {\"microcap\": \"updated\", \"sentiment\": \"updated\", \"official_events\": \"updated\"}}",
+      "stderr_tail": ""
+    },
+    {
+      "name": "market-facts",
+      "returncode": 0,
+      "state": "completed",
+      "stdout_tail": "{\"state\": \"degraded\", \"trade_date\": \"2026-07-31\", \"outputs\": [{\"id\": \"market-breadth\", \"as_of\": \"2026-07-31T09:36:00+08:00\", \"quality_state\": \"degraded\"}, {\"id\": \"market-liquidity\", \"as_of\": \"2026-07-31T09:36:00+08:00\", \"quality_state\": \"degraded\"}, {\"id\": \"mainline-structure\", \"as_of\": \"2026-07-31T09:35:13+08:00\", \"quality_state\": \"degraded\"}, {\"id\": \"external-market\", \"as_of\": \"2026-07-31T09:21:02+08:00\", \"quality_state\": \"usable\"}]}",
+      "stderr_tail": ""
+    },
+    {
+      "name": "input-import",
+      "returncode": 0,
+      "state": "completed",
+      "stdout_tail": "{\"status\": \"updated\", \"contracts\": {\"microcap_observation\": \"updated\", \"sentiment_structure\": \"updated\", \"market_breadth_snapshot\": \"updated\", \"market_liquidity_snapshot\": \"updated\", \"mainline_structure_snapshot\": \"updated\", \"external_market_snapshot\": \"updated\", \"outcome_prices\": \"pending\", \"portfolio_context\": \"pending\", \"events\": \"unchanged\"}}",
+      "stderr_tail": ""
+    },
+    {
+      "name": "market-structure",
+      "returncode": 0,
+      "state": "completed",
+      "stdout_tail": "v2-market-structure: state=usable_proxy direction=up",
+      "stderr_tail": ""
+    },
+    {
+      "name": "representative-quotes",
+      "returncode": 0,
+      "state": "completed",
+      "stdout_tail": "v2-representative-quotes: quotes=92 dual_confirmed=76 conflicts=16 missing=0 source=tencent_futu_cross_verified",
+      "stderr_tail": ""
+    },
+    {
+      "name": "v2-baseline",
+      "returncode": 0,
+      "state": "completed",
+      "stdout_tail": "v2-decision-system: quality=degraded radar=0 validation=24",
+      "stderr_tail": ""
+    },
+    {
+      "name": "stock-pool",
+      "returncode": 0,
+      "state": "completed",
+      "stdout_tail": "V2.2股票池影子投影：正式观察0只；研究待补114只；系统发现13只；用户资产未修改",
+      "stderr_tail": ""
+    },
+    {
+      "name": "market-environment",
+      "returncode": 0,
+      "state": "completed",
+      "stdout_tail": "V2.2市场环境事实影子：支持4项；抑制0项；待补2项；冲突1项；未改变现有行动结论",
+      "stderr_tail": ""
+    },
+    {
+      "name": "environment-decision",
+      "returncode": 0,
+      "state": "completed",
+      "stdout_tail": "V2.2环境决策影子：状态risk_release；风格走强3类、走弱0类；外盘确认6条；G5抑制24条；未修改用户资产和生产入口",
+      "stderr_tail": ""
+    },
+    {
+      "name": "decision-cases",
+      "returncode": 0,
+      "state": "completed",
+      "stdout_tail": "V2.2决策案例影子：去重后42个；决策就绪0个；等待确认16个；未成卡线索0个；历史待补14个；合并重复触发0个；未修改V2基线与用户资产",
+      "stderr_tail": ""
+    },
+    {
+      "name": "cockpit-phase",
+      "returncode": 0,
+      "state": "completed",
+      "stdout_tail": "v2-cockpit-phase: 盘中判断 / 今天的判断已更新",
+      "stderr_tail": ""
+    },
+    {
+      "name": "time-semantics",
+      "returncode": 0,
+      "state": "completed",
+      "stdout_tail": "V2.2时间口径：双轨日期未统一；V2证据属于2026-07-30，V2.2市场事实属于2026-07-31；交易日未统一，暂不比较命中率。",
+      "stderr_tail": ""
+    },
+    {
+      "name": "trigger-quotes",
+      "returncode": 0,
+      "state": "completed",
+      "stdout_tail": "V2.2触发行情影子：新增6个；累计637个；等待36个。",
+      "stderr_tail": ""
+    }
+  ],
+  "trigger_capture": {
+    "created_snapshot_count": 6,
+    "total_snapshot_count": 637,
+    "hold_count": 36,
+    "summary": "新增6个可审计触发行情快照。"
+  },
+  "same_day_comparison": {
+    "allowed": false,
+    "reason": "V2证据属于2026-07-30，V2.2市场事实属于2026-07-31；交易日未统一，暂不比较命中率。"
+  },
+  "summary": "盘中影子检查完成。",
+  "guardrails": {
+    "v1_modified": false,
+    "production_behavior_changed": false,
+    "automatic_trading": false,
+    "automatic_user_asset_mutation": false,
+    "automatic_model_promotion": false,
+    "automatic_v1_shutdown": false,
+    "historical_trigger_backfill": false
+  }
+}

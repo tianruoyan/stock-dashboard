@@ -3,12 +3,21 @@
   "summary": "统一构建完成，但存在降权/需复核项。",
   "steps": [
     {
+      "name": "v1-public-baseline-import",
+      "command": "python3 scripts/import_v1_public_baseline.py",
+      "returncode": 0,
+      "status": "ok",
+      "blocking": false,
+      "stdout_tail": "{\"state\": \"completed\", \"imported_count\": 6, \"blocked_count\": 0}",
+      "stderr_tail": ""
+    },
+    {
       "name": "opportunity-watch:pre",
       "command": "python3 scripts/build_opportunity_watch.py",
       "returncode": 0,
       "status": "ok",
       "blocking": false,
-      "stdout_tail": "opportunity-watch: 12 items",
+      "stdout_tail": "opportunity-watch: 9 items",
       "stderr_tail": ""
     },
     {
@@ -17,7 +26,7 @@
       "returncode": 0,
       "status": "ok",
       "blocking": false,
-      "stdout_tail": "theme-shifts: 7 shifts - 风险2；抱团1；升温2；新线2",
+      "stdout_tail": "theme-shifts: 6 shifts - 风险3；升温2；新线1",
       "stderr_tail": ""
     },
     {
@@ -33,9 +42,9 @@
       "name": "automation-health:pre",
       "command": "python3 scripts/build_automation_health.py",
       "returncode": 0,
-      "status": "blocked",
+      "status": "waiting",
       "blocking": false,
-      "stdout_tail": "automation-health: blocked - 6 个自动化产出异常：盘前简报、盘中全景、盘中异动、午盘分析。",
+      "stdout_tail": "automation-health: waiting - 1 个自动化尚未到产出窗口：晚间舆情。",
       "stderr_tail": ""
     },
     {
@@ -44,7 +53,7 @@
       "returncode": 0,
       "status": "ok",
       "blocking": false,
-      "stdout_tail": "p0.1-alert-semantics: alerts=10 theme_metrics=0 sector_metrics=0 leader_pct_removed=0 scores_removed=0",
+      "stdout_tail": "p0.1-alert-semantics: alerts=13 theme_metrics=0 sector_metrics=13 leader_pct_removed=38 scores_removed=38",
       "stderr_tail": ""
     },
     {
@@ -53,7 +62,7 @@
       "returncode": 0,
       "status": "degraded",
       "blocking": false,
-      "stdout_tail": "degraded: 发现 38 个降级/需复核项（1 个交易阻断，20 个价格/行情复核，1 个信号复核，18 个背景复核），核心结论可看但必须按影响分层使用。",
+      "stdout_tail": "degraded: 发现 33 个降级/需复核项（16 个价格/行情复核，19 个背景复核），核心结论可看但必须按影响分层使用。",
       "stderr_tail": ""
     },
     {
@@ -62,16 +71,16 @@
       "returncode": 0,
       "status": "ok",
       "blocking": false,
-      "stdout_tail": "alert-recovery-readiness: candidate_visible - 盘中候选异动证据完整，可展示为待确认；未通过双源核验前不得升级为确认机会。",
+      "stdout_tail": "alert-recovery-readiness: active_needs_review - 盘中异动已有 active alerts，但 quote_audit 不完整或仍引用异常源，需复核后使用。",
       "stderr_tail": ""
     },
     {
       "name": "automation-health:post-audit",
       "command": "python3 scripts/build_automation_health.py",
       "returncode": 0,
-      "status": "blocked",
+      "status": "waiting",
       "blocking": false,
-      "stdout_tail": "automation-health: blocked - 6 个自动化产出异常：盘前简报、盘中全景、盘中异动、午盘分析。",
+      "stdout_tail": "automation-health: waiting - 1 个自动化尚未到产出窗口：晚间舆情。",
       "stderr_tail": ""
     },
     {
@@ -80,7 +89,7 @@
       "returncode": 0,
       "status": "ok",
       "blocking": false,
-      "stdout_tail": "opportunity-watch: 12 items",
+      "stdout_tail": "opportunity-watch: 9 items",
       "stderr_tail": ""
     },
     {
@@ -89,7 +98,7 @@
       "returncode": 0,
       "status": "ok",
       "blocking": false,
-      "stdout_tail": "theme-shifts: 7 shifts - 风险2；抱团1；升温2；新线2",
+      "stdout_tail": "theme-shifts: 6 shifts - 风险3；升温2；新线1",
       "stderr_tail": ""
     },
     {
@@ -107,7 +116,7 @@
       "returncode": 0,
       "status": "ok",
       "blocking": false,
-      "stdout_tail": "data-trust: degraded - 1 个数据文件需降权，7 个文件仅作历史背景。",
+      "stdout_tail": "data-trust: degraded - 5 个数据文件需降权，1 个文件仅作历史背景，4 个同日文件已过当前阶段。",
       "stderr_tail": ""
     },
     {
@@ -116,7 +125,7 @@
       "returncode": 0,
       "status": "ok",
       "blocking": false,
-      "stdout_tail": "monitoring-coverage: degraded - 2 个监测维度需降权，1 个背景维度需复核。",
+      "stdout_tail": "monitoring-coverage: degraded - 6 个监测维度需降权，1 个背景维度需复核。",
       "stderr_tail": ""
     },
     {
@@ -125,7 +134,7 @@
       "returncode": 0,
       "status": "ok",
       "blocking": false,
-      "stdout_tail": "section-health: degraded - 9 个区块需降权查看。",
+      "stdout_tail": "section-health: degraded - 8 个区块需降权查看。",
       "stderr_tail": ""
     },
     {
@@ -134,7 +143,7 @@
       "returncode": 0,
       "status": "ok",
       "blocking": false,
-      "stdout_tail": "{\"state\": \"usable\", \"trade_date\": \"2026-07-29\", \"collectors\": {\"microcap\": \"current\", \"sentiment\": \"current\", \"official_events\": \"current\"}}",
+      "stdout_tail": "{\"state\": \"usable\", \"trade_date\": \"2026-08-10\", \"collectors\": {\"microcap\": \"current\", \"sentiment\": \"current\", \"official_events\": \"current\"}}",
       "stderr_tail": ""
     },
     {
@@ -143,7 +152,16 @@
       "returncode": 0,
       "status": "ok",
       "blocking": false,
-      "stdout_tail": "{\"status\": \"no_change\", \"contracts\": {\"microcap_observation\": \"unchanged\", \"sentiment_structure\": \"unchanged\", \"market_breadth_snapshot\": \"unchanged\", \"market_liquidity_snapshot\": \"unchanged\", \"mainline_structure_snapshot\": \"unchanged\", \"external_market_snapshot\": \"unchanged\", \"outcome_prices\": \"pending\", \"portfolio_context\": \"pending\", \"events\": \"unchanged\"}}",
+      "stdout_tail": "{\"status\": \"updated\", \"contracts\": {\"microcap_observation\": \"updated\", \"sentiment_structure\": \"updated\", \"market_breadth_snapshot\": \"unchanged\", \"market_liquidity_snapshot\": \"unchanged\", \"mainline_structure_snapshot\": \"unchanged\", \"external_market_snapshot\": \"unchanged\", \"outcome_prices\": \"pending\", \"portfolio_context\": \"pending\", \"events\": \"updated\"}}",
+      "stderr_tail": ""
+    },
+    {
+      "name": "v2-v22-longbridge-analysis",
+      "command": "python3 scripts/import_longbridge_analysis.py",
+      "returncode": 0,
+      "status": "ok",
+      "blocking": false,
+      "stdout_tail": "{\"status\": \"passed\", \"input_state\": \"imported\", \"accepted\": 1, \"review_required\": 0, \"rejected\": 0, \"public_reference_count\": 1, \"mode\": \"shadow_reference_only\", \"trading_enabled\": false, \"watchlist_sync_changed\": false}",
       "stderr_tail": ""
     },
     {
@@ -161,7 +179,7 @@
       "returncode": 0,
       "status": "ok",
       "blocking": false,
-      "stdout_tail": "v2-research: domains=7 stocks=114 role_gaps=104",
+      "stdout_tail": "v2-research: domains=9 stocks=125 role_gaps=115",
       "stderr_tail": ""
     },
     {
@@ -170,7 +188,7 @@
       "returncode": 0,
       "status": "ok",
       "blocking": false,
-      "stdout_tail": "v2-representative-quotes: quotes=97 dual_confirmed=97 conflicts=0 missing=0 source=tencent_futu_cross_verified",
+      "stdout_tail": "v2-representative-quotes: quotes=93 dual_confirmed=0 conflicts=0 missing=0 source=tencent_futu_cross_verified",
       "stderr_tail": ""
     },
     {
@@ -179,7 +197,7 @@
       "returncode": 0,
       "status": "ok",
       "blocking": false,
-      "stdout_tail": "v2-governance: events=12 tasks=7",
+      "stdout_tail": "v2-governance: events=21 tasks=7",
       "stderr_tail": ""
     },
     {
@@ -188,7 +206,7 @@
       "returncode": 0,
       "status": "ok",
       "blocking": false,
-      "stdout_tail": "v2-learning: snapshots=29 pending=12 path=data/v2/snapshots/2026-07-23/snapshot_906a6df480a6fe3eb9dc.json",
+      "stdout_tail": "v2-learning: snapshots=42 pending=12 path=data/v2/snapshots/2026-08-10/snapshot_40822803b6ba487aa69c.json",
       "stderr_tail": ""
     },
     {
@@ -197,7 +215,7 @@
       "returncode": 0,
       "status": "ok",
       "blocking": false,
-      "stdout_tail": "v2-outcome-price: state=current observations=72 windows=288 failures=0",
+      "stdout_tail": "v2-outcome-price: state=current observations=87 windows=348 failures=0",
       "stderr_tail": ""
     },
     {
@@ -206,7 +224,7 @@
       "returncode": 0,
       "status": "ok",
       "blocking": false,
-      "stdout_tail": "v2-learning: snapshots=29 pending=12 path=data/v2/snapshots/2026-07-23/snapshot_906a6df480a6fe3eb9dc.json",
+      "stdout_tail": "v2-learning: snapshots=42 pending=12 path=data/v2/snapshots/2026-08-10/snapshot_40822803b6ba487aa69c.json",
       "stderr_tail": ""
     },
     {
@@ -215,7 +233,7 @@
       "returncode": 0,
       "status": "ok",
       "blocking": false,
-      "stdout_tail": "v2-model-evaluation: state=baseline_observation records=4 recommendation=keep_baseline",
+      "stdout_tail": "v2-model-evaluation: state=baseline_observation records=9 recommendation=keep_baseline",
       "stderr_tail": ""
     },
     {
@@ -224,7 +242,7 @@
       "returncode": 0,
       "status": "ok",
       "blocking": false,
-      "stdout_tail": "v2-decision-system: quality=blocked radar=0 validation=24",
+      "stdout_tail": "v2-decision-system: quality=degraded radar=0 validation=24",
       "stderr_tail": ""
     },
     {
@@ -233,7 +251,7 @@
       "returncode": 0,
       "status": "ok",
       "blocking": false,
-      "stdout_tail": "v2-parallel-comparison: state=comparable divergences=4 consensus=6",
+      "stdout_tail": "v2-parallel-comparison: state=comparable divergences=2 consensus=18",
       "stderr_tail": ""
     },
     {
@@ -242,7 +260,7 @@
       "returncode": 0,
       "status": "ok",
       "blocking": false,
-      "stdout_tail": "v2-decision-system: quality=blocked radar=0 validation=24",
+      "stdout_tail": "v2-decision-system: quality=degraded radar=0 validation=24",
       "stderr_tail": ""
     },
     {
@@ -251,7 +269,7 @@
       "returncode": 0,
       "status": "ok",
       "blocking": false,
-      "stdout_tail": "V2.2股票池影子投影：正式观察0只；研究待补114只；系统发现17只；用户资产未修改",
+      "stdout_tail": "V2.2股票池影子投影：正式观察16只；研究待补109只；系统发现11只；用户资产未修改",
       "stderr_tail": ""
     },
     {
@@ -260,7 +278,16 @@
       "returncode": 0,
       "status": "ok",
       "blocking": false,
-      "stdout_tail": "V2.2市场环境事实影子：支持3项；抑制2项；待补1项；冲突1项；未改变现有行动结论",
+      "stdout_tail": "V2.2市场环境事实影子：支持0项；抑制1项；待补3项；冲突1项；未改变现有行动结论",
+      "stderr_tail": ""
+    },
+    {
+      "name": "v2-v22-industry-tracking",
+      "command": "python3 scripts/build_v2_industry_tracking.py",
+      "returncode": 0,
+      "status": "ok",
+      "blocking": false,
+      "stdout_tail": "V2行业持续跟踪：行业3条；当前交易日代表股行情16只；用户资产和V1未修改",
       "stderr_tail": ""
     },
     {
@@ -269,7 +296,7 @@
       "returncode": 0,
       "status": "ok",
       "blocking": false,
-      "stdout_tail": "V2.2环境决策影子：状态risk_release；风格走强1类、走弱0类；外盘确认4条；G5抑制24条；未修改用户资产和生产入口",
+      "stdout_tail": "V2.2环境决策影子：状态risk_release；风格走强2类、走弱0类；外盘确认1条；G5抑制24条；未修改用户资产和生产入口",
       "stderr_tail": ""
     },
     {
@@ -278,7 +305,7 @@
       "returncode": 0,
       "status": "ok",
       "blocking": false,
-      "stdout_tail": "V2.2决策案例影子：去重后39个；决策就绪0个；等待确认18个；未成卡线索1个；历史待补12个；合并重复触发0个；未修改V2基线与用户资产",
+      "stdout_tail": "V2.2决策案例影子：去重后39个；决策就绪0个；等待确认11个；未成卡线索0个；历史待补15个；合并重复触发0个；未修改V2基线与用户资产",
       "stderr_tail": ""
     },
     {
@@ -296,7 +323,7 @@
       "returncode": 0,
       "status": "ok",
       "blocking": false,
-      "stdout_tail": "V2.2时间口径：双轨日期未统一；V2证据属于2026-07-23，V2.2市场事实属于2026-07-29；交易日未统一，暂不比较命中率。",
+      "stdout_tail": "V2.2时间口径：双轨日期一致；两侧交易日期一致；仍须满足结果完整性和样本门槛后才能比较。",
       "stderr_tail": ""
     },
     {
@@ -305,7 +332,7 @@
       "returncode": 0,
       "status": "ok",
       "blocking": false,
-      "stdout_tail": "V2.2触发行情影子：新增0个；累计498个；等待39个。",
+      "stdout_tail": "V2.2触发行情影子：新增13个；累计1162个；等待26个。",
       "stderr_tail": ""
     },
     {
@@ -314,7 +341,7 @@
       "returncode": 0,
       "status": "ok",
       "blocking": false,
-      "stdout_tail": "V2.2结果回填影子：状态current；结果窗口4446个；失败0个。",
+      "stdout_tail": "V2.2结果回填影子：状态updated；结果窗口14385个；失败0个。",
       "stderr_tail": ""
     },
     {
@@ -323,7 +350,7 @@
       "returncode": 0,
       "status": "ok",
       "blocking": false,
-      "stdout_tail": "V2.2回溯影子：可评价0例；命中率不展示；生产切换继续保持",
+      "stdout_tail": "V2.2回溯影子：可评价432例；命中率不展示；生产切换继续保持",
       "stderr_tail": ""
     },
     {
@@ -350,7 +377,7 @@
       "returncode": 0,
       "status": "warning",
       "blocking": false,
-      "stdout_tail": "warning: 发现 9 个页面需复核项。",
+      "stdout_tail": "warning: 发现 2 个页面需复核项。",
       "stderr_tail": ""
     },
     {
