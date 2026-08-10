@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-08-10T14:43:26+08:00",
+  "timestamp": "2026-08-10T14:48:40+08:00",
   "sources": {
     "tencent_http": {
       "status": "ok",
@@ -9833,24 +9833,32 @@
     "failure_count_observed_after_095016": 75
   },
   "monitor_runtime_stall_20260810_135359": {
-    "status": "failed_retrying",
-    "checked_at": "2026-08-10T14:43:26+08:00",
+    "status": "degraded_partial",
+    "checked_at": "2026-08-10T14:48:40+08:00",
     "first_stale_detected_at": "2026-08-10T14:09:36+08:00",
     "last_output_before_restart": "2026-08-10T13:53:59+08:00",
     "restart_attempt_at": "2026-08-10T14:10:14+08:00",
-    "restart_result": "守护器与行情子进程已重新拉起，但子进程在首批AKShare请求后再次无输出",
+    "restart_result": "重启后行情输出已延迟恢复，但全题材成交放大统一为20.00x且龙头分数异常，未通过行情合理性检查",
     "provider": "AKShare实时行情链路（本地V1监控）",
     "old_guard_pid": 53956,
     "old_child_pid": 53957,
     "new_guard_pid": 68208,
     "new_child_pid": 68209,
-    "latest_output_at": "2026-08-10T14:10:22+08:00",
-    "detail": "monitor.log先超过5分钟未更新；按既有run_monitor_guard.sh完成一次重启，重启后仍长时间卡在首批行情请求，监控当前不可依赖。",
-    "impact": "本轮未发现最近10分钟新增正式提醒；保留上一版alert.json，不生成或编造行情信号。",
+    "latest_output_at": "2026-08-10T14:48:06+08:00",
+    "detail": "monitor.log已恢复更新，守护器与子进程存活；当前输出存在明显口径异常，仅作降级诊断，不可据此形成正式机会。",
+    "impact": "最近10分钟无新增正式提醒；保留上一版alert.json，不生成或编造行情信号。",
     "errors": [
-      "monitor.log stale beyond 5 minutes",
-      "restart completed but child output stalled again",
-      "active quote generation unavailable"
-    ]
+      "monitor recovered after prolonged stall",
+      "all sampled themes report amount_ratio=20.00x",
+      "leader and laggard scores exceed plausible range",
+      "active quote generation remains degraded"
+    ],
+    "flow_recovered_at": "2026-08-10T14:48:06+08:00",
+    "sanity_checks": {
+      "log_fresh": true,
+      "uniform_amount_ratio_20x": true,
+      "leader_score_plausible": false,
+      "quote_generation_usable": false
+    }
   }
 }
