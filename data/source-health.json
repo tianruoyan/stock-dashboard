@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-08-10T09:41:57+08:00",
+  "timestamp": "2026-08-10T09:49:43+08:00",
   "sources": {
     "tencent_http": {
       "status": "ok",
@@ -159,14 +159,14 @@
       "errors": []
     },
     "akshare_a_spot_watch_decode": {
-      "status": "failed_active",
+      "status": "recovered_single_source",
       "usage": "盘中观察池与题材强度刷新",
-      "checked_at": "2026-08-10T09:41:51+08:00",
+      "checked_at": "2026-08-10T09:44:32+08:00",
       "sample_count": 0,
       "errors": [
         "Can not decode value starting with character <"
       ],
-      "detail": "09:26:42至09:41:51连续刷新异常；09:38:09曾产出单源风格级风险结构，随后仍无法取得有效刷新，禁止升级为confirmed。",
+      "detail": "09:44:32恢复取得结构化短周期行情并产出9条新提醒；全部仅为单源候选，等待第二行情源交叉验证。",
       "action": "下一轮自动重试；恢复前不把日内涨幅或旧快照当作短周期异动证据。"
     },
     "eastmoney_limit_pool_intraday_0930": {
@@ -9629,13 +9629,13 @@
     "note": "未发现经本地规范化的8月6日机构观点增量；未触碰账户、持仓、订单、自选或社区能力"
   },
   "current_run": {
-    "timestamp": "2026-08-10T09:41:57+08:00",
+    "timestamp": "2026-08-10T09:54:18+08:00",
     "phase": "上午交易盘中巡检",
-    "summary": "发现09:38:09科技风格级风险候选；单源结构成立但未通过成交和交叉验证门禁。",
+    "summary": "发现09:44:32九条、09:50:16三条新增正式提醒；09:44批次已过期转历史，09:50批次为单源候选。",
     "failed_or_degraded": [
-      "主行情源连续解码失败",
-      "成交放大仅1.00x",
-      "正式段与明细段短周期窗口标签不一致"
+      "行情源间歇解码失败",
+      "第二行情源交叉验证缺失",
+      "V2驾驶舱快照仍为上一交易日，仅作风险边界"
     ]
   },
   "sina_hk_official_close_20260806": {
@@ -9781,5 +9781,54 @@
       "volume_ratio=1.00x",
       "formal section says 5-minute while detail section labels 3-minute"
     ]
+  },
+  "monitor_formal_alert_20260810_094432": {
+    "status": "degraded_partial",
+    "checked_at": "2026-08-10T09:49:43+08:00",
+    "trigger_time": "2026-08-10T09:44:32+08:00",
+    "alert_count": 9,
+    "sectors": [
+      "半导体设备平台",
+      "光刻胶/光刻机催化",
+      "光模块/CPO",
+      "存储芯片",
+      "封装",
+      "电子布",
+      "覆铜板",
+      "超级电容",
+      "传说游资票走势关联"
+    ],
+    "detail": "1条机会候选、8条风险候选均通过单源短周期门槛；cross_source_verified=false，禁止升级confirmed。",
+    "notified_at": "2026-08-10T09:49:43+08:00",
+    "errors": [
+      "second source verification missing"
+    ]
+  },
+  "monitor_formal_alert_20260810_095016": {
+    "status": "degraded_partial",
+    "checked_at": "2026-08-10T09:54:18+08:00",
+    "trigger_time": "2026-08-10T09:50:16+08:00",
+    "alert_count": 3,
+    "sectors": [
+      "CMP/靶材/材料耗材",
+      "医药修复链",
+      "化学制药"
+    ],
+    "detail": "3条机会候选通过单源短周期门槛；cross_source_verified=false，禁止升级confirmed。",
+    "notified_at": "2026-08-10T09:54:18+08:00",
+    "errors": [
+      "second source verification missing"
+    ]
+  },
+  "monitor_realtime_source_degradation_20260810_094516": {
+    "status": "degraded_partial",
+    "checked_at": "2026-08-10T09:54:18+08:00",
+    "first_error_at": "2026-08-10T09:45:16+08:00",
+    "last_error_at": "2026-08-10T09:50:47+08:00",
+    "failure_count_observed": 7,
+    "provider": "本地监控上游实时行情源",
+    "error": "Can not decode value starting with character '<'",
+    "detail": "行情源间歇解码失败；监控进程仍存活且日志持续更新，保留最近有效提醒并等待自动重试。",
+    "impact": "本轮所有active机会仅保持candidate，cross_source_verified=false。"
   }
 }
