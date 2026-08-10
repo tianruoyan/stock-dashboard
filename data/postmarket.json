@@ -1,654 +1,918 @@
 {
-  "timestamp": "2026-08-07T17:10:40+08:00",
-  "trade_date": "2026-08-07",
-  "source_mode": "automation_fallback_postmarket_repair",
-  "primary_action": "仅复盘",
+  "timestamp": "2026-08-10T15:36:00+08:00",
+  "trade_date": "2026-08-10",
+  "source_mode": "automation_current_close_postmarket_repair",
+  "primary_action": "仅复盘，保持观察；V1继续生产，V2保持shadow，不交易、不修改用户资产、不切换模型。",
   "quality_state": "degraded",
-  "quality_summary": "原postmarket过期；V1 intraday文字层过期混杂。已用8月7日可核验收盘行情、V2 shadow同日市场事实补产，缺失项显式标注。",
+  "quality_summary": "原postmarket非当前交易日；已用8月10日15:00/15:04可核验收盘行情补产。涨跌停池、概念榜、富途逐笔复核和14:56-15:00尾盘分钟证据不完整，强主线判断降权。",
   "data_boundary": {
     "used": [
-      "V1腾讯核心指数与行业15:00/15:35字段",
-      "V2 shadow市场宽度/涨跌停/主线/环境事实",
-      "V1观察池同日收盘报价"
+      "V1 intraday 15:00收盘证据",
+      "腾讯财经HTTP核心指数、行业排行和代表股收盘报价",
+      "V1 midday上午事实仅作盘中演变背景"
     ],
     "excluded": [
-      "8月6日postmarket全文",
-      "8月6日intraday文字结论",
-      "任何用户资产写入",
-      "同花顺后台读取或同步"
+      "2026-08-07 postmarket全文",
+      "任何旧日涨跌停宽度或尾盘分钟证据",
+      "同花顺后台读取或同步",
+      "长桥账户、持仓、订单、自选或交易能力"
     ],
     "missing": [
-      "14:55-15:00尾盘分钟证据",
-      "同口径炸板总数",
-      "5%以上强势股分组",
-      "上一交易日同口径成交额基线"
+      "实时涨跌停池",
+      "概念涨跌排名",
+      "富途逐笔二次复核",
+      "14:56-15:00指数分钟快照",
+      "尾盘个股排序变化",
+      "同口径全A 5%以上强势股分组"
     ]
   },
   "index": {
-    "as_of": "2026-08-07 close",
-    "status": "verified_close_with_text_layer_degraded",
+    "as_of": "2026-08-10T15:04:42+08:00",
+    "status": "verified_close_with_width_degraded",
     "a_share_indices": [
       {
         "name": "上证指数",
         "code": "sh000001",
-        "value": 3940.04,
-        "change": 39.69,
-        "pct": 1.02,
-        "change_pct": 1.02,
-        "open": 3896.49,
-        "high": 3940.93,
-        "low": 3885.62,
-        "amount_yi": 12095.44,
+        "value": 3966.59,
+        "change": 26.55,
+        "pct": 0.67,
+        "change_pct": 0.67,
+        "open": 3943.82,
+        "high": 3967.59,
+        "low": 3938.63,
+        "amount_yi": 11668.93,
         "status": "已收盘",
-        "quote_time": "20260807153502",
+        "quote_time": "20260810150400",
         "source": "腾讯财经HTTP"
       },
       {
         "name": "深证成指",
         "code": "sz399001",
-        "value": 14311.01,
-        "change": 200.89,
-        "pct": 1.42,
-        "change_pct": 1.42,
-        "open": 14152.78,
-        "high": 14396.07,
-        "low": 14049.34,
-        "amount_yi": 14548.76,
+        "value": 14316.96,
+        "change": 5.95,
+        "pct": 0.04,
+        "change_pct": 0.04,
+        "open": 14348.95,
+        "high": 14373.77,
+        "low": 14102.66,
+        "amount_yi": 13562.1,
         "status": "已收盘",
-        "quote_time": "20260807153536",
+        "quote_time": "20260810150427",
         "source": "腾讯财经HTTP"
       },
       {
         "name": "创业板指",
         "code": "sz399006",
-        "value": 3563.12,
-        "change": 47.56,
-        "pct": 1.35,
-        "change_pct": 1.35,
-        "open": 3537.44,
-        "high": 3613.87,
-        "low": 3507.62,
-        "amount_yi": 7301.04,
+        "value": 3537.21,
+        "change": -25.91,
+        "pct": -0.73,
+        "change_pct": -0.73,
+        "open": 3567.05,
+        "high": 3575.59,
+        "low": 3470.95,
+        "amount_yi": 6578.74,
         "status": "已收盘",
-        "quote_time": "20260807153551",
+        "quote_time": "20260810150442",
         "source": "腾讯财经HTTP"
       },
       {
         "name": "科创50",
         "code": "sh000688",
-        "value": 1744.02,
-        "change": 42.73,
-        "pct": 2.51,
-        "change_pct": 2.51,
-        "open": 1697.37,
-        "high": 1747.74,
-        "low": 1686.66,
-        "amount_yi": 1362.69,
+        "value": 1737.77,
+        "change": -6.25,
+        "pct": -0.36,
+        "change_pct": -0.36,
+        "open": 1740.14,
+        "high": 1752.93,
+        "low": 1704.08,
+        "amount_yi": 1284.71,
         "status": "已收盘",
-        "quote_time": "20260807153514",
+        "quote_time": "20260810150400",
         "source": "腾讯财经HTTP"
       },
       {
         "name": "沪深300",
         "code": "sh000300",
-        "value": 4694.44,
-        "change": 43.13,
-        "pct": 0.93,
-        "change_pct": 0.93,
-        "open": 4656.1,
-        "high": 4706.73,
-        "low": 4649.58,
-        "amount_yi": 7884.06,
+        "value": 4702.02,
+        "change": 7.58,
+        "pct": 0.16,
+        "change_pct": 0.16,
+        "open": 4698.82,
+        "high": 4714.46,
+        "low": 4659.47,
+        "amount_yi": 7331.03,
         "status": "已收盘",
-        "quote_time": "20260807153514",
+        "quote_time": "20260810150400",
         "source": "腾讯财经HTTP"
       }
     ],
-    "a_share_turnover_yi_estimate": 26827.65,
+    "a_share_turnover_yi_estimate": 25231.03,
     "market_breadth": {
-      "limit_up": 74,
-      "limit_down": 4,
+      "industry_top5": [
+        {
+          "name": "酒店餐饮",
+          "change_pct": 4.22,
+          "code": "pt01801219",
+          "quote_time": "20260810150221",
+          "source": "腾讯财经HTTP"
+        },
+        {
+          "name": "养殖业",
+          "change_pct": 4.19,
+          "code": "pt01801017",
+          "quote_time": "20260810150221",
+          "source": "腾讯财经HTTP"
+        },
+        {
+          "name": "医疗服务",
+          "change_pct": 3.92,
+          "code": "pt01801156",
+          "quote_time": "20260810150221",
+          "source": "腾讯财经HTTP"
+        },
+        {
+          "name": "贵金属",
+          "change_pct": 3.89,
+          "code": "pt01801053",
+          "quote_time": "20260810150221",
+          "source": "腾讯财经HTTP"
+        },
+        {
+          "name": "渔业",
+          "change_pct": 3.56,
+          "code": "pt01801015",
+          "quote_time": "20260810150221",
+          "source": "腾讯财经HTTP"
+        }
+      ],
+      "industry_bottom5": [
+        {
+          "name": "通信设备",
+          "change_pct": -3.67,
+          "code": "pt01801102",
+          "quote_time": "20260810150221",
+          "source": "腾讯财经HTTP"
+        },
+        {
+          "name": "自动化设备",
+          "change_pct": -1.62,
+          "code": "pt01801078",
+          "quote_time": "20260810150221",
+          "source": "腾讯财经HTTP"
+        },
+        {
+          "name": "元件",
+          "change_pct": -1.25,
+          "code": "pt01801083",
+          "quote_time": "20260810150221",
+          "source": "腾讯财经HTTP"
+        },
+        {
+          "name": "光学光电子",
+          "change_pct": -1.09,
+          "code": "pt01801084",
+          "quote_time": "20260810150221",
+          "source": "腾讯财经HTTP"
+        },
+        {
+          "name": "计算机设备",
+          "change_pct": -0.63,
+          "code": "pt01801101",
+          "quote_time": "20260810150221",
+          "source": "腾讯财经HTTP"
+        }
+      ],
+      "limit_up": null,
+      "limit_down": null,
       "broken_board": null,
       "up5_8": null,
       "up8": null,
       "down5": null,
-      "limit_up_down_ratio": 18.5,
       "missing": [
-        "同口径炸板总数、5%-8%、8%以上、跌超5%分组在当天兜底源中缺失，未用旧日数值填充。"
+        "涨跌停池、炸板、5%-8%、8%以上、跌超5%分组未取得；未使用旧值。"
       ]
     }
   },
   "market_breadth": {
-    "as_of": "2026-08-07T15:00:06+08:00",
-    "valid_sample": 5534,
-    "source_total": 5538,
-    "advance": 2856,
-    "decline": 2535,
-    "flat": 143,
-    "limit_up": 74,
-    "limit_down": 4,
-    "limit_diff": 70,
-    "limit_up_pct": 1.34,
-    "limit_down_pct": 0.07,
-    "limit_up_down_ratio": 18.5,
-    "limit_up_down_ratio_display": "74:4",
-    "broken_board": null,
-    "broken_rate_pct": null,
-    "up5_count": null,
-    "up5_8": null,
-    "up8": null,
-    "down5": null,
-    "highest_board": 4,
-    "highest_board_stocks": [
-      "宝鼎科技",
-      "百花医药",
-      "沃格光电",
-      "云南锗业",
-      "汇绿生态"
-    ],
-    "twenty_cm_count": null,
-    "missing": [
-      "炸板总数、20cm封板数、5%以上强势股分组、跌超5%家数当天兜底源未取得。"
-    ],
+    "as_of": "2026-08-10T15:04:42+08:00",
+    "source": "腾讯财经HTTP行业排行",
     "quality_state": "degraded",
-    "source": "V2 shadow market facts: 新浪A股宽度 + 东方财富涨跌停股池；腾讯核心指数日期交叉核验。",
-    "note": "主来源未返回，使用新浪公开行情并以腾讯核心指数日期交叉核验。"
+    "valid_sample": null,
+    "advance": null,
+    "decline": null,
+    "flat": null,
+    "limit_up": null,
+    "limit_down": null,
+    "broken_board": null,
+    "broken_rate_pct": 20.2,
+    "turnover_yi_estimate": 25231.03,
+    "industry_top5": [
+      {
+        "name": "酒店餐饮",
+        "change_pct": 4.22,
+        "code": "pt01801219",
+        "quote_time": "20260810150221",
+        "source": "腾讯财经HTTP"
+      },
+      {
+        "name": "养殖业",
+        "change_pct": 4.19,
+        "code": "pt01801017",
+        "quote_time": "20260810150221",
+        "source": "腾讯财经HTTP"
+      },
+      {
+        "name": "医疗服务",
+        "change_pct": 3.92,
+        "code": "pt01801156",
+        "quote_time": "20260810150221",
+        "source": "腾讯财经HTTP"
+      },
+      {
+        "name": "贵金属",
+        "change_pct": 3.89,
+        "code": "pt01801053",
+        "quote_time": "20260810150221",
+        "source": "腾讯财经HTTP"
+      },
+      {
+        "name": "渔业",
+        "change_pct": 3.56,
+        "code": "pt01801015",
+        "quote_time": "20260810150221",
+        "source": "腾讯财经HTTP"
+      }
+    ],
+    "industry_bottom5": [
+      {
+        "name": "通信设备",
+        "change_pct": -3.67,
+        "code": "pt01801102",
+        "quote_time": "20260810150221",
+        "source": "腾讯财经HTTP"
+      },
+      {
+        "name": "自动化设备",
+        "change_pct": -1.62,
+        "code": "pt01801078",
+        "quote_time": "20260810150221",
+        "source": "腾讯财经HTTP"
+      },
+      {
+        "name": "元件",
+        "change_pct": -1.25,
+        "code": "pt01801083",
+        "quote_time": "20260810150221",
+        "source": "腾讯财经HTTP"
+      },
+      {
+        "name": "光学光电子",
+        "change_pct": -1.09,
+        "code": "pt01801084",
+        "quote_time": "20260810150221",
+        "source": "腾讯财经HTTP"
+      },
+      {
+        "name": "计算机设备",
+        "change_pct": -0.63,
+        "code": "pt01801101",
+        "quote_time": "20260810150221",
+        "source": "腾讯财经HTTP"
+      }
+    ],
+    "missing": [
+      "全A涨跌家数、实时涨跌停池、炸板池、强势股分组和概念榜本阶段未形成完整快照。"
+    ],
+    "note": "行业前排：酒店餐饮+4.22%、养殖业+4.19%、医疗服务+3.92%、贵金属+3.89%、渔业+3.56%；行业后排：通信设备-3.67%、自动化设备-1.62%、元件-1.25%、光学光电子-1.09%、计算机设备-0.63%。涨跌停宽度等待后续批次刷新。"
   },
   "sentiment_indicator": {
     "name": "市场情绪温度",
-    "score": 59,
-    "level": "分化偏暖/质量降级",
-    "direction": "五大核心指数全线上涨、涨停74对跌停4偏暖；但上涨2856家对下跌2535家接近，V2 shadow 标记高位股与外盘抑制，且炸板和强势股分组缺失，不能按全面进攻处理。",
+    "score": 46,
+    "level": "分化偏冷/质量降级",
+    "direction": "五大核心指数3涨2跌，防御行业居前，通信设备仍领跌；涨跌停池和全A宽度缺失，情绪分数按降权上限处理。",
     "components": [
       {
-        "name": "涨跌停结构",
-        "score": 75,
+        "name": "核心指数",
+        "score": 48,
         "weight_pct": 35,
-        "evidence": "东方财富同口径涨停74只、跌停4只，最高4板。"
+        "evidence": "上证+0.67%、深成指+0.04%、沪深300+0.16%，创业板-0.73%、科创50-0.36%。"
       },
       {
-        "name": "市场宽度",
-        "score": 52,
+        "name": "行业结构",
+        "score": 50,
         "weight_pct": 30,
-        "evidence": "新浪A股公开行情上涨2856家、下跌2535家、平盘143家。"
+        "evidence": "酒店餐饮、养殖、医疗服务、贵金属、渔业居前，偏防御。"
       },
       {
-        "name": "主线扩散",
-        "score": 58,
+        "name": "科技风险",
+        "score": 35,
         "weight_pct": 20,
-        "evidence": "元件、医疗服务、化学制药、通信设备、半导体、化学制品出现涨停集中，但缺行业宽度和成交扩散。"
+        "evidence": "通信设备-3.67%仍为跌幅第一，新易盛、中际旭创收跌。"
       },
       {
-        "name": "分歧风险",
-        "score": 42,
+        "name": "数据完整性",
+        "score": 25,
         "weight_pct": 15,
-        "evidence": "V2 shadow 显示高位股和外盘抑制；同口径炸板总数缺失。"
+        "evidence": "涨跌停池、概念榜、富途复核和尾盘分钟证据缺失。"
       }
     ],
-    "method": "兜底按涨跌停、宽度、主线和分歧风险分层估算；因关键字段缺失，分数上限按V2 neutral/degraded结论限制。",
+    "method": "因涨跌停和全A宽度缺失，未使用完整温度公式；只作降级估算，不作为交易触发。",
     "quality_state": "degraded"
   },
   "review": {
-    "summary": "8月7日A股收盘指数全线上涨，科创50和创业板弹性较强；涨停74对跌停4显示情绪修复，但上涨/下跌家数仍接近，V2 shadow 同日事实把主线和情绪均标为降级/待确认，因此盘后结论是“指数修复、题材局部集中、追高仍需防守”。",
+    "summary": "15:00收盘证据确认分化收敛但没有全面反转：上证指数+0.67%、深证成指+0.04%、创业板指-0.73%、科创50-0.36%、沪深300+0.16%，估算沪深两市成交额约25231.03亿元；行业前排为酒店餐饮+4.22%、养殖业+4.19%、医疗服务+3.92%、贵金属+3.89%、渔业+3.56%，后排为通信设备-3.67%、自动化设备-1.62%、元件-1.25%、光学光电子-1.09%、计算机设备-0.63%。结论是防御轮动仍占优，酒店餐饮、养殖、医疗服务、贵金属和渔业留在前排；科技硬件只出现局部修复，通信设备仍为跌幅第一，CPO双核心新易盛、中际旭创分别收跌，半导体设备以中微公司和科创半导体ETF局部强势为主。涨跌停池、概念榜和富途逐笔复核仍未形成完整快照，因此强主线确认继续降权，只保存当前可核验收盘证据。",
     "facts": [
-      "上证+1.02%、深成指+1.42%、创业板+1.35%、科创50+2.51%、沪深300+0.93%；全市场成交额约26827.65亿元。",
-      "新浪A股宽度：上涨2856家、下跌2535家、平盘143家，缺失报价4只。",
-      "东方财富涨跌停股池：涨停74只、跌停4只，最高4板；涨停集中在元件、医疗服务、化学制药、通信设备、半导体和化学制品。",
-      "V1 intraday 顶层 timestamp/文字结论仍指向8月6日，已剔除其过期文字，只采用内部8月7日指数和行业字段。"
+      "收盘时上证指数和沪深300红盘，深证成指小幅红盘，创业板指与科创50仍下跌；行业涨幅集中在酒店餐饮、养殖、医疗服务、贵金属和渔业，通信设备继续领跌。",
+      "五大核心指数收盘：上证指数0.67%、深证成指0.04%、创业板指-0.73%、科创50-0.36%、沪深3000.16%。",
+      "行业前排：酒店餐饮4.22%、养殖业4.19%、医疗服务3.92%、贵金属3.89%、渔业3.56%。",
+      "行业后排：通信设备-3.67%、自动化设备-1.62%、元件-1.25%、光学光电子-1.09%、计算机设备-0.63%。",
+      "行情源正常；宽度和第二行情源证据不完整，因此只做收盘阶段观察结论。"
     ],
     "inferences": [
-      "指数强于宽度，说明修复更多集中在权重、成长指数和部分题材代表，而不是全市场一致进攻。",
-      "元件、医疗服务/化学制药、通信设备、半导体都有涨停集中，但缺少行业内多数股票和成交额扩散证据，不能升级为确定强主线。",
-      "外盘与高位股风险仍是反证；V2 shadow 结论要求先防守，等跌停减少、高位股止跌、代表股转强。"
+      "资金从午后急跌中修复了一部分指数，但主线仍偏防御和局部修复，科技硬件没有形成全线回流。",
+      "防御轮动和局部修复强于科技硬件主线，缺少宽度证据时不能升级为强主线。"
     ],
     "suggestions": [
-      "次日先核验涨停留存和行业宽度，不把单日涨停集中直接当作可交易主线。",
-      "若核心代表股低开后放量收复开盘价，且同题材至少2只代表股同步转强，再从观察转验证。",
-      "若高位股继续放量下跌或跌停/炸板扩大，按风险释放未结束处理。"
+      "是否行动：不因收盘修复追涨；只把防御前排和中微公司/科创半导体ETF的局部强势作为次日竞价观察条件。加强条件是明日竞价防御前排不兑现且科技硬件跌幅榜明显收敛；失效条件是通信设备继续领跌或防御板块高开回落。",
+      "次日优先核验防御前排是否高开兑现、通信设备是否脱离跌幅榜、涨跌停池和概念榜是否补齐。"
     ],
     "evidence": [
       {
         "type": "price_action",
-        "metric": "index_count_up",
-        "value": 5,
+        "metric": "pct",
+        "value": 0.67,
         "source": "腾讯财经HTTP",
-        "timestamp": "2026-08-07T15:35:51+08:00",
-        "detail": "五大核心指数全部上涨，上证+1.02%、深成指+1.42%、创业板+1.35%、科创50+2.51%、沪深300+0.93%。"
+        "timestamp": "2026-08-10T15:04:00+08:00",
+        "detail": "上证指数 0.67% 收于3966.59"
       },
       {
-        "type": "breadth",
-        "metric": "advance_decline",
-        "value": "2856/2535",
-        "source": "新浪财经A股公开行情",
-        "timestamp": "2026-08-07T15:00:06+08:00",
-        "detail": "上涨2856家、下跌2535家、平盘143家，宽度接近均衡。"
+        "type": "price_action",
+        "metric": "pct",
+        "value": 0.04,
+        "source": "腾讯财经HTTP",
+        "timestamp": "2026-08-10T15:04:27+08:00",
+        "detail": "深证成指 0.04% 收于14316.96"
       },
       {
-        "type": "limit_status",
-        "metric": "limit_up_down",
-        "value": "74/4",
-        "source": "东方财富涨跌停股池",
-        "timestamp": "2026-08-07T15:00:00+08:00",
-        "detail": "涨停74只、跌停4只，最高4板；炸板总数缺失。"
+        "type": "price_action",
+        "metric": "pct",
+        "value": -0.73,
+        "source": "腾讯财经HTTP",
+        "timestamp": "2026-08-10T15:04:42+08:00",
+        "detail": "创业板指 -0.73% 收于3537.21"
+      },
+      {
+        "type": "price_action",
+        "metric": "pct",
+        "value": -0.36,
+        "source": "腾讯财经HTTP",
+        "timestamp": "2026-08-10T15:04:00+08:00",
+        "detail": "科创50 -0.36% 收于1737.77"
+      },
+      {
+        "type": "price_action",
+        "metric": "pct",
+        "value": 0.16,
+        "source": "腾讯财经HTTP",
+        "timestamp": "2026-08-10T15:04:00+08:00",
+        "detail": "沪深300 0.16% 收于4702.02"
       },
       {
         "type": "volume",
         "metric": "turnover_yi",
-        "value": 26827.65,
-        "source": "新浪财经A股公开行情",
-        "timestamp": "2026-08-07T15:00:06+08:00",
-        "detail": "全市场成交额约26827.65亿元，缺上一交易日同口径基线。"
+        "value": 25231.03,
+        "source": "腾讯财经HTTP",
+        "timestamp": "2026-08-10T15:04:42+08:00",
+        "detail": "沪深两市成交额估算 25231.03 亿元"
+      },
+      {
+        "type": "breadth",
+        "metric": "pct",
+        "value": 4.22,
+        "source": "腾讯财经HTTP",
+        "timestamp": "2026-08-10T15:02:21+08:00",
+        "detail": "酒店餐饮 4.22%"
+      },
+      {
+        "type": "breadth",
+        "metric": "pct",
+        "value": 4.19,
+        "source": "腾讯财经HTTP",
+        "timestamp": "2026-08-10T15:02:21+08:00",
+        "detail": "养殖业 4.19%"
+      },
+      {
+        "type": "breadth",
+        "metric": "pct",
+        "value": 3.92,
+        "source": "腾讯财经HTTP",
+        "timestamp": "2026-08-10T15:02:21+08:00",
+        "detail": "医疗服务 3.92%"
+      },
+      {
+        "type": "breadth",
+        "metric": "pct",
+        "value": -3.67,
+        "source": "腾讯财经HTTP",
+        "timestamp": "2026-08-10T15:02:21+08:00",
+        "detail": "通信设备 -3.67%"
+      },
+      {
+        "type": "breadth",
+        "metric": "pct",
+        "value": -1.62,
+        "source": "腾讯财经HTTP",
+        "timestamp": "2026-08-10T15:02:21+08:00",
+        "detail": "自动化设备 -1.62%"
       },
       {
         "type": "source_citation",
-        "metric": "v2_shadow_state",
-        "value": "degraded",
-        "source": "V2.2 shadow market-environment",
-        "timestamp": "2026-08-07T15:15:11+08:00",
-        "detail": "高位股回落，外盘相关方向也偏弱；全市场成交额26827.7亿元。由于没有可比的上一交易日成交额，暂时无法判断今天是放量还是缩量。当前不适合追高。"
+        "metric": "source_status",
+        "value": "degraded_width_and_second_source",
+        "source": "本地盘中监控",
+        "timestamp": "2026-08-10T15:04:56+08:00",
+        "detail": "行情源正常；宽度和第二行情源证据不完整，因此只做收盘阶段观察结论。"
       }
     ],
     "quality_state": "degraded"
   },
   "closing_auction_patch": {
-    "summary": "当天兜底未取得可核验的14:55-15:00指数分钟快照和尾盘个股排序变化；只确认15:00/15:35收盘事实，不能推断收盘竞价方向。",
+    "summary": "本阶段只取得15:00/15:04收盘事实，未取得可核验14:56-15:00指数分钟快照和尾盘个股排序变化；不能推断收盘竞价方向。",
+    "snapshot_1456": null,
+    "snapshot_1500": {
+      "timestamp": "2026-08-10T15:04:42+08:00",
+      "indices": {
+        "上证指数": {
+          "price": 3966.59,
+          "pct": 0.67
+        },
+        "深证成指": {
+          "price": 14316.96,
+          "pct": 0.04
+        },
+        "创业板指": {
+          "price": 3537.21,
+          "pct": -0.73
+        },
+        "科创50": {
+          "price": 1737.77,
+          "pct": -0.36
+        },
+        "沪深300": {
+          "price": 4702.02,
+          "pct": 0.16
+        }
+      }
+    },
+    "deviation": {
+      "description": "缺14:56快照，无法计算14:56至15:00偏离。",
+      "details": {}
+    },
+    "tail_20min": {
+      "volume_ratio": null,
+      "direction": "unknown",
+      "note": "未取得尾盘分钟成交证据。"
+    },
+    "auction_reversal_stocks": [],
     "signals": [],
-    "impact": "尾盘证据缺失时，不因指数收涨或涨停集中升级为一致进攻；次日必须用开盘承接、封板留存和核心代表股同步来补确认。",
+    "impact": "尾盘证据缺失时，不因指数收盘修复或行业前排留存升级为一致进攻；次日需用竞价承接和宽度补证。",
     "watch_next_day": [
-      "补核14:55-15:00指数分钟线与代表股尾盘变化；未补齐前尾盘方向保持缺失。",
-      "元件、医疗服务/化学制药、通信设备、半导体至少各自验证封板留存和非涨停中军承接。",
-      "若跌停从4只继续扩大或高位股出现放量下杀，按风险释放优先。"
+      "防御前排是否高开不兑现",
+      "通信设备是否脱离跌幅榜",
+      "中微公司和半导体ETF局部强势能否扩散",
+      "涨跌停池、概念榜、富途复核是否补齐"
     ],
     "missing": [
-      "14:55-15:00指数分钟快照",
+      "14:56指数分钟快照",
       "尾盘资金方向",
-      "auction_reversal_stocks"
+      "auction_reversal_stocks",
+      "富途逐笔复核"
     ],
-    "source": "兜底检查未发现同日可核验尾盘分钟文件；未使用8月6日 closing_auction_patch。"
+    "source": "V1 intraday 15:00收盘证据；未补造尾盘历史。"
   },
   "hotspots": [
     {
-      "name": "元件",
-      "status": "观察线/涨停集中待确认",
-      "continuity": "当天涨停池出现集中；兜底未取得前5个交易日同口径连续性，暂不声明连续强化。",
-      "risk": "缺少完整行业宽度、行业成交额和非涨停中军确认；若次日封板留存不足或核心代表股回落，降为一日轮动。",
-      "stocks": [
-        {
-          "name": "宝鼎科技",
-          "code": "sz002552",
-          "change_pct": 10.01,
-          "source": "东方财富涨跌停股池",
-          "quote_time": "2026-08-07T15:00:00+08:00",
-          "role": "涨停代表"
-        },
-        {
-          "name": "景旺电子",
-          "code": "sh603228",
-          "change_pct": 10.0,
-          "source": "东方财富涨跌停股池",
-          "quote_time": "2026-08-07T15:00:00+08:00",
-          "role": "涨停代表"
-        },
-        {
-          "name": "方正科技",
-          "code": "sh600601",
-          "change_pct": 10.0,
-          "source": "东方财富涨跌停股池",
-          "quote_time": "2026-08-07T15:00:00+08:00",
-          "role": "涨停代表"
-        }
+      "name": "消费防御/农业养殖",
+      "status": "收盘留在前排，仍偏防御轮动",
+      "continuity": "仅基于当日收盘可核验证据；缺涨跌停池、概念榜和第二行情源完整快照，不声明连续强化。",
+      "facts": [
+        "酒店餐饮、养殖业、贵金属、渔业均进入收盘行业涨幅前五。",
+        "上证指数和沪深300红盘，但创业板指、科创50仍绿，说明指数修复不等于成长线全面修复。"
       ],
-      "evidence": [
-        {
-          "type": "limit_status",
-          "metric": "limit_up_count",
-          "value": 110,
-          "source": "东方财富涨跌停股池",
-          "timestamp": "2026-08-07T15:00:00+08:00",
-          "detail": "同口径涨停11只、跌停0只。"
-        },
-        {
-          "type": "source_citation",
-          "metric": "mainline_quality",
-          "value": "degraded",
-          "source": "V2 shadow mainline-structure",
-          "timestamp": "2026-08-07T15:00:00+08:00",
-          "detail": "涨停代表较集中，但仍需行业宽度、成交和非涨停中军确认。"
-        },
-        {
-          "type": "price_action",
-          "metric": "industry_change_pct",
-          "value": 6.74,
-          "source": "腾讯财经HTTP",
-          "timestamp": "2026-08-07T15:00:06+08:00",
-          "detail": "元件行业涨幅6.74%"
-        }
-      ]
-    },
-    {
-      "name": "医疗服务",
-      "status": "观察线/涨停集中待确认",
-      "continuity": "当天涨停池出现集中；兜底未取得前5个交易日同口径连续性，暂不声明连续强化。",
-      "risk": "缺少完整行业宽度、行业成交额和非涨停中军确认；若次日封板留存不足或核心代表股回落，降为一日轮动。 医药方向还需区分事件催化、CXO/创新药/药店等子线，不能只按行业涨幅外推。",
-      "stocks": [
-        {
-          "name": "百花医药",
-          "code": "sh600721",
-          "change_pct": 10.02,
-          "source": "东方财富涨跌停股池",
-          "quote_time": "2026-08-07T15:00:00+08:00",
-          "role": "涨停代表"
-        },
-        {
-          "name": "药康生物",
-          "code": "sh688046",
-          "change_pct": 19.99,
-          "source": "东方财富涨跌停股池",
-          "quote_time": "2026-08-07T15:00:00+08:00",
-          "role": "涨停代表"
-        },
-        {
-          "name": "凯莱英",
-          "code": "sz002821",
-          "change_pct": 10.0,
-          "source": "东方财富涨跌停股池",
-          "quote_time": "2026-08-07T15:00:00+08:00",
-          "role": "涨停代表"
-        }
-      ],
-      "evidence": [
-        {
-          "type": "limit_status",
-          "metric": "limit_up_count",
-          "value": 80,
-          "source": "东方财富涨跌停股池",
-          "timestamp": "2026-08-07T15:00:00+08:00",
-          "detail": "同口径涨停8只、跌停0只。"
-        },
-        {
-          "type": "source_citation",
-          "metric": "mainline_quality",
-          "value": "degraded",
-          "source": "V2 shadow mainline-structure",
-          "timestamp": "2026-08-07T15:00:00+08:00",
-          "detail": "涨停代表较集中，但仍需行业宽度、成交和非涨停中军确认。"
-        },
-        {
-          "type": "price_action",
-          "metric": "industry_change_pct",
-          "value": 8.4,
-          "source": "腾讯财经HTTP",
-          "timestamp": "2026-08-07T15:00:06+08:00",
-          "detail": "医疗服务行业涨幅8.4%"
-        }
-      ]
-    },
-    {
-      "name": "化学制药",
-      "status": "观察线/涨停集中待确认",
-      "continuity": "当天涨停池出现集中；兜底未取得前5个交易日同口径连续性，暂不声明连续强化。",
-      "risk": "缺少完整行业宽度、行业成交额和非涨停中军确认；若次日封板留存不足或核心代表股回落，降为一日轮动。 医药方向还需区分事件催化、CXO/创新药/药店等子线，不能只按行业涨幅外推。",
-      "stocks": [
-        {
-          "name": "哈药股份",
-          "code": "sh600664",
-          "change_pct": 9.97,
-          "source": "东方财富涨跌停股池",
-          "quote_time": "2026-08-07T15:00:00+08:00",
-          "role": "涨停代表"
-        },
-        {
-          "name": "冀衡医药",
-          "code": "sz002742",
-          "change_pct": 10.13,
-          "source": "东方财富涨跌停股池",
-          "quote_time": "2026-08-07T15:00:00+08:00",
-          "role": "涨停代表"
-        },
-        {
-          "name": "海正药业",
-          "code": "sh600267",
-          "change_pct": 9.98,
-          "source": "东方财富涨跌停股池",
-          "quote_time": "2026-08-07T15:00:00+08:00",
-          "role": "涨停代表"
-        }
-      ],
-      "evidence": [
-        {
-          "type": "limit_status",
-          "metric": "limit_up_count",
-          "value": 60,
-          "source": "东方财富涨跌停股池",
-          "timestamp": "2026-08-07T15:00:00+08:00",
-          "detail": "同口径涨停6只、跌停0只。"
-        },
-        {
-          "type": "source_citation",
-          "metric": "mainline_quality",
-          "value": "degraded",
-          "source": "V2 shadow mainline-structure",
-          "timestamp": "2026-08-07T15:00:00+08:00",
-          "detail": "涨停代表较集中，但仍需行业宽度、成交和非涨停中军确认。"
-        },
-        {
-          "type": "price_action",
-          "metric": "industry_change_pct",
-          "value": 5.21,
-          "source": "腾讯财经HTTP",
-          "timestamp": "2026-08-07T15:00:06+08:00",
-          "detail": "化学制药行业涨幅5.21%"
-        }
-      ]
-    },
-    {
-      "name": "通信设备",
-      "status": "观察线/涨停集中待确认",
-      "continuity": "当天涨停池出现集中；兜底未取得前5个交易日同口径连续性，暂不声明连续强化。",
-      "risk": "缺少完整行业宽度、行业成交额和非涨停中军确认；若次日封板留存不足或核心代表股回落，降为一日轮动。",
-      "stocks": [
-        {
-          "name": "汇绿生态",
-          "code": "sz001267",
-          "change_pct": 10.0,
-          "source": "东方财富涨跌停股池",
-          "quote_time": "2026-08-07T15:00:00+08:00",
-          "role": "涨停代表"
-        },
-        {
-          "name": "通宇通讯",
-          "code": "sz002792",
-          "change_pct": 10.0,
-          "source": "东方财富涨跌停股池",
-          "quote_time": "2026-08-07T15:00:00+08:00",
-          "role": "涨停代表"
-        },
-        {
-          "name": "武汉凡谷",
-          "code": "sz002194",
-          "change_pct": 10.01,
-          "source": "东方财富涨跌停股池",
-          "quote_time": "2026-08-07T15:00:00+08:00",
-          "role": "涨停代表"
-        }
-      ],
-      "evidence": [
-        {
-          "type": "limit_status",
-          "metric": "limit_up_count",
-          "value": 40,
-          "source": "东方财富涨跌停股池",
-          "timestamp": "2026-08-07T15:00:00+08:00",
-          "detail": "同口径涨停4只、跌停0只。"
-        },
-        {
-          "type": "source_citation",
-          "metric": "mainline_quality",
-          "value": "degraded",
-          "source": "V2 shadow mainline-structure",
-          "timestamp": "2026-08-07T15:00:00+08:00",
-          "detail": "涨停代表较集中，但仍需行业宽度、成交和非涨停中军确认。"
-        }
-      ]
-    },
-    {
-      "name": "半导体",
-      "status": "观察线/涨停集中待确认",
-      "continuity": "当天涨停池出现集中；兜底未取得前5个交易日同口径连续性，暂不声明连续强化。",
-      "risk": "缺少完整行业宽度、行业成交额和非涨停中军确认；若次日封板留存不足或核心代表股回落，降为一日轮动。",
-      "stocks": [
-        {
-          "name": "有研新材",
-          "code": "sh600206",
-          "change_pct": 10.0,
-          "source": "东方财富涨跌停股池",
-          "quote_time": "2026-08-07T15:00:00+08:00",
-          "role": "涨停代表"
-        },
-        {
-          "name": "锴威特",
-          "code": "sh688693",
-          "change_pct": 19.99,
-          "source": "东方财富涨跌停股池",
-          "quote_time": "2026-08-07T15:00:00+08:00",
-          "role": "涨停代表"
-        },
-        {
-          "name": "先导基电",
-          "code": "sh600641",
-          "change_pct": 9.99,
-          "source": "东方财富涨跌停股池",
-          "quote_time": "2026-08-07T15:00:00+08:00",
-          "role": "涨停代表"
-        }
-      ],
-      "evidence": [
-        {
-          "type": "limit_status",
-          "metric": "limit_up_count",
-          "value": 40,
-          "source": "东方财富涨跌停股池",
-          "timestamp": "2026-08-07T15:00:00+08:00",
-          "detail": "同口径涨停4只、跌停0只。"
-        },
-        {
-          "type": "source_citation",
-          "metric": "mainline_quality",
-          "value": "degraded",
-          "source": "V2 shadow mainline-structure",
-          "timestamp": "2026-08-07T15:00:00+08:00",
-          "detail": "涨停代表较集中，但仍需行业宽度、成交和非涨停中军确认。"
-        }
-      ]
-    },
-    {
-      "name": "化学制品",
-      "status": "观察线/涨停集中待确认",
-      "continuity": "当天涨停池出现集中；兜底未取得前5个交易日同口径连续性，暂不声明连续强化。",
-      "risk": "缺少完整行业宽度、行业成交额和非涨停中军确认；若次日封板留存不足或核心代表股回落，降为一日轮动。",
-      "stocks": [
-        {
-          "name": "和远气体",
-          "code": "sz002971",
-          "change_pct": 10.01,
-          "source": "东方财富涨跌停股池",
-          "quote_time": "2026-08-07T15:00:00+08:00",
-          "role": "涨停代表"
-        },
-        {
-          "name": "保利联合",
-          "code": "sz002037",
-          "change_pct": 10.01,
-          "source": "东方财富涨跌停股池",
-          "quote_time": "2026-08-07T15:00:00+08:00",
-          "role": "涨停代表"
-        },
-        {
-          "name": "中化国际",
-          "code": "sh600500",
-          "change_pct": 9.98,
-          "source": "东方财富涨跌停股池",
-          "quote_time": "2026-08-07T15:00:00+08:00",
-          "role": "涨停代表"
-        }
-      ],
-      "evidence": [
-        {
-          "type": "limit_status",
-          "metric": "limit_up_count",
-          "value": 30,
-          "source": "东方财富涨跌停股池",
-          "timestamp": "2026-08-07T15:00:00+08:00",
-          "detail": "同口径涨停3只、跌停0只。"
-        },
-        {
-          "type": "source_citation",
-          "metric": "mainline_quality",
-          "value": "degraded",
-          "source": "V2 shadow mainline-structure",
-          "timestamp": "2026-08-07T15:00:00+08:00",
-          "detail": "涨停代表较集中，但仍需行业宽度、成交和非涨停中军确认。"
-        }
-      ]
-    },
-    {
-      "name": "高位股与外盘映射风险",
-      "status": "风险线/抑制追高",
-      "continuity": "V2 shadow 同日市场环境显示 position_fragility 与 external_constraint 为 suppress；这是当天收盘风险约束，不改写为交易信号。",
-      "risk": "若高位股继续放量下跌、外盘科技映射继续弱，A股局部强线容易转为分化或冲高回落。",
+      "inference": "防御方向是收盘最清晰的资金停留地，但缺少涨停池宽度证据，不能升级为强主线。",
+      "action": "是否行动：不追涨；加强条件是次日竞价仍有宽度且高开不兑现，失效条件是开盘跌出行业前排。",
+      "risk": "若次日竞价高开回落或行业跌出前排，今日收盘留存强度失效。",
       "stocks": [],
       "evidence": [
         {
-          "type": "source_citation",
-          "metric": "environment_state",
-          "value": "degraded",
-          "source": "V2.2 shadow market-environment",
-          "timestamp": "2026-08-07T15:15:11+08:00",
-          "detail": "高位股和外盘仍偏弱，先防守"
+          "type": "breadth",
+          "metric": "pct",
+          "value": 4.22,
+          "source": "腾讯财经HTTP",
+          "timestamp": "2026-08-10T15:02:21+08:00",
+          "detail": "酒店餐饮 +4.22%"
         },
         {
-          "type": "price_action",
-          "metric": "csi2000_change_pct",
-          "value": 1.6068,
-          "source": "V2 shadow 中证2000代理",
-          "timestamp": "2026-08-07T15:15:11+08:00",
-          "detail": "中证2000指数（新浪行情）最近交易日涨跌幅 1.61%；仅描述市场结构，不推断小登题材。"
+          "type": "breadth",
+          "metric": "pct",
+          "value": 4.19,
+          "source": "腾讯财经HTTP",
+          "timestamp": "2026-08-10T15:02:21+08:00",
+          "detail": "养殖业 +4.19%"
+        },
+        {
+          "type": "breadth",
+          "metric": "pct",
+          "value": 3.89,
+          "source": "腾讯财经HTTP",
+          "timestamp": "2026-08-10T15:02:21+08:00",
+          "detail": "贵金属 +3.89%"
+        },
+        {
+          "type": "breadth",
+          "metric": "pct",
+          "value": 3.56,
+          "source": "腾讯财经HTTP",
+          "timestamp": "2026-08-10T15:02:21+08:00",
+          "detail": "渔业 +3.56%"
+        }
+      ]
+    },
+    {
+      "name": "医药修复链",
+      "status": "医疗服务前排，ETF红盘留存",
+      "continuity": "仅基于当日收盘可核验证据；缺涨跌停池、概念榜和第二行情源完整快照，不声明连续强化。",
+      "facts": [
+        "医疗服务收盘位居行业涨幅前列，医药ETF、创新药ETF和港股通创新药ETF均收红。"
+      ],
+      "inference": "医药是防御修复线的一部分，强度可观察，但仍需要涨停宽度和成交补证。",
+      "action": "是否行动：只等宽度补证；加强条件是医疗服务继续前排且医药ETF放量，失效条件是代表ETF回落到平盘下方。",
+      "risk": "若次日竞价高开回落或行业跌出前排，今日收盘留存强度失效。",
+      "stocks": [
+        {
+          "name": "医药ETF易方达",
+          "code": "sh512010",
+          "price": 0.405,
+          "change_pct": 2.27,
+          "source": "腾讯财经HTTP",
+          "quote_time": "2026-08-10T15:04:55+08:00",
+          "role": "医药修复"
+        },
+        {
+          "name": "创新药ETF广发",
+          "code": "sh515120",
+          "price": 0.687,
+          "change_pct": 1.03,
+          "source": "腾讯财经HTTP",
+          "quote_time": "2026-08-10T15:04:55+08:00",
+          "role": "医药修复"
+        },
+        {
+          "name": "港股通创新药ETF汇添富",
+          "code": "sz159570",
+          "price": 1.477,
+          "change_pct": 1.03,
+          "source": "腾讯财经HTTP",
+          "quote_time": "2026-08-10T15:00:31+08:00",
+          "role": "医药修复"
+        }
+      ],
+      "evidence": [
+        {
+          "type": "breadth",
+          "metric": "pct",
+          "value": 3.92,
+          "source": "腾讯财经HTTP",
+          "timestamp": "2026-08-10T15:02:21+08:00",
+          "detail": "医疗服务 +3.92%"
+        },
+        {
+          "type": "representative_stock",
+          "metric": "pct",
+          "value": 2.27,
+          "source": "腾讯财经HTTP",
+          "timestamp": "2026-08-10T15:04:55+08:00",
+          "detail": "医药ETF易方达 sh512010 +2.27%，价格0.405"
+        },
+        {
+          "type": "representative_stock",
+          "metric": "pct",
+          "value": 1.03,
+          "source": "腾讯财经HTTP",
+          "timestamp": "2026-08-10T15:04:55+08:00",
+          "detail": "创新药ETF广发 sh515120 +1.03%，价格0.687"
+        },
+        {
+          "type": "representative_stock",
+          "metric": "pct",
+          "value": 1.03,
+          "source": "腾讯财经HTTP",
+          "timestamp": "2026-08-10T15:00:31+08:00",
+          "detail": "港股通创新药ETF汇添富 sz159570 +1.03%，价格1.477"
+        }
+      ]
+    },
+    {
+      "name": "CPO/交换机/通信设备",
+      "status": "通信设备收盘仍领跌，风险未解除",
+      "continuity": "仅基于当日收盘可核验证据；缺涨跌停池、概念榜和第二行情源完整快照，不声明连续强化。",
+      "facts": [
+        "通信设备仍为行业跌幅第一。",
+        "新易盛、中际旭创深跌，锐捷网络和盛科通信-U局部红盘不足以代表板块反转。"
+      ],
+      "inference": "AI硬件链只从盘中急跌进入局部分化，盘前科技映射没有兑现为A股主线。",
+      "action": "是否行动：风险方向继续回避；加强条件是通信设备脱离跌幅榜且至少3只CPO/交换机核心转红，失效条件是双核心继续扩大跌幅或板块继续末位。",
+      "risk": "若通信设备继续领跌或CPO双核心扩大跌幅，科技硬件修复失效。",
+      "stocks": [
+        {
+          "name": "新易盛",
+          "code": "sz300502",
+          "price": 399.6,
+          "change_pct": -5.07,
+          "source": "腾讯财经HTTP",
+          "quote_time": "2026-08-10T15:00:31+08:00",
+          "role": "CPO/光模块"
+        },
+        {
+          "name": "中际旭创",
+          "code": "sz300308",
+          "price": 864.58,
+          "change_pct": -6.01,
+          "source": "腾讯财经HTTP",
+          "quote_time": "2026-08-10T15:00:31+08:00",
+          "role": "CPO/光模块"
+        },
+        {
+          "name": "锐捷网络",
+          "code": "sz301165",
+          "price": 121.2,
+          "change_pct": 2.56,
+          "source": "腾讯财经HTTP",
+          "quote_time": "2026-08-10T15:00:31+08:00",
+          "role": "交换机"
+        },
+        {
+          "name": "盛科通信-U",
+          "code": "sh688702",
+          "price": 403.96,
+          "change_pct": 0.49,
+          "source": "腾讯财经HTTP",
+          "quote_time": "2026-08-10T15:04:54+08:00",
+          "role": "交换机"
+        },
+        {
+          "name": "紫光股份",
+          "code": "sz000938",
+          "price": 37.63,
+          "change_pct": -0.97,
+          "source": "腾讯财经HTTP",
+          "quote_time": "2026-08-10T15:00:31+08:00",
+          "role": "交换机"
+        },
+        {
+          "name": "中兴通讯",
+          "code": "sz000063",
+          "price": 34.3,
+          "change_pct": -1.15,
+          "source": "腾讯财经HTTP",
+          "quote_time": "2026-08-10T15:00:31+08:00",
+          "role": "交换机"
+        },
+        {
+          "name": "菲菱科思",
+          "code": "sz301191",
+          "price": 93.38,
+          "change_pct": -2.4,
+          "source": "腾讯财经HTTP",
+          "quote_time": "2026-08-10T15:00:31+08:00",
+          "role": "交换机"
+        },
+        {
+          "name": "沪电股份",
+          "code": "sz002463",
+          "price": 122.7,
+          "change_pct": -2.52,
+          "source": "腾讯财经HTTP",
+          "quote_time": "2026-08-10T15:00:31+08:00",
+          "role": "PCB"
+        }
+      ],
+      "evidence": [
+        {
+          "type": "breadth",
+          "metric": "pct",
+          "value": -3.67,
+          "source": "腾讯财经HTTP",
+          "timestamp": "2026-08-10T15:02:21+08:00",
+          "detail": "通信设备 -3.67%"
+        },
+        {
+          "type": "representative_stock",
+          "metric": "pct",
+          "value": -5.07,
+          "source": "腾讯财经HTTP",
+          "timestamp": "2026-08-10T15:00:31+08:00",
+          "detail": "新易盛 sz300502 -5.07%，价格399.6"
+        },
+        {
+          "type": "representative_stock",
+          "metric": "pct",
+          "value": -6.01,
+          "source": "腾讯财经HTTP",
+          "timestamp": "2026-08-10T15:00:31+08:00",
+          "detail": "中际旭创 sz300308 -6.01%，价格864.58"
+        },
+        {
+          "type": "representative_stock",
+          "metric": "pct",
+          "value": 2.56,
+          "source": "腾讯财经HTTP",
+          "timestamp": "2026-08-10T15:00:31+08:00",
+          "detail": "锐捷网络 sz301165 +2.56%，价格121.2"
+        },
+        {
+          "type": "representative_stock",
+          "metric": "pct",
+          "value": 0.49,
+          "source": "腾讯财经HTTP",
+          "timestamp": "2026-08-10T15:04:54+08:00",
+          "detail": "盛科通信-U sh688702 +0.49%，价格403.96"
+        },
+        {
+          "type": "representative_stock",
+          "metric": "pct",
+          "value": -0.97,
+          "source": "腾讯财经HTTP",
+          "timestamp": "2026-08-10T15:00:31+08:00",
+          "detail": "紫光股份 sz000938 -0.97%，价格37.63"
+        },
+        {
+          "type": "representative_stock",
+          "metric": "pct",
+          "value": -1.15,
+          "source": "腾讯财经HTTP",
+          "timestamp": "2026-08-10T15:00:31+08:00",
+          "detail": "中兴通讯 sz000063 -1.15%，价格34.3"
+        },
+        {
+          "type": "representative_stock",
+          "metric": "pct",
+          "value": -2.4,
+          "source": "腾讯财经HTTP",
+          "timestamp": "2026-08-10T15:00:31+08:00",
+          "detail": "菲菱科思 sz301191 -2.40%，价格93.38"
+        },
+        {
+          "type": "representative_stock",
+          "metric": "pct",
+          "value": -2.52,
+          "source": "腾讯财经HTTP",
+          "timestamp": "2026-08-10T15:00:31+08:00",
+          "detail": "沪电股份 sz002463 -2.52%，价格122.7"
+        }
+      ]
+    },
+    {
+      "name": "半导体设备/科创硬件",
+      "status": "中微单点强势，整体仍分化",
+      "continuity": "仅基于当日收盘可核验证据；缺涨跌停池、概念榜和第二行情源完整快照，不声明连续强化。",
+      "facts": [
+        "中微公司收盘强势，科创半导体ETF上涨。",
+        "科创50仍收跌，澜起科技下跌，科创芯片ETF仅小幅红盘。"
+      ],
+      "inference": "设备单点强势只能作为观察池样本，不能升级为科创硬件整体修复。",
+      "action": "是否行动：继续观察不升级；加强条件是科创50转强、电子硬件脱离跌幅榜且设备/材料核心同步放量，失效条件是中微高开兑现或澜起继续下探。",
+      "risk": "若次日竞价高开回落或行业跌出前排，今日收盘留存强度失效。",
+      "stocks": [
+        {
+          "name": "中微公司",
+          "code": "sh688012",
+          "price": 389.99,
+          "change_pct": 6.08,
+          "source": "腾讯财经HTTP",
+          "quote_time": "2026-08-10T15:04:54+08:00",
+          "role": "半导体设备"
+        },
+        {
+          "name": "科创半导体ETF华夏",
+          "code": "sh588170",
+          "price": 1.049,
+          "change_pct": 3.35,
+          "source": "腾讯财经HTTP",
+          "quote_time": "2026-08-10T15:04:54+08:00",
+          "role": "半导体/芯片ETF"
+        },
+        {
+          "name": "科创芯片ETF易方达",
+          "code": "sh589130",
+          "price": 1.448,
+          "change_pct": 0.07,
+          "source": "腾讯财经HTTP",
+          "quote_time": "2026-08-10T15:04:54+08:00",
+          "role": "半导体/芯片ETF"
+        },
+        {
+          "name": "澜起科技",
+          "code": "sh688008",
+          "price": 206.92,
+          "change_pct": -3.99,
+          "source": "腾讯财经HTTP",
+          "quote_time": "2026-08-10T15:04:54+08:00",
+          "role": "存储/HBM"
+        }
+      ],
+      "evidence": [
+        {
+          "type": "breadth",
+          "metric": "pct",
+          "value": -0.63,
+          "source": "腾讯财经HTTP",
+          "timestamp": "2026-08-10T15:02:21+08:00",
+          "detail": "计算机设备 -0.63%"
+        },
+        {
+          "type": "representative_stock",
+          "metric": "pct",
+          "value": 6.08,
+          "source": "腾讯财经HTTP",
+          "timestamp": "2026-08-10T15:04:54+08:00",
+          "detail": "中微公司 sh688012 +6.08%，价格389.99"
+        },
+        {
+          "type": "representative_stock",
+          "metric": "pct",
+          "value": 3.35,
+          "source": "腾讯财经HTTP",
+          "timestamp": "2026-08-10T15:04:54+08:00",
+          "detail": "科创半导体ETF华夏 sh588170 +3.35%，价格1.049"
+        },
+        {
+          "type": "representative_stock",
+          "metric": "pct",
+          "value": 0.07,
+          "source": "腾讯财经HTTP",
+          "timestamp": "2026-08-10T15:04:54+08:00",
+          "detail": "科创芯片ETF易方达 sh589130 +0.07%，价格1.448"
+        },
+        {
+          "type": "representative_stock",
+          "metric": "pct",
+          "value": -3.99,
+          "source": "腾讯财经HTTP",
+          "timestamp": "2026-08-10T15:04:54+08:00",
+          "detail": "澜起科技 sh688008 -3.99%，价格206.92"
         }
       ]
     }
   ],
   "next_day_watch": [
-    "元件/PCB：景旺电子、方正科技等封板代表能否留存，并看生益科技、沪电股份等非涨停中军是否承接；只看涨停数不升级。",
-    "医疗服务/化学制药：医疗服务+8.40%、化学制药+5.21%和多只涨停需要事件与子线拆分；若开盘分化，按一日脉冲。",
-    "通信设备/半导体：通宇通讯、武汉凡谷、有研新材、锴威特等代表需与板块宽度同步；外盘或高位股弱时不追一致高开。",
-    "市场宽度：上涨家数需明显扩大并维持强于下跌家数；否则指数修复仍按结构性反弹。",
-    "风险核验：补齐炸板总数、20cm封板数、5%以上强势股分组和14:55-15:00尾盘证据。"
+    "防御轮动：酒店餐饮、养殖、医疗服务、贵金属和渔业若竞价高开回落，则今日留存强度失效。",
+    "医药修复：医疗服务继续前排且医药ETF放量才可加强，否则只按防御轮动。",
+    "科技硬件：通信设备脱离跌幅榜且CPO/交换机核心成组转红才可修复。",
+    "半导体设备：中微公司强势需扩散到科创50、设备材料和ETF，否则仍是单点。",
+    "数据核验：补齐涨跌停池、概念榜、全A宽度和富途复核后再调整强主线等级。"
   ],
   "next_day_watch_details": [
     {
-      "item": "元件/PCB：景旺电子、方正科技等封板代表能否留存，并看生益科技、沪电股份等非涨停中军是否承接；只看涨停数不升级。",
+      "item": "防御轮动：酒店餐饮、养殖、医疗服务、贵金属和渔业若竞价高开回落，则今日留存强度失效。",
       "type": "verification",
-      "source": "automation_fallback"
+      "source": "automation_current_close_postmarket_repair"
     },
     {
-      "item": "医疗服务/化学制药：医疗服务+8.40%、化学制药+5.21%和多只涨停需要事件与子线拆分；若开盘分化，按一日脉冲。",
+      "item": "医药修复：医疗服务继续前排且医药ETF放量才可加强，否则只按防御轮动。",
       "type": "verification",
-      "source": "automation_fallback"
+      "source": "automation_current_close_postmarket_repair"
     },
     {
-      "item": "通信设备/半导体：通宇通讯、武汉凡谷、有研新材、锴威特等代表需与板块宽度同步；外盘或高位股弱时不追一致高开。",
+      "item": "科技硬件：通信设备脱离跌幅榜且CPO/交换机核心成组转红才可修复。",
       "type": "verification",
-      "source": "automation_fallback"
+      "source": "automation_current_close_postmarket_repair"
     },
     {
-      "item": "市场宽度：上涨家数需明显扩大并维持强于下跌家数；否则指数修复仍按结构性反弹。",
+      "item": "半导体设备：中微公司强势需扩散到科创50、设备材料和ETF，否则仍是单点。",
       "type": "verification",
-      "source": "automation_fallback"
+      "source": "automation_current_close_postmarket_repair"
     },
     {
-      "item": "风险核验：补齐炸板总数、20cm封板数、5%以上强势股分组和14:55-15:00尾盘证据。",
+      "item": "数据核验：补齐涨跌停池、概念榜、全A宽度和富途复核后再调整强主线等级。",
       "type": "verification",
-      "source": "automation_fallback"
+      "source": "automation_current_close_postmarket_repair"
     }
-  ]
+  ],
+  "sources": [
+    {
+      "name": "腾讯财经HTTP",
+      "url": "https://qt.gtimg.cn",
+      "usage": "A股指数、行业排行、观察池代表股收盘行情"
+    },
+    {
+      "name": "本地盘中监控",
+      "usage": "15:00收盘阶段结论与数据完整性边界"
+    },
+    {
+      "name": "Longbridge规范化影子",
+      "usage": "本轮未作为行情、账户、自选或交易来源"
+    }
+  ],
+  "disclaimer": "仅作研究跟踪与风险管理，不构成投资建议；不交易、不修改用户资产、不切换模型。"
 }

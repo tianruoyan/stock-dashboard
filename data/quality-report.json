@@ -1,27 +1,9 @@
 {
-  "timestamp": "2026-08-10T15:07:08+08:00",
+  "timestamp": "2026-08-10T15:38:26+08:00",
   "current_signal_date": "2026-08-10",
   "status": "degraded",
-  "summary": "发现 145 个降级/需复核项（141 个价格/行情复核，5 个背景复核），核心结论可看但必须按影响分层使用。",
+  "summary": "发现 140 个降级/需复核项（138 个价格/行情复核，3 个背景复核），核心结论可看但必须按影响分层使用。",
   "issues": [
-    {
-      "severity": "warning",
-      "file": "postmarket.json",
-      "path": "",
-      "code": "stale_timestamp",
-      "message": "时间戳不是当前交易日：2026-08-07T17:10:40+08:00",
-      "impact_level": "background_review",
-      "decision_action": "仅作背景复核，不单独阻断交易判断"
-    },
-    {
-      "severity": "warning",
-      "file": "topics.json",
-      "path": "",
-      "code": "stale_timestamp",
-      "message": "时间戳不是当前交易日：2026-08-09T21:35:42+08:00",
-      "impact_level": "background_review",
-      "decision_action": "仅作背景复核，不单独阻断交易判断"
-    },
     {
       "severity": "warning",
       "file": "postmarket.json",
@@ -1290,33 +1272,6 @@
       "message": "shenwan_industry_mapping_postmarket_20260805: 历史代码主表5203只；涨超5%样本中38只未映射，占4.98%，已单列未映射，不外推分类。",
       "impact_level": "price_review",
       "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
-    },
-    {
-      "severity": "warning",
-      "file": "cross-file",
-      "path": "菲菱科思",
-      "code": "stock_pct_cross_file_conflict",
-      "message": "菲菱科思 跨文件涨跌幅差异过大：intraday.json -4.24% vs intraday.json 4.02%",
-      "impact_level": "price_review",
-      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
-    },
-    {
-      "severity": "warning",
-      "file": "cross-file",
-      "path": "宏和科技",
-      "code": "stock_pct_cross_file_conflict",
-      "message": "宏和科技 跨文件涨跌幅差异过大：alert.json -3.1093% vs intraday.json 7.7%",
-      "impact_level": "price_review",
-      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
-    },
-    {
-      "severity": "warning",
-      "file": "cross-file",
-      "path": "盛科通信-U",
-      "code": "stock_pct_cross_file_conflict",
-      "message": "盛科通信-U 跨文件涨跌幅差异过大：intraday.json -1.99% vs intraday.json 11.29%",
-      "impact_level": "price_review",
-      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
     }
   ],
   "action_plan": [
@@ -1327,17 +1282,6 @@
       "file": "alert.json",
       "code": "historical_alert_without_trusted_source",
       "problem": "盘中异动缺少可信源证明；当前阶段只降权参考，不阻断整站发布",
-      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核",
-      "next_step": "用第二行情源复核涨跌幅、quote_time 和代表股方向；未确认前只做验证。",
-      "unblock_condition": "price_review=0 或相关来源标记 trusted/cross verified。"
-    },
-    {
-      "priority": 2,
-      "impact_level": "price_review",
-      "label": "二次行情复核",
-      "file": "cross-file",
-      "code": "stock_pct_cross_file_conflict",
-      "problem": "菲菱科思 跨文件涨跌幅差异过大：intraday.json -4.24% vs intraday.json 4.02%",
       "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核",
       "next_step": "用第二行情源复核涨跌幅、quote_time 和代表股方向；未确认前只做验证。",
       "unblock_condition": "price_review=0 或相关来源标记 trusted/cross verified。"
@@ -1358,8 +1302,8 @@
       "impact_level": "background_review",
       "label": "背景来源复核",
       "file": "postmarket.json",
-      "code": "stale_timestamp",
-      "problem": "时间戳不是当前交易日：2026-08-07T17:10:40+08:00",
+      "code": "missing_closing_patch_field",
+      "problem": "closing_auction_patch.signals 缺失",
       "decision_action": "仅作背景复核，不单独阻断交易判断",
       "next_step": "补官方/交易所/公司公告来源；未补齐前不升级为核心依据。",
       "unblock_condition": "官方来源补齐或确认不影响交易触发。"
@@ -1379,9 +1323,9 @@
       "priority": 4,
       "impact_level": "background_review",
       "label": "背景来源复核",
-      "file": "topics.json",
-      "code": "stale_timestamp",
-      "problem": "时间戳不是当前交易日：2026-08-09T21:35:42+08:00",
+      "file": "evening-sentiment.json",
+      "code": "evening_not_current",
+      "problem": "晚间舆情不是当前交易日，不参与今日总控",
       "decision_action": "仅作背景复核，不单独阻断交易判断",
       "next_step": "补官方/交易所/公司公告来源；未补齐前不升级为核心依据。",
       "unblock_condition": "官方来源补齐或确认不影响交易触发。"
@@ -1389,12 +1333,12 @@
   ],
   "counts": {
     "critical": 0,
-    "warning": 145,
+    "warning": 140,
     "info": 1,
     "blocking": 0,
-    "price_review": 141,
+    "price_review": 138,
     "signal_review": 0,
-    "background_review": 5
+    "background_review": 3
   },
   "rules": [
     "异常文本、JSON解析失败、必需文件缺失为 critical。",
