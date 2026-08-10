@@ -9629,11 +9629,11 @@
     "note": "未发现经本地规范化的8月6日机构观点增量；未触碰账户、持仓、订单、自选或社区能力"
   },
   "current_run": {
-    "timestamp": "2026-08-10T09:54:18+08:00",
+    "timestamp": "2026-08-10T09:59:13+08:00",
     "phase": "上午交易盘中巡检",
-    "summary": "发现09:44:32九条、09:50:16三条新增正式提醒；09:44批次已过期转历史，09:50批次为单源候选。",
+    "summary": "09:44:32九条与09:50:16三条新增正式提醒均已通知并超过5分钟有效期，当前全部转历史。",
     "failed_or_degraded": [
-      "行情源间歇解码失败",
+      "行情源持续间歇解码失败",
       "第二行情源交叉验证缺失",
       "V2驾驶舱快照仍为上一交易日，仅作风险边界"
     ]
@@ -9805,8 +9805,8 @@
     ]
   },
   "monitor_formal_alert_20260810_095016": {
-    "status": "degraded_partial",
-    "checked_at": "2026-08-10T09:54:18+08:00",
+    "status": "historical_trigger",
+    "checked_at": "2026-08-10T09:59:13+08:00",
     "trigger_time": "2026-08-10T09:50:16+08:00",
     "alert_count": 3,
     "sectors": [
@@ -9814,21 +9814,23 @@
       "医药修复链",
       "化学制药"
     ],
-    "detail": "3条机会候选通过单源短周期门槛；cross_source_verified=false，禁止升级confirmed。",
+    "detail": "3条机会候选曾通过单源短周期门槛，但未在5分钟内完成双源确认，现仅作历史触发。",
     "notified_at": "2026-08-10T09:54:18+08:00",
     "errors": [
       "second source verification missing"
-    ]
+    ],
+    "expired_at": "2026-08-10T09:59:13+08:00"
   },
   "monitor_realtime_source_degradation_20260810_094516": {
     "status": "degraded_partial",
-    "checked_at": "2026-08-10T09:54:18+08:00",
+    "checked_at": "2026-08-10T09:59:13+08:00",
     "first_error_at": "2026-08-10T09:45:16+08:00",
-    "last_error_at": "2026-08-10T09:50:47+08:00",
+    "last_error_at": "2026-08-10T09:54:33+08:00",
     "failure_count_observed": 7,
     "provider": "本地监控上游实时行情源",
     "error": "Can not decode value starting with character '<'",
-    "detail": "行情源间歇解码失败；监控进程仍存活且日志持续更新，保留最近有效提醒并等待自动重试。",
-    "impact": "本轮所有active机会仅保持candidate，cross_source_verified=false。"
+    "detail": "行情源持续间歇解码失败；监控进程仍存活且日志持续更新，所有正式提醒已按5分钟规则转历史并等待自动重试。",
+    "impact": "当前无active candidate；历史触发不作为当前机会。",
+    "failure_count_observed_after_095016": 9
   }
 }
