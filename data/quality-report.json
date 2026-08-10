@@ -1,8 +1,8 @@
 {
-  "timestamp": "2026-08-10T09:37:34+08:00",
+  "timestamp": "2026-08-10T09:39:36+08:00",
   "current_signal_date": "2026-08-10",
   "status": "degraded",
-  "summary": "发现 143 个降级/需复核项（1 个交易阻断，135 个价格/行情复核，8 个背景复核），核心结论可看但必须按影响分层使用。",
+  "summary": "发现 142 个降级/需复核项（1 个交易阻断，136 个价格/行情复核，6 个背景复核），核心结论可看但必须按影响分层使用。",
   "issues": [
     {
       "severity": "warning",
@@ -12,15 +12,6 @@
       "message": "行情源最近一次刷新失败，程序会在网络恢复后自动重试。",
       "impact_level": "blocking",
       "decision_action": "对应信号等待重产，页面必须显示阻断"
-    },
-    {
-      "severity": "warning",
-      "file": "intraday.json",
-      "path": "",
-      "code": "stale_timestamp",
-      "message": "时间戳不是当前交易日：2026-08-06T16:09:30+08:00",
-      "impact_level": "background_review",
-      "decision_action": "仅作背景复核，不单独阻断交易判断"
     },
     {
       "severity": "warning",
@@ -1293,12 +1284,12 @@
     },
     {
       "severity": "warning",
-      "file": "theme-shifts.json",
-      "path": "",
-      "code": "stale_theme_shifts",
-      "message": "theme-shifts 日期不是当前交易日：2026-08-09",
-      "impact_level": "background_review",
-      "decision_action": "仅作背景复核，不单独阻断交易判断"
+      "file": "cross-file",
+      "path": "盛科通信-U",
+      "code": "stock_pct_cross_file_conflict",
+      "message": "盛科通信-U 跨文件涨跌幅差异过大：intraday.json 1.49% vs intraday.json 11.29%",
+      "impact_level": "price_review",
+      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
     }
   ],
   "action_plan": [
@@ -1317,23 +1308,23 @@
       "priority": 2,
       "impact_level": "price_review",
       "label": "二次行情复核",
+      "file": "cross-file",
+      "code": "stock_pct_cross_file_conflict",
+      "problem": "盛科通信-U 跨文件涨跌幅差异过大：intraday.json 1.49% vs intraday.json 11.29%",
+      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核",
+      "next_step": "用第二行情源复核涨跌幅、quote_time 和代表股方向；未确认前只做验证。",
+      "unblock_condition": "price_review=0 或相关来源标记 trusted/cross verified。"
+    },
+    {
+      "priority": 2,
+      "impact_level": "price_review",
+      "label": "二次行情复核",
       "file": "source-health.json",
       "code": "source_degraded",
       "problem": "A股补充行情源解码异常，盘中异动和个股涨跌幅需以已审计源复核。",
       "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核",
       "next_step": "用第二行情源复核涨跌幅、quote_time 和代表股方向；未确认前只做验证。",
       "unblock_condition": "price_review=0 或相关来源标记 trusted/cross verified。"
-    },
-    {
-      "priority": 4,
-      "impact_level": "background_review",
-      "label": "背景来源复核",
-      "file": "intraday.json",
-      "code": "stale_timestamp",
-      "problem": "时间戳不是当前交易日：2026-08-06T16:09:30+08:00",
-      "decision_action": "仅作背景复核，不单独阻断交易判断",
-      "next_step": "补官方/交易所/公司公告来源；未补齐前不升级为核心依据。",
-      "unblock_condition": "官方来源补齐或确认不影响交易触发。"
     },
     {
       "priority": 4,
@@ -1371,12 +1362,12 @@
   ],
   "counts": {
     "critical": 0,
-    "warning": 143,
+    "warning": 142,
     "info": 1,
     "blocking": 1,
-    "price_review": 135,
+    "price_review": 136,
     "signal_review": 0,
-    "background_review": 8
+    "background_review": 6
   },
   "rules": [
     "异常文本、JSON解析失败、必需文件缺失为 critical。",
