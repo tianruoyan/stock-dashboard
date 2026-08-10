@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-08-10T09:37:23+08:00",
+  "timestamp": "2026-08-10T09:41:57+08:00",
   "sources": {
     "tencent_http": {
       "status": "ok",
@@ -161,12 +161,12 @@
     "akshare_a_spot_watch_decode": {
       "status": "failed_active",
       "usage": "盘中观察池与题材强度刷新",
-      "checked_at": "2026-08-10T09:35:47+08:00",
+      "checked_at": "2026-08-10T09:41:51+08:00",
       "sample_count": 0,
       "errors": [
         "Can not decode value starting with character <"
       ],
-      "detail": "09:26:42至09:35:47连续刷新未取得有效行情；监控进程存活，日志距巡检约96秒，实时异动识别仍处降级。保留上一版alert.json，不生成或确认新机会。",
+      "detail": "09:26:42至09:41:51连续刷新异常；09:38:09曾产出单源风格级风险结构，随后仍无法取得有效刷新，禁止升级为confirmed。",
       "action": "下一轮自动重试；恢复前不把日内涨幅或旧快照当作短周期异动证据。"
     },
     "eastmoney_limit_pool_intraday_0930": {
@@ -9629,12 +9629,13 @@
     "note": "未发现经本地规范化的8月6日机构观点增量；未触碰账户、持仓、订单、自选或社区能力"
   },
   "current_run": {
-    "timestamp": "2026-08-10T09:37:23+08:00",
+    "timestamp": "2026-08-10T09:41:57+08:00",
     "phase": "上午交易盘中巡检",
-    "summary": "监控进程正常，主行情刷新连续解码失败，实时异动识别降级。",
+    "summary": "发现09:38:09科技风格级风险候选；单源结构成立但未通过成交和交叉验证门禁。",
     "failed_or_degraded": [
-      "主行情源连续返回HTML或非预期内容，无法解码为有效行情",
-      "未取得可信短周期行情，本轮保留上一版alert.json且不生成正式提醒"
+      "主行情源连续解码失败",
+      "成交放大仅1.00x",
+      "正式段与明细段短周期窗口标签不一致"
     ]
   },
   "sina_hk_official_close_20260806": {
@@ -9766,6 +9767,19 @@
     "detail": "Longbridge CLI公共行情返回last/change字段缺失或异常，未作为行情证据；改用AP、BLS和Yahoo正式收盘数据。未调用账户、持仓、订单、自选写入或社区发布能力。",
     "errors": [
       "public quote last/change fields missing or anomalous"
+    ]
+  },
+  "monitor_formal_alert_20260810_093809": {
+    "status": "degraded_partial",
+    "checked_at": "2026-08-10T09:41:57+08:00",
+    "trigger_time": "2026-08-10T09:38:09+08:00",
+    "alert_id": "monitor-20260810-093809-style-risk",
+    "detail": "5个科技关联板块同向回落；价格与方向宽度成立，成交仅1.00x且第二行情源不可用，按style candidate保留，不升级确认。",
+    "notified_at": "2026-08-10T09:41:57+08:00",
+    "errors": [
+      "cross_source_verified=false",
+      "volume_ratio=1.00x",
+      "formal section says 5-minute while detail section labels 3-minute"
     ]
   }
 }

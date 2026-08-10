@@ -1,6 +1,90 @@
 {
-  "timestamp": "2026-08-10T09:42:18+08:00",
-  "source_status": "invalidated",
-  "alerts": [],
-  "note": "行情源最近一次刷新失败，程序会在网络恢复后自动重试。"
+  "timestamp": "2026-08-10T09:41:57+08:00",
+  "source_status": "degraded_partial",
+  "alerts": [
+    {
+      "id": "monitor-20260810-093809-style-risk",
+      "time": "2026-08-10T09:38:09+08:00",
+      "sector": "7月半导体扩产组合",
+      "type": "小登科技风格共振转弱",
+      "reason": "09:38:09，CPO/液冷/算力/机器人/交换机五方向同向回落；CPO短周期-2.47%、下跌100%、成交1.00x、较昨同期4.41x，负反馈已由核心扩散至后排。与周一盘前AI数据中心硬件和光模块强线相反，且命中高开兑现风险线，判定为消息预期落空/冲高回落。待确认：缺第二行情源交叉验证，且成交放大未达5x。",
+      "leaders": [
+        {
+          "name": "新易盛",
+          "code": "300502",
+          "change_pct": -3.5715,
+          "score": 56.38,
+          "factors": [
+            "3分钟-3.57%",
+            "日内-4.37%",
+            "成交放大1.00x",
+            "CPO下跌占比100%"
+          ]
+        },
+        {
+          "name": "中际旭创",
+          "code": "300308",
+          "change_pct": -2.9878,
+          "score": 53.23,
+          "factors": [
+            "3分钟-2.99%",
+            "日内-3.57%",
+            "成交放大1.00x",
+            "CPO下跌占比100%"
+          ]
+        },
+        {
+          "name": "光迅科技",
+          "code": "002281",
+          "change_pct": -3.1227,
+          "score": 51.60,
+          "factors": [
+            "3分钟-3.12%",
+            "日内-3.09%",
+            "成交放大1.00x",
+            "CPO下跌占比100%"
+          ]
+        }
+      ],
+      "signal_type": "风险提示",
+      "is_old_economy": false,
+      "alert_class": "style",
+      "confirmation_level": "candidate",
+      "source_watch_id": "CPO-光模块",
+      "quote_audit": {
+        "provider": "本地盘中监控（单源；后续刷新异常）",
+        "quote_time": "2026-08-10T09:38:09+08:00",
+        "pct_field": "同轮短周期涨跌幅（正式段标5分钟、明细段标3分钟）",
+        "sample_count": 5,
+        "max_abs_leader_change_pct": 3.5715,
+        "board_3m_change_pct": -2.4742,
+        "direction_ratio": 1.0,
+        "volume_ratio": 1.0,
+        "relative_volume_vs_yesterday": 4.4124,
+        "sanity_checks": {
+          "cross_source_verified": false,
+          "price_move_valid": true,
+          "volume_valid": false,
+          "direction_ratio_valid": true,
+          "window_label_consistent": false
+        },
+        "missing_confirmation": "还差第二行情源交叉验证、成交放大达到5x，以及短周期窗口口径统一；前台仅显示待确认。"
+      },
+      "source_status": "degraded_partial",
+      "valid_until": "2026-08-10T09:43:09+08:00",
+      "trigger_rule": "同一小登科技风格下至少3个关联板块同向急跌"
+    }
+  ],
+  "note": "风格级风险候选已记录；价格与宽度结构成立，但成交仅1.00x、窗口标签冲突且第二行情源不可用，不升级为确认信号。",
+  "quote_audit": {
+    "provider": "本地盘中监控（单源；后续刷新异常）",
+    "quote_time": "2026-08-10T09:38:09+08:00",
+    "pct_field": "各异动卡标注的短周期涨跌幅",
+    "sanity_checks": {
+      "sample_count": 1,
+      "max_abs_leader_change_pct": 3.5715,
+      "cross_source_verified": false,
+      "verified_alert_count": 0
+    }
+  }
 }
