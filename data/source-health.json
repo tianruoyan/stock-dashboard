@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-08-08T20:12:50+08:00",
+  "timestamp": "2026-08-10T09:33:20+08:00",
   "sources": {
     "tencent_http": {
       "status": "ok",
@@ -159,15 +159,15 @@
       "errors": []
     },
     "akshare_a_spot_watch_decode": {
-      "status": "degraded",
-      "usage": "盘中观察池/题材强度刷新补充行情源",
-      "checked_at": "2026-07-17T11:27:45+08:00",
+      "status": "failed_active",
+      "usage": "盘中观察池与题材强度刷新",
+      "checked_at": "2026-08-10T09:33:19+08:00",
+      "sample_count": 0,
       "errors": [
-        "Can not decode value starting with character <",
-        "未取得可信行情源交叉验证；所有新增正式提醒仅作需复核观察"
+        "Can not decode value starting with character <"
       ],
-      "last_error": "akshare decode failed / alerts lack trusted quote source proof",
-      "action": "alert.json全部写为invalidated/需复核观察，不作为当前交易触发。"
+      "detail": "09:26:59至09:33:19连续刷新未取得有效行情；监控进程存活且日志持续更新，但实时异动识别已降级。保留上一版alert.json，不生成或确认新机会。",
+      "action": "下一轮自动重试；恢复前不把日内涨幅或旧快照当作短周期异动证据。"
     },
     "eastmoney_limit_pool_intraday_0930": {
       "status": "ok",
@@ -9629,14 +9629,12 @@
     "note": "未发现经本地规范化的8月6日机构观点增量；未触碰账户、持仓、订单、自选或社区能力"
   },
   "current_run": {
-    "timestamp": "2026-08-07T20:11:32+08:00",
-    "phase": "20:00晚间全维度扫描",
-    "summary": "公告全量扫描完成；外部行情可用，官方网页扫描与机构观点增量降权。",
+    "timestamp": "2026-08-10T09:33:20+08:00",
+    "phase": "上午交易盘中巡检",
+    "summary": "监控进程正常，主行情刷新连续解码失败，实时异动识别降级。",
     "failed_or_degraded": [
-      "官方政策和全球标杆网页检索存在陈旧结果，未将未发现表述为绝对无发布",
-      "闪迪最新财报官方全文待8:30增量扫描继续核验",
-      "Longbridge只读shadow无8月7日新增机构观点",
-      "收盘结构仍缺炸板数及14:55-15:00竞价细节"
+      "主行情源连续返回HTML或非预期内容，无法解码为有效行情",
+      "未取得可信短周期行情，本轮保留上一版alert.json且不生成正式提醒"
     ]
   },
   "sina_hk_official_close_20260806": {
