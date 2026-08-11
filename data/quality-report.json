@@ -1,18 +1,9 @@
 {
-  "timestamp": "2026-08-11T11:31:02+08:00",
+  "timestamp": "2026-08-11T12:56:54+08:00",
   "current_signal_date": "2026-08-11",
   "status": "degraded",
-  "summary": "发现 148 个降级/需复核项（141 个价格/行情复核，8 个背景复核），核心结论可看但必须按影响分层使用。",
+  "summary": "发现 149 个降级/需复核项（142 个价格/行情复核，1 个信号复核，7 个背景复核），核心结论可看但必须按影响分层使用。",
   "issues": [
-    {
-      "severity": "warning",
-      "file": "midday.json",
-      "path": "",
-      "code": "stale_timestamp",
-      "message": "时间戳不是当前交易日：2026-08-10T12:04:32+08:00",
-      "impact_level": "background_review",
-      "decision_action": "仅作背景复核，不单独阻断交易判断"
-    },
     {
       "severity": "warning",
       "file": "postmarket.json",
@@ -30,6 +21,15 @@
       "message": "时间戳不是当前交易日：2026-08-10T15:37:00+08:00",
       "impact_level": "background_review",
       "decision_action": "仅作背景复核，不单独阻断交易判断"
+    },
+    {
+      "severity": "warning",
+      "file": "midday.json",
+      "path": "morning_snapshot",
+      "code": "schema_contract_type",
+      "message": "morning_snapshot 类型错误：期望 dict，实际 str",
+      "impact_level": "signal_review",
+      "decision_action": "机会信号必须降权并转入验证"
     },
     {
       "severity": "warning",
@@ -1339,6 +1339,15 @@
     {
       "severity": "warning",
       "file": "cross-file",
+      "path": "锐捷网络",
+      "code": "stock_pct_cross_file_conflict",
+      "message": "锐捷网络 跨文件涨跌幅差异过大：alert.json -3.1336% vs intraday.json 6.99%",
+      "impact_level": "price_review",
+      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
+    },
+    {
+      "severity": "warning",
+      "file": "cross-file",
       "path": "宏和科技",
       "code": "stock_pct_cross_file_conflict",
       "message": "宏和科技 跨文件涨跌幅差异过大：alert.json -3.1093% vs intraday.json 7.7%",
@@ -1364,7 +1373,7 @@
       "label": "二次行情复核",
       "file": "cross-file",
       "code": "stock_pct_cross_file_conflict",
-      "problem": "宏和科技 跨文件涨跌幅差异过大：alert.json -3.1093% vs intraday.json 7.7%",
+      "problem": "锐捷网络 跨文件涨跌幅差异过大：alert.json -3.1336% vs intraday.json 6.99%",
       "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核",
       "next_step": "用第二行情源复核涨跌幅、quote_time 和代表股方向；未确认前只做验证。",
       "unblock_condition": "price_review=0 或相关来源标记 trusted/cross verified。"
@@ -1381,23 +1390,23 @@
       "unblock_condition": "price_review=0 或相关来源标记 trusted/cross verified。"
     },
     {
+      "priority": 3,
+      "impact_level": "signal_review",
+      "label": "信号结构复核",
+      "file": "midday.json",
+      "code": "schema_contract_type",
+      "problem": "morning_snapshot 类型错误：期望 dict，实际 str",
+      "decision_action": "机会信号必须降权并转入验证",
+      "next_step": "修正字段结构、证据、触发原因和升级条件；未通过前降权展示。",
+      "unblock_condition": "signal_review=0，decision-feed/核心 JSON 契约通过。"
+    },
+    {
       "priority": 4,
       "impact_level": "background_review",
       "label": "背景来源复核",
       "file": "alert.json",
       "code": "missing_alert_leader_pct",
       "problem": "alerts[16].leaders[0].change_pct 缺失",
-      "decision_action": "仅作背景复核，不单独阻断交易判断",
-      "next_step": "补官方/交易所/公司公告来源；未补齐前不升级为核心依据。",
-      "unblock_condition": "官方来源补齐或确认不影响交易触发。"
-    },
-    {
-      "priority": 4,
-      "impact_level": "background_review",
-      "label": "背景来源复核",
-      "file": "midday.json",
-      "code": "stale_timestamp",
-      "problem": "时间戳不是当前交易日：2026-08-10T12:04:32+08:00",
       "decision_action": "仅作背景复核，不单独阻断交易判断",
       "next_step": "补官方/交易所/公司公告来源；未补齐前不升级为核心依据。",
       "unblock_condition": "官方来源补齐或确认不影响交易触发。"
@@ -1416,12 +1425,12 @@
   ],
   "counts": {
     "critical": 0,
-    "warning": 148,
+    "warning": 149,
     "info": 1,
     "blocking": 0,
-    "price_review": 141,
-    "signal_review": 0,
-    "background_review": 8
+    "price_review": 142,
+    "signal_review": 1,
+    "background_review": 7
   },
   "rules": [
     "异常文本、JSON解析失败、必需文件缺失为 critical。",
