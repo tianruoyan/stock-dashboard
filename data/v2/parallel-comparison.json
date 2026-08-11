@@ -1,68 +1,83 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-08-11T08:47:44+08:00",
+  "generated_at": "2026-08-11T21:02:11+08:00",
   "mode": "parallel_shadow",
   "state": "comparable",
   "headline": "V1继续生产，V2继续影子；差异只用于解释和回溯。",
   "v1": {
     "label": "V1",
     "role": "production_primary",
-    "git_head": "e1e7d56b6a6113d023f477c18905da73e95379f8",
+    "git_head": "f31f6a36a3030e50e3da8a1bde090475d683f9eb",
     "entry_ok": true,
     "market_date": "2026-08-11",
     "quality_state": "degraded",
-    "quality_issue_count": 146,
-    "price_review_count": 138,
+    "quality_issue_count": 145,
+    "price_review_count": 140,
     "automation_state": "waiting",
     "build_state": "degraded",
     "runtime_state": "ok",
     "opportunity_count": 8,
-    "risk_count": 1,
-    "evidence_as_of": "2026-08-11T08:37:56+08:00"
+    "risk_count": 8,
+    "evidence_as_of": "2026-08-11T15:36:45+08:00"
   },
   "v2": {
     "label": "V2",
     "role": "shadow_observer",
-    "git_head": "6ead2288fe0446aad4d4499f7d3724c6ecdd1d9b",
+    "git_head": "6559f217e5197aaa7a78e63e79b4fc51f9dd323d",
     "entry_ok": true,
     "market_date": "2026-08-11",
     "quality_state": "degraded",
-    "quality_issue_count": 40,
-    "price_review_count": 15,
-    "automation_state": "waiting",
+    "quality_issue_count": 85,
+    "price_review_count": 37,
+    "automation_state": "ok",
     "build_state": "degraded",
     "runtime_state": "ok",
     "opportunity_count": 0,
     "risk_count": 0,
-    "evidence_as_of": "2026-08-11T08:41:44+08:00"
+    "evidence_as_of": "2026-08-11T20:54:45+08:00"
   },
   "consensus": {
-    "signal_title_count": 7,
+    "signal_title_count": 15,
     "titles": [
-      "待触发：CPO/光模块",
-      "待触发：半导体设备材料",
-      "待触发：存储/HBM",
-      "待触发：机器人/工业自动化",
+      "CPO/交换机/通信设备",
+      "CPO/光模块与交换机",
+      "主线变化：指数与市场结构",
+      "主线变化：边缘AI芯片",
+      "创新药/CRO",
+      "创新药/CRO验证",
+      "半导体设备/科创硬件",
+      "半导体设备/芯片链",
+      "指数与市场结构",
       "数据质量降级",
       "盘中追踪：半导体设备材料",
-      "盘中追踪：机器人/工业自动化"
+      "盘中追踪：机器人/工业自动化",
+      "科技硬件链验证",
+      "资源金属与农化风险",
+      "锐捷网络"
     ],
     "note": "标题相同不代表证据链、行动条件或质量状态相同。"
   },
   "divergences": [
     {
+      "id": "automation_state",
+      "level": "must_explain",
+      "conclusion": "V1自动化状态 waiting，V2为 ok。",
+      "action": "展开两边任务诊断；不得把周末无产出误判成交易日故障。"
+    },
+    {
       "id": "quality_issues",
       "level": "observe",
-      "conclusion": "V1记录 146 个质量问题，V2记录 40 个。",
+      "conclusion": "V1记录 145 个质量问题，V2记录 85 个。",
       "action": "只比较问题分类与证据，不以问题更少直接证明判断更优。"
     },
     {
       "id": "signal_titles",
       "level": "observe",
-      "conclusion": "仅V1 8 条、仅V2 17 条。",
+      "conclusion": "仅V1 9 条、仅V2 9 条。",
       "action": "逐条核对触发原因、来源和失效条件。",
       "only_v1": [
-        "待触发：交换机/高速以太网",
+        "主线变化：智能驾驶",
+        "主线变化：金融/消费防御",
         "待触发：半导体材料",
         "待触发：半导体设备",
         "待触发：金融/消费防御",
@@ -72,18 +87,15 @@
         "盘中追踪：金融/消费防御"
       ],
       "only_v2": [
-        "AI内存与存储",
-        "AMD推理ASIC生态",
-        "CPO/交换机/通信设备",
-        "中微公司",
-        "主线变化：金融/消费防御",
-        "农业养殖/消费防御",
-        "创新药/CRO",
-        "半导体设备/科创硬件",
         "待触发：AI算力",
+        "待触发：CPO/光模块",
         "待触发：创新药/CRO",
-        "消费防御/农业养殖",
-        "盘中追踪：AI算力"
+        "待触发：存储/HBM",
+        "待触发：机器人/工业自动化",
+        "盘中追踪：AI算力",
+        "盘中追踪：CPO/光模块",
+        "盘中追踪：创新药/CRO",
+        "盘中追踪：存储/HBM"
       ]
     }
   ],
