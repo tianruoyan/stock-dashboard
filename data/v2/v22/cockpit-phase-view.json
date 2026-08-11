@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "mode": "shadow_only",
-  "generated_at": "2026-08-11T08:41:22+08:00",
+  "generated_at": "2026-08-11T08:51:47+08:00",
   "trade_date": "2026-08-11",
   "calendar_version": "cn-sse-2026-1",
   "stage": "pre_market",
@@ -352,7 +352,7 @@
       "status_label": "等待当日采集",
       "headline": "已进入盘中验证阶段，今日行情与代表股证据尚未形成。",
       "source_as_of": null,
-      "last_available_at": "2026-08-11T08:39:33+08:00",
+      "last_available_at": "2026-08-11T08:44:27+08:00",
       "transition_note": "系统将在下一个更新时间补充市场和代表股；更新前不沿用上一交易日结论。",
       "sections": {
         "external_market": {
@@ -414,7 +414,7 @@
       "status_label": "等待今日更新",
       "headline": "今日收盘复盘尚未形成，不用旧收盘结论代替。",
       "source_as_of": null,
-      "last_available_at": "2026-08-11T08:39:33+08:00",
+      "last_available_at": "2026-08-11T08:44:27+08:00",
       "transition_note": "收盘后将展示今日主线、风险线、代表股和次日验证条件。",
       "sections": {
         "external_market": {
@@ -441,32 +441,66 @@
     "evening": {
       "session_id": "evening",
       "stage_label": "今日晚间舆情",
-      "availability": "waiting_update",
-      "status_label": "等待今晚更新",
-      "headline": "今日晚间舆情尚未生成，不展示旧日期事件。",
-      "source_as_of": null,
-      "last_available_at": "2026-08-10T20:12:05+08:00",
-      "transition_note": "晚间更新后，本页只展示对次日有影响的事件、关联股票和验证条件。",
+      "availability": "ready",
+      "status_label": "当日晚间已更新",
+      "headline": "8月10日晚间结论：明日开盘先按分化观察应对。收盘市场强弱等待补充公司公告中有2条偏正面信息，先按个股事件处理，只有代表股和板块一起转强才考虑行动。",
+      "source_as_of": "2026-08-11T07:06:47+08:00",
+      "last_available_at": "2026-08-11T07:06:47+08:00",
+      "transition_note": "事件只用于形成次日预案；公司利好或市场观点不自动升级为板块机会。",
       "sections": {
         "external_market": {
-          "title": "隔夜外盘",
-          "conclusion": "等待当日数据",
-          "evidence": []
+          "title": "晚间新增信息",
+          "conclusion": "收盘市场强弱等待补充",
+          "evidence": [
+            "关于公司回购股份方案的公告",
+            "关于刊发H股发行聆讯后资料集的公告",
+            "关于回购注销2023年和2024年限制性股票激励计划部分限制性股票完成的公告",
+            "摩尔线程关于聘请H股股票发行并上市审计机构的公告"
+          ]
         },
         "sentiment": {
-          "title": "情绪判断",
-          "conclusion": "等待当日数据",
+          "title": "次日开盘倾向",
+          "conclusion": "分化观察",
           "evidence": []
         },
         "mainline": {
-          "title": "主线判断",
-          "names": [],
-          "evidence": []
+          "title": "影响方向",
+          "names": [
+            "关于公司回购股份方案的公告",
+            "关于刊发H股发行聆讯后资料集的公告",
+            "关于回购注销2023年和2024年限制性股票激励计划部分限制性股票完成的公告",
+            "摩尔线程关于聘请H股股票发行并上市审计机构的公告"
+          ],
+          "evidence": [
+            "北京君正出现偏正面公告，但先按公司事件处理，不能自动升级为板块机会。",
+            "北京君正出现新公告，当前只保留观察，等待价格和板块反应。",
+            "德明利出现偏正面公告，但先按公司事件处理，不能自动升级为板块机会。",
+            "摩尔线程出现新公告，当前只保留观察，等待价格和板块反应。"
+          ]
         },
-        "representative_stocks": [],
-        "action_conditions": [],
-        "risks": [],
-        "invalidation_conditions": []
+        "representative_stocks": [
+          {
+            "name": "德明利",
+            "code": "sz001309",
+            "role": "次日观察股",
+            "change_pct": null,
+            "quote_as_of": null,
+            "source": "晚间只确认关联对象，价格等待次日竞价",
+            "quote_note": "当前仅确认事件关联，价格等待下一交易时段验证。",
+            "quote_status_label": "等待次日竞价"
+          }
+        ],
+        "action_conditions": [
+          "先看跌停是否减少、高位股是否止跌。",
+          "AI硬件先看工业富联、中际旭创及同板块代表股是否同步企稳。",
+          "医药公告先按公司事件观察，没有板块跟随不追高。"
+        ],
+        "risks": [
+          "公司级利好不等于板块反转；隔夜美股方向仍需A股竞价和代表股确认。"
+        ],
+        "invalidation_conditions": [
+          "先看个股，再看板块是否跟随。"
+        ]
       }
     }
   },
