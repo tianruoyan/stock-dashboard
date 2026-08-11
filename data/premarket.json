@@ -1,9 +1,9 @@
 {
-  "timestamp": "2026-08-11T08:37:30+08:00",
+  "timestamp": "2026-08-11T09:04:40+08:00",
   "trade_date": "2026-08-11",
-  "phase": "周二08:30盘前判断（2026-08-11 08:30，港股与A股尚未开市，等待9:25/9:30确认）",
-  "summary": "隔夜美股大盘小幅分化，QQQ -0.30%、SPY -0.03%、DIA -0.12%；半导体ETF和GPU/CPU链明显承压，SOXX -2.55%、SMH -2.28%、NVDA -2.86%、AMD -2.86%。港股与A股当前未开市，不沿用昨日数值；日韩早盘公开接口未取得可校验实时值，按数据缺口处理。",
-  "strategy": "今天开盘先按分化偏谨慎处理：科技硬件不是隔夜顺风盘，CPO/通信设备、存储和半导体设备必须等A股9:25竞价与9:30后成交宽度确认；防御方向若继续占优且科技核心不能批量转红，维持降权观察。",
+  "phase": "周二09:00盘前增量判断（2026-08-11 09:00，港股竞价Open Bid，A股等待9:25集合竞价）",
+  "summary": "隔夜美股大盘小幅分化且半导体链承压；09:04港股进入Open Bid，恒指/恒科指数仍为0%指示值，阿里巴巴-W有少量竞价量并指示+2.13%，腾讯-0.08%、中芯国际-0.68%、华虹宏力+0.44%、小米+0.72%、澜起科技H-0.62%，多数样本成交量为0或很小，只能作为竞价观察，不能当正式开盘。新浪09:04显示日经225 -0.90%、KOSPI -0.94%，亚洲科技风险偏谨慎；A股尚未开市，不沿用昨日收盘数值。",
+  "strategy": "09:00后仍按分化偏谨慎处理：港股竞价没有形成指数级进攻，日韩早盘偏弱，A股科技硬件必须等9:25集合竞价和9:30后成交宽度确认；若通信/CPO不能批量转红，继续把科技线放在风险端。",
   "us_overnight": {
     "as_of": "2026-08-10 US regular close; overnight session snapshot around 2026-08-11T00:36Z via Longbridge CLI",
     "indices": [
@@ -94,21 +94,23 @@
       {
         "name": "日经225",
         "symbol": "NIKKEI",
-        "status": "行情待核验",
-        "quote_time": null,
-        "source": "新浪财经接口Forbidden；Yahoo/Stooq接口未返回可解析JSON/CSV",
-        "note": "不沿用旧数值，等待后续时段或可靠源更新"
+        "change_pct": -0.9,
+        "last": 44946.64,
+        "quote_time": "2026-08-11 09:04+08:00",
+        "source": "新浪全球指数",
+        "note": "早盘实时指数，可用于亚洲风险偏好方向判断"
       },
       {
         "name": "韩国KOSPI",
         "symbol": "KOSPI",
-        "status": "行情待核验",
-        "quote_time": null,
-        "source": "新浪财经接口Forbidden；Yahoo/Stooq接口未返回可解析JSON/CSV",
-        "note": "不沿用旧数值，等待后续时段或可靠源更新"
+        "change_pct": -0.94,
+        "last": 6240.36,
+        "quote_time": "2026-08-11 09:04:40+08:00",
+        "source": "新浪全球指数",
+        "note": "早盘实时指数，可用于亚洲风险偏好方向判断"
       }
     ],
-    "japan_korea_note": "日韩早盘未取得可校验实时数，本轮不据此判断亚洲科技共振。",
+    "japan_korea_note": "09:04新浪全球指数显示日经225 -0.90%、KOSPI -0.94%，亚洲早盘风险偏谨慎；未取得日韩科技个股可用长桥报价，不编造单股映射。",
     "hot_sectors": [
       "AI基础设施融资/数据中心资本开支",
       "云厂商自研AI芯片",
@@ -122,11 +124,101 @@
   },
   "hk_auction": {
     "window": "2026-08-11 09:00-09:30 HKT",
-    "market_status": "等待开市",
-    "indices": [],
+    "market_status": "Open Bid（竞价中，非正式连续竞价）",
+    "indices": [
+      {
+        "name": "恒生指数",
+        "code": "HSI",
+        "change_pct": 0.0,
+        "last": 25937.49,
+        "quote_time": "2026-08-11 09:04:36+08:00",
+        "source": "腾讯r_hk/新浪rt_hk",
+        "note": "指数仍为0%指示值，不当作正式开盘方向"
+      },
+      {
+        "name": "恒生科技指数",
+        "code": "HSTECH",
+        "change_pct": 0.0,
+        "last": 4919.46,
+        "quote_time": "2026-08-11 09:04:36+08:00",
+        "source": "腾讯r_hk/新浪rt_hk",
+        "note": "指数仍为0%指示值，不当作正式开盘方向"
+      }
+    ],
     "sectors": [],
-    "stocks": [],
-    "sentiment": "08:30港股尚未进入今日竞价，腾讯返回仍为2026-08-10收盘，Longbridge market-status显示HK Closed；不沿用昨日涨跌作为今日竞价方向。",
+    "stocks": [
+      {
+        "name": "腾讯控股",
+        "code": "00700.HK",
+        "change_pct": -0.08,
+        "last": 481.0,
+        "quote_time": "2026-08-11 09:04:21+08:00",
+        "source": "腾讯r_hk/Longbridge quote",
+        "volume": 0,
+        "note": "指示价，成交量为0，降权"
+      },
+      {
+        "name": "阿里巴巴-W",
+        "code": "09988.HK",
+        "change_pct": 2.13,
+        "last": 129.4,
+        "quote_time": "2026-08-11 09:04:35+08:00",
+        "source": "腾讯r_hk/Longbridge quote",
+        "volume": 87,
+        "note": "少量竞价量，不单独升级港股科技主线"
+      },
+      {
+        "name": "中芯国际",
+        "code": "00981.HK",
+        "change_pct": -0.68,
+        "last": 65.75,
+        "quote_time": "2026-08-11 09:04:31+08:00",
+        "source": "腾讯r_hk/Longbridge quote",
+        "volume": 0,
+        "note": "指示价，成交量为0，降权"
+      },
+      {
+        "name": "华虹宏力",
+        "code": "01347.HK",
+        "change_pct": 0.44,
+        "last": 138.1,
+        "quote_time": "2026-08-11 09:04:35+08:00",
+        "source": "腾讯r_hk/Longbridge quote",
+        "volume": 0,
+        "note": "指示价，成交量为0，降权"
+      },
+      {
+        "name": "小米集团-W",
+        "code": "01810.HK",
+        "change_pct": 0.72,
+        "last": 27.82,
+        "quote_time": "2026-08-11 09:04:21+08:00",
+        "source": "腾讯r_hk/Longbridge quote",
+        "volume": 0,
+        "note": "指示价，成交量为0，降权"
+      },
+      {
+        "name": "爱芯元智",
+        "code": "00600.HK",
+        "change_pct": 0.0,
+        "last": 13.65,
+        "quote_time": "2026-08-11 09:00:05+08:00",
+        "source": "腾讯r_hk/Longbridge quote",
+        "volume": 0,
+        "note": "等待正式成交确认"
+      },
+      {
+        "name": "澜起科技H",
+        "code": "06809.HK",
+        "change_pct": -0.62,
+        "last": 256.0,
+        "quote_time": "2026-08-11 09:04:14+08:00",
+        "source": "腾讯r_hk/新浪rt_hk",
+        "volume": 0,
+        "note": "H股映射存储/HBM，成交量为0，降权"
+      }
+    ],
+    "sentiment": "港股竞价指示价偏分化：阿里强于样本，但腾讯、中芯、澜起H偏弱，指数未给出有效方向；由于大多数样本成交为0或很小，只作为9:30前观察，不升级为正式港股开盘结论。",
     "latest_hk_close_reference": [
       {
         "symbol": "700.HK",
@@ -179,9 +271,9 @@
     ]
   },
   "a_share_open_preview": {
-    "market_status": "等待开市",
-    "quote_source_check": "腾讯A股指数返回时间仍为202608101614xx，属于昨日收盘；今日A股09:25前不写入涨跌幅。",
-    "opening_emotion": "分化偏谨慎，先看9:25集合竞价是否修复昨日通信设备/CPO弱势，再决定是否上修科技风险偏好。",
+    "market_status": "等待9:25集合竞价",
+    "quote_source_check": "截至09:04，腾讯A股指数和代表股仍返回2026-08-10收盘时间；今日A股09:25前不写入涨跌幅。",
+    "opening_emotion": "分化偏谨慎，港股竞价未形成指数级进攻且日韩早盘偏弱；A股先看9:25集合竞价是否修复昨日通信设备/CPO弱势。",
     "representative_stocks_waiting": [
       {
         "name": "中际旭创",
@@ -244,10 +336,10 @@
     }
   ],
   "market_context": {
-    "current_time_note": "2026-08-11 08:30左右，北京时间；A股与港股均未开市，日韩早盘实时接口未取得可校验数据。",
+    "current_time_note": "2026-08-11 09:00后，北京时间；港股处于Open Bid，A股等待9:25集合竞价。",
     "whole_market_first": "先以隔夜外盘与昨日A股收盘结构判断全市场风险偏好，再映射观察池；观察池样本不反推主线。",
     "yesterday_a_share_p0": "8月10日收盘防御占优、通信设备领跌，今天必须先看通信设备/CPO是否脱离弱势，不能因单个公告直接上修科技主线。",
-    "data_boundary": "A股、港股今日涨跌幅等待开市；未开始市场明确写等待开市，不沿用旧数值。",
+    "data_boundary": "港股仅记录09:04竞价指示价且多数成交很小；A股今日涨跌幅等待9:25/9:30，不沿用旧数值。",
     "v1_v2_boundary": "V1继续生产；V2/V2.2保持shadow；未交易、未修改用户资产、未自动切换模型。"
   },
   "a_share_mapping": {
@@ -287,9 +379,9 @@
   ],
   "data_status": {
     "us_overnight": "Longbridge CLI ok",
-    "hk_auction": "waiting_market_open; Tencent/Longbridge only show prior close",
-    "a_share": "waiting_market_open; Tencent quote_time still 2026-08-10 close",
-    "japan_korea": "degraded; public interfaces failed, no old values reused",
+    "hk_auction": "Open Bid; Tencent r_hk/Sina rt_hk/Longbridge quote cross-check, indicative only",
+    "a_share": "waiting_auction; Tencent quote_time still 2026-08-10 close before 09:25",
+    "japan_korea": "Sina global indices ok; individual tech stock quotes unavailable via Longbridge for JP/KR symbols",
     "longbridge_usage": "market/news reference only; no account, order, watchlist, DCA or community publishing used"
   },
   "sources": [
@@ -312,6 +404,21 @@
       "name": "V1 evening sentiment",
       "url": "data/evening-sentiment.json",
       "note": "2026-08-10 P0 local governed close/announcement evidence"
+    },
+    {
+      "name": "腾讯财经HTTP r_hk",
+      "url": "https://qt.gtimg.cn",
+      "note": "09:04港股Open Bid指示价；指数0%且多只样本成交为0，仅作竞价观察"
+    },
+    {
+      "name": "新浪全球指数/港股rt",
+      "url": "https://hq.sinajs.cn",
+      "note": "09:04日经225、KOSPI与港股rt交叉检查"
+    },
+    {
+      "name": "Longbridge CLI market-status/quote",
+      "url": "https://open.longbridge.com",
+      "note": "确认HK Open Bid并交叉港股指示价；未调用账户、订单、自选或社区能力"
     }
   ]
 }
