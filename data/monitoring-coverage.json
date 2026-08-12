@@ -1,60 +1,14 @@
 {
-  "timestamp": "2026-08-11T21:05:35+08:00",
-  "current_signal_date": "2026-08-11",
+  "timestamp": "2026-08-12T08:39:31+08:00",
+  "current_signal_date": "2026-08-12",
   "overall_status": "degraded",
-  "summary": "6 个监测维度需降权，0 个背景维度需复核。",
+  "summary": "3 个监测维度需降权，1 个背景维度需复核。",
   "counts": {
     "critical": 0,
-    "warning": 6,
-    "info": 0
+    "warning": 3,
+    "info": 1
   },
   "blind_spots": [
-    {
-      "id": "intraday-alert-degraded",
-      "title": "盘中异动触发降权",
-      "severity": "warning",
-      "conclusion": "异动信号可参考，但触发价格/涨跌幅需要二次核验。",
-      "impacted_decisions": [
-        "交易信号不能直接执行",
-        "同题材连续触发需要看原始行情源确认"
-      ],
-      "evidence": [
-        "盘中异动缺少可信源证明；当前阶段只降权参考，不阻断整站发布；quote_audit.pct_field 缺失；A股补充行情源解码异常，盘中异动和个股涨跌幅需以已审计源复核。；港股结构行情源连接/解码异常，港股映射和收盘窗口价格需二次复核。"
-      ],
-      "fallback_action": "只把 alert 当成线索，必须结合指数、板块宽度和个股原始报价确认。",
-      "fallback_checks": [
-        "宽度替代：9:25/9:30先看涨停34、跌停1、炸板7、跌5%以上-是否收敛；不收敛则风险优先。",
-        "主线替代：医药修复链 看 创新药ETF广发/港股通创新药ETF汇添富/医药ETF易方达 是否同步高开承接，单点强不升级。",
-        "新线替代：从行业与题材涨幅、成交和涨停新增中寻找首次扩散方向；没有宽度不升级。",
-        "主线替代：CPO/光模块与交换机 看 锐捷网络/新易盛/中际旭创/紫光股份 是否同步高开承接，单点强不升级。",
-        "主线替代：半导体设备/芯片链 看 中微公司/科创半导体ETF华夏/科创芯片ETF易方达/澜起科技 是否同步高开承接，单点强不升级。",
-        "雷达替代：数据质量降级：污染 alert 修复前，盘中异动信号必须降权；观察池个股涨跌幅以已审计源为准。"
-      ],
-      "source_files": [
-        "data/alert.json",
-        "data/data-trust.json"
-      ]
-    },
-    {
-      "id": "intraday-structure-degraded",
-      "title": "盘中结构降权",
-      "severity": "warning",
-      "conclusion": "盘面宽度、行业/概念强弱和午后建议可看，但实时涨跌幅需复核。",
-      "impacted_decisions": [
-        "强主线不能直接外推为进攻",
-        "机会候选只能等待确认",
-        "风险项优先级高于机会项"
-      ],
-      "evidence": [
-        "A股补充行情源解码异常，盘中异动和个股涨跌幅需以已审计源复核。；港股结构行情源连接/解码异常，港股映射和收盘窗口价格需二次复核。"
-      ],
-      "fallback_action": "优先看涨跌停/炸板/尾盘承接等结构证据，不用单个涨跌幅做结论。",
-      "fallback_checks": [],
-      "source_files": [
-        "data/intraday.json",
-        "data/data-trust.json"
-      ]
-    },
     {
       "id": "premarket-cross-market-degraded",
       "title": "盘前外部映射降权",
@@ -75,22 +29,21 @@
       ]
     },
     {
-      "id": "postmarket-close-degraded",
-      "title": "盘后复盘降权",
-      "severity": "warning",
-      "conclusion": "收盘复盘可参考，但港股收盘窗口和部分补充行情源需要复核。",
+      "id": "evening-sentiment-stale",
+      "title": "晚间舆情过期",
+      "severity": "info",
+      "conclusion": "晚间公告、P0 舆情和隔夜事件不是当前交易日，不能参与今日总控。",
       "impacted_decisions": [
-        "次日方向只作为预案",
-        "需等待次日竞价验证"
+        "次日竞价风险可能缺少最新公告校验",
+        "个股突发公告需要额外扫描"
       ],
       "evidence": [
-        "A股补充行情源解码异常，盘中异动和个股涨跌幅需以已审计源复核。；港股结构行情源连接/解码异常，港股映射和收盘窗口价格需二次复核。"
+        "数据交易日不是当前交易日：2026-08-11"
       ],
-      "fallback_action": "把盘后结论拆成次日验证条件，不直接继承为次日交易方向。",
+      "fallback_action": "只作历史背景；盘前必须重新跑 8:30 增量扫描和个股公告检查。",
       "fallback_checks": [],
       "source_files": [
-        "data/postmarket.json",
-        "data/source-health.json"
+        "data/evening-sentiment.json"
       ]
     },
     {
@@ -103,7 +56,7 @@
         "风险栏优先级高于机会栏"
       ],
       "evidence": [
-        "发现 146 个降级/需复核项（140 个价格/行情复核，1 个信号复核，5 个背景复核），核心结论可看但必须按影响分层使用。；opportunities[7] 含过期相对日期"
+        "发现 155 个降级/需复核项（141 个价格/行情复核，1 个信号复核，14 个背景复核），核心结论可看但必须按影响分层使用。；opportunities[2] 含过期相对日期"
       ],
       "fallback_action": "只跟踪验证条件；若风险项不收敛，不升级任何机会。",
       "fallback_checks": [],
