@@ -1,9 +1,9 @@
 {
-  "timestamp": "2026-08-12T08:39:23+08:00",
+  "timestamp": "2026-08-12T09:06:30+08:00",
   "trade_date": "2026-08-12",
-  "phase": "周三08:30盘前初判（2026-08-12 08:30，A股等待9:25集合竞价，港股等待9:00竞价）",
-  "summary": "08:30盘前初判：上一交易日A股收盘仍是分化结构，医药宽度留存、CPO/交换机前排强但扩散不足，科创和资源端偏弱；隔夜腾讯美股快照显示道指-0.34%、纳指-0.60%、标普500-0.32%，英伟达-0.02%、AMD+1.01%、Arista+3.31%、谷歌-3.84%，AI硬件并非单边进攻。新浪08:37显示日经225-0.90%、KOSPI+2.22%，亚洲科技反馈分化。A股和港股今日尚未开市，全部等待竞价，不沿用昨日涨跌幅作为今日事实。",
-  "strategy": "盘前不追高、不预设科技全面修复。9:25先核验江波龙公告链、医药公告链和通信/CPO前排是否形成宽度；若只是单股高开或港股昨收弱势延续，仍按分化防守处理。",
+  "phase": "周三09:00盘前增量（2026-08-12 09:00，港股竞价早段低置信度，A股等待9:25集合竞价）",
+  "summary": "09:00盘前增量：08:30外部环境判断不变，隔夜美股小幅承压、AI硬件分化；新浪09:03显示日经225-0.90%、KOSPI+2.09%，A50期货14925.69，亚洲风险偏好仍是分化。港股09:00后只有新浪竞价指示价和少量买卖盘，恒指/恒科指数仍为0成交、无有效今日涨跌，不能当作正式开盘方向；个股指示价显示腾讯约457.8（相对昨收-2.76%）、阿里124.5（-1.50%）、中芯65.0（-0.46%）、华虹133.3（持平）、小米26.66（持平），医药中药明康德200.0（+0.45%）、百济神州218.0（-0.37%）、药明生物45.6至45.96（弱平），康方生物91.85（-9.86%，仅早段指示价低置信度）。A股仍未到9:25集合竞价，腾讯A股指数和代表股仍返回8月11日收盘时间，今日A股涨跌幅继续写等待，不沿用旧数值。",
+  "strategy": "09:00后仍不提前交易化判断。港股科技早段指示价偏弱，强化A股科技线需要9:25竞价宽度确认；医药港股分化，不能只因个别指示价高低升级医药主线。9:25先核验存储链、CPO/交换机和医药ETF承接，单股或低成交港股指示价只作观察。",
   "us_overnight": {
     "as_of": "2026-08-11 US regular close via Tencent quote snapshot collected 2026-08-12 08:37 CST",
     "indices": [
@@ -167,11 +167,130 @@
   },
   "hk_auction": {
     "window": "2026-08-12 09:00-09:30 HKT",
-    "market_status": "等待开市；08:30未到港股竞价时段",
-    "indices": [],
+    "market_status": "竞价早段；指数无有效今日涨跌，个股仅有指示价/买卖盘，低置信度",
+    "indices": [
+      {
+        "name": "恒生指数",
+        "symbol": "HSI",
+        "last_reference": 25652.818,
+        "today_change_pct": null,
+        "quote_time": "2026-08-12 09:03:42+08:00",
+        "source": "新浪港股实时",
+        "note": "成交为0，不能作为今日开盘方向"
+      },
+      {
+        "name": "恒生科技指数",
+        "symbol": "HSTECH",
+        "last_reference": 4824.42,
+        "today_change_pct": null,
+        "quote_time": "2026-08-12 09:03:42+08:00",
+        "source": "新浪港股实时",
+        "note": "成交为0，不能作为今日开盘方向"
+      }
+    ],
     "sectors": [],
-    "stocks": [],
-    "sentiment": "等待港股9:00竞价；当前只保留8月11日收盘背景，不写今日港股方向。",
+    "stocks": [
+      {
+        "name": "腾讯控股",
+        "code": "00700.HK",
+        "indication_price": 457.8,
+        "reference_close": 470.8,
+        "indication_change_pct": -2.76,
+        "quote_time": "2026-08-12 09:03:00+08:00",
+        "source": "新浪港股实时",
+        "confidence": "low",
+        "note": "竞价指示价/买盘线索，成交未形成正式开盘事实"
+      },
+      {
+        "name": "阿里巴巴-W",
+        "code": "09988.HK",
+        "indication_price": 124.5,
+        "reference_close": 126.4,
+        "indication_change_pct": -1.5,
+        "quote_time": "2026-08-12 09:02:40+08:00",
+        "source": "新浪港股实时",
+        "confidence": "low",
+        "note": "竞价指示价，成交未形成正式开盘事实"
+      },
+      {
+        "name": "中芯国际",
+        "code": "00981.HK",
+        "indication_price": 65.0,
+        "reference_close": 65.3,
+        "indication_change_pct": -0.46,
+        "quote_time": "2026-08-12 09:00:16+08:00",
+        "source": "新浪港股实时",
+        "confidence": "low",
+        "note": "竞价早段少量卖盘，不能升级半导体方向"
+      },
+      {
+        "name": "华虹宏力",
+        "code": "01347.HK",
+        "indication_price": 133.3,
+        "reference_close": 133.3,
+        "indication_change_pct": 0.0,
+        "quote_time": "2026-08-12 09:01:56+08:00",
+        "source": "新浪港股实时",
+        "confidence": "low",
+        "note": "竞价指示价持平"
+      },
+      {
+        "name": "小米集团-W",
+        "code": "01810.HK",
+        "indication_price": 26.66,
+        "reference_close": 26.66,
+        "indication_change_pct": 0.0,
+        "quote_time": "2026-08-12 09:00:10+08:00",
+        "source": "新浪港股实时",
+        "confidence": "low",
+        "note": "竞价指示价持平"
+      },
+      {
+        "name": "药明康德",
+        "code": "02359.HK",
+        "indication_price": 200.0,
+        "reference_close": 199.1,
+        "indication_change_pct": 0.45,
+        "quote_time": "2026-08-12 09:00:00+08:00",
+        "source": "新浪港股实时",
+        "confidence": "low",
+        "note": "医药映射仅作观察，需A股ETF和行业宽度确认"
+      },
+      {
+        "name": "药明生物",
+        "code": "02269.HK",
+        "indication_price": 45.6,
+        "reference_close": 45.98,
+        "indication_change_pct": -0.83,
+        "quote_time": "2026-08-12 09:02:35+08:00",
+        "source": "新浪港股实时",
+        "confidence": "low",
+        "note": "买卖盘显示弱平，不能代表医药整体"
+      },
+      {
+        "name": "百济神州",
+        "code": "06160.HK",
+        "indication_price": 218.0,
+        "reference_close": 218.8,
+        "indication_change_pct": -0.37,
+        "quote_time": "2026-08-12 09:00:01+08:00",
+        "source": "新浪港股实时",
+        "confidence": "low",
+        "note": "竞价指示价弱平"
+      },
+      {
+        "name": "康方生物",
+        "code": "09926.HK",
+        "indication_price": 91.85,
+        "reference_close": 101.9,
+        "indication_change_pct": -9.86,
+        "quote_time": "2026-08-12 09:03:25+08:00",
+        "source": "新浪港股实时",
+        "confidence": "very_low",
+        "note": "早段指示价波动大，等待开盘成交复核，不作为医药线风险定论"
+      }
+    ],
+    "sentiment": "港股科技早段指示价偏弱、医药分化，但指数未形成有效今日涨跌；只作为9:25 A股竞价前的风险提示。",
     "latest_hk_close_reference": [
       {
         "name": "腾讯控股",
@@ -231,8 +350,8 @@
   },
   "a_share_open_preview": {
     "market_status": "等待9:25集合竞价",
-    "quote_source_check": "截至08:37，腾讯A股指数和代表股仍返回2026-08-11收盘时间；今日A股09:25前不写入今日涨跌幅。",
-    "opening_emotion": "分化偏谨慎：上一交易日指数和科创偏弱，隔夜外部AI硬件不一致，KOSPI反弹只提供风险偏好缓冲，不能替代A股竞价。",
+    "quote_source_check": "截至09:03，腾讯A股指数和代表股仍返回2026-08-11收盘时间；今日A股09:25前不写入今日涨跌幅。",
+    "opening_emotion": "分化偏谨慎：港股科技竞价指示价偏弱但低置信度，KOSPI反弹和A50平稳只能提供缓冲；A股方向必须等9:25竞价宽度确认。",
     "waiting_symbols": [
       {
         "name": "江波龙",
@@ -313,10 +432,10 @@
     }
   ],
   "market_context": {
-    "current_time_note": "2026-08-12 08:39 北京时间；A股和港股均未进入今日可交易行情阶段。",
+    "current_time_note": "2026-08-12 09:06 北京时间；港股进入竞价早段但指数无有效今日涨跌，A股仍等待9:25集合竞价。",
     "whole_market_first": "先以隔夜外盘、日韩早盘、上一交易日A股收盘结构和晚间P0判断全市场风险偏好，再映射观察池；观察池样本不反推主线。",
     "yesterday_a_share_p0": "15:00盘中收盘证据更新至2026-08-11T15:04:00+08:00：指数仍是分化收盘，上证指数-0.82%、深证成指-0.4%、创业板指+0.34%、科创50-1.63%、沪深300-0.81%。行业前排为医药商业+1.59%、专业连锁Ⅱ+1.36%、通信设备+1.34%、生物制品+1.28%、家电零部件Ⅱ+1.26%；跌幅前排为贵金属-5.34%、工业金属-4.84%、有色金属-4.42%、小金属-4.41%、农化制品-3.04%。医药商业+1.59%、生物制品+1.28%，创新药ETF广发+0.58%、港股通创新药ETF汇添富-0.27%、医药ETF易方达-0.49%，说明医药宽度留存但ETF承接收窄。通信设备+1.34%，锐捷网络+5.36%、新易盛+3.93%、中际旭创+2.59%，紫光股份-0.64%、中兴通讯-0.32%、菲菱科思+0.11%、共进股份+0.07%、盛科通信-U-2.56%，说明CPO/交换机仍是前排抱团，后排扩散不足。科创50-1.63%，中微公司-6.9%、科创半导体ETF华夏-2.96%、科创芯片ETF易方达-1.8%、澜起科技-0.11%，半导体设备和科创硬件继续降权。涨停34、跌停1、炸板7仍为10:04旧结构，只作降权情绪参考。结论：收盘不是全面进攻，当前只保留医药宽度与通信前排观察，不追弱修复，不抄底半导体设备。",
-    "data_boundary": "A股今日涨跌幅、港股今日竞价和开盘价均等待后续阶段；本文件不沿用旧数值冒充今日行情。",
+    "data_boundary": "港股09:00早段只写低置信度指示价和买卖盘，不当作正式开盘价；A股今日涨跌幅继续等待9:25后核验，本文件不沿用旧数值冒充今日行情。",
     "v1_v2_boundary": "V1继续生产；V2/V2.2保持shadow；未交易、未修改用户资产、未自动切换模型。"
   },
   "a_share_mapping": {
@@ -337,30 +456,32 @@
   },
   "strong_lines": [],
   "watch_lines": [
-    "江波龙公告后的存储链竞价承接",
+    "江波龙公告后的存储链9:25竞价承接",
     "医药公告链是否从个股扩散到ETF和行业宽度",
     "CPO/交换机前排强势能否扩散到紫光、中兴、共进、盛科",
+    "港股科技竞价偏弱是否压制A股科技高开质量",
     "KOSPI反弹能否缓冲亚洲科技风险"
   ],
   "risk_lines": [
     "上一交易日科创50与半导体设备偏弱",
-    "港股科技8月11日收盘回落，今日竞价未开始",
+    "港股科技09:00竞价指示价偏弱但低置信度，等待正式开盘复核",
     "资源金属和农化上一交易日跌幅集中",
-    "美股AI硬件分化，谷歌/博通偏弱"
+    "美股AI硬件分化，谷歌/博通偏弱",
+    "康方生物早段指示价波动大，未复核前不能代表创新药主线风险"
   ],
   "opening_plan": [
     "9:25先看江波龙是否放量承接，并与北京君正、兆易创新、澜起科技至少两只同步转强；单股高开不升级存储主线。",
-    "医药链只在医药商业、生物制品继续前排，且创新药ETF广发、港股通创新药ETF汇添富、医药ETF易方达同步不转弱时升级。",
+    "医药链只在医药商业、生物制品继续前排，且创新药ETF广发、港股通创新药ETF汇添富、医药ETF易方达同步不转弱时升级；港股个别指示价不单独定性。",
     "CPO/交换机看中际旭创、新易盛、锐捷网络能否维持强势，同时紫光、中兴、共进、盛科至少两只补涨；否则仍是前排抱团。",
     "半导体设备看中微公司、北方华创、科创半导体ETF和科创芯片ETF能否止跌，弱于科创50时不做修复假设。",
     "资源金属若继续跌幅前排，指数风险偏好降权；若跌幅收敛且创业板/科创承接改善，再考虑提高进攻权重。"
   ],
   "data_status": {
     "us_overnight": "Tencent US close snapshot ok",
-    "hk_auction": "waiting_open; no today HK auction values before 09:00",
+    "hk_auction": "09:03 Sina HK auction indication available; indices no valid today pct; stocks low-confidence indication only",
     "a_share": "waiting_auction; Tencent quote_time still 2026-08-11 close before 09:25",
-    "japan_korea": "Sina global indices ok; no cross-verified JP/KR single-stock quotes written",
-    "futures": "Sina futures reference only; not used as A-share price fact",
+    "japan_korea": "Sina 09:03 Nikkei -0.90%, KOSPI +2.09%; no JP/KR single-stock quotes written",
+    "futures": "Sina 09:03 A50 14925.69; futures reference only, not used as A-share price fact",
     "longbridge_usage": "未使用长桥账户、持仓、订单、自选、社区发布或行情作为本次事实来源"
   },
   "sources": [
@@ -383,6 +504,11 @@
       "name": "V1 postmarket",
       "url": "data/postmarket.json",
       "note": "2026-08-11收盘结构和次日核验条件"
+    },
+    {
+      "name": "新浪港股实时",
+      "url": "https://hq.sinajs.cn",
+      "note": "09:00港股竞价早段指示价/买卖盘；指数无有效今日涨跌，个股低置信度引用"
     }
   ]
 }
