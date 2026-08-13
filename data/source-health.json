@@ -10347,5 +10347,20 @@
       "auditable limit-up count missing"
     ],
     "action": "保留上一版有效行情作背景；等待本地高频源连续恢复并取得板块级独立交叉验证，期间不把该提醒升级为候选或确认机会。"
+  },
+  "monitor_quote_failure_20260813_140856": {
+    "status": "degraded_partial",
+    "checked_at": "2026-08-13T14:15:28+08:00",
+    "usage": "14:08-14:11正式提醒批次的实时行情门禁",
+    "detail": "monitor.log在14:08:56记录新浪全市场计数接口DNS解析失败，14:09:13再次出现行情源异常；异常前后生成科技硬件链、CPO、算力、封装、液冷、超节点、存储、覆铜板回落及随后观察拉动提醒。异常批次出现板块3分钟接近0、成交统一1.00x、同一标的日内涨跌幅与Longbridge相反等污染迹象。Longbridge分钟线确认中际旭创、新易盛、澜起科技、南亚新材、金安国纪、生益科技等在14:05-14:12总体走弱，但不能独立核验板块成交放大、方向占比或涨跌停计数，因此保留上一版alert.json，不将该批次写为candidate或confirmed。",
+    "sample_count": 8,
+    "errors": [
+      "vip.stock.finance.sina.com.cn DNS resolution failed at 14:08:56",
+      "no valid quote returned at 14:09:13",
+      "local day-change sign conflicted with Longbridge minute quotes",
+      "auditable limit-up and limit-down counts missing",
+      "board-level cross-source verification missing"
+    ],
+    "action": "正式提醒照常向用户报告，但保留上一版alert.json；等待本地高频源连续恢复，恢复前将14:08-14:11批次视为历史触发和数据风险，不作为当前机会。"
   }
 }
