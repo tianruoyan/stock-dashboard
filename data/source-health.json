@@ -10452,5 +10452,20 @@
       "board-level cross-source verification failed"
     ],
     "action": "正式提醒照常向用户报告并将电子布强提醒无效化；继续保留上一版alert.json，待本地高频源连续稳定恢复后再评估当前机会。"
+  },
+  "monitor_quote_failure_20260813_145117_145553": {
+    "status": "failed",
+    "checked_at": "2026-08-13T14:56:24+08:00",
+    "usage": "14:50交换机观察提醒后的实时行情健康检查",
+    "detail": "monitor.log在14:51:17至14:55:53连续13次记录行情源异常。异常前14:50:17生成交换机/高速以太网观察提醒，但板块3分钟-0.24%、上涨71%、成交4.09x、强势样本0只，且至少2只涨停无可审计计数，不满足opportunity candidate门槛。保留当前invalidated alert，不得升级candidate或confirmed。",
+    "sample_count": 0,
+    "errors": [
+      "thirteen repeated quote source failures from 14:51:17 through 14:55:53",
+      "short-period board price negative",
+      "volume below candidate combination threshold",
+      "auditable limit-up count missing",
+      "board-level cross-source verification unavailable"
+    ],
+    "action": "保留alert.json中的14:50历史无效触发，不升级为当前机会；等待本地高频源连续稳定恢复。"
   }
 }
