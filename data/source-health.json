@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-08-13T10:25:46+08:00",
+  "timestamp": "2026-08-13T13:58:57+08:00",
   "sources": {
     "tencent_http": {
       "status": "ok",
@@ -10334,5 +10334,18 @@
       "short-period price threshold not met",
       "auditable limit-up structure missing"
     ]
+  },
+  "monitor_quote_decode_20260813_135802": {
+    "status": "degraded_partial",
+    "checked_at": "2026-08-13T13:58:57+08:00",
+    "usage": "13:58交换机/高速以太网正式提醒的实时行情门禁",
+    "detail": "13:56:29至13:58:18本地监控连续出现Can not decode value starting with character '<'；13:58:02随后生成交换机观察提醒。保留单源盘面记录，但因触发前行情链路不稳定、板块3分钟仅-0.07%、强势样本0只及涨停计数不可审计，门禁拦截candidate与confirmed。Longbridge只读分钟线仅核验三只龙头方向，不能替代板块级双源。",
+    "sample_count": 7,
+    "errors": [
+      "repeated quote decode failure before trigger",
+      "board-level cross-source verification missing",
+      "auditable limit-up count missing"
+    ],
+    "action": "保留上一版有效行情作背景；等待本地高频源连续恢复并取得板块级独立交叉验证，期间不把该提醒升级为候选或确认机会。"
   }
 }
