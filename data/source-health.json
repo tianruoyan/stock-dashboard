@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-08-13T10:13:51+08:00",
+  "timestamp": "2026-08-13T10:25:46+08:00",
   "sources": {
     "tencent_http": {
       "status": "ok",
@@ -6887,11 +6887,39 @@
         "ETF or cross-branch persistence confirmation missing",
         "supercapacitor auditable two-limit-up structure missing"
       ]
+    },
+    "monitor_formal_alert_20260813_102414": {
+      "status": "degraded_partial",
+      "checked_at": "2026-08-13T10:25:46+08:00",
+      "trigger_time": "2026-08-13T10:24:14+08:00",
+      "alert_count": 1,
+      "sectors": [
+        "超级电容"
+      ],
+      "detail": "正式提醒已推送并写入看板；价格门槛不足且至少2只涨停结构不可审计，门禁拦截candidate与confirmed。",
+      "notified_at": "2026-08-13T10:25:46+08:00",
+      "errors": [
+        "precise trigger-time cross-source verification missing",
+        "short-period price threshold not met",
+        "auditable two-limit-up structure missing"
+      ]
+    },
+    "monitor_realtime_source_degradation_20260813_102327": {
+      "status": "degraded_partial",
+      "checked_at": "2026-08-13T10:25:46+08:00",
+      "failed_at": "2026-08-13T10:23:27+08:00",
+      "recovered_at": "2026-08-13T10:24:14+08:00",
+      "provider": "本地实时行情链路",
+      "detail": "一次刷新返回No value to decode，下一轮已自动恢复并产出行情；本轮提醒仍按降级单源处理。",
+      "impact": "保留上一版有效提醒，不将恢复后的单次观察异动升级confirmed。",
+      "errors": [
+        "No value to decode"
+      ]
     }
   },
   "last_publish_attempt": "pending_20260717_0830_premarket_publish",
   "status": "degraded_partial",
-  "last_error": "CPO is a single-source candidate; supercapacitor gate failed; exact trigger-time cross-source verification missing",
+  "last_error": "intermittent quote decode failure recovered; new supercapacitor observation failed candidate gate",
   "tencent_a_close_postmarket_20260716": {
     "status": "ok",
     "last_check": "2026-07-16T15:18:57+08:00",
