@@ -1,18 +1,9 @@
 {
-  "timestamp": "2026-08-13T09:38:08+08:00",
+  "timestamp": "2026-08-13T09:47:17+08:00",
   "current_signal_date": "2026-08-13",
   "status": "degraded",
-  "summary": "发现 151 个降级/需复核项（142 个价格/行情复核，1 个信号复核，9 个背景复核），核心结论可看但必须按影响分层使用。",
+  "summary": "发现 150 个降级/需复核项（142 个价格/行情复核，1 个信号复核，8 个背景复核），核心结论可看但必须按影响分层使用。",
   "issues": [
-    {
-      "severity": "warning",
-      "file": "alert.json",
-      "path": "",
-      "code": "stale_timestamp",
-      "message": "时间戳不是当前交易日：2026-08-12T11:31:00+08:00",
-      "impact_level": "background_review",
-      "decision_action": "仅作背景复核，不单独阻断交易判断"
-    },
     {
       "severity": "warning",
       "file": "midday.json",
@@ -37,15 +28,6 @@
       "path": "hotspots[2].stocks[0]",
       "code": "bad_change_pct",
       "message": "地产链代表股收盘补证缺失 change_pct 非数字：None，该字段忽略并降权",
-      "impact_level": "price_review",
-      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
-    },
-    {
-      "severity": "warning",
-      "file": "source-health.json",
-      "path": "",
-      "code": "stale_timestamp",
-      "message": "时间戳不是当前交易日：2026-08-12T11:31:00+08:00",
       "impact_level": "price_review",
       "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
     },
@@ -79,15 +61,6 @@
     {
       "severity": "warning",
       "file": "alert.json",
-      "path": "quote_audit",
-      "code": "historical_alert_quote_audit_incomplete",
-      "message": "quote_audit.pct_field 缺失",
-      "impact_level": "price_review",
-      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
-    },
-    {
-      "severity": "warning",
-      "file": "alert.json",
       "path": "quote_audit.sanity_checks",
       "code": "historical_alert_quote_audit_incomplete",
       "message": "quote_audit.sanity_checks.sample_count 缺失",
@@ -115,27 +88,27 @@
     {
       "severity": "warning",
       "file": "alert.json",
-      "path": "alerts[23].leaders[0]",
+      "path": "alerts[29].leaders[0]",
       "code": "missing_alert_leader_pct",
-      "message": "alerts[23].leaders[0].change_pct 缺失",
+      "message": "alerts[29].leaders[0].change_pct 缺失",
       "impact_level": "background_review",
       "decision_action": "仅作背景复核，不单独阻断交易判断"
     },
     {
       "severity": "warning",
       "file": "alert.json",
-      "path": "alerts[23].leaders[1]",
+      "path": "alerts[29].leaders[1]",
       "code": "missing_alert_leader_pct",
-      "message": "alerts[23].leaders[1].change_pct 缺失",
+      "message": "alerts[29].leaders[1].change_pct 缺失",
       "impact_level": "background_review",
       "decision_action": "仅作背景复核，不单独阻断交易判断"
     },
     {
       "severity": "warning",
       "file": "alert.json",
-      "path": "alerts[23].leaders[2]",
+      "path": "alerts[29].leaders[2]",
       "code": "missing_alert_leader_pct",
-      "message": "alerts[23].leaders[2].change_pct 缺失",
+      "message": "alerts[29].leaders[2].change_pct 缺失",
       "impact_level": "background_review",
       "decision_action": "仅作背景复核，不单独阻断交易判断"
     },
@@ -1371,6 +1344,24 @@
       "message": "shenwan_industry_mapping_postmarket_20260805: 历史代码主表5203只；涨超5%样本中38只未映射，占4.98%，已单列未映射，不外推分类。",
       "impact_level": "price_review",
       "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
+    },
+    {
+      "severity": "warning",
+      "file": "cross-file",
+      "path": "共进股份",
+      "code": "stock_pct_cross_file_conflict",
+      "message": "共进股份 跨文件涨跌幅差异过大：alert.json 1.29% vs intraday.json 9.99%",
+      "impact_level": "price_review",
+      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
+    },
+    {
+      "severity": "warning",
+      "file": "cross-file",
+      "path": "宏和科技",
+      "code": "stock_pct_cross_file_conflict",
+      "message": "宏和科技 跨文件涨跌幅差异过大：alert.json -3.1093% vs intraday.json 7.7%",
+      "impact_level": "price_review",
+      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
     }
   ],
   "action_plan": [
@@ -1381,6 +1372,17 @@
       "file": "alert.json",
       "code": "historical_alert_without_trusted_source",
       "problem": "盘中异动缺少可信源证明；当前阶段只降权参考，不阻断整站发布",
+      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核",
+      "next_step": "用第二行情源复核涨跌幅、quote_time 和代表股方向；未确认前只做验证。",
+      "unblock_condition": "price_review=0 或相关来源标记 trusted/cross verified。"
+    },
+    {
+      "priority": 2,
+      "impact_level": "price_review",
+      "label": "二次行情复核",
+      "file": "cross-file",
+      "code": "stock_pct_cross_file_conflict",
+      "problem": "共进股份 跨文件涨跌幅差异过大：alert.json 1.29% vs intraday.json 9.99%",
       "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核",
       "next_step": "用第二行情源复核涨跌幅、quote_time 和代表股方向；未确认前只做验证。",
       "unblock_condition": "price_review=0 或相关来源标记 trusted/cross verified。"
@@ -1401,8 +1403,8 @@
       "impact_level": "price_review",
       "label": "二次行情复核",
       "file": "source-health.json",
-      "code": "stale_timestamp",
-      "problem": "时间戳不是当前交易日：2026-08-12T11:31:00+08:00",
+      "code": "source_degraded",
+      "problem": "A股补充行情源解码异常，盘中异动和个股涨跌幅需以已审计源复核。",
       "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核",
       "next_step": "用第二行情源复核涨跌幅、quote_time 和代表股方向；未确认前只做验证。",
       "unblock_condition": "price_review=0 或相关来源标记 trusted/cross verified。"
@@ -1423,19 +1425,8 @@
       "impact_level": "background_review",
       "label": "背景来源复核",
       "file": "alert.json",
-      "code": "stale_timestamp",
-      "problem": "时间戳不是当前交易日：2026-08-12T11:31:00+08:00",
-      "decision_action": "仅作背景复核，不单独阻断交易判断",
-      "next_step": "补官方/交易所/公司公告来源；未补齐前不升级为核心依据。",
-      "unblock_condition": "官方来源补齐或确认不影响交易触发。"
-    },
-    {
-      "priority": 4,
-      "impact_level": "background_review",
-      "label": "背景来源复核",
-      "file": "midday.json",
-      "code": "stale_timestamp",
-      "problem": "时间戳不是当前交易日：2026-08-12T11:36:00+08:00",
+      "code": "missing_alert_leader_pct",
+      "problem": "alerts[29].leaders[0].change_pct 缺失",
       "decision_action": "仅作背景复核，不单独阻断交易判断",
       "next_step": "补官方/交易所/公司公告来源；未补齐前不升级为核心依据。",
       "unblock_condition": "官方来源补齐或确认不影响交易触发。"
@@ -1443,12 +1434,12 @@
   ],
   "counts": {
     "critical": 0,
-    "warning": 151,
+    "warning": 150,
     "info": 1,
     "blocking": 0,
     "price_review": 142,
     "signal_review": 1,
-    "background_review": 9
+    "background_review": 8
   },
   "rules": [
     "异常文本、JSON解析失败、必需文件缺失为 critical。",
