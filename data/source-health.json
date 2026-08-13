@@ -10362,5 +10362,20 @@
       "board-level cross-source verification missing"
     ],
     "action": "正式提醒照常向用户报告，但保留上一版alert.json；等待本地高频源连续恢复，恢复前将14:08-14:11批次视为历史触发和数据风险，不作为当前机会。"
+  },
+  "monitor_quote_failure_20260813_141201_141741": {
+    "status": "failed",
+    "checked_at": "2026-08-13T14:17:58+08:00",
+    "usage": "14:12-14:17正式提醒批次的实时行情门禁",
+    "detail": "monitor.log从14:12:01至14:17:41连续记录行情源异常，期间生成超级电容回落，以及液冷、科技硬件、算力、半导体设备/CMP/零部件、存储/HBM、CPO、封装、电子布和超节点观察提醒。多条提醒出现3分钟0.00%、成交统一1.00x、上涨100%却板块价格为负等矛盾，且声称至少2只涨停/跌停但无可审计计数。上一版alert.json保留不变，全部禁止写candidate或confirmed。",
+    "sample_count": 0,
+    "errors": [
+      "repeated quote source failures from 14:12:01 through 14:17:41",
+      "zero or contradictory short-period price fields",
+      "uniform 1.00x turnover values in multiple sectors",
+      "auditable limit-up and limit-down counts missing",
+      "board-level cross-source verification unavailable"
+    ],
+    "action": "继续保留上一版alert.json并等待高频源连续恢复；本批正式提醒只作为数据风险和历史触发向用户报告，不作为当前机会。"
   }
 }
