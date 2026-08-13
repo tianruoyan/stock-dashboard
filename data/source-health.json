@@ -10392,5 +10392,20 @@
       "board-level cross-source verification unavailable"
     ],
     "action": "正式提醒照常向用户报告；继续保留上一版alert.json，等待高频源连续恢复后再评估当前机会。"
+  },
+  "monitor_quote_failure_20260813_142013_142238": {
+    "status": "failed",
+    "checked_at": "2026-08-13T14:23:18+08:00",
+    "usage": "14:20-14:22正式提醒批次及硅片上涨攻势的实时行情门禁",
+    "detail": "monitor.log在14:20:13、14:20:29、14:20:45、14:21:43、14:22:06、14:22:22、14:22:38持续记录行情源异常。期间生成半导体零部件、长鑫存储、电子布、液冷、CPO、覆铜板、超节点观察提醒和14:22:25硅片上涨攻势。硅片本地数据称3分钟+1.07%、上涨83%、成交9.93x，但Longbridge分钟线显示有研硅14:19至14:22约-0.44%、沪硅产业约-0.19%、立昂微约+0.02%，三只当前日内分别-0.44%、-1.67%、-1.09%，与本地日内+15.50%、+0.86%、+2.26%严重冲突。保留上一版alert.json，硅片强提醒不得写candidate或confirmed。",
+    "sample_count": 3,
+    "errors": [
+      "repeated quote source failures from 14:20:13 through 14:22:38",
+      "silicon-wafer three-minute direction contradicted Longbridge minutes",
+      "silicon-wafer current day changes contradicted Longbridge quotes",
+      "auditable limit-up count missing",
+      "board-level cross-source verification failed"
+    ],
+    "action": "正式提醒照常报告并明确无效化；继续保留上一版alert.json，等待本地高频源稳定恢复后才重新评估硅片和相关科技方向。"
   }
 }
