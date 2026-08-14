@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-08-14T10:41:46+08:00",
+  "timestamp": "2026-08-14T10:44:46+08:00",
   "sources": {
     "tencent_http": {
       "status": "ok",
@@ -10734,5 +10734,54 @@
       "limit structure counts not auditable"
     ],
     "action": "正式提醒照常报告；不写candidate或confirmed，等待结构化信号链恢复、腾讯或通达信复核，以及ETF/指数同步证据。"
+  },
+  "monitor_formal_alert_20260814_104446": {
+    "status": "degraded_partial",
+    "checked_at": "2026-08-14T10:44:46+08:00",
+    "trigger_time": "2026-08-14T10:44:46+08:00",
+    "latest_trigger_time": "10:44:46",
+    "alert_count": 20,
+    "theme_count": 13,
+    "sectors": [
+      "科技硬件链",
+      "半导体设备平台",
+      "CMP/靶材/耗材",
+      "半导体零部件",
+      "先进封装",
+      "长鑫存储IPO映射",
+      "高带宽内存/HBM",
+      "存储芯片",
+      "光模块/CPO",
+      "算力",
+      "覆铜板",
+      "硅片",
+      "光刻胶/光刻机催化"
+    ],
+    "detail": "10:42:58至10:44:46新增20条正式提醒。10:44:25科技硬件、设备、CMP、零部件、封装、存储/HBM、CPO和算力一度全面放量上涨；10:44:45仅20秒后转为封装、硅片、机器人、光刻胶四分支风格杀，10:44:46的CPO风险快照又与21秒前强势快照冲突。本批没有任何记录进入data/signals.jsonl。已合并通知并记录latest_trigger_time，后续不重复推送同一批日志。",
+    "notified_at": "2026-08-14T10:44:46+08:00",
+    "errors": [
+      "20 new monitor.log snapshot alerts without any append-only structured signal",
+      "broad technology rally flipped to four-branch style kill within 20 seconds",
+      "CPO strong and risk snapshots contradicted within 21 seconds",
+      "board-level cross-source verification unavailable",
+      "auditable limit-up, limit-down and seal counts missing"
+    ]
+  },
+  "monitor_quote_audit_20260814_104446": {
+    "status": "degraded_partial",
+    "checked_at": "2026-08-14T10:44:46+08:00",
+    "market_time": "2026-08-14T10:44:46+08:00",
+    "usage": "10:44科技硬件全面拉升后风格杀及硅片风险的实时行情门禁",
+    "detail": "本地AkShare底池显示多个科技分支名义达到opportunity candidate门槛，硅片风险亦达到单源risk candidate最低门槛；但20秒级反向快照、CPO强弱矛盾、本批未进入data/signals.jsonl，以及未取得腾讯或通达信第二源，使行情审计不通过。alert.json继续保持alerts空列表，只在invalidated_alerts保存历史触发。",
+    "sample_count": 13,
+    "max_abs_leader_change_pct": 3.12,
+    "errors": [
+      "cross_source_verified=false",
+      "structured_signal_persisted=false",
+      "20-second direction reversal detected",
+      "CPO same-theme snapshot contradiction detected",
+      "limit structure counts not auditable"
+    ],
+    "action": "正式提醒照常报告；不写candidate或confirmed，等待结构化信号链恢复、腾讯或通达信复核、ETF/指数同步证据和连续快照确认。"
   }
 }
