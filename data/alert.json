@@ -1,42 +1,61 @@
 {
-  "timestamp": "2026-08-13T14:52:58+08:00",
-  "source_status": "degraded_partial",
-  "alerts": [
+  "timestamp": "2026-08-14T09:41:40+08:00",
+  "source_status": "invalidated",
+  "alerts": [],
+  "quote_audit": {
+    "provider": "本地盘中监控（AkShare底池降级）",
+    "quote_time": "2026-08-14T09:33:58+08:00",
+    "pct_field": "异动卡标注的3分钟涨跌幅",
+    "sanity_checks": {
+      "sample_count": 1,
+      "max_abs_leader_change_pct": 3.33,
+      "cross_source_verified": false,
+      "verified_alert_count": 0,
+      "leader_laggard_overlap_valid": false
+    }
+  },
+  "note": "source_status=invalidated 时禁止展示污染批次；等待可信行情源恢复并重产。",
+  "invalidated_alerts": [
     {
-      "id": "monitor-20260813-145017-switch-ethernet-gated",
-      "time": "2026-08-13T14:50:17+08:00",
+      "id": "monitor-20260814-093358-switch-ethernet-audit-gated",
+      "time": "2026-08-14T09:33:58+08:00",
       "sector": "交换机/高速以太网",
-      "type": "小登观察异动（未通过候选门禁）",
-      "reason": "触发时间14:50:17；小登方向。交换机/高速以太网再次触发观察性拉动，底池3分钟-0.24%，上涨71%/下跌29%，成交放大4.09x、较昨同期1.45x，强势样本0只；监控显示有后排扩散，但价格方向为负且成交仍不足，不满足candidate最低门槛。暂未接入最新周一盘前科技消息汇总，只按盘面结构判断；晚间P0/专题将交换机列为高优先观察线，催化来自工业富联半年报强化AI服务器、数据中心交换机及CPO映射，但要求板块宽度确认。同期科技硬件链-0.48%、超节点-0.40%、CPO-0.12%、算力-0.08%、液冷-0.02%，跨分支仍未形成同步上攻，本轮判断为“消息兑现但扩散不足”。持续性观察锐捷网络的短周期正收益能否延续、共进股份封板稳定性、盛科通信能否止跌，以及CPO/算力是否同步转强。风险：监控所称至少2只涨停未写入可审计limit_up_count，板块短周期价格为负、强势样本为0，且板块级双源与ETF证据缺失，不能写candidate或confirmed，不构成买卖建议。",
+      "type": "小登上涨攻势（行情审计未通过）",
+      "reason": "触发时间09:33:58；小登方向。本地监控显示交换机/高速以太网底池3分钟涨幅1.65%，上涠100%/下跌0%，成交放大20.00x，较昨同期6.83x，4只强势样本且监控判定有后排扩散，名义上达到opportunity candidate的价格、方向占比和成交门槛。但触发快照中锐捷网络同时进入领涨与领跌列表，存在领涨领跌重叠矛盾；且无第二行情源交叉核验，也没有可审计的涨停结构计数，因此依最高优先级门禁不写candidate或confirmed。盘前汇总将交换机列为高优先观察线，但明确“存储/HBM优先，交换机/CPO不因外盘直接升级”，并提醒强股高开兑现风险。触发同期CPO-0.08%、科技硬件链-0.46%、存储芯片-0.68%、高带宽内存-0.72%，液冷+0.53%、算力+0.45%、超节点+0.09%，跨分支同步扩散不足，本轮判断为“消息兑现但扩散不足”。只解释盘面结构，不构成买卖建议。",
       "leaders": [
         {
-          "name": "锐捷网络",
-          "change_pct": 0.24,
-          "score": 53.1,
-          "factors": [
-            "3分钟+0.24%",
-            "成交放大5.46x",
-            "触发时点日内+13.29%"
-          ]
-        },
-        {
           "name": "共进股份",
-          "change_pct": 0.0,
-          "score": 51.1,
+          "code": "603118",
+          "change_pct": 3.29,
+          "score": 100.0,
           "factors": [
-            "3分钟+0.00%",
-            "成交放大3.01x",
-            "触发时点日内+9.99%"
+            "3分钟+3.29%",
+            "成交放大20.00x",
+            "触发时点日内+10.03%",
+            "日内新高"
           ]
         },
         {
-          "name": "盛科通信",
-          "change_pct": -0.58,
-          "score": 34.7,
+          "name": "菲菱科思",
+          "code": "301191",
+          "change_pct": 3.33,
+          "score": 75.68,
           "factors": [
-            "3分钟-0.58%",
-            "成交放大6.31x",
-            "触发时点日内+4.47%"
+            "3分钟+3.33%",
+            "成交放大20.00x",
+            "触发时点日内+4.67%"
+          ]
+        },
+        {
+          "name": "锐捷网络",
+          "code": "301165",
+          "change_pct": 2.34,
+          "score": 61.25,
+          "factors": [
+            "3分钟+2.34%",
+            "成交放大20.00x",
+            "触发时点日内+3.56%",
+            "与领跌列表重叠，审计冲突"
           ]
         }
       ],
@@ -46,64 +65,82 @@
       "confirmation_level": "invalidated",
       "source_watch_id": "交换机-高速以太网",
       "quote_audit": {
-        "provider": "本地盘中监控（底池降级）",
-        "quote_time": "2026-08-13T14:50:17+08:00",
+        "provider": "本地盘中监控（AkShare底池降级）",
+        "quote_time": "2026-08-14T09:33:58+08:00",
         "pct_field": "3分钟涨跌幅",
         "sample_count": 7,
-        "max_abs_leader_change_pct": 0.58,
+        "max_abs_leader_change_pct": 3.33,
         "sanity_checks": {
+          "sample_count": 7,
+          "max_abs_leader_change_pct": 3.33,
           "cross_source_verified": false,
-          "price_move_valid": false,
-            "volume_valid": false,
+          "price_move_valid": true,
+          "volume_valid": true,
           "direction_ratio_valid": true,
-          "leader_laggard_overlap_valid": true,
+          "leader_laggard_overlap_valid": false,
           "limit_up_count_valid": false
         },
-        "board_3m_change_pct": -0.24,
-        "direction_ratio": 0.71,
-        "volume_ratio": 4.09,
-        "relative_volume_vs_yesterday": 1.45,
-        "strong_stock_count": 0,
+        "board_3m_change_pct": 1.65,
+        "direction_ratio": 1.0,
+        "volume_ratio": 20.0,
+        "relative_volume_vs_yesterday": 6.83,
+        "strong_stock_count": 4,
         "back_row_expansion": true,
+        "leader_laggard_overlap": [
+          "锐捷网络"
+        ],
         "limit_up_count": 0,
         "limit_down_count": 0,
         "limit_up_count_auditable": false,
         "cross_branch_snapshot": {
           "光模块/CPO": {
-            "change_pct_3m": -0.12,
-            "up_ratio": 0.42,
+            "change_pct_3m": -0.08,
+            "up_ratio": 1.0,
+            "volume_ratio": 20.0
+          },
+          "科技硬件链": {
+            "change_pct_3m": -0.46,
+            "up_ratio": 0.8,
+            "volume_ratio": 20.0
+          },
+          "存储芯片": {
+            "change_pct_3m": -0.68,
+            "up_ratio": 1.0,
+            "volume_ratio": 20.0
+          },
+          "高带宽内存": {
+            "change_pct_3m": -0.72,
+            "up_ratio": 1.0,
             "volume_ratio": 20.0
           },
           "液冷": {
-            "change_pct_3m": -0.02,
-            "up_ratio": 0.29,
+            "change_pct_3m": 0.53,
+            "up_ratio": 1.0,
+            "volume_ratio": 20.0
+          },
+          "算力": {
+            "change_pct_3m": 0.45,
+            "up_ratio": 1.0,
             "volume_ratio": 20.0
           },
           "8192超节点/昇腾算力": {
-            "change_pct_3m": -0.4,
-            "up_ratio": 0.44,
-            "volume_ratio": 4.28
-          },
-          "科技硬件链": {
-            "change_pct_3m": -0.48,
-            "up_ratio": 0.2,
-            "volume_ratio": 4.25
-          },
-          "算力": {
-            "change_pct_3m": -0.08,
-            "up_ratio": 0.31,
+            "change_pct_3m": 0.09,
+            "up_ratio": 1.0,
             "volume_ratio": 20.0
           }
         },
-        "missing_confirmation": "还差达到candidate门槛的板块3分钟上涨幅度与成交放大组合、至少1只强势推进样本、稳定一致的板块级独立行情源、ETF与跨分支同步，以及至少2只可审计涨停结构。"
+        "missing_confirmation": "还差领涨/领跌列表冲突消解、第二行情源按触发时点交叉核验、ETF与CPO/存储/HBM跨分支同向证据，以及可审计的涨停/封板结构计数。"
       },
       "source_status": "invalidated",
-      "valid_until": "2026-08-13T14:55:17+08:00",
-      "trigger_rule": "监控文本称至少2只涨停；因板块3分钟-0.24%、成交仅4.09x、强势样本0只且涨停计数不可审计，门禁拦截candidate与confirmed",
+      "valid_until": "2026-08-14T09:38:58+08:00",
+      "trigger_rule": "名义触发：3分钟平均涨幅>=1.5%、上涨占比>=70%、成交放大>=5x；审计拦截：领涨领跌重叠且无第二行情源交叉验证",
       "limit_up_count": 0,
       "limit_down_count": 0,
       "premarket_interpretation": "消息兑现但扩散不足",
-      "premarket_match": "匹配AI服务器/数据中心交换机高优先观察线；但CPO、液冷、超节点、算力与科技硬件链同步回落，交换机短周期价格为负、成交不足、强势样本为0，板块级双源也未满足确认条件。"
+      "premarket_match": "高度匹配交换机/高速以太网高优先观察线；不匹配盘前优先的存储/HBM强主线候选，CPO、存储/HBM和科技硬件链未同步上攻。"
     }
-  ]
+  ],
+  "updated_at": "2026-08-14T09:41:40+08:00",
+  "status": "invalidated_empty",
+  "summary": "09:33:58 交换机/高速以太网名义异动因领涨/领跌重叠且缺少第二行情源核验被撤下；alerts 已按门禁清空，仅保留 invalidated_alerts 供复盘，不作为交易触发。"
 }
