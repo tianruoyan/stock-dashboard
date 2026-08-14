@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-08-14T10:01:54+08:00",
+  "timestamp": "2026-08-14T10:36:46+08:00",
   "sources": {
     "tencent_http": {
       "status": "ok",
@@ -10645,5 +10645,50 @@
       "limit structure counts not auditable"
     ],
     "action": "正式风险提醒照常报告；不写candidate或confirmed，等待结构化信号链恢复、腾讯或通达信复核，以及ETF/指数同步证据。"
+  },
+  "monitor_formal_alert_20260814_103641": {
+    "status": "degraded_partial",
+    "checked_at": "2026-08-14T10:36:46+08:00",
+    "trigger_time": "2026-08-14T10:36:41+08:00",
+    "latest_trigger_time": "10:36:41",
+    "alert_count": 34,
+    "theme_count": 15,
+    "sectors": [
+      "半导体设备平台",
+      "CMP/靶材/材料耗材",
+      "长鑫存储IPO映射",
+      "科技硬件链",
+      "封装",
+      "算力",
+      "光模块/CPO",
+      "液冷",
+      "8192超节点/昇腾算力",
+      "交换机/高速以太网",
+      "7月半导体扩产组合"
+    ],
+    "detail": "10:26:54至10:36:41最近10分钟新增34条正式提醒，覆盖15个题材。10:34:55设备平台、CMP、长鑫映射与科技硬件名义共振，10:35封装跟随；10:36算力、液冷、超节点先回落后转观察，方向仍快速切换。本批没有任何记录进入data/signals.jsonl，并出现同一股票日内涨幅短时由接近跌停跳至接近涨停的快照矛盾。已合并通知并记录latest_trigger_time，后续不重复推送同一批日志。",
+    "notified_at": "2026-08-14T10:36:46+08:00",
+    "errors": [
+      "34 new monitor.log snapshot alerts without any append-only structured signal",
+      "semiconductor rebound did not receive computing and CPO confirmation",
+      "same stock day-change fields contradicted each other within seconds",
+      "board-level cross-source verification unavailable",
+      "auditable limit-up and limit-down counts missing"
+    ]
+  },
+  "monitor_quote_audit_20260814_103641": {
+    "status": "degraded_partial",
+    "checked_at": "2026-08-14T10:36:46+08:00",
+    "market_time": "2026-08-14T10:36:41+08:00",
+    "usage": "10:34半导体设备/CMP/长鑫映射共振及10:36算力分化的实时行情门禁",
+    "detail": "本地AkShare底池显示设备、CMP、长鑫映射和科技硬件名义达到opportunity candidate门槛并向封装扩散，但所有记录均未进入data/signals.jsonl；算力、液冷、超节点的最新回落幅度又不足risk candidate门槛，随后观察快照出现日内涨幅矛盾。未取得腾讯或通达信第二源和可审计涨跌停计数，alert.json继续保持alerts空列表，只在invalidated_alerts保存历史触发。",
+    "sample_count": 15,
+    "errors": [
+      "cross_source_verified=false",
+      "structured_signal_persisted=false",
+      "same-stock day-change contradiction detected",
+      "limit structure counts not auditable"
+    ],
+    "action": "正式提醒照常报告；不写candidate或confirmed，等待结构化信号链恢复、腾讯或通达信复核，以及ETF/指数同步证据。"
   }
 }
