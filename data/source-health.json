@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-08-13T13:58:57+08:00",
+  "timestamp": "2026-08-14T09:44:54+08:00",
   "sources": {
     "tencent_http": {
       "status": "ok",
@@ -10467,5 +10467,49 @@
       "board-level cross-source verification unavailable"
     ],
     "action": "保留alert.json中的14:50历史无效触发，不升级为当前机会；等待本地高频源连续稳定恢复。"
+  },
+  "monitor_formal_alert_20260814_094432": {
+    "status": "degraded_partial",
+    "checked_at": "2026-08-14T09:44:54+08:00",
+    "trigger_time": "2026-08-14T09:44:32+08:00",
+    "latest_trigger_time": "09:44:32",
+    "alert_count": 112,
+    "theme_count": 25,
+    "sectors": [
+      "半导体设备平台",
+      "存储芯片",
+      "光模块/CPO",
+      "光刻胶/光刻机催化",
+      "封装",
+      "电子布",
+      "覆铜板",
+      "超级电容",
+      "交换机/高速以太网",
+      "算力"
+    ],
+    "detail": "09:34:59至09:44:32的10分钟窗口内，monitor.log出现112条匹配正式提醒行，覆盖25个方向，多个方向在上涨、观察和快速回落之间反复切换。09:44:32最新快照为半导体设备平台名义拉升，同时存储、CPO、光刻胶、封装、电子布、覆铜板、超级电容和游资关联快速回落。追加式data/signals.jsonl在上一条已通知记录后仅新增覆铜板、组合风格、电子布和CPO四条去重记录，说明monitor.log快照行与持久化去重信号之间存在明显数量差异。本轮已逐行扫描并合并通知，后续以latest_trigger_time避免同一日志重复推送。",
+    "notified_at": "2026-08-14T09:44:54+08:00",
+    "errors": [
+      "monitor.log snapshot alert volume materially exceeds append-only structured signal count",
+      "multiple themes flipped from attack to rapid pullback within minutes",
+      "leader and laggard lists overlap in degraded bottom-pool snapshots",
+      "board-level cross-source verification unavailable",
+      "auditable limit-up and limit-down counts missing"
+    ]
+  },
+  "monitor_quote_audit_20260814_094432": {
+    "status": "degraded_partial",
+    "checked_at": "2026-08-14T09:44:54+08:00",
+    "market_time": "2026-08-14T09:44:32+08:00",
+    "usage": "09:44半导体设备拉升及科技多分支快速回落的实时行情门禁",
+    "detail": "本地AkShare底池快照显示半导体设备平台3分钟+1.39%、上涨100%、成交20.00x；同时存储、CPO、光刻胶、封装、电子布、覆铜板、超级电容和游资关联3分钟跌幅达到risk candidate名义门槛。但所有方向均未取得腾讯或通达信第二源，领涨/领跌名单不能可靠分离，涨跌停结构计数不可审计。按最高优先级门禁，alert.json继续保持alerts空列表，只在invalidated_alerts保存历史触发。",
+    "sample_count": 11,
+    "errors": [
+      "cross_source_verified=false",
+      "leader_laggard_overlap_valid=false",
+      "limit structure counts not auditable",
+      "third valid semiconductor-equipment leader unavailable"
+    ],
+    "action": "正式提醒照常向用户报告；不写candidate或confirmed，等待腾讯或通达信复核与ETF/指数同步证据。"
   }
 }
