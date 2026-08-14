@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-08-14T09:57:24+08:00",
+  "timestamp": "2026-08-14T10:01:54+08:00",
   "sources": {
     "tencent_http": {
       "status": "ok",
@@ -10599,5 +10599,51 @@
       "limit structure counts not auditable"
     ],
     "action": "正式提醒照常报告；不写candidate或confirmed，等待结构化信号链恢复、腾讯或通达信复核，以及ETF/指数同步证据。"
+  },
+  "monitor_formal_alert_20260814_100143": {
+    "status": "degraded_partial",
+    "checked_at": "2026-08-14T10:01:54+08:00",
+    "trigger_time": "2026-08-14T10:01:43+08:00",
+    "latest_trigger_time": "10:01:43",
+    "alert_count": 54,
+    "theme_count": 20,
+    "sectors": [
+      "科技硬件链",
+      "CMP/靶材/材料耗材",
+      "半导体设备平台",
+      "半导体零部件弹性",
+      "存储芯片",
+      "高带宽内存",
+      "光模块/CPO",
+      "封装",
+      "硅片",
+      "机器人/工业自动化",
+      "8192超节点/昇腾算力",
+      "7月半导体扩产组合"
+    ],
+    "detail": "09:58:08至10:01:43新增54条正式提醒，覆盖20个题材。09:59:31组合回暖，10:00:32即转为覆铜板、CPO、零部件、封装、HBM、CMP六分支风格杀；10:01:43科技硬件和CMP/材料继续放量回落。本轮只有09:59:56电子布上涨攻势进入data/signals.jsonl，10:00后的风险未被结构化持久化。已合并通知并记录latest_trigger_time，后续不重复推送同一批日志。",
+    "notified_at": "2026-08-14T10:01:54+08:00",
+    "errors": [
+      "54 new monitor.log snapshot alerts but only one append-only structured signal",
+      "semiconductor portfolio flipped from warming to six-branch style kill within one minute",
+      "post-10:00 risk signals not persisted to data/signals.jsonl",
+      "board-level cross-source verification unavailable",
+      "auditable limit-up and limit-down counts missing"
+    ]
+  },
+  "monitor_quote_audit_20260814_100143": {
+    "status": "degraded_partial",
+    "checked_at": "2026-08-14T10:01:54+08:00",
+    "market_time": "2026-08-14T10:01:43+08:00",
+    "usage": "10:00半导体扩产组合风格杀及10:01科技硬件/CMP回落的实时行情门禁",
+    "detail": "本地AkShare底池显示六分支风格杀，且科技硬件、CMP、硅片、超节点、存储和零部件名义达到risk candidate门槛。但10:00后的风险未进入data/signals.jsonl，也未取得腾讯或通达信第二源、领涨领跌名单分离和可审计跌停计数。alert.json继续保持alerts空列表，只在invalidated_alerts保存历史触发。",
+    "sample_count": 20,
+    "errors": [
+      "cross_source_verified=false",
+      "structured_signal_persisted=false for post-10:00 risk batch",
+      "leader_laggard_overlap_valid=false",
+      "limit structure counts not auditable"
+    ],
+    "action": "正式风险提醒照常报告；不写candidate或confirmed，等待结构化信号链恢复、腾讯或通达信复核，以及ETF/指数同步证据。"
   }
 }

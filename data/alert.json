@@ -1,14 +1,14 @@
 {
-  "timestamp": "2026-08-14T09:57:24+08:00",
+  "timestamp": "2026-08-14T10:01:54+08:00",
   "source_status": "invalidated",
   "alerts": [],
   "quote_audit": {
     "provider": "本地盘中监控（AkShare底池降级）",
-    "quote_time": "2026-08-14T09:57:23+08:00",
+    "quote_time": "2026-08-14T10:01:43+08:00",
     "pct_field": "异动卡标注的3分钟涨跌幅",
     "sanity_checks": {
-      "sample_count": 7,
-      "max_abs_leader_change_pct": 2.62,
+      "sample_count": 20,
+      "max_abs_leader_change_pct": 6.85,
       "cross_source_verified": false,
       "verified_alert_count": 0,
       "leader_laggard_overlap_valid": false
@@ -476,9 +476,88 @@
       "limit_down_count": 0,
       "premarket_interpretation": "消息预期落空/冲高回落",
       "premarket_match": "高度匹配盘前CPO高开兑现与核心高开低走风险线。"
+    },
+    {
+      "id": "monitor-20260814-100143-tech-style-kill-audit-gated",
+      "time": "2026-08-14T10:01:43+08:00",
+      "sector": "科技硬件/半导体扩产组合",
+      "type": "小登科技多分支风格杀（行情审计未通过）",
+      "reason": "触发时间09:58:08-10:01:43；小登风险方向。本轮新增54条正式提醒，覆盖20个题材及组合风格信号；09:59:31半导体扩产组合曾由零部件、封装、覆铜板、电子布四分支带动回暖，10:00:32即转为六分支风格杀：覆铜板5分钟-2.64%、CPO-2.24%、零部件-2.09%、封装-2.01%、HBM-2.01%、CMP/材料-2.00%，对应成交7.66x-11.93x。10:01:43最新科技硬件链3分钟-1.44%、下跌67%、成交14.24x、较昨同期2.09x；CMP/靶材/材料耗材-1.58%、下跌100%、15.51x、1.83x，均称风险向后排扩散。存储/HBM、半导体设备材料与CPO原属盘前强主线/观察线，本轮强转弱属于“消息预期落空/冲高回落”，并与盘前强线确认条件背离；CPO高开兑现风险则得到验证。54条快照中只有09:59:56电子布上涨攻势进入data/signals.jsonl，10:00后的风格杀和最新风险未被结构化持久化；叠加单源降级、涨跌停结构不可审计及分钟级方向矛盾，禁止写candidate或confirmed。只解释盘面结构，不构成买卖建议。",
+      "leaders": [
+        {
+          "name": "雅克科技",
+          "change_pct": -1.89,
+          "score": 65.6,
+          "factors": ["科技硬件链3分钟-1.89%", "成交放大10.70x", "触发时点日内-9.06%"]
+        },
+        {
+          "name": "新易盛",
+          "change_pct": -2.66,
+          "score": 62.3,
+          "factors": ["科技硬件链3分钟-2.66%", "成交放大18.20x", "触发时点日内-2.64%"]
+        },
+        {
+          "name": "江丰电子",
+          "change_pct": -1.74,
+          "score": 60.2,
+          "factors": ["CMP/材料耗材3分钟-1.74%", "成交放大17.23x", "触发时点日内-4.76%"]
+        }
+      ],
+      "signal_type": "⚠️风险信号",
+      "is_old_economy": false,
+      "alert_class": "risk",
+      "confirmation_level": "invalidated",
+      "source_watch_id": "存储-HBM",
+      "quote_audit": {
+        "provider": "本地盘中监控（AkShare底池降级）",
+        "quote_time": "2026-08-14T10:01:43+08:00",
+        "pct_field": "3分钟涨跌幅及风格5分钟涨跌幅",
+        "sample_count": 20,
+        "max_abs_leader_change_pct": 6.85,
+        "sanity_checks": {
+          "sample_count": 20,
+          "max_abs_leader_change_pct": 6.85,
+          "cross_source_verified": false,
+          "price_move_valid": true,
+          "volume_valid": true,
+          "direction_ratio_valid": true,
+          "structured_signal_persisted": false,
+          "leader_laggard_overlap_valid": false,
+          "limit_down_count_valid": false
+        },
+        "theme_snapshots": {
+          "科技硬件链": {"change_pct_3m": -1.44, "down_ratio": 0.67, "volume_ratio": 14.24, "relative_volume_vs_yesterday": 2.09},
+          "CMP/靶材/材料耗材": {"change_pct_3m": -1.58, "down_ratio": 1.0, "volume_ratio": 15.51, "relative_volume_vs_yesterday": 1.83},
+          "8192超节点/昇腾算力": {"change_pct_3m": -1.33, "down_ratio": 0.94, "volume_ratio": 10.9, "relative_volume_vs_yesterday": 2.2},
+          "硅片": {"change_pct_3m": -2.33, "down_ratio": 1.0, "volume_ratio": 7.45, "relative_volume_vs_yesterday": 2.55},
+          "半导体零部件弹性": {"change_pct_3m": -1.54, "down_ratio": 1.0, "volume_ratio": 7.1, "relative_volume_vs_yesterday": 2.07},
+          "存储芯片": {"change_pct_3m": -1.25, "down_ratio": 1.0, "volume_ratio": 7.8, "relative_volume_vs_yesterday": 2.53}
+        },
+        "style_kill_5m": {
+          "覆铜板": {"change_pct_5m": -2.64, "down_ratio": 1.0, "volume_ratio": 10.32},
+          "光模块/CPO": {"change_pct_5m": -2.24, "down_ratio": 1.0, "volume_ratio": 9.97},
+          "半导体零部件弹性": {"change_pct_5m": -2.09, "down_ratio": 1.0, "volume_ratio": 11.16},
+          "封装": {"change_pct_5m": -2.01, "down_ratio": 1.0, "volume_ratio": 9.11},
+          "高带宽内存": {"change_pct_5m": -2.01, "down_ratio": 1.0, "volume_ratio": 9.91},
+          "CMP/靶材/材料耗材": {"change_pct_5m": -2.0, "down_ratio": 1.0, "volume_ratio": 9.76}
+        },
+        "back_row_risk_expansion": true,
+        "structured_signal_count": 1,
+        "limit_up_count": 0,
+        "limit_down_count": 0,
+        "limit_down_count_auditable": false,
+        "missing_confirmation": "还差腾讯或通达信第二源、10:00后风险信号持久化、ETF/指数同步、领涨领跌冲突消解及可审计跌停计数。"
+      },
+      "source_status": "invalidated",
+      "valid_until": "2026-08-14T10:06:43+08:00",
+      "trigger_rule": "多分支名义达到risk candidate价格、方向占比和成交门槛，并出现风格级六分支同向急跌；审计拦截：单源降级、结构化信号未持久化且结构计数不可审计",
+      "limit_up_count": 0,
+      "limit_down_count": 0,
+      "premarket_interpretation": "消息预期落空/冲高回落",
+      "premarket_match": "存储/HBM、半导体设备材料的强线确认条件落空；CPO高开兑现风险线得到验证，整体与盘前强线预期背离。"
     }
   ],
-  "updated_at": "2026-08-14T09:57:24+08:00",
+  "updated_at": "2026-08-14T10:01:54+08:00",
   "status": "invalidated_empty",
-  "summary": "09:54:22-09:57:23新增16条正式提醒；09:56设备平台、零部件、长鑫映射与液冷名义拉升，09:57 CPO及电子布转为快速回落。因AkShare底池降级、结构化信号未持久化、缺少第二源和可审计结构计数，alerts继续保持空列表，仅在invalidated_alerts保留历史触发，不作为交易依据。"
+  "summary": "09:58:08-10:01:43新增54条正式提醒；半导体扩产组合由09:59回暖在10:00迅速转为六分支风格杀，10:01科技硬件与CMP/材料仍放量回落。因AkShare底池降级、最新风险未结构化持久化、缺少第二源和可审计结构计数，alerts继续保持空列表，仅在invalidated_alerts保留历史触发，不作为交易依据。"
 }
