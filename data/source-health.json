@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-08-14T09:44:54+08:00",
+  "timestamp": "2026-08-14T09:53:54+08:00",
   "sources": {
     "tencent_http": {
       "status": "ok",
@@ -10511,5 +10511,48 @@
       "third valid semiconductor-equipment leader unavailable"
     ],
     "action": "正式提醒照常向用户报告；不写candidate或confirmed，等待腾讯或通达信复核与ETF/指数同步证据。"
+  },
+  "monitor_formal_alert_20260814_095353": {
+    "status": "degraded_partial",
+    "checked_at": "2026-08-14T09:53:54+08:00",
+    "trigger_time": "2026-08-14T09:53:53+08:00",
+    "latest_trigger_time": "09:53:53",
+    "alert_count": 89,
+    "theme_count": 23,
+    "sectors": [
+      "科技硬件链",
+      "CMP/靶材/材料耗材",
+      "光模块/CPO",
+      "8192超节点/昇腾算力",
+      "机器人/工业自动化",
+      "封装",
+      "高带宽内存",
+      "光刻胶/光刻机催化",
+      "半导体零部件弹性"
+    ],
+    "detail": "09:44:57至09:53:53窗口内，monitor.log新增89条匹配正式提醒行，覆盖23个方向；多个方向继续在上涨、观察和快速回落之间切换。09:53:26至09:53:53最新快照集中转为科技硬件、CMP、CPO、超节点、机器人、封装、HBM、光刻胶和半导体零部件上涨。但data/signals.jsonl在09:40:07后没有新增结构化记录，表明快照提醒没有进入追加式持久化信号链。本轮已合并通知并记录latest_trigger_time，后续不重复推送同一批日志。",
+    "notified_at": "2026-08-14T09:53:54+08:00",
+    "errors": [
+      "89 new monitor.log snapshot alerts without any new append-only structured signal",
+      "multiple themes continued to flip direction within minutes",
+      "board-level cross-source verification unavailable",
+      "leader and laggard list separation unavailable",
+      "auditable limit-up and limit-down counts missing"
+    ]
+  },
+  "monitor_quote_audit_20260814_095353": {
+    "status": "degraded_partial",
+    "checked_at": "2026-08-14T09:53:54+08:00",
+    "market_time": "2026-08-14T09:53:53+08:00",
+    "usage": "09:53科技多分支上涨攻势的实时行情门禁",
+    "detail": "本地AkShare底池快照显示科技硬件、CMP、超节点、机器人、封装、HBM、光刻胶和半导体零部件名义达到opportunity candidate价格、方向占比和成交门槛，并称存在跨分支后排扩散。但对应记录未进入data/signals.jsonl，且未取得腾讯或通达信第二源、领涨领跌名单分离和可审计涨停结构计数。alert.json继续保持alerts空列表，只在invalidated_alerts保存历史触发。",
+    "sample_count": 8,
+    "errors": [
+      "cross_source_verified=false",
+      "structured_signal_persisted=false",
+      "leader_laggard_overlap_valid=false",
+      "limit structure counts not auditable"
+    ],
+    "action": "正式提醒照常报告；不写candidate或confirmed，等待结构化信号链恢复及腾讯或通达信复核。"
   }
 }

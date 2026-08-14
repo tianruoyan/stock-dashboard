@@ -1,14 +1,14 @@
 {
-  "timestamp": "2026-08-14T09:44:54+08:00",
+  "timestamp": "2026-08-14T09:53:54+08:00",
   "source_status": "invalidated",
   "alerts": [],
   "quote_audit": {
     "provider": "本地盘中监控（AkShare底池降级）",
-    "quote_time": "2026-08-14T09:44:32+08:00",
+    "quote_time": "2026-08-14T09:53:53+08:00",
     "pct_field": "异动卡标注的3分钟涨跌幅",
     "sanity_checks": {
-      "sample_count": 11,
-      "max_abs_leader_change_pct": 3.95,
+      "sample_count": 8,
+      "max_abs_leader_change_pct": 2.78,
       "cross_source_verified": false,
       "verified_alert_count": 0,
       "leader_laggard_overlap_valid": false
@@ -270,9 +270,81 @@
       "limit_down_count": 0,
       "premarket_interpretation": "消息预期落空/冲高回落",
       "premarket_match": "存储/HBM与CPO均匹配盘前高优先跟踪线，但最新回落与盘前强主线确认条件背离；电子布、覆铜板等缺少明确盘前消息支撑。"
+    },
+    {
+      "id": "monitor-20260814-095353-tech-rebound-audit-gated",
+      "time": "2026-08-14T09:53:53+08:00",
+      "sector": "科技成长多分支反抽",
+      "type": "小登多分支上涨攻势（行情审计未通过）",
+      "reason": "触发时间09:53:26-09:53:53；小登上涨方向。科技硬件链3分钟+2.06%、上涨80%、成交6.35x、较昨同期3.63x；CMP/靶材/材料耗材+2.09%、上涨100%、5.46x、2.73x；8192超节点/昇腾算力+1.65%、上涨88%、7.21x、3.31x；机器人/工业自动化+2.25%、上涨100%、8.06x、2.77x；封装+1.74%、上涨100%、9.19x、2.96x；高带宽内存+1.18%、上涨80%、8.72x、2.95x；光刻胶/光刻机+1.36%、上涨100%、10.19x、2.70x；半导体零部件弹性+1.62%、上涨100%、15.18x、2.91x，盘面显示从核心向多个后排分支扩散。盘前优先存储/HBM，并将CPO、半导体设备材料列为观察线；当前HBM、CMP、硬件、CPO同步修复，但存储芯片最近仅观察且3分钟-0.02%，因此判断为“消息兑现但扩散不足”。本轮monitor.log新增89条快照提醒，但data/signals.jsonl在09:40:07后无新增结构化记录；同时没有腾讯/通达信第二源、领涨领跌分离证据与可审计涨停数，故不写candidate或confirmed。只解释盘面结构，不构成买卖建议。",
+      "leaders": [
+        {
+          "name": "雅克科技",
+          "change_pct": 2.32,
+          "score": 68.6,
+          "factors": ["科技硬件链3分钟+2.32%", "成交放大5.28x", "触发时点日内+5.98%"]
+        },
+        {
+          "name": "华天科技",
+          "change_pct": 2.61,
+          "score": 66.2,
+          "factors": ["封装3分钟+2.61%", "成交放大13.48x", "触发时点日内+4.30%"]
+        },
+        {
+          "name": "华海清科",
+          "change_pct": 2.58,
+          "score": 60.8,
+          "factors": ["CMP/材料耗材3分钟+2.58%", "成交放大6.85x", "触发时点日内+2.28%"]
+        }
+      ],
+      "signal_type": "🎯交易信号",
+      "is_old_economy": false,
+      "alert_class": "opportunity",
+      "confirmation_level": "invalidated",
+      "source_watch_id": "存储-HBM",
+      "quote_audit": {
+        "provider": "本地盘中监控（AkShare底池降级）",
+        "quote_time": "2026-08-14T09:53:53+08:00",
+        "pct_field": "3分钟涨跌幅",
+        "sample_count": 8,
+        "max_abs_leader_change_pct": 2.78,
+        "sanity_checks": {
+          "sample_count": 8,
+          "max_abs_leader_change_pct": 2.78,
+          "cross_source_verified": false,
+          "price_move_valid": true,
+          "volume_valid": true,
+          "direction_ratio_valid": true,
+          "structured_signal_persisted": false,
+          "leader_laggard_overlap_valid": false,
+          "limit_up_count_valid": false
+        },
+        "theme_snapshots": {
+          "科技硬件链": {"change_pct_3m": 2.06, "up_ratio": 0.8, "volume_ratio": 6.35, "relative_volume_vs_yesterday": 3.63},
+          "CMP/靶材/材料耗材": {"change_pct_3m": 2.09, "up_ratio": 1.0, "volume_ratio": 5.46, "relative_volume_vs_yesterday": 2.73},
+          "8192超节点/昇腾算力": {"change_pct_3m": 1.65, "up_ratio": 0.88, "volume_ratio": 7.21, "relative_volume_vs_yesterday": 3.31},
+          "机器人/工业自动化": {"change_pct_3m": 2.25, "up_ratio": 1.0, "volume_ratio": 8.06, "relative_volume_vs_yesterday": 2.77},
+          "封装": {"change_pct_3m": 1.74, "up_ratio": 1.0, "volume_ratio": 9.19, "relative_volume_vs_yesterday": 2.96},
+          "高带宽内存": {"change_pct_3m": 1.18, "up_ratio": 0.8, "volume_ratio": 8.72, "relative_volume_vs_yesterday": 2.95},
+          "光刻胶/光刻机催化": {"change_pct_3m": 1.36, "up_ratio": 1.0, "volume_ratio": 10.19, "relative_volume_vs_yesterday": 2.7},
+          "半导体零部件弹性": {"change_pct_3m": 1.62, "up_ratio": 1.0, "volume_ratio": 15.18, "relative_volume_vs_yesterday": 2.91}
+        },
+        "back_row_expansion": true,
+        "limit_up_count": 0,
+        "limit_down_count": 0,
+        "limit_up_count_auditable": false,
+        "missing_confirmation": "还差腾讯或通达信第二源、data/signals.jsonl持久化记录、领涨/领跌名单分离、存储芯片与ETF同步，以及可审计涨停/封板计数。"
+      },
+      "source_status": "invalidated",
+      "valid_until": "2026-08-14T09:58:53+08:00",
+      "trigger_rule": "多分支名义达到opportunity candidate价格、方向占比和成交门槛；审计拦截：结构化信号未持久化、单源降级且结构计数不可审计",
+      "limit_up_count": 0,
+      "limit_down_count": 0,
+      "premarket_interpretation": "消息兑现但扩散不足",
+      "premarket_match": "CMP、HBM、CPO与科技硬件修复匹配盘前观察线，但存储芯片与ETF未同步确认，机器人方向缺少盘前消息催化。"
     }
   ],
-  "updated_at": "2026-08-14T09:44:54+08:00",
+  "updated_at": "2026-08-14T09:53:54+08:00",
   "status": "invalidated_empty",
-  "summary": "09:44:32 半导体设备平台名义拉升，同时存储、CPO、光刻胶、封装、电子布、覆铜板等多分支快速回落；由于AkShare底池降级、领涨/领跌名单冲突、缺少第二源和可审计结构计数，alerts继续保持空列表，仅在invalidated_alerts保留历史触发，不作为交易依据。"
+  "summary": "09:53:26-09:53:53科技硬件、CMP、超节点、机器人、封装、HBM、光刻胶与零部件多分支名义反抽；因AkShare底池降级、结构化信号未持久化、缺少第二源和可审计结构计数，alerts继续保持空列表，仅在invalidated_alerts保留历史触发，不作为交易依据。"
 }
