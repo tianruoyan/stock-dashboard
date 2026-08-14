@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-08-14T09:53:54+08:00",
+  "timestamp": "2026-08-14T09:57:24+08:00",
   "sources": {
     "tencent_http": {
       "status": "ok",
@@ -10554,5 +10554,50 @@
       "limit structure counts not auditable"
     ],
     "action": "正式提醒照常报告；不写candidate或confirmed，等待结构化信号链恢复及腾讯或通达信复核。"
+  },
+  "monitor_formal_alert_20260814_095723": {
+    "status": "degraded_partial",
+    "checked_at": "2026-08-14T09:57:24+08:00",
+    "trigger_time": "2026-08-14T09:57:23+08:00",
+    "latest_trigger_time": "09:57:23",
+    "alert_count": 16,
+    "theme_count": 11,
+    "sectors": [
+      "半导体设备平台",
+      "半导体零部件弹性",
+      "长鑫存储IPO映射",
+      "液冷",
+      "光模块/CPO",
+      "电子布",
+      "封装",
+      "覆铜板",
+      "科技硬件链",
+      "交换机/高速以太网",
+      "7月半导体扩产组合"
+    ],
+    "detail": "09:54:22至09:57:23新增16条正式提醒。09:56:05设备平台、零部件、长鑫映射与液冷达到本地名义上涨门槛；09:56:52电子布、09:57:23光模块/CPO转为快速回落，方向继续分钟级翻转。data/signals.jsonl在09:40:07后仍无新增结构化记录。本轮已合并通知并记录latest_trigger_time，后续不重复推送同一批日志。",
+    "notified_at": "2026-08-14T09:57:24+08:00",
+    "errors": [
+      "16 new monitor.log snapshot alerts without any new append-only structured signal",
+      "semiconductor and CPO branches continued to flip direction within minutes",
+      "board-level cross-source verification unavailable",
+      "leader and laggard list separation unavailable",
+      "auditable limit-up and limit-down counts missing"
+    ]
+  },
+  "monitor_quote_audit_20260814_095723": {
+    "status": "degraded_partial",
+    "checked_at": "2026-08-14T09:57:24+08:00",
+    "market_time": "2026-08-14T09:57:23+08:00",
+    "usage": "09:56半导体设备/零部件/长鑫映射拉升及09:57 CPO回落的实时行情门禁",
+    "detail": "本地AkShare底池显示设备平台、零部件、长鑫映射和液冷名义达到opportunity candidate门槛，随后CPO和电子布名义达到risk candidate门槛。但对应记录未进入data/signals.jsonl，且未取得腾讯或通达信第二源、领涨领跌名单分离和可审计涨跌停计数。alert.json继续保持alerts空列表，只在invalidated_alerts保存历史触发。",
+    "sample_count": 7,
+    "errors": [
+      "cross_source_verified=false",
+      "structured_signal_persisted=false",
+      "leader_laggard_overlap_valid=false",
+      "limit structure counts not auditable"
+    ],
+    "action": "正式提醒照常报告；不写candidate或confirmed，等待结构化信号链恢复、腾讯或通达信复核，以及ETF/指数同步证据。"
   }
 }
