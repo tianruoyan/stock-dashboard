@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-08-14T10:36:46+08:00",
+  "timestamp": "2026-08-14T10:41:46+08:00",
   "sources": {
     "tencent_http": {
       "status": "ok",
@@ -10687,6 +10687,50 @@
       "cross_source_verified=false",
       "structured_signal_persisted=false",
       "same-stock day-change contradiction detected",
+      "limit structure counts not auditable"
+    ],
+    "action": "正式提醒照常报告；不写candidate或confirmed，等待结构化信号链恢复、腾讯或通达信复核，以及ETF/指数同步证据。"
+  },
+  "monitor_formal_alert_20260814_104122": {
+    "status": "degraded_partial",
+    "checked_at": "2026-08-14T10:41:46+08:00",
+    "trigger_time": "2026-08-14T10:41:22+08:00",
+    "latest_trigger_time": "10:41:22",
+    "alert_count": 14,
+    "theme_count": 10,
+    "sectors": [
+      "半导体设备平台",
+      "半导体零部件弹性",
+      "长鑫存储IPO映射",
+      "覆铜板",
+      "光刻胶/光刻机催化",
+      "光模块/CPO",
+      "8192超节点/昇腾算力",
+      "交换机/高速以太网",
+      "封装",
+      "7月半导体扩产组合"
+    ],
+    "detail": "10:37:06至10:41:22新增14条正式提醒。10:40:24组合回暖由零部件、长鑫映射和覆铜板三分支5分钟同向急拉确认，设备与光刻胶亦跟随；但CPO、超节点和交换机未同向。本批没有任何记录进入data/signals.jsonl，且风险卡出现价格和触发结构不一致。已合并通知并记录latest_trigger_time，后续不重复推送同一批日志。",
+    "notified_at": "2026-08-14T10:41:46+08:00",
+    "errors": [
+      "14 new monitor.log snapshot alerts without any append-only structured signal",
+      "semiconductor recovery lacked computing-network confirmation",
+      "risk cards referenced unauditable limit-down structure despite insufficient price moves",
+      "board-level cross-source verification unavailable",
+      "auditable limit-up and limit-down counts missing"
+    ]
+  },
+  "monitor_quote_audit_20260814_104122": {
+    "status": "degraded_partial",
+    "checked_at": "2026-08-14T10:41:46+08:00",
+    "market_time": "2026-08-14T10:41:22+08:00",
+    "usage": "10:40半导体扩产组合回暖及算力网络分化的实时行情门禁",
+    "detail": "本地AkShare底池显示设备、零部件、长鑫映射、覆铜板和光刻胶名义达到或接近opportunity candidate门槛，并形成三分支风格回暖。但本批未进入data/signals.jsonl；CPO、超节点和交换机风险卡又缺少价格门槛或可审计跌停计数。未取得腾讯或通达信第二源，alert.json继续保持alerts空列表，只在invalidated_alerts保存历史触发。",
+    "sample_count": 10,
+    "errors": [
+      "cross_source_verified=false",
+      "structured_signal_persisted=false",
+      "computing-network confirmation missing",
       "limit structure counts not auditable"
     ],
     "action": "正式提醒照常报告；不写candidate或confirmed，等待结构化信号链恢复、腾讯或通达信复核，以及ETF/指数同步证据。"

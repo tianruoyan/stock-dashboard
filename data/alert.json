@@ -1,14 +1,14 @@
 {
-  "timestamp": "2026-08-14T10:36:46+08:00",
+  "timestamp": "2026-08-14T10:41:46+08:00",
   "source_status": "invalidated",
   "alerts": [],
   "quote_audit": {
     "provider": "本地盘中监控（AkShare底池降级）",
-    "quote_time": "2026-08-14T10:36:41+08:00",
+    "quote_time": "2026-08-14T10:41:22+08:00",
     "pct_field": "异动卡标注的3分钟涨跌幅",
     "sanity_checks": {
-      "sample_count": 15,
-      "max_abs_leader_change_pct": 3.42,
+      "sample_count": 10,
+      "max_abs_leader_change_pct": 3.83,
       "cross_source_verified": false,
       "verified_alert_count": 0,
       "leader_laggard_overlap_valid": false
@@ -628,9 +628,86 @@
       "limit_down_count": 0,
       "premarket_interpretation": "消息兑现但扩散不足",
       "premarket_match": "设备平台和长鑫存储映射匹配盘前高优先线，CMP匹配观察线；封装有后排跟随，但算力、CPO未同步确认。"
+    },
+    {
+      "id": "monitor-20260814-104122-semiconductor-style-recovery-audit-gated",
+      "time": "2026-08-14T10:40:24+08:00",
+      "sector": "7月半导体扩产组合",
+      "type": "小登半导体多分支回暖（行情审计未通过）",
+      "reason": "触发时间10:37:06-10:41:22；小登上涨方向。新增14条正式提醒。10:40:24组合风格回暖由三分支5分钟同向急拉确认：半导体零部件弹性+1.87%、上涨100%、成交16.00x；长鑫存储IPO映射+1.57%、上涨80%、15.50x；覆铜板+1.52%、上涨100%、7.28x。3分钟结构上，设备平台10:38:37为+1.07%、上涨100%、成交12.38x、较昨同期1.41x；零部件+1.28%、上涨100%、13.27x、1.64x；长鑫映射10:37:55为+1.09%、上涨80%、12.19x、1.37x；覆铜板+1.21%、上涨100%、8.60x、2.48x；光刻胶10:39:36观察拉动+1.40%、上涨100%、10.21x、1.59x，显示设备、材料、零部件和光刻胶顺序均与config专题优先级一致，半导体内部可解释为“消息兑现加强”。但CPO10:37:53为-0.97%、超节点10:40:00为-0.22%，交换机10:41:22的所谓回落实际3分钟+0.04%、成交仅3.74x，算力网络未形成同向扩散，且这些风险卡的跌停结构不可审计。本批无记录进入data/signals.jsonl，仍缺第二源、ETF/指数确认和一致快照，故禁止写candidate或confirmed。只解释盘面结构，不构成买卖建议。",
+      "leaders": [
+        {
+          "name": "南亚新材",
+          "change_pct": 1.69,
+          "score": 68.8,
+          "factors": ["覆铜板3分钟+1.69%", "成交放大11.02x", "触发时点日内+7.17%"]
+        },
+        {
+          "name": "新莱应材",
+          "change_pct": 0.94,
+          "score": 60.4,
+          "factors": ["零部件弹性3分钟+0.94%", "成交放大20.00x", "触发时点日内+6.96%"]
+        },
+        {
+          "name": "北方华创",
+          "change_pct": 1.18,
+          "score": 46.2,
+          "factors": ["设备平台3分钟+1.18%", "成交放大20.00x", "触发时点日内+2.94%"]
+        }
+      ],
+      "signal_type": "🎯交易信号",
+      "is_old_economy": false,
+      "alert_class": "opportunity",
+      "confirmation_level": "invalidated",
+      "source_watch_id": "半导体设备",
+      "quote_audit": {
+        "provider": "本地盘中监控（AkShare底池降级）",
+        "quote_time": "2026-08-14T10:41:22+08:00",
+        "pct_field": "3分钟涨跌幅及风格5分钟涨跌幅",
+        "sample_count": 10,
+        "max_abs_leader_change_pct": 3.83,
+        "sanity_checks": {
+          "sample_count": 10,
+          "max_abs_leader_change_pct": 3.83,
+          "cross_source_verified": false,
+          "price_move_valid": true,
+          "volume_valid": true,
+          "direction_ratio_valid": true,
+          "structured_signal_persisted": false,
+          "leader_laggard_overlap_valid": false,
+          "limit_up_count_valid": false
+        },
+        "theme_snapshots": {
+          "半导体设备平台": {"change_pct_3m": 1.07, "up_ratio": 1.0, "volume_ratio": 12.38, "relative_volume_vs_yesterday": 1.41},
+          "半导体零部件弹性": {"change_pct_3m": 1.28, "up_ratio": 1.0, "volume_ratio": 13.27, "relative_volume_vs_yesterday": 1.64},
+          "长鑫存储IPO映射": {"change_pct_3m": 1.09, "up_ratio": 0.8, "volume_ratio": 12.19, "relative_volume_vs_yesterday": 1.37},
+          "覆铜板": {"change_pct_3m": 1.21, "up_ratio": 1.0, "volume_ratio": 8.6, "relative_volume_vs_yesterday": 2.48},
+          "光刻胶/光刻机催化": {"change_pct_3m": 1.4, "up_ratio": 1.0, "volume_ratio": 10.21, "relative_volume_vs_yesterday": 1.59},
+          "光模块/CPO": {"change_pct_3m": -0.97, "down_ratio": 1.0, "volume_ratio": 6.09, "relative_volume_vs_yesterday": 2.35},
+          "8192超节点/昇腾算力": {"change_pct_3m": -0.22, "down_ratio": 0.94, "volume_ratio": 6.8, "relative_volume_vs_yesterday": 2.65}
+        },
+        "style_recovery_5m": {
+          "半导体零部件弹性": {"change_pct_5m": 1.87, "up_ratio": 1.0, "volume_ratio": 16.0},
+          "长鑫存储IPO映射": {"change_pct_5m": 1.57, "up_ratio": 0.8, "volume_ratio": 15.5},
+          "覆铜板": {"change_pct_5m": 1.52, "up_ratio": 1.0, "volume_ratio": 7.28}
+        },
+        "back_row_expansion": true,
+        "structured_signal_count": 0,
+        "limit_up_count": 0,
+        "limit_down_count": 0,
+        "limit_up_count_auditable": false,
+        "missing_confirmation": "还差腾讯或通达信第二源、data/signals.jsonl持久化、半导体ETF/科创50同步、算力网络跟随及可审计涨停/封板计数。"
+      },
+      "source_status": "invalidated",
+      "valid_until": "2026-08-14T10:45:24+08:00",
+      "trigger_rule": "半导体多分支名义达到opportunity candidate价格、方向占比和成交门槛，并出现风格级三分支回暖；审计拦截：单源降级、结构化信号未持久化、跨科技扩散不足且结构计数不可审计",
+      "limit_up_count": 0,
+      "limit_down_count": 0,
+      "premarket_interpretation": "消息兑现加强",
+      "premarket_match": "设备、材料、零部件与光刻胶均按config优先级扩散，匹配盘前半导体设备/存储高优先线；算力、CPO和交换机仍是缺口。"
     }
   ],
-  "updated_at": "2026-08-14T10:36:46+08:00",
+  "updated_at": "2026-08-14T10:41:46+08:00",
   "status": "invalidated_empty",
-  "summary": "10:26:54-10:36:41最近10分钟新增34条正式提醒；10:34设备、CMP、长鑫存储映射与科技硬件名义共振，随后算力、液冷、超节点分化且快照自相矛盾。因AkShare底池降级、本批无结构化信号、缺少第二源和可审计结构计数，alerts继续保持空列表，仅在invalidated_alerts保留历史触发，不作为交易依据。"
+  "summary": "10:37:06-10:41:22新增14条正式提醒；半导体零部件、长鑫存储映射、覆铜板、设备与光刻胶名义扩散并触发组合回暖，但算力、CPO和交换机未同步。本批无结构化信号且缺少第二源和可审计结构计数，alerts继续保持空列表，仅在invalidated_alerts保留历史触发，不作为交易依据。"
 }
