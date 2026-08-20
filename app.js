@@ -2572,10 +2572,14 @@ function currentDateAlertData(alert, currentDate = currentSignalDate()) {
 
 function currentSignalDate() {
   const dates = [
+    cached("data/data-trust.json")?.current_signal_date,
+    cached("data/opportunity-watch.json")?.current_signal_date,
+    cached("data/watchlist-quotes.json")?.timestamp,
     cached("data/premarket.json")?.timestamp,
     cached("data/alert.json")?.timestamp,
     cached("data/intraday.json")?.timestamp,
     cached("data/midday.json")?.timestamp,
+    cached("data/evening-sentiment.json")?.timestamp,
     cached("data/topics.json")?.timestamp,
     cached("data/postmarket.json")?.timestamp
   ].map(signalDate).filter(Boolean).sort();
@@ -2931,7 +2935,7 @@ function formatAgeText(ms) {
 
 function intradayOpportunityAlerts(alertTimestamp) {
   const intraday = cached("data/intraday.json") || {};
-  if (!intraday.timestamp || signalDate(intraday.timestamp) !== currentSignalDate()) return [];
+  if (!intraday.timestamp || !intradayHasCurrentMarketSnapshot(intraday)) return [];
   if (alertTimestamp && Date.parse(intraday.timestamp) <= Date.parse(alertTimestamp)) return [];
   const trends = Array.isArray(intraday.main_trends) ? intraday.main_trends : [];
   return trends
@@ -2962,7 +2966,7 @@ function intradayOpportunityAlerts(alertTimestamp) {
 
 function intradayRiskAlerts(alertTimestamp) {
   const intraday = cached("data/intraday.json") || {};
-  if (!intraday.timestamp || signalDate(intraday.timestamp) !== currentSignalDate()) return [];
+  if (!intraday.timestamp || !intradayHasCurrentMarketSnapshot(intraday)) return [];
   if (alertTimestamp && Date.parse(intraday.timestamp) <= Date.parse(alertTimestamp)) return [];
   const trends = Array.isArray(intraday.main_trends) ? intraday.main_trends : [];
   return trends
@@ -3016,6 +3020,17 @@ function renderIntradayFallbackCards(alerts) {
       </div>`;
     }).join("")}
   </div>`;
+}
+
+function intradayHasCurrentMarketSnapshot(intraday) {
+  const currentDate = currentSignalDate();
+  return [
+    intraday?.timestamp,
+    intraday?.market_data_as_of,
+    intraday?.market_data_collected_at,
+    intraday?.index?.snapshot_time,
+    intraday?.watchlist_quote_as_of
+  ].some(value => signalDate(value) === currentDate);
 }
 
 function extractIntradayRepresentativeLeaders(evidence) {
