@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-08-14T10:44:46+08:00",
+  "timestamp": "2026-08-21T10:47:54+08:00",
   "sources": {
     "tencent_http": {
       "status": "ok",
@@ -6915,6 +6915,18 @@
       "errors": [
         "No value to decode"
       ]
+    },
+    "akshare_monitor_intraday_1040": {
+      "status": "degraded_recovered_partial",
+      "last_check": "2026-08-21T10:47:54+08:00",
+      "usage": "盘中观察池与题材短周期刷新",
+      "detail": "10:33:13-10:35:49连续11次无有效行情并写入system:data异常；随后本地监控恢复输出且守护/子进程存活。恢复后的正式提醒仍只有akshare/本地监控单源，未取得腾讯或通达信交叉验证。",
+      "sample_count": 0,
+      "errors": [
+        "连续11次行情源空返回/无有效行情",
+        "正式提醒缺少第二行情源按触发时点复核"
+      ],
+      "action": "source_status保持degraded_partial；candidate前台显示待确认，confirmed保持为0，过期或结构不可审计提醒转历史/失效。"
     }
   },
   "last_publish_attempt": "pending_20260717_0830_premarket_publish",
