@@ -1,8 +1,8 @@
 {
-  "timestamp": "2026-08-20T23:31:27+08:00",
-  "current_signal_date": "2026-08-20",
+  "timestamp": "2026-08-21T09:47:47+08:00",
+  "current_signal_date": "2026-08-21",
   "status": "degraded",
-  "summary": "发现 147 个降级/需复核项（1 个交易阻断，136 个价格/行情复核，1 个信号复核，9 个背景复核），核心结论可看但必须按影响分层使用。",
+  "summary": "发现 151 个降级/需复核项（1 个交易阻断，136 个价格/行情复核，1 个信号复核，14 个背景复核），核心结论可看但必须按影响分层使用。",
   "issues": [
     {
       "severity": "warning",
@@ -42,6 +42,15 @@
     },
     {
       "severity": "warning",
+      "file": "postmarket.json",
+      "path": "",
+      "code": "stale_timestamp",
+      "message": "时间戳不是当前交易日：2026-08-20T22:45:10+08:00",
+      "impact_level": "background_review",
+      "decision_action": "仅作背景复核，不单独阻断交易判断"
+    },
+    {
+      "severity": "warning",
       "file": "premarket.json",
       "path": "",
       "code": "stale_timestamp",
@@ -57,6 +66,15 @@
       "message": "时间戳不是当前交易日：2026-08-14T10:44:46+08:00",
       "impact_level": "price_review",
       "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
+    },
+    {
+      "severity": "warning",
+      "file": "topics.json",
+      "path": "",
+      "code": "stale_timestamp",
+      "message": "时间戳不是当前交易日：2026-08-20T22:46:33+08:00",
+      "impact_level": "background_review",
+      "decision_action": "仅作背景复核，不单独阻断交易判断"
     },
     {
       "severity": "warning",
@@ -102,6 +120,15 @@
       "message": "sentiment_summary 缺失",
       "impact_level": "signal_review",
       "decision_action": "机会信号必须降权并转入验证"
+    },
+    {
+      "severity": "info",
+      "file": "evening-sentiment.json",
+      "path": "",
+      "code": "evening_not_current",
+      "message": "晚间舆情不是当前交易日，不参与今日总控",
+      "impact_level": "background_review",
+      "decision_action": "仅作背景复核，不单独阻断交易判断"
     },
     {
       "severity": "warning",
@@ -1326,6 +1353,24 @@
       "message": "shenwan_industry_mapping_postmarket_20260805: 历史代码主表5203只；涨超5%样本中38只未映射，占4.98%，已单列未映射，不外推分类。",
       "impact_level": "price_review",
       "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
+    },
+    {
+      "severity": "warning",
+      "file": "automation-health.json",
+      "path": "",
+      "code": "stale_automation_health",
+      "message": "automation-health 日期不是当前交易日：2026-08-20",
+      "impact_level": "background_review",
+      "decision_action": "仅作背景复核，不单独阻断交易判断"
+    },
+    {
+      "severity": "warning",
+      "file": "theme-shifts.json",
+      "path": "",
+      "code": "stale_theme_shifts",
+      "message": "theme-shifts 日期不是当前交易日：2026-08-20",
+      "impact_level": "background_review",
+      "decision_action": "仅作背景复核，不单独阻断交易判断"
     }
   ],
   "action_plan": [
@@ -1377,9 +1422,9 @@
       "priority": 4,
       "impact_level": "background_review",
       "label": "背景来源复核",
-      "file": "intraday.json",
-      "code": "stale_timestamp",
-      "problem": "时间戳不是当前交易日：2026-08-14T14:19:17+08:00",
+      "file": "automation-health.json",
+      "code": "stale_automation_health",
+      "problem": "automation-health 日期不是当前交易日：2026-08-20",
       "decision_action": "仅作背景复核，不单独阻断交易判断",
       "next_step": "补官方/交易所/公司公告来源；未补齐前不升级为核心依据。",
       "unblock_condition": "官方来源补齐或确认不影响交易触发。"
@@ -1388,9 +1433,9 @@
       "priority": 4,
       "impact_level": "background_review",
       "label": "背景来源复核",
-      "file": "midday.json",
+      "file": "intraday.json",
       "code": "stale_timestamp",
-      "problem": "时间戳不是当前交易日：2026-08-14T11:39:30+08:00",
+      "problem": "时间戳不是当前交易日：2026-08-14T14:19:17+08:00",
       "decision_action": "仅作背景复核，不单独阻断交易判断",
       "next_step": "补官方/交易所/公司公告来源；未补齐前不升级为核心依据。",
       "unblock_condition": "官方来源补齐或确认不影响交易触发。"
@@ -1398,12 +1443,12 @@
   ],
   "counts": {
     "critical": 0,
-    "warning": 147,
-    "info": 0,
+    "warning": 151,
+    "info": 1,
     "blocking": 1,
     "price_review": 136,
     "signal_review": 1,
-    "background_review": 9
+    "background_review": 14
   },
   "rules": [
     "异常文本、JSON解析失败、必需文件缺失为 critical。",
