@@ -1,18 +1,9 @@
 {
-  "timestamp": "2026-08-21T16:10:32+08:00",
+  "timestamp": "2026-08-21T16:28:03+08:00",
   "current_signal_date": "2026-08-21",
   "status": "degraded",
-  "summary": "发现 146 个降级/需复核项（137 个价格/行情复核，1 个信号复核，9 个背景复核），核心结论可看但必须按影响分层使用。",
+  "summary": "发现 149 个降级/需复核项（137 个价格/行情复核，1 个信号复核，12 个背景复核），核心结论可看但必须按影响分层使用。",
   "issues": [
-    {
-      "severity": "warning",
-      "file": "postmarket.json",
-      "path": "",
-      "code": "stale_timestamp",
-      "message": "时间戳不是当前交易日：2026-08-20T22:45:10+08:00",
-      "impact_level": "background_review",
-      "decision_action": "仅作背景复核，不单独阻断交易判断"
-    },
     {
       "severity": "warning",
       "file": "premarket.json",
@@ -64,6 +55,42 @@
       "path": "",
       "code": "missing_sentiment_indicator_field",
       "message": "sentiment_indicator.method 缺失",
+      "impact_level": "background_review",
+      "decision_action": "仅作背景复核，不单独阻断交易判断"
+    },
+    {
+      "severity": "warning",
+      "file": "postmarket.json",
+      "path": "",
+      "code": "missing_hotspot_field",
+      "message": "hotspots[0].continuity 缺失",
+      "impact_level": "background_review",
+      "decision_action": "仅作背景复核，不单独阻断交易判断"
+    },
+    {
+      "severity": "warning",
+      "file": "postmarket.json",
+      "path": "",
+      "code": "missing_hotspot_field",
+      "message": "hotspots[1].continuity 缺失",
+      "impact_level": "background_review",
+      "decision_action": "仅作背景复核，不单独阻断交易判断"
+    },
+    {
+      "severity": "warning",
+      "file": "postmarket.json",
+      "path": "",
+      "code": "missing_hotspot_field",
+      "message": "hotspots[2].continuity 缺失",
+      "impact_level": "background_review",
+      "decision_action": "仅作背景复核，不单独阻断交易判断"
+    },
+    {
+      "severity": "warning",
+      "file": "postmarket.json",
+      "path": "",
+      "code": "missing_hotspot_field",
+      "message": "hotspots[3].continuity 缺失",
       "impact_level": "background_review",
       "decision_action": "仅作背景复核，不单独阻断交易判断"
     },
@@ -1367,8 +1394,8 @@
       "impact_level": "background_review",
       "label": "背景来源复核",
       "file": "postmarket.json",
-      "code": "stale_timestamp",
-      "problem": "时间戳不是当前交易日：2026-08-20T22:45:10+08:00",
+      "code": "missing_sentiment_indicator_field",
+      "problem": "sentiment_indicator.score 缺失",
       "decision_action": "仅作背景复核，不单独阻断交易判断",
       "next_step": "补官方/交易所/公司公告来源；未补齐前不升级为核心依据。",
       "unblock_condition": "官方来源补齐或确认不影响交易触发。"
@@ -1398,12 +1425,12 @@
   ],
   "counts": {
     "critical": 0,
-    "warning": 146,
+    "warning": 149,
     "info": 1,
     "blocking": 0,
     "price_review": 137,
     "signal_review": 1,
-    "background_review": 9
+    "background_review": 12
   },
   "rules": [
     "异常文本、JSON解析失败、必需文件缺失为 critical。",
