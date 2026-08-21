@@ -1,27 +1,9 @@
 {
-  "timestamp": "2026-08-21T09:52:34+08:00",
+  "timestamp": "2026-08-21T10:06:19+08:00",
   "current_signal_date": "2026-08-21",
   "status": "degraded",
-  "summary": "发现 148 个降级/需复核项（1 个交易阻断，136 个价格/行情复核，1 个信号复核，11 个背景复核），核心结论可看但必须按影响分层使用。",
+  "summary": "发现 148 个降级/需复核项（138 个价格/行情复核，1 个信号复核，10 个背景复核），核心结论可看但必须按影响分层使用。",
   "issues": [
-    {
-      "severity": "warning",
-      "file": "alert.json",
-      "path": "",
-      "code": "stale_timestamp",
-      "message": "时间戳不是当前交易日：2026-08-14T10:44:46+08:00",
-      "impact_level": "background_review",
-      "decision_action": "仅作背景复核，不单独阻断交易判断"
-    },
-    {
-      "severity": "warning",
-      "file": "alert.json",
-      "path": "",
-      "code": "invalidated_source",
-      "message": "source_status=invalidated 时禁止展示污染批次；等待可信行情源恢复并重产。",
-      "impact_level": "blocking",
-      "decision_action": "对应信号等待重产，页面必须显示阻断"
-    },
     {
       "severity": "warning",
       "file": "midday.json",
@@ -111,6 +93,24 @@
       "message": "sentiment_summary 缺失",
       "impact_level": "signal_review",
       "decision_action": "机会信号必须降权并转入验证"
+    },
+    {
+      "severity": "warning",
+      "file": "alert.json",
+      "path": "",
+      "code": "historical_alert_without_trusted_source",
+      "message": "盘中异动缺少可信源证明；当前阶段只降权参考，不阻断整站发布",
+      "impact_level": "price_review",
+      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
+    },
+    {
+      "severity": "warning",
+      "file": "alert.json",
+      "path": "quote_audit.sanity_checks",
+      "code": "historical_alert_not_cross_verified",
+      "message": "行情污染源仍降级，历史 alert 未交叉验证，只降权复盘参考",
+      "impact_level": "price_review",
+      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
     },
     {
       "severity": "info",
@@ -1348,15 +1348,15 @@
   ],
   "action_plan": [
     {
-      "priority": 1,
-      "impact_level": "blocking",
-      "label": "先修复阻断",
+      "priority": 2,
+      "impact_level": "price_review",
+      "label": "二次行情复核",
       "file": "alert.json",
-      "code": "invalidated_source",
-      "problem": "source_status=invalidated 时禁止展示污染批次；等待可信行情源恢复并重产。",
-      "decision_action": "对应信号等待重产，页面必须显示阻断",
-      "next_step": "暂停对应交易触发；等待污染批次撤下、可信行情源恢复并重产 JSON。",
-      "unblock_condition": "quality-report blocking=0，相关文件不再 invalidated/missing。"
+      "code": "historical_alert_without_trusted_source",
+      "problem": "盘中异动缺少可信源证明；当前阶段只降权参考，不阻断整站发布",
+      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核",
+      "next_step": "用第二行情源复核涨跌幅、quote_time 和代表股方向；未确认前只做验证。",
+      "unblock_condition": "price_review=0 或相关来源标记 trusted/cross verified。"
     },
     {
       "priority": 2,
@@ -1384,17 +1384,6 @@
       "priority": 4,
       "impact_level": "background_review",
       "label": "背景来源复核",
-      "file": "alert.json",
-      "code": "stale_timestamp",
-      "problem": "时间戳不是当前交易日：2026-08-14T10:44:46+08:00",
-      "decision_action": "仅作背景复核，不单独阻断交易判断",
-      "next_step": "补官方/交易所/公司公告来源；未补齐前不升级为核心依据。",
-      "unblock_condition": "官方来源补齐或确认不影响交易触发。"
-    },
-    {
-      "priority": 4,
-      "impact_level": "background_review",
-      "label": "背景来源复核",
       "file": "midday.json",
       "code": "stale_timestamp",
       "problem": "时间戳不是当前交易日：2026-08-14T11:39:30+08:00",
@@ -1412,16 +1401,27 @@
       "decision_action": "仅作背景复核，不单独阻断交易判断",
       "next_step": "补官方/交易所/公司公告来源；未补齐前不升级为核心依据。",
       "unblock_condition": "官方来源补齐或确认不影响交易触发。"
+    },
+    {
+      "priority": 4,
+      "impact_level": "background_review",
+      "label": "背景来源复核",
+      "file": "premarket.json",
+      "code": "stale_timestamp",
+      "problem": "时间戳不是当前交易日：2026-08-14T09:05:10+08:00",
+      "decision_action": "仅作背景复核，不单独阻断交易判断",
+      "next_step": "补官方/交易所/公司公告来源；未补齐前不升级为核心依据。",
+      "unblock_condition": "官方来源补齐或确认不影响交易触发。"
     }
   ],
   "counts": {
     "critical": 0,
     "warning": 148,
     "info": 1,
-    "blocking": 1,
-    "price_review": 136,
+    "blocking": 0,
+    "price_review": 138,
     "signal_review": 1,
-    "background_review": 11
+    "background_review": 10
   },
   "rules": [
     "异常文本、JSON解析失败、必需文件缺失为 critical。",
