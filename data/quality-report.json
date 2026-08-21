@@ -1,51 +1,15 @@
 {
-  "timestamp": "2026-08-21T22:01:54+08:00",
+  "timestamp": "2026-08-21T22:02:52+08:00",
   "current_signal_date": "2026-08-21",
   "status": "degraded",
-  "summary": "发现 146 个降级/需复核项（142 个价格/行情复核，4 个背景复核），核心结论可看但必须按影响分层使用。",
+  "summary": "发现 143 个降级/需复核项（139 个价格/行情复核，4 个背景复核），核心结论可看但必须按影响分层使用。",
   "issues": [
     {
       "severity": "warning",
-      "file": "automation-health.json",
-      "path": "processes[5].timestamp",
+      "file": "data-trust.json",
+      "path": "files[5].timestamp",
       "code": "future_timestamp",
-      "message": "processes[5].timestamp 超前当前时间约 3 分钟：2026-08-21T22:05:00+08:00",
-      "impact_level": "price_review",
-      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
-    },
-    {
-      "severity": "warning",
-      "file": "automation-health.json",
-      "path": "next_session_readiness.items[5].timestamp",
-      "code": "future_timestamp",
-      "message": "next_session_readiness.items[5].timestamp 超前当前时间约 3 分钟：2026-08-21T22:05:00+08:00",
-      "impact_level": "price_review",
-      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
-    },
-    {
-      "severity": "warning",
-      "file": "evening-sentiment.json",
-      "path": "timestamp",
-      "code": "future_timestamp",
-      "message": "timestamp 超前当前时间约 3 分钟：2026-08-21T22:05:00+08:00",
-      "impact_level": "price_review",
-      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
-    },
-    {
-      "severity": "warning",
-      "file": "evening-sentiment.json",
-      "path": "p0_alerts[3].evidence[0].timestamp",
-      "code": "future_timestamp",
-      "message": "p0_alerts[3].evidence[0].timestamp 超前当前时间约 3 分钟：2026-08-21T22:05:00+08:00",
-      "impact_level": "price_review",
-      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
-    },
-    {
-      "severity": "warning",
-      "file": "evening-sentiment.json",
-      "path": "p0_alerts[3].evidence[1].timestamp",
-      "code": "future_timestamp",
-      "message": "p0_alerts[3].evidence[1].timestamp 超前当前时间约 3 分钟：2026-08-21T22:05:00+08:00",
+      "message": "files[5].timestamp 超前当前时间约 2 分钟：2026-08-21T22:05:00+08:00",
       "impact_level": "price_review",
       "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
     },
@@ -57,6 +21,15 @@
       "message": "时间戳不是当前交易日：2026-08-14T09:05:10+08:00",
       "impact_level": "background_review",
       "decision_action": "仅作背景复核，不单独阻断交易判断"
+    },
+    {
+      "severity": "warning",
+      "file": "section-health.json",
+      "path": "sections[7].files[0].timestamp",
+      "code": "future_timestamp",
+      "message": "sections[7].files[0].timestamp 超前当前时间约 2 分钟：2026-08-21T22:05:00+08:00",
+      "impact_level": "price_review",
+      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
     },
     {
       "severity": "warning",
@@ -1335,9 +1308,9 @@
       "priority": 2,
       "impact_level": "price_review",
       "label": "二次行情复核",
-      "file": "automation-health.json",
+      "file": "data-trust.json",
       "code": "future_timestamp",
-      "problem": "processes[5].timestamp 超前当前时间约 3 分钟：2026-08-21T22:05:00+08:00",
+      "problem": "files[5].timestamp 超前当前时间约 2 分钟：2026-08-21T22:05:00+08:00",
       "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核",
       "next_step": "用第二行情源复核涨跌幅、quote_time 和代表股方向；未确认前只做验证。",
       "unblock_condition": "price_review=0 或相关来源标记 trusted/cross verified。"
@@ -1346,9 +1319,9 @@
       "priority": 2,
       "impact_level": "price_review",
       "label": "二次行情复核",
-      "file": "evening-sentiment.json",
+      "file": "section-health.json",
       "code": "future_timestamp",
-      "problem": "timestamp 超前当前时间约 3 分钟：2026-08-21T22:05:00+08:00",
+      "problem": "sections[7].files[0].timestamp 超前当前时间约 2 分钟：2026-08-21T22:05:00+08:00",
       "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核",
       "next_step": "用第二行情源复核涨跌幅、quote_time 和代表股方向；未确认前只做验证。",
       "unblock_condition": "price_review=0 或相关来源标记 trusted/cross verified。"
@@ -1389,10 +1362,10 @@
   ],
   "counts": {
     "critical": 0,
-    "warning": 146,
+    "warning": 143,
     "info": 0,
     "blocking": 0,
-    "price_review": 142,
+    "price_review": 139,
     "signal_review": 0,
     "background_review": 4
   },
