@@ -1,8 +1,8 @@
 {
-  "timestamp": "2026-08-21T16:41:15+08:00",
+  "timestamp": "2026-08-21T21:59:12+08:00",
   "current_signal_date": "2026-08-21",
   "status": "degraded",
-  "summary": "发现 142 个降级/需复核项（137 个价格/行情复核，1 个信号复核，5 个背景复核），核心结论可看但必须按影响分层使用。",
+  "summary": "发现 141 个降级/需复核项（137 个价格/行情复核，4 个背景复核），核心结论可看但必须按影响分层使用。",
   "issues": [
     {
       "severity": "warning",
@@ -33,15 +33,6 @@
     },
     {
       "severity": "warning",
-      "file": "evening-sentiment.json",
-      "path": "sentiment_summary",
-      "code": "schema_contract_missing",
-      "message": "sentiment_summary 缺失",
-      "impact_level": "signal_review",
-      "decision_action": "机会信号必须降权并转入验证"
-    },
-    {
-      "severity": "warning",
       "file": "alert.json",
       "path": "",
       "code": "historical_alert_without_trusted_source",
@@ -57,15 +48,6 @@
       "message": "行情污染源仍降级，历史 alert 未交叉验证，只降权复盘参考",
       "impact_level": "price_review",
       "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
-    },
-    {
-      "severity": "info",
-      "file": "evening-sentiment.json",
-      "path": "",
-      "code": "evening_not_current",
-      "message": "晚间舆情不是当前交易日，不参与今日总控",
-      "impact_level": "background_review",
-      "decision_action": "仅作背景复核，不单独阻断交易判断"
     },
     {
       "severity": "warning",
@@ -1316,17 +1298,6 @@
       "unblock_condition": "price_review=0 或相关来源标记 trusted/cross verified。"
     },
     {
-      "priority": 3,
-      "impact_level": "signal_review",
-      "label": "信号结构复核",
-      "file": "evening-sentiment.json",
-      "code": "schema_contract_missing",
-      "problem": "sentiment_summary 缺失",
-      "decision_action": "机会信号必须降权并转入验证",
-      "next_step": "修正字段结构、证据、触发原因和升级条件；未通过前降权展示。",
-      "unblock_condition": "signal_review=0，decision-feed/核心 JSON 契约通过。"
-    },
-    {
       "priority": 4,
       "impact_level": "background_review",
       "label": "背景来源复核",
@@ -1358,16 +1329,27 @@
       "decision_action": "仅作政策/背景覆盖复核，不阻断盘中价格和交易触发",
       "next_step": "补官方/交易所/公司公告来源；未补齐前不升级为核心依据。",
       "unblock_condition": "官方来源补齐或确认不影响交易触发。"
+    },
+    {
+      "priority": 4,
+      "impact_level": "background_review",
+      "label": "背景来源复核",
+      "file": "topics.json",
+      "code": "stale_timestamp",
+      "problem": "时间戳不是当前交易日：2026-08-20T22:46:33+08:00",
+      "decision_action": "仅作背景复核，不单独阻断交易判断",
+      "next_step": "补官方/交易所/公司公告来源；未补齐前不升级为核心依据。",
+      "unblock_condition": "官方来源补齐或确认不影响交易触发。"
     }
   ],
   "counts": {
     "critical": 0,
-    "warning": 142,
-    "info": 1,
+    "warning": 141,
+    "info": 0,
     "blocking": 0,
     "price_review": 137,
-    "signal_review": 1,
-    "background_review": 5
+    "signal_review": 0,
+    "background_review": 4
   },
   "rules": [
     "异常文本、JSON解析失败、必需文件缺失为 critical。",
