@@ -1,67 +1,102 @@
 {
-  "timestamp": "2026-08-21T21:59:02+08:00",
-  "analysis_time": "2026-08-21T21:59:02+08:00",
   "trade_date": "2026-08-21",
-  "phase": "evening_2100_health_recovery",
-  "status": "degraded_cninfo_partial",
-  "summary": "8月21日晚间补产：收盘证据显示资源金属和通信设备/元件居行业前排，CPO/PCB样本同步走强；医药与农业链位于弱势侧。巨潮全量公告请求显示3,011条，但分页返回重复，唯一可核验30条，公告覆盖降级；观察池内确认江波龙H股发行获港交所审议。隔夜没有纳入未经核验的海外、政策或产业事件。次日仅观察，不交易、不修改用户资产；V1继续生产，V2/V2.2保持shadow。",
-  "source_notes": [
-    "腾讯财经HTTP收盘快照：指数、行业与代表样本行情时点集中在2026-08-21 15:00—16:15。",
-    "巨潮资讯2026-08-21查询总量3011条，但分页响应重复；实际唯一30条，公告覆盖为部分，未出现不等于无公告。",
-    "未调用Longbridge账户、持仓、订单、自选、DCA或社区能力；本轮没有引用Longbridge机构观点。"
-  ],
+  "timestamp": "2026-08-21T22:05:00+08:00",
+  "analysis_time": "2026-08-21T22:05:00+08:00",
+  "phase": "evening_2030_check_late_completion",
+  "status": "degraded_cninfo_page_cap_width_unavailable",
+  "summary": "2026-08-21晚间更新：腾讯收盘事实显示指数多数上涨但结构分化，上证和科创50仅接近平盘，创业板和深成指更强；贵金属/能源金属、通信/CPO/PCB是次日强观察线，半导体设备未同步确认。医药修复链被化学制药、医疗服务、生物制品及医药ETF下跌证伪，次日先按风险线隔离。巨潮公告抓取3000/3011条且无分页错误，但受100页上限仍有11条缺口；已纳入恒瑞医药、新易盛、兆易创新等可核验公告。美股常规交易尚未形成完整当日事实，不沿用旧海外涨跌幅。V1继续生产，V2/V2.2保持shadow；不交易、不修改用户资产、不切换模型。",
+  "sentiment_summary": {
+    "overall": "P0优先/结构分化",
+    "headline": "资源与CPO强观察，医药风险隔离，公告覆盖小幅降级",
+    "counts": {
+      "正面": 2,
+      "负面": 1,
+      "中性": 5
+    }
+  },
   "market_context": {
-    "indices": [
-      {
-        "type": "price_action",
-        "metric": "pct",
-        "value": 0.04,
-        "source": "腾讯财经HTTP",
-        "timestamp": "2026-08-21T16:14:02+08:00",
-        "detail": "上证指数 +0.04% 收盘 3905.2"
-      },
-      {
-        "type": "price_action",
-        "metric": "pct",
-        "value": 0.87,
-        "source": "腾讯财经HTTP",
-        "timestamp": "2026-08-21T16:14:36+08:00",
-        "detail": "深证成指 +0.87% 收盘 14094.17"
-      },
-      {
-        "type": "price_action",
-        "metric": "pct",
-        "value": 1.43,
-        "source": "腾讯财经HTTP",
-        "timestamp": "2026-08-21T16:14:51+08:00",
-        "detail": "创业板指 +1.43% 收盘 3545.58"
-      },
-      {
-        "type": "price_action",
-        "metric": "pct",
-        "value": 0.04,
-        "source": "腾讯财经HTTP",
-        "timestamp": "2026-08-21T16:14:14+08:00",
-        "detail": "科创50 +0.04% 收盘 1653.56"
-      },
-      {
-        "type": "price_action",
-        "metric": "pct",
-        "value": 0.57,
-        "source": "腾讯财经HTTP",
-        "timestamp": "2026-08-21T16:14:14+08:00",
-        "detail": "沪深300 +0.57% 收盘 4618.9"
-      }
-    ],
-    "judgement": "创业板与深成指收强，但上证和科创50接近平盘；资源与通信硬件居前，医药显著走弱，仍按结构性行情处理。",
-    "action_layer": "次日9:25先验证通信/CPO/PCB是否继续扩散、资源金属是否保留行业前排；医药若不能止跌，只保留风险观察。"
+    "a_share_close": "指数多数上涨但上证和科创50接近平盘；结构强于全面强。",
+    "hk_us_context": "晚间更新时美股常规交易尚未形成完整收盘事实；不沿用旧值。",
+    "source_boundary": "行情使用腾讯财经HTTP和V1 postmarket；巨潮仅作公告扫描；长桥未作为行情、账户、持仓、自选或交易来源。"
   },
   "p0_alerts": [
     {
-      "title": "通信CPO/PCB收盘转强，需防高开兑现",
+      "title": "指数收红但主线仍是结构行情",
       "severity": "P0",
-      "why_p0": "通信设备+2.98%、元件+2.80%，新易盛+6.76%、沪电股份+6.03%、共进股份+4.65%、中际旭创+4.29%。该组合会直接影响次日科技硬件竞价和追涨风险；但缺少涨停与宽度结构，不能升级为强主线。",
+      "why_p0": "上证+0.04%、科创50+0.04%接近平盘，而深成指+0.87%、创业板+1.43%更强；贵金属/能源金属和通信/CPO/PCB是收盘强观察，不能按全面进攻或科技硬件全线修复处理。",
       "evidence": [
+        {
+          "type": "price_action",
+          "metric": "pct",
+          "value": 0.04,
+          "source": "腾讯财经HTTP",
+          "timestamp": "2026-08-21T16:14:51+08:00",
+          "detail": "上证指数 sh000001 +0.04%，收3905.2，行情时间20260821161402"
+        },
+        {
+          "type": "price_action",
+          "metric": "pct",
+          "value": 0.87,
+          "source": "腾讯财经HTTP",
+          "timestamp": "2026-08-21T16:14:51+08:00",
+          "detail": "深证成指 sz399001 +0.87%，收14094.17，行情时间20260821161436"
+        },
+        {
+          "type": "price_action",
+          "metric": "pct",
+          "value": 1.43,
+          "source": "腾讯财经HTTP",
+          "timestamp": "2026-08-21T16:14:51+08:00",
+          "detail": "创业板指 sz399006 +1.43%，收3545.58，行情时间20260821161451"
+        },
+        {
+          "type": "price_action",
+          "metric": "pct",
+          "value": 0.04,
+          "source": "腾讯财经HTTP",
+          "timestamp": "2026-08-21T16:14:51+08:00",
+          "detail": "科创50 sh000688 +0.04%，收1653.56，行情时间20260821161414"
+        },
+        {
+          "type": "price_action",
+          "metric": "pct",
+          "value": 0.57,
+          "source": "腾讯财经HTTP",
+          "timestamp": "2026-08-21T16:14:51+08:00",
+          "detail": "沪深300 sh000300 +0.57%，收4618.9，行情时间20260821161414"
+        },
+        {
+          "type": "breadth",
+          "metric": "pct",
+          "value": 4.64,
+          "source": "腾讯财经HTTP",
+          "timestamp": "2026-08-21T15:00:06+08:00",
+          "detail": "行业贵金属 +4.64%"
+        },
+        {
+          "type": "breadth",
+          "metric": "pct",
+          "value": 4.6,
+          "source": "腾讯财经HTTP",
+          "timestamp": "2026-08-21T15:00:06+08:00",
+          "detail": "行业能源金属 +4.60%"
+        },
+        {
+          "type": "representative_stock",
+          "metric": "pct",
+          "value": 7.22,
+          "source": "腾讯财经HTTP",
+          "timestamp": "2026-08-21T16:14:54+08:00",
+          "detail": "赤峰黄金 sh600988 +7.22% 收盘价49.43，贵金属/能源金属观察"
+        },
+        {
+          "type": "representative_stock",
+          "metric": "pct",
+          "value": 4.96,
+          "source": "腾讯财经HTTP",
+          "timestamp": "2026-08-21T16:14:54+08:00",
+          "detail": "山东黄 sh600547 +4.96% 收盘价37.05，贵金属/能源金属观察"
+        },
         {
           "type": "breadth",
           "metric": "pct",
@@ -93,35 +128,19 @@
           "source": "腾讯财经HTTP",
           "timestamp": "2026-08-21T16:14:51+08:00",
           "detail": "沪电股份 sz002463 +6.03% 收盘价121.21，通信/CPO/PCB观察"
-        },
-        {
-          "type": "representative_stock",
-          "metric": "pct",
-          "value": 4.65,
-          "source": "腾讯财经HTTP",
-          "timestamp": "2026-08-21T16:14:31+08:00",
-          "detail": "共进股份 sh603118 +4.65% 收盘价17.79，通信/CPO/PCB观察"
-        },
-        {
-          "type": "representative_stock",
-          "metric": "pct",
-          "value": 4.29,
-          "source": "腾讯财经HTTP",
-          "timestamp": "2026-08-21T16:14:42+08:00",
-          "detail": "中际旭创 sz300308 +4.29% 收盘价943.0，通信/CPO/PCB观察"
         }
       ],
       "watch_next_day": [
-        "9:25看新易盛、中际旭创、沪电股份是否同步强于创业板。",
-        "若核心高开回落或行业跌出前排，按兑现风险而非扩散处理。",
-        "补看涨停/炸板和行业宽度，未补齐前不升级主线。"
+        "9:25先看上证、科创50是否补强，避免只看创业板红盘。",
+        "贵金属/能源金属若继续前排并出现涨停宽度，才从观察线升级。",
+        "通信/CPO/PCB若高开后扩散到低位样本，再提高科技硬件权重。"
       ],
-      "source": "腾讯财经HTTP；data/postmarket.json"
+      "source": "腾讯财经HTTP; data/postmarket.json"
     },
     {
-      "title": "医药修复被证伪，风险线延续待确认",
+      "title": "医药修复被收盘证伪",
       "severity": "P0",
-      "why_p0": "化学制药-4.33%、医疗服务-3.75%、生物制品-3.63%，创新药ETF广发-4.56%、医药ETF易方达-3.00%。前一日的医药修复没有延续，可能改变次日医药方向的竞价预期。",
+      "why_p0": "化学制药-4.33%、医疗服务-3.75%、生物制品-3.63%，创新药ETF广发-4.56%、医药ETF易方达-3.00%；这直接改变次一交易日医药修复链的竞价预期，先按风险线隔离。",
       "evidence": [
         {
           "type": "breadth",
@@ -142,10 +161,10 @@
         {
           "type": "breadth",
           "metric": "pct",
-          "value": -3.63,
+          "value": -4.81,
           "source": "腾讯财经HTTP",
           "timestamp": "2026-08-21T15:00:06+08:00",
-          "detail": "行业生物制品 -3.63%"
+          "detail": "行业种植业 -4.81%"
         },
         {
           "type": "representative_stock",
@@ -162,121 +181,399 @@
           "source": "腾讯财经HTTP",
           "timestamp": "2026-08-21T16:14:36+08:00",
           "detail": "医药ETF易方达 sh512010 -3.00% 收盘价0.388，医药修复证伪/风险观察"
-        }
-      ],
-      "watch_next_day": [
-        "9:25看创新药ETF和医药ETF是否继续弱于指数。",
-        "若ETF止跌且核心股同步修复，再把医药由风险线降为待验证。",
-        "没有扩散证据前，不将单只医药股公告升级为板块结论。"
-      ],
-      "source": "腾讯财经HTTP；data/postmarket.json"
-    },
-    {
-      "title": "巨潮公告扫描分页异常，公告覆盖降级",
-      "severity": "P0",
-      "why_p0": "巨潮当日查询总量为3011条，但分页请求返回重复内容，实际仅取得30条唯一公告。公告覆盖不完整时，无法将未命中的观察池公司解释为无公告；这会影响次日竞价前的公司事件核验。",
-      "evidence": [
+        },
         {
-          "type": "source_status",
-          "metric": "coverage",
-          "value": "partial",
-          "source": "巨潮资讯",
-          "timestamp": "2026-08-21T21:59:02+08:00",
-          "detail": "2026-08-21公告查询total=3011，fetched=930，unique=30；分页响应重复。"
+          "type": "representative_stock",
+          "metric": "pct",
+          "value": -1.92,
+          "source": "腾讯财经HTTP",
+          "timestamp": "2026-08-21T16:14:39+08:00",
+          "detail": "港股通创新药ETF汇添富 sz159570 -1.92% 收盘价1.48，医药修复证伪/风险观察"
         },
         {
           "type": "source_citation",
           "metric": "announcement_id",
-          "value": "1225491970",
+          "value": "1225485081",
           "source": "巨潮资讯",
           "timestamp": "2026-08-21T00:00:00+08:00",
-          "detail": "江波龙：关于香港联交所审议公司发行境外上市外资股（H股）的公告。"
+          "detail": "恒瑞医药：H股公告-建议采纳2026年H股股份计划"
+        },
+        {
+          "type": "source_citation",
+          "metric": "announcement_id",
+          "value": "1225485073",
+          "source": "巨潮资讯",
+          "timestamp": "2026-08-21T00:00:00+08:00",
+          "detail": "恒瑞医药：恒瑞医药关于获得药品注册批准的公告"
+        },
+        {
+          "type": "source_citation",
+          "metric": "announcement_id",
+          "value": "1225485063",
+          "source": "巨潮资讯",
+          "timestamp": "2026-08-21T00:00:00+08:00",
+          "detail": "恒瑞医药：恒瑞医药关于获得药物临床试验批准通知书的公告"
+        },
+        {
+          "type": "source_citation",
+          "metric": "announcement_id",
+          "value": "1225485046",
+          "source": "巨潮资讯",
+          "timestamp": "2026-08-21T00:00:00+08:00",
+          "detail": "恒瑞医药：恒瑞医药关于获得药物临床试验批准通知书的公告"
         }
       ],
       "watch_next_day": [
-        "8:30前重新执行观察池与重大公告增量核验。",
-        "江波龙仅按个股H股发行进度变量观察，不替代存储/HBM板块确认。",
-        "来源未恢复前，公告维度只作降权参考。"
+        "医药ETF和创新药ETF若继续低开，前一日医药修复结论失效。",
+        "恒瑞医药药品注册/临床公告只作为个股催化，必须等待股价和ETF止跌。",
+        "化学制药、医疗服务、生物制品若仍在跌幅前排，不做修复外推。"
       ],
-      "source": "巨潮资讯；data/.cninfo-evening-scan-20260821.json"
+      "source": "腾讯财经HTTP; 巨潮资讯; data/postmarket.json"
+    },
+    {
+      "title": "CPO强于半导体设备但缺宽度",
+      "severity": "P0",
+      "why_p0": "新易盛+6.76%、沪电股份+6.03%、中际旭创+4.29%强于中微公司-0.82%、科创半导体ETF华夏-0.69%；新易盛晚间还有股权激励草案公告，但缺少涨停池和概念宽度，不能把CPO强度外推为半导体设备全线。",
+      "evidence": [
+        {
+          "type": "representative_stock",
+          "metric": "pct",
+          "value": 6.76,
+          "source": "腾讯财经HTTP",
+          "timestamp": "2026-08-21T16:14:27+08:00",
+          "detail": "新易盛 sz300502 +6.76% 收盘价442.0，通信/CPO/PCB观察"
+        },
+        {
+          "type": "representative_stock",
+          "metric": "pct",
+          "value": 6.03,
+          "source": "腾讯财经HTTP",
+          "timestamp": "2026-08-21T16:14:51+08:00",
+          "detail": "沪电股份 sz002463 +6.03% 收盘价121.21，通信/CPO/PCB观察"
+        },
+        {
+          "type": "representative_stock",
+          "metric": "pct",
+          "value": 4.29,
+          "source": "腾讯财经HTTP",
+          "timestamp": "2026-08-21T16:14:42+08:00",
+          "detail": "中际旭创 sz300308 +4.29% 收盘价943.0，通信/CPO/PCB观察"
+        },
+        {
+          "type": "representative_stock",
+          "metric": "pct",
+          "value": 4.65,
+          "source": "腾讯财经HTTP",
+          "timestamp": "2026-08-21T16:14:31+08:00",
+          "detail": "共进股份 sh603118 +4.65% 收盘价17.79，通信/CPO/PCB观察"
+        },
+        {
+          "type": "representative_stock",
+          "metric": "pct",
+          "value": 2.98,
+          "source": "腾讯财经HTTP",
+          "timestamp": "2026-08-21T16:14:18+08:00",
+          "detail": "锐捷网络 sz301165 +2.98% 收盘价126.97，通信/CPO/PCB观察"
+        },
+        {
+          "type": "representative_stock",
+          "metric": "pct",
+          "value": 0.72,
+          "source": "腾讯财经HTTP",
+          "timestamp": "2026-08-21T16:14:51+08:00",
+          "detail": "澜起科技 sh688008 +0.72% 收盘价200.55，科技硬件分化观察"
+        },
+        {
+          "type": "representative_stock",
+          "metric": "pct",
+          "value": 0.22,
+          "source": "腾讯财经HTTP",
+          "timestamp": "2026-08-21T16:14:44+08:00",
+          "detail": "科创芯片ETF易方达 sh589130 +0.22% 收盘价1.396，科技硬件分化观察"
+        },
+        {
+          "type": "representative_stock",
+          "metric": "pct",
+          "value": -0.69,
+          "source": "腾讯财经HTTP",
+          "timestamp": "2026-08-21T16:14:40+08:00",
+          "detail": "科创半导体ETF华夏 sh588170 -0.69% 收盘价1.012，科技硬件分化观察"
+        },
+        {
+          "type": "representative_stock",
+          "metric": "pct",
+          "value": -0.82,
+          "source": "腾讯财经HTTP",
+          "timestamp": "2026-08-21T16:15:00+08:00",
+          "detail": "中微公司 sh688012 -0.82% 收盘价362.5，科技硬件分化观察"
+        },
+        {
+          "type": "representative_stock",
+          "metric": "pct",
+          "value": -1.43,
+          "source": "腾讯财经HTTP",
+          "timestamp": "2026-08-21T16:14:37+08:00",
+          "detail": "晶晨股份 sh688099 -1.43% 收盘价91.92，科技硬件分化观察"
+        },
+        {
+          "type": "source_citation",
+          "metric": "announcement_id",
+          "value": "1225486598",
+          "source": "巨潮资讯",
+          "timestamp": "2026-08-21T00:00:00+08:00",
+          "detail": "新易盛：新易盛2026年限制性股票激励计划（草案）法律意见书"
+        },
+        {
+          "type": "source_citation",
+          "metric": "announcement_id",
+          "value": "1225486597",
+          "source": "巨潮资讯",
+          "timestamp": "2026-08-21T00:00:00+08:00",
+          "detail": "新易盛：董事会薪酬与考核委员会关于公司2026年限制性股票激励计划相关事项的核查意见"
+        },
+        {
+          "type": "source_citation",
+          "metric": "announcement_id",
+          "value": "1225486596",
+          "source": "巨潮资讯",
+          "timestamp": "2026-08-21T00:00:00+08:00",
+          "detail": "新易盛：2026年限制性股票激励计划自查表"
+        },
+        {
+          "type": "source_citation",
+          "metric": "announcement_id",
+          "value": "1225487114",
+          "source": "巨潮资讯",
+          "timestamp": "2026-08-21T00:00:00+08:00",
+          "detail": "兆易创新：兆易创新关于以集中竞价交易方式回购公司A股股份的回购报告书"
+        },
+        {
+          "type": "source_citation",
+          "metric": "announcement_id",
+          "value": "1225487110",
+          "source": "巨潮资讯",
+          "timestamp": "2026-08-21T00:00:00+08:00",
+          "detail": "兆易创新：兆易创新关于回购A股股份用于注销并减少注册资本暨通知债权人的公告"
+        }
+      ],
+      "watch_next_day": [
+        "看新易盛、沪电股份、中际旭创是否继续强于创业板。",
+        "看中微公司、科创半导体ETF能否修复，否则科技硬件仍是内部分化。",
+        "新易盛股权激励只按公司事件观察，不能替代板块宽度。"
+      ],
+      "source": "腾讯财经HTTP; 巨潮资讯; data/postmarket.json"
+    },
+    {
+      "title": "公告扫描接近全量但仍有上限缺口",
+      "severity": "P0",
+      "why_p0": "巨潮2026-08-21公告接口返回3011条，本地抓取3000条且无分页错误，但受100页上限仍少11条；已看到恒瑞医药药品注册/临床、新易盛股权激励、兆易创新回购等观察池相关事件，次日盘前仍需复核公告增量。",
+      "evidence": [
+        {
+          "type": "source_citation",
+          "metric": "count_raw",
+          "value": 3011,
+          "source": "巨潮资讯",
+          "timestamp": "2026-08-21T22:05:00+08:00",
+          "detail": "2026-08-21公告接口返回count_raw=3011，totalpages=100"
+        },
+        {
+          "type": "source_citation",
+          "metric": "count_fetched",
+          "value": 3000,
+          "source": "巨潮资讯",
+          "timestamp": "2026-08-21T22:05:00+08:00",
+          "detail": "本地缓存抓取count_fetched=3000，100页上限下仍少于总记录，不将缺失11条视为无事件"
+        },
+        {
+          "type": "source_citation",
+          "metric": "announcement_id",
+          "value": "1225485081",
+          "source": "巨潮资讯",
+          "timestamp": "2026-08-21T00:00:00+08:00",
+          "detail": "恒瑞医药：H股公告-建议采纳2026年H股股份计划"
+        },
+        {
+          "type": "source_citation",
+          "metric": "announcement_id",
+          "value": "1225485073",
+          "source": "巨潮资讯",
+          "timestamp": "2026-08-21T00:00:00+08:00",
+          "detail": "恒瑞医药：恒瑞医药关于获得药品注册批准的公告"
+        },
+        {
+          "type": "source_citation",
+          "metric": "announcement_id",
+          "value": "1225486598",
+          "source": "巨潮资讯",
+          "timestamp": "2026-08-21T00:00:00+08:00",
+          "detail": "新易盛：新易盛2026年限制性股票激励计划（草案）法律意见书"
+        },
+        {
+          "type": "source_citation",
+          "metric": "announcement_id",
+          "value": "1225486597",
+          "source": "巨潮资讯",
+          "timestamp": "2026-08-21T00:00:00+08:00",
+          "detail": "新易盛：董事会薪酬与考核委员会关于公司2026年限制性股票激励计划相关事项的核查意见"
+        },
+        {
+          "type": "source_citation",
+          "metric": "announcement_id",
+          "value": "1225487114",
+          "source": "巨潮资讯",
+          "timestamp": "2026-08-21T00:00:00+08:00",
+          "detail": "兆易创新：兆易创新关于以集中竞价交易方式回购公司A股股份的回购报告书"
+        },
+        {
+          "type": "source_citation",
+          "metric": "announcement_id",
+          "value": "1225487110",
+          "source": "巨潮资讯",
+          "timestamp": "2026-08-21T00:00:00+08:00",
+          "detail": "兆易创新：兆易创新关于回购A股股份用于注销并减少注册资本暨通知债权人的公告"
+        }
+      ],
+      "watch_next_day": [
+        "8:30盘前重新扫巨潮公告，重点补齐100页上限外的缺口。",
+        "观察池公告必须与竞价和板块宽度共同验证。",
+        "未抓取的11条不视作无重大事件。"
+      ],
+      "source": "巨潮资讯公告扫描"
     }
   ],
   "news": [
     {
-      "title": "资源金属位居行业前排",
-      "text": "贵金属+4.64%、能源金属+4.60%，赤峰黄金、赣锋锂业和天齐锂业收涨。",
+      "title": "A股收盘多数上涨但上证和科创接近平盘",
+      "text": "腾讯收盘快照显示深成指、创业板强于主板和科创，市场偏结构性修复。",
       "source": "腾讯财经HTTP",
-      "tag": "资源/收盘/行业",
-      "impact": "保留为次日观察线，需行业前排与强势股宽度同时延续。",
+      "tag": "市场/指数",
+      "sentiment": "中性",
+      "impact": "次日不能按全面进攻预设，先看主板和科创是否补强。",
       "evidence": [
-        "贵金属+4.64%",
-        "能源金属+4.60%",
-        "赤峰黄金+7.22%"
+        "上证指数+0.04%",
+        "创业板指+1.43%",
+        "科创50+0.04%"
       ],
-      "verify_next_day": "看资源金属是否继续居行业前排，且非单纯高开回落。"
+      "verify_next_day": "9:25核验主板、科创50与创业板强弱。"
     },
     {
-      "title": "通信CPO与PCB样本同步走强",
-      "text": "通信设备、元件位居行业前排，新易盛、沪电股份、共进股份和中际旭创均收涨。",
+      "title": "贵金属与能源金属收盘前排",
+      "text": "贵金属+4.64%、能源金属+4.60%，赤峰黄金、赣锋锂业、天齐锂业等代表股收涨。",
+      "source": "腾讯财经HTTP",
+      "tag": "资源/周期",
+      "sentiment": "正面",
+      "impact": "作为次日强观察线，但需涨停宽度确认。",
+      "evidence": [
+        "赤峰黄金+7.22%",
+        "赣锋锂业+5.56%",
+        "天齐锂业+5.11%"
+      ],
+      "verify_next_day": "看资源线是否继续行业前排且出现宽度。"
+    },
+    {
+      "title": "通信CPO和PCB承接强于半导体设备",
+      "text": "新易盛、沪电股份、中际旭创收涨明显，而半导体ETF和设备样本偏弱。",
       "source": "腾讯财经HTTP",
       "tag": "通信/CPO/PCB",
-      "impact": "进入次日优先验证，但因缺少涨停与宽度结构不作强主线处理。",
+      "sentiment": "正面",
+      "impact": "科技硬件只看局部强观察，不做全线升级。",
       "evidence": [
-        "通信设备+2.98%",
-        "元件+2.80%",
         "新易盛+6.76%",
-        "沪电股份+6.03%"
+        "沪电股份+6.03%",
+        "中微公司-0.82%"
       ],
-      "verify_next_day": "看核心样本、行业排行与涨停宽度能否同向确认。"
+      "verify_next_day": "看CPO是否扩散到低位和设备端。"
     },
     {
-      "title": "医药位于收盘弱势侧",
-      "text": "化学制药、医疗服务和生物制品均居行业跌幅前列，创新药和医药ETF收跌。",
+      "title": "医药和农业进入风险线",
+      "text": "化学制药、医疗服务、生物制品以及种植业、农产品加工在跌幅前排。",
       "source": "腾讯财经HTTP",
-      "tag": "医药/风险",
-      "impact": "前日修复预期被证伪，次日以止跌验证为先。",
+      "tag": "医药/农业/风险",
+      "sentiment": "负面",
+      "impact": "前一交易日医药修复被证伪，次日先做风险隔离。",
       "evidence": [
         "化学制药-4.33%",
-        "医疗服务-3.75%",
-        "创新药ETF广发-4.56%"
+        "创新药ETF广发-4.56%",
+        "种植业-4.81%"
       ],
-      "verify_next_day": "看医药ETF与核心股能否止跌并重新强于指数。"
+      "verify_next_day": "看ETF能否收回平盘，否则继续风险线。"
     },
     {
-      "title": "江波龙H股发行获港交所审议",
-      "text": "巨潮公告显示江波龙披露香港联交所审议其发行境外上市外资股（H股）。",
-      "source": "https://static.cninfo.com.cn/finalpage/2026-08-21/1225491970.PDF",
-      "tag": "公司公告/存储/H股",
-      "impact": "仅作为江波龙个股融资与上市进度变量，不单独构成存储/HBM板块结论。",
-      "stock": "江波龙",
+      "title": "恒瑞医药多条药品注册和临床公告",
+      "text": "巨潮晚间可核验到恒瑞医药获得药品注册批准及多条药物临床试验批准通知书。",
+      "source": "巨潮资讯",
+      "tag": "公司公告/医药",
+      "sentiment": "中性",
+      "impact": "只作为个股催化，不能覆盖医药ETF和行业收盘弱势。",
       "evidence": [
-        "公告ID 1225491970"
+        "H股公告-建议采纳2026年H股股份计划",
+        "恒瑞医药关于获得药品注册批准的公告",
+        "恒瑞医药关于获得药物临床试验批准通知书的公告"
       ],
-      "verify_next_day": "看江波龙竞价反馈，且与存储核心股、ETF和板块宽度交叉确认。"
+      "verify_next_day": "看恒瑞医药和医药ETF竞价是否同步止跌。"
     },
     {
-      "title": "巨潮公告覆盖降级",
-      "text": "当日公告查询总量3011条，但分页响应重复，实际唯一30条；未命中不能解读为无公告。",
-      "source": "data/.cninfo-evening-scan-20260821.json",
-      "tag": "数据质量/公告覆盖",
-      "impact": "公告线降权，次日盘前必须增量复核。",
+      "title": "新易盛发布限制性股票激励计划草案",
+      "text": "巨潮晚间可核验到新易盛限制性股票激励计划草案及摘要等公告。",
+      "source": "巨潮资讯",
+      "tag": "公司公告/CPO",
+      "sentiment": "中性",
+      "impact": "叠加强势收盘，次日需要看是否有板块扩散而非单股高开兑现。",
       "evidence": [
-        "total=3011",
-        "fetched=930",
-        "unique=30",
-        "分页响应重复"
+        "新易盛2026年限制性股票激励计划（草案）法律意见书",
+        "董事会薪酬与考核委员会关于公司2026年限制性股票激励计划相关事项的核查意见"
       ],
-      "verify_next_day": "8:30前重扫观察池及重大公告。"
+      "verify_next_day": "看新易盛高开后承接和CPO宽度。"
+    },
+    {
+      "title": "兆易创新披露回购相关公告",
+      "text": "兆易创新发布回购A股股份用于注销并减少注册资本等公告。",
+      "source": "巨潮资讯",
+      "tag": "公司公告/存储芯片",
+      "sentiment": "中性",
+      "impact": "偏公司层面正向信号，但半导体设备和ETF仍需盘面确认。",
+      "evidence": [
+        "兆易创新关于以集中竞价交易方式回购公司A股股份的回购报告书",
+        "兆易创新关于回购A股股份用于注销并减少注册资本暨通知债权人的公告"
+      ],
+      "verify_next_day": "看存储和半导体ETF是否跟随修复。"
+    },
+    {
+      "title": "美股常规交易尚未开盘",
+      "text": "本次北京时间22:05更新时，美国常规交易尚未形成完整当日收盘事实；不沿用旧美股涨跌幅判断A股次日。",
+      "source": "交易时段规则",
+      "tag": "海外/等待开市",
+      "sentiment": "中性",
+      "impact": "次日盘前需重新核验美股、美元、商品和中概股收盘。",
+      "evidence": [
+        "北京时间22:05早于美国常规交易完整收盘窗口"
+      ],
+      "verify_next_day": "8:30盘前补充隔夜美股和商品事实。"
     }
   ],
-  "sentiment_summary": {
-    "overall": "分化/降权",
-    "headline": "通信硬件与资源线收强，医药转弱；公告扫描不完整，次日先核验。",
-    "counts": {
-      "正面": 2,
-      "负面": 2,
-      "中性": 1
-    }
-  },
-  "note": "P0已单独运行。无额外可核验的重大海外、政策或产业事件被纳入本轮；公告扫描覆盖不完整已显式降权。"
+  "watch_next_day": [
+    "8:30重新核验隔夜美股、商品、中概和巨潮公告增量。",
+    "9:25先看贵金属/能源金属是否继续行业前排并有涨停宽度。",
+    "9:25看CPO/PCB是否扩散，避免把单股强势外推到半导体设备。",
+    "医药ETF若继续低开，医药修复链维持风险隔离。",
+    "恢复涨跌停、炸板、全A宽度后再判断市场温度。"
+  ],
+  "risk": [
+    "涨跌停/炸板/全A宽度缺失，不能计算市场温度或强主线。",
+    "巨潮100页上限导致11条公告未覆盖，缺失不等于无事件。",
+    "美股当日收盘事实未形成，海外变量留到次日盘前核验。"
+  ],
+  "source_notes": {
+    "cninfo": {
+      "file": "data/.cninfo-evening-scan-20260821.json",
+      "count_raw": 3011,
+      "count_fetched": 3000,
+      "totalpages": 100,
+      "errors": [],
+      "limitation": "接口100页上限下抓取3000/3011条，未覆盖的11条不视作无事件。"
+    },
+    "market": "腾讯财经HTTP收盘事实来自data/postmarket.json，行情时间约2026-08-21T16:14-16:15+08:00。",
+    "longbridge": "未使用长桥账户、持仓、订单、自选、社区发布或行情作为事实来源。",
+    "boundary": "V1生产，V2/V2.2 shadow；无交易、无用户资产编辑、无模型切换。"
+  }
 }

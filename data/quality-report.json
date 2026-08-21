@@ -1,9 +1,54 @@
 {
-  "timestamp": "2026-08-21T21:59:12+08:00",
+  "timestamp": "2026-08-21T22:01:54+08:00",
   "current_signal_date": "2026-08-21",
   "status": "degraded",
-  "summary": "发现 141 个降级/需复核项（137 个价格/行情复核，4 个背景复核），核心结论可看但必须按影响分层使用。",
+  "summary": "发现 146 个降级/需复核项（142 个价格/行情复核，4 个背景复核），核心结论可看但必须按影响分层使用。",
   "issues": [
+    {
+      "severity": "warning",
+      "file": "automation-health.json",
+      "path": "processes[5].timestamp",
+      "code": "future_timestamp",
+      "message": "processes[5].timestamp 超前当前时间约 3 分钟：2026-08-21T22:05:00+08:00",
+      "impact_level": "price_review",
+      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
+    },
+    {
+      "severity": "warning",
+      "file": "automation-health.json",
+      "path": "next_session_readiness.items[5].timestamp",
+      "code": "future_timestamp",
+      "message": "next_session_readiness.items[5].timestamp 超前当前时间约 3 分钟：2026-08-21T22:05:00+08:00",
+      "impact_level": "price_review",
+      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
+    },
+    {
+      "severity": "warning",
+      "file": "evening-sentiment.json",
+      "path": "timestamp",
+      "code": "future_timestamp",
+      "message": "timestamp 超前当前时间约 3 分钟：2026-08-21T22:05:00+08:00",
+      "impact_level": "price_review",
+      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
+    },
+    {
+      "severity": "warning",
+      "file": "evening-sentiment.json",
+      "path": "p0_alerts[3].evidence[0].timestamp",
+      "code": "future_timestamp",
+      "message": "p0_alerts[3].evidence[0].timestamp 超前当前时间约 3 分钟：2026-08-21T22:05:00+08:00",
+      "impact_level": "price_review",
+      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
+    },
+    {
+      "severity": "warning",
+      "file": "evening-sentiment.json",
+      "path": "p0_alerts[3].evidence[1].timestamp",
+      "code": "future_timestamp",
+      "message": "p0_alerts[3].evidence[1].timestamp 超前当前时间约 3 分钟：2026-08-21T22:05:00+08:00",
+      "impact_level": "price_review",
+      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
+    },
     {
       "severity": "warning",
       "file": "premarket.json",
@@ -1290,6 +1335,28 @@
       "priority": 2,
       "impact_level": "price_review",
       "label": "二次行情复核",
+      "file": "automation-health.json",
+      "code": "future_timestamp",
+      "problem": "processes[5].timestamp 超前当前时间约 3 分钟：2026-08-21T22:05:00+08:00",
+      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核",
+      "next_step": "用第二行情源复核涨跌幅、quote_time 和代表股方向；未确认前只做验证。",
+      "unblock_condition": "price_review=0 或相关来源标记 trusted/cross verified。"
+    },
+    {
+      "priority": 2,
+      "impact_level": "price_review",
+      "label": "二次行情复核",
+      "file": "evening-sentiment.json",
+      "code": "future_timestamp",
+      "problem": "timestamp 超前当前时间约 3 分钟：2026-08-21T22:05:00+08:00",
+      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核",
+      "next_step": "用第二行情源复核涨跌幅、quote_time 和代表股方向；未确认前只做验证。",
+      "unblock_condition": "price_review=0 或相关来源标记 trusted/cross verified。"
+    },
+    {
+      "priority": 2,
+      "impact_level": "price_review",
+      "label": "二次行情复核",
       "file": "source-health.json",
       "code": "source_degraded",
       "problem": "A股补充行情源解码异常，盘中异动和个股涨跌幅需以已审计源复核。",
@@ -1318,36 +1385,14 @@
       "decision_action": "仅作背景复核，不单独阻断交易判断",
       "next_step": "补官方/交易所/公司公告来源；未补齐前不升级为核心依据。",
       "unblock_condition": "官方来源补齐或确认不影响交易触发。"
-    },
-    {
-      "priority": 4,
-      "impact_level": "background_review",
-      "label": "背景来源复核",
-      "file": "source-health.json",
-      "code": "source_degraded",
-      "problem": "official_policy_global_web_scan: 商务部第33、34号公告及第2、3号令已由官网原文核验；全球标杆官方域名搜索混入历史页面，已剔除并降级为非穷尽扫描。本轮没有把空结果写成完全无新闻，US现金市场尚未开盘。",
-      "decision_action": "仅作政策/背景覆盖复核，不阻断盘中价格和交易触发",
-      "next_step": "补官方/交易所/公司公告来源；未补齐前不升级为核心依据。",
-      "unblock_condition": "官方来源补齐或确认不影响交易触发。"
-    },
-    {
-      "priority": 4,
-      "impact_level": "background_review",
-      "label": "背景来源复核",
-      "file": "topics.json",
-      "code": "stale_timestamp",
-      "problem": "时间戳不是当前交易日：2026-08-20T22:46:33+08:00",
-      "decision_action": "仅作背景复核，不单独阻断交易判断",
-      "next_step": "补官方/交易所/公司公告来源；未补齐前不升级为核心依据。",
-      "unblock_condition": "官方来源补齐或确认不影响交易触发。"
     }
   ],
   "counts": {
     "critical": 0,
-    "warning": 141,
+    "warning": 146,
     "info": 0,
     "blocking": 0,
-    "price_review": 137,
+    "price_review": 142,
     "signal_review": 0,
     "background_review": 4
   },
