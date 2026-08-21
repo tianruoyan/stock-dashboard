@@ -1,18 +1,9 @@
 {
-  "timestamp": "2026-08-21T11:28:43+08:00",
+  "timestamp": "2026-08-21T11:39:20+08:00",
   "current_signal_date": "2026-08-21",
   "status": "degraded",
-  "summary": "发现 147 个降级/需复核项（137 个价格/行情复核，1 个信号复核，10 个背景复核），核心结论可看但必须按影响分层使用。",
+  "summary": "发现 146 个降级/需复核项（137 个价格/行情复核，1 个信号复核，9 个背景复核），核心结论可看但必须按影响分层使用。",
   "issues": [
-    {
-      "severity": "warning",
-      "file": "midday.json",
-      "path": "",
-      "code": "stale_timestamp",
-      "message": "时间戳不是当前交易日：2026-08-14T11:39:30+08:00",
-      "impact_level": "background_review",
-      "decision_action": "仅作背景复核，不单独阻断交易判断"
-    },
     {
       "severity": "warning",
       "file": "postmarket.json",
@@ -1375,17 +1366,6 @@
       "priority": 4,
       "impact_level": "background_review",
       "label": "背景来源复核",
-      "file": "midday.json",
-      "code": "stale_timestamp",
-      "problem": "时间戳不是当前交易日：2026-08-14T11:39:30+08:00",
-      "decision_action": "仅作背景复核，不单独阻断交易判断",
-      "next_step": "补官方/交易所/公司公告来源；未补齐前不升级为核心依据。",
-      "unblock_condition": "官方来源补齐或确认不影响交易触发。"
-    },
-    {
-      "priority": 4,
-      "impact_level": "background_review",
-      "label": "背景来源复核",
       "file": "postmarket.json",
       "code": "stale_timestamp",
       "problem": "时间戳不是当前交易日：2026-08-20T22:45:10+08:00",
@@ -1403,16 +1383,27 @@
       "decision_action": "仅作背景复核，不单独阻断交易判断",
       "next_step": "补官方/交易所/公司公告来源；未补齐前不升级为核心依据。",
       "unblock_condition": "官方来源补齐或确认不影响交易触发。"
+    },
+    {
+      "priority": 4,
+      "impact_level": "background_review",
+      "label": "背景来源复核",
+      "file": "source-health.json",
+      "code": "source_degraded",
+      "problem": "official_policy_global_web_scan: 商务部第33、34号公告及第2、3号令已由官网原文核验；全球标杆官方域名搜索混入历史页面，已剔除并降级为非穷尽扫描。本轮没有把空结果写成完全无新闻，US现金市场尚未开盘。",
+      "decision_action": "仅作政策/背景覆盖复核，不阻断盘中价格和交易触发",
+      "next_step": "补官方/交易所/公司公告来源；未补齐前不升级为核心依据。",
+      "unblock_condition": "官方来源补齐或确认不影响交易触发。"
     }
   ],
   "counts": {
     "critical": 0,
-    "warning": 147,
+    "warning": 146,
     "info": 1,
     "blocking": 0,
     "price_review": 137,
     "signal_review": 1,
-    "background_review": 10
+    "background_review": 9
   },
   "rules": [
     "异常文本、JSON解析失败、必需文件缺失为 critical。",
