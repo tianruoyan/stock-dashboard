@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-08-21T10:47:54+08:00",
+  "timestamp": "2026-08-21T14:20:59+08:00",
   "sources": {
     "tencent_http": {
       "status": "ok",
@@ -6927,6 +6927,19 @@
         "正式提醒缺少第二行情源按触发时点复核"
       ],
       "action": "source_status保持degraded_partial；candidate前台显示待确认，confirmed保持为0，过期或结构不可审计提醒转历史/失效。"
+    },
+    "akshare_monitor_intraday_1420": {
+      "status": "degraded_partial",
+      "last_check": "2026-08-21T14:20:59+08:00",
+      "usage": "午后观察池与题材短周期刷新",
+      "detail": "守护进程与子进程存活，monitor.log仍在更新，但午后70标的刷新多次出现7分钟以上阻塞，题材快照又在相邻轮次统一输出1.00x或20.00x成交放大，缺少可审计的逐标的真实短周期量能。当前没有新增正式提醒，保留上一版alert.json。",
+      "sample_count": 0,
+      "errors": [
+        "70标的刷新存在超过7分钟的异常阻塞",
+        "多个无关题材成交放大同时固定为1.00x或20.00x，量能字段未通过合理性检查",
+        "午后短周期报价未取得腾讯或通达信交叉验证"
+      ],
+      "action": "source_status保持degraded_partial；不生成candidate或confirmed，等待本地高频源连续稳定并由腾讯或通达信复核。"
     }
   },
   "last_publish_attempt": "pending_20260717_0830_premarket_publish",
