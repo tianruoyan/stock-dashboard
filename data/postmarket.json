@@ -97,8 +97,37 @@
   "sentiment_indicator": {
     "score": null,
     "bucket": "宽度缺失，暂不评分",
-    "status": "degraded",
-    "basis": "市场温度公式需要涨跌停、炸板和强势股宽度，本次只保留指数与行业事实。"
+    "status": "degraded_unscored",
+    "basis": "市场温度公式需要涨跌停、炸板和强势股宽度，本次只保留指数与行业事实，不用旧值回填。",
+    "level": "不可评分",
+    "method": "规则公式需要涨跌停差、涨跌停比、封板质量、强势股宽度和核心指数表现；本次缺少涨跌停/炸板/强势股宽度，故不输出数值分。",
+    "components": {
+      "limit_up_down_spread": {
+        "score": null,
+        "status": "unavailable_not_backfilled",
+        "reason": "缺少当日有效涨停和跌停数量"
+      },
+      "limit_up_down_ratio": {
+        "score": null,
+        "status": "unavailable_not_backfilled",
+        "reason": "缺少当日有效涨停和跌停数量"
+      },
+      "seal_quality": {
+        "score": null,
+        "status": "unavailable_not_backfilled",
+        "reason": "缺少当日炸板数量"
+      },
+      "strong_stock_width": {
+        "score": null,
+        "status": "unavailable_not_backfilled",
+        "reason": "缺少当日5%以上强势股和有效全A基数"
+      },
+      "core_index_performance": {
+        "score": null,
+        "status": "available_reference_only",
+        "reason": "核心指数收盘行情可用，但单项不足以形成市场温度总分"
+      }
+    }
   },
   "review": {
     "one_sentence": "指数整体收红但上证和科创接近平盘，资源金属与通信/CPO/PCB是收盘前排观察线，医药和农业链成为风险线。",
@@ -465,7 +494,8 @@
           "detail": "宁德时代 sz300750 +1.60% 收盘价391.15，贵金属/能源金属观察"
         }
       ],
-      "risk": "资源股弹性高，若商品价格或指数承接转弱，次日容易兑现。"
+      "risk": "资源股弹性高，若商品价格或指数承接转弱，次日容易兑现。",
+      "continuity": "同日收盘行业涨幅居前，代表股多数收涨；缺少当日涨停池、炸板池和多日宽度数据，延续性只能降级为次日竞价再核验。"
     },
     {
       "name": "通信/CPO/PCB链",
@@ -633,7 +663,8 @@
           "detail": "中兴通讯 sz000063 -0.18% 收盘价33.78，通信/CPO/PCB观察"
         }
       ],
-      "risk": "高位核心涨幅较大，若没有低位扩散，容易变成局部抱团。"
+      "risk": "高位核心涨幅较大，若没有低位扩散，容易变成局部抱团。",
+      "continuity": "同日通信设备、元件行业前排且多只代表股收涨；缺少低位扩散、涨停宽度和多日连续证据，暂按强观察线处理。"
     },
     {
       "name": "科技硬件内部",
@@ -742,7 +773,8 @@
           "detail": "晶晨股份 sh688099 -1.43% 收盘价91.92，科技硬件分化观察"
         }
       ],
-      "risk": "不能把CPO/PCB的局部强度外推为整条科技硬件主线。"
+      "risk": "不能把CPO/PCB的局部强度外推为整条科技硬件主线。",
+      "continuity": "同日科创50接近平盘，半导体设备/ETF样本弱于CPO/PCB；延续性表现为内部结构分化，不支持整条科技硬件升级。"
     },
     {
       "name": "医药与农业链",
@@ -833,7 +865,8 @@
           "detail": "港股通创新药ETF汇添富 sz159570 -1.92% 收盘价1.48，医药修复证伪/风险观察"
         }
       ],
-      "risk": "若次日竞价继续弱，不能把前一日医药强势样本作为延续依据。"
+      "risk": "若次日竞价继续弱，不能把前一日医药强势样本作为延续依据。",
+      "continuity": "同日医药与农业相关行业位于跌幅前排，昨日修复被收盘证伪；延续性按风险线跟踪，次日需看竞价能否止跌。"
     }
   ],
   "closing_auction_patch": {
@@ -931,7 +964,10 @@
     "v2_shadow": true,
     "no_trading": true,
     "no_user_asset_change": true,
-    "longbridge_usage": "未使用长桥账户、持仓、订单、自选、社区发布或行情作为本次事实来源。"
+    "longbridge_usage": "未使用长桥账户、持仓、订单、自选、社区发布或行情作为本次事实来源。",
+    "v2_shadow_same_day_fact": "not_available_current_v2_shadow_found_2026-08-11_only",
+    "automation_repaired_at": "2026-08-21T16:41:10+08:00",
+    "automation_repair_scope": "filled hotspot continuity from same-day V1 close facts; kept sentiment score unscored because breadth sources are missing"
   },
   "disclaimer": "本文件只维护V1看板阶段性结论，不构成交易指令，不修改用户资产，不自动切换模型。"
 }
