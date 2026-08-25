@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-08-25T13:41:28+08:00",
+  "timestamp": "2026-08-25T13:45:22+08:00",
   "sources": {
     "tencent_http": {
       "status": "ok",
@@ -161,17 +161,17 @@
     "akshare_a_spot_watch_decode": {
       "status": "degraded",
       "usage": "盘中观察池与题材短周期刷新",
-      "checked_at": "2026-08-25T13:41:00+08:00",
+      "checked_at": "2026-08-25T13:45:15+08:00",
       "sample_count": 2,
       "errors": [
-        "09:35:07至13:41:00累计428轮AkShare解码失败",
-        "13:31:48曾单批恢复并产生两条正式提醒，随后持续失败",
+        "09:35:07至13:45:15累计435轮AkShare解码失败",
+        "13:42:58曾单批恢复并产生两条正式提醒，随后再次失败",
         "cross_source_verified=false"
       ],
-      "detail": "行情源在13:31:48短暂恢复并产生两条正式提醒，随后持续解码失败，最近一次为13:41:00；监控进程仍存活且日志持续更新。",
+      "detail": "行情源在13:42:58短暂恢复并产生两条正式提醒，随后再次解码失败，最近一次为13:45:15；监控进程仍存活且日志持续更新。",
       "action": "两条正式提醒已按证据冲突门禁写入并标记invalidated；不生成candidate或confirmed，等待腾讯或通达信第二源及AkShare连续稳定恢复。",
-      "failure_count": 428,
-      "last_valid_batch_at": "2026-08-25T13:31:48+08:00"
+      "failure_count": 435,
+      "last_valid_batch_at": "2026-08-25T13:42:58+08:00"
     },
     "eastmoney_limit_pool_intraday_0930": {
       "status": "ok",
@@ -7051,6 +7051,29 @@
       ],
       "detail": "13:31:48新增两条小登观察拉动；液冷3分钟-0.75%，超节点3分钟-0.65%，两者强势股均为0、成交放大仅1.00x，且宽度字段与龙头短周期表现矛盾、至少2只涨停结构不可审计，因此证据门禁拦截candidate与confirmed。",
       "notified_at": "2026-08-25T13:33:22+08:00",
+      "errors": [
+        "cross_source_verified=false",
+        "short-period direction is negative",
+        "breadth conflicts with leader moves",
+        "volume amplification threshold not met",
+        "auditable two-limit-up structure missing",
+        "latest Monday premarket technology digest missing"
+      ],
+      "action": "正式提醒照常报告；看板保留证据冲突记录，不作为当前机会。"
+    },
+    "monitor_formal_alert_20260825_134258": {
+      "status": "invalidated",
+      "checked_at": "2026-08-25T13:45:22+08:00",
+      "trigger_time": "2026-08-25T13:42:58+08:00",
+      "latest_trigger_time": "13:42:58",
+      "alert_count": 2,
+      "theme_count": 2,
+      "sectors": [
+        "液冷",
+        "8192超节点/昇腾算力"
+      ],
+      "detail": "13:42:58新增两条小登观察拉动；液冷3分钟-0.70%，超节点3分钟-0.43%，两者强势股均为0、成交放大仅1.00x，且涨停结构不可审计，因此证据门禁拦截candidate与confirmed。",
+      "notified_at": "2026-08-25T13:45:22+08:00",
       "errors": [
         "cross_source_verified=false",
         "short-period direction is negative",
