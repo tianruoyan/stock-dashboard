@@ -1,42 +1,631 @@
 {
-  "timestamp": "2026-08-24T21:03:07+08:00",
-  "analysis_time": "2026-08-24T21:03:07+08:00",
+  "timestamp": "2026-08-25T08:37:15+08:00",
+  "analysis_time": "2026-08-25T08:37:15+08:00",
   "market_time": null,
-  "trade_date": "2026-08-24",
-  "date": "2026-08-24",
-  "phase": "盘前原时点数据缺失",
-  "summary": "今天盘前数据没有在开盘前完整取得，不能在收盘后补写成当时已知结论；请直接查看今天盘后复盘和下一交易日盘前预案。",
-  "strategy": "本页只记录缺口，不作为今天交易依据。",
+  "trade_date": "2026-08-25",
+  "date": "2026-08-25",
+  "phase": "08:30盘前更新",
+  "data_status": "usable_premarket_partial_asia_unavailable_before_auction",
+  "summary": "08:30盘前：隔夜美股结构分化，道指+0.26%、标普-0.28%、纳指-0.76%，但英伟达-2.91%、美光-5.83%、AMD-3.49%、特斯拉-3.83%、博通-2.63%，对A股科技硬件、CPO/PCB、存储/HBM和高弹性成长仍是风险映射。A股集合竞价、港股竞价尚未开始，本轮不沿用旧盘中数值；8月24日A股收盘已显示创业板-3.21%、科创50-3.10%、通信/CPO和医药承压，今天先看竞价是否止跌，而不是预设反攻。",
+  "strategy": "事实层：隔夜美股科技偏弱、A股和港股尚未竞价；推断层：成长方向仍需防守验证，防御/传统权重只能作观察；行动层：不开盘前给交易动作，09:25先核验核心股竞价和板块宽度。",
   "us_overnight": {
-    "status": "当时数据未完整保存",
-    "indices": [],
-    "tech_stocks": [],
-    "conclusion": "不事后补写"
+    "status": "已取得2026-08-24美股正式收盘",
+    "indices": [
+      {
+        "name": "道琼斯指数",
+        "code": "usDJI",
+        "price": 53417.16,
+        "change": 140.15,
+        "change_pct": 0.26,
+        "market_time": "2026-08-24 16:37:38",
+        "source": "腾讯财经HTTP"
+      },
+      {
+        "name": "纳斯达克指数",
+        "code": "usIXIC",
+        "price": 25980.19,
+        "change": -200.26,
+        "change_pct": -0.76,
+        "market_time": "2026-08-24 17:15:59",
+        "source": "腾讯财经HTTP"
+      },
+      {
+        "name": "标普500指数",
+        "code": "usINX",
+        "price": 7652.86,
+        "change": -21.51,
+        "change_pct": -0.28,
+        "market_time": "2026-08-24 16:36:32",
+        "source": "腾讯财经HTTP"
+      }
+    ],
+    "tech_stocks": [
+      "英伟达 usNVDA -2.91% 2026-08-24 16:00:01 腾讯财经HTTP",
+      "美光科技 usMU -5.83% 2026-08-24 16:00:01 腾讯财经HTTP",
+      "超威半导体 usAMD -3.49% 2026-08-24 16:00:01 腾讯财经HTTP",
+      "特斯拉 usTSLA -3.83% 2026-08-24 16:00:01 腾讯财经HTTP",
+      "博通 usAVGO -2.63% 2026-08-24 16:00:01 腾讯财经HTTP",
+      "苹果 usAAPL +0.32% 2026-08-24 16:00:01 腾讯财经HTTP",
+      "微软 usMSFT +0.84% 2026-08-24 16:00:01 腾讯财经HTTP",
+      "谷歌-C usGOOG +0.83% 2026-08-24 16:00:01 腾讯财经HTTP",
+      "Meta Platforms usMETA +1.66% 2026-08-24 16:00:01 腾讯财经HTTP"
+    ],
+    "conclusion": "指数不是单边大跌，但AI芯片、存储和高估值成长代表股集中回落，A股映射偏风险。",
+    "tech_stock_evidence": [
+      {
+        "name": "英伟达",
+        "code": "usNVDA",
+        "price": 208.48,
+        "change": -6.24,
+        "change_pct": -2.91,
+        "market_time": "2026-08-24 16:00:01",
+        "source": "腾讯财经HTTP",
+        "detail": "英伟达 usNVDA -2.91% 2026-08-24 16:00:01",
+        "note": "AI算力/半导体风险映射"
+      },
+      {
+        "name": "美光科技",
+        "code": "usMU",
+        "price": 910.43,
+        "change": -56.35,
+        "change_pct": -5.83,
+        "market_time": "2026-08-24 16:00:01",
+        "source": "腾讯财经HTTP",
+        "detail": "美光科技 usMU -5.83% 2026-08-24 16:00:01",
+        "note": "存储/HBM风险映射"
+      },
+      {
+        "name": "超威半导体",
+        "code": "usAMD",
+        "price": 456.75,
+        "change": -16.5,
+        "change_pct": -3.49,
+        "market_time": "2026-08-24 16:00:01",
+        "source": "腾讯财经HTTP",
+        "detail": "超威半导体 usAMD -3.49% 2026-08-24 16:00:01",
+        "note": "AI芯片风险映射"
+      },
+      {
+        "name": "特斯拉",
+        "code": "usTSLA",
+        "price": 348.95,
+        "change": -13.91,
+        "change_pct": -3.83,
+        "market_time": "2026-08-24 16:00:01",
+        "source": "腾讯财经HTTP",
+        "detail": "特斯拉 usTSLA -3.83% 2026-08-24 16:00:01",
+        "note": "成长风险偏好映射"
+      },
+      {
+        "name": "博通",
+        "code": "usAVGO",
+        "price": 358.76,
+        "change": -9.69,
+        "change_pct": -2.63,
+        "market_time": "2026-08-24 16:00:01",
+        "source": "腾讯财经HTTP",
+        "detail": "博通 usAVGO -2.63% 2026-08-24 16:00:01",
+        "note": "AI网络/半导体风险映射"
+      },
+      {
+        "name": "苹果",
+        "code": "usAAPL",
+        "price": 310.34,
+        "change": 0.99,
+        "change_pct": 0.32,
+        "market_time": "2026-08-24 16:00:01",
+        "source": "腾讯财经HTTP",
+        "detail": "苹果 usAAPL +0.32% 2026-08-24 16:00:01",
+        "note": "消费电子相对抗跌"
+      },
+      {
+        "name": "微软",
+        "code": "usMSFT",
+        "price": 487.31,
+        "change": 4.07,
+        "change_pct": 0.84,
+        "market_time": "2026-08-24 16:00:01",
+        "source": "腾讯财经HTTP",
+        "detail": "微软 usMSFT +0.84% 2026-08-24 16:00:01"
+      },
+      {
+        "name": "谷歌-C",
+        "code": "usGOOG",
+        "price": 344.59,
+        "change": 2.84,
+        "change_pct": 0.83,
+        "market_time": "2026-08-24 16:00:01",
+        "source": "腾讯财经HTTP",
+        "detail": "谷歌-C usGOOG +0.83% 2026-08-24 16:00:01"
+      },
+      {
+        "name": "Meta Platforms",
+        "code": "usMETA",
+        "price": 559.02,
+        "change": 9.12,
+        "change_pct": 1.66,
+        "market_time": "2026-08-24 16:00:01",
+        "source": "腾讯财经HTTP",
+        "detail": "Meta Platforms usMETA +1.66% 2026-08-24 16:00:01"
+      }
+    ]
+  },
+  "asia_morning": {
+    "japan_korea": {
+      "status": "本轮未从腾讯接口取得可校验日韩指数早盘字段，等待09:00复核",
+      "indices": [],
+      "data_boundary": "不使用未能复核字段或旧收盘数值冒充日韩早盘。"
+    },
+    "a50_futures": {
+      "status": "本轮未取得可校验公开字段，等待09:00复核",
+      "indices": []
+    }
   },
   "hk_auction": {
-    "status": "当时数据未完整保存",
+    "status": "等待港股竞价/开市",
     "indices": [],
     "stocks": [],
-    "sentiment": "不事后补写"
-  },
-  "overnight_news": [],
-  "market_context": {
-    "sentiment_judgement": "盘前原时点缺失",
-    "data_boundary": "收盘后只能补全收盘事实，不能还原盘前已知信息。"
-  },
-  "strong_lines": [],
-  "watch_lines": [],
-  "risk_lines": [
-    "盘前原时点数据缺失，禁止事后生成交易结论。"
-  ],
-  "opening_plan": [],
-  "a_share_mapping": {
-    "core_watch": [],
-    "mapping_logic": "等待下一交易日盘前重新生成。"
+    "last_close_reference": [
+      {
+        "name": "恒生指数",
+        "code": "hkHSI",
+        "price": 25517.33,
+        "change": -492.13,
+        "change_pct": -1.89,
+        "market_time": "2026/08/24 18:31:19",
+        "source": "腾讯财经HTTP"
+      },
+      {
+        "name": "恒生科技指数",
+        "code": "hkHSTECH",
+        "price": 4594.04,
+        "change": -172.12,
+        "change_pct": -3.61,
+        "market_time": "2026/08/24 16:08:42",
+        "source": "腾讯财经HTTP"
+      },
+      {
+        "name": "澜起科技",
+        "code": "hk06809",
+        "price": 250.0,
+        "change": -22.0,
+        "change_pct": -8.09,
+        "market_time": "2026/08/24 16:08:25",
+        "source": "腾讯财经HTTP",
+        "detail": "澜起科技 hk06809 -8.09% 2026/08/24 16:08:25"
+      },
+      {
+        "name": "智谱",
+        "code": "hk02513",
+        "price": 1007.0,
+        "change": -122.0,
+        "change_pct": -10.81,
+        "market_time": "2026/08/24 16:08:26",
+        "source": "腾讯财经HTTP",
+        "detail": "智谱 hk02513 -10.81% 2026/08/24 16:08:26"
+      },
+      {
+        "name": "腾讯控股",
+        "code": "hk00700",
+        "price": 440.0,
+        "change": -17.0,
+        "change_pct": -3.72,
+        "market_time": "2026/08/24 16:08:26",
+        "source": "腾讯财经HTTP",
+        "detail": "腾讯控股 hk00700 -3.72% 2026/08/24 16:08:26"
+      },
+      {
+        "name": "阿里巴巴-W",
+        "code": "hk09988",
+        "price": 112.5,
+        "change": -10.5,
+        "change_pct": -8.54,
+        "market_time": "2026/08/24 16:08:26",
+        "source": "腾讯财经HTTP",
+        "detail": "阿里巴巴-W hk09988 -8.54% 2026/08/24 16:08:26"
+      },
+      {
+        "name": "美团-W",
+        "code": "hk03690",
+        "price": 82.7,
+        "change": -2.3,
+        "change_pct": -2.71,
+        "market_time": "2026/08/24 16:08:25",
+        "source": "腾讯财经HTTP",
+        "detail": "美团-W hk03690 -2.71% 2026/08/24 16:08:25"
+      }
+    ],
+    "sentiment": "8月24日恒生科技和港股AI/半导体已明显回撤，今天需等港股竞价确认是否继续压制。",
+    "data_boundary": "08:30尚未开市，last_close_reference仅是上一交易日收盘背景，不作为今日开盘事实。"
   },
   "a_share_open_preview": {
-    "market_status": "今日原时点已错过"
+    "market_status": "等待集合竞价",
+    "expected_emotion": "偏谨慎/分化，先看止跌",
+    "previous_close_reference": [
+      {
+        "name": "上证指数",
+        "code": "sh000001",
+        "price": 3882.01,
+        "change": -23.19,
+        "change_pct": -0.59,
+        "market_time": "20260824161402",
+        "source": "腾讯财经HTTP"
+      },
+      {
+        "name": "深证成指",
+        "code": "sz399001",
+        "price": 13794.29,
+        "change": -299.88,
+        "change_pct": -2.13,
+        "market_time": "20260824161409",
+        "source": "腾讯财经HTTP"
+      },
+      {
+        "name": "创业板指",
+        "code": "sz399006",
+        "price": 3431.89,
+        "change": -113.69,
+        "change_pct": -3.21,
+        "market_time": "20260824161424",
+        "source": "腾讯财经HTTP"
+      },
+      {
+        "name": "科创50",
+        "code": "sh000688",
+        "price": 1602.34,
+        "change": -51.22,
+        "change_pct": -3.1,
+        "market_time": "20260824161414",
+        "source": "腾讯财经HTTP"
+      },
+      {
+        "name": "沪深300",
+        "code": "sh000300",
+        "price": 4563.13,
+        "change": -55.77,
+        "change_pct": -1.21,
+        "market_time": "20260824161414",
+        "source": "腾讯财经HTTP"
+      }
+    ],
+    "key_checks_0925": [
+      "新易盛、中际旭创、沪电股份、共进股份、锐捷网络是否继续低开放量",
+      "科创50、创业板和半导体ETF是否强于上一日弱势",
+      "医药ETF和创新药ETF能否止跌，避免个股抱团误判为行业修复",
+      "紫光股份定增受理事件是否有竞价承接，且通信设备板块同步回稳"
+    ],
+    "data_boundary": "A股今日竞价未开始，不写今日指数涨跌幅。"
   },
-  "data_status": "missing_original_phase_not_backfilled",
-  "sources": []
+  "overnight_news": [
+    {
+      "title": "美股AI芯片和存储代表股回落",
+      "source": "腾讯美股公开行情",
+      "time": "2026-08-24 16:00:01 ET",
+      "sentiment": "负面",
+      "impact": "压制A股科技硬件、CPO、存储/HBM和半导体设备风险偏好",
+      "evidence": [
+        "英伟达-2.91%",
+        "美光科技-5.83%",
+        "AMD-3.49%",
+        "博通-2.63%"
+      ]
+    },
+    {
+      "title": "美股指数分化，成长弱于道指",
+      "source": "腾讯美股公开行情",
+      "time": "2026-08-24收盘",
+      "sentiment": "中性偏负",
+      "impact": "不能按全面外盘利好处理，重点看A股成长竞价修复能力",
+      "evidence": [
+        "道琼斯+0.26%",
+        "纳斯达克-0.76%",
+        "标普500-0.28%"
+      ]
+    },
+    {
+      "title": "紫光股份定增申请获深交所受理",
+      "source": "巨潮资讯",
+      "time": "2026-08-24",
+      "sentiment": "中性",
+      "impact": "公司事件需竞价和通信设备板块共同确认，不能替代股价承接",
+      "evidence": [
+        "1225493897",
+        "1225493896",
+        "1225493895",
+        "1225493894"
+      ]
+    }
+  ],
+  "market_context": {
+    "sentiment_judgement": "外盘科技偏弱叠加A股上一交易日成长重挫，盘前基调偏防守；只有竞价核心股止跌、ETF回稳、板块宽度扩散同时出现，才考虑把风险线转为修复观察。",
+    "data_boundary": "08:30版本仅覆盖隔夜美股、上一交易日A/H收盘背景和可核验公告；A股竞价、港股竞价、日韩/A50未取得可校验字段的部分均等待后续复核。",
+    "open_style": "分化偏防御，等待竞价确认",
+    "benefit_themes": [
+      "防御/传统权重只作连续性观察",
+      "紫光股份/交换机事件等待竞价承接"
+    ],
+    "risk_points": [
+      "科技硬件/CPO/PCB风险未解除",
+      "存储/HBM和半导体设备受美股科技压制",
+      "医药修复链仍需ETF止跌确认"
+    ]
+  },
+  "strong_lines": [],
+  "watch_lines": [
+    "防御/传统权重：8月24日保险、白酒、种植、普钢、家电相对抗跌，但需要连续前排和扩散确认；确认条件：09:30后行业排名继续前排且不是少数权重护盘；失效：高开低走或成长止跌后资金快速回流",
+    "紫光股份/交换机事件观察：定增申请受理提供公司事件，但上一交易日紫光股份-5.35%、通信设备弱；确认条件：紫光股份竞价强于通信设备，且中兴通讯、锐捷网络、共进股份至少部分止跌；失效：公告高开低走或交换机样本继续放量下跌"
+  ],
+  "risk_lines": [
+    "科技硬件/CPO/PCB：上一交易日新易盛-6.79%、中际旭创-7.72%、共进股份-10.01%，隔夜NVDA/MU/AMD继续压制风险偏好；解除/修复条件：核心股竞价低开后快速收复、ETF止跌且后排不补跌",
+    "存储/HBM/半导体设备：隔夜美光-5.83%、英伟达-2.91%，上一交易日澜起科技、中微公司等仍偏弱；解除/修复条件：半导体ETF和设备平台股同步强于科创50",
+    "医药修复链：上一交易日医药ETF-3.09%、创新药ETF-4.93%，个股抱团不能外推行业修复；解除/修复条件：ETF止跌且涨停从个股扩散到行业宽度"
+  ],
+  "opening_plan": [
+    "09:15前不基于旧收盘价给新交易日涨跌结论。",
+    "09:25先核验集合竞价：核心科技是否继续低开、紫光事件是否有承接、医药ETF是否止跌。",
+    "若创业板/科创50继续弱于主板，维持防守；若核心股低开高走且宽度扩散，再把CPO/半导体从风险线降为修复观察。",
+    "防御方向只看连续性，不追单日避险脉冲。"
+  ],
+  "a_share_mapping": {
+    "core_watch": [
+      {
+        "name": "新易盛",
+        "code": "sz300502",
+        "price": 412.0,
+        "change": -30.0,
+        "change_pct": -6.79,
+        "market_time": "20260824161445",
+        "source": "腾讯财经HTTP",
+        "detail": "新易盛 sz300502 -6.79% 20260824161445",
+        "note": "CPO/光模块，高位风险观察"
+      },
+      {
+        "name": "中际旭创",
+        "code": "sz300308",
+        "price": 870.22,
+        "change": -72.78,
+        "change_pct": -7.72,
+        "market_time": "20260824161427",
+        "source": "腾讯财经HTTP",
+        "detail": "中际旭创 sz300308 -7.72% 20260824161427",
+        "note": "CPO/光模块，高位风险观察"
+      },
+      {
+        "name": "共进股份",
+        "code": "sh603118",
+        "price": 16.01,
+        "change": -1.78,
+        "change_pct": -10.01,
+        "market_time": "20260824161450",
+        "source": "腾讯财经HTTP",
+        "detail": "共进股份 sh603118 -10.01% 20260824161450",
+        "note": "交换机/ODM，跌停风险样本"
+      },
+      {
+        "name": "锐捷网络",
+        "code": "sz301165",
+        "price": 115.9,
+        "change": -11.07,
+        "change_pct": -8.72,
+        "market_time": "20260824161421",
+        "source": "腾讯财经HTTP",
+        "detail": "锐捷网络 sz301165 -8.72% 20260824161421",
+        "note": "交换机，风险样本"
+      },
+      {
+        "name": "紫光股份",
+        "code": "sz000938",
+        "price": 34.49,
+        "change": -1.95,
+        "change_pct": -5.35,
+        "market_time": "20260824161418",
+        "source": "腾讯财经HTTP",
+        "detail": "紫光股份 sz000938 -5.35% 20260824161418",
+        "note": "定增受理事件等待竞价确认"
+      },
+      {
+        "name": "澜起科技",
+        "code": "sh688008",
+        "price": 191.83,
+        "change": -8.72,
+        "change_pct": -4.35,
+        "market_time": "20260824161441",
+        "source": "腾讯财经HTTP",
+        "detail": "澜起科技 sh688008 -4.35% 20260824161441",
+        "note": "存储/HBM映射"
+      },
+      {
+        "name": "中微公司",
+        "code": "sh688012",
+        "price": 357.65,
+        "change": -4.85,
+        "change_pct": -1.34,
+        "market_time": "20260824161457",
+        "source": "腾讯财经HTTP",
+        "detail": "中微公司 sh688012 -1.34% 20260824161457",
+        "note": "半导体设备平台"
+      },
+      {
+        "name": "创新药ETF广发",
+        "code": "sh515120",
+        "price": 0.636,
+        "change": -0.033,
+        "change_pct": -4.93,
+        "market_time": "20260824161456",
+        "source": "腾讯财经HTTP",
+        "detail": "创新药ETF广发 sh515120 -4.93% 20260824161456",
+        "note": "医药修复验证样本"
+      },
+      {
+        "name": "医药ETF易方达",
+        "code": "sh512010",
+        "price": 0.376,
+        "change": -0.012,
+        "change_pct": -3.09,
+        "market_time": "20260824161448",
+        "source": "腾讯财经HTTP",
+        "detail": "医药ETF易方达 sh512010 -3.09% 20260824161448",
+        "note": "医药整体风险样本"
+      }
+    ],
+    "mapping_logic": "先看全市场指数和行业宽度，再把外盘科技风险映射到观察池；观察池个股只作验证样本，不反推主线。"
+  },
+  "sources": [
+    {
+      "name": "腾讯财经HTTP",
+      "usage": "美股正式收盘、A/H上一交易日收盘背景、观察池代表股上一收盘参考",
+      "queried_at": "2026-08-25T08:37:15+08:00"
+    },
+    {
+      "name": "巨潮资讯",
+      "usage": "紫光股份定增受理等公告，沿用2026-08-24晚间扫描结果",
+      "queried_at": "2026-08-24T21:48:48+08:00"
+    },
+    {
+      "name": "V1盘后复盘",
+      "usage": "上一交易日A股收盘复盘和风险基线",
+      "queried_at": "2026-08-24T21:03:07+08:00"
+    }
+  ],
+  "source_notes": [
+    "长桥未作为行情、账户、自选或交易来源。",
+    "A股和港股今日尚未竞价，等待后续阶段复核。",
+    "日韩早盘/A50本轮未取得可校验字段，未写入数值。"
+  ],
+  "watch_line_details": [
+    {
+      "name": "防御/传统权重",
+      "reason": "8月24日保险、白酒、种植、普钢、家电相对抗跌，但需要连续前排和扩散确认",
+      "condition": "09:30后行业排名继续前排且不是少数权重护盘",
+      "invalidation": "高开低走或成长止跌后资金快速回流"
+    },
+    {
+      "name": "紫光股份/交换机事件观察",
+      "reason": "定增申请受理提供公司事件，但上一交易日紫光股份-5.35%、通信设备弱",
+      "condition": "紫光股份竞价强于通信设备，且中兴通讯、锐捷网络、共进股份至少部分止跌",
+      "invalidation": "公告高开低走或交换机样本继续放量下跌"
+    }
+  ],
+  "risk_line_details": [
+    {
+      "name": "科技硬件/CPO/PCB",
+      "reason": "上一交易日新易盛-6.79%、中际旭创-7.72%、共进股份-10.01%，隔夜NVDA/MU/AMD继续压制风险偏好",
+      "representative_stocks": [
+        {
+          "name": "新易盛",
+          "code": "sz300502",
+          "price": 412.0,
+          "change": -30.0,
+          "change_pct": -6.79,
+          "market_time": "20260824161445",
+          "source": "腾讯财经HTTP",
+          "detail": "新易盛 sz300502 -6.79% 20260824161445",
+          "note": "CPO/光模块，高位风险观察"
+        },
+        {
+          "name": "中际旭创",
+          "code": "sz300308",
+          "price": 870.22,
+          "change": -72.78,
+          "change_pct": -7.72,
+          "market_time": "20260824161427",
+          "source": "腾讯财经HTTP",
+          "detail": "中际旭创 sz300308 -7.72% 20260824161427",
+          "note": "CPO/光模块，高位风险观察"
+        },
+        {
+          "name": "共进股份",
+          "code": "sh603118",
+          "price": 16.01,
+          "change": -1.78,
+          "change_pct": -10.01,
+          "market_time": "20260824161450",
+          "source": "腾讯财经HTTP",
+          "detail": "共进股份 sh603118 -10.01% 20260824161450",
+          "note": "交换机/ODM，跌停风险样本"
+        },
+        {
+          "name": "锐捷网络",
+          "code": "sz301165",
+          "price": 115.9,
+          "change": -11.07,
+          "change_pct": -8.72,
+          "market_time": "20260824161421",
+          "source": "腾讯财经HTTP",
+          "detail": "锐捷网络 sz301165 -8.72% 20260824161421",
+          "note": "交换机，风险样本"
+        },
+        {
+          "name": "紫光股份",
+          "code": "sz000938",
+          "price": 34.49,
+          "change": -1.95,
+          "change_pct": -5.35,
+          "market_time": "20260824161418",
+          "source": "腾讯财经HTTP",
+          "detail": "紫光股份 sz000938 -5.35% 20260824161418",
+          "note": "定增受理事件等待竞价确认"
+        }
+      ],
+      "invalidation": "核心股竞价低开后快速收复、ETF止跌且后排不补跌"
+    },
+    {
+      "name": "存储/HBM/半导体设备",
+      "reason": "隔夜美光-5.83%、英伟达-2.91%，上一交易日澜起科技、中微公司等仍偏弱",
+      "representative_stocks": [
+        {
+          "name": "澜起科技",
+          "code": "sh688008",
+          "price": 191.83,
+          "change": -8.72,
+          "change_pct": -4.35,
+          "market_time": "20260824161441",
+          "source": "腾讯财经HTTP",
+          "detail": "澜起科技 sh688008 -4.35% 20260824161441",
+          "note": "存储/HBM映射"
+        },
+        {
+          "name": "中微公司",
+          "code": "sh688012",
+          "price": 357.65,
+          "change": -4.85,
+          "change_pct": -1.34,
+          "market_time": "20260824161457",
+          "source": "腾讯财经HTTP",
+          "detail": "中微公司 sh688012 -1.34% 20260824161457",
+          "note": "半导体设备平台"
+        }
+      ],
+      "invalidation": "半导体ETF和设备平台股同步强于科创50"
+    },
+    {
+      "name": "医药修复链",
+      "reason": "上一交易日医药ETF-3.09%、创新药ETF-4.93%，个股抱团不能外推行业修复",
+      "representative_stocks": [
+        {
+          "name": "创新药ETF广发",
+          "code": "sh515120",
+          "price": 0.636,
+          "change": -0.033,
+          "change_pct": -4.93,
+          "market_time": "20260824161456",
+          "source": "腾讯财经HTTP",
+          "detail": "创新药ETF广发 sh515120 -4.93% 20260824161456",
+          "note": "医药修复验证样本"
+        },
+        {
+          "name": "医药ETF易方达",
+          "code": "sh512010",
+          "price": 0.376,
+          "change": -0.012,
+          "change_pct": -3.09,
+          "market_time": "20260824161448",
+          "source": "腾讯财经HTTP",
+          "detail": "医药ETF易方达 sh512010 -3.09% 20260824161448",
+          "note": "医药整体风险样本"
+        }
+      ],
+      "invalidation": "ETF止跌且涨停从个股扩散到行业宽度"
+    }
+  ]
 }

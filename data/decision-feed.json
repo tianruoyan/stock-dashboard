@@ -1,9 +1,9 @@
 {
-  "timestamp": "2026-08-24T21:52:27+08:00",
-  "current_signal_date": "2026-08-24",
+  "timestamp": "2026-08-25T08:38:30+08:00",
+  "current_signal_date": "2026-08-25",
   "quality_gate": {
     "status": "degraded",
-    "summary": "发现 141 个降级/需复核项（140 个价格/行情复核，1 个背景复核），核心结论可看但必须按影响分层使用。",
+    "summary": "发现 150 个降级/需复核项（143 个价格/行情复核，8 个背景复核），核心结论可看但必须按影响分层使用。",
     "decision_flags": [
       "行情/涨跌幅需二次源复核",
       "盘中异动源降级，alert 类信号降权",
@@ -11,42 +11,37 @@
       "行情源降级，需复核涨跌幅"
     ],
     "blocking_count": 0,
-    "price_review_count": 140,
-    "background_review_count": 1
+    "price_review_count": 143,
+    "background_review_count": 8
   },
-  "summary": "今天午盘原时点数据缺失，不能事后还原；请查看盘后复盘。 数据质量：发现 141 个降级/需复核项（140 个价格/行情复核，1 个背景复核），核心结论可看但必须按影响分层使用。",
+  "summary": "当前时段尚无可用盘面结论。 数据质量：发现 150 个降级/需复核项（143 个价格/行情复核，8 个背景复核），核心结论可看但必须按影响分层使用。",
   "observation_coverage": {
-    "summary": "主动扫描捕捉 2 条：新线观察：保险、白酒、种植、普钢和家电 / 医药",
-    "independent_count": 12,
-    "inherited_count": 12,
-    "active_market_count": 2,
-    "postmarket_scan_count": 4,
-    "topic_inherited_count": 2,
-    "verification_count": 2,
-    "active_titles": [
-      "新线观察：保险、白酒、种植、普钢和家电",
-      "医药"
-    ],
-    "status": "active"
+    "summary": "独立盘面/盘后扫描 1 条，但缺少纯主动新线。",
+    "independent_count": 1,
+    "inherited_count": 14,
+    "active_market_count": 0,
+    "postmarket_scan_count": 0,
+    "topic_inherited_count": 0,
+    "verification_count": 0,
+    "active_titles": [],
+    "status": "independent"
   },
   "decision_brief": {
     "stance": "风险优先，只做验证",
     "action": "不把候选方向当交易机会；先看风险收敛、数据恢复和核心承接。",
     "reasons": [
-      "发现 141 个降级/需复核项（140 个价格/行情复核，1 个背景复核），核心结论可看但必须按影响分层使用。",
-      "A/B级风险 7 条",
-      "风险优先冲突 2 条",
-      "可用机会 0 条，降权候选 8 条"
+      "发现 150 个降级/需复核项（143 个价格/行情复核，8 个背景复核），核心结论可看但必须按影响分层使用。",
+      "A/B级风险 1 条",
+      "可用机会 0 条，降权候选 8 条",
+      "先处理：二次行情复核（intraday.json）"
     ],
     "risk_focus": [
-      "数据质量降级",
-      "保险、白酒、种植、普钢和家电",
-      "科技硬件、CPO和PCB"
+      "数据质量降级"
     ],
     "upgrade_watch": [
-      "#1 主线变化：边缘AI芯片：等待科创50和芯片ETF止跌，个股强于指数后再恢复关注。 数据质量恢复或二次行情源确认前，不升级为可用机会。",
-      "#2 主线变化：金融/消费防御：次日只看是否继续前排并出现板块扩散；单日抗跌不追。 数据质量恢复或二次行情源确认前，不升级为可用机会。",
-      "#3 新线观察：保险、白酒、种植、普钢和家电：次日继续前排且出现板块扩散才提高关注，否则只作防守参考。 数据质量恢复或二次行情源确认前，不升级为可用机会。"
+      "#1 待触发：防御/传统权重只作连续性观察：核心股低开后放量收复开盘价或跌幅明显收敛。 数据质量恢复或二次行情源确认前，不升级为可用机会。",
+      "#2 待触发：机器人/工业自动化：核心股低开后放量收复开盘价或跌幅明显收敛。 数据质量恢复或二次行情源确认前，不升级为可用机会。",
+      "#3 待触发：交换机/高速以太网：核心股低开后放量收复开盘价或跌幅明显收敛。 数据质量恢复或二次行情源确认前，不升级为可用机会。"
     ],
     "verification_focus": [
       "核心股低开后放量收复开盘价或跌幅明显收敛"
@@ -60,14 +55,14 @@
       },
       {
         "label": "二次行情复核",
-        "file": "source-health.json",
+        "file": "premarket.json",
         "next_step": "用第二行情源复核涨跌幅、quote_time 和代表股方向；未确认前只做验证。",
         "unblock_condition": "price_review=0 或相关来源标记 trusted/cross verified。"
       }
     ]
   },
   "signal_queue": {
-    "summary": "无可用机会，4 条风险优先，5 条只做验证，4 条禁用直用。",
+    "summary": "无可用机会，1 条风险优先，5 条只做验证，3 条禁用直用。",
     "active_opportunities": [],
     "trackable_risks": [
       {
@@ -75,53 +70,35 @@
         "grade": "A",
         "use_action": "可跟踪",
         "reason": "污染 alert 修复前，盘中异动信号必须降权；观察池个股涨跌幅以已审计源为准。"
-      },
-      {
-        "title": "保险、白酒、种植、普钢和家电",
-        "grade": "A",
-        "use_action": "可跟踪",
-        "reason": "次日继续前排且出现板块扩散才提高关注，否则只作防守参考。"
-      },
-      {
-        "title": "科技硬件、CPO和PCB",
-        "grade": "A",
-        "use_action": "可跟踪",
-        "reason": "不抢第一波反弹；核心股止跌、ETF回稳和后排不补跌后再观察。"
-      },
-      {
-        "title": "创新药/CRO",
-        "grade": "A",
-        "use_action": "可跟踪",
-        "reason": "只观察龙头持续性；ETF和行业未止跌前不扩大到板块机会。"
       }
     ],
     "verification_queue": [
       {
-        "title": "主线变化：边缘AI芯片",
-        "grade": "C",
-        "use_action": "降权观察",
-        "reason": "等待科创50和芯片ETF止跌，个股强于指数后再恢复关注。"
-      },
-      {
-        "title": "主线变化：金融/消费防御",
-        "grade": "C",
-        "use_action": "降权观察",
-        "reason": "次日只看是否继续前排并出现板块扩散；单日抗跌不追。"
-      },
-      {
-        "title": "新线观察：保险、白酒、种植、普钢和家电",
-        "grade": "C",
-        "use_action": "降权观察",
-        "reason": "次日继续前排且出现板块扩散才提高关注，否则只作防守参考。"
-      },
-      {
-        "title": "主线变化：智能驾驶",
+        "title": "待触发：防御/传统权重只作连续性观察",
         "grade": "D",
         "use_action": "仅复核",
-        "reason": "Waymo事件是海外进展，A/H映射需整车、域控、传感器、线控底盘同步走强。"
+        "reason": "核心股低开后放量收复开盘价或跌幅明显收敛"
       },
       {
         "title": "待触发：机器人/工业自动化",
+        "grade": "D",
+        "use_action": "仅复核",
+        "reason": "核心股低开后放量收复开盘价或跌幅明显收敛"
+      },
+      {
+        "title": "待触发：交换机/高速以太网",
+        "grade": "D",
+        "use_action": "仅复核",
+        "reason": "核心股低开后放量收复开盘价或跌幅明显收敛"
+      },
+      {
+        "title": "待触发：存储/HBM",
+        "grade": "D",
+        "use_action": "仅复核",
+        "reason": "核心股低开后放量收复开盘价或跌幅明显收敛"
+      },
+      {
+        "title": "待触发：CPO/光模块",
         "grade": "D",
         "use_action": "仅复核",
         "reason": "核心股低开后放量收复开盘价或跌幅明显收敛"
@@ -129,15 +106,10 @@
     ],
     "disabled_signals": [
       {
-        "title": "冲突主线机会",
-        "use_action": "禁用追高",
-        "reason": "同一主线存在风险优先冲突，只保留验证条件，不作为交易触发。"
-      },
-      {
-        "title": "主线变化：智能驾驶",
+        "title": "待触发：防御/传统权重只作连续性观察",
         "grade": "D",
         "use_action": "仅复核",
-        "reason": "Waymo事件是海外进展，A/H映射需整车、域控、传感器、线控底盘同步走强。"
+        "reason": "核心股低开后放量收复开盘价或跌幅明显收敛"
       },
       {
         "title": "待触发：机器人/工业自动化",
@@ -155,25 +127,24 @@
   },
   "opportunities": [
     {
-      "title": "主线变化：边缘AI芯片",
-      "type": "theme_shift",
-      "trigger_reason": "主线变化扫描触发：升温/降温/抱团/风险状态出现边际变化。",
-      "conclusion": "边缘AI芯片 有升温迹象，但仍需量价和后排扩散验证。",
+      "title": "待触发：防御/传统权重只作连续性观察",
+      "type": "opportunity_watch",
+      "trigger_reason": "盘前/晚间注意点已转为盘中追踪清单，等待实时行情触发。",
+      "conclusion": "外盘科技偏弱叠加A股上一交易日成长重挫，盘前基调偏防守；只有竞价核心股止跌、ETF回稳、板块宽度扩散同时出现，才考虑把风险线转为修复观察。",
       "confidence": "low",
-      "evidence": [
-        "科创50-3.10%",
-        "科创芯片ETF易方达-3.30%",
-        "澜起科技-4.35%"
-      ],
+      "evidence": [],
       "source_files": [
-        "topics.json"
+        "opportunity-watch.json"
       ],
       "watch_next": [
-        "等待科创50和芯片ETF止跌，个股强于指数后再恢复关注。"
+        "核心股低开后放量收复开盘价或跌幅明显收敛",
+        "同题材后排不再扩大负反馈，跌停/炸板数量下降",
+        "板块ETF或指数不再创新低并出现承接"
       ],
-      "invalidation": "边缘AI芯片 需要次日竞价、量能和后排扩散共同确认。",
+      "invalidation": "核心股继续放量下跌",
       "tags": [
-        "科技硬件链"
+        "金融/消费防御",
+        "风控"
       ],
       "quality_flags": [
         "行情/涨跌幅需二次源复核",
@@ -182,178 +153,28 @@
         "行情源降级，需复核涨跌幅"
       ],
       "tone": "good",
-      "discovery_type": "theme_shift_scan",
-      "evidence_score": 96,
+      "discovery_type": "premarket_watch_queue",
+      "evidence_score": 21,
       "missing_evidence": [
+        "缺少可核验证据",
         "数据源降级需二次确认"
       ],
-      "next_action": "等待科创50和芯片ETF止跌，个股强于指数后再恢复关注。",
-      "observation_source": "主线变化扫描",
-      "independent_observation": true,
-      "signal_score": 55,
-      "signal_grade": "C",
-      "use_action": "降权观察",
+      "next_action": "核心股低开后放量收复开盘价或跌幅明显收敛",
+      "observation_source": "数据派生",
+      "independent_observation": false,
+      "signal_score": 12,
+      "signal_grade": "D",
+      "use_action": "仅复核",
       "use_reasons": [
-        "有可核验证据",
+        "缺少证据",
         "有下一步验证",
         "有证伪条件",
         "有来源文件",
         "数据质量降权"
       ],
       "upgrade_rank": 1,
-      "upgrade_priority": "优先验证",
-      "upgrade_condition": "等待科创50和芯片ETF止跌，个股强于指数后再恢复关注。 数据质量恢复或二次行情源确认前，不升级为可用机会。"
-    },
-    {
-      "title": "主线变化：金融/消费防御",
-      "type": "theme_shift",
-      "trigger_reason": "主线变化扫描触发：升温/降温/抱团/风险状态出现边际变化。",
-      "conclusion": "金融/消费防御 有新出现或轮动增强迹象，需看次日扩散确认。",
-      "confidence": "low",
-      "evidence": [
-        "保险Ⅱ+2.58%",
-        "种植业+2.06%",
-        "白酒Ⅱ+1.73%",
-        "普钢+1.51%",
-        "白色家电+1.39%"
-      ],
-      "source_files": [
-        "intraday.json",
-        "postmarket.json"
-      ],
-      "watch_next": [
-        "次日只看是否继续前排并出现板块扩散；单日抗跌不追。",
-        "观察持续性，不追单日脉冲",
-        "次日继续前排且出现板块扩散才提高关注，否则只作防守参考。"
-      ],
-      "invalidation": "金融/消费防御 需要次日竞价、量能和后排扩散共同确认。",
-      "tags": [],
-      "quality_flags": [
-        "行情/涨跌幅需二次源复核",
-        "盘中异动源降级，alert 类信号降权",
-        "港股收盘窗口可能非终值",
-        "行情源降级，需复核涨跌幅"
-      ],
-      "tone": "good",
-      "discovery_type": "theme_shift_scan",
-      "evidence_score": 83,
-      "missing_evidence": [
-        "数据源降级需二次确认"
-      ],
-      "next_action": "次日只看是否继续前排并出现板块扩散；单日抗跌不追。",
-      "observation_source": "主线变化扫描",
-      "independent_observation": true,
-      "signal_score": 57,
-      "signal_grade": "C",
-      "use_action": "降权观察",
-      "use_reasons": [
-        "有可核验证据",
-        "有下一步验证",
-        "有证伪条件",
-        "有来源文件",
-        "数据质量降权"
-      ],
-      "upgrade_rank": 2,
-      "upgrade_priority": "优先验证",
-      "upgrade_condition": "次日只看是否继续前排并出现板块扩散；单日抗跌不追。 数据质量恢复或二次行情源确认前，不升级为可用机会。"
-    },
-    {
-      "title": "新线观察：保险、白酒、种植、普钢和家电",
-      "type": "unplanned_theme",
-      "trigger_reason": "非预设盘面扫描触发：保险、白酒、种植、普钢和家电不在既有专题精确清单中，但出现涨停池/强势组/轮动增强证据。",
-      "conclusion": "等待次日行业排名、成交和涨停宽度确认。",
-      "confidence": "low",
-      "evidence": [
-        "保险Ⅱ+2.58%",
-        "种植业+2.06%",
-        "白酒Ⅱ+1.73%",
-        "普钢+1.51%",
-        "白色家电+1.39%"
-      ],
-      "source_files": [
-        "postmarket.json"
-      ],
-      "watch_next": [
-        "次日继续前排且出现板块扩散才提高关注，否则只作防守参考。"
-      ],
-      "invalidation": "保险、白酒、种植、普钢和家电次日不能继续高开承接、涨停池收缩或代表股冲高回落，则只按一日轮动处理。",
-      "tags": [
-        "金融/消费防御"
-      ],
-      "quality_flags": [
-        "行情/涨跌幅需二次源复核",
-        "盘中异动源降级，alert 类信号降权",
-        "港股收盘窗口可能非终值",
-        "行情源降级，需复核涨跌幅"
-      ],
-      "tone": "good",
-      "discovery_type": "active_market_scan",
-      "evidence_score": 83,
-      "missing_evidence": [
-        "数据源降级需二次确认"
-      ],
-      "next_action": "次日继续前排且出现板块扩散才提高关注，否则只作防守参考。",
-      "observation_source": "主动盘面扫描",
-      "independent_observation": true,
-      "signal_score": 57,
-      "signal_grade": "C",
-      "use_action": "降权观察",
-      "use_reasons": [
-        "有可核验证据",
-        "有下一步验证",
-        "有证伪条件",
-        "有来源文件",
-        "数据质量降权"
-      ],
-      "upgrade_rank": 3,
-      "upgrade_priority": "优先验证",
-      "upgrade_condition": "次日继续前排且出现板块扩散才提高关注，否则只作防守参考。 数据质量恢复或二次行情源确认前，不升级为可用机会。"
-    },
-    {
-      "title": "主线变化：智能驾驶",
-      "type": "theme_shift",
-      "trigger_reason": "主线变化扫描触发：升温/降温/抱团/风险状态出现边际变化。",
-      "conclusion": "智能驾驶 有升温迹象，但仍需量价和后排扩散验证。",
-      "confidence": "low",
-      "evidence": [
-        "智能驾驶/Robotaxi 观察 Waymo事件是海外进展，A/H映射需整车、域控、传感器、线控底盘同步走强。"
-      ],
-      "source_files": [
-        "topics.json"
-      ],
-      "watch_next": [
-        "Waymo事件是海外进展，A/H映射需整车、域控、传感器、线控底盘同步走强。"
-      ],
-      "invalidation": "智能驾驶 需要次日竞价、量能和后排扩散共同确认。",
-      "tags": [],
-      "quality_flags": [
-        "行情/涨跌幅需二次源复核",
-        "盘中异动源降级，alert 类信号降权",
-        "港股收盘窗口可能非终值",
-        "行情源降级，需复核涨跌幅"
-      ],
-      "tone": "good",
-      "discovery_type": "theme_shift_scan",
-      "evidence_score": 47,
-      "missing_evidence": [
-        "数据源降级需二次确认"
-      ],
-      "next_action": "Waymo事件是海外进展，A/H映射需整车、域控、传感器、线控底盘同步走强。",
-      "observation_source": "主线变化扫描",
-      "independent_observation": true,
-      "signal_score": 36,
-      "signal_grade": "D",
-      "use_action": "仅复核",
-      "use_reasons": [
-        "有可核验证据",
-        "有下一步验证",
-        "有证伪条件",
-        "有来源文件",
-        "数据质量降权"
-      ],
-      "upgrade_rank": 4,
       "upgrade_priority": "仅复核",
-      "upgrade_condition": "Waymo事件是海外进展，A/H映射需整车、域控、传感器、线控底盘同步走强。 数据质量恢复或二次行情源确认前，不升级为可用机会。"
+      "upgrade_condition": "核心股低开后放量收复开盘价或跌幅明显收敛。 数据质量恢复或二次行情源确认前，不升级为可用机会。"
     },
     {
       "title": "待触发：机器人/工业自动化",
@@ -401,7 +222,7 @@
         "有来源文件",
         "数据质量降权"
       ],
-      "upgrade_rank": 5,
+      "upgrade_rank": 2,
       "upgrade_priority": "仅复核",
       "upgrade_condition": "核心股低开后放量收复开盘价或跌幅明显收敛。 数据质量恢复或二次行情源确认前，不升级为可用机会。"
     },
@@ -409,7 +230,7 @@
       "title": "待触发：交换机/高速以太网",
       "type": "opportunity_watch",
       "trigger_reason": "盘前/晚间注意点已转为盘中追踪清单，等待实时行情触发。",
-      "conclusion": "科技硬件和CPO风险仍未解除；创业板和科创50跌逾3%，通信设备-5.21%，新易盛、中际旭创、锐捷网络、共进股份等代表股同步大跌；次日先看止跌，不抢反弹。；[\"核心股是否停止创新低。\", \"通信设备行业跌幅是否明显收窄。\", \"ETF和后排是否同步回稳。\"]；[{\"type\": \"price_action\", \"m…；紫光股份定增申请获受理，但股价和板块…",
+      "conclusion": "外盘科技偏弱叠加A股上一交易日成长重挫，盘前基调偏防守；只有竞价核心股止跌、ETF回稳、板块宽度扩散同时出现，才考虑把风险线转为修复观察。；科技硬件和CPO风险仍未解除；创业板和科创50跌逾3%，通信设备-5.21%，新易盛、中际旭创、锐捷网络、共进股份等代表股同步大跌；次日先看止跌，不抢反弹。；[\"核心股是否停止创新低。\", \"通信设备行业跌幅是否明显收…",
       "confidence": "low",
       "evidence": [],
       "source_files": [
@@ -452,7 +273,57 @@
         "有来源文件",
         "数据质量降权"
       ],
-      "upgrade_rank": 6,
+      "upgrade_rank": 3,
+      "upgrade_priority": "仅复核",
+      "upgrade_condition": "核心股低开后放量收复开盘价或跌幅明显收敛。 数据质量恢复或二次行情源确认前，不升级为可用机会。"
+    },
+    {
+      "title": "待触发：存储/HBM",
+      "type": "opportunity_watch",
+      "trigger_reason": "盘前/晚间注意点已转为盘中追踪清单，等待实时行情触发。",
+      "conclusion": "压制A股科技硬件、CPO、存储/HBM和半导体设备风险偏好；港股科技下跌，加强成长方向风险提示；恒生指数-1.89%、恒生科技指数-3.61%，智谱-10.81%、港股澜起科技-8.09%；外部映射方向是下跌和风险，不是机会。；[\"A股科技竞价是否继续受到港股弱势压制。\", \"若港股科技反弹但A股核心不跟，仍不升级。\"]；[{\"type\": \"price_…",
+      "confidence": "low",
+      "evidence": [],
+      "source_files": [
+        "opportunity-watch.json"
+      ],
+      "watch_next": [
+        "核心股低开后放量收复开盘价或跌幅明显收敛",
+        "同题材后排不再扩大负反馈，跌停/炸板数量下降",
+        "板块ETF或指数不再创新低并出现承接"
+      ],
+      "invalidation": "核心股继续放量下跌",
+      "tags": [
+        "科技硬件链",
+        "风控"
+      ],
+      "quality_flags": [
+        "行情/涨跌幅需二次源复核",
+        "盘中异动源降级，alert 类信号降权",
+        "港股收盘窗口可能非终值",
+        "行情源降级，需复核涨跌幅"
+      ],
+      "tone": "good",
+      "discovery_type": "premarket_watch_queue",
+      "evidence_score": 21,
+      "missing_evidence": [
+        "缺少可核验证据",
+        "数据源降级需二次确认"
+      ],
+      "next_action": "核心股低开后放量收复开盘价或跌幅明显收敛",
+      "observation_source": "数据派生",
+      "independent_observation": false,
+      "signal_score": 12,
+      "signal_grade": "D",
+      "use_action": "仅复核",
+      "use_reasons": [
+        "缺少证据",
+        "有下一步验证",
+        "有证伪条件",
+        "有来源文件",
+        "数据质量降权"
+      ],
+      "upgrade_rank": 4,
       "upgrade_priority": "仅复核",
       "upgrade_condition": "核心股低开后放量收复开盘价或跌幅明显收敛。 数据质量恢复或二次行情源确认前，不升级为可用机会。"
     },
@@ -460,7 +331,108 @@
       "title": "待触发：CPO/光模块",
       "type": "opportunity_watch",
       "trigger_reason": "盘前/晚间注意点已转为盘中追踪清单，等待实时行情触发。",
-      "conclusion": "科技硬件和CPO风险仍未解除；创业板和科创50跌逾3%，通信设备-5.21%，新易盛、中际旭创、锐捷网络、共进股份等代表股同步大跌；次日先看止跌，不抢反弹。；[\"核心股是否停止创新低。\", \"通信设备行业跌幅是否明显收窄。\", \"ETF和后排是否同步回稳。\"]；[{\"type\": \"price_action\", \"m…；光模块/高速互联；风险释放中；通信设…",
+      "conclusion": "压制A股科技硬件、CPO、存储/HBM和半导体设备风险偏好；科技硬件和CPO风险仍未解除；创业板和科创50跌逾3%，通信设备-5.21%，新易盛、中际旭创、锐捷网络、共进股份等代表股同步大跌；次日先看止跌，不抢反弹。；[\"核心股是否停止创新低。\", \"通信设备行业跌幅是否明显收窄。\", \"ETF和后排是否同步回稳。\"]；[{\"type\": \"price_a…",
+      "confidence": "low",
+      "evidence": [],
+      "source_files": [
+        "opportunity-watch.json"
+      ],
+      "watch_next": [
+        "核心股低开后放量收复开盘价或跌幅明显收敛",
+        "同题材后排不再扩大负反馈，跌停/炸板数量下降",
+        "板块ETF或指数不再创新低并出现承接"
+      ],
+      "invalidation": "核心股继续放量下跌",
+      "tags": [
+        "科技硬件链",
+        "风控"
+      ],
+      "quality_flags": [
+        "行情/涨跌幅需二次源复核",
+        "盘中异动源降级，alert 类信号降权",
+        "港股收盘窗口可能非终值",
+        "行情源降级，需复核涨跌幅"
+      ],
+      "tone": "good",
+      "discovery_type": "premarket_watch_queue",
+      "evidence_score": 21,
+      "missing_evidence": [
+        "缺少可核验证据",
+        "数据源降级需二次确认"
+      ],
+      "next_action": "核心股低开后放量收复开盘价或跌幅明显收敛",
+      "observation_source": "数据派生",
+      "independent_observation": false,
+      "signal_score": 12,
+      "signal_grade": "D",
+      "use_action": "仅复核",
+      "use_reasons": [
+        "缺少证据",
+        "有下一步验证",
+        "有证伪条件",
+        "有来源文件",
+        "数据质量降权"
+      ],
+      "upgrade_rank": 5,
+      "upgrade_priority": "仅复核",
+      "upgrade_condition": "核心股低开后放量收复开盘价或跌幅明显收敛。 数据质量恢复或二次行情源确认前，不升级为可用机会。"
+    },
+    {
+      "title": "待触发：创新药/CRO",
+      "type": "opportunity_watch",
+      "trigger_reason": "盘前/晚间注意点已转为盘中追踪清单，等待实时行情触发。",
+      "conclusion": "医药是个股抱团，不是行业修复；汉森制药4连板等少数个股活跃，但生物制品-4.75%、医疗服务-4.31%，医药和创新药ETF同步下跌；只观察龙头，不扩展为板块机会。；[\"医药ETF能否止跌。\", \"医药涨停是否从个股扩散到更多细分。\", \"高位医药股是否出现亏钱效应。\"]；[{\"type\": \"representat…；创新药/CRO；个股活跃/行业修复未…",
+      "confidence": "low",
+      "evidence": [],
+      "source_files": [
+        "opportunity-watch.json"
+      ],
+      "watch_next": [
+        "题材3分钟涨跌幅>=1.5%，方向占比>=70%，成交放大>=5x",
+        "板块内出现批量涨停/封板或后排扩散",
+        "核心股、ETF、后排扩散同向确认",
+        "核心股低开后放量收复开盘价或跌幅明显收敛"
+      ],
+      "invalidation": "核心股高开低走或冲高回落",
+      "tags": [
+        "创新药/CRO",
+        "风控"
+      ],
+      "quality_flags": [
+        "行情/涨跌幅需二次源复核",
+        "盘中异动源降级，alert 类信号降权",
+        "港股收盘窗口可能非终值",
+        "行情源降级，需复核涨跌幅"
+      ],
+      "tone": "good",
+      "discovery_type": "premarket_watch_queue",
+      "evidence_score": 21,
+      "missing_evidence": [
+        "缺少可核验证据",
+        "数据源降级需二次确认"
+      ],
+      "next_action": "题材3分钟涨跌幅>=1.5%，方向占比>=70%，成交放大>=5x",
+      "observation_source": "数据派生",
+      "independent_observation": false,
+      "signal_score": 12,
+      "signal_grade": "D",
+      "use_action": "仅复核",
+      "use_reasons": [
+        "缺少证据",
+        "有下一步验证",
+        "有证伪条件",
+        "有来源文件",
+        "数据质量降权"
+      ],
+      "upgrade_rank": 6,
+      "upgrade_priority": "仅复核",
+      "upgrade_condition": "题材3分钟涨跌幅>=1.5%，方向占比>=70%，成交放大>=5x。 数据质量恢复或二次行情源确认前，不升级为可用机会。"
+    },
+    {
+      "title": "待触发：半导体设备",
+      "type": "opportunity_watch",
+      "trigger_reason": "盘前/晚间注意点已转为盘中追踪清单，等待实时行情触发。",
+      "conclusion": "压制A股科技硬件、CPO、存储/HBM和半导体设备风险偏好",
       "confidence": "low",
       "evidence": [],
       "source_files": [
@@ -507,10 +479,10 @@
       "upgrade_condition": "核心股低开后放量收复开盘价或跌幅明显收敛。 数据质量恢复或二次行情源确认前，不升级为可用机会。"
     },
     {
-      "title": "待触发：存储/HBM",
+      "title": "待触发：半导体设备材料",
       "type": "opportunity_watch",
       "trigger_reason": "盘前/晚间注意点已转为盘中追踪清单，等待实时行情触发。",
-      "conclusion": "港股科技下跌，加强成长方向风险提示；恒生指数-1.89%、恒生科技指数-3.61%，智谱-10.81%、港股澜起科技-8.09%；外部映射方向是下跌和风险，不是机会。；[\"A股科技竞价是否继续受到港股弱势压制。\", \"若港股科技反弹但A股核心不跟，仍不升级。\"]；[{\"type\": \"price_action\", \"…；恒生科技指数-3.61%，智谱-10…",
+      "conclusion": "半导体设备材料；偏弱观察；科创50-3.10%、科创芯片ETF易方达-3.30%，硬件风险偏好回落。；等待科创50和芯片ETF止跌，个股强于指数后再恢复关注。",
       "confidence": "low",
       "evidence": [],
       "source_files": [
@@ -562,12 +534,12 @@
       "title": "数据质量降级",
       "type": "data_quality",
       "trigger_reason": "风控兜底触发：市场宽度、数据质量或回撤条件触发风险优先。",
-      "conclusion": "发现 141 个降级/需复核项（140 个价格/行情复核，1 个背景复核），核心结论可看但必须按影响分层使用。",
+      "conclusion": "发现 150 个降级/需复核项（143 个价格/行情复核，8 个背景复核），核心结论可看但必须按影响分层使用。",
       "confidence": "high",
       "evidence": [
+        "时间戳不是当前交易日：2026-08-24T21:03:07+08:00",
         "智谱 接近跌停 -10.81，需确认是否真实",
-        "共进股份 接近跌停 -10.01，需确认是否真实",
-        "时间戳不是当前交易日：2026-08-21T14:20:59+08:00"
+        "共进股份 接近跌停 -10.01，需确认是否真实"
       ],
       "source_files": [
         "quality-report.json",
@@ -599,212 +571,40 @@
         "有来源文件",
         "证据链较完整"
       ]
-    },
+    }
+  ],
+  "verifications": [
     {
-      "title": "保险、白酒、种植、普钢和家电",
-      "type": "theme",
-      "trigger_reason": "盘后风险扫描触发：收盘复盘出现持续性、尾盘或次日风险线。",
-      "conclusion": "单日避险容易次日回落，不适合追高。",
-      "confidence": "high",
-      "evidence": [
-        "保险Ⅱ+2.58%",
-        "种植业+2.06%",
-        "白酒Ⅱ+1.73%",
-        "普钢+1.51%",
-        "白色家电+1.39%"
-      ],
-      "source_files": [
-        "postmarket.json"
-      ],
-      "watch_next": [
-        "次日继续前排且出现板块扩散才提高关注，否则只作防守参考。"
-      ],
-      "invalidation": "保险、白酒、种植、普钢和家电风险信号收敛、核心股重新放量承接，则风险降级。",
-      "tags": [
-        "金融/消费防御"
-      ],
-      "quality_flags": [],
-      "tone": "risk",
-      "discovery_type": "postmarket_risk_scan",
-      "evidence_score": 90,
-      "missing_evidence": [],
-      "next_action": "次日继续前排且出现板块扩散才提高关注，否则只作防守参考。",
-      "observation_source": "盘后结构扫描",
-      "independent_observation": true,
-      "signal_score": 100,
-      "signal_grade": "A",
-      "use_action": "可跟踪",
-      "use_reasons": [
-        "有可核验证据",
-        "有下一步验证",
-        "有证伪条件",
-        "有来源文件",
-        "证据链较完整"
-      ]
-    },
-    {
-      "title": "科技硬件、CPO和PCB",
-      "type": "theme",
-      "trigger_reason": "盘后风险扫描触发：收盘复盘出现持续性、尾盘或次日风险线。",
-      "conclusion": "高位方向波动加大，弱反抽可能继续回落。",
-      "confidence": "high",
-      "evidence": [
-        "新易盛",
-        "中际旭创",
-        "锐捷网络",
-        "共进股份",
-        "沪电股份"
-      ],
-      "source_files": [
-        "postmarket.json"
-      ],
-      "watch_next": [
-        "不抢第一波反弹；核心股止跌、ETF回稳和后排不补跌后再观察。"
-      ],
-      "invalidation": "科技硬件、CPO和PCB风险信号收敛、核心股重新放量承接，则风险降级。",
-      "tags": [
-        "科技硬件链",
-        "风控"
-      ],
-      "quality_flags": [],
-      "tone": "risk",
-      "discovery_type": "postmarket_risk_scan",
-      "evidence_score": 56,
-      "missing_evidence": [
-        "缺少量化盘口证据",
-        "缺少代表股验证"
-      ],
-      "next_action": "不抢第一波反弹；核心股止跌、ETF回稳和后排不补跌后再观察。",
-      "observation_source": "盘后结构扫描",
-      "independent_observation": true,
-      "signal_score": 90,
-      "signal_grade": "A",
-      "use_action": "可跟踪",
-      "use_reasons": [
-        "有可核验证据",
-        "有下一步验证",
-        "有证伪条件",
-        "有来源文件",
-        "有证据缺口"
-      ]
-    },
-    {
-      "title": "创新药/CRO",
-      "type": "theme",
-      "trigger_reason": "盘后风险扫描触发：收盘复盘出现持续性、尾盘或次日风险线。",
-      "conclusion": "高位个股抱团与板块下跌并存，跟风股风险高。",
-      "confidence": "high",
-      "evidence": [
-        "汉森制药4连板",
-        "汉森制药",
-        "中关村",
-        "医药ETF易方达",
-        "创新药ETF广发"
-      ],
-      "source_files": [
-        "postmarket.json"
-      ],
-      "watch_next": [
-        "只观察龙头持续性；ETF和行业未止跌前不扩大到板块机会。"
-      ],
-      "invalidation": "创新药/CRO风险信号收敛、核心股重新放量承接，则风险降级。",
-      "tags": [
-        "创新药/CRO",
-        "风控"
-      ],
-      "quality_flags": [],
-      "tone": "risk",
-      "discovery_type": "postmarket_risk_scan",
-      "evidence_score": 100,
-      "missing_evidence": [],
-      "next_action": "只观察龙头持续性；ETF和行业未止跌前不扩大到板块机会。",
-      "observation_source": "盘后结构扫描",
-      "independent_observation": true,
-      "signal_score": 100,
-      "signal_grade": "A",
-      "use_action": "可跟踪",
-      "use_reasons": [
-        "有可核验证据",
-        "有下一步验证",
-        "有证伪条件",
-        "有来源文件",
-        "证据链较完整"
-      ]
-    },
-    {
-      "title": "机器人/工业自动化",
-      "type": "theme",
-      "trigger_reason": "盘后风险扫描触发：收盘复盘出现持续性、尾盘或次日风险线。",
-      "conclusion": "高弹性代表股承压，个股反抽持续性不足。",
-      "confidence": "high",
-      "evidence": [
-        "绿的谐波-6.11%",
-        "埃斯顿-8.19%",
-        "拓斯达-6.33%",
-        "步科股份-5.53%",
-        "绿的谐波"
-      ],
-      "source_files": [
-        "postmarket.json"
-      ],
-      "watch_next": [
-        "继续等待，不因个别设备股涨停升级机器人主线。"
-      ],
-      "invalidation": "机器人/工业自动化风险信号收敛、核心股重新放量承接，则风险降级。",
-      "tags": [
-        "科技硬件链",
-        "机器人/工业自动化",
-        "风控"
-      ],
-      "quality_flags": [],
-      "tone": "risk",
-      "discovery_type": "postmarket_risk_scan",
-      "evidence_score": 100,
-      "missing_evidence": [],
-      "next_action": "继续等待，不因个别设备股涨停升级机器人主线。",
-      "observation_source": "盘后结构扫描",
-      "independent_observation": true,
-      "signal_score": 100,
-      "signal_grade": "A",
-      "use_action": "可跟踪",
-      "use_reasons": [
-        "有可核验证据",
-        "有下一步验证",
-        "有证伪条件",
-        "有来源文件",
-        "证据链较完整"
-      ]
-    },
-    {
-      "title": "医药",
-      "type": "theme",
-      "trigger_reason": "主动盘面扫描触发：涨跌停、炸板、尾盘承接或板块扩散出现可验证变化。",
-      "conclusion": "局部涨停、整体偏弱",
-      "confidence": "medium",
+      "title": "盘中追踪：防御/传统权重只作连续性观察",
+      "type": "opportunity_watch",
+      "trigger_reason": "盘前/晚间注意点已转为盘中追踪清单，等待实时行情触发。",
+      "conclusion": "外盘科技偏弱叠加A股上一交易日成长重挫，盘前基调偏防守；只有竞价核心股止跌、ETF回稳、板块宽度扩散同时出现，才考虑把风险线转为修复观察。",
+      "confidence": "low",
       "evidence": [],
       "source_files": [
-        "intraday.json"
+        "opportunity-watch.json"
       ],
       "watch_next": [
-        "不把个股涨停当作板块修复"
+        "核心股低开后放量收复开盘价或跌幅明显收敛",
+        "同题材后排不再扩大负反馈，跌停/炸板数量下降",
+        "板块ETF或指数不再创新低并出现承接"
       ],
-      "invalidation": "医药风险信号收敛、核心股重新放量承接，则风险降级。",
+      "invalidation": "核心股继续放量下跌",
       "tags": [
-        "创新药/CRO"
+        "金融/消费防御",
+        "风控"
       ],
       "quality_flags": [],
-      "tone": "risk",
-      "discovery_type": "active_market_scan",
-      "evidence_score": 14,
+      "tone": "neutral",
+      "discovery_type": "premarket_watch_queue",
+      "evidence_score": 28,
       "missing_evidence": [
-        "缺少可核验证据",
-        "缺少量化盘口证据",
-        "缺少代表股验证"
+        "缺少可核验证据"
       ],
-      "next_action": "不把个股涨停当作板块修复",
-      "observation_source": "主动盘面扫描",
-      "independent_observation": true,
-      "signal_score": 43,
+      "next_action": "核心股低开后放量收复开盘价或跌幅明显收敛",
+      "observation_source": "数据派生",
+      "independent_observation": false,
+      "signal_score": 47,
       "signal_grade": "D",
       "use_action": "仅复核",
       "use_reasons": [
@@ -815,95 +615,6 @@
         "有证据缺口"
       ]
     },
-    {
-      "title": "AI数据中心硬件",
-      "type": "theme",
-      "trigger_reason": "专题观察触发：既有专题出现新的量价证据或代表股变化。",
-      "conclusion": "风险释放中",
-      "confidence": "high",
-      "evidence": [
-        "通信设备-5.21%",
-        "新易盛-6.79%",
-        "中际旭创-7.72%",
-        "共进股份-10.01%"
-      ],
-      "source_files": [
-        "topics.json"
-      ],
-      "watch_next": [
-        "等待CPO、交换机和PCB核心止跌并出现板块扩散；不抢第一波反弹。"
-      ],
-      "invalidation": "AI数据中心硬件风险信号收敛、核心股重新放量承接，则风险降级。",
-      "tags": [
-        "科技硬件链",
-        "风控"
-      ],
-      "quality_flags": [],
-      "tone": "risk",
-      "discovery_type": "topic_watch_scan",
-      "evidence_score": 83,
-      "missing_evidence": [
-        "缺少代表股验证"
-      ],
-      "next_action": "等待CPO、交换机和PCB核心止跌并出现板块扩散；不抢第一波反弹。",
-      "observation_source": "专题继承",
-      "independent_observation": false,
-      "signal_score": 100,
-      "signal_grade": "A",
-      "use_action": "可跟踪",
-      "use_reasons": [
-        "有可核验证据",
-        "有下一步验证",
-        "有证伪条件",
-        "有来源文件",
-        "有证据缺口"
-      ]
-    },
-    {
-      "title": "AI内存与存储",
-      "type": "theme",
-      "trigger_reason": "专题观察触发：既有专题出现新的量价证据或代表股变化。",
-      "conclusion": "偏弱观察",
-      "confidence": "high",
-      "evidence": [
-        "科创50-3.10%",
-        "科创芯片ETF易方达-3.30%",
-        "澜起科技-4.35%"
-      ],
-      "source_files": [
-        "topics.json"
-      ],
-      "watch_next": [
-        "等待科创50和芯片ETF止跌，个股强于指数后再恢复关注。"
-      ],
-      "invalidation": "AI内存与存储风险信号收敛、核心股重新放量承接，则风险降级。",
-      "tags": [
-        "科技硬件链",
-        "风控"
-      ],
-      "quality_flags": [],
-      "tone": "risk",
-      "discovery_type": "topic_watch_scan",
-      "evidence_score": 96,
-      "missing_evidence": [
-        "缺少代表股验证"
-      ],
-      "next_action": "等待科创50和芯片ETF止跌，个股强于指数后再恢复关注。",
-      "observation_source": "专题继承",
-      "independent_observation": false,
-      "signal_score": 98,
-      "signal_grade": "A",
-      "use_action": "可跟踪",
-      "use_reasons": [
-        "有可核验证据",
-        "有下一步验证",
-        "有证伪条件",
-        "有来源文件",
-        "有证据缺口"
-      ]
-    }
-  ],
-  "verifications": [
     {
       "title": "盘中追踪：机器人/工业自动化",
       "type": "opportunity_watch",
@@ -949,7 +660,7 @@
       "title": "盘中追踪：交换机/高速以太网",
       "type": "opportunity_watch",
       "trigger_reason": "盘前/晚间注意点已转为盘中追踪清单，等待实时行情触发。",
-      "conclusion": "科技硬件和CPO风险仍未解除；创业板和科创50跌逾3%，通信设备-5.21%，新易盛、中际旭创、锐捷网络、共进股份等代表股同步大跌；次日先看止跌，不抢反弹。；[\"核心股是否停止创新低。\", \"通信设备行业跌幅是否明显收窄。\", \"ETF和后排是否同步回稳。\"]；[{\"type\": \"price_a…",
+      "conclusion": "外盘科技偏弱叠加A股上一交易日成长重挫，盘前基调偏防守；只有竞价核心股止跌、ETF回稳、板块宽度扩散同时出现，才考虑把风险线转为修复观察。；科技硬件和CPO风险仍未解除；创业板和科创50跌逾3%，通信设备-5.21%，新易盛、中际旭创、锐捷网络、共进股份等代表股同步大跌；次日先看止跌，不抢反弹。；…",
       "confidence": "low",
       "evidence": [],
       "source_files": [
@@ -988,10 +699,10 @@
       ]
     },
     {
-      "title": "盘中追踪：CPO/光模块",
+      "title": "盘中追踪：存储/HBM",
       "type": "opportunity_watch",
       "trigger_reason": "盘前/晚间注意点已转为盘中追踪清单，等待实时行情触发。",
-      "conclusion": "科技硬件和CPO风险仍未解除；创业板和科创50跌逾3%，通信设备-5.21%，新易盛、中际旭创、锐捷网络、共进股份等代表股同步大跌；次日先看止跌，不抢反弹。；[\"核心股是否停止创新低。\", \"通信设备行业跌幅是否明显收窄。\", \"ETF和后排是否同步回稳。\"]；[{\"type\": \"price_a…",
+      "conclusion": "压制A股科技硬件、CPO、存储/HBM和半导体设备风险偏好；港股科技下跌，加强成长方向风险提示；恒生指数-1.89%、恒生科技指数-3.61%，智谱-10.81%、港股澜起科技-8.09%；外部映射方向是下跌和风险，不是机会。；[\"A股科技竞价是否继续受到港股弱势压制。\", \"若港股科技反弹但A股…",
       "confidence": "low",
       "evidence": [],
       "source_files": [
@@ -1029,10 +740,10 @@
       ]
     },
     {
-      "title": "盘中追踪：存储/HBM",
+      "title": "盘中追踪：CPO/光模块",
       "type": "opportunity_watch",
       "trigger_reason": "盘前/晚间注意点已转为盘中追踪清单，等待实时行情触发。",
-      "conclusion": "港股科技下跌，加强成长方向风险提示；恒生指数-1.89%、恒生科技指数-3.61%，智谱-10.81%、港股澜起科技-8.09%；外部映射方向是下跌和风险，不是机会。；[\"A股科技竞价是否继续受到港股弱势压制。\", \"若港股科技反弹但A股核心不跟，仍不升级。\"]；[{\"type\": \"price_…",
+      "conclusion": "压制A股科技硬件、CPO、存储/HBM和半导体设备风险偏好；科技硬件和CPO风险仍未解除；创业板和科创50跌逾3%，通信设备-5.21%，新易盛、中际旭创、锐捷网络、共进股份等代表股同步大跌；次日先看止跌，不抢反弹。；[\"核心股是否停止创新低。\", \"通信设备行业跌幅是否明显收窄。\", \"ETF和…",
       "confidence": "low",
       "evidence": [],
       "source_files": [
@@ -1110,149 +821,9 @@
         "有来源文件",
         "有证据缺口"
       ]
-    },
-    {
-      "title": "盘中追踪：半导体设备材料",
-      "type": "opportunity_watch",
-      "trigger_reason": "盘前/晚间注意点已转为盘中追踪清单，等待实时行情触发。",
-      "conclusion": "半导体设备材料；偏弱观察；科创50-3.10%、科创芯片ETF易方达-3.30%，硬件风险偏好回落。；等待科创50和芯片ETF止跌，个股强于指数后再恢复关注。",
-      "confidence": "low",
-      "evidence": [],
-      "source_files": [
-        "opportunity-watch.json"
-      ],
-      "watch_next": [
-        "核心股低开后放量收复开盘价或跌幅明显收敛",
-        "同题材后排不再扩大负反馈，跌停/炸板数量下降",
-        "板块ETF或指数不再创新低并出现承接"
-      ],
-      "invalidation": "核心股继续放量下跌",
-      "tags": [
-        "科技硬件链",
-        "风控"
-      ],
-      "quality_flags": [],
-      "tone": "neutral",
-      "discovery_type": "premarket_watch_queue",
-      "evidence_score": 28,
-      "missing_evidence": [
-        "缺少可核验证据"
-      ],
-      "next_action": "核心股低开后放量收复开盘价或跌幅明显收敛",
-      "observation_source": "数据派生",
-      "independent_observation": false,
-      "signal_score": 47,
-      "signal_grade": "D",
-      "use_action": "仅复核",
-      "use_reasons": [
-        "缺少证据",
-        "有下一步验证",
-        "有证伪条件",
-        "有来源文件",
-        "有证据缺口"
-      ]
-    },
-    {
-      "title": "风控验证",
-      "type": "verification",
-      "trigger_reason": "验证队列触发：前序结论需要用下一交易窗口确认或证伪。",
-      "conclusion": "以控制风险和等待确认为主。",
-      "confidence": "actionable",
-      "evidence": [],
-      "source_files": [
-        "intraday.json"
-      ],
-      "watch_next": [
-        "以控制风险和等待确认为主。"
-      ],
-      "invalidation": "条件不出现或反向出现，即撤销对应方向判断。",
-      "tags": [
-        "风控"
-      ],
-      "quality_flags": [],
-      "tone": "risk",
-      "discovery_type": "verification_queue",
-      "evidence_score": 35,
-      "missing_evidence": [],
-      "next_action": "以控制风险和等待确认为主。",
-      "observation_source": "验证队列",
-      "independent_observation": true,
-      "signal_score": 60,
-      "signal_grade": "B",
-      "use_action": "等待确认",
-      "use_reasons": [
-        "缺少证据",
-        "有下一步验证",
-        "有证伪条件",
-        "有来源文件"
-      ]
-    },
-    {
-      "title": "创新药/CRO验证",
-      "type": "verification",
-      "trigger_reason": "验证队列触发：前序结论需要用下一交易窗口确认或证伪。",
-      "conclusion": "防御方向不追高，科技和医药不抢第一波反弹。",
-      "confidence": "actionable",
-      "evidence": [],
-      "source_files": [
-        "intraday.json"
-      ],
-      "watch_next": [
-        "防御方向不追高，科技和医药不抢第一波反弹。"
-      ],
-      "invalidation": "条件不出现或反向出现，即撤销对应方向判断。",
-      "tags": [
-        "创新药/CRO"
-      ],
-      "quality_flags": [],
-      "tone": "neutral",
-      "discovery_type": "verification_queue",
-      "evidence_score": 35,
-      "missing_evidence": [],
-      "next_action": "防御方向不追高，科技和医药不抢第一波反弹。",
-      "observation_source": "验证队列",
-      "independent_observation": true,
-      "signal_score": 60,
-      "signal_grade": "B",
-      "use_action": "等待确认",
-      "use_reasons": [
-        "缺少证据",
-        "有下一步验证",
-        "有证伪条件",
-        "有来源文件"
-      ]
     }
   ],
-  "conflicts": [
-    {
-      "theme": "保险、白酒、种植、普钢和家电",
-      "sections": [
-        "opportunities",
-        "risks"
-      ],
-      "verdict": "风险优先，只做验证",
-      "severity": "risk_first",
-      "action": "先按风险栏处理；只有风险收敛、核心股承接和数据质量恢复后，才允许从验证栏升级。",
-      "evidence": [
-        "机会：C级/降权观察，等待次日行业排名、成交和涨停宽度确认。",
-        "风险：A级/可跟踪，单日避险容易次日回落，不适合追高。"
-      ]
-    },
-    {
-      "theme": "创新药/CRO",
-      "sections": [
-        "risks",
-        "verifications"
-      ],
-      "verdict": "风险优先，只做验证",
-      "severity": "risk_first",
-      "action": "先按风险栏处理；只有风险收敛、核心股承接和数据质量恢复后，才允许从验证栏升级。",
-      "evidence": [
-        "风险：A级/可跟踪，高位个股抱团与板块下跌并存，跟风股风险高。",
-        "验证：B级/等待确认，防御方向不追高，科技和医药不抢第一波反弹。"
-      ]
-    }
-  ],
+  "conflicts": [],
   "rules": [
     "每条机会/风险必须带 source_files；没有证据时置信度不得高于 low。",
     "机会只代表候选方向，必须经过下一步验证，不生成交易指令。",
