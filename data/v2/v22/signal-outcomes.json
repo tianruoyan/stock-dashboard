@@ -1,8 +1,8 @@
 {
   "schema_version": 2,
-  "generated_at": "2026-08-24T21:53:52+08:00",
+  "generated_at": "2026-08-25T16:17:22+08:00",
   "mode": "shadow_only",
-  "case_batch_id": "decision_case_batch_77b3d8721ac231a26f15",
+  "case_batch_id": "decision_case_batch_8471e3831826fcd43633",
   "windows": [
     "盘中5分钟",
     "盘中15分钟",
@@ -15,9 +15,9 @@
     "T+10"
   ],
   "primary_window": "T+3",
-  "trigger_snapshot_count": 1149,
+  "trigger_snapshot_count": 1216,
   "evaluated_case_count": 565,
-  "pending_case_count": 615,
+  "pending_case_count": 683,
   "cases": [
     {
       "trigger_snapshot_id": "trigger_quote_snapshot_2f195605d938912079f7",
@@ -74705,14 +74705,4369 @@
       "result_summary": "主要结果窗口完整，可进入离线评价。"
     },
     {
+      "trigger_snapshot_id": "trigger_quote_snapshot_0aa74b4e0abd1d69730c",
+      "case_id": "decision_case_459e5d7f4c345266eb9a",
+      "trade_date": "2026-08-25",
+      "kind": "opportunity",
+      "primary_window": "T+3",
+      "evaluation_included": false,
+      "evaluation_gates": [
+        {
+          "id": "immutable_decision_and_trigger_snapshot",
+          "passed": true,
+          "reason": "原始判断与触发行情快照必须存在且哈希一致。"
+        },
+        {
+          "id": "unique_trigger_snapshot",
+          "passed": true,
+          "reason": "同一触发行情快照不能重复计入评价。"
+        },
+        {
+          "id": "auditable_trigger_reference",
+          "passed": true,
+          "reason": "代表股触发价格、行情时间和来源必须完整。"
+        },
+        {
+          "id": "dual_source_trigger_confirmation",
+          "passed": false,
+          "reason": "代表股触发行情必须经过两路独立行情确认；单源记录只用于观察，不进入模型评价。"
+        },
+        {
+          "id": "representative_quote_closure",
+          "passed": true,
+          "reason": "全部代表股必须形成结果记录。"
+        },
+        {
+          "id": "reference_matches_frozen_snapshot",
+          "passed": true,
+          "reason": "结果记录必须使用冻结触发价格，不能重新选取参考价。"
+        },
+        {
+          "id": "primary_window_due_and_complete",
+          "passed": false,
+          "reason": "全部代表股的T+3窗口必须到期并取得真实行情。"
+        },
+        {
+          "id": "chronology_before_result",
+          "passed": false,
+          "reason": "判断和触发行情必须发生在结果之前。"
+        },
+        {
+          "id": "result_source_auditable",
+          "passed": false,
+          "reason": "结果行情必须保留来源和时间。"
+        },
+        {
+          "id": "trade_date_aligned",
+          "passed": true,
+          "reason": "首次观察时间必须属于案例交易日。"
+        }
+      ],
+      "representative_count": 5,
+      "representative_result_count": 0,
+      "median_return_pct": null,
+      "signal_supported": null,
+      "result_summary": "代表股触发行情必须经过两路独立行情确认；单源记录只用于观察，不进入模型评价。"
+    },
+    {
+      "trigger_snapshot_id": "trigger_quote_snapshot_1340df68cd6d3d0a58f0",
+      "case_id": "decision_case_b4eca4c0c0fc7ce24209",
+      "trade_date": "2026-08-25",
+      "kind": "opportunity",
+      "primary_window": "T+3",
+      "evaluation_included": false,
+      "evaluation_gates": [
+        {
+          "id": "immutable_decision_and_trigger_snapshot",
+          "passed": true,
+          "reason": "原始判断与触发行情快照必须存在且哈希一致。"
+        },
+        {
+          "id": "unique_trigger_snapshot",
+          "passed": true,
+          "reason": "同一触发行情快照不能重复计入评价。"
+        },
+        {
+          "id": "auditable_trigger_reference",
+          "passed": true,
+          "reason": "代表股触发价格、行情时间和来源必须完整。"
+        },
+        {
+          "id": "dual_source_trigger_confirmation",
+          "passed": false,
+          "reason": "代表股触发行情必须经过两路独立行情确认；单源记录只用于观察，不进入模型评价。"
+        },
+        {
+          "id": "representative_quote_closure",
+          "passed": true,
+          "reason": "全部代表股必须形成结果记录。"
+        },
+        {
+          "id": "reference_matches_frozen_snapshot",
+          "passed": true,
+          "reason": "结果记录必须使用冻结触发价格，不能重新选取参考价。"
+        },
+        {
+          "id": "primary_window_due_and_complete",
+          "passed": false,
+          "reason": "全部代表股的T+3窗口必须到期并取得真实行情。"
+        },
+        {
+          "id": "chronology_before_result",
+          "passed": false,
+          "reason": "判断和触发行情必须发生在结果之前。"
+        },
+        {
+          "id": "result_source_auditable",
+          "passed": false,
+          "reason": "结果行情必须保留来源和时间。"
+        },
+        {
+          "id": "trade_date_aligned",
+          "passed": true,
+          "reason": "首次观察时间必须属于案例交易日。"
+        }
+      ],
+      "representative_count": 4,
+      "representative_result_count": 0,
+      "median_return_pct": null,
+      "signal_supported": null,
+      "result_summary": "代表股触发行情必须经过两路独立行情确认；单源记录只用于观察，不进入模型评价。"
+    },
+    {
+      "trigger_snapshot_id": "trigger_quote_snapshot_49a51b0dd0f138356a02",
+      "case_id": "decision_case_60b918c73d5c5471eeac",
+      "trade_date": "2026-08-25",
+      "kind": "opportunity",
+      "primary_window": "T+3",
+      "evaluation_included": false,
+      "evaluation_gates": [
+        {
+          "id": "immutable_decision_and_trigger_snapshot",
+          "passed": true,
+          "reason": "原始判断与触发行情快照必须存在且哈希一致。"
+        },
+        {
+          "id": "unique_trigger_snapshot",
+          "passed": true,
+          "reason": "同一触发行情快照不能重复计入评价。"
+        },
+        {
+          "id": "auditable_trigger_reference",
+          "passed": true,
+          "reason": "代表股触发价格、行情时间和来源必须完整。"
+        },
+        {
+          "id": "dual_source_trigger_confirmation",
+          "passed": false,
+          "reason": "代表股触发行情必须经过两路独立行情确认；单源记录只用于观察，不进入模型评价。"
+        },
+        {
+          "id": "representative_quote_closure",
+          "passed": true,
+          "reason": "全部代表股必须形成结果记录。"
+        },
+        {
+          "id": "reference_matches_frozen_snapshot",
+          "passed": true,
+          "reason": "结果记录必须使用冻结触发价格，不能重新选取参考价。"
+        },
+        {
+          "id": "primary_window_due_and_complete",
+          "passed": false,
+          "reason": "全部代表股的T+3窗口必须到期并取得真实行情。"
+        },
+        {
+          "id": "chronology_before_result",
+          "passed": false,
+          "reason": "判断和触发行情必须发生在结果之前。"
+        },
+        {
+          "id": "result_source_auditable",
+          "passed": false,
+          "reason": "结果行情必须保留来源和时间。"
+        },
+        {
+          "id": "trade_date_aligned",
+          "passed": true,
+          "reason": "首次观察时间必须属于案例交易日。"
+        }
+      ],
+      "representative_count": 3,
+      "representative_result_count": 0,
+      "median_return_pct": null,
+      "signal_supported": null,
+      "result_summary": "代表股触发行情必须经过两路独立行情确认；单源记录只用于观察，不进入模型评价。"
+    },
+    {
+      "trigger_snapshot_id": "trigger_quote_snapshot_511fc332bfebb40d3807",
+      "case_id": "decision_case_930a7c3a04e95be10fbd",
+      "trade_date": "2026-08-25",
+      "kind": "opportunity",
+      "primary_window": "T+3",
+      "evaluation_included": false,
+      "evaluation_gates": [
+        {
+          "id": "immutable_decision_and_trigger_snapshot",
+          "passed": true,
+          "reason": "原始判断与触发行情快照必须存在且哈希一致。"
+        },
+        {
+          "id": "unique_trigger_snapshot",
+          "passed": true,
+          "reason": "同一触发行情快照不能重复计入评价。"
+        },
+        {
+          "id": "auditable_trigger_reference",
+          "passed": true,
+          "reason": "代表股触发价格、行情时间和来源必须完整。"
+        },
+        {
+          "id": "dual_source_trigger_confirmation",
+          "passed": false,
+          "reason": "代表股触发行情必须经过两路独立行情确认；单源记录只用于观察，不进入模型评价。"
+        },
+        {
+          "id": "representative_quote_closure",
+          "passed": true,
+          "reason": "全部代表股必须形成结果记录。"
+        },
+        {
+          "id": "reference_matches_frozen_snapshot",
+          "passed": true,
+          "reason": "结果记录必须使用冻结触发价格，不能重新选取参考价。"
+        },
+        {
+          "id": "primary_window_due_and_complete",
+          "passed": false,
+          "reason": "全部代表股的T+3窗口必须到期并取得真实行情。"
+        },
+        {
+          "id": "chronology_before_result",
+          "passed": false,
+          "reason": "判断和触发行情必须发生在结果之前。"
+        },
+        {
+          "id": "result_source_auditable",
+          "passed": false,
+          "reason": "结果行情必须保留来源和时间。"
+        },
+        {
+          "id": "trade_date_aligned",
+          "passed": true,
+          "reason": "首次观察时间必须属于案例交易日。"
+        }
+      ],
+      "representative_count": 3,
+      "representative_result_count": 0,
+      "median_return_pct": null,
+      "signal_supported": null,
+      "result_summary": "代表股触发行情必须经过两路独立行情确认；单源记录只用于观察，不进入模型评价。"
+    },
+    {
+      "trigger_snapshot_id": "trigger_quote_snapshot_728789867443dd1ea88a",
+      "case_id": "decision_case_9112617fa0f1eb5120f5",
+      "trade_date": "2026-08-25",
+      "kind": "opportunity",
+      "primary_window": "T+3",
+      "evaluation_included": false,
+      "evaluation_gates": [
+        {
+          "id": "immutable_decision_and_trigger_snapshot",
+          "passed": true,
+          "reason": "原始判断与触发行情快照必须存在且哈希一致。"
+        },
+        {
+          "id": "unique_trigger_snapshot",
+          "passed": true,
+          "reason": "同一触发行情快照不能重复计入评价。"
+        },
+        {
+          "id": "auditable_trigger_reference",
+          "passed": true,
+          "reason": "代表股触发价格、行情时间和来源必须完整。"
+        },
+        {
+          "id": "dual_source_trigger_confirmation",
+          "passed": false,
+          "reason": "代表股触发行情必须经过两路独立行情确认；单源记录只用于观察，不进入模型评价。"
+        },
+        {
+          "id": "representative_quote_closure",
+          "passed": true,
+          "reason": "全部代表股必须形成结果记录。"
+        },
+        {
+          "id": "reference_matches_frozen_snapshot",
+          "passed": true,
+          "reason": "结果记录必须使用冻结触发价格，不能重新选取参考价。"
+        },
+        {
+          "id": "primary_window_due_and_complete",
+          "passed": false,
+          "reason": "全部代表股的T+3窗口必须到期并取得真实行情。"
+        },
+        {
+          "id": "chronology_before_result",
+          "passed": false,
+          "reason": "判断和触发行情必须发生在结果之前。"
+        },
+        {
+          "id": "result_source_auditable",
+          "passed": false,
+          "reason": "结果行情必须保留来源和时间。"
+        },
+        {
+          "id": "trade_date_aligned",
+          "passed": true,
+          "reason": "首次观察时间必须属于案例交易日。"
+        }
+      ],
+      "representative_count": 4,
+      "representative_result_count": 0,
+      "median_return_pct": null,
+      "signal_supported": null,
+      "result_summary": "代表股触发行情必须经过两路独立行情确认；单源记录只用于观察，不进入模型评价。"
+    },
+    {
+      "trigger_snapshot_id": "trigger_quote_snapshot_9619cd3a45313043f4fc",
+      "case_id": "decision_case_6341bdeb29e5b84a752a",
+      "trade_date": "2026-08-25",
+      "kind": "risk",
+      "primary_window": "T+3",
+      "evaluation_included": false,
+      "evaluation_gates": [
+        {
+          "id": "immutable_decision_and_trigger_snapshot",
+          "passed": true,
+          "reason": "原始判断与触发行情快照必须存在且哈希一致。"
+        },
+        {
+          "id": "unique_trigger_snapshot",
+          "passed": true,
+          "reason": "同一触发行情快照不能重复计入评价。"
+        },
+        {
+          "id": "auditable_trigger_reference",
+          "passed": true,
+          "reason": "代表股触发价格、行情时间和来源必须完整。"
+        },
+        {
+          "id": "dual_source_trigger_confirmation",
+          "passed": false,
+          "reason": "代表股触发行情必须经过两路独立行情确认；单源记录只用于观察，不进入模型评价。"
+        },
+        {
+          "id": "representative_quote_closure",
+          "passed": true,
+          "reason": "全部代表股必须形成结果记录。"
+        },
+        {
+          "id": "reference_matches_frozen_snapshot",
+          "passed": true,
+          "reason": "结果记录必须使用冻结触发价格，不能重新选取参考价。"
+        },
+        {
+          "id": "primary_window_due_and_complete",
+          "passed": false,
+          "reason": "全部代表股的T+3窗口必须到期并取得真实行情。"
+        },
+        {
+          "id": "chronology_before_result",
+          "passed": false,
+          "reason": "判断和触发行情必须发生在结果之前。"
+        },
+        {
+          "id": "result_source_auditable",
+          "passed": false,
+          "reason": "结果行情必须保留来源和时间。"
+        },
+        {
+          "id": "trade_date_aligned",
+          "passed": true,
+          "reason": "首次观察时间必须属于案例交易日。"
+        }
+      ],
+      "representative_count": 3,
+      "representative_result_count": 0,
+      "median_return_pct": null,
+      "signal_supported": null,
+      "result_summary": "代表股触发行情必须经过两路独立行情确认；单源记录只用于观察，不进入模型评价。"
+    },
+    {
+      "trigger_snapshot_id": "trigger_quote_snapshot_bc29f3a4beaff74d14ab",
+      "case_id": "decision_case_635931a70e05088dac86",
+      "trade_date": "2026-08-25",
+      "kind": "opportunity",
+      "primary_window": "T+3",
+      "evaluation_included": false,
+      "evaluation_gates": [
+        {
+          "id": "immutable_decision_and_trigger_snapshot",
+          "passed": true,
+          "reason": "原始判断与触发行情快照必须存在且哈希一致。"
+        },
+        {
+          "id": "unique_trigger_snapshot",
+          "passed": true,
+          "reason": "同一触发行情快照不能重复计入评价。"
+        },
+        {
+          "id": "auditable_trigger_reference",
+          "passed": true,
+          "reason": "代表股触发价格、行情时间和来源必须完整。"
+        },
+        {
+          "id": "dual_source_trigger_confirmation",
+          "passed": false,
+          "reason": "代表股触发行情必须经过两路独立行情确认；单源记录只用于观察，不进入模型评价。"
+        },
+        {
+          "id": "representative_quote_closure",
+          "passed": true,
+          "reason": "全部代表股必须形成结果记录。"
+        },
+        {
+          "id": "reference_matches_frozen_snapshot",
+          "passed": true,
+          "reason": "结果记录必须使用冻结触发价格，不能重新选取参考价。"
+        },
+        {
+          "id": "primary_window_due_and_complete",
+          "passed": false,
+          "reason": "全部代表股的T+3窗口必须到期并取得真实行情。"
+        },
+        {
+          "id": "chronology_before_result",
+          "passed": false,
+          "reason": "判断和触发行情必须发生在结果之前。"
+        },
+        {
+          "id": "result_source_auditable",
+          "passed": false,
+          "reason": "结果行情必须保留来源和时间。"
+        },
+        {
+          "id": "trade_date_aligned",
+          "passed": true,
+          "reason": "首次观察时间必须属于案例交易日。"
+        }
+      ],
+      "representative_count": 6,
+      "representative_result_count": 0,
+      "median_return_pct": null,
+      "signal_supported": null,
+      "result_summary": "代表股触发行情必须经过两路独立行情确认；单源记录只用于观察，不进入模型评价。"
+    },
+    {
+      "trigger_snapshot_id": "trigger_quote_snapshot_cbc370930b1e5ff663af",
+      "case_id": "decision_case_67e84b468ab2d64d3a6e",
+      "trade_date": "2026-08-25",
+      "kind": "risk",
+      "primary_window": "T+3",
+      "evaluation_included": false,
+      "evaluation_gates": [
+        {
+          "id": "immutable_decision_and_trigger_snapshot",
+          "passed": true,
+          "reason": "原始判断与触发行情快照必须存在且哈希一致。"
+        },
+        {
+          "id": "unique_trigger_snapshot",
+          "passed": true,
+          "reason": "同一触发行情快照不能重复计入评价。"
+        },
+        {
+          "id": "auditable_trigger_reference",
+          "passed": true,
+          "reason": "代表股触发价格、行情时间和来源必须完整。"
+        },
+        {
+          "id": "dual_source_trigger_confirmation",
+          "passed": false,
+          "reason": "代表股触发行情必须经过两路独立行情确认；单源记录只用于观察，不进入模型评价。"
+        },
+        {
+          "id": "representative_quote_closure",
+          "passed": true,
+          "reason": "全部代表股必须形成结果记录。"
+        },
+        {
+          "id": "reference_matches_frozen_snapshot",
+          "passed": true,
+          "reason": "结果记录必须使用冻结触发价格，不能重新选取参考价。"
+        },
+        {
+          "id": "primary_window_due_and_complete",
+          "passed": false,
+          "reason": "全部代表股的T+3窗口必须到期并取得真实行情。"
+        },
+        {
+          "id": "chronology_before_result",
+          "passed": false,
+          "reason": "判断和触发行情必须发生在结果之前。"
+        },
+        {
+          "id": "result_source_auditable",
+          "passed": false,
+          "reason": "结果行情必须保留来源和时间。"
+        },
+        {
+          "id": "trade_date_aligned",
+          "passed": true,
+          "reason": "首次观察时间必须属于案例交易日。"
+        }
+      ],
+      "representative_count": 3,
+      "representative_result_count": 0,
+      "median_return_pct": null,
+      "signal_supported": null,
+      "result_summary": "代表股触发行情必须经过两路独立行情确认；单源记录只用于观察，不进入模型评价。"
+    },
+    {
+      "trigger_snapshot_id": "trigger_quote_snapshot_d2a6f970f09017a19530",
+      "case_id": "decision_case_fa6e7aa0538daf063721",
+      "trade_date": "2026-08-25",
+      "kind": "risk",
+      "primary_window": "T+3",
+      "evaluation_included": false,
+      "evaluation_gates": [
+        {
+          "id": "immutable_decision_and_trigger_snapshot",
+          "passed": true,
+          "reason": "原始判断与触发行情快照必须存在且哈希一致。"
+        },
+        {
+          "id": "unique_trigger_snapshot",
+          "passed": true,
+          "reason": "同一触发行情快照不能重复计入评价。"
+        },
+        {
+          "id": "auditable_trigger_reference",
+          "passed": true,
+          "reason": "代表股触发价格、行情时间和来源必须完整。"
+        },
+        {
+          "id": "dual_source_trigger_confirmation",
+          "passed": false,
+          "reason": "代表股触发行情必须经过两路独立行情确认；单源记录只用于观察，不进入模型评价。"
+        },
+        {
+          "id": "representative_quote_closure",
+          "passed": true,
+          "reason": "全部代表股必须形成结果记录。"
+        },
+        {
+          "id": "reference_matches_frozen_snapshot",
+          "passed": true,
+          "reason": "结果记录必须使用冻结触发价格，不能重新选取参考价。"
+        },
+        {
+          "id": "primary_window_due_and_complete",
+          "passed": false,
+          "reason": "全部代表股的T+3窗口必须到期并取得真实行情。"
+        },
+        {
+          "id": "chronology_before_result",
+          "passed": false,
+          "reason": "判断和触发行情必须发生在结果之前。"
+        },
+        {
+          "id": "result_source_auditable",
+          "passed": false,
+          "reason": "结果行情必须保留来源和时间。"
+        },
+        {
+          "id": "trade_date_aligned",
+          "passed": true,
+          "reason": "首次观察时间必须属于案例交易日。"
+        }
+      ],
+      "representative_count": 3,
+      "representative_result_count": 0,
+      "median_return_pct": null,
+      "signal_supported": null,
+      "result_summary": "代表股触发行情必须经过两路独立行情确认；单源记录只用于观察，不进入模型评价。"
+    },
+    {
+      "trigger_snapshot_id": "trigger_quote_snapshot_d8baad5c586d0fec9669",
+      "case_id": "decision_case_01c338c7c1f22ac8c08b",
+      "trade_date": "2026-08-25",
+      "kind": "opportunity",
+      "primary_window": "T+3",
+      "evaluation_included": false,
+      "evaluation_gates": [
+        {
+          "id": "immutable_decision_and_trigger_snapshot",
+          "passed": true,
+          "reason": "原始判断与触发行情快照必须存在且哈希一致。"
+        },
+        {
+          "id": "unique_trigger_snapshot",
+          "passed": true,
+          "reason": "同一触发行情快照不能重复计入评价。"
+        },
+        {
+          "id": "auditable_trigger_reference",
+          "passed": true,
+          "reason": "代表股触发价格、行情时间和来源必须完整。"
+        },
+        {
+          "id": "dual_source_trigger_confirmation",
+          "passed": false,
+          "reason": "代表股触发行情必须经过两路独立行情确认；单源记录只用于观察，不进入模型评价。"
+        },
+        {
+          "id": "representative_quote_closure",
+          "passed": true,
+          "reason": "全部代表股必须形成结果记录。"
+        },
+        {
+          "id": "reference_matches_frozen_snapshot",
+          "passed": true,
+          "reason": "结果记录必须使用冻结触发价格，不能重新选取参考价。"
+        },
+        {
+          "id": "primary_window_due_and_complete",
+          "passed": false,
+          "reason": "全部代表股的T+3窗口必须到期并取得真实行情。"
+        },
+        {
+          "id": "chronology_before_result",
+          "passed": false,
+          "reason": "判断和触发行情必须发生在结果之前。"
+        },
+        {
+          "id": "result_source_auditable",
+          "passed": false,
+          "reason": "结果行情必须保留来源和时间。"
+        },
+        {
+          "id": "trade_date_aligned",
+          "passed": true,
+          "reason": "首次观察时间必须属于案例交易日。"
+        }
+      ],
+      "representative_count": 5,
+      "representative_result_count": 0,
+      "median_return_pct": null,
+      "signal_supported": null,
+      "result_summary": "代表股触发行情必须经过两路独立行情确认；单源记录只用于观察，不进入模型评价。"
+    },
+    {
+      "trigger_snapshot_id": "trigger_quote_snapshot_eeab5cf2f535b4bb7556",
+      "case_id": "decision_case_054af51803d0ed693f46",
+      "trade_date": "2026-08-25",
+      "kind": "risk",
+      "primary_window": "T+3",
+      "evaluation_included": false,
+      "evaluation_gates": [
+        {
+          "id": "immutable_decision_and_trigger_snapshot",
+          "passed": true,
+          "reason": "原始判断与触发行情快照必须存在且哈希一致。"
+        },
+        {
+          "id": "unique_trigger_snapshot",
+          "passed": true,
+          "reason": "同一触发行情快照不能重复计入评价。"
+        },
+        {
+          "id": "auditable_trigger_reference",
+          "passed": true,
+          "reason": "代表股触发价格、行情时间和来源必须完整。"
+        },
+        {
+          "id": "dual_source_trigger_confirmation",
+          "passed": false,
+          "reason": "代表股触发行情必须经过两路独立行情确认；单源记录只用于观察，不进入模型评价。"
+        },
+        {
+          "id": "representative_quote_closure",
+          "passed": true,
+          "reason": "全部代表股必须形成结果记录。"
+        },
+        {
+          "id": "reference_matches_frozen_snapshot",
+          "passed": true,
+          "reason": "结果记录必须使用冻结触发价格，不能重新选取参考价。"
+        },
+        {
+          "id": "primary_window_due_and_complete",
+          "passed": false,
+          "reason": "全部代表股的T+3窗口必须到期并取得真实行情。"
+        },
+        {
+          "id": "chronology_before_result",
+          "passed": false,
+          "reason": "判断和触发行情必须发生在结果之前。"
+        },
+        {
+          "id": "result_source_auditable",
+          "passed": false,
+          "reason": "结果行情必须保留来源和时间。"
+        },
+        {
+          "id": "trade_date_aligned",
+          "passed": true,
+          "reason": "首次观察时间必须属于案例交易日。"
+        }
+      ],
+      "representative_count": 3,
+      "representative_result_count": 0,
+      "median_return_pct": null,
+      "signal_supported": null,
+      "result_summary": "代表股触发行情必须经过两路独立行情确认；单源记录只用于观察，不进入模型评价。"
+    },
+    {
+      "trigger_snapshot_id": "trigger_quote_snapshot_fa12c93a18d56400296d",
+      "case_id": "decision_case_b3eaed529d092cfb5637",
+      "trade_date": "2026-08-25",
+      "kind": "opportunity",
+      "primary_window": "T+3",
+      "evaluation_included": false,
+      "evaluation_gates": [
+        {
+          "id": "immutable_decision_and_trigger_snapshot",
+          "passed": true,
+          "reason": "原始判断与触发行情快照必须存在且哈希一致。"
+        },
+        {
+          "id": "unique_trigger_snapshot",
+          "passed": true,
+          "reason": "同一触发行情快照不能重复计入评价。"
+        },
+        {
+          "id": "auditable_trigger_reference",
+          "passed": true,
+          "reason": "代表股触发价格、行情时间和来源必须完整。"
+        },
+        {
+          "id": "dual_source_trigger_confirmation",
+          "passed": false,
+          "reason": "代表股触发行情必须经过两路独立行情确认；单源记录只用于观察，不进入模型评价。"
+        },
+        {
+          "id": "representative_quote_closure",
+          "passed": true,
+          "reason": "全部代表股必须形成结果记录。"
+        },
+        {
+          "id": "reference_matches_frozen_snapshot",
+          "passed": true,
+          "reason": "结果记录必须使用冻结触发价格，不能重新选取参考价。"
+        },
+        {
+          "id": "primary_window_due_and_complete",
+          "passed": false,
+          "reason": "全部代表股的T+3窗口必须到期并取得真实行情。"
+        },
+        {
+          "id": "chronology_before_result",
+          "passed": false,
+          "reason": "判断和触发行情必须发生在结果之前。"
+        },
+        {
+          "id": "result_source_auditable",
+          "passed": false,
+          "reason": "结果行情必须保留来源和时间。"
+        },
+        {
+          "id": "trade_date_aligned",
+          "passed": true,
+          "reason": "首次观察时间必须属于案例交易日。"
+        }
+      ],
+      "representative_count": 5,
+      "representative_result_count": 0,
+      "median_return_pct": null,
+      "signal_supported": null,
+      "result_summary": "代表股触发行情必须经过两路独立行情确认；单源记录只用于观察，不进入模型评价。"
+    },
+    {
+      "trigger_snapshot_id": "trigger_quote_snapshot_d69c257db7de7fa31564",
+      "case_id": "decision_case_6341bdeb29e5b84a752a",
+      "trade_date": "2026-08-25",
+      "kind": "risk",
+      "primary_window": "T+3",
+      "evaluation_included": false,
+      "evaluation_gates": [
+        {
+          "id": "immutable_decision_and_trigger_snapshot",
+          "passed": true,
+          "reason": "原始判断与触发行情快照必须存在且哈希一致。"
+        },
+        {
+          "id": "unique_trigger_snapshot",
+          "passed": true,
+          "reason": "同一触发行情快照不能重复计入评价。"
+        },
+        {
+          "id": "auditable_trigger_reference",
+          "passed": true,
+          "reason": "代表股触发价格、行情时间和来源必须完整。"
+        },
+        {
+          "id": "dual_source_trigger_confirmation",
+          "passed": false,
+          "reason": "代表股触发行情必须经过两路独立行情确认；单源记录只用于观察，不进入模型评价。"
+        },
+        {
+          "id": "representative_quote_closure",
+          "passed": true,
+          "reason": "全部代表股必须形成结果记录。"
+        },
+        {
+          "id": "reference_matches_frozen_snapshot",
+          "passed": true,
+          "reason": "结果记录必须使用冻结触发价格，不能重新选取参考价。"
+        },
+        {
+          "id": "primary_window_due_and_complete",
+          "passed": false,
+          "reason": "全部代表股的T+3窗口必须到期并取得真实行情。"
+        },
+        {
+          "id": "chronology_before_result",
+          "passed": false,
+          "reason": "判断和触发行情必须发生在结果之前。"
+        },
+        {
+          "id": "result_source_auditable",
+          "passed": false,
+          "reason": "结果行情必须保留来源和时间。"
+        },
+        {
+          "id": "trade_date_aligned",
+          "passed": true,
+          "reason": "首次观察时间必须属于案例交易日。"
+        }
+      ],
+      "representative_count": 3,
+      "representative_result_count": 0,
+      "median_return_pct": null,
+      "signal_supported": null,
+      "result_summary": "代表股触发行情必须经过两路独立行情确认；单源记录只用于观察，不进入模型评价。"
+    },
+    {
+      "trigger_snapshot_id": "trigger_quote_snapshot_23ca07815ff648ce966d",
+      "case_id": "decision_case_6341bdeb29e5b84a752a",
+      "trade_date": "2026-08-25",
+      "kind": "risk",
+      "primary_window": "T+3",
+      "evaluation_included": false,
+      "evaluation_gates": [
+        {
+          "id": "immutable_decision_and_trigger_snapshot",
+          "passed": true,
+          "reason": "原始判断与触发行情快照必须存在且哈希一致。"
+        },
+        {
+          "id": "unique_trigger_snapshot",
+          "passed": true,
+          "reason": "同一触发行情快照不能重复计入评价。"
+        },
+        {
+          "id": "auditable_trigger_reference",
+          "passed": true,
+          "reason": "代表股触发价格、行情时间和来源必须完整。"
+        },
+        {
+          "id": "dual_source_trigger_confirmation",
+          "passed": false,
+          "reason": "代表股触发行情必须经过两路独立行情确认；单源记录只用于观察，不进入模型评价。"
+        },
+        {
+          "id": "representative_quote_closure",
+          "passed": true,
+          "reason": "全部代表股必须形成结果记录。"
+        },
+        {
+          "id": "reference_matches_frozen_snapshot",
+          "passed": true,
+          "reason": "结果记录必须使用冻结触发价格，不能重新选取参考价。"
+        },
+        {
+          "id": "primary_window_due_and_complete",
+          "passed": false,
+          "reason": "全部代表股的T+3窗口必须到期并取得真实行情。"
+        },
+        {
+          "id": "chronology_before_result",
+          "passed": false,
+          "reason": "判断和触发行情必须发生在结果之前。"
+        },
+        {
+          "id": "result_source_auditable",
+          "passed": false,
+          "reason": "结果行情必须保留来源和时间。"
+        },
+        {
+          "id": "trade_date_aligned",
+          "passed": true,
+          "reason": "首次观察时间必须属于案例交易日。"
+        }
+      ],
+      "representative_count": 3,
+      "representative_result_count": 0,
+      "median_return_pct": null,
+      "signal_supported": null,
+      "result_summary": "代表股触发行情必须经过两路独立行情确认；单源记录只用于观察，不进入模型评价。"
+    },
+    {
+      "trigger_snapshot_id": "trigger_quote_snapshot_3f2446621462618fd408",
+      "case_id": "decision_case_6341bdeb29e5b84a752a",
+      "trade_date": "2026-08-25",
+      "kind": "risk",
+      "primary_window": "T+3",
+      "evaluation_included": false,
+      "evaluation_gates": [
+        {
+          "id": "immutable_decision_and_trigger_snapshot",
+          "passed": true,
+          "reason": "原始判断与触发行情快照必须存在且哈希一致。"
+        },
+        {
+          "id": "unique_trigger_snapshot",
+          "passed": true,
+          "reason": "同一触发行情快照不能重复计入评价。"
+        },
+        {
+          "id": "auditable_trigger_reference",
+          "passed": true,
+          "reason": "代表股触发价格、行情时间和来源必须完整。"
+        },
+        {
+          "id": "dual_source_trigger_confirmation",
+          "passed": false,
+          "reason": "代表股触发行情必须经过两路独立行情确认；单源记录只用于观察，不进入模型评价。"
+        },
+        {
+          "id": "representative_quote_closure",
+          "passed": true,
+          "reason": "全部代表股必须形成结果记录。"
+        },
+        {
+          "id": "reference_matches_frozen_snapshot",
+          "passed": true,
+          "reason": "结果记录必须使用冻结触发价格，不能重新选取参考价。"
+        },
+        {
+          "id": "primary_window_due_and_complete",
+          "passed": false,
+          "reason": "全部代表股的T+3窗口必须到期并取得真实行情。"
+        },
+        {
+          "id": "chronology_before_result",
+          "passed": false,
+          "reason": "判断和触发行情必须发生在结果之前。"
+        },
+        {
+          "id": "result_source_auditable",
+          "passed": false,
+          "reason": "结果行情必须保留来源和时间。"
+        },
+        {
+          "id": "trade_date_aligned",
+          "passed": true,
+          "reason": "首次观察时间必须属于案例交易日。"
+        }
+      ],
+      "representative_count": 3,
+      "representative_result_count": 0,
+      "median_return_pct": null,
+      "signal_supported": null,
+      "result_summary": "代表股触发行情必须经过两路独立行情确认；单源记录只用于观察，不进入模型评价。"
+    },
+    {
+      "trigger_snapshot_id": "trigger_quote_snapshot_dac4e2abc7b57c9aac45",
+      "case_id": "decision_case_6341bdeb29e5b84a752a",
+      "trade_date": "2026-08-25",
+      "kind": "risk",
+      "primary_window": "T+3",
+      "evaluation_included": false,
+      "evaluation_gates": [
+        {
+          "id": "immutable_decision_and_trigger_snapshot",
+          "passed": true,
+          "reason": "原始判断与触发行情快照必须存在且哈希一致。"
+        },
+        {
+          "id": "unique_trigger_snapshot",
+          "passed": true,
+          "reason": "同一触发行情快照不能重复计入评价。"
+        },
+        {
+          "id": "auditable_trigger_reference",
+          "passed": true,
+          "reason": "代表股触发价格、行情时间和来源必须完整。"
+        },
+        {
+          "id": "dual_source_trigger_confirmation",
+          "passed": false,
+          "reason": "代表股触发行情必须经过两路独立行情确认；单源记录只用于观察，不进入模型评价。"
+        },
+        {
+          "id": "representative_quote_closure",
+          "passed": true,
+          "reason": "全部代表股必须形成结果记录。"
+        },
+        {
+          "id": "reference_matches_frozen_snapshot",
+          "passed": true,
+          "reason": "结果记录必须使用冻结触发价格，不能重新选取参考价。"
+        },
+        {
+          "id": "primary_window_due_and_complete",
+          "passed": false,
+          "reason": "全部代表股的T+3窗口必须到期并取得真实行情。"
+        },
+        {
+          "id": "chronology_before_result",
+          "passed": false,
+          "reason": "判断和触发行情必须发生在结果之前。"
+        },
+        {
+          "id": "result_source_auditable",
+          "passed": false,
+          "reason": "结果行情必须保留来源和时间。"
+        },
+        {
+          "id": "trade_date_aligned",
+          "passed": true,
+          "reason": "首次观察时间必须属于案例交易日。"
+        }
+      ],
+      "representative_count": 3,
+      "representative_result_count": 0,
+      "median_return_pct": null,
+      "signal_supported": null,
+      "result_summary": "代表股触发行情必须经过两路独立行情确认；单源记录只用于观察，不进入模型评价。"
+    },
+    {
+      "trigger_snapshot_id": "trigger_quote_snapshot_b6551dc91918e3a997d6",
+      "case_id": "decision_case_6341bdeb29e5b84a752a",
+      "trade_date": "2026-08-25",
+      "kind": "risk",
+      "primary_window": "T+3",
+      "evaluation_included": false,
+      "evaluation_gates": [
+        {
+          "id": "immutable_decision_and_trigger_snapshot",
+          "passed": true,
+          "reason": "原始判断与触发行情快照必须存在且哈希一致。"
+        },
+        {
+          "id": "unique_trigger_snapshot",
+          "passed": true,
+          "reason": "同一触发行情快照不能重复计入评价。"
+        },
+        {
+          "id": "auditable_trigger_reference",
+          "passed": true,
+          "reason": "代表股触发价格、行情时间和来源必须完整。"
+        },
+        {
+          "id": "dual_source_trigger_confirmation",
+          "passed": false,
+          "reason": "代表股触发行情必须经过两路独立行情确认；单源记录只用于观察，不进入模型评价。"
+        },
+        {
+          "id": "representative_quote_closure",
+          "passed": true,
+          "reason": "全部代表股必须形成结果记录。"
+        },
+        {
+          "id": "reference_matches_frozen_snapshot",
+          "passed": true,
+          "reason": "结果记录必须使用冻结触发价格，不能重新选取参考价。"
+        },
+        {
+          "id": "primary_window_due_and_complete",
+          "passed": false,
+          "reason": "全部代表股的T+3窗口必须到期并取得真实行情。"
+        },
+        {
+          "id": "chronology_before_result",
+          "passed": false,
+          "reason": "判断和触发行情必须发生在结果之前。"
+        },
+        {
+          "id": "result_source_auditable",
+          "passed": false,
+          "reason": "结果行情必须保留来源和时间。"
+        },
+        {
+          "id": "trade_date_aligned",
+          "passed": true,
+          "reason": "首次观察时间必须属于案例交易日。"
+        }
+      ],
+      "representative_count": 3,
+      "representative_result_count": 0,
+      "median_return_pct": null,
+      "signal_supported": null,
+      "result_summary": "代表股触发行情必须经过两路独立行情确认；单源记录只用于观察，不进入模型评价。"
+    },
+    {
+      "trigger_snapshot_id": "trigger_quote_snapshot_3f6857e1d63bacdebc70",
+      "case_id": "decision_case_27901989d28dbfe67458",
+      "trade_date": "2026-08-25",
+      "kind": "opportunity",
+      "primary_window": "T+3",
+      "evaluation_included": false,
+      "evaluation_gates": [
+        {
+          "id": "immutable_decision_and_trigger_snapshot",
+          "passed": true,
+          "reason": "原始判断与触发行情快照必须存在且哈希一致。"
+        },
+        {
+          "id": "unique_trigger_snapshot",
+          "passed": true,
+          "reason": "同一触发行情快照不能重复计入评价。"
+        },
+        {
+          "id": "auditable_trigger_reference",
+          "passed": true,
+          "reason": "代表股触发价格、行情时间和来源必须完整。"
+        },
+        {
+          "id": "dual_source_trigger_confirmation",
+          "passed": false,
+          "reason": "代表股触发行情必须经过两路独立行情确认；单源记录只用于观察，不进入模型评价。"
+        },
+        {
+          "id": "representative_quote_closure",
+          "passed": true,
+          "reason": "全部代表股必须形成结果记录。"
+        },
+        {
+          "id": "reference_matches_frozen_snapshot",
+          "passed": true,
+          "reason": "结果记录必须使用冻结触发价格，不能重新选取参考价。"
+        },
+        {
+          "id": "primary_window_due_and_complete",
+          "passed": false,
+          "reason": "全部代表股的T+3窗口必须到期并取得真实行情。"
+        },
+        {
+          "id": "chronology_before_result",
+          "passed": false,
+          "reason": "判断和触发行情必须发生在结果之前。"
+        },
+        {
+          "id": "result_source_auditable",
+          "passed": false,
+          "reason": "结果行情必须保留来源和时间。"
+        },
+        {
+          "id": "trade_date_aligned",
+          "passed": true,
+          "reason": "首次观察时间必须属于案例交易日。"
+        }
+      ],
+      "representative_count": 2,
+      "representative_result_count": 0,
+      "median_return_pct": null,
+      "signal_supported": null,
+      "result_summary": "代表股触发行情必须经过两路独立行情确认；单源记录只用于观察，不进入模型评价。"
+    },
+    {
+      "trigger_snapshot_id": "trigger_quote_snapshot_7acd2d3e7e892fddfc3a",
+      "case_id": "decision_case_55bef8884ac4af0eac1f",
+      "trade_date": "2026-08-25",
+      "kind": "opportunity",
+      "primary_window": "T+3",
+      "evaluation_included": false,
+      "evaluation_gates": [
+        {
+          "id": "immutable_decision_and_trigger_snapshot",
+          "passed": true,
+          "reason": "原始判断与触发行情快照必须存在且哈希一致。"
+        },
+        {
+          "id": "unique_trigger_snapshot",
+          "passed": true,
+          "reason": "同一触发行情快照不能重复计入评价。"
+        },
+        {
+          "id": "auditable_trigger_reference",
+          "passed": true,
+          "reason": "代表股触发价格、行情时间和来源必须完整。"
+        },
+        {
+          "id": "dual_source_trigger_confirmation",
+          "passed": false,
+          "reason": "代表股触发行情必须经过两路独立行情确认；单源记录只用于观察，不进入模型评价。"
+        },
+        {
+          "id": "representative_quote_closure",
+          "passed": true,
+          "reason": "全部代表股必须形成结果记录。"
+        },
+        {
+          "id": "reference_matches_frozen_snapshot",
+          "passed": true,
+          "reason": "结果记录必须使用冻结触发价格，不能重新选取参考价。"
+        },
+        {
+          "id": "primary_window_due_and_complete",
+          "passed": false,
+          "reason": "全部代表股的T+3窗口必须到期并取得真实行情。"
+        },
+        {
+          "id": "chronology_before_result",
+          "passed": false,
+          "reason": "判断和触发行情必须发生在结果之前。"
+        },
+        {
+          "id": "result_source_auditable",
+          "passed": false,
+          "reason": "结果行情必须保留来源和时间。"
+        },
+        {
+          "id": "trade_date_aligned",
+          "passed": true,
+          "reason": "首次观察时间必须属于案例交易日。"
+        }
+      ],
+      "representative_count": 3,
+      "representative_result_count": 0,
+      "median_return_pct": null,
+      "signal_supported": null,
+      "result_summary": "代表股触发行情必须经过两路独立行情确认；单源记录只用于观察，不进入模型评价。"
+    },
+    {
+      "trigger_snapshot_id": "trigger_quote_snapshot_880aef39fe0ffbc40dea",
+      "case_id": "decision_case_6341bdeb29e5b84a752a",
+      "trade_date": "2026-08-25",
+      "kind": "risk",
+      "primary_window": "T+3",
+      "evaluation_included": false,
+      "evaluation_gates": [
+        {
+          "id": "immutable_decision_and_trigger_snapshot",
+          "passed": true,
+          "reason": "原始判断与触发行情快照必须存在且哈希一致。"
+        },
+        {
+          "id": "unique_trigger_snapshot",
+          "passed": true,
+          "reason": "同一触发行情快照不能重复计入评价。"
+        },
+        {
+          "id": "auditable_trigger_reference",
+          "passed": true,
+          "reason": "代表股触发价格、行情时间和来源必须完整。"
+        },
+        {
+          "id": "dual_source_trigger_confirmation",
+          "passed": false,
+          "reason": "代表股触发行情必须经过两路独立行情确认；单源记录只用于观察，不进入模型评价。"
+        },
+        {
+          "id": "representative_quote_closure",
+          "passed": true,
+          "reason": "全部代表股必须形成结果记录。"
+        },
+        {
+          "id": "reference_matches_frozen_snapshot",
+          "passed": true,
+          "reason": "结果记录必须使用冻结触发价格，不能重新选取参考价。"
+        },
+        {
+          "id": "primary_window_due_and_complete",
+          "passed": false,
+          "reason": "全部代表股的T+3窗口必须到期并取得真实行情。"
+        },
+        {
+          "id": "chronology_before_result",
+          "passed": false,
+          "reason": "判断和触发行情必须发生在结果之前。"
+        },
+        {
+          "id": "result_source_auditable",
+          "passed": false,
+          "reason": "结果行情必须保留来源和时间。"
+        },
+        {
+          "id": "trade_date_aligned",
+          "passed": true,
+          "reason": "首次观察时间必须属于案例交易日。"
+        }
+      ],
+      "representative_count": 3,
+      "representative_result_count": 0,
+      "median_return_pct": null,
+      "signal_supported": null,
+      "result_summary": "代表股触发行情必须经过两路独立行情确认；单源记录只用于观察，不进入模型评价。"
+    },
+    {
+      "trigger_snapshot_id": "trigger_quote_snapshot_b2e5e9cfc1c79bb37f0f",
+      "case_id": "decision_case_82ae9eb5b68fa52e79cf",
+      "trade_date": "2026-08-25",
+      "kind": "opportunity",
+      "primary_window": "T+3",
+      "evaluation_included": false,
+      "evaluation_gates": [
+        {
+          "id": "immutable_decision_and_trigger_snapshot",
+          "passed": true,
+          "reason": "原始判断与触发行情快照必须存在且哈希一致。"
+        },
+        {
+          "id": "unique_trigger_snapshot",
+          "passed": true,
+          "reason": "同一触发行情快照不能重复计入评价。"
+        },
+        {
+          "id": "auditable_trigger_reference",
+          "passed": true,
+          "reason": "代表股触发价格、行情时间和来源必须完整。"
+        },
+        {
+          "id": "dual_source_trigger_confirmation",
+          "passed": false,
+          "reason": "代表股触发行情必须经过两路独立行情确认；单源记录只用于观察，不进入模型评价。"
+        },
+        {
+          "id": "representative_quote_closure",
+          "passed": true,
+          "reason": "全部代表股必须形成结果记录。"
+        },
+        {
+          "id": "reference_matches_frozen_snapshot",
+          "passed": true,
+          "reason": "结果记录必须使用冻结触发价格，不能重新选取参考价。"
+        },
+        {
+          "id": "primary_window_due_and_complete",
+          "passed": false,
+          "reason": "全部代表股的T+3窗口必须到期并取得真实行情。"
+        },
+        {
+          "id": "chronology_before_result",
+          "passed": false,
+          "reason": "判断和触发行情必须发生在结果之前。"
+        },
+        {
+          "id": "result_source_auditable",
+          "passed": false,
+          "reason": "结果行情必须保留来源和时间。"
+        },
+        {
+          "id": "trade_date_aligned",
+          "passed": true,
+          "reason": "首次观察时间必须属于案例交易日。"
+        }
+      ],
+      "representative_count": 3,
+      "representative_result_count": 0,
+      "median_return_pct": null,
+      "signal_supported": null,
+      "result_summary": "代表股触发行情必须经过两路独立行情确认；单源记录只用于观察，不进入模型评价。"
+    },
+    {
+      "trigger_snapshot_id": "trigger_quote_snapshot_b8430139ab38e3ef4cbe",
+      "case_id": "decision_case_24f766bd56ea435a9b06",
+      "trade_date": "2026-08-25",
+      "kind": "opportunity",
+      "primary_window": "T+3",
+      "evaluation_included": false,
+      "evaluation_gates": [
+        {
+          "id": "immutable_decision_and_trigger_snapshot",
+          "passed": true,
+          "reason": "原始判断与触发行情快照必须存在且哈希一致。"
+        },
+        {
+          "id": "unique_trigger_snapshot",
+          "passed": true,
+          "reason": "同一触发行情快照不能重复计入评价。"
+        },
+        {
+          "id": "auditable_trigger_reference",
+          "passed": true,
+          "reason": "代表股触发价格、行情时间和来源必须完整。"
+        },
+        {
+          "id": "dual_source_trigger_confirmation",
+          "passed": false,
+          "reason": "代表股触发行情必须经过两路独立行情确认；单源记录只用于观察，不进入模型评价。"
+        },
+        {
+          "id": "representative_quote_closure",
+          "passed": true,
+          "reason": "全部代表股必须形成结果记录。"
+        },
+        {
+          "id": "reference_matches_frozen_snapshot",
+          "passed": true,
+          "reason": "结果记录必须使用冻结触发价格，不能重新选取参考价。"
+        },
+        {
+          "id": "primary_window_due_and_complete",
+          "passed": false,
+          "reason": "全部代表股的T+3窗口必须到期并取得真实行情。"
+        },
+        {
+          "id": "chronology_before_result",
+          "passed": false,
+          "reason": "判断和触发行情必须发生在结果之前。"
+        },
+        {
+          "id": "result_source_auditable",
+          "passed": false,
+          "reason": "结果行情必须保留来源和时间。"
+        },
+        {
+          "id": "trade_date_aligned",
+          "passed": true,
+          "reason": "首次观察时间必须属于案例交易日。"
+        }
+      ],
+      "representative_count": 2,
+      "representative_result_count": 0,
+      "median_return_pct": null,
+      "signal_supported": null,
+      "result_summary": "代表股触发行情必须经过两路独立行情确认；单源记录只用于观察，不进入模型评价。"
+    },
+    {
+      "trigger_snapshot_id": "trigger_quote_snapshot_9cc114e5b28a278b8e58",
+      "case_id": "decision_case_6341bdeb29e5b84a752a",
+      "trade_date": "2026-08-25",
+      "kind": "risk",
+      "primary_window": "T+3",
+      "evaluation_included": false,
+      "evaluation_gates": [
+        {
+          "id": "immutable_decision_and_trigger_snapshot",
+          "passed": true,
+          "reason": "原始判断与触发行情快照必须存在且哈希一致。"
+        },
+        {
+          "id": "unique_trigger_snapshot",
+          "passed": true,
+          "reason": "同一触发行情快照不能重复计入评价。"
+        },
+        {
+          "id": "auditable_trigger_reference",
+          "passed": true,
+          "reason": "代表股触发价格、行情时间和来源必须完整。"
+        },
+        {
+          "id": "dual_source_trigger_confirmation",
+          "passed": false,
+          "reason": "代表股触发行情必须经过两路独立行情确认；单源记录只用于观察，不进入模型评价。"
+        },
+        {
+          "id": "representative_quote_closure",
+          "passed": true,
+          "reason": "全部代表股必须形成结果记录。"
+        },
+        {
+          "id": "reference_matches_frozen_snapshot",
+          "passed": true,
+          "reason": "结果记录必须使用冻结触发价格，不能重新选取参考价。"
+        },
+        {
+          "id": "primary_window_due_and_complete",
+          "passed": false,
+          "reason": "全部代表股的T+3窗口必须到期并取得真实行情。"
+        },
+        {
+          "id": "chronology_before_result",
+          "passed": false,
+          "reason": "判断和触发行情必须发生在结果之前。"
+        },
+        {
+          "id": "result_source_auditable",
+          "passed": false,
+          "reason": "结果行情必须保留来源和时间。"
+        },
+        {
+          "id": "trade_date_aligned",
+          "passed": true,
+          "reason": "首次观察时间必须属于案例交易日。"
+        }
+      ],
+      "representative_count": 3,
+      "representative_result_count": 0,
+      "median_return_pct": null,
+      "signal_supported": null,
+      "result_summary": "代表股触发行情必须经过两路独立行情确认；单源记录只用于观察，不进入模型评价。"
+    },
+    {
+      "trigger_snapshot_id": "trigger_quote_snapshot_f7efc7c5aec6821e9803",
+      "case_id": "decision_case_6341bdeb29e5b84a752a",
+      "trade_date": "2026-08-25",
+      "kind": "risk",
+      "primary_window": "T+3",
+      "evaluation_included": false,
+      "evaluation_gates": [
+        {
+          "id": "immutable_decision_and_trigger_snapshot",
+          "passed": true,
+          "reason": "原始判断与触发行情快照必须存在且哈希一致。"
+        },
+        {
+          "id": "unique_trigger_snapshot",
+          "passed": true,
+          "reason": "同一触发行情快照不能重复计入评价。"
+        },
+        {
+          "id": "auditable_trigger_reference",
+          "passed": true,
+          "reason": "代表股触发价格、行情时间和来源必须完整。"
+        },
+        {
+          "id": "dual_source_trigger_confirmation",
+          "passed": false,
+          "reason": "代表股触发行情必须经过两路独立行情确认；单源记录只用于观察，不进入模型评价。"
+        },
+        {
+          "id": "representative_quote_closure",
+          "passed": true,
+          "reason": "全部代表股必须形成结果记录。"
+        },
+        {
+          "id": "reference_matches_frozen_snapshot",
+          "passed": true,
+          "reason": "结果记录必须使用冻结触发价格，不能重新选取参考价。"
+        },
+        {
+          "id": "primary_window_due_and_complete",
+          "passed": false,
+          "reason": "全部代表股的T+3窗口必须到期并取得真实行情。"
+        },
+        {
+          "id": "chronology_before_result",
+          "passed": false,
+          "reason": "判断和触发行情必须发生在结果之前。"
+        },
+        {
+          "id": "result_source_auditable",
+          "passed": false,
+          "reason": "结果行情必须保留来源和时间。"
+        },
+        {
+          "id": "trade_date_aligned",
+          "passed": true,
+          "reason": "首次观察时间必须属于案例交易日。"
+        }
+      ],
+      "representative_count": 3,
+      "representative_result_count": 0,
+      "median_return_pct": null,
+      "signal_supported": null,
+      "result_summary": "代表股触发行情必须经过两路独立行情确认；单源记录只用于观察，不进入模型评价。"
+    },
+    {
+      "trigger_snapshot_id": "trigger_quote_snapshot_57e6b0f1ecb0fa1e245e",
+      "case_id": "decision_case_6341bdeb29e5b84a752a",
+      "trade_date": "2026-08-25",
+      "kind": "risk",
+      "primary_window": "T+3",
+      "evaluation_included": false,
+      "evaluation_gates": [
+        {
+          "id": "immutable_decision_and_trigger_snapshot",
+          "passed": true,
+          "reason": "原始判断与触发行情快照必须存在且哈希一致。"
+        },
+        {
+          "id": "unique_trigger_snapshot",
+          "passed": true,
+          "reason": "同一触发行情快照不能重复计入评价。"
+        },
+        {
+          "id": "auditable_trigger_reference",
+          "passed": true,
+          "reason": "代表股触发价格、行情时间和来源必须完整。"
+        },
+        {
+          "id": "dual_source_trigger_confirmation",
+          "passed": false,
+          "reason": "代表股触发行情必须经过两路独立行情确认；单源记录只用于观察，不进入模型评价。"
+        },
+        {
+          "id": "representative_quote_closure",
+          "passed": true,
+          "reason": "全部代表股必须形成结果记录。"
+        },
+        {
+          "id": "reference_matches_frozen_snapshot",
+          "passed": true,
+          "reason": "结果记录必须使用冻结触发价格，不能重新选取参考价。"
+        },
+        {
+          "id": "primary_window_due_and_complete",
+          "passed": false,
+          "reason": "全部代表股的T+3窗口必须到期并取得真实行情。"
+        },
+        {
+          "id": "chronology_before_result",
+          "passed": false,
+          "reason": "判断和触发行情必须发生在结果之前。"
+        },
+        {
+          "id": "result_source_auditable",
+          "passed": false,
+          "reason": "结果行情必须保留来源和时间。"
+        },
+        {
+          "id": "trade_date_aligned",
+          "passed": true,
+          "reason": "首次观察时间必须属于案例交易日。"
+        }
+      ],
+      "representative_count": 3,
+      "representative_result_count": 0,
+      "median_return_pct": null,
+      "signal_supported": null,
+      "result_summary": "代表股触发行情必须经过两路独立行情确认；单源记录只用于观察，不进入模型评价。"
+    },
+    {
+      "trigger_snapshot_id": "trigger_quote_snapshot_a43b69b3447b48d159ea",
+      "case_id": "decision_case_6341bdeb29e5b84a752a",
+      "trade_date": "2026-08-25",
+      "kind": "risk",
+      "primary_window": "T+3",
+      "evaluation_included": false,
+      "evaluation_gates": [
+        {
+          "id": "immutable_decision_and_trigger_snapshot",
+          "passed": true,
+          "reason": "原始判断与触发行情快照必须存在且哈希一致。"
+        },
+        {
+          "id": "unique_trigger_snapshot",
+          "passed": true,
+          "reason": "同一触发行情快照不能重复计入评价。"
+        },
+        {
+          "id": "auditable_trigger_reference",
+          "passed": true,
+          "reason": "代表股触发价格、行情时间和来源必须完整。"
+        },
+        {
+          "id": "dual_source_trigger_confirmation",
+          "passed": false,
+          "reason": "代表股触发行情必须经过两路独立行情确认；单源记录只用于观察，不进入模型评价。"
+        },
+        {
+          "id": "representative_quote_closure",
+          "passed": true,
+          "reason": "全部代表股必须形成结果记录。"
+        },
+        {
+          "id": "reference_matches_frozen_snapshot",
+          "passed": true,
+          "reason": "结果记录必须使用冻结触发价格，不能重新选取参考价。"
+        },
+        {
+          "id": "primary_window_due_and_complete",
+          "passed": false,
+          "reason": "全部代表股的T+3窗口必须到期并取得真实行情。"
+        },
+        {
+          "id": "chronology_before_result",
+          "passed": false,
+          "reason": "判断和触发行情必须发生在结果之前。"
+        },
+        {
+          "id": "result_source_auditable",
+          "passed": false,
+          "reason": "结果行情必须保留来源和时间。"
+        },
+        {
+          "id": "trade_date_aligned",
+          "passed": true,
+          "reason": "首次观察时间必须属于案例交易日。"
+        }
+      ],
+      "representative_count": 3,
+      "representative_result_count": 0,
+      "median_return_pct": null,
+      "signal_supported": null,
+      "result_summary": "代表股触发行情必须经过两路独立行情确认；单源记录只用于观察，不进入模型评价。"
+    },
+    {
+      "trigger_snapshot_id": "trigger_quote_snapshot_3e5ee202e758ff519929",
+      "case_id": "decision_case_6341bdeb29e5b84a752a",
+      "trade_date": "2026-08-25",
+      "kind": "risk",
+      "primary_window": "T+3",
+      "evaluation_included": false,
+      "evaluation_gates": [
+        {
+          "id": "immutable_decision_and_trigger_snapshot",
+          "passed": true,
+          "reason": "原始判断与触发行情快照必须存在且哈希一致。"
+        },
+        {
+          "id": "unique_trigger_snapshot",
+          "passed": true,
+          "reason": "同一触发行情快照不能重复计入评价。"
+        },
+        {
+          "id": "auditable_trigger_reference",
+          "passed": true,
+          "reason": "代表股触发价格、行情时间和来源必须完整。"
+        },
+        {
+          "id": "dual_source_trigger_confirmation",
+          "passed": false,
+          "reason": "代表股触发行情必须经过两路独立行情确认；单源记录只用于观察，不进入模型评价。"
+        },
+        {
+          "id": "representative_quote_closure",
+          "passed": true,
+          "reason": "全部代表股必须形成结果记录。"
+        },
+        {
+          "id": "reference_matches_frozen_snapshot",
+          "passed": true,
+          "reason": "结果记录必须使用冻结触发价格，不能重新选取参考价。"
+        },
+        {
+          "id": "primary_window_due_and_complete",
+          "passed": false,
+          "reason": "全部代表股的T+3窗口必须到期并取得真实行情。"
+        },
+        {
+          "id": "chronology_before_result",
+          "passed": false,
+          "reason": "判断和触发行情必须发生在结果之前。"
+        },
+        {
+          "id": "result_source_auditable",
+          "passed": false,
+          "reason": "结果行情必须保留来源和时间。"
+        },
+        {
+          "id": "trade_date_aligned",
+          "passed": true,
+          "reason": "首次观察时间必须属于案例交易日。"
+        }
+      ],
+      "representative_count": 3,
+      "representative_result_count": 0,
+      "median_return_pct": null,
+      "signal_supported": null,
+      "result_summary": "代表股触发行情必须经过两路独立行情确认；单源记录只用于观察，不进入模型评价。"
+    },
+    {
+      "trigger_snapshot_id": "trigger_quote_snapshot_e951b0dd921859224d28",
+      "case_id": "decision_case_6341bdeb29e5b84a752a",
+      "trade_date": "2026-08-25",
+      "kind": "risk",
+      "primary_window": "T+3",
+      "evaluation_included": false,
+      "evaluation_gates": [
+        {
+          "id": "immutable_decision_and_trigger_snapshot",
+          "passed": true,
+          "reason": "原始判断与触发行情快照必须存在且哈希一致。"
+        },
+        {
+          "id": "unique_trigger_snapshot",
+          "passed": true,
+          "reason": "同一触发行情快照不能重复计入评价。"
+        },
+        {
+          "id": "auditable_trigger_reference",
+          "passed": true,
+          "reason": "代表股触发价格、行情时间和来源必须完整。"
+        },
+        {
+          "id": "dual_source_trigger_confirmation",
+          "passed": false,
+          "reason": "代表股触发行情必须经过两路独立行情确认；单源记录只用于观察，不进入模型评价。"
+        },
+        {
+          "id": "representative_quote_closure",
+          "passed": true,
+          "reason": "全部代表股必须形成结果记录。"
+        },
+        {
+          "id": "reference_matches_frozen_snapshot",
+          "passed": true,
+          "reason": "结果记录必须使用冻结触发价格，不能重新选取参考价。"
+        },
+        {
+          "id": "primary_window_due_and_complete",
+          "passed": false,
+          "reason": "全部代表股的T+3窗口必须到期并取得真实行情。"
+        },
+        {
+          "id": "chronology_before_result",
+          "passed": false,
+          "reason": "判断和触发行情必须发生在结果之前。"
+        },
+        {
+          "id": "result_source_auditable",
+          "passed": false,
+          "reason": "结果行情必须保留来源和时间。"
+        },
+        {
+          "id": "trade_date_aligned",
+          "passed": true,
+          "reason": "首次观察时间必须属于案例交易日。"
+        }
+      ],
+      "representative_count": 3,
+      "representative_result_count": 0,
+      "median_return_pct": null,
+      "signal_supported": null,
+      "result_summary": "代表股触发行情必须经过两路独立行情确认；单源记录只用于观察，不进入模型评价。"
+    },
+    {
+      "trigger_snapshot_id": "trigger_quote_snapshot_419b7394ebc4196ed12d",
+      "case_id": "decision_case_6341bdeb29e5b84a752a",
+      "trade_date": "2026-08-25",
+      "kind": "risk",
+      "primary_window": "T+3",
+      "evaluation_included": false,
+      "evaluation_gates": [
+        {
+          "id": "immutable_decision_and_trigger_snapshot",
+          "passed": true,
+          "reason": "原始判断与触发行情快照必须存在且哈希一致。"
+        },
+        {
+          "id": "unique_trigger_snapshot",
+          "passed": true,
+          "reason": "同一触发行情快照不能重复计入评价。"
+        },
+        {
+          "id": "auditable_trigger_reference",
+          "passed": true,
+          "reason": "代表股触发价格、行情时间和来源必须完整。"
+        },
+        {
+          "id": "dual_source_trigger_confirmation",
+          "passed": false,
+          "reason": "代表股触发行情必须经过两路独立行情确认；单源记录只用于观察，不进入模型评价。"
+        },
+        {
+          "id": "representative_quote_closure",
+          "passed": true,
+          "reason": "全部代表股必须形成结果记录。"
+        },
+        {
+          "id": "reference_matches_frozen_snapshot",
+          "passed": true,
+          "reason": "结果记录必须使用冻结触发价格，不能重新选取参考价。"
+        },
+        {
+          "id": "primary_window_due_and_complete",
+          "passed": false,
+          "reason": "全部代表股的T+3窗口必须到期并取得真实行情。"
+        },
+        {
+          "id": "chronology_before_result",
+          "passed": false,
+          "reason": "判断和触发行情必须发生在结果之前。"
+        },
+        {
+          "id": "result_source_auditable",
+          "passed": false,
+          "reason": "结果行情必须保留来源和时间。"
+        },
+        {
+          "id": "trade_date_aligned",
+          "passed": true,
+          "reason": "首次观察时间必须属于案例交易日。"
+        }
+      ],
+      "representative_count": 1,
+      "representative_result_count": 0,
+      "median_return_pct": null,
+      "signal_supported": null,
+      "result_summary": "代表股触发行情必须经过两路独立行情确认；单源记录只用于观察，不进入模型评价。"
+    },
+    {
+      "trigger_snapshot_id": "trigger_quote_snapshot_2d18b23d568127c0f163",
+      "case_id": "decision_case_6341bdeb29e5b84a752a",
+      "trade_date": "2026-08-25",
+      "kind": "risk",
+      "primary_window": "T+3",
+      "evaluation_included": false,
+      "evaluation_gates": [
+        {
+          "id": "immutable_decision_and_trigger_snapshot",
+          "passed": true,
+          "reason": "原始判断与触发行情快照必须存在且哈希一致。"
+        },
+        {
+          "id": "unique_trigger_snapshot",
+          "passed": true,
+          "reason": "同一触发行情快照不能重复计入评价。"
+        },
+        {
+          "id": "auditable_trigger_reference",
+          "passed": true,
+          "reason": "代表股触发价格、行情时间和来源必须完整。"
+        },
+        {
+          "id": "dual_source_trigger_confirmation",
+          "passed": false,
+          "reason": "代表股触发行情必须经过两路独立行情确认；单源记录只用于观察，不进入模型评价。"
+        },
+        {
+          "id": "representative_quote_closure",
+          "passed": true,
+          "reason": "全部代表股必须形成结果记录。"
+        },
+        {
+          "id": "reference_matches_frozen_snapshot",
+          "passed": true,
+          "reason": "结果记录必须使用冻结触发价格，不能重新选取参考价。"
+        },
+        {
+          "id": "primary_window_due_and_complete",
+          "passed": false,
+          "reason": "全部代表股的T+3窗口必须到期并取得真实行情。"
+        },
+        {
+          "id": "chronology_before_result",
+          "passed": false,
+          "reason": "判断和触发行情必须发生在结果之前。"
+        },
+        {
+          "id": "result_source_auditable",
+          "passed": false,
+          "reason": "结果行情必须保留来源和时间。"
+        },
+        {
+          "id": "trade_date_aligned",
+          "passed": true,
+          "reason": "首次观察时间必须属于案例交易日。"
+        }
+      ],
+      "representative_count": 3,
+      "representative_result_count": 0,
+      "median_return_pct": null,
+      "signal_supported": null,
+      "result_summary": "代表股触发行情必须经过两路独立行情确认；单源记录只用于观察，不进入模型评价。"
+    },
+    {
+      "trigger_snapshot_id": "trigger_quote_snapshot_be2d98219c2c40fffa4f",
+      "case_id": "decision_case_6341bdeb29e5b84a752a",
+      "trade_date": "2026-08-25",
+      "kind": "risk",
+      "primary_window": "T+3",
+      "evaluation_included": false,
+      "evaluation_gates": [
+        {
+          "id": "immutable_decision_and_trigger_snapshot",
+          "passed": true,
+          "reason": "原始判断与触发行情快照必须存在且哈希一致。"
+        },
+        {
+          "id": "unique_trigger_snapshot",
+          "passed": true,
+          "reason": "同一触发行情快照不能重复计入评价。"
+        },
+        {
+          "id": "auditable_trigger_reference",
+          "passed": true,
+          "reason": "代表股触发价格、行情时间和来源必须完整。"
+        },
+        {
+          "id": "dual_source_trigger_confirmation",
+          "passed": false,
+          "reason": "代表股触发行情必须经过两路独立行情确认；单源记录只用于观察，不进入模型评价。"
+        },
+        {
+          "id": "representative_quote_closure",
+          "passed": true,
+          "reason": "全部代表股必须形成结果记录。"
+        },
+        {
+          "id": "reference_matches_frozen_snapshot",
+          "passed": true,
+          "reason": "结果记录必须使用冻结触发价格，不能重新选取参考价。"
+        },
+        {
+          "id": "primary_window_due_and_complete",
+          "passed": false,
+          "reason": "全部代表股的T+3窗口必须到期并取得真实行情。"
+        },
+        {
+          "id": "chronology_before_result",
+          "passed": false,
+          "reason": "判断和触发行情必须发生在结果之前。"
+        },
+        {
+          "id": "result_source_auditable",
+          "passed": false,
+          "reason": "结果行情必须保留来源和时间。"
+        },
+        {
+          "id": "trade_date_aligned",
+          "passed": true,
+          "reason": "首次观察时间必须属于案例交易日。"
+        }
+      ],
+      "representative_count": 2,
+      "representative_result_count": 0,
+      "median_return_pct": null,
+      "signal_supported": null,
+      "result_summary": "代表股触发行情必须经过两路独立行情确认；单源记录只用于观察，不进入模型评价。"
+    },
+    {
+      "trigger_snapshot_id": "trigger_quote_snapshot_56afbf1547e94ce460b7",
+      "case_id": "decision_case_6341bdeb29e5b84a752a",
+      "trade_date": "2026-08-25",
+      "kind": "risk",
+      "primary_window": "T+3",
+      "evaluation_included": false,
+      "evaluation_gates": [
+        {
+          "id": "immutable_decision_and_trigger_snapshot",
+          "passed": true,
+          "reason": "原始判断与触发行情快照必须存在且哈希一致。"
+        },
+        {
+          "id": "unique_trigger_snapshot",
+          "passed": true,
+          "reason": "同一触发行情快照不能重复计入评价。"
+        },
+        {
+          "id": "auditable_trigger_reference",
+          "passed": true,
+          "reason": "代表股触发价格、行情时间和来源必须完整。"
+        },
+        {
+          "id": "dual_source_trigger_confirmation",
+          "passed": false,
+          "reason": "代表股触发行情必须经过两路独立行情确认；单源记录只用于观察，不进入模型评价。"
+        },
+        {
+          "id": "representative_quote_closure",
+          "passed": true,
+          "reason": "全部代表股必须形成结果记录。"
+        },
+        {
+          "id": "reference_matches_frozen_snapshot",
+          "passed": true,
+          "reason": "结果记录必须使用冻结触发价格，不能重新选取参考价。"
+        },
+        {
+          "id": "primary_window_due_and_complete",
+          "passed": false,
+          "reason": "全部代表股的T+3窗口必须到期并取得真实行情。"
+        },
+        {
+          "id": "chronology_before_result",
+          "passed": false,
+          "reason": "判断和触发行情必须发生在结果之前。"
+        },
+        {
+          "id": "result_source_auditable",
+          "passed": false,
+          "reason": "结果行情必须保留来源和时间。"
+        },
+        {
+          "id": "trade_date_aligned",
+          "passed": true,
+          "reason": "首次观察时间必须属于案例交易日。"
+        }
+      ],
+      "representative_count": 3,
+      "representative_result_count": 0,
+      "median_return_pct": null,
+      "signal_supported": null,
+      "result_summary": "代表股触发行情必须经过两路独立行情确认；单源记录只用于观察，不进入模型评价。"
+    },
+    {
+      "trigger_snapshot_id": "trigger_quote_snapshot_7d194bb37d479280d73d",
+      "case_id": "decision_case_dc3221d2b7fb3d87b825",
+      "trade_date": "2026-08-25",
+      "kind": "opportunity",
+      "primary_window": "T+3",
+      "evaluation_included": false,
+      "evaluation_gates": [
+        {
+          "id": "immutable_decision_and_trigger_snapshot",
+          "passed": true,
+          "reason": "原始判断与触发行情快照必须存在且哈希一致。"
+        },
+        {
+          "id": "unique_trigger_snapshot",
+          "passed": true,
+          "reason": "同一触发行情快照不能重复计入评价。"
+        },
+        {
+          "id": "auditable_trigger_reference",
+          "passed": true,
+          "reason": "代表股触发价格、行情时间和来源必须完整。"
+        },
+        {
+          "id": "dual_source_trigger_confirmation",
+          "passed": false,
+          "reason": "代表股触发行情必须经过两路独立行情确认；单源记录只用于观察，不进入模型评价。"
+        },
+        {
+          "id": "representative_quote_closure",
+          "passed": true,
+          "reason": "全部代表股必须形成结果记录。"
+        },
+        {
+          "id": "reference_matches_frozen_snapshot",
+          "passed": true,
+          "reason": "结果记录必须使用冻结触发价格，不能重新选取参考价。"
+        },
+        {
+          "id": "primary_window_due_and_complete",
+          "passed": false,
+          "reason": "全部代表股的T+3窗口必须到期并取得真实行情。"
+        },
+        {
+          "id": "chronology_before_result",
+          "passed": false,
+          "reason": "判断和触发行情必须发生在结果之前。"
+        },
+        {
+          "id": "result_source_auditable",
+          "passed": false,
+          "reason": "结果行情必须保留来源和时间。"
+        },
+        {
+          "id": "trade_date_aligned",
+          "passed": true,
+          "reason": "首次观察时间必须属于案例交易日。"
+        }
+      ],
+      "representative_count": 2,
+      "representative_result_count": 0,
+      "median_return_pct": null,
+      "signal_supported": null,
+      "result_summary": "代表股触发行情必须经过两路独立行情确认；单源记录只用于观察，不进入模型评价。"
+    },
+    {
+      "trigger_snapshot_id": "trigger_quote_snapshot_8d6bf18b211e75447447",
+      "case_id": "decision_case_55bef8884ac4af0eac1f",
+      "trade_date": "2026-08-25",
+      "kind": "opportunity",
+      "primary_window": "T+3",
+      "evaluation_included": false,
+      "evaluation_gates": [
+        {
+          "id": "immutable_decision_and_trigger_snapshot",
+          "passed": true,
+          "reason": "原始判断与触发行情快照必须存在且哈希一致。"
+        },
+        {
+          "id": "unique_trigger_snapshot",
+          "passed": true,
+          "reason": "同一触发行情快照不能重复计入评价。"
+        },
+        {
+          "id": "auditable_trigger_reference",
+          "passed": true,
+          "reason": "代表股触发价格、行情时间和来源必须完整。"
+        },
+        {
+          "id": "dual_source_trigger_confirmation",
+          "passed": false,
+          "reason": "代表股触发行情必须经过两路独立行情确认；单源记录只用于观察，不进入模型评价。"
+        },
+        {
+          "id": "representative_quote_closure",
+          "passed": true,
+          "reason": "全部代表股必须形成结果记录。"
+        },
+        {
+          "id": "reference_matches_frozen_snapshot",
+          "passed": true,
+          "reason": "结果记录必须使用冻结触发价格，不能重新选取参考价。"
+        },
+        {
+          "id": "primary_window_due_and_complete",
+          "passed": false,
+          "reason": "全部代表股的T+3窗口必须到期并取得真实行情。"
+        },
+        {
+          "id": "chronology_before_result",
+          "passed": false,
+          "reason": "判断和触发行情必须发生在结果之前。"
+        },
+        {
+          "id": "result_source_auditable",
+          "passed": false,
+          "reason": "结果行情必须保留来源和时间。"
+        },
+        {
+          "id": "trade_date_aligned",
+          "passed": true,
+          "reason": "首次观察时间必须属于案例交易日。"
+        }
+      ],
+      "representative_count": 2,
+      "representative_result_count": 0,
+      "median_return_pct": null,
+      "signal_supported": null,
+      "result_summary": "代表股触发行情必须经过两路独立行情确认；单源记录只用于观察，不进入模型评价。"
+    },
+    {
+      "trigger_snapshot_id": "trigger_quote_snapshot_97e787c8d7c6b18dcfeb",
+      "case_id": "decision_case_18436206dbb19702c059",
+      "trade_date": "2026-08-25",
+      "kind": "opportunity",
+      "primary_window": "T+3",
+      "evaluation_included": false,
+      "evaluation_gates": [
+        {
+          "id": "immutable_decision_and_trigger_snapshot",
+          "passed": true,
+          "reason": "原始判断与触发行情快照必须存在且哈希一致。"
+        },
+        {
+          "id": "unique_trigger_snapshot",
+          "passed": true,
+          "reason": "同一触发行情快照不能重复计入评价。"
+        },
+        {
+          "id": "auditable_trigger_reference",
+          "passed": true,
+          "reason": "代表股触发价格、行情时间和来源必须完整。"
+        },
+        {
+          "id": "dual_source_trigger_confirmation",
+          "passed": false,
+          "reason": "代表股触发行情必须经过两路独立行情确认；单源记录只用于观察，不进入模型评价。"
+        },
+        {
+          "id": "representative_quote_closure",
+          "passed": true,
+          "reason": "全部代表股必须形成结果记录。"
+        },
+        {
+          "id": "reference_matches_frozen_snapshot",
+          "passed": true,
+          "reason": "结果记录必须使用冻结触发价格，不能重新选取参考价。"
+        },
+        {
+          "id": "primary_window_due_and_complete",
+          "passed": false,
+          "reason": "全部代表股的T+3窗口必须到期并取得真实行情。"
+        },
+        {
+          "id": "chronology_before_result",
+          "passed": false,
+          "reason": "判断和触发行情必须发生在结果之前。"
+        },
+        {
+          "id": "result_source_auditable",
+          "passed": false,
+          "reason": "结果行情必须保留来源和时间。"
+        },
+        {
+          "id": "trade_date_aligned",
+          "passed": true,
+          "reason": "首次观察时间必须属于案例交易日。"
+        }
+      ],
+      "representative_count": 3,
+      "representative_result_count": 0,
+      "median_return_pct": null,
+      "signal_supported": null,
+      "result_summary": "代表股触发行情必须经过两路独立行情确认；单源记录只用于观察，不进入模型评价。"
+    },
+    {
+      "trigger_snapshot_id": "trigger_quote_snapshot_f0c8b4d9eebf2bc4d595",
+      "case_id": "decision_case_be96c3ead8bbb47868cc",
+      "trade_date": "2026-08-25",
+      "kind": "opportunity",
+      "primary_window": "T+3",
+      "evaluation_included": false,
+      "evaluation_gates": [
+        {
+          "id": "immutable_decision_and_trigger_snapshot",
+          "passed": true,
+          "reason": "原始判断与触发行情快照必须存在且哈希一致。"
+        },
+        {
+          "id": "unique_trigger_snapshot",
+          "passed": true,
+          "reason": "同一触发行情快照不能重复计入评价。"
+        },
+        {
+          "id": "auditable_trigger_reference",
+          "passed": true,
+          "reason": "代表股触发价格、行情时间和来源必须完整。"
+        },
+        {
+          "id": "dual_source_trigger_confirmation",
+          "passed": false,
+          "reason": "代表股触发行情必须经过两路独立行情确认；单源记录只用于观察，不进入模型评价。"
+        },
+        {
+          "id": "representative_quote_closure",
+          "passed": true,
+          "reason": "全部代表股必须形成结果记录。"
+        },
+        {
+          "id": "reference_matches_frozen_snapshot",
+          "passed": true,
+          "reason": "结果记录必须使用冻结触发价格，不能重新选取参考价。"
+        },
+        {
+          "id": "primary_window_due_and_complete",
+          "passed": false,
+          "reason": "全部代表股的T+3窗口必须到期并取得真实行情。"
+        },
+        {
+          "id": "chronology_before_result",
+          "passed": false,
+          "reason": "判断和触发行情必须发生在结果之前。"
+        },
+        {
+          "id": "result_source_auditable",
+          "passed": false,
+          "reason": "结果行情必须保留来源和时间。"
+        },
+        {
+          "id": "trade_date_aligned",
+          "passed": true,
+          "reason": "首次观察时间必须属于案例交易日。"
+        }
+      ],
+      "representative_count": 3,
+      "representative_result_count": 0,
+      "median_return_pct": null,
+      "signal_supported": null,
+      "result_summary": "代表股触发行情必须经过两路独立行情确认；单源记录只用于观察，不进入模型评价。"
+    },
+    {
+      "trigger_snapshot_id": "trigger_quote_snapshot_e2e75711b79aff8c20a8",
+      "case_id": "decision_case_6341bdeb29e5b84a752a",
+      "trade_date": "2026-08-25",
+      "kind": "risk",
+      "primary_window": "T+3",
+      "evaluation_included": false,
+      "evaluation_gates": [
+        {
+          "id": "immutable_decision_and_trigger_snapshot",
+          "passed": true,
+          "reason": "原始判断与触发行情快照必须存在且哈希一致。"
+        },
+        {
+          "id": "unique_trigger_snapshot",
+          "passed": true,
+          "reason": "同一触发行情快照不能重复计入评价。"
+        },
+        {
+          "id": "auditable_trigger_reference",
+          "passed": true,
+          "reason": "代表股触发价格、行情时间和来源必须完整。"
+        },
+        {
+          "id": "dual_source_trigger_confirmation",
+          "passed": false,
+          "reason": "代表股触发行情必须经过两路独立行情确认；单源记录只用于观察，不进入模型评价。"
+        },
+        {
+          "id": "representative_quote_closure",
+          "passed": true,
+          "reason": "全部代表股必须形成结果记录。"
+        },
+        {
+          "id": "reference_matches_frozen_snapshot",
+          "passed": true,
+          "reason": "结果记录必须使用冻结触发价格，不能重新选取参考价。"
+        },
+        {
+          "id": "primary_window_due_and_complete",
+          "passed": false,
+          "reason": "全部代表股的T+3窗口必须到期并取得真实行情。"
+        },
+        {
+          "id": "chronology_before_result",
+          "passed": false,
+          "reason": "判断和触发行情必须发生在结果之前。"
+        },
+        {
+          "id": "result_source_auditable",
+          "passed": false,
+          "reason": "结果行情必须保留来源和时间。"
+        },
+        {
+          "id": "trade_date_aligned",
+          "passed": true,
+          "reason": "首次观察时间必须属于案例交易日。"
+        }
+      ],
+      "representative_count": 1,
+      "representative_result_count": 0,
+      "median_return_pct": null,
+      "signal_supported": null,
+      "result_summary": "代表股触发行情必须经过两路独立行情确认；单源记录只用于观察，不进入模型评价。"
+    },
+    {
+      "trigger_snapshot_id": "trigger_quote_snapshot_4e8088265a249fde7671",
+      "case_id": "decision_case_6341bdeb29e5b84a752a",
+      "trade_date": "2026-08-25",
+      "kind": "risk",
+      "primary_window": "T+3",
+      "evaluation_included": false,
+      "evaluation_gates": [
+        {
+          "id": "immutable_decision_and_trigger_snapshot",
+          "passed": true,
+          "reason": "原始判断与触发行情快照必须存在且哈希一致。"
+        },
+        {
+          "id": "unique_trigger_snapshot",
+          "passed": true,
+          "reason": "同一触发行情快照不能重复计入评价。"
+        },
+        {
+          "id": "auditable_trigger_reference",
+          "passed": true,
+          "reason": "代表股触发价格、行情时间和来源必须完整。"
+        },
+        {
+          "id": "dual_source_trigger_confirmation",
+          "passed": false,
+          "reason": "代表股触发行情必须经过两路独立行情确认；单源记录只用于观察，不进入模型评价。"
+        },
+        {
+          "id": "representative_quote_closure",
+          "passed": true,
+          "reason": "全部代表股必须形成结果记录。"
+        },
+        {
+          "id": "reference_matches_frozen_snapshot",
+          "passed": true,
+          "reason": "结果记录必须使用冻结触发价格，不能重新选取参考价。"
+        },
+        {
+          "id": "primary_window_due_and_complete",
+          "passed": false,
+          "reason": "全部代表股的T+3窗口必须到期并取得真实行情。"
+        },
+        {
+          "id": "chronology_before_result",
+          "passed": false,
+          "reason": "判断和触发行情必须发生在结果之前。"
+        },
+        {
+          "id": "result_source_auditable",
+          "passed": false,
+          "reason": "结果行情必须保留来源和时间。"
+        },
+        {
+          "id": "trade_date_aligned",
+          "passed": true,
+          "reason": "首次观察时间必须属于案例交易日。"
+        }
+      ],
+      "representative_count": 2,
+      "representative_result_count": 0,
+      "median_return_pct": null,
+      "signal_supported": null,
+      "result_summary": "代表股触发行情必须经过两路独立行情确认；单源记录只用于观察，不进入模型评价。"
+    },
+    {
+      "trigger_snapshot_id": "trigger_quote_snapshot_ab77a153366d458c1bde",
+      "case_id": "decision_case_6341bdeb29e5b84a752a",
+      "trade_date": "2026-08-25",
+      "kind": "risk",
+      "primary_window": "T+3",
+      "evaluation_included": false,
+      "evaluation_gates": [
+        {
+          "id": "immutable_decision_and_trigger_snapshot",
+          "passed": true,
+          "reason": "原始判断与触发行情快照必须存在且哈希一致。"
+        },
+        {
+          "id": "unique_trigger_snapshot",
+          "passed": true,
+          "reason": "同一触发行情快照不能重复计入评价。"
+        },
+        {
+          "id": "auditable_trigger_reference",
+          "passed": true,
+          "reason": "代表股触发价格、行情时间和来源必须完整。"
+        },
+        {
+          "id": "dual_source_trigger_confirmation",
+          "passed": false,
+          "reason": "代表股触发行情必须经过两路独立行情确认；单源记录只用于观察，不进入模型评价。"
+        },
+        {
+          "id": "representative_quote_closure",
+          "passed": true,
+          "reason": "全部代表股必须形成结果记录。"
+        },
+        {
+          "id": "reference_matches_frozen_snapshot",
+          "passed": true,
+          "reason": "结果记录必须使用冻结触发价格，不能重新选取参考价。"
+        },
+        {
+          "id": "primary_window_due_and_complete",
+          "passed": false,
+          "reason": "全部代表股的T+3窗口必须到期并取得真实行情。"
+        },
+        {
+          "id": "chronology_before_result",
+          "passed": false,
+          "reason": "判断和触发行情必须发生在结果之前。"
+        },
+        {
+          "id": "result_source_auditable",
+          "passed": false,
+          "reason": "结果行情必须保留来源和时间。"
+        },
+        {
+          "id": "trade_date_aligned",
+          "passed": true,
+          "reason": "首次观察时间必须属于案例交易日。"
+        }
+      ],
+      "representative_count": 3,
+      "representative_result_count": 0,
+      "median_return_pct": null,
+      "signal_supported": null,
+      "result_summary": "代表股触发行情必须经过两路独立行情确认；单源记录只用于观察，不进入模型评价。"
+    },
+    {
+      "trigger_snapshot_id": "trigger_quote_snapshot_c20c22ffc25e2ade6e32",
+      "case_id": "decision_case_6341bdeb29e5b84a752a",
+      "trade_date": "2026-08-25",
+      "kind": "risk",
+      "primary_window": "T+3",
+      "evaluation_included": false,
+      "evaluation_gates": [
+        {
+          "id": "immutable_decision_and_trigger_snapshot",
+          "passed": true,
+          "reason": "原始判断与触发行情快照必须存在且哈希一致。"
+        },
+        {
+          "id": "unique_trigger_snapshot",
+          "passed": true,
+          "reason": "同一触发行情快照不能重复计入评价。"
+        },
+        {
+          "id": "auditable_trigger_reference",
+          "passed": true,
+          "reason": "代表股触发价格、行情时间和来源必须完整。"
+        },
+        {
+          "id": "dual_source_trigger_confirmation",
+          "passed": false,
+          "reason": "代表股触发行情必须经过两路独立行情确认；单源记录只用于观察，不进入模型评价。"
+        },
+        {
+          "id": "representative_quote_closure",
+          "passed": true,
+          "reason": "全部代表股必须形成结果记录。"
+        },
+        {
+          "id": "reference_matches_frozen_snapshot",
+          "passed": true,
+          "reason": "结果记录必须使用冻结触发价格，不能重新选取参考价。"
+        },
+        {
+          "id": "primary_window_due_and_complete",
+          "passed": false,
+          "reason": "全部代表股的T+3窗口必须到期并取得真实行情。"
+        },
+        {
+          "id": "chronology_before_result",
+          "passed": false,
+          "reason": "判断和触发行情必须发生在结果之前。"
+        },
+        {
+          "id": "result_source_auditable",
+          "passed": false,
+          "reason": "结果行情必须保留来源和时间。"
+        },
+        {
+          "id": "trade_date_aligned",
+          "passed": true,
+          "reason": "首次观察时间必须属于案例交易日。"
+        }
+      ],
+      "representative_count": 3,
+      "representative_result_count": 0,
+      "median_return_pct": null,
+      "signal_supported": null,
+      "result_summary": "代表股触发行情必须经过两路独立行情确认；单源记录只用于观察，不进入模型评价。"
+    },
+    {
+      "trigger_snapshot_id": "trigger_quote_snapshot_4105e3c3aa8f2198f564",
+      "case_id": "decision_case_9465dc83f782a74bb263",
+      "trade_date": "2026-08-25",
+      "kind": "opportunity",
+      "primary_window": "T+3",
+      "evaluation_included": false,
+      "evaluation_gates": [
+        {
+          "id": "immutable_decision_and_trigger_snapshot",
+          "passed": true,
+          "reason": "原始判断与触发行情快照必须存在且哈希一致。"
+        },
+        {
+          "id": "unique_trigger_snapshot",
+          "passed": true,
+          "reason": "同一触发行情快照不能重复计入评价。"
+        },
+        {
+          "id": "auditable_trigger_reference",
+          "passed": true,
+          "reason": "代表股触发价格、行情时间和来源必须完整。"
+        },
+        {
+          "id": "dual_source_trigger_confirmation",
+          "passed": false,
+          "reason": "代表股触发行情必须经过两路独立行情确认；单源记录只用于观察，不进入模型评价。"
+        },
+        {
+          "id": "representative_quote_closure",
+          "passed": true,
+          "reason": "全部代表股必须形成结果记录。"
+        },
+        {
+          "id": "reference_matches_frozen_snapshot",
+          "passed": true,
+          "reason": "结果记录必须使用冻结触发价格，不能重新选取参考价。"
+        },
+        {
+          "id": "primary_window_due_and_complete",
+          "passed": false,
+          "reason": "全部代表股的T+3窗口必须到期并取得真实行情。"
+        },
+        {
+          "id": "chronology_before_result",
+          "passed": false,
+          "reason": "判断和触发行情必须发生在结果之前。"
+        },
+        {
+          "id": "result_source_auditable",
+          "passed": false,
+          "reason": "结果行情必须保留来源和时间。"
+        },
+        {
+          "id": "trade_date_aligned",
+          "passed": true,
+          "reason": "首次观察时间必须属于案例交易日。"
+        }
+      ],
+      "representative_count": 3,
+      "representative_result_count": 0,
+      "median_return_pct": null,
+      "signal_supported": null,
+      "result_summary": "代表股触发行情必须经过两路独立行情确认；单源记录只用于观察，不进入模型评价。"
+    },
+    {
+      "trigger_snapshot_id": "trigger_quote_snapshot_dfdd6974f60ec45b722a",
+      "case_id": "decision_case_6341bdeb29e5b84a752a",
+      "trade_date": "2026-08-25",
+      "kind": "risk",
+      "primary_window": "T+3",
+      "evaluation_included": false,
+      "evaluation_gates": [
+        {
+          "id": "immutable_decision_and_trigger_snapshot",
+          "passed": true,
+          "reason": "原始判断与触发行情快照必须存在且哈希一致。"
+        },
+        {
+          "id": "unique_trigger_snapshot",
+          "passed": true,
+          "reason": "同一触发行情快照不能重复计入评价。"
+        },
+        {
+          "id": "auditable_trigger_reference",
+          "passed": true,
+          "reason": "代表股触发价格、行情时间和来源必须完整。"
+        },
+        {
+          "id": "dual_source_trigger_confirmation",
+          "passed": false,
+          "reason": "代表股触发行情必须经过两路独立行情确认；单源记录只用于观察，不进入模型评价。"
+        },
+        {
+          "id": "representative_quote_closure",
+          "passed": true,
+          "reason": "全部代表股必须形成结果记录。"
+        },
+        {
+          "id": "reference_matches_frozen_snapshot",
+          "passed": true,
+          "reason": "结果记录必须使用冻结触发价格，不能重新选取参考价。"
+        },
+        {
+          "id": "primary_window_due_and_complete",
+          "passed": false,
+          "reason": "全部代表股的T+3窗口必须到期并取得真实行情。"
+        },
+        {
+          "id": "chronology_before_result",
+          "passed": false,
+          "reason": "判断和触发行情必须发生在结果之前。"
+        },
+        {
+          "id": "result_source_auditable",
+          "passed": false,
+          "reason": "结果行情必须保留来源和时间。"
+        },
+        {
+          "id": "trade_date_aligned",
+          "passed": true,
+          "reason": "首次观察时间必须属于案例交易日。"
+        }
+      ],
+      "representative_count": 3,
+      "representative_result_count": 0,
+      "median_return_pct": null,
+      "signal_supported": null,
+      "result_summary": "代表股触发行情必须经过两路独立行情确认；单源记录只用于观察，不进入模型评价。"
+    },
+    {
+      "trigger_snapshot_id": "trigger_quote_snapshot_efd4f8c9cc3abd766c46",
+      "case_id": "decision_case_144360b2f58a6046d865",
+      "trade_date": "2026-08-25",
+      "kind": "opportunity",
+      "primary_window": "T+3",
+      "evaluation_included": false,
+      "evaluation_gates": [
+        {
+          "id": "immutable_decision_and_trigger_snapshot",
+          "passed": true,
+          "reason": "原始判断与触发行情快照必须存在且哈希一致。"
+        },
+        {
+          "id": "unique_trigger_snapshot",
+          "passed": true,
+          "reason": "同一触发行情快照不能重复计入评价。"
+        },
+        {
+          "id": "auditable_trigger_reference",
+          "passed": true,
+          "reason": "代表股触发价格、行情时间和来源必须完整。"
+        },
+        {
+          "id": "dual_source_trigger_confirmation",
+          "passed": false,
+          "reason": "代表股触发行情必须经过两路独立行情确认；单源记录只用于观察，不进入模型评价。"
+        },
+        {
+          "id": "representative_quote_closure",
+          "passed": true,
+          "reason": "全部代表股必须形成结果记录。"
+        },
+        {
+          "id": "reference_matches_frozen_snapshot",
+          "passed": true,
+          "reason": "结果记录必须使用冻结触发价格，不能重新选取参考价。"
+        },
+        {
+          "id": "primary_window_due_and_complete",
+          "passed": false,
+          "reason": "全部代表股的T+3窗口必须到期并取得真实行情。"
+        },
+        {
+          "id": "chronology_before_result",
+          "passed": false,
+          "reason": "判断和触发行情必须发生在结果之前。"
+        },
+        {
+          "id": "result_source_auditable",
+          "passed": false,
+          "reason": "结果行情必须保留来源和时间。"
+        },
+        {
+          "id": "trade_date_aligned",
+          "passed": true,
+          "reason": "首次观察时间必须属于案例交易日。"
+        }
+      ],
+      "representative_count": 3,
+      "representative_result_count": 0,
+      "median_return_pct": null,
+      "signal_supported": null,
+      "result_summary": "代表股触发行情必须经过两路独立行情确认；单源记录只用于观察，不进入模型评价。"
+    },
+    {
+      "trigger_snapshot_id": "trigger_quote_snapshot_ae200a3cbcba0e9ac9c5",
+      "case_id": "decision_case_6341bdeb29e5b84a752a",
+      "trade_date": "2026-08-25",
+      "kind": "risk",
+      "primary_window": "T+3",
+      "evaluation_included": false,
+      "evaluation_gates": [
+        {
+          "id": "immutable_decision_and_trigger_snapshot",
+          "passed": true,
+          "reason": "原始判断与触发行情快照必须存在且哈希一致。"
+        },
+        {
+          "id": "unique_trigger_snapshot",
+          "passed": true,
+          "reason": "同一触发行情快照不能重复计入评价。"
+        },
+        {
+          "id": "auditable_trigger_reference",
+          "passed": true,
+          "reason": "代表股触发价格、行情时间和来源必须完整。"
+        },
+        {
+          "id": "dual_source_trigger_confirmation",
+          "passed": false,
+          "reason": "代表股触发行情必须经过两路独立行情确认；单源记录只用于观察，不进入模型评价。"
+        },
+        {
+          "id": "representative_quote_closure",
+          "passed": true,
+          "reason": "全部代表股必须形成结果记录。"
+        },
+        {
+          "id": "reference_matches_frozen_snapshot",
+          "passed": true,
+          "reason": "结果记录必须使用冻结触发价格，不能重新选取参考价。"
+        },
+        {
+          "id": "primary_window_due_and_complete",
+          "passed": false,
+          "reason": "全部代表股的T+3窗口必须到期并取得真实行情。"
+        },
+        {
+          "id": "chronology_before_result",
+          "passed": false,
+          "reason": "判断和触发行情必须发生在结果之前。"
+        },
+        {
+          "id": "result_source_auditable",
+          "passed": false,
+          "reason": "结果行情必须保留来源和时间。"
+        },
+        {
+          "id": "trade_date_aligned",
+          "passed": true,
+          "reason": "首次观察时间必须属于案例交易日。"
+        }
+      ],
+      "representative_count": 3,
+      "representative_result_count": 0,
+      "median_return_pct": null,
+      "signal_supported": null,
+      "result_summary": "代表股触发行情必须经过两路独立行情确认；单源记录只用于观察，不进入模型评价。"
+    },
+    {
+      "trigger_snapshot_id": "trigger_quote_snapshot_ce1e16328d09c110c9e5",
+      "case_id": "decision_case_18436206dbb19702c059",
+      "trade_date": "2026-08-25",
+      "kind": "opportunity",
+      "primary_window": "T+3",
+      "evaluation_included": false,
+      "evaluation_gates": [
+        {
+          "id": "immutable_decision_and_trigger_snapshot",
+          "passed": true,
+          "reason": "原始判断与触发行情快照必须存在且哈希一致。"
+        },
+        {
+          "id": "unique_trigger_snapshot",
+          "passed": true,
+          "reason": "同一触发行情快照不能重复计入评价。"
+        },
+        {
+          "id": "auditable_trigger_reference",
+          "passed": true,
+          "reason": "代表股触发价格、行情时间和来源必须完整。"
+        },
+        {
+          "id": "dual_source_trigger_confirmation",
+          "passed": false,
+          "reason": "代表股触发行情必须经过两路独立行情确认；单源记录只用于观察，不进入模型评价。"
+        },
+        {
+          "id": "representative_quote_closure",
+          "passed": true,
+          "reason": "全部代表股必须形成结果记录。"
+        },
+        {
+          "id": "reference_matches_frozen_snapshot",
+          "passed": true,
+          "reason": "结果记录必须使用冻结触发价格，不能重新选取参考价。"
+        },
+        {
+          "id": "primary_window_due_and_complete",
+          "passed": false,
+          "reason": "全部代表股的T+3窗口必须到期并取得真实行情。"
+        },
+        {
+          "id": "chronology_before_result",
+          "passed": false,
+          "reason": "判断和触发行情必须发生在结果之前。"
+        },
+        {
+          "id": "result_source_auditable",
+          "passed": false,
+          "reason": "结果行情必须保留来源和时间。"
+        },
+        {
+          "id": "trade_date_aligned",
+          "passed": true,
+          "reason": "首次观察时间必须属于案例交易日。"
+        }
+      ],
+      "representative_count": 2,
+      "representative_result_count": 0,
+      "median_return_pct": null,
+      "signal_supported": null,
+      "result_summary": "代表股触发行情必须经过两路独立行情确认；单源记录只用于观察，不进入模型评价。"
+    },
+    {
+      "trigger_snapshot_id": "trigger_quote_snapshot_e4e5ff008cbdc921d95b",
+      "case_id": "decision_case_6341bdeb29e5b84a752a",
+      "trade_date": "2026-08-25",
+      "kind": "risk",
+      "primary_window": "T+3",
+      "evaluation_included": false,
+      "evaluation_gates": [
+        {
+          "id": "immutable_decision_and_trigger_snapshot",
+          "passed": true,
+          "reason": "原始判断与触发行情快照必须存在且哈希一致。"
+        },
+        {
+          "id": "unique_trigger_snapshot",
+          "passed": true,
+          "reason": "同一触发行情快照不能重复计入评价。"
+        },
+        {
+          "id": "auditable_trigger_reference",
+          "passed": true,
+          "reason": "代表股触发价格、行情时间和来源必须完整。"
+        },
+        {
+          "id": "dual_source_trigger_confirmation",
+          "passed": false,
+          "reason": "代表股触发行情必须经过两路独立行情确认；单源记录只用于观察，不进入模型评价。"
+        },
+        {
+          "id": "representative_quote_closure",
+          "passed": true,
+          "reason": "全部代表股必须形成结果记录。"
+        },
+        {
+          "id": "reference_matches_frozen_snapshot",
+          "passed": true,
+          "reason": "结果记录必须使用冻结触发价格，不能重新选取参考价。"
+        },
+        {
+          "id": "primary_window_due_and_complete",
+          "passed": false,
+          "reason": "全部代表股的T+3窗口必须到期并取得真实行情。"
+        },
+        {
+          "id": "chronology_before_result",
+          "passed": false,
+          "reason": "判断和触发行情必须发生在结果之前。"
+        },
+        {
+          "id": "result_source_auditable",
+          "passed": false,
+          "reason": "结果行情必须保留来源和时间。"
+        },
+        {
+          "id": "trade_date_aligned",
+          "passed": true,
+          "reason": "首次观察时间必须属于案例交易日。"
+        }
+      ],
+      "representative_count": 3,
+      "representative_result_count": 0,
+      "median_return_pct": null,
+      "signal_supported": null,
+      "result_summary": "代表股触发行情必须经过两路独立行情确认；单源记录只用于观察，不进入模型评价。"
+    },
+    {
+      "trigger_snapshot_id": "trigger_quote_snapshot_f1c4a57e325a8e47921b",
+      "case_id": "decision_case_6341bdeb29e5b84a752a",
+      "trade_date": "2026-08-25",
+      "kind": "risk",
+      "primary_window": "T+3",
+      "evaluation_included": false,
+      "evaluation_gates": [
+        {
+          "id": "immutable_decision_and_trigger_snapshot",
+          "passed": true,
+          "reason": "原始判断与触发行情快照必须存在且哈希一致。"
+        },
+        {
+          "id": "unique_trigger_snapshot",
+          "passed": true,
+          "reason": "同一触发行情快照不能重复计入评价。"
+        },
+        {
+          "id": "auditable_trigger_reference",
+          "passed": true,
+          "reason": "代表股触发价格、行情时间和来源必须完整。"
+        },
+        {
+          "id": "dual_source_trigger_confirmation",
+          "passed": false,
+          "reason": "代表股触发行情必须经过两路独立行情确认；单源记录只用于观察，不进入模型评价。"
+        },
+        {
+          "id": "representative_quote_closure",
+          "passed": true,
+          "reason": "全部代表股必须形成结果记录。"
+        },
+        {
+          "id": "reference_matches_frozen_snapshot",
+          "passed": true,
+          "reason": "结果记录必须使用冻结触发价格，不能重新选取参考价。"
+        },
+        {
+          "id": "primary_window_due_and_complete",
+          "passed": false,
+          "reason": "全部代表股的T+3窗口必须到期并取得真实行情。"
+        },
+        {
+          "id": "chronology_before_result",
+          "passed": false,
+          "reason": "判断和触发行情必须发生在结果之前。"
+        },
+        {
+          "id": "result_source_auditable",
+          "passed": false,
+          "reason": "结果行情必须保留来源和时间。"
+        },
+        {
+          "id": "trade_date_aligned",
+          "passed": true,
+          "reason": "首次观察时间必须属于案例交易日。"
+        }
+      ],
+      "representative_count": 3,
+      "representative_result_count": 0,
+      "median_return_pct": null,
+      "signal_supported": null,
+      "result_summary": "代表股触发行情必须经过两路独立行情确认；单源记录只用于观察，不进入模型评价。"
+    },
+    {
+      "trigger_snapshot_id": "trigger_quote_snapshot_a9506a1cdaa1567284e9",
+      "case_id": "decision_case_6341bdeb29e5b84a752a",
+      "trade_date": "2026-08-25",
+      "kind": "risk",
+      "primary_window": "T+3",
+      "evaluation_included": false,
+      "evaluation_gates": [
+        {
+          "id": "immutable_decision_and_trigger_snapshot",
+          "passed": true,
+          "reason": "原始判断与触发行情快照必须存在且哈希一致。"
+        },
+        {
+          "id": "unique_trigger_snapshot",
+          "passed": true,
+          "reason": "同一触发行情快照不能重复计入评价。"
+        },
+        {
+          "id": "auditable_trigger_reference",
+          "passed": true,
+          "reason": "代表股触发价格、行情时间和来源必须完整。"
+        },
+        {
+          "id": "dual_source_trigger_confirmation",
+          "passed": false,
+          "reason": "代表股触发行情必须经过两路独立行情确认；单源记录只用于观察，不进入模型评价。"
+        },
+        {
+          "id": "representative_quote_closure",
+          "passed": true,
+          "reason": "全部代表股必须形成结果记录。"
+        },
+        {
+          "id": "reference_matches_frozen_snapshot",
+          "passed": true,
+          "reason": "结果记录必须使用冻结触发价格，不能重新选取参考价。"
+        },
+        {
+          "id": "primary_window_due_and_complete",
+          "passed": false,
+          "reason": "全部代表股的T+3窗口必须到期并取得真实行情。"
+        },
+        {
+          "id": "chronology_before_result",
+          "passed": false,
+          "reason": "判断和触发行情必须发生在结果之前。"
+        },
+        {
+          "id": "result_source_auditable",
+          "passed": false,
+          "reason": "结果行情必须保留来源和时间。"
+        },
+        {
+          "id": "trade_date_aligned",
+          "passed": true,
+          "reason": "首次观察时间必须属于案例交易日。"
+        }
+      ],
+      "representative_count": 3,
+      "representative_result_count": 0,
+      "median_return_pct": null,
+      "signal_supported": null,
+      "result_summary": "代表股触发行情必须经过两路独立行情确认；单源记录只用于观察，不进入模型评价。"
+    },
+    {
+      "trigger_snapshot_id": "trigger_quote_snapshot_592ea508472e7a2ea907",
+      "case_id": "decision_case_6341bdeb29e5b84a752a",
+      "trade_date": "2026-08-25",
+      "kind": "risk",
+      "primary_window": "T+3",
+      "evaluation_included": false,
+      "evaluation_gates": [
+        {
+          "id": "immutable_decision_and_trigger_snapshot",
+          "passed": true,
+          "reason": "原始判断与触发行情快照必须存在且哈希一致。"
+        },
+        {
+          "id": "unique_trigger_snapshot",
+          "passed": true,
+          "reason": "同一触发行情快照不能重复计入评价。"
+        },
+        {
+          "id": "auditable_trigger_reference",
+          "passed": true,
+          "reason": "代表股触发价格、行情时间和来源必须完整。"
+        },
+        {
+          "id": "dual_source_trigger_confirmation",
+          "passed": false,
+          "reason": "代表股触发行情必须经过两路独立行情确认；单源记录只用于观察，不进入模型评价。"
+        },
+        {
+          "id": "representative_quote_closure",
+          "passed": true,
+          "reason": "全部代表股必须形成结果记录。"
+        },
+        {
+          "id": "reference_matches_frozen_snapshot",
+          "passed": true,
+          "reason": "结果记录必须使用冻结触发价格，不能重新选取参考价。"
+        },
+        {
+          "id": "primary_window_due_and_complete",
+          "passed": false,
+          "reason": "全部代表股的T+3窗口必须到期并取得真实行情。"
+        },
+        {
+          "id": "chronology_before_result",
+          "passed": false,
+          "reason": "判断和触发行情必须发生在结果之前。"
+        },
+        {
+          "id": "result_source_auditable",
+          "passed": false,
+          "reason": "结果行情必须保留来源和时间。"
+        },
+        {
+          "id": "trade_date_aligned",
+          "passed": true,
+          "reason": "首次观察时间必须属于案例交易日。"
+        }
+      ],
+      "representative_count": 3,
+      "representative_result_count": 0,
+      "median_return_pct": null,
+      "signal_supported": null,
+      "result_summary": "代表股触发行情必须经过两路独立行情确认；单源记录只用于观察，不进入模型评价。"
+    },
+    {
+      "trigger_snapshot_id": "trigger_quote_snapshot_fbfb24bde2f00b35426d",
+      "case_id": "decision_case_6341bdeb29e5b84a752a",
+      "trade_date": "2026-08-25",
+      "kind": "risk",
+      "primary_window": "T+3",
+      "evaluation_included": false,
+      "evaluation_gates": [
+        {
+          "id": "immutable_decision_and_trigger_snapshot",
+          "passed": true,
+          "reason": "原始判断与触发行情快照必须存在且哈希一致。"
+        },
+        {
+          "id": "unique_trigger_snapshot",
+          "passed": true,
+          "reason": "同一触发行情快照不能重复计入评价。"
+        },
+        {
+          "id": "auditable_trigger_reference",
+          "passed": true,
+          "reason": "代表股触发价格、行情时间和来源必须完整。"
+        },
+        {
+          "id": "dual_source_trigger_confirmation",
+          "passed": false,
+          "reason": "代表股触发行情必须经过两路独立行情确认；单源记录只用于观察，不进入模型评价。"
+        },
+        {
+          "id": "representative_quote_closure",
+          "passed": true,
+          "reason": "全部代表股必须形成结果记录。"
+        },
+        {
+          "id": "reference_matches_frozen_snapshot",
+          "passed": true,
+          "reason": "结果记录必须使用冻结触发价格，不能重新选取参考价。"
+        },
+        {
+          "id": "primary_window_due_and_complete",
+          "passed": false,
+          "reason": "全部代表股的T+3窗口必须到期并取得真实行情。"
+        },
+        {
+          "id": "chronology_before_result",
+          "passed": false,
+          "reason": "判断和触发行情必须发生在结果之前。"
+        },
+        {
+          "id": "result_source_auditable",
+          "passed": false,
+          "reason": "结果行情必须保留来源和时间。"
+        },
+        {
+          "id": "trade_date_aligned",
+          "passed": true,
+          "reason": "首次观察时间必须属于案例交易日。"
+        }
+      ],
+      "representative_count": 1,
+      "representative_result_count": 0,
+      "median_return_pct": null,
+      "signal_supported": null,
+      "result_summary": "代表股触发行情必须经过两路独立行情确认；单源记录只用于观察，不进入模型评价。"
+    },
+    {
+      "trigger_snapshot_id": "trigger_quote_snapshot_5f8147eca38f5b72245e",
+      "case_id": "decision_case_18436206dbb19702c059",
+      "trade_date": "2026-08-25",
+      "kind": "opportunity",
+      "primary_window": "T+3",
+      "evaluation_included": false,
+      "evaluation_gates": [
+        {
+          "id": "immutable_decision_and_trigger_snapshot",
+          "passed": true,
+          "reason": "原始判断与触发行情快照必须存在且哈希一致。"
+        },
+        {
+          "id": "unique_trigger_snapshot",
+          "passed": true,
+          "reason": "同一触发行情快照不能重复计入评价。"
+        },
+        {
+          "id": "auditable_trigger_reference",
+          "passed": true,
+          "reason": "代表股触发价格、行情时间和来源必须完整。"
+        },
+        {
+          "id": "dual_source_trigger_confirmation",
+          "passed": false,
+          "reason": "代表股触发行情必须经过两路独立行情确认；单源记录只用于观察，不进入模型评价。"
+        },
+        {
+          "id": "representative_quote_closure",
+          "passed": true,
+          "reason": "全部代表股必须形成结果记录。"
+        },
+        {
+          "id": "reference_matches_frozen_snapshot",
+          "passed": true,
+          "reason": "结果记录必须使用冻结触发价格，不能重新选取参考价。"
+        },
+        {
+          "id": "primary_window_due_and_complete",
+          "passed": false,
+          "reason": "全部代表股的T+3窗口必须到期并取得真实行情。"
+        },
+        {
+          "id": "chronology_before_result",
+          "passed": false,
+          "reason": "判断和触发行情必须发生在结果之前。"
+        },
+        {
+          "id": "result_source_auditable",
+          "passed": false,
+          "reason": "结果行情必须保留来源和时间。"
+        },
+        {
+          "id": "trade_date_aligned",
+          "passed": true,
+          "reason": "首次观察时间必须属于案例交易日。"
+        }
+      ],
+      "representative_count": 3,
+      "representative_result_count": 0,
+      "median_return_pct": null,
+      "signal_supported": null,
+      "result_summary": "代表股触发行情必须经过两路独立行情确认；单源记录只用于观察，不进入模型评价。"
+    },
+    {
+      "trigger_snapshot_id": "trigger_quote_snapshot_b833e37e7509ae404f6d",
+      "case_id": "decision_case_c86b5a45495e5391e36c",
+      "trade_date": "2026-08-25",
+      "kind": "opportunity",
+      "primary_window": "T+3",
+      "evaluation_included": false,
+      "evaluation_gates": [
+        {
+          "id": "immutable_decision_and_trigger_snapshot",
+          "passed": true,
+          "reason": "原始判断与触发行情快照必须存在且哈希一致。"
+        },
+        {
+          "id": "unique_trigger_snapshot",
+          "passed": true,
+          "reason": "同一触发行情快照不能重复计入评价。"
+        },
+        {
+          "id": "auditable_trigger_reference",
+          "passed": true,
+          "reason": "代表股触发价格、行情时间和来源必须完整。"
+        },
+        {
+          "id": "dual_source_trigger_confirmation",
+          "passed": false,
+          "reason": "代表股触发行情必须经过两路独立行情确认；单源记录只用于观察，不进入模型评价。"
+        },
+        {
+          "id": "representative_quote_closure",
+          "passed": true,
+          "reason": "全部代表股必须形成结果记录。"
+        },
+        {
+          "id": "reference_matches_frozen_snapshot",
+          "passed": true,
+          "reason": "结果记录必须使用冻结触发价格，不能重新选取参考价。"
+        },
+        {
+          "id": "primary_window_due_and_complete",
+          "passed": false,
+          "reason": "全部代表股的T+3窗口必须到期并取得真实行情。"
+        },
+        {
+          "id": "chronology_before_result",
+          "passed": false,
+          "reason": "判断和触发行情必须发生在结果之前。"
+        },
+        {
+          "id": "result_source_auditable",
+          "passed": false,
+          "reason": "结果行情必须保留来源和时间。"
+        },
+        {
+          "id": "trade_date_aligned",
+          "passed": true,
+          "reason": "首次观察时间必须属于案例交易日。"
+        }
+      ],
+      "representative_count": 3,
+      "representative_result_count": 0,
+      "median_return_pct": null,
+      "signal_supported": null,
+      "result_summary": "代表股触发行情必须经过两路独立行情确认；单源记录只用于观察，不进入模型评价。"
+    },
+    {
+      "trigger_snapshot_id": "trigger_quote_snapshot_e091102a9dfff32d75aa",
+      "case_id": "decision_case_6341bdeb29e5b84a752a",
+      "trade_date": "2026-08-25",
+      "kind": "risk",
+      "primary_window": "T+3",
+      "evaluation_included": false,
+      "evaluation_gates": [
+        {
+          "id": "immutable_decision_and_trigger_snapshot",
+          "passed": true,
+          "reason": "原始判断与触发行情快照必须存在且哈希一致。"
+        },
+        {
+          "id": "unique_trigger_snapshot",
+          "passed": true,
+          "reason": "同一触发行情快照不能重复计入评价。"
+        },
+        {
+          "id": "auditable_trigger_reference",
+          "passed": true,
+          "reason": "代表股触发价格、行情时间和来源必须完整。"
+        },
+        {
+          "id": "dual_source_trigger_confirmation",
+          "passed": false,
+          "reason": "代表股触发行情必须经过两路独立行情确认；单源记录只用于观察，不进入模型评价。"
+        },
+        {
+          "id": "representative_quote_closure",
+          "passed": true,
+          "reason": "全部代表股必须形成结果记录。"
+        },
+        {
+          "id": "reference_matches_frozen_snapshot",
+          "passed": true,
+          "reason": "结果记录必须使用冻结触发价格，不能重新选取参考价。"
+        },
+        {
+          "id": "primary_window_due_and_complete",
+          "passed": false,
+          "reason": "全部代表股的T+3窗口必须到期并取得真实行情。"
+        },
+        {
+          "id": "chronology_before_result",
+          "passed": false,
+          "reason": "判断和触发行情必须发生在结果之前。"
+        },
+        {
+          "id": "result_source_auditable",
+          "passed": false,
+          "reason": "结果行情必须保留来源和时间。"
+        },
+        {
+          "id": "trade_date_aligned",
+          "passed": true,
+          "reason": "首次观察时间必须属于案例交易日。"
+        }
+      ],
+      "representative_count": 3,
+      "representative_result_count": 0,
+      "median_return_pct": null,
+      "signal_supported": null,
+      "result_summary": "代表股触发行情必须经过两路独立行情确认；单源记录只用于观察，不进入模型评价。"
+    },
+    {
+      "trigger_snapshot_id": "trigger_quote_snapshot_7ffad154467039241af1",
+      "case_id": "decision_case_6341bdeb29e5b84a752a",
+      "trade_date": "2026-08-25",
+      "kind": "risk",
+      "primary_window": "T+3",
+      "evaluation_included": false,
+      "evaluation_gates": [
+        {
+          "id": "immutable_decision_and_trigger_snapshot",
+          "passed": true,
+          "reason": "原始判断与触发行情快照必须存在且哈希一致。"
+        },
+        {
+          "id": "unique_trigger_snapshot",
+          "passed": true,
+          "reason": "同一触发行情快照不能重复计入评价。"
+        },
+        {
+          "id": "auditable_trigger_reference",
+          "passed": true,
+          "reason": "代表股触发价格、行情时间和来源必须完整。"
+        },
+        {
+          "id": "dual_source_trigger_confirmation",
+          "passed": false,
+          "reason": "代表股触发行情必须经过两路独立行情确认；单源记录只用于观察，不进入模型评价。"
+        },
+        {
+          "id": "representative_quote_closure",
+          "passed": true,
+          "reason": "全部代表股必须形成结果记录。"
+        },
+        {
+          "id": "reference_matches_frozen_snapshot",
+          "passed": true,
+          "reason": "结果记录必须使用冻结触发价格，不能重新选取参考价。"
+        },
+        {
+          "id": "primary_window_due_and_complete",
+          "passed": false,
+          "reason": "全部代表股的T+3窗口必须到期并取得真实行情。"
+        },
+        {
+          "id": "chronology_before_result",
+          "passed": false,
+          "reason": "判断和触发行情必须发生在结果之前。"
+        },
+        {
+          "id": "result_source_auditable",
+          "passed": false,
+          "reason": "结果行情必须保留来源和时间。"
+        },
+        {
+          "id": "trade_date_aligned",
+          "passed": true,
+          "reason": "首次观察时间必须属于案例交易日。"
+        }
+      ],
+      "representative_count": 3,
+      "representative_result_count": 0,
+      "median_return_pct": null,
+      "signal_supported": null,
+      "result_summary": "代表股触发行情必须经过两路独立行情确认；单源记录只用于观察，不进入模型评价。"
+    },
+    {
+      "trigger_snapshot_id": "trigger_quote_snapshot_d1b05533501a94c3a586",
+      "case_id": "decision_case_6341bdeb29e5b84a752a",
+      "trade_date": "2026-08-25",
+      "kind": "risk",
+      "primary_window": "T+3",
+      "evaluation_included": false,
+      "evaluation_gates": [
+        {
+          "id": "immutable_decision_and_trigger_snapshot",
+          "passed": true,
+          "reason": "原始判断与触发行情快照必须存在且哈希一致。"
+        },
+        {
+          "id": "unique_trigger_snapshot",
+          "passed": true,
+          "reason": "同一触发行情快照不能重复计入评价。"
+        },
+        {
+          "id": "auditable_trigger_reference",
+          "passed": true,
+          "reason": "代表股触发价格、行情时间和来源必须完整。"
+        },
+        {
+          "id": "dual_source_trigger_confirmation",
+          "passed": false,
+          "reason": "代表股触发行情必须经过两路独立行情确认；单源记录只用于观察，不进入模型评价。"
+        },
+        {
+          "id": "representative_quote_closure",
+          "passed": true,
+          "reason": "全部代表股必须形成结果记录。"
+        },
+        {
+          "id": "reference_matches_frozen_snapshot",
+          "passed": true,
+          "reason": "结果记录必须使用冻结触发价格，不能重新选取参考价。"
+        },
+        {
+          "id": "primary_window_due_and_complete",
+          "passed": false,
+          "reason": "全部代表股的T+3窗口必须到期并取得真实行情。"
+        },
+        {
+          "id": "chronology_before_result",
+          "passed": false,
+          "reason": "判断和触发行情必须发生在结果之前。"
+        },
+        {
+          "id": "result_source_auditable",
+          "passed": false,
+          "reason": "结果行情必须保留来源和时间。"
+        },
+        {
+          "id": "trade_date_aligned",
+          "passed": true,
+          "reason": "首次观察时间必须属于案例交易日。"
+        }
+      ],
+      "representative_count": 3,
+      "representative_result_count": 0,
+      "median_return_pct": null,
+      "signal_supported": null,
+      "result_summary": "代表股触发行情必须经过两路独立行情确认；单源记录只用于观察，不进入模型评价。"
+    },
+    {
+      "trigger_snapshot_id": "trigger_quote_snapshot_4d812576b505fceca33d",
+      "case_id": "decision_case_6341bdeb29e5b84a752a",
+      "trade_date": "2026-08-25",
+      "kind": "risk",
+      "primary_window": "T+3",
+      "evaluation_included": false,
+      "evaluation_gates": [
+        {
+          "id": "immutable_decision_and_trigger_snapshot",
+          "passed": true,
+          "reason": "原始判断与触发行情快照必须存在且哈希一致。"
+        },
+        {
+          "id": "unique_trigger_snapshot",
+          "passed": true,
+          "reason": "同一触发行情快照不能重复计入评价。"
+        },
+        {
+          "id": "auditable_trigger_reference",
+          "passed": true,
+          "reason": "代表股触发价格、行情时间和来源必须完整。"
+        },
+        {
+          "id": "dual_source_trigger_confirmation",
+          "passed": false,
+          "reason": "代表股触发行情必须经过两路独立行情确认；单源记录只用于观察，不进入模型评价。"
+        },
+        {
+          "id": "representative_quote_closure",
+          "passed": true,
+          "reason": "全部代表股必须形成结果记录。"
+        },
+        {
+          "id": "reference_matches_frozen_snapshot",
+          "passed": true,
+          "reason": "结果记录必须使用冻结触发价格，不能重新选取参考价。"
+        },
+        {
+          "id": "primary_window_due_and_complete",
+          "passed": false,
+          "reason": "全部代表股的T+3窗口必须到期并取得真实行情。"
+        },
+        {
+          "id": "chronology_before_result",
+          "passed": false,
+          "reason": "判断和触发行情必须发生在结果之前。"
+        },
+        {
+          "id": "result_source_auditable",
+          "passed": false,
+          "reason": "结果行情必须保留来源和时间。"
+        },
+        {
+          "id": "trade_date_aligned",
+          "passed": true,
+          "reason": "首次观察时间必须属于案例交易日。"
+        }
+      ],
+      "representative_count": 3,
+      "representative_result_count": 0,
+      "median_return_pct": null,
+      "signal_supported": null,
+      "result_summary": "代表股触发行情必须经过两路独立行情确认；单源记录只用于观察，不进入模型评价。"
+    },
+    {
+      "trigger_snapshot_id": "trigger_quote_snapshot_2e2298d8acd303dce170",
+      "case_id": "decision_case_6341bdeb29e5b84a752a",
+      "trade_date": "2026-08-25",
+      "kind": "risk",
+      "primary_window": "T+3",
+      "evaluation_included": false,
+      "evaluation_gates": [
+        {
+          "id": "immutable_decision_and_trigger_snapshot",
+          "passed": true,
+          "reason": "原始判断与触发行情快照必须存在且哈希一致。"
+        },
+        {
+          "id": "unique_trigger_snapshot",
+          "passed": true,
+          "reason": "同一触发行情快照不能重复计入评价。"
+        },
+        {
+          "id": "auditable_trigger_reference",
+          "passed": true,
+          "reason": "代表股触发价格、行情时间和来源必须完整。"
+        },
+        {
+          "id": "dual_source_trigger_confirmation",
+          "passed": false,
+          "reason": "代表股触发行情必须经过两路独立行情确认；单源记录只用于观察，不进入模型评价。"
+        },
+        {
+          "id": "representative_quote_closure",
+          "passed": true,
+          "reason": "全部代表股必须形成结果记录。"
+        },
+        {
+          "id": "reference_matches_frozen_snapshot",
+          "passed": true,
+          "reason": "结果记录必须使用冻结触发价格，不能重新选取参考价。"
+        },
+        {
+          "id": "primary_window_due_and_complete",
+          "passed": false,
+          "reason": "全部代表股的T+3窗口必须到期并取得真实行情。"
+        },
+        {
+          "id": "chronology_before_result",
+          "passed": false,
+          "reason": "判断和触发行情必须发生在结果之前。"
+        },
+        {
+          "id": "result_source_auditable",
+          "passed": false,
+          "reason": "结果行情必须保留来源和时间。"
+        },
+        {
+          "id": "trade_date_aligned",
+          "passed": true,
+          "reason": "首次观察时间必须属于案例交易日。"
+        }
+      ],
+      "representative_count": 1,
+      "representative_result_count": 0,
+      "median_return_pct": null,
+      "signal_supported": null,
+      "result_summary": "代表股触发行情必须经过两路独立行情确认；单源记录只用于观察，不进入模型评价。"
+    },
+    {
+      "trigger_snapshot_id": "trigger_quote_snapshot_1859aee8930b83444b5b",
+      "case_id": "decision_case_7571cf5c7979c25eb45d",
+      "trade_date": "2026-08-25",
+      "kind": "opportunity",
+      "primary_window": "T+3",
+      "evaluation_included": false,
+      "evaluation_gates": [
+        {
+          "id": "immutable_decision_and_trigger_snapshot",
+          "passed": true,
+          "reason": "原始判断与触发行情快照必须存在且哈希一致。"
+        },
+        {
+          "id": "unique_trigger_snapshot",
+          "passed": true,
+          "reason": "同一触发行情快照不能重复计入评价。"
+        },
+        {
+          "id": "auditable_trigger_reference",
+          "passed": true,
+          "reason": "代表股触发价格、行情时间和来源必须完整。"
+        },
+        {
+          "id": "dual_source_trigger_confirmation",
+          "passed": false,
+          "reason": "代表股触发行情必须经过两路独立行情确认；单源记录只用于观察，不进入模型评价。"
+        },
+        {
+          "id": "representative_quote_closure",
+          "passed": true,
+          "reason": "全部代表股必须形成结果记录。"
+        },
+        {
+          "id": "reference_matches_frozen_snapshot",
+          "passed": true,
+          "reason": "结果记录必须使用冻结触发价格，不能重新选取参考价。"
+        },
+        {
+          "id": "primary_window_due_and_complete",
+          "passed": false,
+          "reason": "全部代表股的T+3窗口必须到期并取得真实行情。"
+        },
+        {
+          "id": "chronology_before_result",
+          "passed": false,
+          "reason": "判断和触发行情必须发生在结果之前。"
+        },
+        {
+          "id": "result_source_auditable",
+          "passed": false,
+          "reason": "结果行情必须保留来源和时间。"
+        },
+        {
+          "id": "trade_date_aligned",
+          "passed": true,
+          "reason": "首次观察时间必须属于案例交易日。"
+        }
+      ],
+      "representative_count": 3,
+      "representative_result_count": 0,
+      "median_return_pct": null,
+      "signal_supported": null,
+      "result_summary": "代表股触发行情必须经过两路独立行情确认；单源记录只用于观察，不进入模型评价。"
+    },
+    {
+      "trigger_snapshot_id": "trigger_quote_snapshot_387640f967fff0196066",
+      "case_id": "decision_case_18436206dbb19702c059",
+      "trade_date": "2026-08-25",
+      "kind": "opportunity",
+      "primary_window": "T+3",
+      "evaluation_included": false,
+      "evaluation_gates": [
+        {
+          "id": "immutable_decision_and_trigger_snapshot",
+          "passed": true,
+          "reason": "原始判断与触发行情快照必须存在且哈希一致。"
+        },
+        {
+          "id": "unique_trigger_snapshot",
+          "passed": true,
+          "reason": "同一触发行情快照不能重复计入评价。"
+        },
+        {
+          "id": "auditable_trigger_reference",
+          "passed": true,
+          "reason": "代表股触发价格、行情时间和来源必须完整。"
+        },
+        {
+          "id": "dual_source_trigger_confirmation",
+          "passed": false,
+          "reason": "代表股触发行情必须经过两路独立行情确认；单源记录只用于观察，不进入模型评价。"
+        },
+        {
+          "id": "representative_quote_closure",
+          "passed": true,
+          "reason": "全部代表股必须形成结果记录。"
+        },
+        {
+          "id": "reference_matches_frozen_snapshot",
+          "passed": true,
+          "reason": "结果记录必须使用冻结触发价格，不能重新选取参考价。"
+        },
+        {
+          "id": "primary_window_due_and_complete",
+          "passed": false,
+          "reason": "全部代表股的T+3窗口必须到期并取得真实行情。"
+        },
+        {
+          "id": "chronology_before_result",
+          "passed": false,
+          "reason": "判断和触发行情必须发生在结果之前。"
+        },
+        {
+          "id": "result_source_auditable",
+          "passed": false,
+          "reason": "结果行情必须保留来源和时间。"
+        },
+        {
+          "id": "trade_date_aligned",
+          "passed": true,
+          "reason": "首次观察时间必须属于案例交易日。"
+        }
+      ],
+      "representative_count": 3,
+      "representative_result_count": 0,
+      "median_return_pct": null,
+      "signal_supported": null,
+      "result_summary": "代表股触发行情必须经过两路独立行情确认；单源记录只用于观察，不进入模型评价。"
+    },
+    {
+      "trigger_snapshot_id": "trigger_quote_snapshot_531097cfe3fed4cee8f4",
+      "case_id": "decision_case_6341bdeb29e5b84a752a",
+      "trade_date": "2026-08-25",
+      "kind": "risk",
+      "primary_window": "T+3",
+      "evaluation_included": false,
+      "evaluation_gates": [
+        {
+          "id": "immutable_decision_and_trigger_snapshot",
+          "passed": true,
+          "reason": "原始判断与触发行情快照必须存在且哈希一致。"
+        },
+        {
+          "id": "unique_trigger_snapshot",
+          "passed": true,
+          "reason": "同一触发行情快照不能重复计入评价。"
+        },
+        {
+          "id": "auditable_trigger_reference",
+          "passed": true,
+          "reason": "代表股触发价格、行情时间和来源必须完整。"
+        },
+        {
+          "id": "dual_source_trigger_confirmation",
+          "passed": false,
+          "reason": "代表股触发行情必须经过两路独立行情确认；单源记录只用于观察，不进入模型评价。"
+        },
+        {
+          "id": "representative_quote_closure",
+          "passed": true,
+          "reason": "全部代表股必须形成结果记录。"
+        },
+        {
+          "id": "reference_matches_frozen_snapshot",
+          "passed": true,
+          "reason": "结果记录必须使用冻结触发价格，不能重新选取参考价。"
+        },
+        {
+          "id": "primary_window_due_and_complete",
+          "passed": false,
+          "reason": "全部代表股的T+3窗口必须到期并取得真实行情。"
+        },
+        {
+          "id": "chronology_before_result",
+          "passed": false,
+          "reason": "判断和触发行情必须发生在结果之前。"
+        },
+        {
+          "id": "result_source_auditable",
+          "passed": false,
+          "reason": "结果行情必须保留来源和时间。"
+        },
+        {
+          "id": "trade_date_aligned",
+          "passed": true,
+          "reason": "首次观察时间必须属于案例交易日。"
+        }
+      ],
+      "representative_count": 3,
+      "representative_result_count": 0,
+      "median_return_pct": null,
+      "signal_supported": null,
+      "result_summary": "代表股触发行情必须经过两路独立行情确认；单源记录只用于观察，不进入模型评价。"
+    },
+    {
+      "trigger_snapshot_id": "trigger_quote_snapshot_d2eb1353c0c901afce68",
+      "case_id": "decision_case_6341bdeb29e5b84a752a",
+      "trade_date": "2026-08-25",
+      "kind": "risk",
+      "primary_window": "T+3",
+      "evaluation_included": false,
+      "evaluation_gates": [
+        {
+          "id": "immutable_decision_and_trigger_snapshot",
+          "passed": true,
+          "reason": "原始判断与触发行情快照必须存在且哈希一致。"
+        },
+        {
+          "id": "unique_trigger_snapshot",
+          "passed": true,
+          "reason": "同一触发行情快照不能重复计入评价。"
+        },
+        {
+          "id": "auditable_trigger_reference",
+          "passed": true,
+          "reason": "代表股触发价格、行情时间和来源必须完整。"
+        },
+        {
+          "id": "dual_source_trigger_confirmation",
+          "passed": false,
+          "reason": "代表股触发行情必须经过两路独立行情确认；单源记录只用于观察，不进入模型评价。"
+        },
+        {
+          "id": "representative_quote_closure",
+          "passed": true,
+          "reason": "全部代表股必须形成结果记录。"
+        },
+        {
+          "id": "reference_matches_frozen_snapshot",
+          "passed": true,
+          "reason": "结果记录必须使用冻结触发价格，不能重新选取参考价。"
+        },
+        {
+          "id": "primary_window_due_and_complete",
+          "passed": false,
+          "reason": "全部代表股的T+3窗口必须到期并取得真实行情。"
+        },
+        {
+          "id": "chronology_before_result",
+          "passed": false,
+          "reason": "判断和触发行情必须发生在结果之前。"
+        },
+        {
+          "id": "result_source_auditable",
+          "passed": false,
+          "reason": "结果行情必须保留来源和时间。"
+        },
+        {
+          "id": "trade_date_aligned",
+          "passed": true,
+          "reason": "首次观察时间必须属于案例交易日。"
+        }
+      ],
+      "representative_count": 3,
+      "representative_result_count": 0,
+      "median_return_pct": null,
+      "signal_supported": null,
+      "result_summary": "代表股触发行情必须经过两路独立行情确认；单源记录只用于观察，不进入模型评价。"
+    },
+    {
+      "trigger_snapshot_id": "trigger_quote_snapshot_17aac9c404d22633cc48",
+      "case_id": "decision_case_930a7c3a04e95be10fbd",
+      "trade_date": "2026-08-25",
+      "kind": "opportunity",
+      "primary_window": "T+3",
+      "evaluation_included": false,
+      "evaluation_gates": [
+        {
+          "id": "immutable_decision_and_trigger_snapshot",
+          "passed": true,
+          "reason": "原始判断与触发行情快照必须存在且哈希一致。"
+        },
+        {
+          "id": "unique_trigger_snapshot",
+          "passed": true,
+          "reason": "同一触发行情快照不能重复计入评价。"
+        },
+        {
+          "id": "auditable_trigger_reference",
+          "passed": true,
+          "reason": "代表股触发价格、行情时间和来源必须完整。"
+        },
+        {
+          "id": "dual_source_trigger_confirmation",
+          "passed": false,
+          "reason": "代表股触发行情必须经过两路独立行情确认；单源记录只用于观察，不进入模型评价。"
+        },
+        {
+          "id": "representative_quote_closure",
+          "passed": true,
+          "reason": "全部代表股必须形成结果记录。"
+        },
+        {
+          "id": "reference_matches_frozen_snapshot",
+          "passed": true,
+          "reason": "结果记录必须使用冻结触发价格，不能重新选取参考价。"
+        },
+        {
+          "id": "primary_window_due_and_complete",
+          "passed": false,
+          "reason": "全部代表股的T+3窗口必须到期并取得真实行情。"
+        },
+        {
+          "id": "chronology_before_result",
+          "passed": false,
+          "reason": "判断和触发行情必须发生在结果之前。"
+        },
+        {
+          "id": "result_source_auditable",
+          "passed": false,
+          "reason": "结果行情必须保留来源和时间。"
+        },
+        {
+          "id": "trade_date_aligned",
+          "passed": true,
+          "reason": "首次观察时间必须属于案例交易日。"
+        }
+      ],
+      "representative_count": 3,
+      "representative_result_count": 0,
+      "median_return_pct": null,
+      "signal_supported": null,
+      "result_summary": "代表股触发行情必须经过两路独立行情确认；单源记录只用于观察，不进入模型评价。"
+    },
+    {
+      "trigger_snapshot_id": "trigger_quote_snapshot_83403fe5269d72635f62",
+      "case_id": "decision_case_01c338c7c1f22ac8c08b",
+      "trade_date": "2026-08-25",
+      "kind": "opportunity",
+      "primary_window": "T+3",
+      "evaluation_included": false,
+      "evaluation_gates": [
+        {
+          "id": "immutable_decision_and_trigger_snapshot",
+          "passed": true,
+          "reason": "原始判断与触发行情快照必须存在且哈希一致。"
+        },
+        {
+          "id": "unique_trigger_snapshot",
+          "passed": true,
+          "reason": "同一触发行情快照不能重复计入评价。"
+        },
+        {
+          "id": "auditable_trigger_reference",
+          "passed": true,
+          "reason": "代表股触发价格、行情时间和来源必须完整。"
+        },
+        {
+          "id": "dual_source_trigger_confirmation",
+          "passed": false,
+          "reason": "代表股触发行情必须经过两路独立行情确认；单源记录只用于观察，不进入模型评价。"
+        },
+        {
+          "id": "representative_quote_closure",
+          "passed": true,
+          "reason": "全部代表股必须形成结果记录。"
+        },
+        {
+          "id": "reference_matches_frozen_snapshot",
+          "passed": true,
+          "reason": "结果记录必须使用冻结触发价格，不能重新选取参考价。"
+        },
+        {
+          "id": "primary_window_due_and_complete",
+          "passed": false,
+          "reason": "全部代表股的T+3窗口必须到期并取得真实行情。"
+        },
+        {
+          "id": "chronology_before_result",
+          "passed": false,
+          "reason": "判断和触发行情必须发生在结果之前。"
+        },
+        {
+          "id": "result_source_auditable",
+          "passed": false,
+          "reason": "结果行情必须保留来源和时间。"
+        },
+        {
+          "id": "trade_date_aligned",
+          "passed": true,
+          "reason": "首次观察时间必须属于案例交易日。"
+        }
+      ],
+      "representative_count": 5,
+      "representative_result_count": 0,
+      "median_return_pct": null,
+      "signal_supported": null,
+      "result_summary": "代表股触发行情必须经过两路独立行情确认；单源记录只用于观察，不进入模型评价。"
+    },
+    {
+      "trigger_snapshot_id": "trigger_quote_snapshot_e097f0d91a41407a1d80",
+      "case_id": "decision_case_e4ebbb3ccff26011d64d",
+      "trade_date": "2026-08-25",
+      "kind": "risk",
+      "primary_window": "T+3",
+      "evaluation_included": false,
+      "evaluation_gates": [
+        {
+          "id": "immutable_decision_and_trigger_snapshot",
+          "passed": true,
+          "reason": "原始判断与触发行情快照必须存在且哈希一致。"
+        },
+        {
+          "id": "unique_trigger_snapshot",
+          "passed": true,
+          "reason": "同一触发行情快照不能重复计入评价。"
+        },
+        {
+          "id": "auditable_trigger_reference",
+          "passed": true,
+          "reason": "代表股触发价格、行情时间和来源必须完整。"
+        },
+        {
+          "id": "dual_source_trigger_confirmation",
+          "passed": false,
+          "reason": "代表股触发行情必须经过两路独立行情确认；单源记录只用于观察，不进入模型评价。"
+        },
+        {
+          "id": "representative_quote_closure",
+          "passed": true,
+          "reason": "全部代表股必须形成结果记录。"
+        },
+        {
+          "id": "reference_matches_frozen_snapshot",
+          "passed": true,
+          "reason": "结果记录必须使用冻结触发价格，不能重新选取参考价。"
+        },
+        {
+          "id": "primary_window_due_and_complete",
+          "passed": false,
+          "reason": "全部代表股的T+3窗口必须到期并取得真实行情。"
+        },
+        {
+          "id": "chronology_before_result",
+          "passed": false,
+          "reason": "判断和触发行情必须发生在结果之前。"
+        },
+        {
+          "id": "result_source_auditable",
+          "passed": false,
+          "reason": "结果行情必须保留来源和时间。"
+        },
+        {
+          "id": "trade_date_aligned",
+          "passed": true,
+          "reason": "首次观察时间必须属于案例交易日。"
+        }
+      ],
+      "representative_count": 3,
+      "representative_result_count": 0,
+      "median_return_pct": null,
+      "signal_supported": null,
+      "result_summary": "代表股触发行情必须经过两路独立行情确认；单源记录只用于观察，不进入模型评价。"
+    },
+    {
+      "trigger_snapshot_id": "trigger_quote_snapshot_e53661c15e52b90a27fc",
+      "case_id": "decision_case_f5904bbb994588175629",
+      "trade_date": "2026-08-25",
+      "kind": "opportunity",
+      "primary_window": "T+3",
+      "evaluation_included": false,
+      "evaluation_gates": [
+        {
+          "id": "immutable_decision_and_trigger_snapshot",
+          "passed": true,
+          "reason": "原始判断与触发行情快照必须存在且哈希一致。"
+        },
+        {
+          "id": "unique_trigger_snapshot",
+          "passed": true,
+          "reason": "同一触发行情快照不能重复计入评价。"
+        },
+        {
+          "id": "auditable_trigger_reference",
+          "passed": true,
+          "reason": "代表股触发价格、行情时间和来源必须完整。"
+        },
+        {
+          "id": "dual_source_trigger_confirmation",
+          "passed": false,
+          "reason": "代表股触发行情必须经过两路独立行情确认；单源记录只用于观察，不进入模型评价。"
+        },
+        {
+          "id": "representative_quote_closure",
+          "passed": true,
+          "reason": "全部代表股必须形成结果记录。"
+        },
+        {
+          "id": "reference_matches_frozen_snapshot",
+          "passed": true,
+          "reason": "结果记录必须使用冻结触发价格，不能重新选取参考价。"
+        },
+        {
+          "id": "primary_window_due_and_complete",
+          "passed": false,
+          "reason": "全部代表股的T+3窗口必须到期并取得真实行情。"
+        },
+        {
+          "id": "chronology_before_result",
+          "passed": false,
+          "reason": "判断和触发行情必须发生在结果之前。"
+        },
+        {
+          "id": "result_source_auditable",
+          "passed": false,
+          "reason": "结果行情必须保留来源和时间。"
+        },
+        {
+          "id": "trade_date_aligned",
+          "passed": true,
+          "reason": "首次观察时间必须属于案例交易日。"
+        }
+      ],
+      "representative_count": 5,
+      "representative_result_count": 0,
+      "median_return_pct": null,
+      "signal_supported": null,
+      "result_summary": "代表股触发行情必须经过两路独立行情确认；单源记录只用于观察，不进入模型评价。"
+    },
+    {
+      "trigger_snapshot_id": "trigger_quote_snapshot_f164fa807755c306ae6a",
+      "case_id": "decision_case_b4eca4c0c0fc7ce24209",
+      "trade_date": "2026-08-25",
+      "kind": "opportunity",
+      "primary_window": "T+3",
+      "evaluation_included": false,
+      "evaluation_gates": [
+        {
+          "id": "immutable_decision_and_trigger_snapshot",
+          "passed": true,
+          "reason": "原始判断与触发行情快照必须存在且哈希一致。"
+        },
+        {
+          "id": "unique_trigger_snapshot",
+          "passed": true,
+          "reason": "同一触发行情快照不能重复计入评价。"
+        },
+        {
+          "id": "auditable_trigger_reference",
+          "passed": true,
+          "reason": "代表股触发价格、行情时间和来源必须完整。"
+        },
+        {
+          "id": "dual_source_trigger_confirmation",
+          "passed": false,
+          "reason": "代表股触发行情必须经过两路独立行情确认；单源记录只用于观察，不进入模型评价。"
+        },
+        {
+          "id": "representative_quote_closure",
+          "passed": true,
+          "reason": "全部代表股必须形成结果记录。"
+        },
+        {
+          "id": "reference_matches_frozen_snapshot",
+          "passed": true,
+          "reason": "结果记录必须使用冻结触发价格，不能重新选取参考价。"
+        },
+        {
+          "id": "primary_window_due_and_complete",
+          "passed": false,
+          "reason": "全部代表股的T+3窗口必须到期并取得真实行情。"
+        },
+        {
+          "id": "chronology_before_result",
+          "passed": false,
+          "reason": "判断和触发行情必须发生在结果之前。"
+        },
+        {
+          "id": "result_source_auditable",
+          "passed": false,
+          "reason": "结果行情必须保留来源和时间。"
+        },
+        {
+          "id": "trade_date_aligned",
+          "passed": true,
+          "reason": "首次观察时间必须属于案例交易日。"
+        }
+      ],
+      "representative_count": 4,
+      "representative_result_count": 0,
+      "median_return_pct": null,
+      "signal_supported": null,
+      "result_summary": "代表股触发行情必须经过两路独立行情确认；单源记录只用于观察，不进入模型评价。"
+    },
+    {
+      "trigger_snapshot_id": "trigger_quote_snapshot_f6738ae5d9c9d17cca96",
+      "case_id": "decision_case_b3eaed529d092cfb5637",
+      "trade_date": "2026-08-25",
+      "kind": "opportunity",
+      "primary_window": "T+3",
+      "evaluation_included": false,
+      "evaluation_gates": [
+        {
+          "id": "immutable_decision_and_trigger_snapshot",
+          "passed": true,
+          "reason": "原始判断与触发行情快照必须存在且哈希一致。"
+        },
+        {
+          "id": "unique_trigger_snapshot",
+          "passed": true,
+          "reason": "同一触发行情快照不能重复计入评价。"
+        },
+        {
+          "id": "auditable_trigger_reference",
+          "passed": true,
+          "reason": "代表股触发价格、行情时间和来源必须完整。"
+        },
+        {
+          "id": "dual_source_trigger_confirmation",
+          "passed": false,
+          "reason": "代表股触发行情必须经过两路独立行情确认；单源记录只用于观察，不进入模型评价。"
+        },
+        {
+          "id": "representative_quote_closure",
+          "passed": true,
+          "reason": "全部代表股必须形成结果记录。"
+        },
+        {
+          "id": "reference_matches_frozen_snapshot",
+          "passed": true,
+          "reason": "结果记录必须使用冻结触发价格，不能重新选取参考价。"
+        },
+        {
+          "id": "primary_window_due_and_complete",
+          "passed": false,
+          "reason": "全部代表股的T+3窗口必须到期并取得真实行情。"
+        },
+        {
+          "id": "chronology_before_result",
+          "passed": false,
+          "reason": "判断和触发行情必须发生在结果之前。"
+        },
+        {
+          "id": "result_source_auditable",
+          "passed": false,
+          "reason": "结果行情必须保留来源和时间。"
+        },
+        {
+          "id": "trade_date_aligned",
+          "passed": true,
+          "reason": "首次观察时间必须属于案例交易日。"
+        }
+      ],
+      "representative_count": 5,
+      "representative_result_count": 0,
+      "median_return_pct": null,
+      "signal_supported": null,
+      "result_summary": "代表股触发行情必须经过两路独立行情确认；单源记录只用于观察，不进入模型评价。"
+    },
+    {
       "trigger_snapshot_id": null,
-      "case_id": "decision_case_d6ed8bbaf1ef9221ac21",
-      "trade_date": "2026-08-24",
+      "case_id": "decision_case_3f2c2c57aa37ed431a17",
+      "trade_date": "2026-08-25",
       "kind": "opportunity",
       "primary_window": "T+3",
       "evaluation_included": false,
       "evaluation_gates": [],
-      "representative_count": 2,
+      "representative_count": 3,
       "representative_result_count": 0,
       "median_return_pct": null,
       "signal_supported": null,
@@ -74720,9 +79075,9 @@
     },
     {
       "trigger_snapshot_id": null,
-      "case_id": "decision_case_82205fcc8b134d3eb243",
-      "trade_date": "2026-08-24",
-      "kind": "opportunity",
+      "case_id": "decision_case_d825fb31ca71f83ebf42",
+      "trade_date": "2026-08-25",
+      "kind": "risk",
       "primary_window": "T+3",
       "evaluation_included": false,
       "evaluation_gates": [],
@@ -74735,8 +79090,8 @@
     {
       "trigger_snapshot_id": null,
       "case_id": "decision_case_cf8dd698497f466a886b",
-      "trade_date": "2026-08-24",
-      "kind": "opportunity",
+      "trade_date": "2026-08-25",
+      "kind": "risk",
       "primary_window": "T+3",
       "evaluation_included": false,
       "evaluation_gates": [],
@@ -74749,8 +79104,8 @@
     {
       "trigger_snapshot_id": null,
       "case_id": "decision_case_cf795dc5a79a1b57b346",
-      "trade_date": "2026-08-24",
-      "kind": "opportunity",
+      "trade_date": "2026-08-25",
+      "kind": "risk",
       "primary_window": "T+3",
       "evaluation_included": false,
       "evaluation_gates": [],
@@ -74763,22 +79118,8 @@
     {
       "trigger_snapshot_id": null,
       "case_id": "decision_case_c95bfded59df60d52d5c",
-      "trade_date": "2026-08-24",
+      "trade_date": "2026-08-25",
       "kind": "risk",
-      "primary_window": "T+3",
-      "evaluation_included": false,
-      "evaluation_gates": [],
-      "representative_count": 3,
-      "representative_result_count": 0,
-      "median_return_pct": null,
-      "signal_supported": null,
-      "result_summary": "历史或当前案例没有同交易日、近触发时点的行情快照，不进入评价。"
-    },
-    {
-      "trigger_snapshot_id": null,
-      "case_id": "decision_case_b7b41142ca4dfb4851c6",
-      "trade_date": "2026-08-24",
-      "kind": "opportunity",
       "primary_window": "T+3",
       "evaluation_included": false,
       "evaluation_gates": [],
@@ -74791,21 +79132,7 @@
     {
       "trigger_snapshot_id": null,
       "case_id": "decision_case_a3b11a2cb20f89dccd6c",
-      "trade_date": "2026-08-24",
-      "kind": "risk",
-      "primary_window": "T+3",
-      "evaluation_included": false,
-      "evaluation_gates": [],
-      "representative_count": 3,
-      "representative_result_count": 0,
-      "median_return_pct": null,
-      "signal_supported": null,
-      "result_summary": "历史或当前案例没有同交易日、近触发时点的行情快照，不进入评价。"
-    },
-    {
-      "trigger_snapshot_id": null,
-      "case_id": "decision_case_759db13a57d7c7cf04c9",
-      "trade_date": "2026-08-24",
+      "trade_date": "2026-08-25",
       "kind": "opportunity",
       "primary_window": "T+3",
       "evaluation_included": false,
@@ -74818,8 +79145,22 @@
     },
     {
       "trigger_snapshot_id": null,
-      "case_id": "decision_case_4d1654d1aa209042084a",
-      "trade_date": "2026-08-24",
+      "case_id": "decision_case_8d5000d142b5eae79244",
+      "trade_date": "2026-08-25",
+      "kind": "risk",
+      "primary_window": "T+3",
+      "evaluation_included": false,
+      "evaluation_gates": [],
+      "representative_count": 3,
+      "representative_result_count": 0,
+      "median_return_pct": null,
+      "signal_supported": null,
+      "result_summary": "历史或当前案例没有同交易日、近触发时点的行情快照，不进入评价。"
+    },
+    {
+      "trigger_snapshot_id": null,
+      "case_id": "decision_case_82205fcc8b134d3eb243",
+      "trade_date": "2026-08-25",
       "kind": "risk",
       "primary_window": "T+3",
       "evaluation_included": false,
@@ -74833,21 +79174,7 @@
     {
       "trigger_snapshot_id": null,
       "case_id": "decision_case_4ad3ca0b50762eaf62dd",
-      "trade_date": "2026-08-24",
-      "kind": "risk",
-      "primary_window": "T+3",
-      "evaluation_included": false,
-      "evaluation_gates": [],
-      "representative_count": 3,
-      "representative_result_count": 0,
-      "median_return_pct": null,
-      "signal_supported": null,
-      "result_summary": "历史或当前案例没有同交易日、近触发时点的行情快照，不进入评价。"
-    },
-    {
-      "trigger_snapshot_id": null,
-      "case_id": "decision_case_4234081d38da842e84d7",
-      "trade_date": "2026-08-24",
+      "trade_date": "2026-08-25",
       "kind": "opportunity",
       "primary_window": "T+3",
       "evaluation_included": false,
@@ -74860,8 +79187,8 @@
     },
     {
       "trigger_snapshot_id": null,
-      "case_id": "decision_case_39cdef94e37c5082f35a",
-      "trade_date": "2026-08-24",
+      "case_id": "decision_case_313a44a6e524d36f4ada",
+      "trade_date": "2026-08-25",
       "kind": "risk",
       "primary_window": "T+3",
       "evaluation_included": false,
@@ -74874,8 +79201,8 @@
     },
     {
       "trigger_snapshot_id": null,
-      "case_id": "decision_case_313a44a6e524d36f4ada",
-      "trade_date": "2026-08-24",
+      "case_id": "decision_case_1db2619e7e6b6cd9375a",
+      "trade_date": "2026-08-25",
       "kind": "risk",
       "primary_window": "T+3",
       "evaluation_included": false,
@@ -74889,7 +79216,7 @@
     {
       "trigger_snapshot_id": null,
       "case_id": "decision_case_041e189f193c7c38f55f",
-      "trade_date": "2026-08-24",
+      "trade_date": "2026-08-25",
       "kind": "risk",
       "primary_window": "T+3",
       "evaluation_included": false,
@@ -74902,8 +79229,50 @@
     },
     {
       "trigger_snapshot_id": null,
-      "case_id": "decision_case_757189ae20e7d676f418",
-      "trade_date": "2026-08-24",
+      "case_id": "decision_case_d6ed8bbaf1ef9221ac21",
+      "trade_date": "2026-08-25",
+      "kind": "opportunity",
+      "primary_window": "T+3",
+      "evaluation_included": false,
+      "evaluation_gates": [],
+      "representative_count": 2,
+      "representative_result_count": 0,
+      "median_return_pct": null,
+      "signal_supported": null,
+      "result_summary": "历史或当前案例没有同交易日、近触发时点的行情快照，不进入评价。"
+    },
+    {
+      "trigger_snapshot_id": null,
+      "case_id": "decision_case_b7b41142ca4dfb4851c6",
+      "trade_date": "2026-08-25",
+      "kind": "opportunity",
+      "primary_window": "T+3",
+      "evaluation_included": false,
+      "evaluation_gates": [],
+      "representative_count": 3,
+      "representative_result_count": 0,
+      "median_return_pct": null,
+      "signal_supported": null,
+      "result_summary": "历史或当前案例没有同交易日、近触发时点的行情快照，不进入评价。"
+    },
+    {
+      "trigger_snapshot_id": null,
+      "case_id": "decision_case_4d1654d1aa209042084a",
+      "trade_date": "2026-08-25",
+      "kind": "opportunity",
+      "primary_window": "T+3",
+      "evaluation_included": false,
+      "evaluation_gates": [],
+      "representative_count": 3,
+      "representative_result_count": 0,
+      "median_return_pct": null,
+      "signal_supported": null,
+      "result_summary": "历史或当前案例没有同交易日、近触发时点的行情快照，不进入评价。"
+    },
+    {
+      "trigger_snapshot_id": null,
+      "case_id": "decision_case_39cdef94e37c5082f35a",
+      "trade_date": "2026-08-25",
       "kind": "risk",
       "primary_window": "T+3",
       "evaluation_included": false,
@@ -74912,12 +79281,54 @@
       "representative_result_count": 0,
       "median_return_pct": null,
       "signal_supported": null,
+      "result_summary": "历史或当前案例没有同交易日、近触发时点的行情快照，不进入评价。"
+    },
+    {
+      "trigger_snapshot_id": null,
+      "case_id": "decision_case_bf80d78aef8dff3d35a3",
+      "trade_date": "2026-08-25",
+      "kind": "opportunity",
+      "primary_window": "T+3",
+      "evaluation_included": false,
+      "evaluation_gates": [],
+      "representative_count": 0,
+      "representative_result_count": 0,
+      "median_return_pct": null,
+      "signal_supported": null,
+      "result_summary": "等待首次触发行情快照与到期结果。"
+    },
+    {
+      "trigger_snapshot_id": null,
+      "case_id": "decision_case_988f53faeb9cc2d20425",
+      "trade_date": "2026-08-25",
+      "kind": "opportunity",
+      "primary_window": "T+3",
+      "evaluation_included": false,
+      "evaluation_gates": [],
+      "representative_count": 0,
+      "representative_result_count": 0,
+      "median_return_pct": null,
+      "signal_supported": null,
+      "result_summary": "等待首次触发行情快照与到期结果。"
+    },
+    {
+      "trigger_snapshot_id": null,
+      "case_id": "decision_case_ffc42f7be2ba34096ea0",
+      "trade_date": "2026-08-25",
+      "kind": "opportunity",
+      "primary_window": "T+3",
+      "evaluation_included": false,
+      "evaluation_gates": [],
+      "representative_count": 0,
+      "representative_result_count": 0,
+      "median_return_pct": null,
+      "signal_supported": null,
       "result_summary": "等待首次触发行情快照与到期结果。"
     },
     {
       "trigger_snapshot_id": null,
       "case_id": "decision_case_fe53dc6facf8f6651727",
-      "trade_date": "2026-08-24",
+      "trade_date": "2026-08-25",
       "kind": "opportunity",
       "primary_window": "T+3",
       "evaluation_included": false,
@@ -74930,22 +79341,8 @@
     },
     {
       "trigger_snapshot_id": null,
-      "case_id": "decision_case_ec20a187d7ff66a49d67",
-      "trade_date": "2026-08-24",
-      "kind": "opportunity",
-      "primary_window": "T+3",
-      "evaluation_included": false,
-      "evaluation_gates": [],
-      "representative_count": 0,
-      "representative_result_count": 0,
-      "median_return_pct": null,
-      "signal_supported": null,
-      "result_summary": "等待首次触发行情快照与到期结果。"
-    },
-    {
-      "trigger_snapshot_id": null,
-      "case_id": "decision_case_d9850fca18ed150b10d7",
-      "trade_date": "2026-08-24",
+      "case_id": "decision_case_f4aac7718bbdafe573cc",
+      "trade_date": "2026-08-25",
       "kind": "opportunity",
       "primary_window": "T+3",
       "evaluation_included": false,
@@ -74959,7 +79356,7 @@
     {
       "trigger_snapshot_id": null,
       "case_id": "decision_case_d5fa46f316961150fefb",
-      "trade_date": "2026-08-24",
+      "trade_date": "2026-08-25",
       "kind": "opportunity",
       "primary_window": "T+3",
       "evaluation_included": false,
@@ -74972,50 +79369,8 @@
     },
     {
       "trigger_snapshot_id": null,
-      "case_id": "decision_case_d2cd3532a2eb496f1967",
-      "trade_date": "2026-08-24",
-      "kind": "opportunity",
-      "primary_window": "T+3",
-      "evaluation_included": false,
-      "evaluation_gates": [],
-      "representative_count": 0,
-      "representative_result_count": 0,
-      "median_return_pct": null,
-      "signal_supported": null,
-      "result_summary": "等待首次触发行情快照与到期结果。"
-    },
-    {
-      "trigger_snapshot_id": null,
-      "case_id": "decision_case_d1c386f2e4badfa3d52f",
-      "trade_date": "2026-08-24",
-      "kind": "opportunity",
-      "primary_window": "T+3",
-      "evaluation_included": false,
-      "evaluation_gates": [],
-      "representative_count": 0,
-      "representative_result_count": 0,
-      "median_return_pct": null,
-      "signal_supported": null,
-      "result_summary": "等待首次触发行情快照与到期结果。"
-    },
-    {
-      "trigger_snapshot_id": null,
-      "case_id": "decision_case_d16d5bb4795e1608e8be",
-      "trade_date": "2026-08-24",
-      "kind": "opportunity",
-      "primary_window": "T+3",
-      "evaluation_included": false,
-      "evaluation_gates": [],
-      "representative_count": 0,
-      "representative_result_count": 0,
-      "median_return_pct": null,
-      "signal_supported": null,
-      "result_summary": "等待首次触发行情快照与到期结果。"
-    },
-    {
-      "trigger_snapshot_id": null,
-      "case_id": "decision_case_cba1148f9fa8f410913f",
-      "trade_date": "2026-08-24",
+      "case_id": "decision_case_adeb5047b2da567f6041",
+      "trade_date": "2026-08-25",
       "kind": "opportunity",
       "primary_window": "T+3",
       "evaluation_included": false,
@@ -75029,7 +79384,7 @@
     {
       "trigger_snapshot_id": null,
       "case_id": "decision_case_a9833502d5b29d81e7c7",
-      "trade_date": "2026-08-24",
+      "trade_date": "2026-08-25",
       "kind": "opportunity",
       "primary_window": "T+3",
       "evaluation_included": false,
@@ -75042,8 +79397,8 @@
     },
     {
       "trigger_snapshot_id": null,
-      "case_id": "decision_case_963094dd27eb9f0eeb87",
-      "trade_date": "2026-08-24",
+      "case_id": "decision_case_951f9025b969c63b420e",
+      "trade_date": "2026-08-25",
       "kind": "opportunity",
       "primary_window": "T+3",
       "evaluation_included": false,
@@ -75056,8 +79411,8 @@
     },
     {
       "trigger_snapshot_id": null,
-      "case_id": "decision_case_7b31c026604e71628f8c",
-      "trade_date": "2026-08-24",
+      "case_id": "decision_case_675a4f0e9dcbb419fc3a",
+      "trade_date": "2026-08-25",
       "kind": "opportunity",
       "primary_window": "T+3",
       "evaluation_included": false,
@@ -75070,8 +79425,8 @@
     },
     {
       "trigger_snapshot_id": null,
-      "case_id": "decision_case_678252d6e5a0b6ed2e8b",
-      "trade_date": "2026-08-24",
+      "case_id": "decision_case_5519011b5d8e41affb5e",
+      "trade_date": "2026-08-25",
       "kind": "opportunity",
       "primary_window": "T+3",
       "evaluation_included": false,
@@ -75085,7 +79440,7 @@
     {
       "trigger_snapshot_id": null,
       "case_id": "decision_case_41598ff1e8a28a8d72ea",
-      "trade_date": "2026-08-24",
+      "trade_date": "2026-08-25",
       "kind": "opportunity",
       "primary_window": "T+3",
       "evaluation_included": false,
@@ -75098,8 +79453,8 @@
     },
     {
       "trigger_snapshot_id": null,
-      "case_id": "decision_case_36a7095f131ead1771d2",
-      "trade_date": "2026-08-24",
+      "case_id": "decision_case_404183a55ae4dc0ed494",
+      "trade_date": "2026-08-25",
       "kind": "opportunity",
       "primary_window": "T+3",
       "evaluation_included": false,
@@ -75112,8 +79467,22 @@
     },
     {
       "trigger_snapshot_id": null,
-      "case_id": "decision_case_2713aad3808154543744",
-      "trade_date": "2026-08-24",
+      "case_id": "decision_case_3b419a4a0ee6cba04590",
+      "trade_date": "2026-08-25",
+      "kind": "opportunity",
+      "primary_window": "T+3",
+      "evaluation_included": false,
+      "evaluation_gates": [],
+      "representative_count": 0,
+      "representative_result_count": 0,
+      "median_return_pct": null,
+      "signal_supported": null,
+      "result_summary": "等待首次触发行情快照与到期结果。"
+    },
+    {
+      "trigger_snapshot_id": null,
+      "case_id": "decision_case_290c38176d5dff6bdd76",
+      "trade_date": "2026-08-25",
       "kind": "opportunity",
       "primary_window": "T+3",
       "evaluation_included": false,
@@ -75127,7 +79496,7 @@
     {
       "trigger_snapshot_id": null,
       "case_id": "decision_case_22994b88563bf9d64639",
-      "trade_date": "2026-08-24",
+      "trade_date": "2026-08-25",
       "kind": "opportunity",
       "primary_window": "T+3",
       "evaluation_included": false,
