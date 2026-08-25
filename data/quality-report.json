@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-08-25T09:34:46+08:00",
+  "timestamp": "2026-08-25T09:36:37+08:00",
   "current_signal_date": "2026-08-25",
   "status": "degraded",
   "summary": "发现 149 个降级/需复核项（142 个价格/行情复核，8 个背景复核），核心结论可看但必须按影响分层使用。",
@@ -96,15 +96,6 @@
     },
     {
       "severity": "warning",
-      "file": "source-health.json",
-      "path": "",
-      "code": "stale_timestamp",
-      "message": "时间戳不是当前交易日：2026-08-21T14:20:59+08:00",
-      "impact_level": "price_review",
-      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
-    },
-    {
-      "severity": "warning",
       "file": "topics.json",
       "path": "",
       "code": "stale_timestamp",
@@ -172,6 +163,15 @@
       "path": "",
       "code": "source_failed",
       "message": "stooq_quote_csv: Stooq CSV多次返回页面不存在或SSL EOF，未采用其数据。",
+      "impact_level": "price_review",
+      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
+    },
+    {
+      "severity": "warning",
+      "file": "source-health.json",
+      "path": "",
+      "code": "source_degraded",
+      "message": "akshare_a_spot_watch_decode: 09:35:07、09:35:36、09:36:05 连续三轮未取得有效行情，AkShare 返回HTML并触发解码失败；监控进程仍存活且日志持续更新。",
       "impact_level": "price_review",
       "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
     },
@@ -1383,8 +1383,8 @@
       "impact_level": "price_review",
       "label": "二次行情复核",
       "file": "source-health.json",
-      "code": "stale_timestamp",
-      "problem": "时间戳不是当前交易日：2026-08-21T14:20:59+08:00",
+      "code": "source_degraded",
+      "problem": "A股补充行情源解码异常，盘中异动和个股涨跌幅需以已审计源复核。",
       "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核",
       "next_step": "用第二行情源复核涨跌幅、quote_time 和代表股方向；未确认前只做验证。",
       "unblock_condition": "price_review=0 或相关来源标记 trusted/cross verified。"

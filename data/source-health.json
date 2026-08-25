@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-08-21T14:20:59+08:00",
+  "timestamp": "2026-08-25T09:36:07+08:00",
   "sources": {
     "tencent_http": {
       "status": "ok",
@@ -159,15 +159,15 @@
       "errors": []
     },
     "akshare_a_spot_watch_decode": {
-      "status": "degraded_recovered",
+      "status": "degraded",
       "usage": "盘中观察池与题材短周期刷新",
-      "checked_at": "2026-08-12T10:10:00+08:00",
+      "checked_at": "2026-08-25T09:36:07+08:00",
       "sample_count": 0,
       "errors": [
-        "No value to decode"
+        "Can not decode value starting with character \"<\""
       ],
-      "detail": "10:04后日志停止更新超过5分钟；10:09确认行情源空返回。已重启监控子进程，日志恢复更新；本轮未生成或编造异动提醒。",
-      "action": "保持降级观察并等待后续刷新取得有效行情；恢复前不将日内涨幅或旧快照当作短周期异动证据。"
+      "detail": "09:35:07、09:35:36、09:36:05 连续三轮未取得有效行情，AkShare 返回HTML并触发解码失败；监控进程仍存活且日志持续更新。",
+      "action": "保留上一版alert.json，不生成候选或确认提醒；等待下一轮实时行情恢复后再按短周期门禁判断。"
     },
     "eastmoney_limit_pool_intraday_0930": {
       "status": "ok",
