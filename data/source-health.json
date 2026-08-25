@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-08-25T09:57:12+08:00",
+  "timestamp": "2026-08-25T10:01:15+08:00",
   "sources": {
     "tencent_http": {
       "status": "ok",
@@ -159,17 +159,18 @@
       "errors": []
     },
     "akshare_a_spot_watch_decode": {
-      "status": "degraded",
+      "status": "degraded_recovered_partial",
       "usage": "盘中观察池与题材短周期刷新",
-      "checked_at": "2026-08-25T09:56:51+08:00",
-      "sample_count": 11,
+      "checked_at": "2026-08-25T09:59:11+08:00",
+      "sample_count": 3,
       "errors": [
-        "Can not decode value starting with character \"<\""
+        "09:35:07至09:57:49累计三十四轮AkShare解码失败",
+        "cross_source_verified=false"
       ],
-      "detail": "09:35:07至09:56:51累计三十二轮解码失败；09:40:36仅间歇取得一批有效本地快照，随后持续失败。监控进程仍存活且日志持续更新。",
-      "action": "保留09:40:36历史风险触发，不生成新的candidate或confirmed；等待腾讯或通达信第二源及AkShare连续稳定恢复。",
-      "failure_count": 32,
-      "last_valid_batch_at": "2026-08-25T09:40:36+08:00"
+      "detail": "连续解码失败后，09:59:11取得一批有效本地快照，生成覆铜板、液冷和8192超节点/昇腾算力三条结构化上涨候选；当前仅确认单批恢复，尚未证明行情源连续稳定。",
+      "action": "三条提醒保持candidate并前台标记待确认；等待腾讯或通达信第二源以及后续连续有效快照，不升级confirmed。",
+      "failure_count": 34,
+      "last_valid_batch_at": "2026-08-25T09:59:11+08:00"
     },
     "eastmoney_limit_pool_intraday_0930": {
       "status": "ok",
@@ -6971,6 +6972,27 @@
         "no auditable limit-down count"
       ],
       "action": "正式风险提醒照常报告；看板只保留待确认/历史风险触发，等待第二源和连续快照确认。"
+    },
+    "monitor_formal_alert_20260825_095911": {
+      "status": "degraded_partial",
+      "checked_at": "2026-08-25T10:01:15+08:00",
+      "trigger_time": "2026-08-25T09:59:11+08:00",
+      "latest_trigger_time": "09:59:11",
+      "alert_count": 3,
+      "theme_count": 3,
+      "sectors": [
+        "覆铜板",
+        "液冷",
+        "8192超节点/昇腾算力"
+      ],
+      "detail": "09:59:11新增三条小登上涨提醒；覆铜板和超节点属于观察性拉动，液冷为上涨攻势。三者均进入data/signals.jsonl并达到本地单源opportunity candidate门槛，但缺少第二源核验。",
+      "notified_at": "2026-08-25T10:01:15+08:00",
+      "errors": [
+        "cross_source_verified=false",
+        "AkShare仅单批恢复",
+        "当日盘前科技催化缺失"
+      ],
+      "action": "正式提醒照常报告；看板标记待确认，观察5分钟内龙头高位维持与后排继续扩散。"
     }
   },
   "last_publish_attempt": "pending_20260717_0830_premarket_publish",
