@@ -1,8 +1,8 @@
 {
-  "timestamp": "2026-08-25T13:07:55+08:00",
+  "timestamp": "2026-08-25T13:12:33+08:00",
   "current_signal_date": "2026-08-25",
   "status": "degraded",
-  "summary": "发现 145 个降级/需复核项（142 个价格/行情复核，4 个背景复核），核心结论可看但必须按影响分层使用。",
+  "summary": "发现 147 个降级/需复核项（144 个价格/行情复核，4 个背景复核），核心结论可看但必须按影响分层使用。",
   "issues": [
     {
       "severity": "warning",
@@ -64,6 +64,24 @@
       "path": "",
       "code": "historical_alert_without_trusted_source",
       "message": "盘中异动缺少可信源证明；当前阶段只降权参考，不阻断整站发布",
+      "impact_level": "price_review",
+      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
+    },
+    {
+      "severity": "warning",
+      "file": "alert.json",
+      "path": "quote_audit.sanity_checks",
+      "code": "alert_quote_audit_mismatch",
+      "message": "quote_audit 最大涨跌幅 4.0509 小于实际 leaders 最大值 4.8037",
+      "impact_level": "price_review",
+      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
+    },
+    {
+      "severity": "warning",
+      "file": "alert.json",
+      "path": "quote_audit.sanity_checks",
+      "code": "alert_quote_audit_mismatch",
+      "message": "quote_audit 样本数小于 alerts 数量",
       "impact_level": "price_review",
       "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
     },
@@ -144,7 +162,7 @@
       "file": "source-health.json",
       "path": "",
       "code": "source_degraded",
-      "message": "akshare_a_spot_watch_decode: 数据源间歇短暂恢复但未形成正式提醒，午后开盘后持续解码失败，最近一次为13:07:41；监控进程仍存活且日志持续更新。",
+      "message": "akshare_a_spot_watch_decode: 行情源在13:09:24短暂恢复并产生两条正式提醒，随后再次解码失败，最近一次为13:12:12；监控进程仍存活且日志持续更新。",
       "impact_level": "price_review",
       "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
     },
@@ -1389,10 +1407,10 @@
   ],
   "counts": {
     "critical": 0,
-    "warning": 145,
+    "warning": 147,
     "info": 1,
     "blocking": 0,
-    "price_review": 142,
+    "price_review": 144,
     "signal_review": 0,
     "background_review": 4
   },

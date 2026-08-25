@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-08-25T13:07:55+08:00",
+  "timestamp": "2026-08-25T13:12:32+08:00",
   "sources": {
     "tencent_http": {
       "status": "ok",
@@ -161,17 +161,17 @@
     "akshare_a_spot_watch_decode": {
       "status": "degraded",
       "usage": "盘中观察池与题材短周期刷新",
-      "checked_at": "2026-08-25T13:07:41+08:00",
-      "sample_count": 3,
+      "checked_at": "2026-08-25T13:12:12+08:00",
+      "sample_count": 2,
       "errors": [
-        "09:35:07至13:07:41累计359轮AkShare解码失败",
-        "期间歇出现无正式提醒的有效快照，随后继续失败",
+        "09:35:07至13:12:12累计367轮AkShare解码失败",
+        "13:09:24曾单批恢复并产生两条正式提醒，随后再次失败",
         "cross_source_verified=false"
       ],
-      "detail": "数据源间歇短暂恢复但未形成正式提醒，午后开盘后持续解码失败，最近一次为13:07:41；监控进程仍存活且日志持续更新。",
-      "action": "不生成新的candidate或confirmed；保留上一版alert.json，等待腾讯或通达信第二源及AkShare连续稳定恢复。",
-      "failure_count": 359,
-      "last_valid_batch_at": "2026-08-25T09:59:11+08:00"
+      "detail": "行情源在13:09:24短暂恢复并产生两条正式提醒，随后再次解码失败，最近一次为13:12:12；监控进程仍存活且日志持续更新。",
+      "action": "两条正式提醒已按证据门禁写入并标记invalidated；不生成candidate或confirmed，等待腾讯或通达信第二源及AkShare连续稳定恢复。",
+      "failure_count": 367,
+      "last_valid_batch_at": "2026-08-25T13:09:24+08:00"
     },
     "eastmoney_limit_pool_intraday_0930": {
       "status": "ok",
@@ -6994,6 +6994,27 @@
         "当日盘前科技催化缺失"
       ],
       "action": "正式提醒照常报告；看板标记待确认，观察5分钟内龙头高位维持与后排继续扩散。"
+    },
+    "monitor_formal_alert_20260825_130924": {
+      "status": "invalidated",
+      "checked_at": "2026-08-25T13:12:32+08:00",
+      "trigger_time": "2026-08-25T13:09:24+08:00",
+      "latest_trigger_time": "13:09:24",
+      "alert_count": 2,
+      "theme_count": 2,
+      "sectors": [
+        "液冷",
+        "8192超节点/昇腾算力"
+      ],
+      "detail": "13:09:24新增两条小登上涨提醒；液冷价格与宽度较强，超节点为观察拉动，但两者成交放大均仅1.00x，且至少2只涨停结构不可审计，因此证据门禁拦截candidate与confirmed。",
+      "notified_at": "2026-08-25T13:12:32+08:00",
+      "errors": [
+        "cross_source_verified=false",
+        "volume amplification threshold not met",
+        "auditable two-limit-up structure missing",
+        "latest Monday premarket technology digest missing"
+      ],
+      "action": "正式提醒照常报告；看板保留门禁拦截记录，不作为当前机会。"
     }
   },
   "last_publish_attempt": "pending_20260717_0830_premarket_publish",
