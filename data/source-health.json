@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-08-25T09:39:39+08:00",
+  "timestamp": "2026-08-25T09:45:36+08:00",
   "sources": {
     "tencent_http": {
       "status": "ok",
@@ -161,14 +161,15 @@
     "akshare_a_spot_watch_decode": {
       "status": "degraded",
       "usage": "盘中观察池与题材短周期刷新",
-      "checked_at": "2026-08-25T09:38:52+08:00",
-      "sample_count": 0,
+      "checked_at": "2026-08-25T09:45:32+08:00",
+      "sample_count": 11,
       "errors": [
         "Can not decode value starting with character \"<\""
       ],
-      "detail": "09:35:07至09:38:52连续八轮未取得有效行情，AkShare返回HTML并触发解码失败；监控进程仍存活且日志持续更新。",
-      "action": "保留上一版alert.json，不生成候选或确认提醒；等待下一轮实时行情恢复后再按短周期门禁判断。",
-      "failure_count": 8
+      "detail": "09:35:07至09:45:32累计十三轮解码失败；09:40:36间歇取得一批有效本地快照并生成11条结构化风险提醒，但09:43:51后又连续四轮失败。监控进程仍存活且日志持续更新。",
+      "action": "保留09:40:36单源风险候选为待确认/历史触发，不升级confirmed；等待腾讯或通达信第二源及AkShare连续稳定恢复。",
+      "failure_count": 13,
+      "last_valid_batch_at": "2026-08-25T09:40:36+08:00"
     },
     "eastmoney_limit_pool_intraday_0930": {
       "status": "ok",
@@ -6941,6 +6942,35 @@
         "午后短周期报价未取得腾讯或通达信交叉验证"
       ],
       "action": "source_status保持degraded_partial；不生成candidate或confirmed，等待本地高频源连续稳定并由腾讯或通达信复核。"
+    },
+    "monitor_formal_alert_20260825_094036": {
+      "status": "degraded_partial",
+      "checked_at": "2026-08-25T09:45:36+08:00",
+      "trigger_time": "2026-08-25T09:40:36+08:00",
+      "latest_trigger_time": "09:40:36",
+      "alert_count": 11,
+      "theme_count": 11,
+      "sectors": [
+        "科技硬件链",
+        "半导体设备平台",
+        "CMP/靶材/材料耗材",
+        "半导体零部件弹性",
+        "光刻胶/光刻机催化",
+        "长鑫存储IPO映射",
+        "高带宽内存",
+        "封装",
+        "硅片",
+        "机器人/工业自动化",
+        "7月半导体扩产组合"
+      ],
+      "detail": "09:40:36新增10个题材快速回落和1个7月半导体扩产组合风格杀；全部进入data/signals.jsonl并达到本地单源risk/style candidate门槛。未取得腾讯或通达信第二源，且AkShare随后恢复失败，故不升级confirmed。",
+      "notified_at": "2026-08-25T09:45:36+08:00",
+      "errors": [
+        "cross_source_verified=false",
+        "AkShare resumed decode failures after the valid batch",
+        "no auditable limit-down count"
+      ],
+      "action": "正式风险提醒照常报告；看板只保留待确认/历史风险触发，等待第二源和连续快照确认。"
     }
   },
   "last_publish_attempt": "pending_20260717_0830_premarket_publish",

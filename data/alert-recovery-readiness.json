@@ -1,12 +1,12 @@
 {
-  "timestamp": "2026-08-25T09:45:35+08:00",
-  "current_signal_date": "2026-08-24",
-  "status": "waiting",
-  "summary": "盘中异动暂无 active alerts，等待下一次盘中扫描。",
+  "timestamp": "2026-08-25T09:47:17+08:00",
+  "current_signal_date": "2026-08-25",
+  "status": "candidate_visible",
+  "summary": "盘中候选异动证据完整，可展示为待确认；未通过双源核验前不得升级为确认机会。",
   "alert_state": {
-    "source_status": "missed_original_intraday_sequence",
-    "active_count": 0,
-    "note": "今天没有可核验的完整盘中异动记录；不使用收盘数据事后补造。下一交易日联网后自动恢复实时扫描。"
+    "source_status": "degraded_partial",
+    "active_count": 11,
+    "note": "09:40:36出现10个题材快速回落和1个半导体扩产组合风格杀；均满足本地单源候选门槛，但AkShare随后再次解码失败且未取得第二源，故只保留为待确认/历史风险触发，不升级confirmed。"
   },
   "trusted_sources": [
     {
@@ -60,7 +60,8 @@
     ]
   },
   "next_actions": [
-    "等待盘中扫描进程产出新 alert。"
+    "前台按候选异动展示，并明确还差双源确认。",
+    "补齐第二行情源后，只有满足确认条件的条目才能升级为 confirmed。"
   ],
   "rules": [
     "该文件供自动化进程和构建门禁使用，不进入交易主页面。",

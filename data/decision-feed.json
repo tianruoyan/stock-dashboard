@@ -1,9 +1,9 @@
 {
-  "timestamp": "2026-08-25T09:45:35+08:00",
+  "timestamp": "2026-08-25T09:47:17+08:00",
   "current_signal_date": "2026-08-25",
   "quality_gate": {
     "status": "degraded",
-    "summary": "发现 145 个降级/需复核项（140 个价格/行情复核，6 个背景复核），核心结论可看但必须按影响分层使用。",
+    "summary": "发现 146 个降级/需复核项（142 个价格/行情复核，5 个背景复核），核心结论可看但必须按影响分层使用。",
     "decision_flags": [
       "行情/涨跌幅需二次源复核",
       "盘中异动源降级，alert 类信号降权",
@@ -11,8 +11,8 @@
       "行情源降级，需复核涨跌幅"
     ],
     "blocking_count": 0,
-    "price_review_count": 140,
-    "background_review_count": 6
+    "price_review_count": 142,
+    "background_review_count": 5
   },
   "summary": "09:30首份盘中核验：截至2026-08-25T09:34:39+08:00，上证指数-0.38%、深证成指-0.93%、创业板指-1.25%、科创50-0.69%、沪深300-0.55%，五大指数全线为负，创业板和深成指跌幅更大，说明开盘风险偏好仍偏弱。行业前排为小家电+5.44%、种植业+3.15%、酒店餐饮+2.48%、农产品加工+2.46%、饰品…",
   "observation_coverage": {
@@ -33,10 +33,10 @@
     "stance": "风险优先，只做验证",
     "action": "不把候选方向当交易机会；先看风险收敛、数据恢复和核心承接。",
     "reasons": [
-      "发现 145 个降级/需复核项（140 个价格/行情复核，6 个背景复核），核心结论可看但必须按影响分层使用。",
+      "发现 146 个降级/需复核项（142 个价格/行情复核，5 个背景复核），核心结论可看但必须按影响分层使用。",
       "A/B级风险 1 条",
       "可用机会 0 条，降权候选 8 条",
-      "先处理：二次行情复核（premarket.json）"
+      "先处理：二次行情复核（alert.json）"
     ],
     "risk_focus": [
       "数据质量降级"
@@ -52,13 +52,13 @@
     "quality_actions": [
       {
         "label": "二次行情复核",
-        "file": "premarket.json",
+        "file": "alert.json",
         "next_step": "用第二行情源复核涨跌幅、quote_time 和代表股方向；未确认前只做验证。",
         "unblock_condition": "price_review=0 或相关来源标记 trusted/cross verified。"
       },
       {
         "label": "二次行情复核",
-        "file": "source-health.json",
+        "file": "premarket.json",
         "next_step": "用第二行情源复核涨跌幅、quote_time 和代表股方向；未确认前只做验证。",
         "unblock_condition": "price_review=0 或相关来源标记 trusted/cross verified。"
       }
@@ -538,11 +538,12 @@
       "title": "数据质量降级",
       "type": "data_quality",
       "trigger_reason": "风控兜底触发：市场宽度、数据质量或回撤条件触发风险优先。",
-      "conclusion": "发现 145 个降级/需复核项（140 个价格/行情复核，6 个背景复核），核心结论可看但必须按影响分层使用。",
+      "conclusion": "发现 146 个降级/需复核项（142 个价格/行情复核，5 个背景复核），核心结论可看但必须按影响分层使用。",
       "confidence": "high",
       "evidence": [
         "时间戳不是当前交易日：2026-08-24T21:03:07+08:00",
-        "智谱 接近跌停 -10.81，需确认是否真实"
+        "智谱 接近跌停 -10.81，需确认是否真实",
+        "共进股份 接近跌停 -10.01，需确认是否真实"
       ],
       "source_files": [
         "quality-report.json",
@@ -559,12 +560,12 @@
       "quality_flags": [],
       "tone": "risk",
       "discovery_type": "risk_guardrail",
-      "evidence_score": 81,
+      "evidence_score": 88,
       "missing_evidence": [],
       "next_action": "污染 alert 修复前，盘中异动信号必须降权；观察池个股涨跌幅以已审计源为准。",
       "observation_source": "系统风控扫描",
       "independent_observation": true,
-      "signal_score": 96,
+      "signal_score": 100,
       "signal_grade": "A",
       "use_action": "可跟踪",
       "use_reasons": [
