@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-08-25T10:01:15+08:00",
+  "timestamp": "2026-08-25T10:02:41+08:00",
   "sources": {
     "tencent_http": {
       "status": "ok",
@@ -159,17 +159,18 @@
       "errors": []
     },
     "akshare_a_spot_watch_decode": {
-      "status": "degraded_recovered_partial",
+      "status": "degraded",
       "usage": "盘中观察池与题材短周期刷新",
-      "checked_at": "2026-08-25T09:59:11+08:00",
+      "checked_at": "2026-08-25T10:02:35+08:00",
       "sample_count": 3,
       "errors": [
-        "09:35:07至09:57:49累计三十四轮AkShare解码失败",
+        "09:35:07至10:02:35累计三十九轮AkShare解码失败",
+        "09:59:11单批恢复后再次连续五轮失败",
         "cross_source_verified=false"
       ],
-      "detail": "连续解码失败后，09:59:11取得一批有效本地快照，生成覆铜板、液冷和8192超节点/昇腾算力三条结构化上涨候选；当前仅确认单批恢复，尚未证明行情源连续稳定。",
-      "action": "三条提醒保持candidate并前台标记待确认；等待腾讯或通达信第二源以及后续连续有效快照，不升级confirmed。",
-      "failure_count": 34,
+      "detail": "09:59:11取得单批有效快照后，10:00:17至10:02:35再次连续五轮解码失败；监控进程仍存活且日志持续更新。",
+      "action": "09:59三条上涨候选保留至有效期结束后转历史，不生成新的candidate或confirmed；等待腾讯或通达信第二源及AkShare连续稳定恢复。",
+      "failure_count": 39,
       "last_valid_batch_at": "2026-08-25T09:59:11+08:00"
     },
     "eastmoney_limit_pool_intraday_0930": {
