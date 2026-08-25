@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-08-25T14:26:56+08:00",
+  "timestamp": "2026-08-25T14:29:20+08:00",
   "sources": {
     "tencent_http": {
       "status": "ok",
@@ -161,17 +161,17 @@
     "akshare_a_spot_watch_decode": {
       "status": "degraded",
       "usage": "盘中观察池与题材短周期刷新",
-      "checked_at": "2026-08-25T14:26:54+08:00",
+      "checked_at": "2026-08-25T14:28:13+08:00",
       "sample_count": 2,
       "errors": [
-        "09:35:07至14:26:54累计503轮AkShare解码失败",
-        "14:16:43曾单批恢复并产生两条正式提醒，随后再次失败",
+        "09:35:07至14:27:23累计504轮AkShare解码失败",
+        "14:28:13单批恢复并产生两条正式提醒，尚未形成连续稳定恢复",
         "cross_source_verified=false"
       ],
-      "detail": "行情源在14:16:43短暂恢复并产生两条正式提醒，随后再次解码失败，最近一次为14:26:54；监控进程仍存活且日志持续更新。",
-      "action": "保留上一版alert.json，不生成新的candidate或confirmed；等待腾讯或通达信第二源及AkShare连续稳定恢复。",
-      "failure_count": 503,
-      "last_valid_batch_at": "2026-08-25T14:16:43+08:00"
+      "detail": "行情源在14:28:13再次单批恢复并产生两条正式提醒；目前仍缺连续稳定批次及腾讯或通达信交叉验证，维持降级。",
+      "action": "正式触发保留，但两条机会均因短周期幅度、成交及结构证据不足被门禁拦截；等待第二源和连续稳定批次。",
+      "failure_count": 504,
+      "last_valid_batch_at": "2026-08-25T14:28:13+08:00"
     },
     "eastmoney_limit_pool_intraday_0930": {
       "status": "ok",
