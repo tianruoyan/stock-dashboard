@@ -1,8 +1,8 @@
 {
-  "timestamp": "2026-08-25T09:36:37+08:00",
+  "timestamp": "2026-08-25T09:38:52+08:00",
   "current_signal_date": "2026-08-25",
   "status": "degraded",
-  "summary": "发现 149 个降级/需复核项（142 个价格/行情复核，8 个背景复核），核心结论可看但必须按影响分层使用。",
+  "summary": "发现 145 个降级/需复核项（140 个价格/行情复核，6 个背景复核），核心结论可看但必须按影响分层使用。",
   "issues": [
     {
       "severity": "warning",
@@ -12,33 +12,6 @@
       "message": "时间戳不是当前交易日：2026-08-24T21:03:07+08:00",
       "impact_level": "background_review",
       "decision_action": "仅作背景复核，不单独阻断交易判断"
-    },
-    {
-      "severity": "warning",
-      "file": "intraday.json",
-      "path": "",
-      "code": "stale_timestamp",
-      "message": "时间戳不是当前交易日：2026-08-24T21:03:07+08:00",
-      "impact_level": "background_review",
-      "decision_action": "仅作背景复核，不单独阻断交易判断"
-    },
-    {
-      "severity": "warning",
-      "file": "intraday.json",
-      "path": "representative_stocks[6]",
-      "code": "watchlist_limit_down_like",
-      "message": "智谱 接近跌停 -10.81，需确认是否真实",
-      "impact_level": "price_review",
-      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
-    },
-    {
-      "severity": "warning",
-      "file": "intraday.json",
-      "path": "representative_stocks[10]",
-      "code": "watchlist_limit_down_like",
-      "message": "共进股份 接近跌停 -10.01，需确认是否真实",
-      "impact_level": "price_review",
-      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
     },
     {
       "severity": "warning",
@@ -171,7 +144,7 @@
       "file": "source-health.json",
       "path": "",
       "code": "source_degraded",
-      "message": "akshare_a_spot_watch_decode: 09:35:07、09:35:36、09:36:05 连续三轮未取得有效行情，AkShare 返回HTML并触发解码失败；监控进程仍存活且日志持续更新。",
+      "message": "akshare_a_spot_watch_decode: 09:35:07至09:37:53连续六轮未取得有效行情，AkShare返回HTML并触发解码失败；监控进程仍存活且日志持续更新。",
       "impact_level": "price_review",
       "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
     },
@@ -1344,29 +1317,9 @@
       "message": "shenwan_industry_mapping_postmarket_20260805: 历史代码主表5203只；涨超5%样本中38只未映射，占4.98%，已单列未映射，不外推分类。",
       "impact_level": "price_review",
       "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
-    },
-    {
-      "severity": "warning",
-      "file": "theme-shifts.json",
-      "path": "",
-      "code": "stale_theme_shifts",
-      "message": "theme-shifts 日期不是当前交易日：2026-08-24",
-      "impact_level": "background_review",
-      "decision_action": "仅作背景复核，不单独阻断交易判断"
     }
   ],
   "action_plan": [
-    {
-      "priority": 2,
-      "impact_level": "price_review",
-      "label": "二次行情复核",
-      "file": "intraday.json",
-      "code": "watchlist_limit_down_like",
-      "problem": "智谱 接近跌停 -10.81，需确认是否真实",
-      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核",
-      "next_step": "用第二行情源复核涨跌幅、quote_time 和代表股方向；未确认前只做验证。",
-      "unblock_condition": "price_review=0 或相关来源标记 trusted/cross verified。"
-    },
     {
       "priority": 2,
       "impact_level": "price_review",
@@ -1404,7 +1357,7 @@
       "priority": 4,
       "impact_level": "background_review",
       "label": "背景来源复核",
-      "file": "intraday.json",
+      "file": "midday.json",
       "code": "stale_timestamp",
       "problem": "时间戳不是当前交易日：2026-08-24T21:03:07+08:00",
       "decision_action": "仅作背景复核，不单独阻断交易判断",
@@ -1415,22 +1368,33 @@
       "priority": 4,
       "impact_level": "background_review",
       "label": "背景来源复核",
-      "file": "midday.json",
+      "file": "postmarket.json",
       "code": "stale_timestamp",
       "problem": "时间戳不是当前交易日：2026-08-24T21:03:07+08:00",
       "decision_action": "仅作背景复核，不单独阻断交易判断",
+      "next_step": "补官方/交易所/公司公告来源；未补齐前不升级为核心依据。",
+      "unblock_condition": "官方来源补齐或确认不影响交易触发。"
+    },
+    {
+      "priority": 4,
+      "impact_level": "background_review",
+      "label": "背景来源复核",
+      "file": "source-health.json",
+      "code": "source_degraded",
+      "problem": "official_policy_global_web_scan: 商务部第33、34号公告及第2、3号令已由官网原文核验；全球标杆官方域名搜索混入历史页面，已剔除并降级为非穷尽扫描。本轮没有把空结果写成完全无新闻，US现金市场尚未开盘。",
+      "decision_action": "仅作政策/背景覆盖复核，不阻断盘中价格和交易触发",
       "next_step": "补官方/交易所/公司公告来源；未补齐前不升级为核心依据。",
       "unblock_condition": "官方来源补齐或确认不影响交易触发。"
     }
   ],
   "counts": {
     "critical": 0,
-    "warning": 149,
+    "warning": 145,
     "info": 1,
     "blocking": 0,
-    "price_review": 142,
+    "price_review": 140,
     "signal_review": 0,
-    "background_review": 8
+    "background_review": 6
   },
   "rules": [
     "异常文本、JSON解析失败、必需文件缺失为 critical。",
