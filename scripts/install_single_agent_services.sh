@@ -10,8 +10,8 @@ labels=(
   com.stock-dashboard.intraday-recovery
   com.stock-dashboard.monitor-signal-bridge
   com.stock-dashboard.alert-quote-verifier
-  com.stock-dashboard.codex-runtime
   com.stock-dashboard.local-health
+  com.stock-dashboard.log-maintenance
 )
 
 mkdir -p "$AGENTS_DIR" "$ROOT/logs"

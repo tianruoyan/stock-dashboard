@@ -7,6 +7,7 @@ import fcntl
 import hashlib
 import json
 import re
+import socket
 import urllib.parse
 import urllib.request
 from concurrent.futures import ThreadPoolExecutor, as_completed
@@ -21,7 +22,7 @@ WATCHLIST_PATH = ROOT / "config" / "watchlist.json"
 SOURCE_HEALTH_PATH = ROOT / "data" / "source-health.json"
 STATUS_PATH = ROOT / "logs" / "alert-quote-verifier-status.json"
 PENDING_PATH = ROOT / ".publish-pending"
-LOCK_PATH = ROOT / ".monitor-signal-bridge.lock"
+LOCK_PATH = ROOT / ".alert-quote-verify.lock"
 TENCENT_MINUTE_URL = "https://web.ifzq.gtimg.cn/appstock/app/minute/query?code={}"
 EASTMONEY_SEARCH_URL = "https://searchapi.eastmoney.com/api/suggest/get"
 EASTMONEY_TOKEN = "D43BF722C8E33E1B5FBF8EF4C0C8ECBE"
@@ -32,6 +33,9 @@ MAX_TICK_ALIGNMENT_SECONDS = 12
 MINUTE_RANGE_MAX_WIDTH_PCT = 1.5
 RANGE_PADDING_PCT = 0.12
 VERIFIER_VERSION = "futu-opend-2026-07-27.3"
+FUTU_HOST = "127.0.0.1"
+FUTU_PORT = 11111
+FUTU_CONNECT_TIMEOUT_SECONDS = 0.35
 
 
 MinuteLoader = Callable[[str], List[Dict[str, Any]]]
@@ -444,6 +448,8 @@ def fetch_many_futu_intraday_rows(
     codes: Iterable[str],
     now: datetime,
 ) -> tuple[Dict[str, List[Dict[str, Any]]], Dict[str, List[Dict[str, Any]]]]:
+    if not futu_endpoint_ready():
+        return {}, {}
     try:
         from futu import AuType, KLType, OpenQuoteContext, RET_OK, SubType, SysConfig
     except ImportError:
@@ -456,7 +462,7 @@ def fetch_many_futu_intraday_rows(
     minute_result: Dict[str, List[Dict[str, Any]]] = {}
     tick_result: Dict[str, List[Dict[str, Any]]] = {}
     try:
-        context = OpenQuoteContext(host="127.0.0.1", port=11111)
+        context = OpenQuoteContext(host=FUTU_HOST, port=FUTU_PORT)
         mapped = {code: to_futu_code(code) for code in codes}
         futu_codes = [code for code in mapped.values() if code]
         if not futu_codes:
@@ -520,6 +526,19 @@ def fetch_many_futu_intraday_rows(
             except Exception:
                 pass
     return minute_result, tick_result
+
+
+def futu_endpoint_ready(
+    host: str = FUTU_HOST,
+    port: int = FUTU_PORT,
+    timeout: float = FUTU_CONNECT_TIMEOUT_SECONDS,
+) -> bool:
+    """Avoid entering the Futu SDK's long reconnect loop when OpenD is down."""
+    try:
+        with socket.create_connection((host, port), timeout=timeout):
+            return True
+    except OSError:
+        return False
 
 
 def to_futu_code(code: str) -> str:

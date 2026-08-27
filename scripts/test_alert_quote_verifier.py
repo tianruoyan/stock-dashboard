@@ -2,11 +2,13 @@ from __future__ import annotations
 
 import unittest
 from datetime import datetime, timedelta, timezone
+from unittest.mock import patch
 
 from verify_alert_quotes import (
     alert_needs_live_quotes,
     assess_change_consistency,
     enrich_payload,
+    futu_endpoint_ready,
     minute_change,
     normalize_user_facing_text,
     remove_cross_source_missing,
@@ -98,6 +100,21 @@ class AlertQuoteVerifierTests(unittest.TestCase):
         self.assertEqual(verification["state"], "passed")
         self.assertEqual(verification["source"], "富途行情")
         self.assertTrue(result["quote_audit"]["sanity_checks"]["cross_source_verified"])
+
+    def test_futu_preflight_fails_fast_when_opend_is_unavailable(self) -> None:
+        with patch("verify_alert_quotes.socket.create_connection", side_effect=ConnectionRefusedError):
+            self.assertFalse(futu_endpoint_ready(timeout=0.01))
+
+    def test_futu_preflight_accepts_a_ready_endpoint(self) -> None:
+        class Connection:
+            def __enter__(self):
+                return self
+
+            def __exit__(self, *_args):
+                return False
+
+        with patch("verify_alert_quotes.socket.create_connection", return_value=Connection()):
+            self.assertTrue(futu_endpoint_ready(timeout=0.01))
 
     def test_exact_tick_alignment_wins_over_shifted_minute_closes(self) -> None:
         shifted_minutes = {
