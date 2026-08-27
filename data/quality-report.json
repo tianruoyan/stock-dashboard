@@ -1,8 +1,8 @@
 {
-  "timestamp": "2026-08-26T15:59:54+08:00",
-  "current_signal_date": "2026-08-26",
+  "timestamp": "2026-08-27T09:40:33+08:00",
+  "current_signal_date": "2026-08-27",
   "status": "degraded",
-  "summary": "发现 158 个降级/需复核项（145 个价格/行情复核，14 个背景复核），核心结论可看但必须按影响分层使用。",
+  "summary": "发现 160 个降级/需复核项（145 个价格/行情复核，16 个背景复核），核心结论可看但必须按影响分层使用。",
   "issues": [
     {
       "severity": "warning",
@@ -1434,6 +1434,24 @@
       "message": "theme-shifts 日期不是当前交易日：2026-08-25",
       "impact_level": "background_review",
       "decision_action": "仅作背景复核，不单独阻断交易判断"
+    },
+    {
+      "severity": "warning",
+      "file": "data-trust.json",
+      "path": "",
+      "code": "stale_data_trust",
+      "message": "data-trust 日期不是当前交易日：2026-08-26",
+      "impact_level": "background_review",
+      "decision_action": "仅作背景复核，不单独阻断交易判断"
+    },
+    {
+      "severity": "warning",
+      "file": "monitoring-coverage.json",
+      "path": "",
+      "code": "stale_monitoring_coverage",
+      "message": "monitoring-coverage 日期不是当前交易日：2026-08-26",
+      "impact_level": "background_review",
+      "decision_action": "仅作背景复核，不单独阻断交易判断"
     }
   ],
   "action_plan": [
@@ -1496,9 +1514,9 @@
       "priority": 4,
       "impact_level": "background_review",
       "label": "背景来源复核",
-      "file": "intraday.json",
-      "code": "stale_timestamp",
-      "problem": "时间戳不是当前交易日：2026-08-25T15:06:14+08:00",
+      "file": "data-trust.json",
+      "code": "stale_data_trust",
+      "problem": "data-trust 日期不是当前交易日：2026-08-26",
       "decision_action": "仅作背景复核，不单独阻断交易判断",
       "next_step": "补官方/交易所/公司公告来源；未补齐前不升级为核心依据。",
       "unblock_condition": "官方来源补齐或确认不影响交易触发。"
@@ -1506,12 +1524,12 @@
   ],
   "counts": {
     "critical": 0,
-    "warning": 158,
+    "warning": 160,
     "info": 1,
     "blocking": 0,
     "price_review": 145,
     "signal_review": 0,
-    "background_review": 14
+    "background_review": 16
   },
   "rules": [
     "异常文本、JSON解析失败、必需文件缺失为 critical。",
