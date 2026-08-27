@@ -56,6 +56,14 @@ class V2GovernanceTests(unittest.TestCase):
         self.assertFalse(payload["trade_authorization"])
         self.assertNotIn("holdings", payload)
 
+    def test_longbridge_is_reference_only_and_never_replaces_watchlist(self) -> None:
+        payload = V2GovernanceBuilder(ROOT).build()["longbridge_analysis_references"]
+        self.assertEqual(payload["mode"], "shadow_reference_only")
+        self.assertFalse(payload["may_change_decision_or_action"])
+        self.assertFalse(payload["may_change_user_assets"])
+        self.assertFalse(payload["may_replace_or_sync_ths_watchlist"])
+        self.assertFalse(payload["trading_enabled"])
+
 
 if __name__ == "__main__":
     unittest.main()

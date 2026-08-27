@@ -46,6 +46,25 @@
       "target_categories": ["replay_learning", "operations"],
       "reason": "冻结当时判断、回收T+1/T+3/T+5/T+10结果、生成V1/V2对照并复跑验收；不自动修改线上权重或切换入口。",
       "production_state": "shadow_only"
+    },
+    {
+      "name": "V2.2盘中影子捕获",
+      "automation_id": "com.stock-dashboard.v22-intraday-shadow",
+      "schedule": "已验证A股交易日的盘前状态、开盘后、上午、午盘前、午后、尾盘和收盘检查点",
+      "migration": "new",
+      "target_categories": [
+        "background_collection",
+        "real_time_decision",
+        "replay_learning"
+      ],
+      "reason": "在信号首次出现或状态实质变化时保存同交易日代表股触发行情；不事后补造历史价格。",
+      "production_state": "shadow_only",
+      "guardrails": [
+        "不修改V1",
+        "不自动交易",
+        "不修改用户资产",
+        "不自动晋升模型"
+      ]
     }
   ],
   "cutover_rule": "生产切换前保留V1调度；V2任务只生成影子数据。切换时逐任务停旧启新，禁止一次性删除历史任务和日志。"

@@ -1,0 +1,428 @@
+{
+  "schema_version": 1,
+  "model": "AI硬件二次启动雷达",
+  "model_version": "1.0.0",
+  "mode": "research_observation_only",
+  "run_id": "aihw_run_b8c0a344128f303e3f2e",
+  "generated_at": "2026-07-23T09:49:10+08:00",
+  "trade_date": "2026-07-23",
+  "as_of": "2026-07-23T09:49:07+08:00",
+  "checkpoint": {
+    "id": "open_confirmation",
+    "label": "09:35 开盘确认",
+    "scheduled_at": "09:35",
+    "purpose": "识别开盘资金方向，禁止仅凭高开确认"
+  },
+  "next_checkpoint": {
+    "id": "morning_confirmation",
+    "label": "10:30 真假启动复核",
+    "scheduled_at": "10:30",
+    "purpose": "核验龙头、量能与板块扩散是否持续"
+  },
+  "proxy_notice": "AI硬件强度使用8股等权代理篮子，不是官方板块指数。",
+  "score": 51,
+  "max_score": 100,
+  "coverage_ratio": 0.75,
+  "categories": [
+    {
+      "id": "sector_strength",
+      "label": "板块强度",
+      "score": 21,
+      "max_points": 30,
+      "available_points": 30,
+      "components": [
+        {
+          "id": "relative_strength",
+          "label": "相对沪深300",
+          "value": 2.2789,
+          "points": 10,
+          "max_points": 15,
+          "available": true,
+          "detail": "代理篮子相对沪深300的当日超额"
+        },
+        {
+          "id": "market_rank",
+          "label": "可比行业排名",
+          "value": 5.0,
+          "points": 4,
+          "max_points": 8,
+          "available": true,
+          "detail": "8股代理篮子与腾讯行业指数同口径排名；缺失时不能绿色启动"
+        },
+        {
+          "id": "advance_breadth",
+          "label": "股票池上涨宽度",
+          "value": 87.5,
+          "points": 7,
+          "max_points": 7,
+          "available": true,
+          "detail": "8股代理篮子中上涨股票占比"
+        }
+      ]
+    },
+    {
+      "id": "leader_strength",
+      "label": "龙头强度",
+      "score": 20,
+      "max_points": 30,
+      "available_points": 30,
+      "components": [
+        {
+          "id": "leader_outperformance",
+          "label": "核心龙头领先",
+          "value": 0.6667,
+          "points": 10,
+          "max_points": 10,
+          "available": true,
+          "detail": "新易盛、中际旭创、沪电股份强于代理篮子的比例"
+        },
+        {
+          "id": "leader_turnover_pace",
+          "label": "核心龙头成交速度",
+          "value": 2.3655,
+          "points": 10,
+          "max_points": 10,
+          "available": true,
+          "detail": "相对5日同时点成交速度中位数"
+        },
+        {
+          "id": "leader_trend",
+          "label": "核心龙头趋势",
+          "value": 0.0,
+          "points": 0,
+          "max_points": 10,
+          "available": true,
+          "detail": "同时站上5日与10日均线的核心龙头比例"
+        }
+      ]
+    },
+    {
+      "id": "funds_return",
+      "label": "资金回流",
+      "score": 10,
+      "max_points": 20,
+      "available_points": 15,
+      "components": [
+        {
+          "id": "continuous_net_inflow",
+          "label": "连续净流入",
+          "value": 1.0,
+          "points": 5,
+          "max_points": 10,
+          "available": true,
+          "detail": "来自可核验上游的连续净流入天数"
+        },
+        {
+          "id": "pool_net_inflow",
+          "label": "股票池净流入",
+          "value": 4.0813,
+          "points": 5,
+          "max_points": 5,
+          "available": true,
+          "detail": "股票池净流入为正；成交放大不能替代"
+        },
+        {
+          "id": "etf_net_inflow",
+          "label": "相关ETF净流入",
+          "value": null,
+          "points": 0,
+          "max_points": 5,
+          "available": false,
+          "detail": "相关ETF净流入为正"
+        }
+      ]
+    },
+    {
+      "id": "market_environment",
+      "label": "市场环境",
+      "score": 0,
+      "max_points": 20,
+      "available_points": 0,
+      "components": [
+        {
+          "id": "market_turnover",
+          "label": "市场成交",
+          "value": null,
+          "points": 0,
+          "max_points": 8,
+          "available": false,
+          "detail": "两市成交额相对可比基线"
+        },
+        {
+          "id": "technology_breadth",
+          "label": "科技股宽度",
+          "value": null,
+          "points": 0,
+          "max_points": 6,
+          "available": false,
+          "detail": "同口径科技股上涨占比"
+        },
+        {
+          "id": "limit_up_down_ratio",
+          "label": "涨跌停结构",
+          "value": null,
+          "points": 0,
+          "max_points": 6,
+          "available": false,
+          "detail": "同口径涨停数与跌停数之比"
+        }
+      ]
+    }
+  ],
+  "state": {
+    "code": "observe",
+    "label": "🟡观察",
+    "action": "弱观察，等待龙头、板块与资金进一步确认"
+  },
+  "launch_gates": [
+    {
+      "id": "score",
+      "label": "评分达到80",
+      "passed": false,
+      "actual": 51
+    },
+    {
+      "id": "coverage",
+      "label": "数据覆盖率达到80%",
+      "passed": false,
+      "actual": 0.75
+    },
+    {
+      "id": "sector_rank",
+      "label": "AI硬件代理篮子位于可比行业前三",
+      "passed": false,
+      "actual": 5.0
+    },
+    {
+      "id": "leader",
+      "label": "至少一只核心龙头领先",
+      "passed": true,
+      "actual": 2.0
+    },
+    {
+      "id": "turnover",
+      "label": "龙头成交速度达到1.2",
+      "passed": true,
+      "actual": 2.3655
+    },
+    {
+      "id": "funds",
+      "label": "连续资金净流入至少2天",
+      "passed": false,
+      "actual": 1.0
+    }
+  ],
+  "failed_launch_gates": [
+    "评分达到80",
+    "数据覆盖率达到80%",
+    "AI硬件代理篮子位于可比行业前三",
+    "连续资金净流入至少2天"
+  ],
+  "data_quality": {
+    "state": "degraded",
+    "usable": true,
+    "freshness": "快照时点有效",
+    "missing": [
+      "相关ETF净流入",
+      "两市成交额可比基线",
+      "科技股上涨宽度",
+      "同交易日涨跌停结构"
+    ]
+  },
+  "sector": {
+    "proxy_id": "ai_hardware_equal_weight_v1",
+    "proxy_change_pct": 2.3794,
+    "benchmark_change_pct": 0.1005,
+    "relative_outperformance_pct": 2.2789,
+    "market_rank": 5,
+    "comparable_theme_count": 98,
+    "rank_universe": "腾讯98个行业指数",
+    "advance_ratio_pct": 87.5
+  },
+  "leaders": {
+    "core_count": 3,
+    "outperform_count": 2,
+    "outperform_ratio": 0.6667,
+    "median_turnover_pace": 2.3655,
+    "trend_confirmed_count": 0,
+    "trend_confirmed_ratio": 0.0
+  },
+  "funds": {
+    "continuous_net_inflow_days": 1,
+    "pool_net_inflow_yi": 4.0813,
+    "etf_net_inflow_yi": null
+  },
+  "market_environment": {
+    "market_turnover_ratio": null,
+    "technology_advance_ratio_pct": null,
+    "limit_up_down_ratio": null
+  },
+  "stocks": [
+    {
+      "code": "sz300502",
+      "name": "新易盛",
+      "segment": "CPO/光模块",
+      "role": "进攻龙头",
+      "price": 513.65,
+      "change_pct": 0.9532,
+      "amount_yi": 62.9697,
+      "turnover_pace": 2.3655,
+      "ma5": 519.21,
+      "ma10": 530.192,
+      "above_ma5": false,
+      "above_ma10": false,
+      "quote_as_of": "2026-07-23T09:49:06+08:00",
+      "quote_source": "腾讯财经公开行情",
+      "trend_source": "新浪财经公开日K"
+    },
+    {
+      "code": "sz300308",
+      "name": "中际旭创",
+      "segment": "CPO/光模块",
+      "role": "机构核心",
+      "price": 1100.89,
+      "change_pct": 3.7792,
+      "amount_yi": 89.5366,
+      "turnover_pace": 2.3587,
+      "ma5": 1058.762,
+      "ma10": 1104.405,
+      "above_ma5": true,
+      "above_ma10": false,
+      "quote_as_of": "2026-07-23T09:49:06+08:00",
+      "quote_source": "腾讯财经公开行情",
+      "trend_source": "新浪财经公开日K"
+    },
+    {
+      "code": "sz300394",
+      "name": "天孚通信",
+      "segment": "CPO/光模块",
+      "role": "上游核心",
+      "price": 220.32,
+      "change_pct": 1.236,
+      "amount_yi": 14.3126,
+      "turnover_pace": 1.636,
+      "ma5": 223.534,
+      "ma10": 245.251,
+      "above_ma5": false,
+      "above_ma10": false,
+      "quote_as_of": "2026-07-23T09:49:06+08:00",
+      "quote_source": "腾讯财经公开行情",
+      "trend_source": "新浪财经公开日K"
+    },
+    {
+      "code": "sz002463",
+      "name": "沪电股份",
+      "segment": "PCB",
+      "role": "确定性龙头",
+      "price": 119.47,
+      "change_pct": 4.5872,
+      "amount_yi": 21.2567,
+      "turnover_pace": 2.5756,
+      "ma5": 123.274,
+      "ma10": 128.213,
+      "above_ma5": false,
+      "above_ma10": false,
+      "quote_as_of": "2026-07-23T09:49:06+08:00",
+      "quote_source": "腾讯财经公开行情",
+      "trend_source": "新浪财经公开日K"
+    },
+    {
+      "code": "sz300476",
+      "name": "胜宏科技",
+      "segment": "PCB",
+      "role": "弹性核心",
+      "price": 247.71,
+      "change_pct": 3.0408,
+      "amount_yi": 19.5564,
+      "turnover_pace": 2.4452,
+      "ma5": 243.442,
+      "ma10": 262.597,
+      "above_ma5": true,
+      "above_ma10": false,
+      "quote_as_of": "2026-07-23T09:49:06+08:00",
+      "quote_source": "腾讯财经公开行情",
+      "trend_source": "新浪财经公开日K"
+    },
+    {
+      "code": "sh600183",
+      "name": "生益科技",
+      "segment": "PCB",
+      "role": "材料核心",
+      "price": 131.78,
+      "change_pct": 4.5873,
+      "amount_yi": 23.0399,
+      "turnover_pace": 2.6866,
+      "ma5": 132.858,
+      "ma10": 140.586,
+      "above_ma5": false,
+      "above_ma10": false,
+      "quote_as_of": "2026-07-23T09:49:06+08:00",
+      "quote_source": "腾讯财经公开行情",
+      "trend_source": "新浪财经公开日K"
+    },
+    {
+      "code": "sz301165",
+      "name": "锐捷网络",
+      "segment": "AI网络",
+      "role": "交换机核心",
+      "price": 131.78,
+      "change_pct": 4.5873,
+      "amount_yi": 28.7635,
+      "turnover_pace": 7.4547,
+      "ma5": 107.984,
+      "ma10": 105.711,
+      "above_ma5": true,
+      "above_ma10": true,
+      "quote_as_of": "2026-07-23T09:49:06+08:00",
+      "quote_source": "腾讯财经公开行情",
+      "trend_source": "新浪财经公开日K"
+    },
+    {
+      "code": "sh688702",
+      "name": "盛科通信",
+      "segment": "AI网络",
+      "role": "交换芯片核心",
+      "price": 414.08,
+      "change_pct": -3.7359,
+      "amount_yi": 15.4486,
+      "turnover_pace": 2.8413,
+      "ma5": 369.072,
+      "ma10": 376.815,
+      "above_ma5": true,
+      "above_ma10": true,
+      "quote_as_of": "2026-07-23T09:49:07+08:00",
+      "quote_source": "腾讯财经公开行情",
+      "trend_source": "新浪财经公开日K"
+    }
+  ],
+  "sources": [
+    {
+      "id": "tencent_realtime_quote",
+      "state": "usable"
+    },
+    {
+      "id": "sina_daily_kline",
+      "state": "usable"
+    },
+    {
+      "id": "tencent_industry_rank",
+      "state": "usable",
+      "comparable_count": 98
+    },
+    {
+      "id": "eastmoney_pool_fund_flow",
+      "state": "usable"
+    },
+    {
+      "id": "v2_governed_environment",
+      "state": "waiting"
+    }
+  ],
+  "guardrails": {
+    "automatic_trading": false,
+    "user_assets_modified": false,
+    "model_promoted": false,
+    "missing_facts_ai_filled": false
+  },
+  "disclaimer": "仅作研究观察，不构成投资建议或买卖指令。"
+}

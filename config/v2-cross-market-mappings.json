@@ -1,0 +1,107 @@
+{
+  "schema_version": 1,
+  "version": "2026-07-18.e5.1",
+  "default_valid_windows": ["盘前观察", "竞价至10:00验证", "午盘复核", "收盘定性", "T+1/T+3/T+5回溯"],
+  "mappings": [
+    {
+      "mapping_id": "us_ai_compute_to_a_share",
+      "origin_market": "US",
+      "origin_objects": ["NVIDIA", "AMD", "美股半导体"],
+      "origin_keywords": ["NVIDIA", "英伟达", "AMD", "美股半导体"],
+      "transmission_type": "产业链与风险偏好",
+      "a_share_themes": ["AI算力", "光模块/CPO"],
+      "representative_securities": [
+        {"code":"sz300308","name":"中际旭创"},
+        {"code":"sz300502","name":"新易盛"},
+        {"code":"sh601138","name":"工业富联"}
+      ],
+      "invalidation_conditions": ["海外变化属于公司特有事件", "A股代表股竞价至10:00未兑现", "A股已经提前交易并出现高开低走"]
+    },
+    {
+      "mapping_id": "us_memory_to_a_share",
+      "origin_market": "US",
+      "origin_objects": ["Micron", "美光", "HBM"],
+      "origin_keywords": ["Micron", "美光", "HBM", "存储"],
+      "transmission_type": "产业链映射",
+      "a_share_themes": ["存储", "HBM"],
+      "representative_securities": [
+        {"code":"sh688008","name":"澜起科技"},
+        {"code":"sh603986","name":"兆易创新"},
+        {"code":"sz301308","name":"江波龙"}
+      ],
+      "invalidation_conditions": ["变化只来自美光公司特有财报或诉讼", "A股存储代表股背离", "A股此前已提前交易"]
+    },
+    {
+      "mapping_id": "hk_internet_ai_app_to_a_share",
+      "origin_market": "HK",
+      "origin_objects": ["腾讯控股", "阿里巴巴-W", "美团-W", "快手-W", "金山云", "恒生科技"],
+      "origin_keywords": ["港股科网", "科网权重", "腾讯", "阿里", "美团", "快手", "金山云", "恒生科技", "AI模型", "AI应用", "云计算"],
+      "transmission_type": "AI应用变现、云服务和平台估值修复映射",
+      "a_share_themes": ["AI应用", "软件服务", "云计算", "AI算力"],
+      "representative_securities": [
+        {"code":"sh688111","name":"金山办公"},
+        {"code":"sz300033","name":"同花顺"},
+        {"code":"sz002230","name":"科大讯飞"},
+        {"code":"sz300624","name":"万兴科技"},
+        {"code":"sz000977","name":"浪潮信息"},
+        {"code":"sh603019","name":"中科曙光"},
+        {"code":"sh601138","name":"工业富联"}
+      ],
+      "invalidation_conditions": ["港股上涨主要来自低估值权重或回购而非AI/云预期", "A股AI应用和软件代表股竞价至10:00未兑现", "A股半导体或高位科技负反馈继续扩大", "南向资金或恒生科技冲高回落导致跨市场风险偏好失效"]
+    },
+    {
+      "mapping_id": "hk_semiconductor_to_a_share",
+      "origin_market": "HK",
+      "origin_objects": ["中芯国际H", "华虹半导体", "恒生科技"],
+      "origin_keywords": ["中芯", "华虹", "恒生科技", "港股半导体"],
+      "transmission_type": "公司与产业链映射",
+      "a_share_themes": ["半导体设备", "半导体材料"],
+      "representative_securities": [
+        {"code":"sz002371","name":"北方华创"},
+        {"code":"sh688012","name":"中微公司"},
+        {"code":"sh688120","name":"华海清科"}
+      ],
+      "invalidation_conditions": ["港股波动来自个股特有事件", "A股设备代表股未共振", "人民币或A股风险偏好反向"]
+    },
+    {
+      "mapping_id": "hk_semiconductor_rapid_repair_to_a_share",
+      "origin_market": "HK",
+      "origin_objects": ["华虹半导体", "中芯国际H", "兆易创新H", "澜起科技H", "恒生科技"],
+      "origin_keywords": ["华虹", "中芯", "兆易H", "澜起H", "港股半导体", "恒生科技"],
+      "transmission_type": "盘中快速修复与A/H风险偏好共振",
+      "a_share_themes": ["半导体制造", "存储", "HBM", "半导体设备", "半导体材料"],
+      "representative_securities": [
+        {"code":"sh512480","name":"半导体ETF"},
+        {"code":"sh000688","name":"科创50"},
+        {"code":"sh603986","name":"兆易创新"},
+        {"code":"sh688008","name":"澜起科技"},
+        {"code":"sz300502","name":"新易盛"},
+        {"code":"sz300308","name":"中际旭创"}
+      ],
+      "candidate_conditions": ["港股核心从低位站回分时均价或创日内高", "A股半导体ETF/科创50或映射股同步转强", "至少两只核心样本同向，不把单股反抽升级"],
+      "confirmation_conditions": ["候选后继续放量", "后排扩散", "核心股维持均价上方并出现二次承接"],
+      "invalidation_conditions": ["核心股重新跌回分时均价", "A/H任一侧共振断裂", "后排不扩散且成交萎缩"],
+      "operation_note": "该映射只允许生成candidate早提醒和回踩承接观察；不得绕过G3代表股、G6位置和G7时窗门禁。"
+    },
+    {
+      "mapping_id": "kr_memory_to_a_share",
+      "origin_market": "KR",
+      "origin_objects": ["Samsung Electronics", "SK Hynix"],
+      "origin_keywords": ["Samsung", "三星电子", "SK Hynix", "海力士", "韩国半导体"],
+      "transmission_type": "存储产业链映射",
+      "a_share_themes": ["存储", "HBM"],
+      "representative_securities": [
+        {"code":"sh688008","name":"澜起科技"},
+        {"code":"sh603986","name":"兆易创新"},
+        {"code":"sz301308","name":"江波龙"}
+      ],
+      "invalidation_conditions": ["韩国行情来源或时点未核验", "A股代表股背离", "变化属于单一公司事件"]
+    }
+  ],
+  "guardrails": {
+    "emotion_mapping_can_support_upgrade_alone": false,
+    "single_company_event_can_upgrade_theme": false,
+    "a_share_validation_required": true,
+    "mapping_without_current_origin_is_background_only": true
+  }
+}

@@ -1,8 +1,14 @@
 {
   "schema_version": 1,
   "definition_version": "2026-07-12.1",
-  "status": "verified_market_convention",
-  "governance_note": "老登/中登/小登属于市场俗称，没有官方统一分类标准。系统按产业周期与投资者风格建立可版本化口径，不按市值大小机械划分；具体公司可随主业、产业周期和市场叙事迁移。",
+  "status": "versioned_semantics_with_candidate_baskets",
+  "governance_note": "老登/中登/小登属于市场俗称，没有官方统一分类标准。系统按产业周期与投资者风格建立可版本化口径，不按市值大小机械划分；具体公司可随主业、产业周期和市场叙事迁移。篮子成员和方向证据见config/v2-style-baskets.json；关键词只能形成线索。",
+  "basket_policy": {
+    "config": "config/v2-style-baskets.json",
+    "keyword_only_can_confirm_direction": false,
+    "minimum_checks": ["价格", "成交", "宽度", "代表股", "情绪"],
+    "user_asset_write_permission": false
+  },
   "dimensions": {
     "old_deng": {
       "label": "老登",

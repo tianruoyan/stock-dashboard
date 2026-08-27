@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import tempfile
 import unittest
+import json
 from datetime import date
 from pathlib import Path
 
@@ -52,6 +53,27 @@ class V2PublicRefreshTests(unittest.TestCase):
             self.assertEqual(micro["state"], "failed")
             self.assertTrue(micro["previous_input_preserved"])
             self.assertIn("2026-07-09", path.read_text())
+
+    def test_refresh_preserves_other_collector_health_rows(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            self.prepare(root)
+            health_path = root / "data/v2/public-input-health.json"
+            health_path.parent.mkdir(parents=True)
+            health_path.write_text(json.dumps({
+                "state": "usable",
+                "collectors": [{"id": "outcome_prices", "state": "current", "observation_count": 2}],
+            }), encoding="utf-8")
+            refresher = V2PublicInputRefresher(
+                root,
+                microcap_collector=lambda day: {"observations": [{"trade_date": day.isoformat()}]},
+                sentiment_collector=lambda day: {"trade_date": day.isoformat()},
+                official_event_collector=lambda: {"events": [{"event_id": "e1", "published_at": "x"}]},
+            )
+            report = refresher.run(date(2026, 7, 12))
+            outcome = next(item for item in report["collectors"] if item["id"] == "outcome_prices")
+            self.assertEqual(outcome["state"], "current")
+            self.assertEqual(outcome["observation_count"], 2)
 
 
 if __name__ == "__main__":

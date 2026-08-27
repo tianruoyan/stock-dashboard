@@ -13,6 +13,13 @@ SPEC.loader.exec_module(MODULE)
 
 
 class DashboardAuditSourceTests(unittest.TestCase):
+    def test_weekend_research_refresh_does_not_advance_market_signal_date(self) -> None:
+        files = {
+            "postmarket.json": {"timestamp": "2026-08-07T17:10:00+08:00"},
+            "topics.json": {"timestamp": "2026-08-08T20:12:00+08:00"},
+        }
+        self.assertEqual(MODULE.latest_signal_date(files), "2026-08-07")
+
     def test_historical_failures_are_retained_but_not_current_price_warnings(self) -> None:
         issues = []
         MODULE.validate_source_health(

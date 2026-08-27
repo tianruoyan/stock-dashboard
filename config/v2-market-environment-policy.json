@@ -1,0 +1,56 @@
+{
+  "schema_version": 1,
+  "version": "2026-07-30.e4.5",
+  "mode": "facts_only_shadow",
+  "dimensions": [
+    {"code": "index_structure", "label": "指数结构"},
+    {"code": "liquidity", "label": "流动性"},
+    {"code": "market_breadth", "label": "市场宽度"},
+    {"code": "mainline_structure", "label": "主线结构"},
+    {"code": "sentiment_structure", "label": "情绪结构"},
+    {"code": "style_structure", "label": "风格结构"},
+    {"code": "position_fragility", "label": "位置与脆弱性"},
+    {"code": "external_constraint", "label": "外部约束"}
+  ],
+  "session_phases": [
+    {"code": "pre_market", "label": "盘前", "latest_time": "09:14:59"},
+    {"code": "auction", "label": "竞价后", "latest_time": "09:35:00"},
+    {"code": "morning", "label": "上午", "latest_time": "11:30:00"},
+    {"code": "midday", "label": "午盘", "latest_time": "12:59:59"},
+    {"code": "afternoon", "label": "下午", "latest_time": "14:59:59"},
+    {"code": "close", "label": "收盘", "latest_time": "18:00:00"},
+    {"code": "evening_plan", "label": "晚间预案", "latest_time": "23:59:59"}
+  ],
+  "support_levels": ["support", "partial_support", "neutral", "suppress", "risk_release", "unknown"],
+  "quality_states": ["usable", "degraded", "blocked", "unknown"],
+  "freshness_states": ["current", "stale", "conflict", "missing"],
+  "same_snapshot_rules": {
+    "timezone_required": true,
+    "same_trade_date_required": true,
+    "built_at_never_used_as_fact_time": true,
+    "different_session_values_are_not_directly_compared": true,
+    "same_metric_conflicts_preserve_all_values": true
+  },
+  "positive_conclusion_rules": {
+    "minimum_independent_dimensions": 3,
+    "counter_evidence_required": true,
+    "unknown_or_blocked_key_dimension_prevents_positive_upgrade": true,
+    "e4_changes_existing_action_conclusion": false
+  },
+  "snapshot_rules": {
+    "immutable": true,
+    "deduplicate_same_hash": true,
+    "evening_plan_must_not_replace_close": true,
+    "event_snapshots_require_material_change": true
+  },
+  "fixed_checkpoints": ["pre_market", "auction", "morning", "midday", "afternoon", "close", "evening_plan"],
+  "event_triggers": ["风险扩散", "核心反转", "宽度实质变化", "成交结构实质变化", "质量阻断变化", "外盘兑现或失败"],
+  "guardrails": [
+    "事实、解释和行动分层；AI不得补造缺失事实。",
+    "盘中、午盘和收盘数据不能混为同一时点。",
+    "涨停和跌停必须同时进入情绪判断。",
+    "晋级日期异常时晋级率不得参与正向判断。",
+    "中证2000只作为小微盘宽基代理，不等于纯微盘或小登。",
+    "E4只生成事实影子，不改写现有V2行动结论。"
+  ]
+}

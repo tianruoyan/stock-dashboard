@@ -1,0 +1,79 @@
+{
+  "schema_version": 1,
+  "version": "2026-07-18.e5.1",
+  "definition_version": "2026-07-12.1",
+  "rebalance_policy": "成员变更必须保留版本、理由和证据；不得由行情或AI自动改写用户资产。",
+  "minimum_coverage_ratio": 0.6,
+  "styles": {
+    "old_deng": {
+      "label": "老登",
+      "status": "versioned_candidate_basket",
+      "construction": "成熟价值、金融、消费防御主题篮子；已排除旧名单中与定义冲突的科技样本。",
+      "members": [
+        {"code":"sh600030","name":"中信证券","group":"券商"},
+        {"code":"sz300059","name":"东方财富","group":"券商"},
+        {"code":"sh601688","name":"华泰证券","group":"券商"},
+        {"code":"sh601881","name":"中国银河","group":"券商"},
+        {"code":"sh601318","name":"中国平安","group":"保险"},
+        {"code":"sh601628","name":"中国人寿","group":"保险"},
+        {"code":"sh601601","name":"中国太保","group":"保险"},
+        {"code":"sh601336","name":"新华保险","group":"保险"},
+        {"code":"sz002714","name":"牧原股份","group":"消费防御"},
+        {"code":"sz300498","name":"温氏股份","group":"消费防御"},
+        {"code":"sz000876","name":"新希望","group":"消费防御"},
+        {"code":"sh603477","name":"巨星农牧","group":"消费防御"},
+        {"code":"sz002567","name":"唐人神","group":"消费防御"},
+        {"code":"sh600519","name":"贵州茅台","group":"白酒"},
+        {"code":"sz000858","name":"五粮液","group":"白酒"},
+        {"code":"sz000568","name":"泸州老窖","group":"白酒"},
+        {"code":"sh600809","name":"山西汾酒","group":"白酒"},
+        {"code":"sz002304","name":"洋河股份","group":"白酒"}
+      ]
+    },
+    "middle_deng": {
+      "label": "中登",
+      "status": "versioned_candidate_basket",
+      "construction": "按用户既有语义重点覆盖新能源、光伏、储能、新能源车及电力设备链；当前先建立候选篮子，证据不足时不判断方向。",
+      "members": [
+        {"code":"sz002129","name":"TCL中环","group":"光伏硅片"},
+        {"code":"sz300316","name":"晶盛机电","group":"新能源设备"},
+        {"code":"sz300037","name":"新宙邦","group":"锂电材料"},
+        {"code":"sh600110","name":"诺德股份","group":"锂电材料"},
+        {"code":"sz002920","name":"德赛西威","group":"新能源车产业链"}
+      ]
+    },
+    "small_deng": {
+      "label": "小登",
+      "status": "versioned_candidate_basket",
+      "construction": "当前创新周期的半导体、AI算力和光模块代表篮子；不含纯微盘代理。",
+      "members": [
+        {"code":"sz002371","name":"北方华创","group":"半导体设备"},
+        {"code":"sh688012","name":"中微公司","group":"半导体设备"},
+        {"code":"sh688120","name":"华海清科","group":"半导体设备"},
+        {"code":"sh688019","name":"安集科技","group":"半导体材料"},
+        {"code":"sz002409","name":"雅克科技","group":"半导体材料"},
+        {"code":"sz300308","name":"中际旭创","group":"光模块"},
+        {"code":"sz300502","name":"新易盛","group":"光模块"},
+        {"code":"sz300394","name":"天孚通信","group":"光模块"},
+        {"code":"sz000977","name":"浪潮信息","group":"AI算力"},
+        {"code":"sh603019","name":"中科曙光","group":"AI算力"},
+        {"code":"sh601138","name":"工业富联","group":"AI算力"},
+        {"code":"sh688008","name":"澜起科技","group":"存储与算力"}
+      ]
+    },
+    "microcap": {
+      "label": "微盘",
+      "status": "proxy_only",
+      "construction": "独立使用中证2000小微盘宽基代理；不从小登篮子推断，不等于纯微盘。",
+      "proxy_source_id": "sina_csi2000_secondary_proxy",
+      "members": []
+    }
+  },
+  "guardrails": {
+    "style_is_user_watchlist": false,
+    "style_can_add_user_asset": false,
+    "style_can_delete_user_asset": false,
+    "keyword_only_can_confirm_direction": false,
+    "microcap_can_be_inferred_from_small_deng": false
+  }
+}

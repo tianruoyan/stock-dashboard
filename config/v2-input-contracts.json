@@ -18,6 +18,30 @@
       "required_fields": ["trade_date", "as_of", "source_url", "limit_up_ladder", "limit_down_ladder", "high_level_loss_effect"]
     },
     {
+      "id": "market_breadth_snapshot",
+      "filename": "market-breadth.json",
+      "target": "data/v2/inputs/market-breadth.json",
+      "required_fields": ["trade_date", "as_of", "source_url", "universe_definition_id", "advance_count", "decline_count", "flat_count"]
+    },
+    {
+      "id": "market_liquidity_snapshot",
+      "filename": "market-liquidity.json",
+      "target": "data/v2/inputs/market-liquidity.json",
+      "required_fields": ["trade_date", "as_of", "source_url", "total_turnover", "comparison_method"]
+    },
+    {
+      "id": "mainline_structure_snapshot",
+      "filename": "mainline-structure.json",
+      "target": "data/v2/inputs/mainline-structure.json",
+      "required_fields": ["trade_date", "as_of", "source_url", "conclusion", "themes"]
+    },
+    {
+      "id": "external_market_snapshot",
+      "filename": "external-market.json",
+      "target": "data/v2/inputs/external-market.json",
+      "required_fields": ["trade_date", "as_of", "source_url", "markets"]
+    },
+    {
       "id": "outcome_prices",
       "filename": "outcome-prices.json",
       "target": "data/v2/outcome-prices.json",
@@ -42,6 +66,8 @@
     "导入只接受JSON对象；校验失败时不覆盖上一次可用输入。",
     "所有时间字段必须带时区，交易日使用YYYY-MM-DD。",
     "导入文件保留内容哈希和导入时间，重复内容不重复写入。",
+    "A股与H股同名证券必须按市场和标准化代码精确匹配，禁止只按名称复用行情。",
+    "无成交、待成交或竞价指示价只能作为盘前背景，不得进入个股强弱、机会升级或用户资产行情。",
     "导入持仓只提供风险上下文，不授权自动交易。",
     "博主事件仍受来源治理约束，不能因导入成功而成为交易事实。"
   ]

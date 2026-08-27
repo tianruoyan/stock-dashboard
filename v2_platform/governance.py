@@ -4,6 +4,7 @@ from pathlib import Path
 from typing import Any
 
 from v2_platform.learning import as_dict, as_list, load_json
+from v2_platform.user_asset_views import build_user_asset_storage_health
 
 
 class V2GovernanceBuilder:
@@ -16,6 +17,8 @@ class V2GovernanceBuilder:
     def build(self) -> dict[str, Any]:
         path = self.root / str(self.sources.get("input_path") or "data/v2/inputs/events.json")
         event_payload = load_json(path)
+        longbridge_payload = load_json(self.root / "data" / "v2" / "v22" / "longbridge-analysis-references.json")
+        longbridge_report = load_json(self.root / "data" / "v2" / "v22" / "longbridge-analysis-import-report.json")
         blogger_accounts_payload = load_json(self.root / ".v2_private" / "blogger-accounts.json")
         portfolio_payload = load_json(self.root / ".v2_private" / "portfolio.json")
         blogger_accounts = [item for item in as_list(blogger_accounts_payload.get("accounts")) if isinstance(item, dict)]
@@ -36,6 +39,19 @@ class V2GovernanceBuilder:
             "source_governance_version": self.sources.get("version"),
             "automation_routing_version": self.automation.get("version"),
             "fact_inference_action_layers": self.sources.get("fact_inference_action_layers"),
+            "longbridge_analysis_references": {
+                "state": longbridge_payload.get("input_state") or longbridge_report.get("input_state") or "input_pending",
+                "mode": longbridge_payload.get("mode") or "shadow_reference_only",
+                "reference_count": int(longbridge_payload.get("reference_count") or 0),
+                "provider_role": as_dict(longbridge_payload.get("governance")).get("provider_role")
+                or "外部机构分析模型与观点来源；不是交易系统或用户自选来源。",
+                "may_change_decision_or_action": False,
+                "may_change_user_assets": False,
+                "may_replace_or_sync_ths_watchlist": False,
+                "trading_enabled": False,
+                "public_output": "data/v2/v22/longbridge-analysis-references.json",
+                "import_report": "data/v2/v22/longbridge-analysis-import-report.json",
+            },
             "event_registry": {
                 "state": "available" if events else "input_pending",
                 "event_count": len(events),
@@ -74,6 +90,7 @@ class V2GovernanceBuilder:
                 "trade_authorization": False,
                 "privacy_note": "原始持仓、成本、现金和风险预算只保存在本机私有区。",
             },
+            "用户资产存储": build_user_asset_storage_health(self.root),
         }
 
     def _validate_event(self, item: dict[str, Any]) -> dict[str, Any]:

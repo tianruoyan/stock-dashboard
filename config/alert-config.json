@@ -85,6 +85,30 @@
       "weak_observation_pull": "若 type/reason 包含观察拉动或[watch]，且前排最大3分钟涨跌幅<1%、板块3分钟涨跌幅<1.5%、成交放大<5x、上涨占比<70%，只能显示为观察，不得进入交易异动/机会异动。",
       "daily_gain_not_enough": "日内涨幅高只能说明位置或前排强度，不能单独构成盘中异动；必须同时有3分钟价格/成交/扩散证据。",
       "trade_alert_gate": "交易异动必须满足至少一类短周期证据：涨停/封板；或板块3分钟涨跌幅>=1.5%且方向占比>=70%且成交放大>=5x；或成交放大>=10x且方向占比>=80%；或单股3分钟涨跌幅>=1.5%且伴随急拉/突破/放量。"
+    },
+    "early_candidate_policy": {
+      "_说明": "2026-07-21上午复盘新增：防止高波动核心票从弱转强时因等待完全确认而错过第一段拉升。",
+      "purpose": "先把可试错的候选变化通知出来，再等待确认；candidate 只用于盘中提醒和小仓试错观察，不等同于confirmed或买入指令。",
+      "trigger_templates": [
+        "核心股从低位重新站回分时均价或开盘价，且不是单股孤立修复。",
+        "同题材至少2只核心/中军/弹性样本在5分钟内同步转强或创日内新高。",
+        "A/H或跨市场映射同向：港股半导体核心、A股半导体ETF/科创50、A股映射股至少两侧共振。",
+        "高开回落后重新收复关键位，优先标为回踩承接候选，而不是等待完全确认。"
+      ],
+      "semiconductor_ah_watch": {
+        "hk_representatives": ["华虹半导体", "中芯国际H", "兆易创新H", "澜起科技H"],
+        "a_share_representatives": ["半导体ETF", "科创50", "兆易创新", "澜起科技", "中际旭创", "新易盛"],
+        "candidate_condition": "港股代表股至少2只站回分时均价或创日内新高，同时A股半导体ETF/科创50任一转强，即先发candidate。",
+        "confirm_condition": "candidate后继续放量、后排扩散或核心股维持均价上方，再升级confirmed。",
+        "invalidate_condition": "核心股重新跌回均价且A/H任一侧共振断裂，candidate降为历史触发/不追。"
+      },
+      "zai_high_beta_watch": {
+        "hk_representatives": ["智谱", "金山云", "恒生科技"],
+        "candidate_condition": "智谱站回分时均价并收复前一关键整数位时可先候选，但必须同时检查恒生科技和AI应用后排。",
+        "confirm_condition": "智谱突破早盘高点或后排AI应用同步扩散，才从高波动反抽升级。",
+        "invalidate_condition": "跌回分时均价或后排不跟，按单股反抽处理。"
+      },
+      "anti_miss_rule": "当用户空仓且已明确可稍激进时，满足early candidate后输出'可小仓试错/回踩承接'和明确放弃线；不得只输出等待完全确认。"
     }
   },
   "small_deng": {

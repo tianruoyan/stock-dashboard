@@ -1,0 +1,58 @@
+{
+  "schema_version": 1,
+  "version": "2026-07-25.s2.3",
+  "mode": "shadow_only",
+  "market": "CN",
+  "timezone": "Asia/Shanghai",
+  "interval_seconds": 60,
+  "checkpoints": [
+    {"id": "pre_open_status", "label": "盘前状态", "start": "09:15", "end": "09:24", "pipeline": "status_only", "capture": false},
+    {"id": "open_validation", "label": "开盘后验证", "start": "09:35", "end": "09:44", "pipeline": "market", "capture": true},
+    {"id": "morning_validation", "label": "上午复核", "start": "10:00", "end": "10:09", "pipeline": "market", "capture": true},
+    {"id": "midday_validation", "label": "午盘前复核", "start": "11:20", "end": "11:29", "pipeline": "market", "capture": true},
+    {"id": "afternoon_validation", "label": "午后复核", "start": "13:30", "end": "13:39", "pipeline": "market", "capture": true},
+    {"id": "late_validation", "label": "尾盘复核", "start": "14:45", "end": "14:54", "pipeline": "market", "capture": true},
+    {"id": "close_freeze", "label": "收盘冻结", "start": "15:05", "end": "15:20", "pipeline": "close", "capture": true}
+  ],
+  "rapid_candidate_windows": [
+    {
+      "id": "morning_rapid_candidate",
+      "label": "上午快速候选",
+      "start": "09:45",
+      "end": "11:15",
+      "interval_seconds": 60,
+      "pipeline": "market",
+      "capture": true,
+      "purpose": "复盘2026-07-21上午华虹、兆易H、澜起H、智谱快速拉升后新增；用于捕捉固定检查点之间的核心股回均价/AH共振候选。"
+    },
+    {
+      "id": "afternoon_rapid_candidate",
+      "label": "午后快速候选",
+      "start": "13:00",
+      "end": "14:30",
+      "interval_seconds": 60,
+      "pipeline": "market",
+      "capture": true,
+      "purpose": "午后延续或二次拉升阶段，先输出候选提醒，再等待扩散确认。"
+    }
+  ],
+  "recovery": {
+    "enabled": true,
+    "stale_after_seconds": 600,
+    "interval_seconds": 300,
+    "active_windows": [
+      {"start": "09:25", "end": "11:30"},
+      {"start": "13:00", "end": "15:20"}
+    ],
+    "purpose": "本机休眠、断网或单次行情源失败后，恢复运行时补采最新应有的盘中影子快照。"
+  },
+  "guardrails": {
+    "v1_modified": false,
+    "production_behavior_changed": false,
+    "automatic_trading": false,
+    "automatic_user_asset_mutation": false,
+    "automatic_model_promotion": false,
+    "automatic_v1_shutdown": false,
+    "historical_trigger_backfill": false
+  }
+}

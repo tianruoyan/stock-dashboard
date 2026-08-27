@@ -1,0 +1,130 @@
+{
+  "schema_version": 1,
+  "version": "2026-08-02.longbridge-analysis.1",
+  "mode": "shadow_reference_only",
+  "provider": "Longbridge",
+  "default_input": "local_inputs/longbridge-analysis.json",
+  "public_output": "data/v2/v22/longbridge-analysis-references.json",
+  "import_report": "data/v2/v22/longbridge-analysis-import-report.json",
+  "acceptance_output": "data/v2/v22/longbridge-analysis-acceptance.json",
+  "allowed_products": [
+    "longbridge_ai",
+    "longbridge_agent_platform",
+    "longbridge_skill",
+    "longbridge_official_research"
+  ],
+  "allowed_scopes": [
+    "market",
+    "macro",
+    "industry",
+    "theme",
+    "company",
+    "earnings",
+    "valuation",
+    "cross_market",
+    "risk"
+  ],
+  "allowed_source_hosts": [
+    "longbridge.com",
+    "www.longbridge.com",
+    "open.longbridge.com",
+    "open.longbridge.cn"
+  ],
+  "allowed_claim_types": [
+    "reported_fact",
+    "inference",
+    "risk",
+    "counter_view",
+    "trading_view"
+  ],
+  "required_item_fields": [
+    "analysis_id",
+    "product",
+    "provider",
+    "scope",
+    "title",
+    "source_url",
+    "published_at",
+    "observed_at",
+    "subjects",
+    "horizon",
+    "claims",
+    "citations",
+    "invalidation_conditions"
+  ],
+  "required_citation_fields": [
+    "citation_id",
+    "title",
+    "url",
+    "published_at"
+  ],
+  "allowed_uses": [
+    "research_context",
+    "institutional_view_attribution",
+    "explanation_reference",
+    "counter_evidence_candidate",
+    "local_verification_queue"
+  ],
+  "claim_roles": {
+    "reported_fact": "fact_candidate_pending_local_verification",
+    "inference": "external_institutional_inference",
+    "risk": "counter_evidence_candidate",
+    "counter_view": "counter_evidence_candidate",
+    "trading_view": "provider_view_non_actionable"
+  },
+  "immutable_boundaries": {
+    "may_execute_trade": false,
+    "may_read_or_write_account": false,
+    "may_read_or_write_positions": false,
+    "may_read_or_write_watchlist": false,
+    "may_create_or_mutate_user_asset": false,
+    "may_change_user_priority_intent_or_note": false,
+    "may_satisfy_g0_market_fact_by_itself": false,
+    "may_override_g0_g7": false,
+    "may_upgrade_decision_case_by_itself": false,
+    "may_assign_stock_role_by_itself": false,
+    "may_promote_model_or_v2": false,
+    "may_change_v1_production": false,
+    "may_publish_to_longbridge_community": false
+  },
+  "forbidden_input_keys": [
+    "account",
+    "account_id",
+    "cash",
+    "dca",
+    "decision_state",
+    "gate_override",
+    "holdings",
+    "model_promotion",
+    "order",
+    "orders",
+    "portfolio",
+    "position",
+    "positions",
+    "publish_to_community",
+    "trade",
+    "trading_action",
+    "user_asset",
+    "user_assets",
+    "user_intent",
+    "user_note",
+    "user_priority",
+    "watchlist"
+  ],
+  "private_input_keys_never_published": [
+    "raw_prompt",
+    "raw_response",
+    "conversation_id",
+    "chat_uid",
+    "member_id",
+    "token"
+  ],
+  "quality_rules": [
+    "长桥模型输出属于机构分析观点，不因提供方身份自动成为本地事实。",
+    "reported_fact 必须有引文，并进入本地独立核验队列；核验前不得通过 G0。",
+    "trading_view 只保留为带归属的外部观点，action_permitted 永远为 false。",
+    "缺少反证或失效条件的分析只能进入人工复核队列，不进入公开引用集。",
+    "原始提示词、完整对话、账户、持仓、自选和用户字段不得进入公开产物。",
+    "引用长桥时必须写明产品、生成或发布时间、来源链接以及模型版本披露状态。"
+  ]
+}

@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from datetime import date, datetime, timedelta
+from datetime import date, datetime, time, timedelta
 from pathlib import Path
 from typing import Any
 
@@ -16,9 +16,14 @@ def as_dict(value: Any) -> dict[str, Any]:
 
 
 class V2MarketStructureBuilder:
-    def __init__(self, root: Path, *, today: date | None = None) -> None:
+    def __init__(self, root: Path, *, today: date | None = None, now: datetime | None = None) -> None:
         self.root = root.resolve()
-        self.today = today or datetime.now().astimezone().date()
+        resolved_now = now or datetime.now().astimezone()
+        if resolved_now.tzinfo is None:
+            resolved_now = resolved_now.astimezone()
+        self.now = resolved_now
+        self.today_was_explicit = today is not None
+        self.today = today or resolved_now.date()
         self.config = load_json(self.root / "config" / "v2-market-structure-sources.json")
         self.calendar = TradingCalendar(load_json(self.root / "config" / "v2-market-calendar.json"), "CN")
 
@@ -73,6 +78,17 @@ class V2MarketStructureBuilder:
 
     def _latest_expected_trade_date(self) -> date | None:
         cursor = self.today
+        # Before today's market has closed, only yesterday's (or the prior open
+        # day's) close is complete enough to validate a daily market-structure
+        # observation. Explicit ``today`` values keep the deterministic legacy
+        # behaviour used by historical builds and tests.
+        if (
+            not self.today_was_explicit
+            and self.now.date() == cursor
+            and self.calendar.is_open(cursor) is True
+            and self.now.timetz().replace(tzinfo=None) < time(15, 5)
+        ):
+            cursor -= timedelta(days=1)
         for _ in range(15):
             state = self.calendar.is_open(cursor)
             if state is None:

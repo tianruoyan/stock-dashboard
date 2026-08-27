@@ -3,7 +3,7 @@ from __future__ import annotations
 import json
 import tempfile
 import unittest
-from datetime import date
+from datetime import date, datetime
 from pathlib import Path
 
 from v2_platform.market_structure import V2MarketStructureBuilder
@@ -69,6 +69,28 @@ class V2MarketStructureTests(unittest.TestCase):
             flags = payload["observation_checks"][0]["quality_flags"]
             self.assertIn("timezone_missing", flags)
             self.assertIn("not_latest_expected_trade_date", flags)
+
+    def test_premarket_uses_latest_completed_trade_date(self) -> None:
+        with self.make_root() as tmp:
+            root = Path(tmp)
+            self.copy_configs(root)
+            path = root / "data" / "v2" / "inputs" / "microcap-observation.json"
+            path.parent.mkdir(parents=True)
+            path.write_text(json.dumps({"observations": [{
+                "source_id": "csi2000_official_proxy",
+                "trade_date": "2026-08-10",
+                "as_of": "2026-08-10T15:00:00+08:00",
+                "close": 3120.83,
+                "change_pct": 1.15,
+                "source_url": "https://www.csindex.com.cn/"
+            }]}), encoding="utf-8")
+            payload = V2MarketStructureBuilder(
+                root,
+                now=datetime.fromisoformat("2026-08-11T08:30:00+08:00"),
+            ).build()
+            self.assertEqual(payload["expected_trade_date"], "2026-08-10")
+            self.assertEqual(payload["state"], "usable_proxy")
+            self.assertEqual(payload["selected_observation"]["trade_date"], "2026-08-10")
 
 
 if __name__ == "__main__":

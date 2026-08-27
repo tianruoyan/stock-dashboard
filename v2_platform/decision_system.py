@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import re
 from dataclasses import dataclass
 from datetime import datetime, timezone
 from pathlib import Path
@@ -10,6 +11,7 @@ from typing import Any, Iterable
 from v2_platform.research import V2ResearchSystemBuilder
 from v2_platform.market_structure import V2MarketStructureBuilder
 from v2_platform.governance import V2GovernanceBuilder
+from v2_platform.watchlist_sync import normalize_code
 
 
 SCHEMA_VERSION = 1
@@ -101,10 +103,16 @@ class V2DecisionSystemBuilder:
         "v2_model_evaluation": "v2/model-evaluation.json",
         "v2_public_input_health": "v2/public-input-health.json",
         "v2_parallel_comparison": "v2/parallel-comparison.json",
+        "v2_representative_quotes": "v2/inputs/representative-stock-quotes.json",
+        "v2_external_market": "v2/inputs/external-market.json",
     }
 
-    def __init__(self, root: Path) -> None:
+    def __init__(self, root: Path, now: datetime | None = None) -> None:
         self.root = root.resolve()
+        resolved_now = now or datetime.now(timezone.utc).astimezone()
+        if resolved_now.tzinfo is None:
+            raise ValueError("now must include timezone information")
+        self.now = resolved_now
         self.data_dir = self.root / "data"
         self.sources = {
             name: self._load(name, self.data_dir / filename)
@@ -120,7 +128,7 @@ class V2DecisionSystemBuilder:
     def build(self) -> dict[str, Any]:
         quality = self._quality_gate()
         environment = self._market_environment(quality)
-        radar, validation = self._radar(quality)
+        radar, validation, history = self._radar(quality)
         market_structure = V2MarketStructureBuilder(self.root).build()
         style = self._style_map(market_structure)
         research = self._research_themes()
@@ -157,6 +165,7 @@ class V2DecisionSystemBuilder:
             "data_quality_gate": quality,
             "market_environment": environment,
             "opportunity_radar": radar,
+            "opportunity_history": history,
             "validation_queue": validation,
             "style_map": style,
             "market_structure": market_structure,
@@ -266,8 +275,27 @@ class V2DecisionSystemBuilder:
                     }
                 )
         global_evidence = []
+        external_input = as_dict(self.sources["v2_external_market"].data)
+        for item in as_list(external_input.get("markets")):
+            if not isinstance(item, dict) or not text(item.get("market")):
+                continue
+            quality_state = text(item.get("quality_state"), "degraded")
+            global_evidence.append(
+                {
+                    "market": text(item.get("market")),
+                    "conclusion": text(item.get("conclusion"), "未形成结论"),
+                    "mapping": [],
+                    "samples": as_list(item.get("samples")),
+                    "quality_state": quality_state,
+                    "actionability": "verify_mapping" if item.get("mapping_eligible") is True and quality_state == "usable" else "background_only",
+                    "source_name": text(item.get("source_name"), "公开行情"),
+                    "source_url": item.get("source_url"),
+                    "as_of": item.get("as_of") or external_input.get("as_of"),
+                }
+            )
+        covered_markets = {item.get("market") for item in global_evidence}
         us = as_dict(premarket.get("us_overnight"))
-        if us:
+        if us and "US" not in covered_markets:
             global_evidence.append(
                 {
                     "market": "US",
@@ -277,7 +305,7 @@ class V2DecisionSystemBuilder:
                 }
             )
         hk = as_dict(intraday.get("hk_market")) or as_dict(postmarket.get("hk_close_review"))
-        if hk:
+        if hk and "HK" not in covered_markets:
             global_evidence.append(
                 {
                     "market": "HK",
@@ -287,16 +315,39 @@ class V2DecisionSystemBuilder:
                 }
             )
         japan_korea = as_dict(us.get("japan_korea"))
-        if japan_korea:
+        if japan_korea and "KR" not in covered_markets:
+            korea_quality = text(japan_korea.get("source_status"), "missing")
             global_evidence.append(
                 {
                     "market": "KR",
                     "conclusion": text(japan_korea.get("summary"), "韩国市场没有形成可用结论"),
                     "mapping": [],
                     "watch": [text(value) for value in as_list(japan_korea.get("watch")) if text(value)],
-                    "quality_state": text(japan_korea.get("source_status"), "missing"),
-                    "actionability": "background_only" if japan_korea.get("pending_confirmation") else "verify_mapping",
+                    "quality_state": korea_quality,
+                    "actionability": (
+                        "background_only"
+                        if japan_korea.get("pending_confirmation") or korea_quality not in {"usable", "verified", "current"}
+                        else "verify_mapping"
+                    ),
                     "as_of": self.sources["premarket"].timestamp,
+                }
+            )
+        present_markets = {text(item.get("market")) for item in global_evidence if isinstance(item, dict)}
+        market_labels = {"US": "美股", "HK": "港股", "KR": "韩国市场"}
+        for market in ("US", "HK", "KR"):
+            if market in present_markets:
+                continue
+            global_evidence.append(
+                {
+                    "market": market,
+                    "conclusion": f"{market_labels[market]}公开行情尚未更新，本轮不用于交易判断。",
+                    "mapping": [],
+                    "samples": [],
+                    "quality_state": "missing",
+                    "actionability": "background_only",
+                    "source_name": "公开行情待更新",
+                    "source_url": None,
+                    "as_of": None,
                 }
             )
         limit_up_ladder = as_dict(structure_input.get("limit_up_ladder")) or as_dict(sentiment.get("limit_up_ladder"))
@@ -336,9 +387,14 @@ class V2DecisionSystemBuilder:
             "cross_market": global_evidence,
         }
 
-    def _radar(self, quality: dict[str, Any]) -> tuple[list[dict[str, Any]], list[dict[str, Any]]]:
+    def _radar(self, quality: dict[str, Any]) -> tuple[list[dict[str, Any]], list[dict[str, Any]], list[dict[str, Any]]]:
         cards: list[dict[str, Any]] = []
-        for alert in as_list(self.sources["alert"].data.get("alerts")):
+        alert_source = self.sources["alert"].data
+        alert_rows = [
+            *as_list(alert_source.get("alerts")),
+            *as_list(alert_source.get("historical_alerts")),
+        ]
+        for alert in alert_rows:
             if isinstance(alert, dict):
                 cards.append(self._alert_card(alert, quality))
 
@@ -356,34 +412,121 @@ class V2DecisionSystemBuilder:
                 continue
             seen.add(key)
             deduped.append(card)
-        priority = {"confirmed": 0, "candidate": 1, "risk": 2, "waiting": 3, "invalidated": 4}
+        priority = {"confirmed": 0, "candidate": 1, "risk": 2, "waiting": 3, "invalidated": 4, "expired": 5}
         deduped.sort(key=lambda item: (priority.get(item["state"], 9), item["title"]))
 
-        queue = []
+        queue: list[dict[str, Any]] = []
         watch = self.sources["opportunity_watch"].data
         for item in as_list(watch.get("items")):
             if not isinstance(item, dict):
                 continue
+            theme_id = text(item.get("theme_id"), stable_id("theme", item.get("theme")))
+            refs = [ref for ref in as_list(item.get("evidence_refs")) if isinstance(ref, dict)]
+            accepted_theme = [
+                ref for ref in refs
+                if ref.get("accepted") is True
+                and ref.get("scope") == "theme"
+                and theme_id in as_list(ref.get("mapped_theme_ids"))
+            ]
+            accepted_global = [ref for ref in refs if ref.get("accepted") is True and ref.get("scope") == "global"]
+            adopted = [*accepted_theme, *accepted_global]
+            summary = text(item.get("why_watch_summary")) if accepted_theme else "关联证据不足，等待主题专属依据。"
             queue.append(
                 {
                     "id": stable_id("validation", item.get("id"), item.get("source_phase")),
+                    "theme_id": theme_id,
                     "theme": text(item.get("theme"), text(item.get("id"), "未命名方向")),
                     "status": text(item.get("status"), "waiting"),
-                    "why_watch": text(item.get("source_reason"), "等待盘中规则触发"),
-                    "representative_stocks": [text(value) for value in as_list(item.get("watch_stocks")) if text(value)],
+                    "why_watch": summary,
+                    "why_watch_summary": summary,
+                    "representative_stocks": self._verified_representative_stocks(
+                        as_list(item.get("watch_stocks")),
+                        role="主题代表股",
+                        basis="主题清单代表股，等待盘中共振。",
+                    ),
                     "confirm_conditions": [text(value) for value in as_list(item.get("confirm_rules")) if text(value)],
                     "invalidation_conditions": [text(value) for value in as_list(item.get("invalidate_rules")) if text(value)],
-                    "evidence": as_list(item.get("evidence")),
+                    "risk_factors": self._validation_risk_factors(adopted, as_list(item.get("invalidate_rules"))),
+                    "evidence": adopted,
+                    "evidence_refs": refs,
+                    "evidence_quality": "theme_supported" if accepted_theme else "theme_evidence_missing",
                     "source": "opportunity-watch.json",
                     "as_of": self.sources["opportunity_watch"].timestamp,
                 }
             )
-        return deduped[:16], queue[:16]
+
+        active: list[dict[str, Any]] = []
+        history: list[dict[str, Any]] = []
+        for card in deduped:
+            self._apply_freshness(card)
+            if not card.get("representative_stocks"):
+                queue.append(self._card_validation_item(card, "缺少代表性个股依据，暂不能进入交易驾驶舱。"))
+                continue
+            if card["freshness_state"] == "expired":
+                history.append(card)
+                continue
+            if card["freshness_state"] == "missing":
+                queue.append(self._card_validation_item(card, "缺少可核验的有效时间，暂不能作为当前盘中机会。"))
+                continue
+            active.append(card)
+
+        deduped_queue: list[dict[str, Any]] = []
+        seen_queue: set[str] = set()
+        for item in queue:
+            key = text(item.get("theme_id"), text(item.get("theme")))
+            if key in seen_queue:
+                continue
+            seen_queue.add(key)
+            deduped_queue.append(item)
+        return active[:16], deduped_queue[:24], history[:24]
+
+    def _apply_freshness(self, card: dict[str, Any]) -> None:
+        valid_until = parse_time(card.get("valid_until"))
+        original_state = text(card.get("state"), "waiting")
+        history = [{"state": original_state, "at": card.get("triggered_at") or card.get("last_evidence_at")}]
+        if valid_until is None:
+            card["freshness_state"] = "missing"
+            card["state_history"] = history
+            return
+        seconds = (valid_until - self.now.astimezone(valid_until.tzinfo)).total_seconds()
+        if seconds < 0:
+            card["freshness_state"] = "expired"
+            card["state"] = "expired"
+            card["action"] = "有效时间已结束，仅供历史复盘；不要按当前机会或风险执行。"
+            history.append({"state": "expired", "at": self.now.isoformat(timespec="seconds")})
+        elif seconds <= 60:
+            card["freshness_state"] = "near_expiry"
+        else:
+            card["freshness_state"] = "fresh"
+        card["state_history"] = history
+
+    @staticmethod
+    def _card_validation_item(card: dict[str, Any], reason: str) -> dict[str, Any]:
+        return {
+            "id": stable_id("validation", card.get("id"), reason),
+            "theme_id": stable_id("theme", card.get("title")),
+            "theme": text(card.get("title"), "未命名方向"),
+            "status": "waiting",
+            "why_watch": reason,
+            "why_watch_summary": reason,
+            "representative_stocks": as_list(card.get("representative_stocks")),
+            "confirm_conditions": as_list(card.get("confirm_conditions")),
+            "invalidation_conditions": as_list(card.get("invalidation_conditions")),
+            "risk_factors": (
+                as_list(card.get("risk_factors"))
+                or as_list(card.get("counter_evidence"))
+                or ["当前依据不足，不能按已确认机会执行。"]
+            ),
+            "evidence": as_list(card.get("evidence")),
+            "evidence_refs": [],
+            "source": card.get("source"),
+            "as_of": card.get("last_evidence_at"),
+        }
 
     def _alert_card(self, alert: dict[str, Any], quality: dict[str, Any]) -> dict[str, Any]:
         kind = text(alert.get("alert_class"), "opportunity")
         confirmation = text(alert.get("confirmation_level"), "candidate")
-        quote = as_dict(alert.get("quote_audit"))
+        quote = as_dict(alert.get("quote_audit")) or as_dict(self.sources["alert"].data.get("quote_audit"))
         sanity = as_dict(quote.get("sanity_checks"))
         cross_verified = sanity.get("cross_source_verified") is True
         if confirmation == "invalidated":
@@ -403,13 +546,15 @@ class V2DecisionSystemBuilder:
         leaders = []
         for value in as_list(alert.get("leaders")):
             if isinstance(value, dict):
-                leaders.append(
-                    {
-                        "name": text(value.get("name"), "未知标的"),
-                        "change_pct": value.get("change_pct"),
-                        "role": text(value.get("role"), "代表股"),
-                    }
+                stock = self._representative_stock(
+                    text(value.get("name"), "未知标的"),
+                    role=text(value.get("role"), "代表股"),
+                    basis="盘中异动记录列为同步领跌样本；个股涨跌幅以上方独立行情为准。",
                 )
+                if stock is not None:
+                    leaders.append(stock)
+        triggered_at = self._alert_triggered_at(alert)
+        last_evidence_at = text(quote.get("quote_time"), self.sources["alert"].timestamp or "") or None
         evidence = [
             {
                 "type": "trigger",
@@ -422,7 +567,7 @@ class V2DecisionSystemBuilder:
             evidence.append(
                 {
                     "type": "quote_audit",
-                    "summary": f"来源 {text(quote.get('provider'), '未知')}；样本 {quote.get('sample_count', '未知')}；交叉验证 {'通过' if cross_verified else '未通过'}",
+                    "summary": f"来源 {self._public_source_label(quote.get('provider'))}；样本 {quote.get('sample_count', '未知')}；交叉验证 {'通过' if cross_verified else '未通过'}",
                     "source": text(quote.get("provider"), "alert.quote_audit"),
                     "as_of": text(quote.get("quote_time"), ""),
                 }
@@ -431,7 +576,7 @@ class V2DecisionSystemBuilder:
         if not cross_verified:
             counter.append("交叉行情验证未通过，不能升级为已确认机会。")
         if quality["state"] != "usable":
-            counter.append(f"全局数据状态为{quality['state']}，行动性结论降级。")
+            counter.append("全局数据已降级，行动性结论仅供观察。")
         return {
             "id": text(alert.get("id"), stable_id("alert", alert.get("sector"), alert.get("time"))),
             "kind": kind,
@@ -441,13 +586,141 @@ class V2DecisionSystemBuilder:
             "conclusion": text(alert.get("reason"), "等待原因核验"),
             "action": action,
             "representative_stocks": leaders,
+            "trigger_metrics": self._alert_trigger_metrics(alert, quote),
             "evidence": evidence,
             "counter_evidence": counter,
+            "risk_factors": counter or ["代表股与板块背离时，当前判断不成立。"],
             "confirm_conditions": ["关键行情交叉验证通过", "代表股与板块扩散同向", "在有效时间窗内保持触发"],
             "invalidation_conditions": ["超过有效期", "代表股与板块背离", "触发方向快速反转"],
             "valid_until": alert.get("valid_until"),
+            "triggered_at": triggered_at,
+            "last_evidence_at": last_evidence_at,
             "quality_state": "usable" if cross_verified else "degraded",
             "source": "alert.json",
+        }
+
+    def _verified_representative_stocks(self, names: list[Any], *, role: str, basis: str) -> list[dict[str, Any]]:
+        rows = []
+        for value in names:
+            name = text(value)
+            if not name:
+                continue
+            stock = self._representative_stock(name, role=role, basis=basis)
+            if stock is not None:
+                rows.append(stock)
+        return rows
+
+    def _representative_stock(self, name: str, *, role: str, basis: str) -> dict[str, Any] | None:
+        quote = self._representative_quote(name)
+        if not quote:
+            return None
+        return {
+            "name": name,
+            "stock_code": quote.get("stock_code"),
+            "stock_change_pct": quote.get("stock_change_pct"),
+            "stock_quote_as_of": quote.get("stock_quote_as_of"),
+            "stock_quote_source": quote.get("stock_quote_source"),
+            "metric_state": "verified",
+            "role": role,
+            "basis": basis,
+        }
+
+    def _representative_quote(self, name: str) -> dict[str, Any]:
+        matches = [
+            item
+            for item in as_list(self.sources["v2_representative_quotes"].data.get("quotes"))
+            if isinstance(item, dict) and text(item.get("name")) == name
+        ]
+        identities = {
+            normalize_code(item.get("code"))
+            for item in matches
+            if normalize_code(item.get("code"))
+        }
+        if len(identities) > 1:
+            return {}
+        for item in matches:
+            pct = item.get("stock_change_pct")
+            as_of = item.get("stock_quote_as_of")
+            source = text(item.get("stock_quote_source"))
+            if isinstance(pct, (int, float)) and parse_time(as_of) and source:
+                return {
+                    "stock_code": text(item.get("code")) or None,
+                    "stock_change_pct": pct,
+                    "stock_quote_as_of": as_of,
+                    "stock_quote_source": source,
+                }
+        return {}
+
+    @staticmethod
+    def _validation_risk_factors(evidence: list[dict[str, Any]], invalidation: list[Any]) -> list[str]:
+        risk_words = ("风险", "减持", "高估值", "回落", "承压", "不及预期")
+        risks = [
+            text(item.get("summary"))
+            for item in evidence
+            if isinstance(item, dict) and any(word in text(item.get("summary")) for word in risk_words)
+        ]
+        if risks:
+            return list(dict.fromkeys(risks))[:2]
+        return [text(item) for item in invalidation if text(item)][:2]
+
+    @staticmethod
+    def _public_source_label(value: Any) -> str:
+        raw = text(value, "来源记录")
+        if "monitor.log" in raw or "盘中监控日志" in raw:
+            return "盘中异动监测记录"
+        return raw
+
+    def _alert_triggered_at(self, alert: dict[str, Any]) -> str | None:
+        raw = text(alert.get("time"))
+        parsed = parse_time(raw)
+        if parsed:
+            return parsed.isoformat()
+        source_at = parse_time(self.sources["alert"].timestamp)
+        match = re.fullmatch(r"(\d{1,2}):(\d{2})(?::(\d{2}))?", raw)
+        if source_at and match:
+            hour, minute, second = (int(match.group(1)), int(match.group(2)), int(match.group(3) or 0))
+            return source_at.replace(hour=hour, minute=minute, second=second, microsecond=0).isoformat()
+        return self.sources["alert"].timestamp
+
+    @staticmethod
+    def _alert_trigger_metrics(alert: dict[str, Any], quote: dict[str, Any]) -> dict[str, Any]:
+        migrated = as_dict(alert.get("trigger_metrics"))
+        if migrated.get("metric_scope"):
+            return {
+                "metric_scope": text(migrated.get("metric_scope")),
+                "scope_label": text(migrated.get("scope_label"), "触发指标"),
+                "window": text(migrated.get("window")) or None,
+                "change_pct": migrated.get("change_pct") if isinstance(migrated.get("change_pct"), (int, float)) else None,
+                "as_of": text(migrated.get("as_of")) or None,
+                "source_label": V2DecisionSystemBuilder._public_source_label(migrated.get("source_label")),
+            }
+        pct_field = text(quote.get("pct_field"))
+        if any(token in pct_field for token in ("底池", "题材")):
+            scope = "theme_pool"
+        elif "板块" in pct_field:
+            scope = "sector"
+        elif "个股" in pct_field:
+            scope = "security"
+        elif text(alert.get("sector")) or text(alert.get("title")):
+            # 盘中异动卡描述的是板块/题材触发。缺少可核验数值时仍应保留
+            # 正确的指标对象，但不得把板块变化伪装成个股或全市场涨跌幅。
+            scope = "sector"
+        else:
+            scope = "market"
+        window_match = re.search(r"(\d+)\s*分钟", pct_field)
+        legacy_values = [
+            item.get("change_pct")
+            for item in as_list(alert.get("leaders"))
+            if isinstance(item, dict) and isinstance(item.get("change_pct"), (int, float))
+        ]
+        change_pct = legacy_values[0] if legacy_values and len({round(float(item), 6) for item in legacy_values}) == 1 else None
+        return {
+            "metric_scope": scope,
+            "scope_label": "题材/底池" if scope == "theme_pool" else ("板块" if scope == "sector" else ("个股" if scope == "security" else "市场")),
+            "window": f"{window_match.group(1)}m" if window_match else None,
+            "change_pct": change_pct,
+            "as_of": text(quote.get("quote_time")) or None,
+            "source_label": V2DecisionSystemBuilder._public_source_label(quote.get("provider")),
         }
 
     def _feed_card(self, item: dict[str, Any], section: str, quality: dict[str, Any]) -> dict[str, Any]:
@@ -467,7 +740,7 @@ class V2DecisionSystemBuilder:
             if kind == "risk"
             else text(item.get("next_action"), "等待确认，不追")
         )
-        source_files = as_list(item.get("source_files"))
+        source_files = self._feed_origin_source_files(item, as_list(item.get("source_files")))
         evidence_as_of = self._source_files_timestamp(source_files) or self.sources["decision_feed"].timestamp
         return {
             "id": stable_id("decision", item.get("title"), section, item.get("discovery_type")),
@@ -488,6 +761,10 @@ class V2DecisionSystemBuilder:
                 for value in evidence_values[:6]
             ],
             "counter_evidence": missing + [text(value) for value in as_list(item.get("quality_flags")) if text(value)],
+            "risk_factors": (
+                missing + [text(value) for value in as_list(item.get("quality_flags")) if text(value)]
+                or (["风险信号仍未收敛，核心股承接不足。"] if kind == "risk" else ["当前依据不足，不能按已确认机会执行。"])
+            ),
             "confirm_conditions": [text(value) for value in as_list(item.get("watch_next")) if text(value)],
             "invalidation_conditions": [text(item.get("invalidation"), "未提供失效条件")],
             "valid_until": None,
@@ -499,6 +776,42 @@ class V2DecisionSystemBuilder:
         names = {Path(str(value)).name for value in source_files}
         timestamps = [source.timestamp for source in self.sources.values() if source.path.name in names and source.timestamp]
         return newest_time(timestamps)
+
+    def _feed_origin_source_files(self, item: dict[str, Any], source_files: list[Any]) -> list[str]:
+        """Resolve derived watch rows back to the market material that created them.
+
+        ``opportunity-watch.json`` is rebuilt whenever the dashboard pipeline runs.  Its
+        file timestamp is therefore a rebuild time, not the time of the underlying
+        premarket, evening, or research evidence.  Keep the derived file out of the
+        evidence timestamp contract and point each row back to its actual source phase.
+        """
+        resolved: list[str] = []
+        for value in source_files:
+            name = Path(str(value)).name
+            if name != "opportunity-watch.json":
+                resolved.append(name)
+                continue
+            title = re.sub(r"^(待触发：|盘中追踪：)", "", text(item.get("title"))).strip()
+            title = {"创新药/CRO": "医药修复链", "金融/消费防御": "老登风格切换"}.get(title, title)
+            watch_item = next(
+                (
+                    row for row in as_list(self.sources["opportunity_watch"].data.get("items"))
+                    if isinstance(row, dict) and text(row.get("theme")) == title
+                ),
+                {},
+            )
+            phase = text(watch_item.get("source_phase"))
+            origin = (
+                "premarket.json" if phase.startswith("盘前")
+                else "evening-sentiment.json" if phase.startswith("晚间")
+                else "topics.json" if phase.startswith("专题")
+                else ""
+            )
+            if origin and any(source.path.name == origin and source.timestamp for source in self.sources.values()):
+                resolved.append(origin)
+            else:
+                resolved.append(name)
+        return list(dict.fromkeys(resolved))
 
     def _style_map(self, market_structure: dict[str, Any]) -> dict[str, Any]:
         shifts = []

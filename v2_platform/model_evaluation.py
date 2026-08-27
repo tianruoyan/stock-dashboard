@@ -16,7 +16,9 @@ class V2ModelEvaluator:
     def build(self) -> dict[str, Any]:
         index = load_json(self.data_dir / "replay-index.json")
         outcomes = load_json(self.data_dir / "signal-outcomes.json")
-        snapshot_meta = self._snapshot_meta(as_list(index.get("snapshots")))
+        refs = as_list(index.get("snapshots"))
+        all_snapshot_meta = self._snapshot_meta(refs, eligible_only=False)
+        snapshot_meta = self._snapshot_meta(refs, eligible_only=True)
         records = self._records(as_list(outcomes.get("signals")), snapshot_meta)
         versions = sorted(set(meta["model_version"] for meta in snapshot_meta.values()) | {record["model_version"] for record in records})
         summaries = [self._summary(version, records, snapshot_meta) for version in versions]
@@ -36,14 +38,16 @@ class V2ModelEvaluator:
             "promotion_policy": self.registry.get("promotion_policy"),
             "recommendation": self._recommendation(comparisons),
             "record_count": len(records),
-            "data_gaps": self._data_gaps(records, snapshot_meta),
+            "data_gaps": self._data_gaps(records, all_snapshot_meta),
         }
 
-    def _snapshot_meta(self, refs: list[Any]) -> dict[str, dict[str, Any]]:
+    def _snapshot_meta(self, refs: list[Any], eligible_only: bool) -> dict[str, dict[str, Any]]:
         result = {}
         baseline = str(as_dict(self.registry.get("baseline")).get("version") or "unversioned")
         for ref in refs:
             if not isinstance(ref, dict) or not ref.get("path"):
+                continue
+            if eligible_only and ref.get("evaluation_eligible") is not True:
                 continue
             snapshot = load_json(self.root / str(ref["path"]))
             result[str(snapshot.get("snapshot_id"))] = {
@@ -61,7 +65,9 @@ class V2ModelEvaluator:
         for signal in signals:
             if not isinstance(signal, dict):
                 continue
-            meta = snapshot_meta.get(str(signal.get("snapshot_id")), {})
+            meta = snapshot_meta.get(str(signal.get("snapshot_id")))
+            if meta is None:
+                continue
             returns = []
             supports = []
             for security in as_list(signal.get("security_results")):

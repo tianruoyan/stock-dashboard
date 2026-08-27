@@ -2445,7 +2445,6 @@ function currentSignalDate() {
     cached("data/alert.json")?.timestamp,
     cached("data/intraday.json")?.timestamp,
     cached("data/midday.json")?.timestamp,
-    cached("data/topics.json")?.timestamp,
     cached("data/postmarket.json")?.timestamp
   ].map(signalDate).filter(Boolean).sort();
   return dates[dates.length - 1] || "";

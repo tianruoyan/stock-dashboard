@@ -1,0 +1,41 @@
+{
+  "schema_version": 1,
+  "required": ["trade_date", "as_of", "source_quality", "sector", "leaders", "funds", "market_environment"],
+  "fields": {
+    "trade_date": "YYYY-MM-DD",
+    "as_of": "带时区ISO-8601",
+    "checkpoint_id": "open_confirmation | morning_confirmation | late_confirmation",
+    "source_quality": {
+      "state": "usable | degraded | waiting",
+      "sources": "来源数组",
+      "missing": "缺失事实数组"
+    },
+    "sector": {
+      "proxy_change_pct": "AI硬件8股等权涨跌幅",
+      "benchmark_change_pct": "沪深300涨跌幅",
+      "relative_outperformance_pct": "代理篮子相对沪深300超额",
+      "market_rank": "8股代理篮子在同口径可比行业中的排名",
+      "comparable_theme_count": "同口径可比行业总数",
+      "advance_ratio_pct": "8股上涨占比"
+    },
+    "leaders": {
+      "core_count": "取得有效行情的核心龙头数",
+      "outperform_count": "强于代理篮子的核心龙头数",
+      "outperform_ratio": "强于代理篮子的核心龙头比例",
+      "median_turnover_pace": "核心龙头相对5日同时点成交速度中位数",
+      "trend_confirmed_count": "同时站上5日和10日均线的核心龙头数",
+      "trend_confirmed_ratio": "趋势确认比例"
+    },
+    "funds": {
+      "continuous_net_inflow_days": "连续净流入天数",
+      "pool_net_inflow_yi": "股票池净流入，亿元",
+      "etf_net_inflow_yi": "相关ETF净流入，亿元"
+    },
+    "market_environment": {
+      "market_turnover_ratio": "两市成交额相对可比基线",
+      "technology_advance_ratio_pct": "科技股上涨宽度",
+      "limit_up_down_ratio": "涨停数/跌停数"
+    },
+    "stocks": "标准化个股明细数组"
+  }
+}

@@ -141,7 +141,9 @@ def load_watchlist_names() -> set[str]:
 def latest_signal_date(files: dict[str, Any]) -> str:
     dates = []
     # Generated decision artifacts use build time; only primary market outputs define the market date.
-    for name in ("premarket.json", "alert.json", "intraday.json", "midday.json", "postmarket.json", "topics.json"):
+    # Research topics may be refreshed on weekends or evenings. They do not define the
+    # trading date used by intraday decisions and must not make Friday data look stale.
+    for name in ("premarket.json", "alert.json", "intraday.json", "midday.json", "postmarket.json"):
         ts = files.get(name, {}).get("timestamp") if isinstance(files.get(name), dict) else None
         date = signal_date(ts)
         if date:
@@ -586,12 +588,24 @@ def validate_alert(data: Any, source_health: Any, issues: list[dict[str, Any]], 
         if not isinstance(leaders, list):
             issues.append(issue("warning", "alert.json", "bad_alert_leaders", f"alerts[{index}].leaders 不是数组", f"alerts[{index}].leaders"))
             continue
+        quote = item.get("quote_audit") if isinstance(item.get("quote_audit"), dict) else data.get("quote_audit") or {}
+        pct_field = str(quote.get("pct_field") or "") if isinstance(quote, dict) else ""
+        trigger_metrics = item.get("trigger_metrics") if isinstance(item.get("trigger_metrics"), dict) else {}
+        is_group_metric = trigger_metrics.get("metric_scope") in {"theme_pool", "sector"} or bool(re.search(r"底池|题材|板块", pct_field))
+        if is_group_metric:
+            for key in ("metric_scope", "change_pct", "as_of", "source_label"):
+                if trigger_metrics.get(key) in (None, ""):
+                    issues.append(issue("warning", "alert.json", "missing_group_trigger_metric", f"alerts[{index}].trigger_metrics.{key} 缺失", f"alerts[{index}].trigger_metrics"))
         for leader_index, leader in enumerate(leaders):
             if not isinstance(leader, dict):
                 issues.append(issue("warning", "alert.json", "bad_alert_leader", f"alerts[{index}].leaders[{leader_index}] 不是对象", f"alerts[{index}].leaders[{leader_index}]"))
                 continue
             if not leader.get("name"):
                 issues.append(issue("warning", "alert.json", "missing_alert_leader_name", f"alerts[{index}].leaders[{leader_index}].name 缺失", f"alerts[{index}].leaders[{leader_index}]"))
+            if is_group_metric:
+                if "change_pct" in leader:
+                    issues.append(issue("warning", "alert.json", "theme_metric_mislabeled_as_stock_pct", f"alerts[{index}].leaders[{leader_index}] 不得保存题材/底池涨跌幅", f"alerts[{index}].leaders[{leader_index}]"))
+                continue
             if "change_pct" not in leader:
                 issues.append(issue("warning", "alert.json", "missing_alert_leader_pct", f"alerts[{index}].leaders[{leader_index}].change_pct 缺失", f"alerts[{index}].leaders[{leader_index}]"))
                 continue
@@ -605,6 +619,19 @@ def validate_alert(data: Any, source_health: Any, issues: list[dict[str, Any]], 
                     issues.append(issue("warning", "alert.json", "suspicious_alert_pct", f"{leader.get('name') or 'leader'} 触发窗口涨跌幅 {pct}，3分钟窗口需回查原始行情源", f"alerts[{index}].leaders[{leader_index}]"))
             except Exception:
                 issues.append(issue("critical", "alert.json", "bad_alert_leader_pct", f"{leader.get('name') or 'leader'} change_pct 非数字：{leader.get('change_pct')}", f"alerts[{index}].leaders[{leader_index}]"))
+        legacy_values = []
+        for leader in leaders:
+            if not isinstance(leader, dict) or not isinstance(leader.get("change_pct"), (int, float)):
+                continue
+            legacy_values.append(round(float(leader["change_pct"]), 6))
+        if len(legacy_values) >= 2 and len(set(legacy_values)) == 1 and re.search(r"底池|题材|板块", pct_field):
+            issues.append(issue(
+                "warning",
+                "alert.json",
+                "theme_metric_mislabeled_as_stock_pct",
+                f"alerts[{index}] 多只代表股共用同一{pct_field or '题材指标'}；V2不得把该值展示为个股涨跌",
+                f"alerts[{index}].leaders",
+            ))
 
 
 def validate_alert_quote_audit(data: dict[str, Any], alerts: list[Any], polluted: bool, issues: list[dict[str, Any]], requires_trade_gate: bool = True) -> None:
@@ -633,21 +660,33 @@ def validate_alert_quote_audit(data: dict[str, Any], alerts: list[Any], polluted
         code = "bad_alert_quote_audit" if requires_trade_gate else "historical_alert_quote_audit_incomplete"
         issues.append(issue(severity, "alert.json", code, "quote_audit.sanity_checks 必须是对象", "quote_audit.sanity_checks"))
         return
-    for key in ("sample_count", "max_abs_leader_change_pct", "cross_source_verified"):
+    group_metric = audit.get("metric_scope") in {"theme_pool", "sector"} or bool(re.search(r"底池|题材|板块", str(audit.get("pct_field") or "")))
+    magnitude_key = "max_abs_trigger_change_pct" if group_metric else "max_abs_leader_change_pct"
+    for key in ("sample_count", magnitude_key, "cross_source_verified"):
         if sanity.get(key) in (None, "", []):
             severity = "critical" if requires_trade_gate else "warning"
             code = "missing_alert_quote_audit_field" if requires_trade_gate else "historical_alert_quote_audit_incomplete"
             issues.append(issue(severity, "alert.json", code, f"quote_audit.sanity_checks.{key} 缺失", "quote_audit.sanity_checks"))
-    observed = max_abs_alert_leader_pct(alerts)
+    if group_metric:
+        trigger_values = [
+            abs(float(item.get("trigger_metrics", {}).get("change_pct")))
+            for item in alerts
+            if isinstance(item, dict)
+            and isinstance(item.get("trigger_metrics"), dict)
+            and isinstance(item.get("trigger_metrics", {}).get("change_pct"), (int, float))
+        ]
+        observed = max(trigger_values) if trigger_values else None
+    else:
+        observed = max_abs_alert_leader_pct(alerts)
     try:
-        reported = float(sanity.get("max_abs_leader_change_pct"))
+        reported = float(sanity.get(magnitude_key))
         if observed is not None and reported + 0.01 < observed:
-            issues.append(issue("warning", "alert.json", "alert_quote_audit_mismatch", f"quote_audit 最大涨跌幅 {reported} 小于实际 leaders 最大值 {observed}", "quote_audit.sanity_checks"))
+            issues.append(issue("warning", "alert.json", "alert_quote_audit_mismatch", f"quote_audit 最大涨跌幅 {reported} 小于实际触发值 {observed}", "quote_audit.sanity_checks"))
     except Exception:
-        if sanity.get("max_abs_leader_change_pct") not in (None, ""):
+        if sanity.get(magnitude_key) not in (None, ""):
             severity = "critical" if requires_trade_gate else "warning"
             code = "bad_alert_quote_audit" if requires_trade_gate else "historical_alert_quote_audit_incomplete"
-            issues.append(issue(severity, "alert.json", code, f"quote_audit.sanity_checks.max_abs_leader_change_pct 非数字：{sanity.get('max_abs_leader_change_pct')}", "quote_audit.sanity_checks"))
+            issues.append(issue(severity, "alert.json", code, f"quote_audit.sanity_checks.{magnitude_key} 非数字：{sanity.get(magnitude_key)}", "quote_audit.sanity_checks"))
     try:
         if int(sanity.get("sample_count")) < len(alerts):
             issues.append(issue("warning", "alert.json", "alert_quote_audit_mismatch", "quote_audit 样本数小于 alerts 数量", "quote_audit.sanity_checks"))
@@ -719,10 +758,11 @@ def validate_candidate_alert_evidence(
     if valid:
         return
     severity = "critical" if alert_item_is_fresh(data, item, now, phase) else "warning"
+    code = "candidate_alert_evidence_weak" if severity == "critical" else "historical_candidate_alert_evidence_weak"
     issues.append(issue(
         severity,
         "alert.json",
-        "candidate_alert_evidence_weak",
+        code,
         f"alerts[{index}] 候选异动未达到最低短周期价格、方向占比和成交门槛，不得作为当前候选展示",
         f"alerts[{index}]",
     ))
@@ -1142,6 +1182,8 @@ def issue_impact(code: str, file: str, message: str) -> tuple[str, str]:
     text = f"{code} {file} {message}"
     if code == "historical_source_failures":
         return "background_review", "保留历史来源审计记录，不重复影响当前价格门禁"
+    if code == "historical_candidate_alert_evidence_weak":
+        return "background_review", "过期候选仅保留复盘，不作为当前交易依据"
     if code == "stale_timestamp" and file in {"source-health.json", "evening-sentiment.json"}:
         return "background_review", "休市增量或来源巡检只作下一交易日背景，不改写最近市场日"
     if re.search(r"ths_watchlist_import|hkex_evening_watchlist_scan|watchlist_code_quality|公告扫描|无权限读取", text, re.I):

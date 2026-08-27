@@ -1,0 +1,55 @@
+{
+  "schema_version": 1,
+  "version": "2026-07-18.1",
+  "effective_from": "2026-07-06",
+  "classification_rule": "必须同时读取交易所、板块、风险警示状态、上市天数和退市整理状态；禁止只按代码前缀机械判断。",
+  "boards": [
+    {
+      "id": "sse_main",
+      "label": "上交所主板",
+      "daily_limit_pct": 10,
+      "risk_warning_limit_pct": 10,
+      "no_limit_cases": ["首次公开发行上市后的前五个交易日", "退市整理期首个交易日", "交易所规定的其他情形"],
+      "source_url": "https://www.sse.com.cn/lawandrules/sselawsrules2025/trade/universal/c/c_20260424_10816492.shtml"
+    },
+    {
+      "id": "sse_star",
+      "label": "科创板",
+      "daily_limit_pct": 20,
+      "risk_warning_limit_pct": 20,
+      "no_limit_cases": ["首次公开发行上市后的前五个交易日", "退市整理期首个交易日", "交易所规定的其他情形"],
+      "source_url": "https://www.sse.com.cn/lawandrules/sselawsrules2025/trade/universal/c/c_20260424_10816492.shtml"
+    },
+    {
+      "id": "szse_main",
+      "label": "深交所主板",
+      "daily_limit_pct": 10,
+      "risk_warning_limit_pct": 10,
+      "no_limit_cases": ["首次公开发行上市后的前五个交易日", "重新上市首日", "退市整理期首个交易日", "交易所规定的其他情形"],
+      "source_url": "https://www.szse.cn/lawrules/rule/allrules/bussiness/t20260424_620190.html"
+    },
+    {
+      "id": "szse_chinext",
+      "label": "创业板",
+      "daily_limit_pct": 20,
+      "risk_warning_limit_pct": 20,
+      "no_limit_cases": ["首次公开发行上市后的前五个交易日", "重新上市首日", "退市整理期首个交易日", "交易所规定的其他情形"],
+      "source_url": "https://docs.static.szse.cn/www/lawrules/rule/trade/current/W020260424690713155663.pdf"
+    },
+    {
+      "id": "bse_stock",
+      "label": "北交所股票",
+      "daily_limit_pct": 30,
+      "risk_warning_limit_pct": null,
+      "no_limit_cases": ["公开发行股票上市交易首日", "退市整理期首个交易日", "交易所规定的其他情形"],
+      "source_url": "https://www.bse.cn/jygl_list/200028217.html"
+    }
+  ],
+  "current_sentiment_pool_scope": {
+    "rule_id": "eastmoney_sh_sz_filtered_2026-07-18.1",
+    "included": ["沪深A股"],
+    "excluded": ["北交所", "名称含ST或退市标识", "N/C前缀近期上市股票"],
+    "note": "当前涨跌停池已经按名称和市场过滤；原始总数与过滤后数量分别保存，不视为同口径冲突。"
+  },
+  "official_sources_checked_at": "2026-07-18T00:00:00+08:00"
+}

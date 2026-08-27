@@ -3,16 +3,25 @@ from __future__ import annotations
 import json
 import tempfile
 import unittest
-from datetime import date
+from datetime import date, datetime, timezone, timedelta
 from pathlib import Path
 
-from v2_platform.sentiment_collector import DOWN_URL, UP_URL, V2SentimentCollector
+from v2_platform.sentiment_collector import (
+    DOWN_URL,
+    UP_URL,
+    V2SentimentCollector,
+    tencent_turnover_yi,
+)
 
 
 ROOT = Path(__file__).resolve().parents[1]
 
 
 class V2SentimentCollectorTests(unittest.TestCase):
+    def test_hong_kong_turnover_uses_currency_units_not_a_share_wan_yuan(self) -> None:
+        self.assertEqual(tencent_turnover_yi("hk00981", "8114269873"), 81.1427)
+        self.assertEqual(tencent_turnover_yi("sh600000", "811426"), 81.1426)
+
     def prepare(self, root: Path) -> None:
         (root / "config").mkdir()
         (root / "config/v2-market-calendar.json").write_text((ROOT / "config/v2-market-calendar.json").read_text(encoding="utf-8"), encoding="utf-8")
@@ -73,6 +82,24 @@ class V2SentimentCollectorTests(unittest.TestCase):
             self.assertEqual(effect["median_return_pct"], -6.0)
             self.assertEqual(effect["max_adverse_excursion_pct"], -10.0)
             self.assertEqual(effect["judgement"], "高位亏钱效应明显")
+
+    def test_intraday_as_of_uses_actual_observation_time_not_future_close(self) -> None:
+        def fake(url, params):
+            return {"rc": 0, "data": {"qdate": int(params["date"]), "tc": 0, "pool": []}}
+        observed = datetime(2026, 7, 10, 10, 5, tzinfo=timezone(timedelta(hours=8)))
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            self.prepare(root)
+            payload = V2SentimentCollector(root, fetcher=fake, clock=lambda: observed).collect(date(2026, 7, 10))
+            self.assertEqual(payload["as_of"], "2026-07-10T10:05:00+08:00")
+
+    def test_bse_920_code_is_not_mislabelled_as_shenzhen(self) -> None:
+        rows, exclusions = V2SentimentCollector._clean([
+            {"c": "920690", "m": 0, "n": "捷众科技", "lbc": 1, "zdp": 29.98},
+            {"c": "000001", "m": 0, "n": "平安银行", "lbc": 1, "zdp": 10.0},
+        ])
+        self.assertEqual([item["c"] for item in rows], ["000001"])
+        self.assertEqual(exclusions[0]["reason"], "non_sh_sz_market")
 
 
 if __name__ == "__main__":

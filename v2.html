@@ -3,176 +3,41 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="color-scheme" content="dark">
+  <meta name="color-scheme" content="light">
   <title>AI投资决策系统 V2</title>
-  <link rel="stylesheet" href="v2.css?v=phase5-sources-1">
+  <link rel="stylesheet" href="v2.css?v=trader-language-1">
 </head>
-<body>
+<body class="page-home">
   <header class="v2-topbar">
-    <div class="brand-block">
-      <span class="brand-mark">V2</span>
-      <div>
-        <strong>AI投资决策系统</strong>
-        <small>规则筛选 · AI解释 · 人工决策</small>
-      </div>
-    </div>
-    <div class="system-meta">
-      <span id="v2-mode" class="pill neutral">影子模式</span>
-      <span id="v2-status" class="pill">加载中</span>
-      <time id="v2-updated">--</time>
-    </div>
+    <a class="brand-block" href="v2.html" aria-label="返回 V2 首页"><span class="brand-mark">V2</span><span><strong>AI投资决策系统</strong><small>结果展示 · 证据核验 · 人工决策</small></span></a>
+    <div class="system-meta"><span id="v2-mode" class="pill neutral">AI辅助判断</span><span id="v2-status" class="pill">正在更新</span><time id="v2-updated">--</time></div>
   </header>
-
-  <nav class="v2-nav" aria-label="V2主要区域">
-    <a href="#opportunity-risk-radar">机会雷达</a>
-    <a href="#market-environment">市场环境</a>
-    <a href="#style-map">风格结构</a>
-    <a href="#validation-queue">验证队列</a>
-    <a href="#research-themes">产业研究</a>
-    <a href="#stock-pool">股票池</a>
-    <a href="#source-manager">关注来源</a>
-    <a href="index.html">返回V1</a>
+  <nav class="v2-nav global-nav" aria-label="V2一级模块">
+    <a href="v2-trading.html">交易系统</a><a href="v2-research.html">产业研究</a><a href="v2-stock-pool.html">股票池</a><a href="v2-review.html">复盘学习</a><a href="v2-system.html">系统说明</a><a href="http://127.0.0.1:8877/index.html">返回 V1</a>
   </nav>
-
-  <main class="v2-shell">
-    <section class="status-grid" aria-label="决策前置状态">
-      <div id="data-quality-gate" class="status-panel" aria-live="polite"></div>
-      <div id="market-environment" class="status-panel" aria-live="polite"></div>
+  <main class="v2-shell home-shell">
+    <section class="home-hero">
+      <div><span class="eyebrow">TODAY · 今日判断</span><h1 id="home-market-action">等待确认</h1><p id="home-market-copy">正在读取今天的市场结论与行动边界。</p></div>
+      <div class="hero-evidence"><span>行情与信息截至</span><strong id="home-evidence-time">--</strong><small>结论由证据支持，决策由你完成</small></div>
     </section>
-
-    <section class="primary-section" aria-labelledby="radar-heading">
-      <div class="section-heading">
-        <div>
-          <span class="eyebrow">最高优先级</span>
-          <h1 id="radar-heading">交易机会与风险雷达</h1>
-          <p>先看发生了什么，再核验为什么，最后决定是否行动。</p>
-        </div>
-        <div id="radar-filters" class="filter-row" role="group" aria-label="筛选雷达卡片">
-          <button type="button" data-filter="all" class="active">全部</button>
-          <button type="button" data-filter="opportunity">机会</button>
-          <button type="button" data-filter="risk">风险</button>
-          <button type="button" data-filter="waiting">待确认</button>
-        </div>
+    <section class="home-decision-grid" aria-label="今日决策摘要">
+      <article class="home-status-card accent"><span>01 · 当前机会</span><strong id="home-opportunity-summary">等待当日信号</strong><p><span id="home-opportunity-count">--</span> 个方向具备当前观察价值。</p></article>
+      <article class="home-status-card risk"><span>02 · 主要风险</span><strong id="home-risk-summary">等待风险判断</strong><p><span id="home-risk-count">--</span> 个风险需要优先处理。</p></article>
+      <article class="home-status-card"><span>03 · 下一步</span><strong id="home-next-check">等待验证条件</strong><p><span id="home-validation-count">--</span> 个方向仍需确认，不抢跑。</p></article>
+    </section>
+    <section class="portal-section" aria-labelledby="portal-title">
+      <div class="portal-heading"><div><span class="eyebrow">系统目录</span><h2 id="portal-title">进入决策工作区</h2></div><p>日常交易与长期研究分开，每页只展示当前任务的结果。</p></div>
+      <div class="portal-grid system-portal-grid">
+        <a class="portal-card priority" href="v2-trading.html"><span class="portal-index">01</span><div><h3>交易系统</h3><p>今日、盘前、盘中异动、午盘、盘后和晚间舆情。</p></div><span class="portal-enter">进入交易系统 →</span></a>
+        <a class="portal-card" href="v2-research.html"><span class="portal-index">02</span><div><h3>产业研究</h3><p>长期主题、产业链位置、催化、A股映射和反向证据。</p></div><span class="portal-enter">查看产业结论 →</span></a>
+        <a class="portal-card" href="v2-stock-pool.html"><span class="portal-index">03</span><div><h3>股票池</h3><p>用户自选、正式观察、交易候选与系统临时发现。</p></div><div class="portal-metrics"><b><span id="home-stock-count">--</span> 只研究标的</b></div><span class="portal-enter">进入股票池 →</span></a>
+        <a class="portal-card" href="v2-review.html"><span class="portal-index">04</span><div><h3>复盘学习</h3><p>回看当时判断、后续结果、误报漏报和版本差异。</p></div><span class="portal-enter">进入复盘 →</span></a>
+        <a class="portal-card utility" href="v2-system.html"><span class="portal-index">05</span><div><h3>系统说明</h3><p>查询判断方法、数据来源、权限边界和版本记录。</p></div><span class="portal-enter">需要时再查看 →</span></a>
       </div>
-      <div id="opportunity-risk-radar" class="radar-grid"></div>
     </section>
-
-    <section class="secondary-grid">
-      <article class="module-card wide">
-        <div class="module-heading">
-          <div><span class="eyebrow">市场结构</span><h2>风格与主线变化</h2></div>
-          <span class="subtle">微盘独立于小登</span>
-        </div>
-        <div id="style-map"></div>
-      </article>
-
-      <article class="module-card">
-        <div class="module-heading">
-          <div><span class="eyebrow">下一步核验</span><h2>验证队列</h2></div>
-        </div>
-        <div id="validation-queue"></div>
-      </article>
-
-      <article class="module-card">
-        <div class="module-heading">
-          <div><span class="eyebrow">规则与缺口</span><h2>组合风险</h2></div>
-        </div>
-        <div id="portfolio-risk"></div>
-        <details class="portfolio-manager" id="portfolio-manager">
-          <summary>管理本机组合数据</summary>
-          <p>只用于风险暴露分析，不授权下单；原始持仓不会进入公开发布。</p>
-          <form id="portfolio-settings-form" class="portfolio-settings-form">
-            <label><span>可用现金</span><input id="portfolio-cash" type="number" min="0" step="0.01" placeholder="可留空"></label>
-            <label><span>单一持仓上限 %</span><input id="portfolio-max-single" type="number" min="0" max="100" step="0.1" placeholder="例如 20"></label>
-            <label><span>单一主题上限 %</span><input id="portfolio-max-theme" type="number" min="0" max="100" step="0.1" placeholder="例如 35"></label>
-            <label><span>总投入上限 %</span><input id="portfolio-max-invested" type="number" min="0" max="100" step="0.1" placeholder="例如 80"></label>
-            <label><span>最大回撤容忍 %</span><input id="portfolio-max-drawdown" type="number" min="0" max="100" step="0.1" placeholder="例如 12"></label>
-            <button type="submit" class="source-primary-action">保存风险设置</button>
-          </form>
-          <form id="portfolio-holding-form" class="portfolio-holding-form">
-            <input id="portfolio-holding-original-code" type="hidden">
-            <label><span>股票代码</span><input id="portfolio-holding-code" required placeholder="600000 / sh600000"></label>
-            <label><span>名称</span><input id="portfolio-holding-name" required maxlength="80"></label>
-            <label><span>数量</span><input id="portfolio-holding-quantity" type="number" required min="0" step="0.01"></label>
-            <label><span>成本价</span><input id="portfolio-holding-cost" type="number" required min="0" step="0.0001"></label>
-            <div class="source-form-actions"><button type="submit" class="source-primary-action">保存持仓</button><button type="button" id="portfolio-holding-cancel" hidden>取消编辑</button></div>
-          </form>
-          <div id="portfolio-private-status" class="source-manager-status" aria-live="polite"></div>
-          <div id="portfolio-private-analysis"></div>
-          <div id="portfolio-holding-list" class="portfolio-holding-list"></div>
-        </details>
-      </article>
-
-      <article class="module-card wide">
-        <div class="module-heading">
-          <div><span class="eyebrow">长期映射</span><h2>产业研究室</h2></div>
-          <span class="subtle">研究结论 → 股票池 → 驾驶舱</span>
-        </div>
-        <div id="research-themes" class="theme-grid"></div>
-      </article>
-
-      <article class="module-card wide" id="stock-pool">
-        <div class="module-heading stock-pool-heading">
-          <div><span class="eyebrow">研究与交易连接层</span><h2>统一股票池</h2></div>
-          <label class="stock-search"><span>查股票/标签</span><input id="stock-pool-search" type="search" placeholder="例如：半导体、北方华创"></label>
-        </div>
-        <div id="stock-pool-summary"></div>
-        <div id="stock-pool-list" class="stock-pool-grid"></div>
-      </article>
-
-      <article class="module-card wide">
-        <div class="module-heading">
-          <div><span class="eyebrow">后验验证</span><h2>信号复盘</h2></div>
-        </div>
-        <div id="signal-review"></div>
-      </article>
-
-      <article class="module-card wide" id="parallel-operation">
-        <div class="module-heading">
-          <div><span class="eyebrow">双轨运行</span><h2>V1 / V2 自动对照</h2></div>
-          <span class="subtle">只比较 · 不自动切换</span>
-        </div>
-        <div id="parallel-comparison"></div>
-      </article>
-
-      <article class="module-card wide">
-        <div class="module-heading">
-          <div><span class="eyebrow">来源与任务边界</span><h2>数据治理</h2></div>
-          <span class="subtle">事实 · 推断 · 建议分层</span>
-        </div>
-        <div id="governance-status"></div>
-      </article>
-
-      <article class="module-card wide" id="source-manager">
-        <div class="module-heading">
-          <div><span class="eyebrow">本机私有配置</span><h2>关注来源管理</h2></div>
-          <span class="subtle">小红书 · 微博 · 公众号 · 其他</span>
-        </div>
-        <p class="source-manager-intro">在这里直接添加、编辑、停用或删除博主来源。博主观点只进入“市场预期/情绪”层，不会被当作交易事实。</p>
-        <form id="blogger-source-form" class="source-manager-form">
-          <input id="blogger-source-id" type="hidden">
-          <label><span>平台</span><select id="blogger-source-platform" required><option value="xiaohongshu">小红书</option><option value="weibo">微博</option><option value="wechat">微信公众号</option><option value="douyin">抖音</option><option value="bilibili">哔哩哔哩</option><option value="other">其他</option></select></label>
-          <label><span>账号名称</span><input id="blogger-source-name" maxlength="80" required placeholder="例如：某产业研究员"></label>
-          <label class="source-url-field"><span>主页或文章链接</span><input id="blogger-source-url" type="url" required placeholder="https://..."></label>
-          <label class="source-note-field"><span>关注说明</span><input id="blogger-source-note" maxlength="500" placeholder="例如：跟踪半导体设备产业信息"></label>
-          <div class="source-form-actions"><button type="submit" class="source-primary-action">保存来源</button><button type="button" id="blogger-source-cancel" hidden>取消编辑</button></div>
-        </form>
-        <div id="blogger-source-status" class="source-manager-status" aria-live="polite"></div>
-        <div id="blogger-source-list" class="source-manager-list"></div>
-      </article>
-    </section>
-
-    <details class="source-drawer">
-      <summary>查看本页数据来源与时间</summary>
-      <div id="source-registry"></div>
-    </details>
+    <div id="page-load-error"></div>
   </main>
-
-  <footer class="v2-footer">
-    <span>V2当前为影子入口，不触发生产通知或交易。</span>
-    <a href="VERSION.md">版本记录</a>
-  </footer>
-
-  <script src="v2.js?v=phase7-portfolio-1"></script>
+  <footer class="v2-footer"><span>本页只展示今日摘要和系统入口。</span><a href="VERSION.md">版本记录</a></footer>
+  <script src="v2.js?v=trader-language-1"></script>
 </body>
 </html>

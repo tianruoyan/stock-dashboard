@@ -1,0 +1,38 @@
+{
+  "schema_version": 1,
+  "version": "2026-07-18.e1",
+  "sources": {
+    "manual_add": {
+      "source_priority": 300,
+      "writer_actor": "user",
+      "user_confirmed_source": true
+    },
+    "broker_sync": {
+      "source_priority": 200,
+      "writer_actor": "sync_service",
+      "user_confirmed_source": true,
+      "enabled": false
+    },
+    "ths_cloud": {
+      "source_priority": 100,
+      "writer_actor": "sync_service",
+      "user_confirmed_source": true,
+      "enabled": false,
+      "shadow_read_enabled": true
+    }
+  },
+  "non_user_sources": [
+    "system_candidate",
+    "research_import"
+  ],
+  "invariants": {
+    "effective_source_order": [
+      "manual_add",
+      "broker_sync",
+      "ths_cloud"
+    ],
+    "any_active_user_source_protects_asset": true,
+    "source_priority_cannot_change_user_fields": true,
+    "ai_cannot_create_user_source": true
+  }
+}

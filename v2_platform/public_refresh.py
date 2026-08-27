@@ -34,14 +34,23 @@ class V2PublicInputRefresher:
             self._refresh_market("sentiment", "sentiment-structure.json", trade_date, self.sentiment_collector, force),
             self._refresh_events(force),
         ]
+        health_path = self.root / "data" / "v2" / "public-input-health.json"
+        refreshed_ids = {str(item.get("id") or "") for item in rows}
+        previous = load_json(health_path)
+        carried_rows = [
+            item
+            for item in as_list(previous.get("collectors"))
+            if isinstance(item, dict) and str(item.get("id") or "") not in refreshed_ids
+        ]
+        all_rows = rows + carried_rows
         report = {
             "schema_version": 1,
             "trade_date": trade_date.isoformat(),
-            "state": "degraded" if any(item["state"] == "failed" for item in rows) else "usable",
-            "collectors": rows,
+            "state": "degraded" if any(item.get("state") == "failed" for item in all_rows) else "usable",
+            "collectors": all_rows,
             "privacy_note": "只刷新公开市场和官方来源；不读取或发布本地持仓。",
         }
-        write_json(self.root / "data" / "v2" / "public-input-health.json", report)
+        write_json(health_path, report)
         return report
 
     def _refresh_market(

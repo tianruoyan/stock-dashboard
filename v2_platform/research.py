@@ -59,6 +59,7 @@ class V2ResearchSystemBuilder:
         self.topic_state = load_json(self.root / "data" / "topics.json")
         self.taxonomy = load_json(self.root / "config" / "v2-theme-taxonomy.json")
         self.templates = load_json(self.root / "config" / "v2-research-templates.json")
+        self.formal_observation = load_json(self.root / "config" / "v2-formal-observation.json")
 
     def build(self) -> tuple[dict[str, Any], dict[str, Any]]:
         topics = self._topics()
@@ -107,13 +108,45 @@ class V2ResearchSystemBuilder:
                     "frequency": clean_text(item.get("frequency")) or "未配置",
                     "stock_names": sorted(set(stock_names)),
                     "focus": focus,
-                    "current_status": clean_text(current.get("status")) or "current_state_missing",
+                    "current_status": clean_text(current.get("status")) or "观察",
                     "current_conclusion": clean_text(current.get("conclusion")) or clean_text(current.get("note")) or "当前专题状态没有同名可审计输入。",
                     "current_action": clean_text(current.get("action")) or "等待专题更新。",
                     "current_updated_at": current.get("updated_at") or self.topic_state.get("timestamp"),
                     "mapping_basis": "config/topics-list.json explicit topic fields",
                 }
             )
+        seen_names = {row["name"] for row in rows}
+        for item in as_list(self.formal_observation.get("themes")):
+            if not isinstance(item, dict):
+                continue
+            name = clean_text(item.get("name")) or "未命名正式观察专题"
+            if name in seen_names:
+                continue
+            focus = [clean_text(value) for value in as_list(item.get("focus")) if clean_text(value)]
+            stock_names = [clean_stock_name(value) for value in as_list(item.get("stocks")) if clean_stock_name(value)]
+            configured_domains = [
+                {"id": clean_text(domain.get("id")), "name": clean_text(domain.get("name"))}
+                for domain in as_list(item.get("domains"))
+                if isinstance(domain, dict) and clean_text(domain.get("id"))
+            ]
+            rows.append(
+                {
+                    "id": stable_id("topic", name),
+                    "name": name,
+                    "domains": configured_domains or self._domains_for(" ".join([name, *focus, *stock_names])),
+                    "priority": item.get("priority"),
+                    "level": clean_text(item.get("level")) or "正式观察专题",
+                    "frequency": clean_text(item.get("frequency")) or "盘后复核",
+                    "stock_names": sorted(set(stock_names)),
+                    "focus": focus,
+                    "current_status": clean_text(item.get("current_status")) or "观察",
+                    "current_conclusion": clean_text(item.get("current_conclusion")) or "等待持续核验。",
+                    "current_action": clean_text(item.get("current_action")) or "持续观察。",
+                    "current_updated_at": item.get("current_updated_at"),
+                    "mapping_basis": "config/v2-formal-observation.json research_import",
+                }
+            )
+            seen_names.add(name)
         return rows
 
     @staticmethod
@@ -163,6 +196,30 @@ class V2ResearchSystemBuilder:
                 row["tags"].extend(clean_text(value) for value in as_list(raw.get("tags")) if clean_text(value))
                 if clean_text(raw.get("source")):
                     row["source_notes"].append(clean_text(raw.get("source")))
+        formal_by_code: dict[str, dict[str, Any]] = {}
+        for raw in as_list(self.formal_observation.get("stocks")):
+            if not isinstance(raw, dict):
+                continue
+            code = clean_text(raw.get("code")).lower()
+            name = clean_stock_name(raw.get("name"))
+            if not code or not name:
+                continue
+            formal_by_code[code] = raw
+            row = by_code.setdefault(
+                code,
+                {
+                    "security_id": stable_id("security", code),
+                    "code": code,
+                    "name": name,
+                    "market": market_from_code(code),
+                    "source_pools": [],
+                    "tags": [],
+                    "source_notes": [],
+                },
+            )
+            row["source_pools"].append("research_import")
+            row["tags"].extend(clean_text(value) for value in as_list(raw.get("tags")) if clean_text(value))
+            row["source_notes"].append("V2正式观察研究导入")
         for row in by_code.values():
             row["source_pools"] = sorted(set(row["source_pools"]))
             row["tags"] = sorted(set(row["tags"]))
@@ -183,6 +240,30 @@ class V2ResearchSystemBuilder:
             row["invalidation_conditions"] = [value for value in focus if any(k in value for k in ("风险", "回避", "无扩散", "不得", "不作为", "降级", "跌破", "拖累"))][:6]
             row["history_status"] = "not_started"
             row["mapping_basis"] = "explicit watchlist + explicit topic stock list/tag keyword"
+            formal = as_dict(formal_by_code.get(row["code"]))
+            if formal:
+                explicit_roles = [clean_text(value) for value in as_list(formal.get("roles")) if clean_text(value)]
+                explicit_role_evidence = [clean_text(value) for value in as_list(formal.get("role_evidence")) if clean_text(value)]
+                row["identity_source"] = clean_text(formal.get("identity_source"))
+                row["roles"] = explicit_roles or ["unclassified"]
+                row["role_evidence"] = explicit_role_evidence or ["研究导入未提供角色证据，保持未分类"]
+                row["attention_reason"] = clean_text(formal.get("attention_reason")) or row["attention_reason"]
+                row["counter_evidence"] = [clean_text(value) for value in as_list(formal.get("counter_evidence")) if clean_text(value)]
+                row["catalysts"] = [clean_text(value) for value in as_list(formal.get("catalysts")) if clean_text(value)]
+                row["trigger_conditions"] = [clean_text(value) for value in as_list(formal.get("trigger_conditions")) if clean_text(value)]
+                row["invalidation_conditions"] = [clean_text(value) for value in as_list(formal.get("invalidation_conditions")) if clean_text(value)]
+                row["suitable_environment"] = [clean_text(value) for value in as_list(formal.get("suitable_environment")) if clean_text(value)]
+                row["unsuitable_environment"] = [clean_text(value) for value in as_list(formal.get("unsuitable_environment")) if clean_text(value)]
+                row["source_refs"] = [dict(value) for value in as_list(formal.get("source_refs")) if isinstance(value, dict)]
+                row["chain_side"] = clean_text(formal.get("chain_side"))
+                row["benefit_tier"] = clean_text(formal.get("benefit_tier"))
+                row["evidence_grade"] = clean_text(formal.get("evidence_grade"))
+                row["research_classification"] = clean_text(formal.get("research_classification"))
+                row["formal_observation_requested"] = formal.get("formal_observation_requested") is True
+                row["trading_candidate_opt_in"] = formal.get("trading_candidate_opt_in") is True
+                row["observation_source"] = "research_import"
+                row["is_user_asset"] = False
+                row["mapping_basis"] = "official evidence research_import + explicit formal observation theme"
         return sorted(by_code.values(), key=lambda item: (item["market"], item["code"]))
 
     def _research_library(self, topics: list[dict[str, Any]], stocks: list[dict[str, Any]]) -> dict[str, Any]:
@@ -225,7 +306,7 @@ class V2ResearchSystemBuilder:
             "research_governance": clean_text(self.templates.get("governance")),
             "domains": domains,
             "unmapped_topics": unmapped,
-            "source_files": ["config/topics-list.json", "data/topics.json", "config/watchlist.json", "config/v2-theme-taxonomy.json", "config/v2-research-templates.json"],
+            "source_files": ["config/topics-list.json", "data/topics.json", "config/watchlist.json", "config/v2-theme-taxonomy.json", "config/v2-research-templates.json", "config/v2-formal-observation.json"],
         }
 
     def _stock_pool(self, stocks: list[dict[str, Any]], topics: list[dict[str, Any]]) -> dict[str, Any]:

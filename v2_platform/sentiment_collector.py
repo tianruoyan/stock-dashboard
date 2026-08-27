@@ -19,6 +19,15 @@ KLINE_URL = "https://push2his.eastmoney.com/api/qt/stock/kline/get"
 TENCENT_URL = "https://qt.gtimg.cn/q="
 
 
+def tencent_turnover_yi(code: str, value: Any) -> float | None:
+    try:
+        amount = float(value)
+    except (TypeError, ValueError):
+        return None
+    divisor = 100_000_000 if str(code).lower().startswith("hk") else 10_000
+    return round(amount / divisor, 4)
+
+
 def fetch_json(url: str, params: dict[str, str], timeout: int = 20) -> dict[str, Any]:
     request_url = f"{url}?{urllib.parse.urlencode(params)}"
     request = urllib.request.Request(request_url, headers={"User-Agent": "Mozilla/5.0 V2Research/1.0"})
@@ -27,13 +36,32 @@ def fetch_json(url: str, params: dict[str, str], timeout: int = 20) -> dict[str,
             payload = json.loads(response.read().decode("utf-8"))
     except Exception as first_error:
         proc = subprocess.run(
-            ["curl", "-L", "--fail", "--silent", "--show-error", "--max-time", str(timeout), request_url],
+            [
+                "curl",
+                "-L",
+                "--fail",
+                "--silent",
+                "--show-error",
+                "--retry",
+                "2",
+                "--retry-all-errors",
+                "--retry-delay",
+                "1",
+                "--max-time",
+                str(timeout),
+                request_url,
+            ],
             capture_output=True,
             text=True,
         )
         if proc.returncode != 0:
             raise RuntimeError(f"source_fetch_failed:{type(first_error).__name__}:{proc.stderr.strip()[:160]}") from first_error
-        payload = json.loads(proc.stdout)
+        if not proc.stdout.strip():
+            raise RuntimeError(f"source_empty_response:{type(first_error).__name__}") from first_error
+        try:
+            payload = json.loads(proc.stdout)
+        except json.JSONDecodeError as exc:
+            raise RuntimeError(f"source_invalid_json:{type(first_error).__name__}") from exc
     if not isinstance(payload, dict):
         raise ValueError("response_not_object")
     return payload
@@ -71,6 +99,7 @@ def fetch_tencent_quotes(codes: list[str], timeout: int = 20) -> dict[str, dict[
             "close": float(parts[3]),
             "previous_close": float(parts[4]),
             "volume": float(parts[6] or 0),
+            "amount_yi": tencent_turnover_yi(code, parts[37]) if len(parts) > 37 else None,
             "high": float(parts[33]),
             "low": float(parts[34]),
             "as_of": parts[30],
@@ -85,10 +114,12 @@ class V2SentimentCollector:
         *,
         fetcher: Callable[[str, dict[str, str]], dict[str, Any]] = fetch_json,
         quote_fetcher: Callable[[list[str]], dict[str, dict[str, Any]]] = fetch_tencent_quotes,
+        clock: Callable[[], datetime] | None = None,
     ) -> None:
         self.root = root.resolve()
         self.fetcher = fetcher
         self.quote_fetcher = quote_fetcher
+        self.clock = clock or (lambda: datetime.now(timezone.utc).astimezone())
         self.calendar = TradingCalendar(load_json(self.root / "config" / "v2-market-calendar.json"), "CN")
 
     def collect(self, trade_date: date) -> dict[str, Any]:
@@ -107,12 +138,20 @@ class V2SentimentCollector:
             promotion["state"] = "degraded_response_date_unverified"
             promotion["quality_flags"] = previous_up_raw["quality_flags"]
         high_level = self._high_level_loss(previous_up, trade_date)
-        observed_at = datetime.now(timezone.utc).astimezone().isoformat(timespec="seconds")
+        observed = self.clock()
+        if observed.tzinfo is None:
+            raise ValueError("collector_clock_timezone_required")
+        observed = observed.astimezone(timezone(timedelta(hours=8)))
+        observed_at = observed.isoformat(timespec="seconds")
+        if observed.date() == trade_date:
+            market_as_of = min(observed, datetime.combine(trade_date, datetime.max.time().replace(hour=15, minute=0, second=0, microsecond=0), tzinfo=observed.tzinfo))
+        else:
+            market_as_of = datetime.combine(trade_date, datetime.min.time().replace(hour=15), tzinfo=observed.tzinfo)
         source_url = f"{UP_URL} ; {DOWN_URL}"
         return {
             "schema_version": 1,
             "trade_date": trade_date.isoformat(),
-            "as_of": f"{trade_date.isoformat()}T15:00:00+08:00",
+            "as_of": market_as_of.isoformat(timespec="seconds"),
             "observed_at": observed_at,
             "source_url": source_url,
             "source_type": "mainstream_market_data",
@@ -271,7 +310,9 @@ class V2SentimentCollector:
             code = str(item.get("c") or "")
             market = item.get("m")
             reason = None
-            if market not in {0, 1}:
+            if code.startswith("920"):
+                reason = "non_sh_sz_market"
+            elif market not in {0, 1}:
                 reason = "non_sh_sz_market"
             elif "ST" in name.upper() or "退" in name:
                 reason = "risk_or_delisting_name"

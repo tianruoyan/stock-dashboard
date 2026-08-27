@@ -461,7 +461,7 @@ function checkDataRenderCoverage(document, issues) {
 
   addCoverageCheck(checks, "section-intraday", intraday.sentiment?.judgement || intraday.sentiment?.interpretation, "盘中全景盘面状态未渲染");
   addCoverageCheck(checks, "section-intraday", intraday.sentiment?.limit_up_count != null ? `涨停${intraday.sentiment.limit_up_count}` : "", "盘中全景宽度未渲染");
-  addCoverageCheck(checks, "section-intraday", firstThemeName(intraday.main_trends).split(/[\/／]/)[0], "盘中全景主线未渲染");
+  addCoverageCheck(checks, "section-intraday", displayedThemeName(intraday.main_trends).split(/[\/／]/)[0], "盘中全景主线未渲染");
   addCoverageCheck(checks, "section-intraday", firstIndexName(intraday), "盘中全景指数/港股快照未渲染");
   addCoverageCheck(checks, "section-premarket", premarket.summary, "早盘 summary 未渲染");
   addCoverageCheck(checks, "section-midday", midday.morning_review?.one_sentence, "午盘一句话复盘未渲染");
@@ -1025,6 +1025,13 @@ function firstThemeName(value) {
   const first = value.find(Boolean);
   if (!first) return "";
   return typeof first === "string" ? first : (first.name || first.sector || first.theme || first.title || "");
+}
+
+function displayedThemeName(value) {
+  const name = firstThemeName(value);
+  if (/医药修复链|化学制药|创新药|CRO/.test(name)) return "创新药/CRO";
+  if (/老登风格切换|券商|证券|保险|白酒|畜牧|权重/.test(name)) return "金融/消费权重";
+  return name;
 }
 
 function firstActionText(value) {

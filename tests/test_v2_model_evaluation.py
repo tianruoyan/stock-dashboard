@@ -38,7 +38,7 @@ class V2ModelEvaluationTests(unittest.TestCase):
             }
             snapshot_path = root / "data/v2/snapshots/2026-07-01/s1.json"
             snapshot_path.write_text(json.dumps(snapshot), encoding="utf-8")
-            (root / "data/v2/replay-index.json").write_text(json.dumps({"snapshots":[{"snapshot_id":"s1","path":"data/v2/snapshots/2026-07-01/s1.json"}]}), encoding="utf-8")
+            (root / "data/v2/replay-index.json").write_text(json.dumps({"snapshots":[{"snapshot_id":"s1","path":"data/v2/snapshots/2026-07-01/s1.json","evaluation_eligible":True}]}), encoding="utf-8")
             outcomes = {"signals": [{
                 "snapshot_id":"s1", "signal_id":"x", "title":"测试", "kind":"risk", "security_results":[
                     {"windows":[{"window":"T+3","status":"evaluated","result":{"absolute_return_pct":-4.0,"signal_support":"supportive"}}]},
@@ -63,6 +63,30 @@ class V2ModelEvaluationTests(unittest.TestCase):
             (root / "data/v2/signal-outcomes.json").write_text('{"signals":[]}', encoding="utf-8")
             report = V2ModelEvaluator(root).build()
             self.assertIn("历史快照没有决策模型版本，只能作为旧基线背景", report["data_gaps"])
+
+    def test_p0_03_rebuild_variant_is_excluded_from_model_evaluation(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            self.prepare(root)
+            for snapshot_id in ("s1", "s2"):
+                (root / f"data/v2/snapshots/2026-07-01/{snapshot_id}.json").write_text(json.dumps({
+                    "snapshot_id": snapshot_id,
+                    "decision_date": "2026-07-01",
+                    "decision_model_version": "decision-v2.0-baseline-1",
+                    "quality": {"state": "usable"},
+                    "market_environment": {"state": "进攻"},
+                }), encoding="utf-8")
+            refs = [
+                {"snapshot_id":"s1","path":"data/v2/snapshots/2026-07-01/s1.json","evaluation_eligible":True},
+                {"snapshot_id":"s2","path":"data/v2/snapshots/2026-07-01/s2.json","evaluation_eligible":False},
+            ]
+            (root / "data/v2/replay-index.json").write_text(json.dumps({"snapshots": refs}), encoding="utf-8")
+            outcome = lambda sid: {"snapshot_id":sid,"signal_id":"x","kind":"risk","security_results":[{"windows":[{"window":"T+3","status":"evaluated","result":{"absolute_return_pct":-2.0,"signal_support":"supportive"}}]}]}
+            (root / "data/v2/signal-outcomes.json").write_text(json.dumps({"signals":[outcome("s1"), outcome("s2")]}), encoding="utf-8")
+            report = V2ModelEvaluator(root).build()
+            self.assertEqual(report["record_count"], 1)
+            summary = next(item for item in report["version_summaries"] if item["version"] == "decision-v2.0-baseline-1")
+            self.assertEqual(summary["snapshot_count"], 1)
 
 
 if __name__ == "__main__":

@@ -65,13 +65,13 @@ def main() -> int:
                 "quote_time",
                 "field_mapping",
                 "sanity_checks.sample_count",
-                "sanity_checks.max_abs_leader_change_pct",
+                "sanity_checks.max_abs_trigger_change_pct（题材/底池）或 max_abs_leader_change_pct（个股）",
                 "sanity_checks.cross_source_verified",
             ],
             "hard_gates": [
                 "candidate 必须带单源 quote_audit 和完整短周期证据，可在未交叉验证时展示为待确认。",
                 "confirmed 必须带 quote_audit，且 cross_source_verified=true。",
-                "leaders.change_pct 不得超过 A股常规单日边界；异常值直接撤下。",
+                "题材/底池涨跌幅只写 trigger_metrics；个股涨跌幅只写独立个股行情字段。",
                 "污染源仍 degraded 时，禁止只用该源恢复 alert。",
                 "重产后必须执行 build_dashboard_reports.py，runtime-smoke 通过后再推送。",
             ],
@@ -111,7 +111,9 @@ def quote_audit_complete(quote_audit: dict[str, Any]) -> bool:
     sanity = quote_audit.get("sanity_checks")
     if not isinstance(sanity, dict):
         return False
-    return all(key in sanity for key in ("sample_count", "max_abs_leader_change_pct", "cross_source_verified"))
+    group_metric = quote_audit.get("metric_scope") in {"theme_pool", "sector"} or any(token in str(quote_audit.get("pct_field") or "") for token in ("底池", "题材", "板块"))
+    magnitude_key = "max_abs_trigger_change_pct" if group_metric else "max_abs_leader_change_pct"
+    return all(key in sanity for key in ("sample_count", magnitude_key, "cross_source_verified"))
 
 
 def trusted_source_rows(sources: dict[str, Any]) -> list[dict[str, Any]]:

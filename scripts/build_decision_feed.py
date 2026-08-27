@@ -1038,7 +1038,9 @@ def has_stale_relative_time(text: str, current_date: str) -> bool:
     weekday_words = {
         "周一": 0, "周二": 1, "周三": 2, "周四": 3, "周五": 4, "周六": 5, "周日": 6, "周天": 6,
     }
-    return any(word in text and weekday != day for word, day in weekday_words.items())
+    next_trading_weekday = 0 if weekday == 4 else weekday + 1
+    allowed = {weekday, next_trading_weekday}
+    return any(word in text and day not in allowed for word, day in weekday_words.items())
 
 
 def is_risk_text(status: str, text: str) -> bool:
@@ -1222,6 +1224,8 @@ def conflict_key(title: Any) -> str:
         "半导体设备": "科技硬件链",
         "半导体材料": "科技硬件链",
         "半导体零部件": "科技硬件链",
+        "创新药/CRO": "医药修复链",
+        "医药": "医药修复链",
         "医药修复链": "医药修复链",
         "老登风格切换": "老登风格切换",
     }

@@ -308,6 +308,7 @@ def normalize_conflict_title(title: Any) -> str:
         "半导体设备": "科技硬件链",
         "半导体材料": "科技硬件链",
         "半导体零部件": "科技硬件链",
+        "创新药/CRO": "医药修复链",
     }
     return aliases.get(text, text)
 
@@ -373,7 +374,9 @@ def check_alert_quote_audit(issues: list[dict[str, Any]]) -> None:
     if not isinstance(sanity, dict):
         issues.append(issue("critical" if trade_gate else "warning", "data/alert.json", "bad_quote_audit", "quote_audit.sanity_checks 必须是对象"))
         return
-    for key in ("sample_count", "max_abs_leader_change_pct", "cross_source_verified"):
+    group_metric = audit.get("metric_scope") in {"theme_pool", "sector"} or bool(re.search(r"底池|题材|板块", str(audit.get("pct_field") or "")))
+    magnitude_key = "max_abs_trigger_change_pct" if group_metric else "max_abs_leader_change_pct"
+    for key in ("sample_count", magnitude_key, "cross_source_verified"):
         if sanity.get(key) in (None, "", []):
             issues.append(issue("critical" if trade_gate else "warning", "data/alert.json", "missing_quote_audit_field", f"quote_audit.sanity_checks.{key} 缺失"))
 
@@ -445,7 +448,7 @@ def check_unplanned_theme_detection(feed: dict[str, Any], issues: list[dict[str,
         return
     rendered = {
         str(item.get("title") or "")
-        for item in (feed.get("opportunities") or []) + (feed.get("verifications") or [])
+        for item in (feed.get("opportunities") or []) + (feed.get("risks") or []) + (feed.get("verifications") or [])
         if isinstance(item, dict)
     }
     for name in expected[:3]:
@@ -476,7 +479,9 @@ def check_build_report(issues: list[dict[str, Any]]) -> None:
             continue
         if item.get("returncode") not in (0, None) or item.get("status") == "script_error":
             message = item.get("stderr_tail") or item.get("stdout_tail") or "构建步骤异常"
-            issues.append(issue("critical", "data/build-report.json", "build_step_error", f"{item.get('name')} 执行异常：{message}"))
+            severity = "critical" if item.get("gates_publish", True) else "warning"
+            code = "build_step_error" if severity == "critical" else "non_blocking_build_step_error"
+            issues.append(issue(severity, "data/build-report.json", code, f"{item.get('name')} 执行异常：{message}"))
     if data.get("status") == "blocked":
         issues.append(issue("warning", "data/build-report.json", "previous_build_blocked", data.get("summary") or "上一次统一构建阻断发布，本次构建以当前步骤结果为准"))
 
@@ -696,7 +701,7 @@ def check_section_health_derived_dates(section_health: dict[str, Any], issues: l
                     "derived_file_false_stale",
                     f"{section.get('label') or section.get('id')} 将派生报告 {row['file']} 误判为非当前交易日"
                 ))
-            if row["file"] in reason and "非当前交易日" in reason and payload.get("current_signal_date") == current_date:
+            if f"{row['file']} 非当前交易日" in reason and payload.get("current_signal_date") == current_date:
                 issues.append(issue(
                     "warning",
                     "data/section-health.json",
@@ -721,7 +726,9 @@ def has_stale_relative_time(text: str, current_date: str) -> bool:
     weekday_words = {
         "周一": 0, "周二": 1, "周三": 2, "周四": 3, "周五": 4, "周六": 5, "周日": 6, "周天": 6,
     }
-    return any(word in text and weekday != day for word, day in weekday_words.items())
+    next_trading_weekday = 0 if weekday == 4 else weekday + 1
+    allowed = {weekday, next_trading_weekday}
+    return any(word in text and day not in allowed for word, day in weekday_words.items())
 
 
 def signal_date(value: Any) -> str:

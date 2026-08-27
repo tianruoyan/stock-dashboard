@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "name": "dashboard-generated-data",
-  "version": "phase1-wp4-2-private-inputs",
+  "version": "v2.2-s2-runtime-guardrails",
   "include_globs": [
     "data/*.json",
     "data/**/*.json",
@@ -15,7 +15,38 @@
     "data/**/*.lock",
     "data/v2/inputs/**",
     "data/v2/outcome-prices.json",
-    "data/v2/input-import-manifest.json"
+    "data/v2/input-import-manifest.json",
+    ".v2_private/**",
+    ".v2_runtime/**",
+    "**/user-assets.sqlite3",
+    "**/user-assets.sqlite3-*",
+    "**/user-assets*.backup",
+    "data/v2/raw-sync/**",
+    "data/v2/sync-raw/**",
+    "data/v2/**/raw-sync/**"
+  ],
+  "deny_globs": [
+    ".v2_private/**",
+    ".v2_runtime/**",
+    "**/user-assets.sqlite3",
+    "**/user-assets.sqlite3-*",
+    "**/user-assets*.backup",
+    "data/v2/inputs/**",
+    "data/v2/raw-sync/**",
+    "data/v2/sync-raw/**",
+    "data/v2/**/raw-sync/**"
+  ],
+  "sensitive_json_keys": [
+    "user_note",
+    "user_priority",
+    "user_intent",
+    "user_confirmed_at",
+    "source_account_id",
+    "account_id",
+    "account_identifier",
+    "user_account_id",
+    "ths_account_id",
+    "broker_account_id"
   ],
   "target_remote": "origin",
   "target_branch": "main",

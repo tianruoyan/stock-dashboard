@@ -31,6 +31,14 @@ def load_json(path: Path) -> dict[str, Any]:
     return value if isinstance(value, dict) else {}
 
 
+def parse_iso(value: Any) -> datetime | None:
+    try:
+        parsed = datetime.fromisoformat(str(value))
+    except (TypeError, ValueError):
+        return None
+    return parsed if parsed.tzinfo else None
+
+
 def stable_hash(value: Any) -> str:
     raw = json.dumps(value, ensure_ascii=False, sort_keys=True, separators=(",", ":"))
     return hashlib.sha256(raw.encode("utf-8")).hexdigest()
@@ -90,7 +98,8 @@ class V2LearningBuilder:
         self.root = root.resolve()
         self.out_dir = self.root / "data" / "v2"
         self.policy = load_json(self.root / "config" / "v2-learning-policy.json")
-        self.calendar = TradingCalendar(load_json(self.root / "config" / "v2-market-calendar.json"), str(self.policy.get("primary_market") or "CN"))
+        self.primary_market = str(self.policy.get("primary_market") or "CN")
+        self.calendar = TradingCalendar(load_json(self.root / "config" / "v2-market-calendar.json"), self.primary_market)
         self.prices = load_json(self.out_dir / "outcome-prices.json")
 
     def build(self, decision: dict[str, Any]) -> tuple[dict[str, Any], dict[str, Any], Path]:
@@ -129,7 +138,17 @@ class V2LearningBuilder:
             for raw in as_list(card.get("representative_stocks")):
                 name = raw if isinstance(raw, str) else raw.get("name") if isinstance(raw, dict) else None
                 ref = stock_by_name.get(name)
-                securities.append({"name": name, "code": ref.get("code") if ref else None, "mapping_status": "mapped" if ref else "code_missing"})
+                raw_code = (
+                    raw.get("stock_code") or raw.get("code")
+                    if isinstance(raw, dict)
+                    else None
+                )
+                code = raw_code or (ref.get("code") if ref else None)
+                securities.append({
+                    "name": name,
+                    "code": code,
+                    "mapping_status": "mapped" if code else "code_missing",
+                })
             signals.append(
                 {
                     "signal_id": card.get("id"),
@@ -148,6 +167,7 @@ class V2LearningBuilder:
                 }
             )
         frozen = {
+            "primary_market": self.primary_market,
             "decision_as_of": as_of_raw,
             "decision_date": decision_date.isoformat() if decision_date else None,
             "quality": decision.get("data_quality_gate"),
@@ -190,36 +210,96 @@ class V2LearningBuilder:
         entries = [item for item in as_list(current.get("snapshots")) if isinstance(item, dict)]
         ref = {
             "snapshot_id": snapshot.get("snapshot_id"),
+            "primary_market": snapshot.get("primary_market") or self.primary_market,
             "decision_as_of": snapshot.get("decision_as_of"),
             "decision_date": snapshot.get("decision_date"),
             "quality_state": as_dict(snapshot.get("quality")).get("state"),
             "signal_count": len(as_list(snapshot.get("signals"))),
             "path": str(path.relative_to(self.root)),
             "content_hash": snapshot.get("content_hash"),
+            "decision_model_version": snapshot.get("decision_model_version"),
+            "created_at": snapshot.get("created_at"),
         }
         entries = [item for item in entries if item.get("snapshot_id") != ref["snapshot_id"]]
         entries.append(ref)
-        deduped: dict[str, dict[str, Any]] = {}
-        for item in entries:
-            candidate_snapshot = load_json(self.root / str(item.get("path") or ""))
-            semantic_hash = self._snapshot_semantic_hash(candidate_snapshot)
-            if not semantic_hash:
-                continue
-            candidate = {**item, "semantic_hash": semantic_hash}
-            previous = deduped.get(semantic_hash)
-            # Prefer snapshots written with the semantic-hash scheme over legacy rebuild-clock hashes.
-            if previous is None or candidate.get("content_hash") == semantic_hash:
-                deduped[semantic_hash] = candidate
-        entries = list(deduped.values())
+        entries = self._canonicalize_entries(entries)
         entries.sort(key=lambda item: str(item.get("decision_as_of") or ""), reverse=True)
         return {
             "schema_version": SCHEMA_VERSION,
             "updated_at": now_iso(),
             "snapshot_count": len(entries),
+            "evaluation_snapshot_count": sum(item.get("evaluation_eligible") is True for item in entries),
             "snapshots": entries,
             "calendar_version": self.calendar.version,
             "learning_policy_version": self.policy.get("version"),
         }
+
+    def _canonicalize_entries(self, entries: list[dict[str, Any]]) -> list[dict[str, Any]]:
+        normalized: list[dict[str, Any]] = []
+        for item in entries:
+            path = self.root / str(item.get("path") or "")
+            snapshot = load_json(path)
+            if not snapshot or not snapshot.get("snapshot_id"):
+                continue
+            market = str(snapshot.get("primary_market") or item.get("primary_market") or self.primary_market)
+            as_of = snapshot.get("decision_as_of") or item.get("decision_as_of")
+            model = snapshot.get("decision_model_version") or item.get("decision_model_version")
+            canonical_key = f"{market}|{as_of or 'missing'}|{model or 'missing'}"
+            semantic_hash = self._snapshot_semantic_hash(snapshot)
+            contract_valid = bool(parse_iso(as_of) and model and isinstance(snapshot.get("signals"), list) and snapshot.get("signals"))
+            normalized.append({
+                **item,
+                "snapshot_id": snapshot.get("snapshot_id"),
+                "primary_market": market,
+                "decision_as_of": as_of,
+                "decision_date": snapshot.get("decision_date") or item.get("decision_date"),
+                "decision_model_version": model,
+                "created_at": snapshot.get("created_at") or item.get("created_at"),
+                "signal_count": len(as_list(snapshot.get("signals"))),
+                "semantic_hash": semantic_hash,
+                "canonical_key": canonical_key,
+                "contract_valid": contract_valid,
+            })
+        groups: dict[str, list[dict[str, Any]]] = {}
+        for item in normalized:
+            groups.setdefault(str(item["canonical_key"]), []).append(item)
+        result: list[dict[str, Any]] = []
+        for rows in groups.values():
+            eligible = [item for item in rows if item["contract_valid"]]
+            canonical = max(eligible, key=lambda item: (str(item.get("created_at") or ""), str(item.get("snapshot_id") or ""))) if eligible else None
+            canonical_id = canonical.get("snapshot_id") if canonical else None
+            for item in rows:
+                is_canonical = bool(canonical_id and item.get("snapshot_id") == canonical_id)
+                result.append({
+                    **item,
+                    "canonical_snapshot_id": canonical_id,
+                    "evaluation_eligible": is_canonical,
+                    "variant_of": None if is_canonical else canonical_id,
+                    "exclusion_reason": None if is_canonical else ("rebuild_variant" if canonical_id else "contract_invalid"),
+                })
+        return result
+
+    def migrate_existing(self) -> tuple[dict[str, Any], dict[str, Any], dict[str, Any]]:
+        current = load_json(self.out_dir / "replay-index.json")
+        entries = [item for item in as_list(current.get("snapshots")) if isinstance(item, dict)]
+        canonicalized = self._canonicalize_entries(entries)
+        canonicalized.sort(key=lambda item: str(item.get("decision_as_of") or ""), reverse=True)
+        index = {
+            **current,
+            "schema_version": SCHEMA_VERSION,
+            "updated_at": now_iso(),
+            "snapshot_count": len(canonicalized),
+            "evaluation_snapshot_count": sum(item.get("evaluation_eligible") is True for item in canonicalized),
+            "snapshots": canonicalized,
+            "calendar_version": self.calendar.version,
+            "learning_policy_version": self.policy.get("version"),
+        }
+        outcomes = self._resolve_outcomes(index)
+        review = self._review(index, outcomes)
+        write_json(self.out_dir / "replay-index.json", index)
+        write_json(self.out_dir / "signal-outcomes.json", outcomes)
+        write_json(self.out_dir / "signal-review.json", review)
+        return index, outcomes, review
 
     @classmethod
     def _snapshot_semantic_hash(cls, snapshot: dict[str, Any]) -> str | None:
@@ -228,7 +308,7 @@ class V2LearningBuilder:
         frozen = {
             key: snapshot.get(key)
             for key in (
-                "decision_as_of", "decision_date", "quality", "market_environment", "style_map",
+                "primary_market", "decision_as_of", "decision_date", "quality", "market_environment", "style_map",
                 "signals", "learning_policy_version", "decision_model_version", "calendar_version",
             )
         }
@@ -255,9 +335,16 @@ class V2LearningBuilder:
             for item in observations
         }
         rows = []
+        seen_signals: set[tuple[str, str]] = set()
         for ref in as_list(index.get("snapshots")):
+            if not isinstance(ref, dict) or ref.get("evaluation_eligible") is not True:
+                continue
             snapshot = load_json(self.root / str(ref.get("path")))
             for signal in as_list(snapshot.get("signals")):
+                evaluation_key = (str(ref.get("canonical_key") or snapshot.get("snapshot_id")), str(signal.get("signal_id")))
+                if evaluation_key in seen_signals:
+                    continue
+                seen_signals.add(evaluation_key)
                 security_results = []
                 for security in as_list(signal.get("securities")):
                     code = security.get("code") if isinstance(security, dict) else None
@@ -305,6 +392,7 @@ class V2LearningBuilder:
                 rows.append(
                     {
                         "snapshot_id": snapshot.get("snapshot_id"),
+                        "canonical_key": ref.get("canonical_key"),
                         "decision_date": snapshot.get("decision_date"),
                         "signal_id": signal.get("signal_id"),
                         "title": signal.get("title"),
@@ -329,7 +417,8 @@ class V2LearningBuilder:
         }
 
     def _review(self, index: dict[str, Any], outcomes: dict[str, Any]) -> dict[str, Any]:
-        entries = as_list(index.get("snapshots"))
+        all_entries = [item for item in as_list(index.get("snapshots")) if isinstance(item, dict)]
+        entries = [item for item in all_entries if item.get("evaluation_eligible") is True]
         outcome_signals = as_list(outcomes.get("signals"))
         evaluated = sum(item.get("status") == "partially_evaluated" for item in outcome_signals)
         total = sum(int(item.get("signal_count") or 0) for item in entries)
@@ -347,9 +436,11 @@ class V2LearningBuilder:
         return {
             "schema_version": SCHEMA_VERSION,
             "status": "collecting" if entries else "unavailable",
-            "summary": f"已冻结 {len(entries)} 个判断快照、{pending} 条信号；结果窗口等待可审计价格数据。",
+            "summary": f"已形成 {len(entries)} 个有效复盘样本、{pending} 条信号；结果窗口等待可审计价格数据。",
             "windows": [f"T+{item}" for item in as_list(self.policy.get("outcome_windows"))],
             "snapshot_count": len(entries),
+            "raw_snapshot_count": len(all_entries),
+            "excluded_variant_count": len(all_entries) - len(entries),
             "pending_signal_count": pending,
             "evaluated_signal_count": evaluated,
             "hit_rate": round(sum(supports) / len(supports) * 100, 2) if reveal and supports else None,

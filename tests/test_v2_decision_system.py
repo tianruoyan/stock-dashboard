@@ -1,6 +1,8 @@
 from __future__ import annotations
 
+import json
 import unittest
+from datetime import datetime, timezone
 from pathlib import Path
 
 from v2_platform.decision_system import V2DecisionSystemBuilder
@@ -20,6 +22,7 @@ class V2DecisionSystemTests(unittest.TestCase):
             "data_quality_gate",
             "market_environment",
             "opportunity_radar",
+            "opportunity_history",
             "validation_queue",
             "style_map",
             "market_structure",
@@ -94,16 +97,180 @@ class V2DecisionSystemTests(unittest.TestCase):
             self.assertIsInstance(item["confirm_conditions"], list)
             self.assertIsInstance(item["invalidation_conditions"], list)
 
+    def test_p0_01_radar_cards_require_representative_stock_basis(self) -> None:
+        cards = [*self.payload["opportunity_radar"], *self.payload["opportunity_history"]]
+        self.assertTrue(cards)
+        for item in cards:
+            self.assertTrue(item["representative_stocks"], item["title"])
+            for stock in item["representative_stocks"]:
+                self.assertTrue(stock.get("name"))
+                self.assertTrue(stock.get("basis"))
+                self.assertTrue(stock.get("stock_code"))
+                self.assertNotIn("change_pct", stock)
+                if stock.get("stock_change_pct") is not None:
+                    self.assertTrue(stock.get("stock_quote_as_of"))
+                    self.assertTrue(stock.get("stock_quote_source"))
+            metrics = item.get("trigger_metrics") or {}
+            self.assertIn(metrics.get("metric_scope"), {"theme_pool", "sector", "market", "security"})
+
+    def test_p0_representative_quotes_have_three_auditable_samples(self) -> None:
+        stocks = [
+            stock
+            for card in [*self.payload["opportunity_radar"], *self.payload["opportunity_history"], *self.payload["validation_queue"]]
+            for stock in card.get("representative_stocks", [])
+            if stock.get("stock_change_pct") is not None
+        ]
+        names = {stock["name"] for stock in stocks}
+        self.assertTrue({"华海清科", "安集科技", "江丰电子"}.issubset(names))
+        self.assertTrue(all(stock.get("stock_code") and stock.get("stock_quote_as_of") and stock.get("stock_quote_source") for stock in stocks))
+
+    def test_same_name_a_h_quotes_require_code_identity(self) -> None:
+        builder = V2DecisionSystemBuilder(ROOT)
+        builder.sources["v2_representative_quotes"].data = {
+            "quotes": [
+                {
+                    "name": "澜起科技",
+                    "code": "sh688008",
+                    "stock_change_pct": 3.45,
+                    "stock_quote_as_of": "2026-07-20T15:00:00+08:00",
+                    "stock_quote_source": "A股测试行情",
+                },
+                {
+                    "name": "澜起科技",
+                    "code": "hk06809",
+                    "stock_change_pct": 3.53,
+                    "stock_quote_as_of": "2026-07-20T16:08:00+08:00",
+                    "stock_quote_source": "港股测试行情",
+                },
+            ]
+        }
+        self.assertEqual(builder._representative_quote("澜起科技"), {})
+
+    def test_p01_all_representative_stocks_have_quote_closure(self) -> None:
+        cards = [*self.payload["opportunity_radar"], *self.payload["opportunity_history"], *self.payload["validation_queue"]]
+        stocks = [stock for card in cards for stock in card.get("representative_stocks", [])]
+        self.assertTrue(stocks)
+        self.assertTrue(all(stock.get("stock_code") for stock in stocks))
+        self.assertTrue(all(stock.get("stock_change_pct") is not None for stock in stocks))
+        self.assertTrue(all(stock.get("stock_quote_as_of") and stock.get("stock_quote_source") for stock in stocks))
+
+    def test_p01_ambiguous_contribution_metric_is_not_exposed(self) -> None:
+        cards = [*self.payload["opportunity_radar"], *self.payload["opportunity_history"], *self.payload["validation_queue"]]
+        basis_text = " ".join(str(stock.get("basis") or "") for card in cards for stock in card.get("representative_stocks", []))
+        self.assertNotIn("领跌贡献", basis_text)
+
+    def test_p01_historical_alert_uses_theme_trigger_metric(self) -> None:
+        builder = V2DecisionSystemBuilder(ROOT)
+        quality = builder._quality_gate()
+        alert = builder.sources["alert"].data
+        rows = [*alert.get("alerts", []), *alert.get("historical_alerts", [])]
+        cards = [builder._alert_card(item, quality) for item in rows]
+        self.assertTrue(cards)
+        self.assertTrue(
+            all(card.get("trigger_metrics", {}).get("metric_scope") in {"theme_pool", "sector"} for card in cards)
+        )
+        for item in rows:
+            self.assertTrue(all("change_pct" not in leader for leader in item.get("leaders", [])))
+            self.assertTrue(all("score" not in leader for leader in item.get("leaders", [])))
+
+    @staticmethod
+    def payload_builder_source(name: str) -> dict:
+        return V2DecisionSystemBuilder(ROOT).sources[name].data
+
+    def test_p0_cards_expose_risk_and_invalidation(self) -> None:
+        cards = [*self.payload["opportunity_radar"], *self.payload["validation_queue"]]
+        self.assertTrue(cards)
+        self.assertTrue(all(card.get("risk_factors") for card in cards))
+        self.assertTrue(all(card.get("invalidation_conditions") for card in cards))
+
+    def test_p0_02_expired_and_missing_validity_are_not_current_radar(self) -> None:
+        payload = V2DecisionSystemBuilder(
+            ROOT,
+            now=datetime(2027, 1, 2, 12, 0, tzinfo=timezone.utc),
+        ).build()
+        self.assertTrue(payload["opportunity_history"])
+        self.assertTrue(all(item["freshness_state"] != "expired" for item in payload["opportunity_radar"]))
+        self.assertTrue(all(item.get("valid_until") for item in payload["opportunity_radar"]))
+        self.assertTrue(all(item["state"] == "expired" for item in payload["opportunity_history"]))
+
+    def test_p0_04_validation_evidence_stays_inside_theme(self) -> None:
+        from scripts.build_opportunity_watch import make_item
+
+        medicine = make_item(
+            "医药修复链",
+            "专题",
+            "恒瑞医药与科伦药业修复；Micron、HBM、半导体设备和雅克科技属于其他主题。",
+            "medium",
+        )
+        self.assertTrue(medicine["theme_id"])
+        self.assertTrue(medicine["evidence_refs"])
+        visible = " ".join(item.get("summary", "") for item in medicine["evidence_refs"] if item.get("accepted"))
+        for forbidden in ("Micron", "300mm", "HBM", "雅克科技", "半导体设备"):
+            self.assertNotIn(forbidden, visible)
+        self.assertTrue(all(item.get("evidence_id") for item in medicine["evidence_refs"]))
+
+    def test_structured_evening_evidence_exposes_fact_not_backend_contract(self) -> None:
+        from scripts.build_opportunity_watch import items_from_evening
+
+        items = items_from_evening({
+            "p0_alerts": [{
+                "title": "美股芯片股盘中走弱，AI硬件风险尚未解除",
+                "why_p0": "隔夜芯片股走弱",
+                "watch_next_day": ["若A股算力代表股继续低开，先回避。"],
+                "evidence": [{
+                    "type": "external_quote",
+                    "source": "腾讯美股公开行情",
+                    "timestamp": "2026-07-30T20:00:47+08:00",
+                    "detail": "英伟达 -3.55%，价格190.01美元",
+                }],
+            }]
+        })
+        raw = json.dumps(items, ensure_ascii=False)
+        self.assertIn("英伟达 -3.55%", raw)
+        for forbidden in ('external_quote', 'timestamp', 'detail', '腾讯美股公开行情'):
+            self.assertNotIn(forbidden, raw)
+        self.assertFalse(any(item.get("theme") == "港股科网AI应用映射" for item in items))
+
+    def test_semiconductor_watch_uses_early_candidate_ah_repair_rules(self) -> None:
+        from scripts.build_opportunity_watch import make_item
+
+        item = make_item("存储/HBM", "专题", "兆易创新、澜起科技和港股半导体等待盘中修复。", "high")
+        rules = " ".join(item["confirm_rules"])
+        invalidation = " ".join(item["invalidate_rules"])
+        self.assertIn("早期候选", rules)
+        self.assertIn("A/H共振", rules)
+        self.assertIn("分时均价", invalidation)
+        self.assertIn("兆易创新H", item["watch_stocks"])
+        self.assertIn("澜起科技H", item["watch_stocks"])
+
     def test_feed_evidence_uses_origin_timestamp_not_rebuild_time(self) -> None:
-        intraday_timestamp = next(item["timestamp"] for item in self.payload["source_registry"] if item["path"] == "intraday.json")
+        builder = V2DecisionSystemBuilder(ROOT)
+        quality = builder._quality_gate()
+        feed = builder.sources["decision_feed"].data
+        cards = [
+            builder._feed_card(item, section, quality)
+            for section in ("risks", "opportunities", "verifications")
+            for item in feed.get(section, [])
+            if isinstance(item, dict)
+        ]
         rows = [
             evidence
-            for card in self.payload["opportunity_radar"]
+            for card in cards
             for evidence in card["evidence"]
-            if evidence.get("source") == "intraday.json"
+            if evidence.get("source") and evidence.get("as_of")
         ]
         self.assertTrue(rows)
-        self.assertTrue(all(item["as_of"] == intraday_timestamp for item in rows))
+        source_timestamps = {
+            source.path.name: source.timestamp
+            for source in builder.sources.values()
+            if source.timestamp
+        }
+        rebuild_time = self.payload["system"]["generated_at"]
+        for item in rows:
+            names = [name.strip() for name in str(item["source"]).split(",")]
+            expected = {source_timestamps.get(name) for name in names} - {None}
+            self.assertIn(item["as_of"], expected)
+            self.assertNotEqual(item["as_of"], rebuild_time)
 
     def test_frontend_contract_does_not_expose_abstract_scores(self) -> None:
         for item in self.payload["opportunity_radar"]:

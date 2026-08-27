@@ -3,6 +3,10 @@
 import hashlib, json, os, re, socket, sys, urllib.parse, urllib.request
 from datetime import datetime, timezone
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
+from pathlib import Path
+
+from v2_platform.cockpit_phase import CockpitPhaseViewBuilder
+from v2_platform.user_asset_views import build_user_asset_read_projection
 
 CONFIG_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "config")
 PRIVATE_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), ".v2_private")
@@ -159,16 +163,33 @@ class DashboardServer(SimpleHTTPRequestHandler):
         """
         return
 
+    def end_headers(self):
+        if getattr(self.server, "server_port", None) == 8878 and not getattr(self, "_explicit_cache_control", False):
+            self.send_header("Cache-Control", "no-store, max-age=0")
+        super().end_headers()
+
     def send_json(self, status, payload):
         body = json.dumps(payload, ensure_ascii=False).encode("utf-8")
         self.send_response(status)
         self.send_header("Content-Type", "application/json; charset=utf-8")
         self.send_header("Content-Length", str(len(body)))
         self.send_header("Cache-Control", "no-store")
+        self._explicit_cache_control = True
         self.end_headers()
         self.wfile.write(body)
 
+    def send_redirect(self, location):
+        self.send_response(302)
+        self.send_header("Location", location)
+        self.send_header("Cache-Control", "no-store")
+        self.send_header("Content-Length", "0")
+        self._explicit_cache_control = True
+        self.end_headers()
+
     def do_POST(self):
+        if self.path == "/_v2-user-assets":
+            self.send_json(405, {"状态": "只读", "提示": "当前阶段不开放用户资产页面写入。"})
+            return
         if self.path in {"/_save-config", "/_v2-blogger-accounts", "/_v2-portfolio"}:
             try:
                 length = int(self.headers.get("Content-Length", 0))
@@ -222,8 +243,17 @@ class DashboardServer(SimpleHTTPRequestHandler):
             self.send_json(404, {"error": "not found"})
 
     def do_GET(self):
+        requested_path = urllib.parse.urlparse(self.path).path
+        if getattr(self.server, "server_port", None) == 8878 and requested_path in {"/", "/index.html"}:
+            self.send_redirect("/v2.html")
+            return
         if self.path == "/_health":
-            self.send_json(200, {"status": "ok", "service": "stock-dashboard-local"})
+            port = getattr(self.server, "server_port", None)
+            self.send_json(200, {
+                "status": "ok",
+                "service": "stock-dashboard-v2" if port == 8878 else "stock-dashboard-v1",
+                "entry": "/v2.html" if port == 8878 else "/index.html",
+            })
             return
         if self.path == "/_v2-blogger-accounts":
             try:
@@ -240,6 +270,16 @@ class DashboardServer(SimpleHTTPRequestHandler):
             except (FileNotFoundError, json.JSONDecodeError):
                 payload = {"schema_version": 1, "holdings": [], "cash": None, "risk_budget": {}, "trade_authorization": False, "privacy_note": "只保存在本机；不进入公开发布，不授权自动交易。"}
             self.send_json(200, payload)
+            return
+        if self.path == "/_v2-user-assets":
+            self.send_json(200, build_user_asset_read_projection(Path(os.path.dirname(os.path.abspath(__file__)))))
+            return
+        if self.path.startswith("/_v2-cockpit-phase"):
+            try:
+                root = Path(os.path.dirname(os.path.abspath(__file__)))
+                self.send_json(200, CockpitPhaseViewBuilder(root).build())
+            except Exception:
+                self.send_json(503, {"状态": "等待更新", "提示": "交易阶段结果暂时没有生成成功，请稍后刷新。"})
             return
         if self.path.startswith("/_stock-lookup"):
             query = urllib.parse.parse_qs(urllib.parse.urlparse(self.path).query).get("q", [""])[0]

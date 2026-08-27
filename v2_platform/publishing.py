@@ -40,6 +40,8 @@ class PublishPolicy:
     target_remote: str
     target_branch: str
     max_push_attempts: int
+    deny_globs: tuple[str, ...] = ()
+    sensitive_json_keys: tuple[str, ...] = ()
     schema_version: int = POLICY_SCHEMA_VERSION
 
     @classmethod
@@ -53,14 +55,28 @@ class PublishPolicy:
             target_remote=str(value.get("target_remote", "origin")),
             target_branch=str(value.get("target_branch", "main")),
             max_push_attempts=max(1, int(value.get("max_push_attempts", 3))),
+            deny_globs=tuple(str(item) for item in value.get("deny_globs", [])),
+            sensitive_json_keys=tuple(str(item) for item in value.get("sensitive_json_keys", [])),
             schema_version=int(value.get("schema_version", POLICY_SCHEMA_VERSION)),
         )
 
+    @staticmethod
+    def normalize_path(path: str) -> str:
+        normalized = path.replace(os.sep, "/")
+        while normalized.startswith("./"):
+            normalized = normalized[2:]
+        return normalized
+
     def allows(self, path: str) -> bool:
-        normalized = path.replace(os.sep, "/").lstrip("./")
+        normalized = self.normalize_path(path)
         included = any(fnmatch.fnmatchcase(normalized, pattern) for pattern in self.include_globs)
         excluded = any(fnmatch.fnmatchcase(normalized, pattern) for pattern in self.exclude_globs)
-        return included and not excluded
+        denied = any(fnmatch.fnmatchcase(normalized, pattern) for pattern in self.deny_globs)
+        return included and not excluded and not denied
+
+    def hard_blocks_path(self, path: str) -> bool:
+        normalized = self.normalize_path(path)
+        return any(fnmatch.fnmatchcase(normalized, pattern) for pattern in self.deny_globs)
 
 
 @dataclass(frozen=True)
@@ -69,10 +85,11 @@ class ScopeAudit:
     allowed_paths: tuple[str, ...]
     blocked_paths: tuple[str, ...]
     pre_staged_paths: tuple[str, ...]
+    hard_blocked_paths: tuple[str, ...] = ()
 
     @property
     def safe_to_stage(self) -> bool:
-        return not self.pre_staged_paths
+        return not self.pre_staged_paths and not self.hard_blocked_paths
 
     def to_dict(self) -> dict[str, Any]:
         return asdict(self) | {"safe_to_stage": self.safe_to_stage}
@@ -186,6 +203,19 @@ class V2Publisher:
 
             scope = self.audit_scope()
             artifact = self.freeze_artifact(scope.allowed_paths) if scope.allowed_paths else None
+            if scope.hard_blocked_paths:
+                return self._finish(
+                    publish_run_id,
+                    mode,
+                    "blocked_sensitive_scope",
+                    "private, raw-sync, account identifier, or user note data detected; nothing was staged",
+                    scope,
+                    artifact,
+                    build,
+                    None,
+                    0,
+                    started,
+                )
             if scope.pre_staged_paths:
                 return self._finish(
                     publish_run_id,
@@ -273,9 +303,43 @@ class V2Publisher:
         staged = set(self._git_paths("diff", "--cached", "--name-only", "-z"))
         untracked = set(self._git_paths("ls-files", "--others", "--exclude-standard", "-z"))
         changed = tuple(sorted(unstaged | staged | untracked))
-        allowed = tuple(path for path in changed if self.policy.allows(path))
+        hard_blocked = tuple(
+            path
+            for path in changed
+            if self.policy.hard_blocks_path(path)
+            or (self.policy.allows(path) and self._contains_sensitive_json_key(path))
+        )
+        allowed = tuple(path for path in changed if path not in hard_blocked and self.policy.allows(path))
         blocked = tuple(path for path in changed if path not in allowed)
-        return ScopeAudit(changed, allowed, blocked, tuple(sorted(staged)))
+        return ScopeAudit(
+            changed,
+            allowed,
+            blocked,
+            tuple(sorted(staged)),
+            tuple(sorted(hard_blocked)),
+        )
+
+    def _contains_sensitive_json_key(self, relative: str) -> bool:
+        if not self.policy.sensitive_json_keys or not relative.lower().endswith(".json"):
+            return False
+        path = self.repo / relative
+        if not path.is_file():
+            return False
+        try:
+            value = json.loads(path.read_text(encoding="utf-8"))
+        except (OSError, UnicodeDecodeError, json.JSONDecodeError):
+            return False
+        sensitive = set(self.policy.sensitive_json_keys)
+        stack = [value]
+        while stack:
+            current = stack.pop()
+            if isinstance(current, dict):
+                if any(str(key) in sensitive for key in current):
+                    return True
+                stack.extend(current.values())
+            elif isinstance(current, list):
+                stack.extend(current)
+        return False
 
     def freeze_artifact(self, paths: Iterable[str]) -> PublishArtifact:
         files: list[dict[str, Any]] = []
@@ -421,4 +485,3 @@ class V2Publisher:
     def _git_paths(self, *args: str) -> list[str]:
         output = self._git(*args).stdout
         return [item for item in output.split("\0") if item]
-

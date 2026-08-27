@@ -1,0 +1,37 @@
+{
+  "schema_version": 1,
+  "version": "2026-07-18.e6.1",
+  "gate_order": ["G0", "G1", "G2", "G3", "G4", "G5", "G6", "G7"],
+  "gates": {
+    "G0": {"label": "数据可用", "question": "来源、时间、字段和冲突是否足以支持本次判断"},
+    "G1": {"label": "触发成立", "question": "是否发生了有操作意义的实质变化"},
+    "G2": {"label": "对象明确", "question": "主题、单股、风格或事件对象是否明确"},
+    "G3": {"label": "代表股确认", "question": "代表股代码、真实行情、角色和共振是否完整"},
+    "G4": {"label": "原因可解释", "question": "事实、推断与未知是否分开，原因是否可核验"},
+    "G5": {"label": "环境许可", "question": "全市场环境支持、部分支持、中性、抑制还是阻断"},
+    "G6": {"label": "位置可交易", "question": "位置、拥挤、流动性和可买性是否清楚"},
+    "G7": {"label": "条件与时窗", "question": "加强、失效和有效时间是否完整"}
+  },
+  "gate_states": ["pass", "partial", "pending", "suppress", "block", "fail", "not_applicable"],
+  "business_paths": ["theme_opportunity", "single_stock_event", "cross_market_mapping", "risk_path"],
+  "signal_states": ["candidate", "verified", "invalidated"],
+  "maturity_states": ["clue", "observe", "await_confirmation", "decision_ready", "weakened", "ended"],
+  "action_languages": ["积极关注", "等待确认", "不追", "风险释放", "降低关注"],
+  "positive_decision_ready_requires": ["G0", "G1", "G2", "G3", "G4", "G5", "G6", "G7"],
+  "theme_role_minimum": 2,
+  "representative_quote_required_fields": ["stock_code", "name", "stock_change_pct", "stock_quote_as_of", "stock_quote_source", "role", "basis"],
+  "default_validity": {
+    "intraday_minutes": 30,
+    "event_observation": "下一关键盘面检查点",
+    "missing_validity_action": "不能进入决策就绪"
+  },
+  "guardrails": {
+    "verified_equals_decision_ready": false,
+    "decision_ready_equals_buy": false,
+    "user_asset_identity_bypasses_gate": false,
+    "theme_pct_can_replace_stock_pct": false,
+    "automatic_trading": false,
+    "automatic_user_asset_mutation": false,
+    "automatic_model_promotion": false
+  }
+}

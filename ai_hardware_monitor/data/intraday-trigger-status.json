@@ -1,0 +1,111 @@
+{
+  "schema_version": 1,
+  "version": "1.0.0",
+  "generated_at": "2026-07-23T09:58:01+08:00",
+  "trade_date": "2026-07-23",
+  "as_of": "2026-07-23T09:58:00+08:00",
+  "window": {
+    "id": "morning",
+    "label": "上午盘中",
+    "start": "09:40",
+    "end": "11:25"
+  },
+  "trigger": {
+    "active": false,
+    "level": "waiting",
+    "label": "⚪未触发",
+    "conditions": [
+      {
+        "id": "score",
+        "label": "综合评分达到60",
+        "actual": 56.0,
+        "threshold": 60.0,
+        "passed": false
+      },
+      {
+        "id": "coverage",
+        "label": "证据覆盖率达到65%",
+        "actual": 0.75,
+        "threshold": 0.65,
+        "passed": true
+      },
+      {
+        "id": "sector_rank",
+        "label": "代理篮子进入可比行业前三",
+        "actual": 7.0,
+        "threshold": 3.0,
+        "passed": false
+      },
+      {
+        "id": "relative_strength",
+        "label": "相对沪深300超额达到1%",
+        "actual": 2.6022,
+        "threshold": 1.0,
+        "passed": true
+      },
+      {
+        "id": "breadth",
+        "label": "股票池上涨宽度达到70%",
+        "actual": 87.5,
+        "threshold": 70.0,
+        "passed": true
+      },
+      {
+        "id": "leader",
+        "label": "至少一只核心龙头领先",
+        "actual": 2.0,
+        "threshold": 1.0,
+        "passed": true
+      },
+      {
+        "id": "turnover",
+        "label": "龙头成交速度达到1.2倍",
+        "actual": 2.1175,
+        "threshold": 1.2,
+        "passed": true
+      },
+      {
+        "id": "representative_quote",
+        "label": "至少一只代表股具有当日实时报价",
+        "actual": "生益科技",
+        "threshold": "当日实时报价",
+        "passed": true
+      }
+    ],
+    "failed_conditions": [
+      "综合评分达到60",
+      "代理篮子进入可比行业前三"
+    ],
+    "representative_stock": {
+      "code": "sh600183",
+      "name": "生益科技",
+      "segment": "PCB",
+      "role": "材料核心",
+      "price": 132.98,
+      "change_pct": 5.5397,
+      "amount_yi": 30.678,
+      "turnover_pace": 2.433,
+      "ma5": 132.858,
+      "ma10": 140.586,
+      "above_ma5": true,
+      "above_ma10": false,
+      "quote_as_of": "2026-07-23T09:58:00+08:00",
+      "quote_source": "腾讯财经公开行情",
+      "trend_source": "新浪财经公开日K"
+    }
+  },
+  "score": 56,
+  "coverage_ratio": 0.75,
+  "notification": {
+    "state": "not_sent",
+    "channel": "macos_notification_center"
+  },
+  "next_poll_seconds": 180,
+  "guardrails": {
+    "automatic_trading": false,
+    "position_change": false,
+    "candidate_is_buy_instruction": false,
+    "missing_fact_inference": false
+  },
+  "disclaimer": "盘中候选提醒不等于买入指令，最终决策由用户作出。"
+}

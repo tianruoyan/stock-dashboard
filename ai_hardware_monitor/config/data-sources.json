@@ -1,0 +1,53 @@
+{
+  "schema_version": 1,
+  "sources": [
+    {
+      "id": "tencent_realtime_quote",
+      "name": "腾讯财经公开行情",
+      "purpose": "股票池与沪深300当日价格、涨跌幅、成交量、成交额和行情时点",
+      "url": "https://qt.gtimg.cn/",
+      "required": true
+    },
+    {
+      "id": "sina_daily_kline",
+      "name": "新浪财经公开日K",
+      "purpose": "5日/10日均线及5日成交量基线",
+      "url": "https://quotes.sina.cn/cn/api/json_v2.php/CN_MarketDataService.getKLineData",
+      "required": true
+    },
+    {
+      "id": "tencent_industry_rank",
+      "name": "腾讯财经行业指数",
+      "purpose": "8股等权代理篮子与可比行业指数的当日排名",
+      "url": "https://qt.gtimg.cn/",
+      "required": true
+    },
+    {
+      "id": "eastmoney_pool_fund_flow",
+      "name": "东方财富公开资金流",
+      "purpose": "8股股票池当日主力净流入汇总及连续净流入天数",
+      "url": "https://push2.eastmoney.com/ ; https://push2his.eastmoney.com/",
+      "required": true
+    },
+    {
+      "id": "v2_governed_environment",
+      "name": "V2/V2.2治理市场环境",
+      "purpose": "同交易日成交、科技宽度和涨跌停结构约束",
+      "path": "data/v2/v22/market-environment.json",
+      "required": false
+    },
+    {
+      "id": "governed_sector_and_fund_input",
+      "name": "标准化上游板块与资金快照",
+      "purpose": "可比主题排名、股票池净流入、ETF净流入和连续流入天数",
+      "contract": "config/input-contract.json",
+      "required": false
+    }
+  ],
+  "rules": [
+    "来源时点必须与交易日匹配，旧快照不得复用为当前信号。",
+    "8股等权代理篮子不等于官方AI硬件指数。",
+    "成交放大不能替代主力或ETF净流入字段。",
+    "缺失事实不使用AI推断补齐。"
+  ]
+}

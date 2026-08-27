@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>AI硬件二次启动雷达 · V2</title>
+  <link rel="stylesheet" href="../../v2.css?v=ai-hardware-v1">
+  <link rel="stylesheet" href="monitor.css?v=ai-hardware-v1">
+</head>
+<body class="aihw-page">
+  <header class="v2-topbar">
+    <a class="brand-block" href="../../v2.html" aria-label="返回 V2 首页">
+      <span class="brand-mark">V2</span>
+      <span><strong>AI投资决策系统</strong><small>结果展示 · 证据核验 · 人工决策</small></span>
+    </a>
+    <div class="system-meta">
+      <span class="pill neutral">专题观察</span>
+      <span id="header-state" class="pill degraded">加载中</span>
+      <time id="header-updated">--</time>
+    </div>
+  </header>
+
+  <nav class="v2-nav" aria-label="V2主要页面">
+    <a href="../../v2.html">系统总览</a>
+    <a href="../../v2-radar.html">交易驾驶舱</a>
+    <a class="active" href="ai_hardware.html">AI硬件雷达</a>
+    <a href="../../v2-market.html">市场环境</a>
+    <a href="../../v2-research.html">产业研究</a>
+    <a href="../../v2-stock-pool.html">股票池</a>
+    <a href="../../v2-review.html">复盘学习</a>
+    <a href="../../v2-governance.html">数据治理</a>
+    <a href="../../v2-logic.html">逻辑查询</a>
+    <a href="http://127.0.0.1:8877/index.html">返回 V1</a>
+  </nav>
+
+  <main class="v2-shell aihw-shell">
+    <section class="page-intro">
+      <div>
+      <span class="eyebrow">V2 专题模块 · 版本 1.0</span>
+        <h1>AI硬件二次启动雷达</h1>
+        <p>不预测上涨，只检查板块、龙头、资金与市场环境是否同时确认。8股等权篮子仅为研究代理，不是官方指数。</p>
+      </div>
+      <a class="back-link" href="../../v2.html">返回系统总览 →</a>
+    </section>
+
+    <section class="radar-overview" aria-live="polite">
+      <article id="state-card" class="state-card observe">
+        <span class="card-kicker">当前状态</span>
+        <strong id="state-label">🟡观察</strong>
+        <p id="state-action">正在读取最新检查结果。</p>
+        <div class="state-meta"><span id="checkpoint-label">--</span><span id="evidence-time">--</span></div>
+      </article>
+      <article class="score-card">
+        <div class="score-ring" id="score-ring"><strong id="total-score">--</strong><span>/ 100</span></div>
+        <div><span class="card-kicker">综合评分</span><p id="score-copy">分数不能替代绿色硬门槛。</p></div>
+      </article>
+      <article class="quality-card">
+        <span class="card-kicker">证据完整度</span>
+        <strong id="coverage-value">--</strong>
+        <div class="coverage-track"><span id="coverage-bar"></span></div>
+        <p id="quality-copy">正在检查来源与时点。</p>
+      </article>
+    </section>
+
+    <section class="aihw-grid">
+      <article class="module-card wide">
+        <div class="module-heading"><div><span class="eyebrow">100分拆解</span><h2>四维评分</h2></div><span class="subtle">缺失事实不补分</span></div>
+        <div id="category-grid" class="category-grid"></div>
+      </article>
+
+      <article class="module-card">
+        <div class="module-heading"><div><span class="eyebrow">启动约束</span><h2>绿色硬门槛</h2></div></div>
+        <div id="gate-list" class="gate-list"></div>
+      </article>
+
+      <article class="module-card">
+        <div class="module-heading"><div><span class="eyebrow">三次确认</span><h2>检查节点</h2></div></div>
+        <div class="checkpoint-list">
+          <div><b>09:35</b><span>开盘资金方向</span></div>
+          <div><b>10:30</b><span>真假启动复核</span></div>
+          <div><b>14:30</b><span>资金留仓确认</span></div>
+        </div>
+        <p id="next-checkpoint" class="checkpoint-next">下一节点：--</p>
+      </article>
+
+      <article class="module-card wide intraday-trigger-card">
+        <div class="module-heading"><div><span class="eyebrow">新增 · 即时巡检</span><h2>盘中触发提醒</h2></div><span id="intraday-trigger-badge" class="state-badge waiting">等待巡检</span></div>
+        <div class="intraday-trigger-layout">
+          <div class="intraday-trigger-summary">
+            <strong id="intraday-trigger-state">⚪等待首次巡检</strong>
+            <p id="intraday-trigger-copy">09:40-11:25、13:05-14:50 每3分钟检查一次；满足共振条件时弹出本机通知。</p>
+            <small id="intraday-trigger-time">最近巡检：--</small>
+          </div>
+          <div id="intraday-trigger-conditions" class="trigger-condition-grid"></div>
+        </div>
+      </article>
+
+      <article class="module-card wide">
+        <div class="module-heading"><div><span class="eyebrow">固定观察池</span><h2>8股实时证据</h2></div><span class="subtle">CPO · PCB · AI网络</span></div>
+        <div class="stock-table-wrap">
+          <table class="stock-table">
+            <thead><tr><th>股票</th><th>分组</th><th>角色</th><th>涨跌幅</th><th>成交速度</th><th>趋势</th><th>行情时点</th></tr></thead>
+            <tbody id="stock-rows"><tr><td colspan="7">正在读取股票池。</td></tr></tbody>
+          </table>
+        </div>
+      </article>
+
+      <article class="module-card">
+        <div class="module-heading"><div><span class="eyebrow">数据边界</span><h2>缺失与降级</h2></div></div>
+        <div id="missing-list" class="missing-list"></div>
+      </article>
+
+      <article class="module-card">
+        <div class="module-heading"><div><span class="eyebrow">状态变化</span><h2>最近提醒</h2></div></div>
+        <div id="alert-list" class="alert-list"></div>
+      </article>
+    </section>
+
+    <div id="page-load-error" role="alert"></div>
+  </main>
+
+  <footer class="v2-footer"><span>本雷达属于 V2 专题模块；仅作研究观察，不构成投资建议或买卖指令。</span><a href="../README.md">查看模块规格</a></footer>
+  <script src="monitor.js?v=ai-hardware-v1"></script>
+</body>
+</html>

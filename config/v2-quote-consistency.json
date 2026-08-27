@@ -1,0 +1,41 @@
+{
+  "schema_version": 1,
+  "version": "2026-07-27.shadow.1",
+  "mode": "shadow_only",
+  "enabled": true,
+  "primary_source": {
+    "source_id": "tencent_http",
+    "label": "腾讯财经公开行情"
+  },
+  "secondary_source": {
+    "source_id": "futu_opend_lv1",
+    "label": "富途 OpenD 行情（A股LV1、港股LV2）",
+    "host": "127.0.0.1",
+    "port": 11111,
+    "timeout_seconds": 10
+  },
+  "thresholds": {
+    "max_quote_time_gap_seconds": 20,
+    "max_exact_match_time_gap_seconds": 60,
+    "max_price_relative_diff_pct": 0.05,
+    "max_change_diff_percentage_points": 0.10,
+    "minimum_price_tick": 0.01,
+    "market_close_time": "15:00:00",
+    "market_close_time_by_market": {
+      "a_share": "15:00:00",
+      "hk": "16:10:00"
+    }
+  },
+  "decision_rules": {
+    "conflict_resolution": "保留两份原始值，不平均；当前判断不得升级。",
+    "single_source_action": "允许观察，不视为双源确认。",
+    "secondary_required_for_decision_ready": true,
+    "secondary_required_for_model_evaluation": true
+  },
+  "guardrails": {
+    "automatic_trading": false,
+    "automatic_user_asset_mutation": false,
+    "automatic_model_promotion": false,
+    "v1_production_entry_changed": false
+  }
+}

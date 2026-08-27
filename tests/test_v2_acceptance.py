@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 import unittest
 from pathlib import Path
 
@@ -22,9 +23,16 @@ class V2AcceptanceTests(unittest.TestCase):
         self.assertTrue(parallel["passed"])
 
     def test_rollback_keeps_production_v1_baseline(self) -> None:
+        rollout = json.loads((ROOT / "config/v2-rollout.json").read_text(encoding="utf-8"))
         self.assertEqual(self.report["rollback_rehearsal"]["status"], "passed")
-        self.assertEqual(self.report["rollback_rehearsal"]["baseline_commit"], "2e5f149")
+        self.assertEqual(
+            self.report["rollback_rehearsal"]["baseline_commit"],
+            rollout["production_v1"]["baseline_commit"],
+        )
         self.assertEqual(self.report["rollback_rehearsal"]["changed_protected_paths"], [])
+        protected = set(self.report["rollback_rehearsal"]["protected_paths"])
+        self.assertNotIn("config/watchlist.json", protected)
+        self.assertTrue({"config/alert-config.json", "config/topics-list.json"}.issubset(protected))
 
     def test_confirmation_list_covers_exposed_gaps(self) -> None:
         ids = {item["id"] for item in self.report["confirmation_items"]}
