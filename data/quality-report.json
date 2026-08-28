@@ -1,18 +1,9 @@
 {
-  "timestamp": "2026-08-28T09:44:44+08:00",
+  "timestamp": "2026-08-28T09:45:39+08:00",
   "current_signal_date": "2026-08-28",
   "status": "degraded",
-  "summary": "发现 145 个降级/需复核项（1 个交易阻断，136 个价格/行情复核，9 个背景复核），核心结论可看但必须按影响分层使用。",
+  "summary": "发现 147 个降级/需复核项（138 个价格/行情复核，1 个信号复核，9 个背景复核），核心结论可看但必须按影响分层使用。",
   "issues": [
-    {
-      "severity": "warning",
-      "file": "alert.json",
-      "path": "",
-      "code": "invalidated_source",
-      "message": "行情源最近一次刷新失败，程序会在网络恢复后自动重试。",
-      "impact_level": "blocking",
-      "decision_action": "对应信号等待重产，页面必须显示阻断"
-    },
     {
       "severity": "warning",
       "file": "midday.json",
@@ -75,6 +66,33 @@
       "message": "sentiment_indicator.method 缺失",
       "impact_level": "background_review",
       "decision_action": "仅作背景复核，不单独阻断交易判断"
+    },
+    {
+      "severity": "warning",
+      "file": "alert.json",
+      "path": "",
+      "code": "historical_alert_without_trusted_source",
+      "message": "盘中异动缺少可信源证明；当前阶段只降权参考，不阻断整站发布",
+      "impact_level": "price_review",
+      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
+    },
+    {
+      "severity": "warning",
+      "file": "alert.json",
+      "path": "quote_audit.sanity_checks",
+      "code": "historical_alert_not_cross_verified",
+      "message": "行情污染源仍降级，历史 alert 未交叉验证，只降权复盘参考",
+      "impact_level": "price_review",
+      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
+    },
+    {
+      "severity": "warning",
+      "file": "alert.json",
+      "path": "alerts[0]",
+      "code": "historical_candidate_alert_evidence_weak",
+      "message": "alerts[0] 候选异动未达到最低短周期价格、方向占比和成交门槛，不得作为当前候选展示",
+      "impact_level": "signal_review",
+      "decision_action": "仅作历史复核，不得恢复为当前候选"
     },
     {
       "severity": "info",
@@ -144,7 +162,7 @@
       "file": "source-health.json",
       "path": "",
       "code": "source_degraded",
-      "message": "akshare_a_spot_watch_decode: 开盘后实时行情源持续失败，09:39:27至09:42:19新增9轮解码异常；监控进程仍存活且日志持续更新。",
+      "message": "akshare_a_spot_watch_decode: 实时行情源在09:42:35至09:43:29新增3轮解码异常；后续出现的底池快照仍未取得交叉验证，监控进程持续运行。",
       "impact_level": "price_review",
       "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
     },
@@ -1321,15 +1339,15 @@
   ],
   "action_plan": [
     {
-      "priority": 1,
-      "impact_level": "blocking",
-      "label": "先修复阻断",
+      "priority": 2,
+      "impact_level": "price_review",
+      "label": "二次行情复核",
       "file": "alert.json",
-      "code": "invalidated_source",
-      "problem": "行情源最近一次刷新失败，程序会在网络恢复后自动重试。",
-      "decision_action": "对应信号等待重产，页面必须显示阻断",
-      "next_step": "暂停对应交易触发；等待污染批次撤下、可信行情源恢复并重产 JSON。",
-      "unblock_condition": "quality-report blocking=0，相关文件不再 invalidated/missing。"
+      "code": "historical_alert_without_trusted_source",
+      "problem": "盘中异动缺少可信源证明；当前阶段只降权参考，不阻断整站发布",
+      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核",
+      "next_step": "用第二行情源复核涨跌幅、quote_time 和代表股方向；未确认前只做验证。",
+      "unblock_condition": "price_review=0 或相关来源标记 trusted/cross verified。"
     },
     {
       "priority": 2,
@@ -1341,6 +1359,17 @@
       "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核",
       "next_step": "用第二行情源复核涨跌幅、quote_time 和代表股方向；未确认前只做验证。",
       "unblock_condition": "price_review=0 或相关来源标记 trusted/cross verified。"
+    },
+    {
+      "priority": 3,
+      "impact_level": "signal_review",
+      "label": "信号结构复核",
+      "file": "alert.json",
+      "code": "historical_candidate_alert_evidence_weak",
+      "problem": "alerts[0] 候选异动未达到最低短周期价格、方向占比和成交门槛，不得作为当前候选展示",
+      "decision_action": "仅作历史复核，不得恢复为当前候选",
+      "next_step": "修正字段结构、证据、触发原因和升级条件；未通过前降权展示。",
+      "unblock_condition": "signal_review=0，decision-feed/核心 JSON 契约通过。"
     },
     {
       "priority": 4,
@@ -1374,26 +1403,15 @@
       "decision_action": "仅作政策/背景覆盖复核，不阻断盘中价格和交易触发",
       "next_step": "补官方/交易所/公司公告来源；未补齐前不升级为核心依据。",
       "unblock_condition": "官方来源补齐或确认不影响交易触发。"
-    },
-    {
-      "priority": 4,
-      "impact_level": "background_review",
-      "label": "背景来源复核",
-      "file": "topics.json",
-      "code": "stale_timestamp",
-      "problem": "时间戳不是当前交易日：2026-08-25T15:42:30+08:00",
-      "decision_action": "仅作背景复核，不单独阻断交易判断",
-      "next_step": "补官方/交易所/公司公告来源；未补齐前不升级为核心依据。",
-      "unblock_condition": "官方来源补齐或确认不影响交易触发。"
     }
   ],
   "counts": {
     "critical": 0,
-    "warning": 145,
+    "warning": 147,
     "info": 1,
-    "blocking": 1,
-    "price_review": 136,
-    "signal_review": 0,
+    "blocking": 0,
+    "price_review": 138,
+    "signal_review": 1,
     "background_review": 9
   },
   "rules": [
