@@ -1,26 +1,17 @@
 {
-  "timestamp": "2026-08-28T09:32:28+08:00",
+  "timestamp": "2026-08-28T09:37:58+08:00",
   "current_signal_date": "2026-08-28",
   "status": "degraded",
-  "summary": "发现 148 个降级/需复核项（1 个交易阻断，137 个价格/行情复核，11 个背景复核），核心结论可看但必须按影响分层使用。",
+  "summary": "发现 145 个降级/需复核项（1 个交易阻断，136 个价格/行情复核，9 个背景复核），核心结论可看但必须按影响分层使用。",
   "issues": [
     {
       "severity": "warning",
       "file": "alert.json",
       "path": "",
       "code": "invalidated_source",
-      "message": "行情源最近一次刷新失败，程序会在网络恢复后自动重试。",
+      "message": "09:32开盘脉冲未达到最低成交门槛且未完成双源精确对齐，已从当前异动中撤下；继续由09:30盘中结论降权观察。",
       "impact_level": "blocking",
       "decision_action": "对应信号等待重产，页面必须显示阻断"
-    },
-    {
-      "severity": "warning",
-      "file": "intraday.json",
-      "path": "",
-      "code": "stale_timestamp",
-      "message": "时间戳不是当前交易日：2026-08-25T15:06:14+08:00",
-      "impact_level": "background_review",
-      "decision_action": "仅作背景复核，不单独阻断交易判断"
     },
     {
       "severity": "warning",
@@ -153,7 +144,7 @@
       "file": "source-health.json",
       "path": "",
       "code": "source_degraded",
-      "message": "akshare_a_spot_watch_decode: 开盘前至09:30:17 AkShare连续返回非行情内容，监控进程仍存活且日志持续更新；本轮未生成可用实时行情。",
+      "message": "akshare_a_spot_watch_decode: 开盘后实时行情源持续失败，09:33:44至09:36:12新增9轮解码异常；监控进程仍存活且日志持续更新。",
       "impact_level": "price_review",
       "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
     },
@@ -1326,24 +1317,6 @@
       "message": "shenwan_industry_mapping_postmarket_20260805: 历史代码主表5203只；涨超5%样本中38只未映射，占4.98%，已单列未映射，不外推分类。",
       "impact_level": "price_review",
       "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
-    },
-    {
-      "severity": "warning",
-      "file": "theme-shifts.json",
-      "path": "",
-      "code": "stale_theme_shifts",
-      "message": "theme-shifts 日期不是当前交易日：2026-08-25",
-      "impact_level": "background_review",
-      "decision_action": "仅作背景复核，不单独阻断交易判断"
-    },
-    {
-      "severity": "warning",
-      "file": "cross-file",
-      "path": "智谱",
-      "code": "stock_pct_cross_file_conflict",
-      "message": "智谱 跨文件涨跌幅差异过大：premarket.json 0.69% vs premarket.json 12.62%",
-      "impact_level": "price_review",
-      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
     }
   ],
   "action_plan": [
@@ -1353,21 +1326,10 @@
       "label": "先修复阻断",
       "file": "alert.json",
       "code": "invalidated_source",
-      "problem": "行情源最近一次刷新失败，程序会在网络恢复后自动重试。",
+      "problem": "09:32开盘脉冲未达到最低成交门槛且未完成双源精确对齐，已从当前异动中撤下；继续由09:30盘中结论降权观察。",
       "decision_action": "对应信号等待重产，页面必须显示阻断",
       "next_step": "暂停对应交易触发；等待污染批次撤下、可信行情源恢复并重产 JSON。",
       "unblock_condition": "quality-report blocking=0，相关文件不再 invalidated/missing。"
-    },
-    {
-      "priority": 2,
-      "impact_level": "price_review",
-      "label": "二次行情复核",
-      "file": "cross-file",
-      "code": "stock_pct_cross_file_conflict",
-      "problem": "智谱 跨文件涨跌幅差异过大：premarket.json 0.69% vs premarket.json 12.62%",
-      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核",
-      "next_step": "用第二行情源复核涨跌幅、quote_time 和代表股方向；未确认前只做验证。",
-      "unblock_condition": "price_review=0 或相关来源标记 trusted/cross verified。"
     },
     {
       "priority": 2,
@@ -1379,17 +1341,6 @@
       "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核",
       "next_step": "用第二行情源复核涨跌幅、quote_time 和代表股方向；未确认前只做验证。",
       "unblock_condition": "price_review=0 或相关来源标记 trusted/cross verified。"
-    },
-    {
-      "priority": 4,
-      "impact_level": "background_review",
-      "label": "背景来源复核",
-      "file": "intraday.json",
-      "code": "stale_timestamp",
-      "problem": "时间戳不是当前交易日：2026-08-25T15:06:14+08:00",
-      "decision_action": "仅作背景复核，不单独阻断交易判断",
-      "next_step": "补官方/交易所/公司公告来源；未补齐前不升级为核心依据。",
-      "unblock_condition": "官方来源补齐或确认不影响交易触发。"
     },
     {
       "priority": 4,
@@ -1412,16 +1363,38 @@
       "decision_action": "仅作背景复核，不单独阻断交易判断",
       "next_step": "补官方/交易所/公司公告来源；未补齐前不升级为核心依据。",
       "unblock_condition": "官方来源补齐或确认不影响交易触发。"
+    },
+    {
+      "priority": 4,
+      "impact_level": "background_review",
+      "label": "背景来源复核",
+      "file": "source-health.json",
+      "code": "source_degraded",
+      "problem": "official_policy_global_web_scan: 商务部第33、34号公告及第2、3号令已由官网原文核验；全球标杆官方域名搜索混入历史页面，已剔除并降级为非穷尽扫描。本轮没有把空结果写成完全无新闻，US现金市场尚未开盘。",
+      "decision_action": "仅作政策/背景覆盖复核，不阻断盘中价格和交易触发",
+      "next_step": "补官方/交易所/公司公告来源；未补齐前不升级为核心依据。",
+      "unblock_condition": "官方来源补齐或确认不影响交易触发。"
+    },
+    {
+      "priority": 4,
+      "impact_level": "background_review",
+      "label": "背景来源复核",
+      "file": "topics.json",
+      "code": "stale_timestamp",
+      "problem": "时间戳不是当前交易日：2026-08-25T15:42:30+08:00",
+      "decision_action": "仅作背景复核，不单独阻断交易判断",
+      "next_step": "补官方/交易所/公司公告来源；未补齐前不升级为核心依据。",
+      "unblock_condition": "官方来源补齐或确认不影响交易触发。"
     }
   ],
   "counts": {
     "critical": 0,
-    "warning": 148,
+    "warning": 145,
     "info": 1,
     "blocking": 1,
-    "price_review": 137,
+    "price_review": 136,
     "signal_review": 0,
-    "background_review": 11
+    "background_review": 9
   },
   "rules": [
     "异常文本、JSON解析失败、必需文件缺失为 critical。",

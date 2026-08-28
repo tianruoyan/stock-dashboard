@@ -1,6 +1,24 @@
 {
-  "timestamp": "2026-08-28T09:31:39+08:00",
+  "timestamp": "2026-08-28T09:37:10+08:00",
   "source_status": "invalidated",
   "alerts": [],
-  "note": "行情源最近一次刷新失败，程序会在网络恢复后自动重试。"
+  "quote_audit": {
+    "provider": "本地盘中监控、富途行情（腾讯备用）",
+    "quote_time": "2026-08-28T09:32:03+08:00",
+    "pct_field": "各异动卡标注的短周期涨跌幅",
+    "sanity_checks": {
+      "sample_count": 1,
+      "max_abs_leader_change_pct": 5.5017,
+      "cross_source_verified": false,
+      "verified_alert_count": 0
+    },
+    "secondary_verification": {
+      "state": "insufficient_precision",
+      "checked_at": "2026-08-28T09:37:01+08:00",
+      "source": "富途行情",
+      "reason": "代表股已识别，但外部行情无法精确对齐触发时点；同时成交放大仅1.00倍，未达到候选展示门槛。"
+    }
+  },
+  "note": "09:32开盘脉冲未达到最低成交门槛且未完成双源精确对齐，已从当前异动中撤下；继续由09:30盘中结论降权观察。",
+  "monitor_checked_at": "2026-08-28T09:37:10+08:00"
 }
