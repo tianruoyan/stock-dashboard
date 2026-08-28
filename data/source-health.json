@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-08-25T14:59:09+08:00",
+  "timestamp": "2026-08-28T09:30:17+08:00",
   "sources": {
     "tencent_http": {
       "status": "ok",
@@ -161,16 +161,16 @@
     "akshare_a_spot_watch_decode": {
       "status": "degraded",
       "usage": "盘中观察池与题材短周期刷新",
-      "checked_at": "2026-08-25T14:58:36+08:00",
-      "sample_count": 2,
+      "checked_at": "2026-08-28T09:30:17+08:00",
+      "sample_count": 0,
       "errors": [
-        "09:35:07至14:58:36累计554轮AkShare解码失败",
-        "14:51:02曾单批恢复并产生两条正式提醒，随后再次失败",
+        "09:26:40至09:30:17连续13轮AkShare解码失败",
+        "Can not decode value starting with character <",
         "cross_source_verified=false"
       ],
-      "detail": "行情源在14:51:02单批恢复后再次解码失败，最近一次为14:58:36；监控进程仍存活且日志持续更新。",
-      "action": "正式触发保留，但两条机会均因尾盘短周期转负、成交及结构证据不足被门禁拦截；等待第二源和连续稳定批次。",
-      "failure_count": 554,
+      "detail": "开盘前至09:30:17 AkShare连续返回非行情内容，监控进程仍存活且日志持续更新；本轮未生成可用实时行情。",
+      "action": "保留上一版alert.json；等待高频行情源恢复和可审计的连续有效批次。",
+      "failure_count": 567,
       "last_valid_batch_at": "2026-08-25T14:51:02+08:00"
     },
     "eastmoney_limit_pool_intraday_0930": {
