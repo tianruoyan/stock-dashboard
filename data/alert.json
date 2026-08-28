@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-08-28T09:45:03+08:00",
+  "timestamp": "2026-08-28T09:46:04+08:00",
   "source_status": "monitor_live",
   "alerts": [
     {
@@ -50,7 +50,7 @@
       "is_old_economy": false,
       "source_watch_id": "7月半导体扩产组合",
       "quote_audit": {
-        "provider": "本地盘中监控",
+        "provider": "本地盘中监控、富途行情（腾讯备用）",
         "quote_time": "2026-08-28T09:32:03+08:00",
         "pct_field": "3分钟涨跌幅",
         "sample_count": 3,
@@ -66,21 +66,179 @@
         "direction_ratio": 1.0,
         "volume_ratio": 1.0,
         "relative_volume_vs_yesterday": null,
-        "missing_confirmation": "等待富途行情按触发时点交叉核验；通过前只作候选或观察，不作为确认交易信号。"
+        "missing_confirmation": "等待富途行情按触发时点交叉核验；通过前只作候选或观察，不作为确认交易信号。",
+        "secondary_source": "富途行情",
+        "secondary_verification": {
+          "state": "too_late_no_backfill",
+          "checked_at": "2026-08-28T09:46:03+08:00",
+          "source": "富途行情",
+          "reason": "超过实时核验窗口，不事后补成已确认。",
+          "representatives": [],
+          "fingerprint": "8d65ed3b74880df7d8fb",
+          "verifier_version": "futu-opend-2026-07-27.3"
+        }
       },
       "source_status": "degraded_partial",
       "valid_until": "2026-08-28T09:37:03+08:00",
       "trigger_rule": "小登风格轮动：同一大风格下≥3个关联板块同向急拉",
       "alert_class": "style",
       "confirmation_level": "candidate"
+    },
+    {
+      "id": "monitor-20260828-094518-e90d9641c64a",
+      "time": "2026-08-28T09:45:18+08:00",
+      "sector": "电子布",
+      "type": "小登题材短周期拉动",
+      "reason": "触发规则：小登底池扩散预警：板块行情缺失时，底池3分钟平均涨幅≥1.0%，上涨占比≥60%，成交放大≥8x，且至少2只样本明显推进\n异动性质：上涨攻势中的拉起。3分钟价格推进、上涨占比、强势股数量和前排日内状态同时确认。\n结论：电子布处在上涨攻势中的拉起，有扩散，山东玻纤暂为核心。\n题材：电子布，当前动态龙头：山东玻纤 / 长海股份 / 中国巨石。\n强度：底池样本 3分钟涨跌幅 1.19%，上涨占比 100%，强势股 5 只。\n成交：3分钟放大 20.00x，较昨同期 3.65x，有后排扩散。\n当前动态龙头分数：山东玻纤(47.2)，长海股份(44.0)，中国巨石(42.5)。\n主要贡献因子：山东玻纤: 3分钟涨跌幅 1.10%，成交放大 20.00x，日内涨幅 3.75%；长海股份: 3分钟涨跌幅 1.29%，成交放大 20.00x，日内涨幅 1.58%；中国巨石: 3分钟涨跌幅 1.17%，成交放大 20.00x，日内涨幅 1.57%\n观察点：龙头是否维持日内高位、后排是否继续补涨、成交是否继续放大。\n风险提示：这是题材强度分析，不构成买卖建议。",
+      "leaders": [
+        {
+          "name": "山东玻纤",
+          "code": "605006",
+          "change_pct": 1.1034,
+          "quote_time": "2026-08-28T09:45:18.680803",
+          "score": 47.25,
+          "factors": [
+            "3分钟+1.10%",
+            "成交放大20.00x",
+            "日内+3.75%"
+          ]
+        },
+        {
+          "name": "长海股份",
+          "code": "300196",
+          "change_pct": 1.2858,
+          "quote_time": "2026-08-28T09:45:18.680803",
+          "score": 43.96,
+          "factors": [
+            "3分钟+1.29%",
+            "成交放大20.00x",
+            "日内+1.58%"
+          ]
+        },
+        {
+          "name": "中国巨石",
+          "code": "600176",
+          "change_pct": 1.168,
+          "quote_time": "2026-08-28T09:45:18.680803",
+          "score": 42.55,
+          "factors": [
+            "3分钟+1.17%",
+            "成交放大20.00x",
+            "日内+1.57%"
+          ]
+        }
+      ],
+      "signal_type": "🎯交易信号",
+      "is_old_economy": false,
+      "source_watch_id": "PCB-电子布",
+      "quote_audit": {
+        "provider": "本地盘中监控",
+        "quote_time": "2026-08-28T09:45:18+08:00",
+        "pct_field": "3分钟涨跌幅",
+        "sample_count": 3,
+        "max_abs_leader_change_pct": 1.2858,
+        "sanity_checks": {
+          "cross_source_verified": false,
+          "price_move_valid": true,
+          "volume_valid": true,
+          "direction_ratio_valid": true,
+          "limit_down_count_valid": false
+        },
+        "board_3m_change_pct": 1.1888,
+        "direction_ratio": 1.0,
+        "volume_ratio": 20.0,
+        "relative_volume_vs_yesterday": 3.6472,
+        "missing_confirmation": "等待富途行情按触发时点交叉核验；通过前只作候选或观察，不作为确认交易信号。"
+      },
+      "source_status": "degraded_partial",
+      "valid_until": "2026-08-28T09:50:18+08:00",
+      "trigger_rule": "小登底池扩散预警：板块行情缺失时，底池3分钟平均涨幅≥1.0%，上涨占比≥60%，成交放大≥8x，且至少2只样本明显推进",
+      "alert_class": "opportunity",
+      "confirmation_level": "candidate",
+      "limit_up_count": 0,
+      "limit_down_count": 0
+    },
+    {
+      "id": "monitor-20260828-094518-583dd6a14608",
+      "time": "2026-08-28T09:45:18+08:00",
+      "sector": "覆铜板",
+      "type": "小登题材短周期拉动",
+      "reason": "触发规则：小登股异动：3分钟平均涨跌幅≥1.5%，上涨占比≥70%，且成交放大≥5x；小登底池拉起预警：板块行情缺失时，底池3分钟平均涨幅≥1.5%，上涨占比≥70%，且成交放大≥5x；小登底池扩散预警：板块行情缺失时，底池3分钟平均涨幅≥1.0%，上涨占比≥60%，成交放大≥8x，且至少2只样本明显推进\n异动性质：上涨攻势中的拉起。3分钟价格推进、上涨占比、强势股数量和前排日内状态同时确认。\n结论：覆铜板上涨攻势较强且扩散较好，金安国纪领涨。\n题材：覆铜板，当前动态龙头：金安国纪 / 华正新材 / 生益科技。\n强度：底池样本 3分钟涨跌幅 1.73%，上涨占比 100%，强势股 4 只。\n成交：3分钟放大 20.00x，较昨同期 5.07x，有后排扩散。\n当前动态龙头分数：金安国纪(75.4)，华正新材(67.1)，生益科技(57.9)。\n主要贡献因子：金安国纪: 3分钟涨跌幅 2.01%，成交放大 20.00x，日内涨幅 8.40%；华正新材: 3分钟涨跌幅 2.05%，成交放大 20.00x，日内涨幅 5.67%；生益科技: 3分钟涨跌幅 1.53%，成交放大 20.00x，日内涨幅 1.99%\n观察点：龙头是否维持日内高位、后排是否继续补涨、成交是否继续放大。\n风险提示：这是题材强度分析，不构成买卖建议。",
+      "leaders": [
+        {
+          "name": "金安国纪",
+          "code": "002636",
+          "change_pct": 2.0065,
+          "quote_time": "2026-08-28T09:45:18.680803",
+          "score": 75.41,
+          "factors": [
+            "3分钟+2.01%",
+            "成交放大20.00x",
+            "日内+8.40%"
+          ]
+        },
+        {
+          "name": "华正新材",
+          "code": "603186",
+          "change_pct": 2.0538,
+          "quote_time": "2026-08-28T09:45:18.680803",
+          "score": 67.14,
+          "factors": [
+            "3分钟+2.05%",
+            "成交放大20.00x",
+            "日内+5.67%"
+          ]
+        },
+        {
+          "name": "生益科技",
+          "code": "600183",
+          "change_pct": 1.5324,
+          "quote_time": "2026-08-28T09:45:18.680803",
+          "score": 57.86,
+          "factors": [
+            "3分钟+1.53%",
+            "成交放大20.00x",
+            "日内+1.99%"
+          ]
+        }
+      ],
+      "signal_type": "🎯交易信号",
+      "is_old_economy": false,
+      "source_watch_id": "PCB-电子布",
+      "quote_audit": {
+        "provider": "本地盘中监控",
+        "quote_time": "2026-08-28T09:45:18+08:00",
+        "pct_field": "3分钟涨跌幅",
+        "sample_count": 3,
+        "max_abs_leader_change_pct": 2.0538,
+        "sanity_checks": {
+          "cross_source_verified": false,
+          "price_move_valid": true,
+          "volume_valid": true,
+          "direction_ratio_valid": true,
+          "limit_down_count_valid": false
+        },
+        "board_3m_change_pct": 1.7339,
+        "direction_ratio": 1.0,
+        "volume_ratio": 20.0,
+        "relative_volume_vs_yesterday": 5.0688,
+        "missing_confirmation": "等待富途行情按触发时点交叉核验；通过前只作候选或观察，不作为确认交易信号。"
+      },
+      "source_status": "degraded_partial",
+      "valid_until": "2026-08-28T09:50:18+08:00",
+      "trigger_rule": "小登股异动：3分钟平均涨跌幅≥1.5%，上涨占比≥70%，且成交放大≥5x；小登底池拉起预警：板块行情缺失时，底池3分钟平均涨幅≥1.5%，上涨占比≥70%，且成交放大≥5x；小登底池扩散预警：板块行情缺失时，底池3分钟平均涨幅≥1.0%，上涨占比≥60%，成交放大≥8x，且至少2只样本明显推进",
+      "alert_class": "opportunity",
+      "confirmation_level": "candidate",
+      "limit_up_count": 0,
+      "limit_down_count": 0
     }
   ],
   "quote_audit": {
-    "provider": "本地盘中监控",
-    "quote_time": "2026-08-28T09:32:03+08:00",
+    "provider": "本地盘中监控、富途行情（腾讯备用）",
+    "quote_time": "2026-08-28T09:45:18+08:00",
     "pct_field": "各异动卡标注的3分钟涨跌幅",
     "sanity_checks": {
-      "sample_count": 1,
+      "sample_count": 3,
       "max_abs_leader_change_pct": 5.5017,
       "cross_source_verified": false,
       "verified_alert_count": 0
