@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-08-28T09:26:21+08:00",
+  "timestamp": "2026-08-28T09:28:26+08:00",
   "current_signal_date": "2026-08-28",
   "status": "degraded",
   "summary": "发现 149 个降级/需复核项（1 个交易阻断，138 个价格/行情复核，11 个背景复核），核心结论可看但必须按影响分层使用。",
@@ -9,7 +9,7 @@
       "file": "alert.json",
       "path": "",
       "code": "invalidated_source",
-      "message": "盘中监控尚未产出近期有效行情，等待下一轮。",
+      "message": "行情源最近一次刷新失败，程序会在网络恢复后自动重试。",
       "impact_level": "blocking",
       "decision_action": "对应信号等待重产，页面必须显示阻断"
     },
@@ -1362,7 +1362,7 @@
       "label": "先修复阻断",
       "file": "alert.json",
       "code": "invalidated_source",
-      "problem": "盘中监控尚未产出近期有效行情，等待下一轮。",
+      "problem": "行情源最近一次刷新失败，程序会在网络恢复后自动重试。",
       "decision_action": "对应信号等待重产，页面必须显示阻断",
       "next_step": "暂停对应交易触发；等待污染批次撤下、可信行情源恢复并重产 JSON。",
       "unblock_condition": "quality-report blocking=0，相关文件不再 invalidated/missing。"
