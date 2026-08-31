@@ -1,8 +1,8 @@
 {
-  "timestamp": "2026-08-31T15:00:21+08:00",
+  "timestamp": "2026-08-31T21:13:50+08:00",
   "current_signal_date": "2026-08-31",
   "status": "degraded",
-  "summary": "发现 146 个降级/需复核项（138 个价格/行情复核，9 个背景复核），核心结论可看但必须按影响分层使用。",
+  "summary": "发现 146 个降级/需复核项（138 个价格/行情复核，8 个背景复核），核心结论可看但必须按影响分层使用。",
   "issues": [
     {
       "severity": "warning",
@@ -64,15 +64,6 @@
       "path": "",
       "code": "stale_timestamp",
       "message": "时间戳不是当前交易日：2026-08-30T20:12:00+08:00",
-      "impact_level": "background_review",
-      "decision_action": "仅作背景复核，不单独阻断交易判断"
-    },
-    {
-      "severity": "info",
-      "file": "evening-sentiment.json",
-      "path": "",
-      "code": "evening_not_current",
-      "message": "晚间舆情不是当前交易日，不参与今日总控",
       "impact_level": "background_review",
       "decision_action": "仅作背景复核，不单独阻断交易判断"
     },
@@ -1321,9 +1312,9 @@
     {
       "severity": "warning",
       "file": "decision-feed.json",
-      "path": "opportunities[2]",
+      "path": "opportunities[1]",
       "code": "stale_relative_time",
-      "message": "opportunities[2] 含过期相对日期",
+      "message": "opportunities[1] 含过期相对日期",
       "impact_level": "background_review",
       "decision_action": "仅作背景复核，不单独阻断交易判断"
     }
@@ -1357,7 +1348,7 @@
       "label": "背景来源复核",
       "file": "decision-feed.json",
       "code": "stale_relative_time",
-      "problem": "opportunities[2] 含过期相对日期",
+      "problem": "opportunities[1] 含过期相对日期",
       "decision_action": "仅作背景复核，不单独阻断交易判断",
       "next_step": "补官方/交易所/公司公告来源；未补齐前不升级为核心依据。",
       "unblock_condition": "官方来源补齐或确认不影响交易触发。"
@@ -1399,11 +1390,11 @@
   "counts": {
     "critical": 0,
     "warning": 146,
-    "info": 1,
+    "info": 0,
     "blocking": 0,
     "price_review": 138,
     "signal_review": 0,
-    "background_review": 9
+    "background_review": 8
   },
   "rules": [
     "异常文本、JSON解析失败、必需文件缺失为 critical。",
