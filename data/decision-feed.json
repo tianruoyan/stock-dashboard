@@ -1,20 +1,20 @@
 {
-  "timestamp": "2026-08-31T11:57:21+08:00",
+  "timestamp": "2026-08-31T14:14:41+08:00",
   "current_signal_date": "2026-08-31",
   "quality_gate": {
     "status": "degraded",
-    "summary": "发现 153 个降级/需复核项（140 个价格/行情复核，1 个信号复核，13 个背景复核），核心结论可看但必须按影响分层使用。",
+    "summary": "发现 146 个降级/需复核项（138 个价格/行情复核，9 个背景复核），核心结论可看但必须按影响分层使用。",
     "decision_flags": [
       "行情/涨跌幅需二次源复核",
       "盘中异动源降级，alert 类信号降权",
-      "机会信号需降权转验证",
-      "港股收盘窗口可能非终值"
+      "港股收盘窗口可能非终值",
+      "行情源降级，需复核涨跌幅"
     ],
     "blocking_count": 0,
-    "price_review_count": 140,
-    "background_review_count": 13
+    "price_review_count": 138,
+    "background_review_count": 9
   },
-  "summary": "当前时段尚无可用盘面结论。 数据质量：发现 153 个降级/需复核项（140 个价格/行情复核，1 个信号复核，13 个背景复核），核心结论可看但必须按影响分层使用。",
+  "summary": "当前时段尚无可用盘面结论。 数据质量：发现 146 个降级/需复核项（138 个价格/行情复核，9 个背景复核），核心结论可看但必须按影响分层使用。",
   "observation_coverage": {
     "summary": "独立盘面/盘后扫描 1 条，但缺少纯主动新线。",
     "independent_count": 1,
@@ -30,10 +30,10 @@
     "stance": "风险优先，只做验证",
     "action": "不把候选方向当交易机会；先看风险收敛、数据恢复和核心承接。",
     "reasons": [
-      "发现 153 个降级/需复核项（140 个价格/行情复核，1 个信号复核，13 个背景复核），核心结论可看但必须按影响分层使用。",
+      "发现 146 个降级/需复核项（138 个价格/行情复核，9 个背景复核），核心结论可看但必须按影响分层使用。",
       "A/B级风险 1 条",
       "可用机会 0 条，降权候选 8 条",
-      "先处理：二次行情复核（alert.json）"
+      "先处理：二次行情复核（premarket.json）"
     ],
     "risk_focus": [
       "数据质量降级"
@@ -50,13 +50,13 @@
     "quality_actions": [
       {
         "label": "二次行情复核",
-        "file": "alert.json",
+        "file": "premarket.json",
         "next_step": "用第二行情源复核涨跌幅、quote_time 和代表股方向；未确认前只做验证。",
         "unblock_condition": "price_review=0 或相关来源标记 trusted/cross verified。"
       },
       {
         "label": "二次行情复核",
-        "file": "premarket.json",
+        "file": "source-health.json",
         "next_step": "用第二行情源复核涨跌幅、quote_time 和代表股方向；未确认前只做验证。",
         "unblock_condition": "price_review=0 或相关来源标记 trusted/cross verified。"
       }
@@ -151,8 +151,8 @@
       "quality_flags": [
         "行情/涨跌幅需二次源复核",
         "盘中异动源降级，alert 类信号降权",
-        "机会信号需降权转验证",
-        "港股收盘窗口可能非终值"
+        "港股收盘窗口可能非终值",
+        "行情源降级，需复核涨跌幅"
       ],
       "tone": "good",
       "discovery_type": "premarket_watch_queue",
@@ -202,8 +202,8 @@
       "quality_flags": [
         "行情/涨跌幅需二次源复核",
         "盘中异动源降级，alert 类信号降权",
-        "机会信号需降权转验证",
-        "港股收盘窗口可能非终值"
+        "港股收盘窗口可能非终值",
+        "行情源降级，需复核涨跌幅"
       ],
       "tone": "good",
       "discovery_type": "premarket_watch_queue",
@@ -252,8 +252,8 @@
       "quality_flags": [
         "行情/涨跌幅需二次源复核",
         "盘中异动源降级，alert 类信号降权",
-        "机会信号需降权转验证",
-        "港股收盘窗口可能非终值"
+        "港股收盘窗口可能非终值",
+        "行情源降级，需复核涨跌幅"
       ],
       "tone": "good",
       "discovery_type": "premarket_watch_queue",
@@ -303,8 +303,8 @@
       "quality_flags": [
         "行情/涨跌幅需二次源复核",
         "盘中异动源降级，alert 类信号降权",
-        "机会信号需降权转验证",
-        "港股收盘窗口可能非终值"
+        "港股收盘窗口可能非终值",
+        "行情源降级，需复核涨跌幅"
       ],
       "tone": "good",
       "discovery_type": "premarket_watch_queue",
@@ -354,8 +354,8 @@
       "quality_flags": [
         "行情/涨跌幅需二次源复核",
         "盘中异动源降级，alert 类信号降权",
-        "机会信号需降权转验证",
-        "港股收盘窗口可能非终值"
+        "港股收盘窗口可能非终值",
+        "行情源降级，需复核涨跌幅"
       ],
       "tone": "good",
       "discovery_type": "premarket_watch_queue",
@@ -405,8 +405,8 @@
       "quality_flags": [
         "行情/涨跌幅需二次源复核",
         "盘中异动源降级，alert 类信号降权",
-        "机会信号需降权转验证",
-        "港股收盘窗口可能非终值"
+        "港股收盘窗口可能非终值",
+        "行情源降级，需复核涨跌幅"
       ],
       "tone": "good",
       "discovery_type": "premarket_watch_queue",
@@ -456,8 +456,8 @@
       "quality_flags": [
         "行情/涨跌幅需二次源复核",
         "盘中异动源降级，alert 类信号降权",
-        "机会信号需降权转验证",
-        "港股收盘窗口可能非终值"
+        "港股收盘窗口可能非终值",
+        "行情源降级，需复核涨跌幅"
       ],
       "tone": "good",
       "discovery_type": "premarket_watch_queue",
@@ -508,8 +508,8 @@
       "quality_flags": [
         "行情/涨跌幅需二次源复核",
         "盘中异动源降级，alert 类信号降权",
-        "机会信号需降权转验证",
-        "港股收盘窗口可能非终值"
+        "港股收盘窗口可能非终值",
+        "行情源降级，需复核涨跌幅"
       ],
       "tone": "good",
       "discovery_type": "premarket_watch_queue",
@@ -541,13 +541,13 @@
       "title": "数据质量降级",
       "type": "data_quality",
       "trigger_reason": "风控兜底触发：市场宽度、数据质量或回撤条件触发风险优先。",
-      "conclusion": "发现 153 个降级/需复核项（140 个价格/行情复核，1 个信号复核，13 个背景复核），核心结论可看但必须按影响分层使用。",
+      "conclusion": "发现 146 个降级/需复核项（138 个价格/行情复核，9 个背景复核），核心结论可看但必须按影响分层使用。",
       "confidence": "high",
       "evidence": [
-        "时间戳不是当前交易日：2026-08-28T15:05:19+08:00",
         "时间戳不是当前交易日：2026-08-28T15:02:00+08:00",
         "时间戳不是当前交易日：2026-08-28T11:41:00+08:00",
-        "时间戳不是当前交易日：2026-08-28T16:32:00+08:00"
+        "时间戳不是当前交易日：2026-08-28T16:32:00+08:00",
+        "时间戳不是当前交易日：2026-08-30T20:12:00+08:00"
       ],
       "source_files": [
         "quality-report.json",
