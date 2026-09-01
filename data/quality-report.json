@@ -1,8 +1,8 @@
 {
-  "timestamp": "2026-09-01T08:30:58+08:00",
+  "timestamp": "2026-09-01T08:39:08+08:00",
   "current_signal_date": "2026-09-01",
   "status": "degraded",
-  "summary": "发现 147 个降级/需复核项（137 个价格/行情复核，11 个背景复核），核心结论可看但必须按影响分层使用。",
+  "summary": "发现 145 个降级/需复核项（137 个价格/行情复核，9 个背景复核），核心结论可看但必须按影响分层使用。",
   "issues": [
     {
       "severity": "warning",
@@ -1317,24 +1317,6 @@
       "message": "opportunities[1] 含过期相对日期",
       "impact_level": "background_review",
       "decision_action": "仅作背景复核，不单独阻断交易判断"
-    },
-    {
-      "severity": "warning",
-      "file": "data-trust.json",
-      "path": "",
-      "code": "stale_data_trust",
-      "message": "data-trust 日期不是当前交易日：2026-08-31",
-      "impact_level": "background_review",
-      "decision_action": "仅作背景复核，不单独阻断交易判断"
-    },
-    {
-      "severity": "warning",
-      "file": "monitoring-coverage.json",
-      "path": "",
-      "code": "stale_monitoring_coverage",
-      "message": "monitoring-coverage 日期不是当前交易日：2026-08-31",
-      "impact_level": "background_review",
-      "decision_action": "仅作背景复核，不单独阻断交易判断"
     }
   ],
   "action_plan": [
@@ -1356,17 +1338,6 @@
       "file": "alert.json",
       "code": "stale_timestamp",
       "problem": "时间戳不是当前交易日：2026-08-31T14:51:37+08:00",
-      "decision_action": "仅作背景复核，不单独阻断交易判断",
-      "next_step": "补官方/交易所/公司公告来源；未补齐前不升级为核心依据。",
-      "unblock_condition": "官方来源补齐或确认不影响交易触发。"
-    },
-    {
-      "priority": 4,
-      "impact_level": "background_review",
-      "label": "背景来源复核",
-      "file": "data-trust.json",
-      "code": "stale_data_trust",
-      "problem": "data-trust 日期不是当前交易日：2026-08-31",
       "decision_action": "仅作背景复核，不单独阻断交易判断",
       "next_step": "补官方/交易所/公司公告来源；未补齐前不升级为核心依据。",
       "unblock_condition": "官方来源补齐或确认不影响交易触发。"
@@ -1403,16 +1374,27 @@
       "decision_action": "仅作背景复核，不单独阻断交易判断",
       "next_step": "补官方/交易所/公司公告来源；未补齐前不升级为核心依据。",
       "unblock_condition": "官方来源补齐或确认不影响交易触发。"
+    },
+    {
+      "priority": 4,
+      "impact_level": "background_review",
+      "label": "背景来源复核",
+      "file": "postmarket.json",
+      "code": "stale_timestamp",
+      "problem": "时间戳不是当前交易日：2026-08-28T16:32:00+08:00",
+      "decision_action": "仅作背景复核，不单独阻断交易判断",
+      "next_step": "补官方/交易所/公司公告来源；未补齐前不升级为核心依据。",
+      "unblock_condition": "官方来源补齐或确认不影响交易触发。"
     }
   ],
   "counts": {
     "critical": 0,
-    "warning": 147,
+    "warning": 145,
     "info": 1,
     "blocking": 0,
     "price_review": 137,
     "signal_review": 0,
-    "background_review": 11
+    "background_review": 9
   },
   "rules": [
     "异常文本、JSON解析失败、必需文件缺失为 critical。",

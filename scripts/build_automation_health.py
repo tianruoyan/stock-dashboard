@@ -15,11 +15,11 @@ TZ = timezone(timedelta(hours=8))
 
 
 EXPECTED = [
-    {"id": "premarket", "label": "盘前简报", "file": "premarket.json", "due": "09:25", "grace_minutes": 20, "blocking": False},
+    {"id": "premarket", "label": "盘前简报", "file": "premarket.json", "due": "08:30", "grace_minutes": 5, "blocking": False},
     {"id": "intraday", "label": "盘中全景", "file": "intraday.json", "due": "15:05", "grace_minutes": 90, "blocking": False},
     {"id": "alerts", "label": "盘中异动", "file": "alert.json", "due": "15:00", "grace_minutes": 5, "blocking": True},
     {"id": "midday", "label": "午盘分析", "file": "midday.json", "due": "11:30", "grace_minutes": 30, "blocking": False},
-    {"id": "postmarket", "label": "盘后复盘", "file": "postmarket.json", "due": "15:30", "grace_minutes": 60, "blocking": False},
+    {"id": "postmarket", "label": "盘后复盘", "file": "postmarket.json", "due": "16:30", "grace_minutes": 10, "blocking": False},
     {"id": "evening", "label": "晚间舆情", "file": "evening-sentiment.json", "due": "20:00", "grace_minutes": 90, "blocking": False},
     {"id": "topics", "label": "专题跟踪", "file": "topics.json", "due": "15:30", "grace_minutes": 180, "blocking": False},
 ]
