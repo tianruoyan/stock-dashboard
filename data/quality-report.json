@@ -1,18 +1,9 @@
 {
-  "timestamp": "2026-09-01T15:06:56+08:00",
+  "timestamp": "2026-09-01T16:35:04+08:00",
   "current_signal_date": "2026-09-01",
   "status": "degraded",
-  "summary": "发现 143 个降级/需复核项（139 个价格/行情复核，5 个背景复核），核心结论可看但必须按影响分层使用。",
+  "summary": "发现 141 个降级/需复核项（139 个价格/行情复核，3 个背景复核），核心结论可看但必须按影响分层使用。",
   "issues": [
-    {
-      "severity": "warning",
-      "file": "postmarket.json",
-      "path": "",
-      "code": "stale_timestamp",
-      "message": "时间戳不是当前交易日：2026-08-28T16:32:00+08:00",
-      "impact_level": "background_review",
-      "decision_action": "仅作背景复核，不单独阻断交易判断"
-    },
     {
       "severity": "warning",
       "file": "source-health.json",
@@ -21,15 +12,6 @@
       "message": "时间戳不是当前交易日：2026-08-28T09:43:29+08:00",
       "impact_level": "price_review",
       "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
-    },
-    {
-      "severity": "warning",
-      "file": "topics.json",
-      "path": "",
-      "code": "stale_timestamp",
-      "message": "时间戳不是当前交易日：2026-08-30T20:12:00+08:00",
-      "impact_level": "background_review",
-      "decision_action": "仅作背景复核，不单独阻断交易判断"
     },
     {
       "severity": "warning",
@@ -1294,9 +1276,9 @@
     {
       "severity": "warning",
       "file": "decision-feed.json",
-      "path": "opportunities[3]",
+      "path": "opportunities[6]",
       "code": "stale_relative_time",
-      "message": "opportunities[3] 含过期相对日期",
+      "message": "opportunities[6] 含过期相对日期",
       "impact_level": "background_review",
       "decision_action": "仅作背景复核，不单独阻断交易判断"
     }
@@ -1330,18 +1312,7 @@
       "label": "背景来源复核",
       "file": "decision-feed.json",
       "code": "stale_relative_time",
-      "problem": "opportunities[3] 含过期相对日期",
-      "decision_action": "仅作背景复核，不单独阻断交易判断",
-      "next_step": "补官方/交易所/公司公告来源；未补齐前不升级为核心依据。",
-      "unblock_condition": "官方来源补齐或确认不影响交易触发。"
-    },
-    {
-      "priority": 4,
-      "impact_level": "background_review",
-      "label": "背景来源复核",
-      "file": "postmarket.json",
-      "code": "stale_timestamp",
-      "problem": "时间戳不是当前交易日：2026-08-28T16:32:00+08:00",
+      "problem": "opportunities[6] 含过期相对日期",
       "decision_action": "仅作背景复核，不单独阻断交易判断",
       "next_step": "补官方/交易所/公司公告来源；未补齐前不升级为核心依据。",
       "unblock_condition": "官方来源补齐或确认不影响交易触发。"
@@ -1361,9 +1332,9 @@
       "priority": 4,
       "impact_level": "background_review",
       "label": "背景来源复核",
-      "file": "topics.json",
-      "code": "stale_timestamp",
-      "problem": "时间戳不是当前交易日：2026-08-30T20:12:00+08:00",
+      "file": "evening-sentiment.json",
+      "code": "evening_not_current",
+      "problem": "晚间舆情不是当前交易日，不参与今日总控",
       "decision_action": "仅作背景复核，不单独阻断交易判断",
       "next_step": "补官方/交易所/公司公告来源；未补齐前不升级为核心依据。",
       "unblock_condition": "官方来源补齐或确认不影响交易触发。"
@@ -1371,12 +1342,12 @@
   ],
   "counts": {
     "critical": 0,
-    "warning": 143,
+    "warning": 141,
     "info": 1,
     "blocking": 0,
     "price_review": 139,
     "signal_review": 0,
-    "background_review": 5
+    "background_review": 3
   },
   "rules": [
     "异常文本、JSON解析失败、必需文件缺失为 critical。",
