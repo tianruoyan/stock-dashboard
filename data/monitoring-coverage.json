@@ -1,38 +1,49 @@
 {
-  "timestamp": "2026-08-31T21:13:50+08:00",
-  "current_signal_date": "2026-08-31",
+  "timestamp": "2026-09-01T08:30:58+08:00",
+  "current_signal_date": "2026-09-01",
   "overall_status": "degraded",
-  "summary": "3 个监测维度需降权，0 个背景维度需复核。",
+  "summary": "3 个监测维度需降权，1 个背景维度需复核。",
   "counts": {
     "critical": 0,
     "warning": 3,
-    "info": 0
+    "info": 1
   },
   "blind_spots": [
     {
-      "id": "intraday-alert-degraded",
-      "title": "盘中异动触发降权",
+      "id": "premarket-cross-market-degraded",
+      "title": "盘前外部映射降权",
       "severity": "warning",
-      "conclusion": "异动信号可参考，但触发价格/涨跌幅需要二次核验。",
+      "conclusion": "美股/港股/日韩映射可以提供方向，但部分实时外部源非终值或需复核。",
       "impacted_decisions": [
-        "交易信号不能直接执行",
-        "同题材连续触发需要看原始行情源确认"
+        "盘前提振/压制判断不能单独作为开盘动作",
+        "科技映射链需要9:25竞价和9:30后承接确认"
       ],
       "evidence": [
         "A股补充行情源解码异常，盘中异动和个股涨跌幅需以已审计源复核。；港股结构行情源连接/解码异常，港股映射和收盘窗口价格需二次复核。"
       ],
-      "fallback_action": "只把 alert 当成线索，必须结合指数、板块宽度和个股原始报价确认。",
-      "fallback_checks": [
-        "宽度替代：实时涨停、跌停和炸板数据暂不可用；恢复前不判断情绪扩散。",
-        "主线替代：农业与房地产服务 看 我爱我家/特发服务/深物业A/福建金森 是否同步高开承接，单点强不升级。",
-        "新线替代：从行业与题材涨幅、成交和涨停新增中寻找首次扩散方向；没有宽度不升级。",
-        "主线替代：软件/数据中心 看 麒麟信安/鼎捷数智/大位科技/软件ETF嘉实 是否同步高开承接，单点强不升级。",
-        "主线替代：PCB/覆铜板 看 生益科技/金安国纪/华正新材 是否同步高开承接，单点强不升级。",
-        "主线替代：CPO/交换机 看 中际旭创/新易盛/光库科技/锐捷网络 是否同步高开承接，单点强不升级。"
-      ],
+      "fallback_action": "开盘只按竞价确认后的 A 股反馈升级，不把外盘映射直接升为强主线。",
+      "fallback_checks": [],
       "source_files": [
-        "data/alert.json",
-        "data/data-trust.json"
+        "data/premarket.json",
+        "data/source-health.json"
+      ]
+    },
+    {
+      "id": "evening-sentiment-stale",
+      "title": "晚间舆情过期",
+      "severity": "info",
+      "conclusion": "晚间公告、P0 舆情和隔夜事件不是当前交易日，不能参与今日总控。",
+      "impacted_decisions": [
+        "次日竞价风险可能缺少最新公告校验",
+        "个股突发公告需要额外扫描"
+      ],
+      "evidence": [
+        "数据交易日不是当前交易日：2026-08-31"
+      ],
+      "fallback_action": "只作历史背景；盘前必须重新跑 8:30 增量扫描和个股公告检查。",
+      "fallback_checks": [],
+      "source_files": [
+        "data/evening-sentiment.json"
       ]
     },
     {
@@ -45,7 +56,7 @@
         "风险栏优先级高于机会栏"
       ],
       "evidence": [
-        "发现 146 个降级/需复核项（138 个价格/行情复核，8 个背景复核），核心结论可看但必须按影响分层使用。；opportunities[1] 含过期相对日期"
+        "发现 147 个降级/需复核项（137 个价格/行情复核，11 个背景复核），核心结论可看但必须按影响分层使用。；opportunities[1] 含过期相对日期"
       ],
       "fallback_action": "只跟踪验证条件；若风险项不收敛，不升级任何机会。",
       "fallback_checks": [],
