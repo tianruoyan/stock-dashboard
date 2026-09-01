@@ -1,8 +1,8 @@
 {
-  "timestamp": "2026-09-01T20:04:11+08:00",
+  "timestamp": "2026-09-01T20:33:37+08:00",
   "current_signal_date": "2026-09-01",
   "status": "degraded",
-  "summary": "发现 141 个降级/需复核项（139 个价格/行情复核，2 个背景复核），核心结论可看但必须按影响分层使用。",
+  "summary": "发现 142 个降级/需复核项（140 个价格/行情复核，2 个背景复核），核心结论可看但必须按影响分层使用。",
   "issues": [
     {
       "severity": "warning",
@@ -28,6 +28,15 @@
       "path": "quote_audit.sanity_checks",
       "code": "historical_alert_not_cross_verified",
       "message": "行情污染源仍降级，历史 alert 未交叉验证，只降权复盘参考",
+      "impact_level": "price_review",
+      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
+    },
+    {
+      "severity": "warning",
+      "file": "evening-sentiment.json",
+      "path": "",
+      "code": "missing_p0_field",
+      "message": "p0_alerts[0].source 缺失",
       "impact_level": "price_review",
       "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
     },
@@ -1290,6 +1299,17 @@
       "priority": 2,
       "impact_level": "price_review",
       "label": "二次行情复核",
+      "file": "evening-sentiment.json",
+      "code": "missing_p0_field",
+      "problem": "p0_alerts[0].source 缺失",
+      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核",
+      "next_step": "用第二行情源复核涨跌幅、quote_time 和代表股方向；未确认前只做验证。",
+      "unblock_condition": "price_review=0 或相关来源标记 trusted/cross verified。"
+    },
+    {
+      "priority": 2,
+      "impact_level": "price_review",
+      "label": "二次行情复核",
       "file": "source-health.json",
       "code": "stale_timestamp",
       "problem": "时间戳不是当前交易日：2026-08-28T09:43:29+08:00",
@@ -1322,10 +1342,10 @@
   ],
   "counts": {
     "critical": 0,
-    "warning": 141,
+    "warning": 142,
     "info": 0,
     "blocking": 0,
-    "price_review": 139,
+    "price_review": 140,
     "signal_review": 0,
     "background_review": 2
   },
