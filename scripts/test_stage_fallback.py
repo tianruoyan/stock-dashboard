@@ -147,6 +147,38 @@ class StageFallbackTests(unittest.TestCase):
         self.assertEqual([item["stage"] for item in payload["stage_updates"]], ["08:30", "09:00"])
         self.assertIn("等待", payload["hk_auction"]["sentiment"])
 
+    def test_0900_preserves_verified_current_hk_quotes(self) -> None:
+        tmp, root, calendar = self.make_root()
+        self.addCleanup(tmp.cleanup)
+        write_json(
+            root / "data" / "premarket.json",
+            {
+                "timestamp": "2026-09-01T08:40:00+08:00",
+                "trade_date": "2026-09-01",
+                "summary": "已核验港股报价",
+                "hk_auction": {
+                    "window": "08:40",
+                    "status": "已验证",
+                    "indices": [{"name": "恒生科技", "quote_time": "20260901084000", "pct": 0.5}],
+                    "sectors": [],
+                    "stocks": [],
+                    "sentiment": "偏强",
+                },
+                "stage_updates": [{"stage": "08:30", "timestamp": "2026-09-01T08:40:00+08:00"}],
+            },
+        )
+        execute(
+            root,
+            datetime(2026, 9, 1, 9, 0, tzinfo=TZ),
+            stage="premarket-0900",
+            publish=False,
+            calendar_path=calendar,
+        )
+        payload = read_json(root / "data" / "premarket.json")
+        self.assertEqual(payload["summary"], "已核验港股报价")
+        self.assertEqual(payload["hk_auction"]["indices"][0]["pct"], 0.5)
+        self.assertEqual(payload["hk_auction"]["status"], "当日行情已验证")
+
     def test_holiday_does_not_write_market_file(self) -> None:
         tmp, root, calendar = self.make_root()
         self.addCleanup(tmp.cleanup)
@@ -220,6 +252,27 @@ class StageFallbackTests(unittest.TestCase):
         payload = read_json(root / "data" / "postmarket.json")
         self.assertEqual(payload["market_breadth"]["status"], "same_day_width_unavailable")
         self.assertNotIn("advance_count", payload["market_breadth"])
+
+    def test_current_postmarket_with_preclose_quotes_is_incomplete(self) -> None:
+        payload = {
+            "timestamp": "2026-09-01T16:30:00+08:00",
+            "trade_date": "2026-09-01",
+            "index": {"a_share_indices": index_rows()},
+            "market_breadth": {},
+            "sentiment_indicator": {},
+            "review": {"evidence": [{}]},
+            "closing_auction_patch": {
+                "summary": "x",
+                "signals": ["x"],
+                "impact": "x",
+                "watch_next_day": ["x"],
+            },
+            "hotspots": [],
+            "next_day_watch": [],
+        }
+        for item in payload["index"]["a_share_indices"]:
+            item["quote_time"] = "20260901145600"
+        self.assertFalse(postmarket_complete(payload, "2026-09-01"))
 
 
 if __name__ == "__main__":

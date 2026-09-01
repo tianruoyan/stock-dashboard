@@ -118,6 +118,16 @@ def stage_rank(payload: dict[str, Any]) -> int:
     return rank
 
 
+def has_same_day_quote(value: Any, day: str) -> bool:
+    if isinstance(value, dict):
+        if signal_date(value.get("quote_time") or value.get("timestamp") or value.get("as_of")) == day:
+            return True
+        return any(has_same_day_quote(item, day) for item in value.values())
+    if isinstance(value, list):
+        return any(has_same_day_quote(item, day) for item in value)
+    return False
+
+
 def premarket_skeleton(now: datetime, stage: str) -> dict[str, Any]:
     day = now.date().isoformat()
     stage_text = "08:30竞价前强制落盘" if stage == "08:30" else "09:00盘前增量更新"
@@ -226,21 +236,26 @@ def ensure_premarket(root: Path, now: datetime, stage: str) -> bool:
         }
     )
     if stage == "09:00":
-        payload["summary"] = (
-            "09:00已在08:30版本上完成增量更新时间；港股竞价与A股集合竞价仍须以当日实时报价验证，"
-            "未取得事实的字段继续等待，不沿用旧值。"
-        )
         hk = payload.get("hk_auction") if isinstance(payload.get("hk_auction"), dict) else {}
-        hk.update(
-            {
-                "window": "09:00",
-                "status": "等待验证",
-                "indices": [],
-                "sectors": [],
-                "stocks": [],
-                "sentiment": "09:00港股盘前窗口已到，尚无本轮可核验竞价报价；等待验证。",
-            }
-        )
+        if has_same_day_quote(hk, day):
+            hk["window"] = "09:00"
+            hk["status"] = "当日行情已验证"
+            payload.setdefault("source_notes", []).append("09:00阶段保留已存在的当日可核验港股报价。")
+        else:
+            payload["summary"] = (
+                "09:00已在08:30版本上完成增量更新时间；港股竞价与A股集合竞价仍须以当日实时报价验证，"
+                "未取得事实的字段继续等待，不沿用旧值。"
+            )
+            hk.update(
+                {
+                    "window": "09:00",
+                    "status": "等待验证",
+                    "indices": [],
+                    "sectors": [],
+                    "stocks": [],
+                    "sentiment": "09:00港股盘前窗口已到，尚无本轮可核验竞价报价；等待验证。",
+                }
+            )
         payload["hk_auction"] = hk
     write_json_atomic(path, payload)
     return True
@@ -384,7 +399,15 @@ def postmarket_complete(payload: dict[str, Any], day: str) -> bool:
     indices = (payload.get("index") or {}).get("a_share_indices") or []
     if len(indices) < 4:
         return False
-    return all(signal_date(item.get("quote_time")) == day for item in indices if isinstance(item, dict))
+    for item in indices:
+        if not isinstance(item, dict):
+            return False
+        quote_at = parse_datetime(item.get("quote_time"))
+        if quote_at is None or quote_at.date().isoformat() != day or quote_at.time() < time(15, 0):
+            return False
+        if item.get("value") is None or item.get("change_pct") is None or not item.get("source"):
+            return False
+    return True
 
 
 def build_postmarket_payload(
