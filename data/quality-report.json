@@ -1,8 +1,8 @@
 {
-  "timestamp": "2026-09-01T20:33:37+08:00",
+  "timestamp": "2026-09-01T21:02:58+08:00",
   "current_signal_date": "2026-09-01",
   "status": "degraded",
-  "summary": "发现 142 个降级/需复核项（140 个价格/行情复核，2 个背景复核），核心结论可看但必须按影响分层使用。",
+  "summary": "发现 142 个降级/需复核项（141 个价格/行情复核，1 个背景复核），核心结论可看但必须按影响分层使用。",
   "issues": [
     {
       "severity": "warning",
@@ -37,6 +37,15 @@
       "path": "",
       "code": "missing_p0_field",
       "message": "p0_alerts[0].source 缺失",
+      "impact_level": "price_review",
+      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
+    },
+    {
+      "severity": "warning",
+      "file": "evening-sentiment.json",
+      "path": "",
+      "code": "missing_p0_field",
+      "message": "p0_alerts[1].source 缺失",
       "impact_level": "price_review",
       "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
     },
@@ -1272,15 +1281,6 @@
       "message": "shenwan_industry_mapping_postmarket_20260805: 历史代码主表5203只；涨超5%样本中38只未映射，占4.98%，已单列未映射，不外推分类。",
       "impact_level": "price_review",
       "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
-    },
-    {
-      "severity": "warning",
-      "file": "decision-feed.json",
-      "path": "opportunities[6]",
-      "code": "stale_relative_time",
-      "message": "opportunities[6] 含过期相对日期",
-      "impact_level": "background_review",
-      "decision_action": "仅作背景复核，不单独阻断交易判断"
     }
   ],
   "action_plan": [
@@ -1321,17 +1321,6 @@
       "priority": 4,
       "impact_level": "background_review",
       "label": "背景来源复核",
-      "file": "decision-feed.json",
-      "code": "stale_relative_time",
-      "problem": "opportunities[6] 含过期相对日期",
-      "decision_action": "仅作背景复核，不单独阻断交易判断",
-      "next_step": "补官方/交易所/公司公告来源；未补齐前不升级为核心依据。",
-      "unblock_condition": "官方来源补齐或确认不影响交易触发。"
-    },
-    {
-      "priority": 4,
-      "impact_level": "background_review",
-      "label": "背景来源复核",
       "file": "source-health.json",
       "code": "source_degraded",
       "problem": "official_policy_global_web_scan: 商务部第33、34号公告及第2、3号令已由官网原文核验；全球标杆官方域名搜索混入历史页面，已剔除并降级为非穷尽扫描。本轮没有把空结果写成完全无新闻，US现金市场尚未开盘。",
@@ -1345,9 +1334,9 @@
     "warning": 142,
     "info": 0,
     "blocking": 0,
-    "price_review": 140,
+    "price_review": 141,
     "signal_review": 0,
-    "background_review": 2
+    "background_review": 1
   },
   "rules": [
     "异常文本、JSON解析失败、必需文件缺失为 critical。",
