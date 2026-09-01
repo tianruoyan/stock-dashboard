@@ -1,9 +1,9 @@
 {
-  "timestamp": "2026-09-01T09:35:41+08:00",
+  "timestamp": "2026-09-01T09:36:35+08:00",
   "current_signal_date": "2026-09-01",
   "quality_gate": {
     "status": "degraded",
-    "summary": "发现 146 个降级/需复核项（139 个价格/行情复核，8 个背景复核），核心结论可看但必须按影响分层使用。",
+    "summary": "发现 144 个降级/需复核项（139 个价格/行情复核，6 个背景复核），核心结论可看但必须按影响分层使用。",
     "decision_flags": [
       "行情/涨跌幅需二次源复核",
       "盘中异动源降级，alert 类信号降权",
@@ -12,36 +12,42 @@
     ],
     "blocking_count": 0,
     "price_review_count": 139,
-    "background_review_count": 8
+    "background_review_count": 6
   },
-  "summary": "当前时段尚无可用盘面结论。 数据质量：发现 146 个降级/需复核项（139 个价格/行情复核，8 个背景复核），核心结论可看但必须按影响分层使用。",
+  "summary": "09:30首份盘中快照：五大指数开盘后均偏弱，上证指数-0.06%、深证成指-0.26%、创业板指-0.51%、科创50-0.41%、沪深300-0.18%；全市场行业前排集中在种植业、农产品加工、一般零售、农林牧渔和渔业，元件、非金属材料、电子化学品、其他电子和消费电子处后排。农业、零售与房地产服务获得开盘确认，科技硬件总体承压；这只是开盘约3分钟快照，…",
   "observation_coverage": {
-    "summary": "独立盘面/盘后扫描 1 条，但缺少纯主动新线。",
-    "independent_count": 1,
-    "inherited_count": 14,
-    "active_market_count": 0,
+    "summary": "主动扫描捕捉 4 条：农业链 / 零售与房地产服务 / 科技硬件链 / 科技硬件",
+    "independent_count": 10,
+    "inherited_count": 12,
+    "active_market_count": 4,
     "postmarket_scan_count": 0,
     "topic_inherited_count": 0,
-    "verification_count": 0,
-    "active_titles": [],
-    "status": "independent"
+    "verification_count": 2,
+    "active_titles": [
+      "农业链",
+      "零售与房地产服务",
+      "科技硬件链",
+      "科技硬件"
+    ],
+    "status": "active"
   },
   "decision_brief": {
     "stance": "风险优先，只做验证",
     "action": "不把候选方向当交易机会；先看风险收敛、数据恢复和核心承接。",
     "reasons": [
-      "发现 146 个降级/需复核项（139 个价格/行情复核，8 个背景复核），核心结论可看但必须按影响分层使用。",
-      "A/B级风险 1 条",
-      "可用机会 0 条，降权候选 8 条",
-      "先处理：二次行情复核（alert.json）"
+      "发现 144 个降级/需复核项（139 个价格/行情复核，6 个背景复核），核心结论可看但必须按影响分层使用。",
+      "A/B级风险 2 条",
+      "风险优先冲突 1 条",
+      "可用机会 0 条，降权候选 8 条"
     ],
     "risk_focus": [
-      "数据质量降级"
+      "数据质量降级",
+      "主线变化：金融/消费防御"
     ],
     "upgrade_watch": [
-      "#1 待触发：创新药/CRO：核心股低开后放量收复开盘价或跌幅明显收敛。 数据质量恢复或二次行情源确认前，不升级为可用机会。",
-      "#2 待触发：半导体设备材料：核心股低开后放量收复开盘价或跌幅明显收敛。 数据质量恢复或二次行情源确认前，不升级为可用机会。",
-      "#3 待触发：机器人/工业自动化：题材3分钟涨跌幅>=1.5%，方向占比>=70%，成交放大>=5x。 数据质量恢复或二次行情源确认前，不升级为可用机会。"
+      "#1 主线变化：影视娱乐：作为独立强股与行业参考，等待更多代表股和成交宽度，不与农业主线混合。 数据质量恢复或二次行情源确认前，不升级为可用机会。",
+      "#2 主线变化：农业链：等待宽度与封板质量确认，不追前三分钟脉冲。 数据质量恢复或二次行情源确认前，不升级为可用机会。",
+      "#3 待触发：创新药/CRO：核心股低开后放量收复开盘价或跌幅明显收敛。 数据质量恢复或二次行情源确认前，不升级为可用机会。"
     ],
     "verification_focus": [
       "核心股低开后放量收复开盘价或跌幅明显收敛",
@@ -63,7 +69,7 @@
     ]
   },
   "signal_queue": {
-    "summary": "无可用机会，1 条风险优先，5 条只做验证，3 条禁用直用。",
+    "summary": "无可用机会，2 条风险优先，5 条只做验证，4 条禁用直用。",
     "active_opportunities": [],
     "trackable_risks": [
       {
@@ -71,10 +77,28 @@
         "grade": "A",
         "use_action": "可跟踪",
         "reason": "污染 alert 修复前，盘中异动信号必须降权；观察池个股涨跌幅以已审计源为准。"
+      },
+      {
+        "title": "主线变化：金融/消费防御",
+        "grade": "B",
+        "use_action": "等待确认",
+        "reason": "只列为优先观察，不追开盘脉冲；等待10:00前后板块宽度、封板质量和回落承接。"
       }
     ],
     "verification_queue": [
       {
+        "title": "主线变化：影视娱乐",
+        "grade": "D",
+        "use_action": "仅复核",
+        "reason": "作为独立强股与行业参考，等待更多代表股和成交宽度，不与农业主线混合。"
+      },
+      {
+        "title": "主线变化：农业链",
+        "grade": "D",
+        "use_action": "仅复核",
+        "reason": "等待宽度与封板质量确认，不追前三分钟脉冲。"
+      },
+      {
         "title": "待触发：创新药/CRO",
         "grade": "D",
         "use_action": "仅复核",
@@ -91,42 +115,127 @@
         "grade": "D",
         "use_action": "仅复核",
         "reason": "题材3分钟涨跌幅>=1.5%，方向占比>=70%，成交放大>=5x"
-      },
-      {
-        "title": "待触发：交换机/高速以太网",
-        "grade": "D",
-        "use_action": "仅复核",
-        "reason": "核心股低开后放量收复开盘价或跌幅明显收敛"
-      },
-      {
-        "title": "待触发：半导体设备",
-        "grade": "D",
-        "use_action": "仅复核",
-        "reason": "核心股低开后放量收复开盘价或跌幅明显收敛"
       }
     ],
     "disabled_signals": [
       {
+        "title": "冲突主线机会",
+        "use_action": "禁用追高",
+        "reason": "同一主线存在风险优先冲突，只保留验证条件，不作为交易触发。"
+      },
+      {
+        "title": "主线变化：影视娱乐",
+        "grade": "D",
+        "use_action": "仅复核",
+        "reason": "作为独立强股与行业参考，等待更多代表股和成交宽度，不与农业主线混合。"
+      },
+      {
+        "title": "主线变化：农业链",
+        "grade": "D",
+        "use_action": "仅复核",
+        "reason": "等待宽度与封板质量确认，不追前三分钟脉冲。"
+      },
+      {
         "title": "待触发：创新药/CRO",
         "grade": "D",
         "use_action": "仅复核",
         "reason": "核心股低开后放量收复开盘价或跌幅明显收敛"
-      },
-      {
-        "title": "待触发：半导体设备材料",
-        "grade": "D",
-        "use_action": "仅复核",
-        "reason": "核心股低开后放量收复开盘价或跌幅明显收敛"
-      },
-      {
-        "title": "待触发：机器人/工业自动化",
-        "grade": "D",
-        "use_action": "仅复核",
-        "reason": "题材3分钟涨跌幅>=1.5%，方向占比>=70%，成交放大>=5x"
       }
     ]
   },
   "opportunities": [
+    {
+      "title": "主线变化：影视娱乐",
+      "type": "theme_shift",
+      "trigger_reason": "主线变化扫描触发：升温/降温/抱团/风险状态出现边际变化。",
+      "conclusion": "影视娱乐 有升温迹象，但仍需量价和后排扩散验证。",
+      "confidence": "low",
+      "evidence": [
+        "影视娱乐 芒果超媒（sz300413）09:33:18报+20.02%，Longbridge公开行业排行同窗约+3.48% 作为独立强股与行业参考，等待更多代表股和成交宽度，不与农业主线混合。"
+      ],
+      "source_files": [
+        "intraday.json"
+      ],
+      "watch_next": [
+        "作为独立强股与行业参考，等待更多代表股和成交宽度，不与农业主线混合。"
+      ],
+      "invalidation": "影视娱乐 需要次日竞价、量能和后排扩散共同确认。",
+      "tags": [],
+      "quality_flags": [
+        "行情/涨跌幅需二次源复核",
+        "盘中异动源降级，alert 类信号降权",
+        "港股收盘窗口可能非终值",
+        "行情源降级，需复核涨跌幅"
+      ],
+      "tone": "good",
+      "discovery_type": "theme_shift_scan",
+      "evidence_score": 82,
+      "missing_evidence": [
+        "数据源降级需二次确认"
+      ],
+      "next_action": "作为独立强股与行业参考，等待更多代表股和成交宽度，不与农业主线混合。",
+      "observation_source": "主线变化扫描",
+      "independent_observation": true,
+      "signal_score": 41,
+      "signal_grade": "D",
+      "use_action": "仅复核",
+      "use_reasons": [
+        "有可核验证据",
+        "有下一步验证",
+        "有证伪条件",
+        "有来源文件",
+        "数据质量降权"
+      ],
+      "upgrade_rank": 1,
+      "upgrade_priority": "仅复核",
+      "upgrade_condition": "作为独立强股与行业参考，等待更多代表股和成交宽度，不与农业主线混合。 数据质量恢复或二次行情源确认前，不升级为可用机会。"
+    },
+    {
+      "title": "主线变化：农业链",
+      "type": "theme_shift",
+      "trigger_reason": "主线变化扫描触发：升温/降温/抱团/风险状态出现边际变化。",
+      "conclusion": "农业链 有升温迹象，但仍需量价和后排扩散验证。",
+      "confidence": "low",
+      "evidence": [
+        "农业链 开盘全市场行业前排 等待宽度与封板质量确认，不追前三分钟脉冲。"
+      ],
+      "source_files": [
+        "intraday.json"
+      ],
+      "watch_next": [
+        "等待宽度与封板质量确认，不追前三分钟脉冲。"
+      ],
+      "invalidation": "农业链 需要次日竞价、量能和后排扩散共同确认。",
+      "tags": [],
+      "quality_flags": [
+        "行情/涨跌幅需二次源复核",
+        "盘中异动源降级，alert 类信号降权",
+        "港股收盘窗口可能非终值",
+        "行情源降级，需复核涨跌幅"
+      ],
+      "tone": "good",
+      "discovery_type": "theme_shift_scan",
+      "evidence_score": 67,
+      "missing_evidence": [
+        "数据源降级需二次确认"
+      ],
+      "next_action": "等待宽度与封板质量确认，不追前三分钟脉冲。",
+      "observation_source": "主线变化扫描",
+      "independent_observation": true,
+      "signal_score": 36,
+      "signal_grade": "D",
+      "use_action": "仅复核",
+      "use_reasons": [
+        "有可核验证据",
+        "有下一步验证",
+        "有证伪条件",
+        "有来源文件",
+        "数据质量降权"
+      ],
+      "upgrade_rank": 2,
+      "upgrade_priority": "仅复核",
+      "upgrade_condition": "等待宽度与封板质量确认，不追前三分钟脉冲。 数据质量恢复或二次行情源确认前，不升级为可用机会。"
+    },
     {
       "title": "待触发：创新药/CRO",
       "type": "opportunity_watch",
@@ -173,7 +282,7 @@
         "有来源文件",
         "数据质量降权"
       ],
-      "upgrade_rank": 1,
+      "upgrade_rank": 3,
       "upgrade_priority": "仅复核",
       "upgrade_condition": "核心股低开后放量收复开盘价或跌幅明显收敛。 数据质量恢复或二次行情源确认前，不升级为可用机会。"
     },
@@ -223,7 +332,7 @@
         "有来源文件",
         "数据质量降权"
       ],
-      "upgrade_rank": 2,
+      "upgrade_rank": 4,
       "upgrade_priority": "仅复核",
       "upgrade_condition": "核心股低开后放量收复开盘价或跌幅明显收敛。 数据质量恢复或二次行情源确认前，不升级为可用机会。"
     },
@@ -274,7 +383,7 @@
         "有来源文件",
         "数据质量降权"
       ],
-      "upgrade_rank": 3,
+      "upgrade_rank": 5,
       "upgrade_priority": "仅复核",
       "upgrade_condition": "题材3分钟涨跌幅>=1.5%，方向占比>=70%，成交放大>=5x。 数据质量恢复或二次行情源确认前，不升级为可用机会。"
     },
@@ -324,7 +433,7 @@
         "有来源文件",
         "数据质量降权"
       ],
-      "upgrade_rank": 4,
+      "upgrade_rank": 6,
       "upgrade_priority": "仅复核",
       "upgrade_condition": "核心股低开后放量收复开盘价或跌幅明显收敛。 数据质量恢复或二次行情源确认前，不升级为可用机会。"
     },
@@ -374,7 +483,7 @@
         "有来源文件",
         "数据质量降权"
       ],
-      "upgrade_rank": 5,
+      "upgrade_rank": 7,
       "upgrade_priority": "仅复核",
       "upgrade_condition": "核心股低开后放量收复开盘价或跌幅明显收敛。 数据质量恢复或二次行情源确认前，不升级为可用机会。"
     },
@@ -425,110 +534,9 @@
         "有来源文件",
         "数据质量降权"
       ],
-      "upgrade_rank": 6,
-      "upgrade_priority": "仅复核",
-      "upgrade_condition": "券商+保险或畜牧+白酒至少两个方向同步放量走强。 数据质量恢复或二次行情源确认前，不升级为可用机会。"
-    },
-    {
-      "title": "待触发：存储/HBM",
-      "type": "opportunity_watch",
-      "trigger_reason": "盘前/晚间注意点已转为盘中追踪清单，等待实时行情触发。",
-      "conclusion": "AI硬件内部出现分化：英伟达、AMD、美光与Ciena上涨，Marvell下跌。；紫光股份、晶晨股份、盛科通信和锐捷网络明显上涨，半导体与软件ETF收红；澜起科技、中微公司和中际旭创偏弱，说明网络设备与应用侧强于部分芯片/CPO核心。；AI硬件主线可以保留观察，但不能用少数强股代替全链确认；优先看强势网络设备能否带动芯片和光模块核心。；AI硬件；AI内存与…",
-      "confidence": "low",
-      "evidence": [],
-      "source_files": [
-        "opportunity-watch.json"
-      ],
-      "watch_next": [
-        "题材3分钟涨跌幅>=1.5%，方向占比>=70%，成交放大>=5x",
-        "板块内出现批量涨停/封板或后排扩散",
-        "核心股、ETF、后排扩散同向确认",
-        "核心股低开后放量收复开盘价或跌幅明显收敛"
-      ],
-      "invalidation": "核心股高开低走或冲高回落",
-      "tags": [
-        "科技硬件链",
-        "风控"
-      ],
-      "quality_flags": [
-        "行情/涨跌幅需二次源复核",
-        "盘中异动源降级，alert 类信号降权",
-        "港股收盘窗口可能非终值",
-        "行情源降级，需复核涨跌幅"
-      ],
-      "tone": "good",
-      "discovery_type": "premarket_watch_queue",
-      "evidence_score": 21,
-      "missing_evidence": [
-        "缺少可核验证据",
-        "数据源降级需二次确认"
-      ],
-      "next_action": "题材3分钟涨跌幅>=1.5%，方向占比>=70%，成交放大>=5x",
-      "observation_source": "数据派生",
-      "independent_observation": false,
-      "signal_score": 12,
-      "signal_grade": "D",
-      "use_action": "仅复核",
-      "use_reasons": [
-        "缺少证据",
-        "有下一步验证",
-        "有证伪条件",
-        "有来源文件",
-        "数据质量降权"
-      ],
-      "upgrade_rank": 7,
-      "upgrade_priority": "仅复核",
-      "upgrade_condition": "题材3分钟涨跌幅>=1.5%，方向占比>=70%，成交放大>=5x。 数据质量恢复或二次行情源确认前，不升级为可用机会。"
-    },
-    {
-      "title": "待触发：CPO/光模块",
-      "type": "opportunity_watch",
-      "trigger_reason": "盘前/晚间注意点已转为盘中追踪清单，等待实时行情触发。",
-      "conclusion": "紫光股份、晶晨股份、盛科通信和锐捷网络明显上涨，半导体与软件ETF收红；澜起科技、中微公司和中际旭创偏弱，说明网络设备与应用侧强于部分芯片/CPO核心。；AI硬件主线可以保留观察，但不能用少数强股代替全链确认；优先看强势网络设备能否带动芯片和光模块核心。；AI硬件；光模块/高速互联；止跌观察；Marvell数据中心需求强但交易大跌，CPO链先看兑现后能否转…",
-      "confidence": "low",
-      "evidence": [],
-      "source_files": [
-        "opportunity-watch.json"
-      ],
-      "watch_next": [
-        "核心股低开后放量收复开盘价或跌幅明显收敛",
-        "同题材后排不再扩大负反馈，跌停/炸板数量下降",
-        "板块ETF或指数不再创新低并出现承接"
-      ],
-      "invalidation": "核心股继续放量下跌",
-      "tags": [
-        "科技硬件链",
-        "风控"
-      ],
-      "quality_flags": [
-        "行情/涨跌幅需二次源复核",
-        "盘中异动源降级，alert 类信号降权",
-        "港股收盘窗口可能非终值",
-        "行情源降级，需复核涨跌幅"
-      ],
-      "tone": "good",
-      "discovery_type": "premarket_watch_queue",
-      "evidence_score": 21,
-      "missing_evidence": [
-        "缺少可核验证据",
-        "数据源降级需二次确认"
-      ],
-      "next_action": "核心股低开后放量收复开盘价或跌幅明显收敛",
-      "observation_source": "数据派生",
-      "independent_observation": false,
-      "signal_score": 12,
-      "signal_grade": "D",
-      "use_action": "仅复核",
-      "use_reasons": [
-        "缺少证据",
-        "有下一步验证",
-        "有证伪条件",
-        "有来源文件",
-        "数据质量降权"
-      ],
       "upgrade_rank": 8,
       "upgrade_priority": "仅复核",
-      "upgrade_condition": "核心股低开后放量收复开盘价或跌幅明显收敛。 数据质量恢复或二次行情源确认前，不升级为可用机会。"
+      "upgrade_condition": "券商+保险或畜牧+白酒至少两个方向同步放量走强。 数据质量恢复或二次行情源确认前，不升级为可用机会。"
     }
   ],
   "risks": [
@@ -536,13 +544,13 @@
       "title": "数据质量降级",
       "type": "data_quality",
       "trigger_reason": "风控兜底触发：市场宽度、数据质量或回撤条件触发风险优先。",
-      "conclusion": "发现 146 个降级/需复核项（139 个价格/行情复核，8 个背景复核），核心结论可看但必须按影响分层使用。",
+      "conclusion": "发现 144 个降级/需复核项（139 个价格/行情复核，6 个背景复核），核心结论可看但必须按影响分层使用。",
       "confidence": "high",
       "evidence": [
-        "时间戳不是当前交易日：2026-08-28T15:02:00+08:00",
         "时间戳不是当前交易日：2026-08-28T11:41:00+08:00",
         "时间戳不是当前交易日：2026-08-28T16:32:00+08:00",
-        "时间戳不是当前交易日：2026-08-28T09:43:29+08:00"
+        "时间戳不是当前交易日：2026-08-28T09:43:29+08:00",
+        "时间戳不是当前交易日：2026-08-30T20:12:00+08:00"
       ],
       "source_files": [
         "quality-report.json",
@@ -573,6 +581,204 @@
         "有证伪条件",
         "有来源文件",
         "证据链较完整"
+      ]
+    },
+    {
+      "title": "农业链",
+      "type": "theme",
+      "trigger_reason": "主动盘面扫描触发：涨跌停、炸板、尾盘承接或板块扩散出现可验证变化。",
+      "conclusion": "开盘指数普遍偏弱，资金优先农业、零售和房地产服务，成长硬件承压",
+      "confidence": "medium",
+      "evidence": [],
+      "source_files": [
+        "intraday.json"
+      ],
+      "watch_next": [
+        "只列为优先观察，不追开盘脉冲；等待10:00前后板块宽度、封板质量和回落承接。"
+      ],
+      "invalidation": "农业链风险信号收敛、核心股重新放量承接，则风险降级。",
+      "tags": [
+        "金融/消费防御"
+      ],
+      "quality_flags": [],
+      "tone": "risk",
+      "discovery_type": "active_market_scan",
+      "evidence_score": 14,
+      "missing_evidence": [
+        "缺少可核验证据",
+        "缺少量化盘口证据",
+        "缺少代表股验证"
+      ],
+      "next_action": "只列为优先观察，不追开盘脉冲；等待10:00前后板块宽度、封板质量和回落承接。",
+      "observation_source": "主动盘面扫描",
+      "independent_observation": true,
+      "signal_score": 43,
+      "signal_grade": "D",
+      "use_action": "仅复核",
+      "use_reasons": [
+        "缺少证据",
+        "有下一步验证",
+        "有证伪条件",
+        "有来源文件",
+        "有证据缺口"
+      ]
+    },
+    {
+      "title": "零售与房地产服务",
+      "type": "theme",
+      "trigger_reason": "主动盘面扫描触发：涨跌停、炸板、尾盘承接或板块扩散出现可验证变化。",
+      "conclusion": "开盘延续强势，仍属轮动确认阶段",
+      "confidence": "medium",
+      "evidence": [],
+      "source_files": [
+        "intraday.json"
+      ],
+      "watch_next": [
+        "观察是否由少数高标扩散到行业后排；未扩散前不升级。"
+      ],
+      "invalidation": "零售与房地产服务风险信号收敛、核心股重新放量承接，则风险降级。",
+      "tags": [
+        "金融/消费防御"
+      ],
+      "quality_flags": [],
+      "tone": "risk",
+      "discovery_type": "active_market_scan",
+      "evidence_score": 14,
+      "missing_evidence": [
+        "缺少可核验证据",
+        "缺少量化盘口证据",
+        "缺少代表股验证"
+      ],
+      "next_action": "观察是否由少数高标扩散到行业后排；未扩散前不升级。",
+      "observation_source": "主动盘面扫描",
+      "independent_observation": true,
+      "signal_score": 43,
+      "signal_grade": "D",
+      "use_action": "仅复核",
+      "use_reasons": [
+        "缺少证据",
+        "有下一步验证",
+        "有证伪条件",
+        "有来源文件",
+        "有证据缺口"
+      ]
+    },
+    {
+      "title": "科技硬件链",
+      "type": "theme",
+      "trigger_reason": "主动盘面扫描触发：涨跌停、炸板、尾盘承接或板块扩散出现可验证变化。",
+      "conclusion": "指数与多数细分开盘承压",
+      "confidence": "medium",
+      "evidence": [],
+      "source_files": [
+        "intraday.json"
+      ],
+      "watch_next": [
+        "不接开盘下跌；等待指数、行业和核心股三层同步止跌，再判断是否出现独立分支修复。"
+      ],
+      "invalidation": "科技硬件链风险信号收敛、核心股重新放量承接，则风险降级。",
+      "tags": [
+        "科技硬件链",
+        "风控"
+      ],
+      "quality_flags": [],
+      "tone": "risk",
+      "discovery_type": "active_market_scan",
+      "evidence_score": 14,
+      "missing_evidence": [
+        "缺少可核验证据",
+        "缺少量化盘口证据",
+        "缺少代表股验证"
+      ],
+      "next_action": "不接开盘下跌；等待指数、行业和核心股三层同步止跌，再判断是否出现独立分支修复。",
+      "observation_source": "主动盘面扫描",
+      "independent_observation": true,
+      "signal_score": 43,
+      "signal_grade": "D",
+      "use_action": "仅复核",
+      "use_reasons": [
+        "缺少证据",
+        "有下一步验证",
+        "有证伪条件",
+        "有来源文件",
+        "有证据缺口"
+      ]
+    },
+    {
+      "title": "科技硬件",
+      "type": "theme",
+      "trigger_reason": "主动盘面扫描触发：涨跌停、炸板、尾盘承接或板块扩散出现可验证变化。",
+      "conclusion": "成长指数和多数细分偏弱",
+      "confidence": "low",
+      "evidence": [],
+      "source_files": [
+        "intraday.json"
+      ],
+      "watch_next": [
+        "风险优先，等指数、行业和核心同步止跌。"
+      ],
+      "invalidation": "科技硬件风险信号收敛、核心股重新放量承接，则风险降级。",
+      "tags": [
+        "风控"
+      ],
+      "quality_flags": [],
+      "tone": "risk",
+      "discovery_type": "active_market_scan",
+      "evidence_score": 14,
+      "missing_evidence": [
+        "缺少可核验证据",
+        "缺少量化盘口证据",
+        "缺少代表股验证"
+      ],
+      "next_action": "风险优先，等指数、行业和核心同步止跌。",
+      "observation_source": "主动盘面扫描",
+      "independent_observation": true,
+      "signal_score": 37,
+      "signal_grade": "D",
+      "use_action": "仅复核",
+      "use_reasons": [
+        "缺少证据",
+        "有下一步验证",
+        "有证伪条件",
+        "有来源文件",
+        "有证据缺口"
+      ]
+    },
+    {
+      "title": "主线变化：金融/消费防御",
+      "type": "theme_shift",
+      "trigger_reason": "主线变化扫描触发：升温/降温/抱团/风险状态出现边际变化。",
+      "conclusion": "金融/消费防御 强点集中但扩散不足，属于抱团/拥挤结构。",
+      "confidence": "medium",
+      "evidence": [
+        "农业链 开盘指数普遍偏弱，资金优先农业、零售和房地产服务，成长硬件承压 只列为优先观察，不追开盘脉冲；等待10:00前后板块宽度、封板质量和回落承接。 零售与房地产服务 开盘延续强势，仍属轮动确认阶段 观察是否由少数高标扩散到行业后排；未…"
+      ],
+      "source_files": [
+        "intraday.json"
+      ],
+      "watch_next": [
+        "只列为优先观察，不追开盘脉冲；等待10:00前后板块宽度、封板质量和回落承接。",
+        "观察是否由少数高标扩散到行业后排；未扩散前不升级。",
+        "观察后排扩散，未扩散前不定义全天主线。"
+      ],
+      "invalidation": "风险信号收敛、后排扩散恢复且核心股放量承接。",
+      "tags": [],
+      "quality_flags": [],
+      "tone": "risk",
+      "discovery_type": "theme_shift_scan",
+      "evidence_score": 74,
+      "missing_evidence": [],
+      "next_action": "只列为优先观察，不追开盘脉冲；等待10:00前后板块宽度、封板质量和回落承接。",
+      "observation_source": "主线变化扫描",
+      "independent_observation": true,
+      "signal_score": 77,
+      "signal_grade": "B",
+      "use_action": "等待确认",
+      "use_reasons": [
+        "有可核验证据",
+        "有下一步验证",
+        "有证伪条件",
+        "有来源文件"
       ]
     }
   ],
@@ -824,9 +1030,106 @@
         "有来源文件",
         "有证据缺口"
       ]
+    },
+    {
+      "title": "金融/消费防御验证",
+      "type": "verification",
+      "trigger_reason": "验证队列触发：前序结论需要用下一交易窗口确认或证伪。",
+      "conclusion": "事实：09:30开盘快照显示农业、零售和房地产服务领先，科技硬件多数细分落后。",
+      "confidence": "actionable",
+      "evidence": [],
+      "source_files": [
+        "intraday.json"
+      ],
+      "watch_next": [
+        "事实：09:30开盘快照显示农业、零售和房地产服务领先，科技硬件多数细分落后。"
+      ],
+      "invalidation": "条件不出现或反向出现，即撤销对应方向判断。",
+      "tags": [
+        "金融/消费防御"
+      ],
+      "quality_flags": [],
+      "tone": "neutral",
+      "discovery_type": "verification_queue",
+      "evidence_score": 35,
+      "missing_evidence": [],
+      "next_action": "事实：09:30开盘快照显示农业、零售和房地产服务领先，科技硬件多数细分落后。",
+      "observation_source": "验证队列",
+      "independent_observation": true,
+      "signal_score": 60,
+      "signal_grade": "B",
+      "use_action": "等待确认",
+      "use_reasons": [
+        "缺少证据",
+        "有下一步验证",
+        "有证伪条件",
+        "有来源文件"
+      ]
+    },
+    {
+      "title": "验证条件",
+      "type": "verification",
+      "trigger_reason": "验证队列触发：前序结论需要用下一交易窗口确认或证伪。",
+      "conclusion": "推断：资金在开盘阶段偏向低位轮动，暂不足以确认全天风格切换。",
+      "confidence": "actionable",
+      "evidence": [],
+      "source_files": [
+        "intraday.json"
+      ],
+      "watch_next": [
+        "推断：资金在开盘阶段偏向低位轮动，暂不足以确认全天风格切换。"
+      ],
+      "invalidation": "条件不出现或反向出现，即撤销对应方向判断。",
+      "tags": [],
+      "quality_flags": [],
+      "tone": "neutral",
+      "discovery_type": "verification_queue",
+      "evidence_score": 35,
+      "missing_evidence": [],
+      "next_action": "推断：资金在开盘阶段偏向低位轮动，暂不足以确认全天风格切换。",
+      "observation_source": "验证队列",
+      "independent_observation": true,
+      "signal_score": 60,
+      "signal_grade": "B",
+      "use_action": "等待确认",
+      "use_reasons": [
+        "缺少证据",
+        "有下一步验证",
+        "有证伪条件",
+        "有来源文件"
+      ]
     }
   ],
-  "conflicts": [],
+  "conflicts": [
+    {
+      "theme": "农业链",
+      "sections": [
+        "opportunities",
+        "risks"
+      ],
+      "verdict": "候选分歧，观察验证",
+      "severity": "watch",
+      "action": "保留验证，不升级为交易机会。",
+      "evidence": [
+        "机会：D级/仅复核，农业链 有升温迹象，但仍需量价和后排扩散验证。",
+        "风险：D级/仅复核，开盘指数普遍偏弱，资金优先农业、零售和房地产服务，成长硬件承压"
+      ]
+    },
+    {
+      "theme": "金融/消费防御",
+      "sections": [
+        "risks",
+        "verifications"
+      ],
+      "verdict": "风险优先，只做验证",
+      "severity": "risk_first",
+      "action": "先按风险栏处理；只有风险收敛、核心股承接和数据质量恢复后，才允许从验证栏升级。",
+      "evidence": [
+        "风险：B级/等待确认，金融/消费防御 强点集中但扩散不足，属于抱团/拥挤结构。",
+        "验证：B级/等待确认，事实：09:30开盘快照显示农业、零售和房地产服务领先，科技硬件多数细分落后。"
+      ]
+    }
+  ],
   "rules": [
     "每条机会/风险必须带 source_files；没有证据时置信度不得高于 low。",
     "机会只代表候选方向，必须经过下一步验证，不生成交易指令。",

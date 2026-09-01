@@ -1,18 +1,9 @@
 {
-  "timestamp": "2026-09-01T09:35:41+08:00",
+  "timestamp": "2026-09-01T09:36:35+08:00",
   "current_signal_date": "2026-09-01",
   "status": "degraded",
-  "summary": "发现 146 个降级/需复核项（139 个价格/行情复核，8 个背景复核），核心结论可看但必须按影响分层使用。",
+  "summary": "发现 144 个降级/需复核项（139 个价格/行情复核，6 个背景复核），核心结论可看但必须按影响分层使用。",
   "issues": [
-    {
-      "severity": "warning",
-      "file": "intraday.json",
-      "path": "",
-      "code": "stale_timestamp",
-      "message": "时间戳不是当前交易日：2026-08-28T15:02:00+08:00",
-      "impact_level": "background_review",
-      "decision_action": "仅作背景复核，不单独阻断交易判断"
-    },
     {
       "severity": "warning",
       "file": "midday.json",
@@ -1311,19 +1302,10 @@
     },
     {
       "severity": "warning",
-      "file": "theme-shifts.json",
-      "path": "",
-      "code": "stale_theme_shifts",
-      "message": "theme-shifts 日期不是当前交易日：2026-08-30",
-      "impact_level": "background_review",
-      "decision_action": "仅作背景复核，不单独阻断交易判断"
-    },
-    {
-      "severity": "warning",
       "file": "decision-feed.json",
-      "path": "opportunities[1]",
+      "path": "opportunities[3]",
       "code": "stale_relative_time",
-      "message": "opportunities[1] 含过期相对日期",
+      "message": "opportunities[3] 含过期相对日期",
       "impact_level": "background_review",
       "decision_action": "仅作背景复核，不单独阻断交易判断"
     }
@@ -1357,18 +1339,7 @@
       "label": "背景来源复核",
       "file": "decision-feed.json",
       "code": "stale_relative_time",
-      "problem": "opportunities[1] 含过期相对日期",
-      "decision_action": "仅作背景复核，不单独阻断交易判断",
-      "next_step": "补官方/交易所/公司公告来源；未补齐前不升级为核心依据。",
-      "unblock_condition": "官方来源补齐或确认不影响交易触发。"
-    },
-    {
-      "priority": 4,
-      "impact_level": "background_review",
-      "label": "背景来源复核",
-      "file": "intraday.json",
-      "code": "stale_timestamp",
-      "problem": "时间戳不是当前交易日：2026-08-28T15:02:00+08:00",
+      "problem": "opportunities[3] 含过期相对日期",
       "decision_action": "仅作背景复核，不单独阻断交易判断",
       "next_step": "补官方/交易所/公司公告来源；未补齐前不升级为核心依据。",
       "unblock_condition": "官方来源补齐或确认不影响交易触发。"
@@ -1394,16 +1365,27 @@
       "decision_action": "仅作背景复核，不单独阻断交易判断",
       "next_step": "补官方/交易所/公司公告来源；未补齐前不升级为核心依据。",
       "unblock_condition": "官方来源补齐或确认不影响交易触发。"
+    },
+    {
+      "priority": 4,
+      "impact_level": "background_review",
+      "label": "背景来源复核",
+      "file": "source-health.json",
+      "code": "source_degraded",
+      "problem": "official_policy_global_web_scan: 商务部第33、34号公告及第2、3号令已由官网原文核验；全球标杆官方域名搜索混入历史页面，已剔除并降级为非穷尽扫描。本轮没有把空结果写成完全无新闻，US现金市场尚未开盘。",
+      "decision_action": "仅作政策/背景覆盖复核，不阻断盘中价格和交易触发",
+      "next_step": "补官方/交易所/公司公告来源；未补齐前不升级为核心依据。",
+      "unblock_condition": "官方来源补齐或确认不影响交易触发。"
     }
   ],
   "counts": {
     "critical": 0,
-    "warning": 146,
+    "warning": 144,
     "info": 1,
     "blocking": 0,
     "price_review": 139,
     "signal_review": 0,
-    "background_review": 8
+    "background_review": 6
   },
   "rules": [
     "异常文本、JSON解析失败、必需文件缺失为 critical。",
