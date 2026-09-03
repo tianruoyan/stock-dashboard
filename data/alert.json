@@ -526,7 +526,7 @@
         "sample_count": 3,
         "max_abs_leader_change_pct": 1.89,
         "sanity_checks": {
-          "cross_source_verified": false,
+          "cross_source_verified": true,
           "price_move_valid": true,
           "volume_valid": true,
           "direction_ratio_valid": true,
@@ -539,11 +539,69 @@
         "missing_confirmation": "等待富途行情按触发时点交叉核验；通过前只作候选或观察，不作为确认交易信号。",
         "secondary_source": "富途行情",
         "secondary_verification": {
-          "state": "pending",
-          "checked_at": "2026-09-03T13:59:48+08:00",
+          "state": "passed",
+          "checked_at": "2026-09-03T14:00:50+08:00",
           "source": "富途行情",
-          "reason": "等待触发分钟行情完整落盘。",
-          "representatives": [],
+          "reason": "富途行情已按代表股触发时点对齐，方向和价格变化相互支持。",
+          "representatives": [
+            {
+              "股票": "申菱环境",
+              "代码": "301018.SZ",
+              "监控涨跌幅": 1.89,
+              "富途涨跌幅": 1.4486,
+              "腾讯涨跌幅": 1.5544,
+              "起始分钟": "13:56:27",
+              "结束分钟": "13:59:27",
+              "对齐方式": "逐笔行情同一时点对齐",
+              "时间偏差秒": 0.359,
+              "可比涨跌范围": [
+                1.3512,
+                1.5466
+              ],
+              "方向一致": false,
+              "幅度一致": false,
+              "复核结论": "明显冲突"
+            },
+            {
+              "股票": "同飞股份",
+              "代码": "300990.SZ",
+              "监控涨跌幅": 0.6835,
+              "富途涨跌幅": 0.7389,
+              "腾讯涨跌幅": 0.6742,
+              "起始分钟": "13:56:27",
+              "结束分钟": "13:59:27",
+              "对齐方式": "逐笔行情同一时点对齐",
+              "时间偏差秒": 0.359,
+              "可比涨跌范围": [
+                0.7204,
+                0.7482
+              ],
+              "方向一致": true,
+              "幅度一致": true,
+              "复核结论": "一致"
+            },
+            {
+              "股票": "英维克",
+              "代码": "002837.SZ",
+              "监控涨跌幅": 1.5303,
+              "富途涨跌幅": 1.5443,
+              "腾讯涨跌幅": 1.6067,
+              "起始分钟": "13:56:27",
+              "结束分钟": "13:59:27",
+              "对齐方式": "逐笔行情同一时点对齐",
+              "时间偏差秒": 0.359,
+              "可比涨跌范围": [
+                1.5,
+                1.5591
+              ],
+              "方向一致": true,
+              "幅度一致": true,
+              "复核结论": "一致"
+            }
+          ],
+          "window_minutes": 3,
+          "direction_agreement_ratio": 0.6667,
+          "magnitude_agreement_ratio": 0.6667,
           "fingerprint": "b8f30c4735d2882e7022",
           "verifier_version": "futu-opend-2026-07-27.3"
         }
@@ -565,7 +623,7 @@
       "sample_count": 5,
       "max_abs_leader_change_pct": 2.413,
       "cross_source_verified": false,
-      "verified_alert_count": 0
+      "verified_alert_count": 1
     }
   },
   "note": "异动来自本地短周期监控；候选卡须经富途行情按触发时点复核后才能升级。"
