@@ -1,8 +1,8 @@
 {
-  "timestamp": "2026-09-03T16:34:14+08:00",
+  "timestamp": "2026-09-03T20:08:33+08:00",
   "current_signal_date": "2026-09-03",
   "status": "degraded",
-  "summary": "发现 140 个降级/需复核项（139 个价格/行情复核，2 个背景复核），核心结论可看但必须按影响分层使用。",
+  "summary": "发现 140 个降级/需复核项（139 个价格/行情复核，1 个背景复核），核心结论可看但必须按影响分层使用。",
   "issues": [
     {
       "severity": "warning",
@@ -30,15 +30,6 @@
       "message": "行情污染源仍降级，历史 alert 未交叉验证，只降权复盘参考",
       "impact_level": "price_review",
       "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
-    },
-    {
-      "severity": "info",
-      "file": "evening-sentiment.json",
-      "path": "",
-      "code": "evening_not_current",
-      "message": "晚间舆情不是当前交易日，不参与今日总控",
-      "impact_level": "background_review",
-      "decision_action": "仅作背景复核，不单独阻断交易判断"
     },
     {
       "severity": "warning",
@@ -1307,27 +1298,16 @@
       "decision_action": "仅作政策/背景覆盖复核，不阻断盘中价格和交易触发",
       "next_step": "补官方/交易所/公司公告来源；未补齐前不升级为核心依据。",
       "unblock_condition": "官方来源补齐或确认不影响交易触发。"
-    },
-    {
-      "priority": 4,
-      "impact_level": "background_review",
-      "label": "背景来源复核",
-      "file": "evening-sentiment.json",
-      "code": "evening_not_current",
-      "problem": "晚间舆情不是当前交易日，不参与今日总控",
-      "decision_action": "仅作背景复核，不单独阻断交易判断",
-      "next_step": "补官方/交易所/公司公告来源；未补齐前不升级为核心依据。",
-      "unblock_condition": "官方来源补齐或确认不影响交易触发。"
     }
   ],
   "counts": {
     "critical": 0,
     "warning": 140,
-    "info": 1,
+    "info": 0,
     "blocking": 0,
     "price_review": 139,
     "signal_review": 0,
-    "background_review": 2
+    "background_review": 1
   },
   "rules": [
     "异常文本、JSON解析失败、必需文件缺失为 critical。",
