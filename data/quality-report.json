@@ -1,18 +1,9 @@
 {
-  "timestamp": "2026-09-03T09:36:34+08:00",
+  "timestamp": "2026-09-03T09:37:32+08:00",
   "current_signal_date": "2026-09-03",
   "status": "degraded",
-  "summary": "发现 145 个降级/需复核项（139 个价格/行情复核，7 个背景复核），核心结论可看但必须按影响分层使用。",
+  "summary": "发现 143 个降级/需复核项（139 个价格/行情复核，5 个背景复核），核心结论可看但必须按影响分层使用。",
   "issues": [
-    {
-      "severity": "warning",
-      "file": "intraday.json",
-      "path": "",
-      "code": "stale_timestamp",
-      "message": "时间戳不是当前交易日：2026-09-02T15:03:25+08:00",
-      "impact_level": "background_review",
-      "decision_action": "仅作背景复核，不单独阻断交易判断"
-    },
     {
       "severity": "warning",
       "file": "midday.json",
@@ -1308,15 +1299,6 @@
       "message": "shenwan_industry_mapping_postmarket_20260805: 历史代码主表5203只；涨超5%样本中38只未映射，占4.98%，已单列未映射，不外推分类。",
       "impact_level": "price_review",
       "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
-    },
-    {
-      "severity": "warning",
-      "file": "theme-shifts.json",
-      "path": "",
-      "code": "stale_theme_shifts",
-      "message": "theme-shifts 日期不是当前交易日：2026-09-02",
-      "impact_level": "background_review",
-      "decision_action": "仅作背景复核，不单独阻断交易判断"
     }
   ],
   "action_plan": [
@@ -1341,17 +1323,6 @@
       "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核",
       "next_step": "用第二行情源复核涨跌幅、quote_time 和代表股方向；未确认前只做验证。",
       "unblock_condition": "price_review=0 或相关来源标记 trusted/cross verified。"
-    },
-    {
-      "priority": 4,
-      "impact_level": "background_review",
-      "label": "背景来源复核",
-      "file": "intraday.json",
-      "code": "stale_timestamp",
-      "problem": "时间戳不是当前交易日：2026-09-02T15:03:25+08:00",
-      "decision_action": "仅作背景复核，不单独阻断交易判断",
-      "next_step": "补官方/交易所/公司公告来源；未补齐前不升级为核心依据。",
-      "unblock_condition": "官方来源补齐或确认不影响交易触发。"
     },
     {
       "priority": 4,
@@ -1385,16 +1356,27 @@
       "decision_action": "仅作政策/背景覆盖复核，不阻断盘中价格和交易触发",
       "next_step": "补官方/交易所/公司公告来源；未补齐前不升级为核心依据。",
       "unblock_condition": "官方来源补齐或确认不影响交易触发。"
+    },
+    {
+      "priority": 4,
+      "impact_level": "background_review",
+      "label": "背景来源复核",
+      "file": "topics.json",
+      "code": "stale_timestamp",
+      "problem": "时间戳不是当前交易日：2026-09-02T20:09:00+08:00",
+      "decision_action": "仅作背景复核，不单独阻断交易判断",
+      "next_step": "补官方/交易所/公司公告来源；未补齐前不升级为核心依据。",
+      "unblock_condition": "官方来源补齐或确认不影响交易触发。"
     }
   ],
   "counts": {
     "critical": 0,
-    "warning": 145,
+    "warning": 143,
     "info": 1,
     "blocking": 0,
     "price_review": 139,
     "signal_review": 0,
-    "background_review": 7
+    "background_review": 5
   },
   "rules": [
     "异常文本、JSON解析失败、必需文件缺失为 critical。",
