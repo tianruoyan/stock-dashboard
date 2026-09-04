@@ -1,280 +1,77 @@
 {
-  "date": "2026-09-03",
-  "trade_date": "2026-09-03",
-  "timestamp": "2026-09-03T09:00:35+08:00",
-  "analysis_time": "2026-09-03T09:00:35+08:00",
-  "market_time": "2026-09-03T09:00:35+08:00",
-  "phase": "09:00盘前增量更新",
+  "date": "2026-09-04",
+  "trade_date": "2026-09-04",
+  "timestamp": "2026-09-04T08:30:57+08:00",
+  "analysis_time": "2026-09-04T08:30:57+08:00",
+  "market_time": "2026-09-04T08:30:57+08:00",
+  "phase": "08:30竞价前强制落盘",
   "status": "waiting_preopen_validation",
-  "data_status": "waiting_validation_0900",
-  "summary": "09:00已在08:30版本上完成增量更新时间；港股竞价与A股集合竞价仍须以当日实时报价验证，未取得事实的字段继续等待，不沿用旧值。",
-  "strategy": "当前结论：等待确认。外盘改善有利于风险偏好，但只有存储与部分AI芯片形成较清楚的正向线索，不能把它扩大成全科技主线。09:00看港股竞价是否消化中概ADR偏弱；09:25看科创50、半导体ETF和存储核心股能否同步。指数、核心股、板块后排三者没有同向放量前，不追高。",
+  "data_status": "waiting_validation_0830",
+  "summary": "08:30盘前版本已按时写入；港股竞价尚未取得可核验报价，等待验证；A股集合竞价尚未开始，等待09:15后验证。未沿用上一交易日行情或结论。",
+  "strategy": "事实：当前仅确认当日为A股交易日，港股与A股竞价事实等待实时行情验证。推断：竞价数据到位前不预设进攻、分化或防御风格。行动：09:00增量复核港股盘前状态，09:15后再核验A股集合竞价。",
   "market_context": {
-    "as_of": "2026-09-03T08:31:42+08:00",
+    "as_of": "2026-09-04T08:30:57+08:00",
     "status": "waiting_preopen_validation",
     "facts": [
-      "2026-09-03已由已验证交易所日历确认是A股交易日。",
-      "截至08:30，港股与A股竞价均尚未开始。"
+      "2026-09-04已由已验证交易所日历确认是A股交易日。"
     ],
-    "inference": "没有当日竞价事实时不使用旧日价格推导方向。",
-    "action": "等待09:00港股竞价和09:25A股竞价后再验证。"
+    "inference": "没有竞价事实时不使用旧日价格推导当日方向。",
+    "action": "等待港股和A股竞价报价后再更新。"
   },
   "us_overnight": {
-    "status": "2026-09-02美股正式收盘已核验；以下为9月3日竞价前可用事实。",
-    "indices": [
-      {
-        "name": "纳斯达克指数",
-        "code": ".IXIC.US",
-        "last": 26217.828,
-        "change_pct": 0.45,
-        "source": "Longbridge公开行情",
-        "quote_time": "2026-09-02美股收盘"
-      },
-      {
-        "name": "标普500指数",
-        "code": ".SPX.US",
-        "last": 7666.6,
-        "change_pct": 0.46,
-        "source": "Longbridge公开行情",
-        "quote_time": "2026-09-02美股收盘"
-      },
-      {
-        "name": "道琼斯指数",
-        "code": ".DJI.US",
-        "last": 53061.95,
-        "change_pct": 0.56,
-        "source": "Longbridge公开行情",
-        "quote_time": "2026-09-02美股收盘"
-      },
-      {
-        "name": "VIX恐慌指数",
-        "code": ".VIX.US",
-        "last": 15.2,
-        "change_pct": -6.98,
-        "source": "Longbridge公开行情",
-        "quote_time": "2026-09-02美股收盘"
-      },
-      {
-        "name": "费城半导体指数",
-        "code": "SOX",
-        "note": "本轮行情源未返回有效点位，不用替代数值填充。",
-        "source": "Longbridge公开行情"
-      }
-    ],
-    "tech_stocks": [
-      {
-        "name": "英伟达",
-        "code": "NVDA.US",
-        "change_pct": 3.21,
-        "note": "AI芯片偏强，需由A股半导体核心同步验证。",
-        "source": "Longbridge公开行情"
-      },
-      {
-        "name": "美光科技",
-        "code": "MU.US",
-        "change_pct": 2.43,
-        "note": "存储链外盘偏强，重点观察A股存储是否有板块宽度。",
-        "source": "Longbridge公开行情"
-      },
-      {
-        "name": "AMD",
-        "code": "AMD.US",
-        "change_pct": -0.55,
-        "note": "AI芯片内部仍有分化。",
-        "source": "Longbridge公开行情"
-      },
-      {
-        "name": "Marvell",
-        "code": "MRVL.US",
-        "change_pct": -1.86,
-        "note": "高速互联/ASIC链偏弱。",
-        "source": "Longbridge公开行情"
-      },
-      {
-        "name": "Ciena",
-        "code": "CIEN.US",
-        "change_pct": -1.71,
-        "note": "光通信外盘偏弱。",
-        "source": "Longbridge公开行情"
-      }
-    ],
+    "status": "等待外部市场事实核验",
+    "indices": [],
+    "tech_stocks": [],
     "japan_korea": {
-      "status": "当前尚未取得可核验的日韩早盘行情，不使用旧数据替代。",
+      "status": "等待实时行情验证",
       "indices": [],
-      "stocks": []
+      "stocks": [],
+      "note": "未取得本轮可核验报价，不沿用旧值。"
     },
-    "hot_sectors": [
-      "AI芯片",
-      "存储/HBM"
-    ],
-    "weak_sectors": [
-      "高速互联/光通信",
-      "部分中概ADR"
-    ],
-    "conclusion": "外盘风险偏好改善，但科技内部没有一致共振；盘前只提高观察优先级，不直接升级为操作机会。"
+    "hot_sectors": [],
+    "weak_sectors": [],
+    "conclusion": "外部市场映射等待验证。"
   },
   "hk_auction": {
-    "window": "09:00",
+    "window": "08:30",
     "status": "等待验证",
     "indices": [],
     "sectors": [],
     "stocks": [],
-    "sentiment": "09:00港股盘前窗口已到，尚无本轮可核验竞价报价；等待验证。",
-    "adr_reference": [
-      {
-        "name": "阿里巴巴ADR",
-        "code": "BABA.US",
-        "change_pct": -0.92
-      },
-      {
-        "name": "百度ADR",
-        "code": "BIDU.US",
-        "change_pct": -0.55
-      },
-      {
-        "name": "腾讯ADR",
-        "code": "TCEHY.US",
-        "change_pct": 0.0
-      },
-      {
-        "name": "拼多多ADR",
-        "code": "PDD.US",
-        "change_pct": -1.11
-      }
-    ]
+    "sentiment": "港股竞价尚未取得可核验报价，等待验证"
   },
-  "overnight_news": [
-    {
-      "text": "隔夜美股主要指数上涨，VIX回落，风险偏好较前一日改善。",
-      "source": "Longbridge公开行情",
-      "tag": "行情/市场情绪"
-    },
-    {
-      "text": "英伟达与美光上涨，给AI芯片和存储带来正向观察线索；AMD、Marvell、Ciena走弱，说明硬件内部仍有分化。",
-      "source": "Longbridge公开行情",
-      "tag": "行情/AI硬件"
-    },
-    {
-      "text": "中概ADR多数偏弱，港股互联网的实际竞价仍需单独验证。",
-      "source": "Longbridge公开行情",
-      "tag": "行情/中概映射"
-    },
-    {
-      "text": "本轮未发现可独立核验、足以改变开盘判断的新重大公司公告；不把市场传闻作为盘前主线。",
-      "source": "本轮公开源核验",
-      "tag": "公告与传闻"
-    }
-  ],
-  "a_share_mapping": [
-    {
-      "sector": "存储/HBM",
-      "core_leaders": [
-        "兆易创新",
-        "江波龙",
-        "佰维存储"
-      ],
-      "elastic_names": [
-        "德明利",
-        "香农芯创"
-      ],
-      "pressure": "美光隔夜上涨是观察线；需半导体ETF与核心股同步，才提高关注。"
-    },
-    {
-      "sector": "AI算力芯片",
-      "core_leaders": [
-        "寒武纪",
-        "海光信息",
-        "澜起科技"
-      ],
-      "elastic_names": [
-        "龙芯中科",
-        "芯原股份"
-      ],
-      "pressure": "英伟达上涨但AMD走弱，开盘先看核心承接与板块宽度。"
-    },
-    {
-      "sector": "CPO/光模块",
-      "core_leaders": [
-        "新易盛",
-        "中际旭创",
-        "天孚通信"
-      ],
-      "elastic_names": [
-        "太辰光",
-        "联特科技"
-      ],
-      "pressure": "Marvell、Ciena偏弱，若A股高开但后排不扩散，按不追处理。"
-    },
-    {
-      "sector": "AI应用/互联网映射",
-      "core_leaders": [
-        "金山办公",
-        "科大讯飞",
-        "三六零"
-      ],
-      "elastic_names": [
-        "万兴科技",
-        "彩讯股份"
-      ],
-      "pressure": "中概ADR多数偏弱；只在A股自身放量走强时关注。"
-    }
-  ],
-  "strong_lines": [
-    "存储/HBM：美光隔夜上涨，若半导体ETF、存储核心股与后排同步走强，才是可持续的板块确认。"
-  ],
+  "overnight_news": [],
+  "a_share_mapping": [],
+  "strong_lines": [],
   "watch_lines": [
-    "AI算力芯片：英伟达走强，但需观察寒武纪、海光信息、澜起科技能否同步承接。",
-    "CPO/光模块：外盘偏弱，开盘先看是否低开后有承接，不追单点冲高。"
+    "港股竞价、A股集合竞价、指数与观察池代表股的同向性。"
   ],
   "risk_lines": [
-    "中概ADR多数偏弱，港股互联网竞价若继续走弱，会压制相关映射情绪。",
-    "AI硬件外盘分化，单只高开不能当作板块转强。"
+    "竞价事实到位前禁止沿用旧值或把外盘叙事直接映射为A股结论。"
   ],
   "opening_plan": [
-    "09:00-09:15：先看恒生科技、腾讯、阿里、中芯国际竞价；中概弱势未缓解则降低互联网映射预期。",
-    "09:25：看科创50、半导体ETF以及存储核心股；指数、核心与后排同步才是确认。",
-    "09:30后：若存储冲高无板块宽度，等待回踩，不追高。"
+    "09:00增量更新；09:15后按实际竞价验证；数据缺失时继续明确等待。"
   ],
   "action_conditions": [
-    "存储：半导体ETF、兆易创新/江波龙/佰维存储至少两只同步强于市场。",
-    "算力芯片：科创50稳定，核心股不破开盘价且有后排扩散。",
-    "互联网映射：先看到港股竞价企稳，再看A股自身量能。"
+    "只有当日行情时间、来源和代表股涨跌幅完整后，才形成方向性判断。"
   ],
   "invalidation_conditions": [
-    "科技核心高开后快速跌破开盘价、ETF同步走弱。",
-    "存储只有单股异动、未出现板块宽度。",
-    "港股竞价继续弱于ADR映射且恒生科技未企稳。"
+    "任一行情日期不是当日，或报价仍停留在未开市状态。"
   ],
   "sources": [
-    {
-      "name": "Longbridge公开行情",
-      "url": "https://open.longbridge.com",
-      "type": "market_data"
-    }
+    "V2已验证A股交易日历"
   ],
-  "source_notes": "隔夜行情仅作受治理的外部参考；未获得当日港股或A股竞价的字段保持为空并明确等待验证，不作为账户、持仓、自选或交易来源。",
+  "source_notes": [
+    "本地阶段守卫只负责当日文件与等待边界，不生成未经核验的市场事实。"
+  ],
   "stage_updates": [
     {
       "stage": "08:30",
-      "timestamp": "2026-09-03T08:31:42+08:00",
-      "status": "waiting_validation",
-      "note": "当日竞价前版本已落盘；港股与A股竞价尚未开始，相关字段保持等待验证。"
-    },
-    {
-      "stage": "09:00",
-      "timestamp": "2026-09-03T09:00:35+08:00",
+      "timestamp": "2026-09-04T08:30:57+08:00",
       "status": "waiting_validation",
       "note": "当日文件已落盘；没有可核验竞价事实的字段保持等待验证。"
     }
   ],
   "generation_mode": "automatic_stage_guard",
-  "data_boundary": "不交易、不修改用户资产、不改变V2生产状态；未开始或未取得报价的市场明确写等待验证。",
-  "risks": [
-    "本版本生成于港股与A股竞价前，所有方向均需在09:00/09:25复核。",
-    "外盘映射只是线索，不替代A股自身量价与板块结构。",
-    "这不是投资建议。"
-  ],
-  "automation_fallback_notes": [
-    "08:30检查发现原文件虽为当日，但市场上下文与阶段记录仍引用旧交易日；已清除旧日阶段记录并按2026-09-03竞价前事实重写。"
-  ]
+  "data_boundary": "不交易、不修改用户资产、不改变V2生产状态；未开始或未取得报价的市场明确写等待验证。"
 }
