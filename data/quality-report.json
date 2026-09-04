@@ -1,8 +1,8 @@
 {
-  "timestamp": "2026-09-04T09:36:45+08:00",
+  "timestamp": "2026-09-04T09:39:03+08:00",
   "current_signal_date": "2026-09-04",
   "status": "degraded",
-  "summary": "发现 143 个降级/需复核项（139 个价格/行情复核，5 个背景复核），核心结论可看但必须按影响分层使用。",
+  "summary": "发现 144 个降级/需复核项（140 个价格/行情复核，5 个背景复核），核心结论可看但必须按影响分层使用。",
   "issues": [
     {
       "severity": "warning",
@@ -55,6 +55,15 @@
       "path": "quote_audit.sanity_checks",
       "code": "historical_alert_not_cross_verified",
       "message": "行情污染源仍降级，历史 alert 未交叉验证，只降权复盘参考",
+      "impact_level": "price_review",
+      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
+    },
+    {
+      "severity": "warning",
+      "file": "alert.json",
+      "path": "alerts[2].leaders[0]",
+      "code": "suspicious_alert_pct",
+      "message": "中京电子 触发窗口涨跌幅 8.0057，3分钟窗口需回查原始行情源",
       "impact_level": "price_review",
       "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
     },
@@ -1371,10 +1380,10 @@
   ],
   "counts": {
     "critical": 0,
-    "warning": 143,
+    "warning": 144,
     "info": 1,
     "blocking": 0,
-    "price_review": 139,
+    "price_review": 140,
     "signal_review": 0,
     "background_review": 5
   },

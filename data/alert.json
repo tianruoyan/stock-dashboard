@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-09-04T09:33:57+08:00",
+  "timestamp": "2026-09-04T09:37:57+08:00",
   "source_status": "monitor_live",
   "alerts": [
     {
@@ -70,7 +70,7 @@
         "secondary_source": "富途行情",
         "secondary_verification": {
           "state": "insufficient_precision",
-          "checked_at": "2026-09-04T09:36:08+08:00",
+          "checked_at": "2026-09-04T09:38:11+08:00",
           "source": "富途行情",
           "reason": "至少2只代表股已识别，但外部行情无法精确对齐触发时点；维持观察，不误判为行情冲突。",
           "representatives": [
@@ -186,7 +186,7 @@
         "secondary_source": "富途行情",
         "secondary_verification": {
           "state": "insufficient_precision",
-          "checked_at": "2026-09-04T09:36:08+08:00",
+          "checked_at": "2026-09-04T09:38:11+08:00",
           "source": "富途行情",
           "reason": "至少2只代表股已识别，但外部行情无法精确对齐触发时点；维持观察，不误判为行情冲突。",
           "representatives": [
@@ -233,15 +233,99 @@
       "confirmation_level": "candidate",
       "limit_up_count": 0,
       "limit_down_count": 0
+    },
+    {
+      "id": "monitor-20260904-093710-805fda50f352",
+      "time": "2026-09-04T09:37:10+08:00",
+      "sector": "传说游资票走势关联",
+      "type": "小登题材短周期拉动",
+      "reason": "触发规则：小登股异动：3分钟平均涨跌幅≥1.5%，上涨占比≥70%，且成交放大≥5x；小登底池拉起预警：板块行情缺失时，底池3分钟平均涨幅≥1.5%，上涨占比≥70%，且成交放大≥5x\n异动性质：上涨攻势中的拉起。3分钟价格推进、上涨占比、强势股数量和前排日内状态同时确认。\n结论：传说游资票走势关联上涨攻势较强且扩散较好，中京电子领涨。\n题材：传说游资票走势关联，当前动态龙头：中京电子 / 宏昌电子 / 卓郎智能。\n强度：底池样本 3分钟涨跌幅 1.98%，上涨占比 100%，强势股 2 只。\n成交：3分钟放大 7.44x，较昨同期 5.69x，有后排扩散。\n当前动态龙头分数：中京电子(100.0)，宏昌电子(34.7)，卓郎智能(20.7)。\n主要贡献因子：中京电子: 3分钟涨跌幅 8.01%，成交放大 20.00x，日内涨幅 9.97%；宏昌电子: 3分钟涨跌幅 0.93%，成交放大 4.33x，日内涨幅 2.14%；卓郎智能: 3分钟涨跌幅 0.47%，成交放大 5.05x，日内涨幅 2.39%\n观察点：龙头是否维持日内高位、后排是否继续补涨、成交是否继续放大。\n风险提示：这是题材强度分析，不构成买卖建议。",
+      "leaders": [
+        {
+          "name": "中京电子",
+          "code": "002579",
+          "change_pct": 8.0057,
+          "quote_time": "2026-09-04T09:37:10.543145",
+          "score": 100.0,
+          "factors": [
+            "3分钟+8.01%",
+            "成交放大20.00x",
+            "日内+9.97%"
+          ]
+        },
+        {
+          "name": "宏昌电子",
+          "code": "603002",
+          "change_pct": 0.9328,
+          "quote_time": "2026-09-04T09:37:10.543145",
+          "score": 34.73,
+          "factors": [
+            "3分钟+0.93%",
+            "成交放大4.33x",
+            "日内+2.14%"
+          ]
+        },
+        {
+          "name": "卓郎智能",
+          "code": "600545",
+          "change_pct": 0.4695,
+          "quote_time": "2026-09-04T09:37:10.543145",
+          "score": 20.72,
+          "factors": [
+            "3分钟+0.47%",
+            "成交放大5.05x",
+            "日内+2.39%"
+          ]
+        }
+      ],
+      "signal_type": "舆情观察",
+      "is_old_economy": false,
+      "source_watch_id": "传说游资票走势关联",
+      "quote_audit": {
+        "provider": "本地盘中监控、富途行情（腾讯备用）",
+        "quote_time": "2026-09-04T09:37:10+08:00",
+        "pct_field": "3分钟涨跌幅",
+        "sample_count": 3,
+        "max_abs_leader_change_pct": 8.0057,
+        "sanity_checks": {
+          "cross_source_verified": false,
+          "price_move_valid": true,
+          "volume_valid": true,
+          "direction_ratio_valid": true,
+          "limit_down_count_valid": false
+        },
+        "board_3m_change_pct": 1.9812,
+        "direction_ratio": 1.0,
+        "volume_ratio": 7.436,
+        "relative_volume_vs_yesterday": 5.6903,
+        "missing_confirmation": "等待富途行情按触发时点交叉核验；通过前只作候选或观察，不作为确认交易信号。",
+        "secondary_source": "富途行情",
+        "secondary_verification": {
+          "state": "pending",
+          "checked_at": "2026-09-04T09:38:11+08:00",
+          "source": "富途行情",
+          "reason": "等待触发分钟行情完整落盘。",
+          "representatives": [],
+          "fingerprint": "a957b98566df9088cb41",
+          "verifier_version": "futu-opend-2026-07-27.3"
+        }
+      },
+      "source_status": "invalidated",
+      "valid_until": "2026-09-04T09:42:10+08:00",
+      "trigger_rule": "小登股异动：3分钟平均涨跌幅≥1.5%，上涨占比≥70%，且成交放大≥5x；小登底池拉起预警：板块行情缺失时，底池3分钟平均涨幅≥1.5%，上涨占比≥70%，且成交放大≥5x",
+      "alert_class": "style",
+      "confirmation_level": "invalidated",
+      "limit_up_count": 1,
+      "limit_down_count": 0
     }
   ],
   "quote_audit": {
     "provider": "本地盘中监控、富途行情（腾讯备用）",
-    "quote_time": "2026-09-04T09:30:48+08:00",
+    "quote_time": "2026-09-04T09:37:10+08:00",
     "pct_field": "各异动卡标注的短周期涨跌幅",
     "sanity_checks": {
-      "sample_count": 2,
-      "max_abs_leader_change_pct": 2.4549,
+      "sample_count": 3,
+      "max_abs_leader_change_pct": 8.0057,
       "cross_source_verified": false,
       "verified_alert_count": 0
     }
