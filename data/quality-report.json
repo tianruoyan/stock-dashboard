@@ -1,18 +1,9 @@
 {
-  "timestamp": "2026-09-04T09:19:21+08:00",
+  "timestamp": "2026-09-04T09:26:51+08:00",
   "current_signal_date": "2026-09-04",
   "status": "degraded",
-  "summary": "发现 146 个降级/需复核项（139 个价格/行情复核，8 个背景复核），核心结论可看但必须按影响分层使用。",
+  "summary": "发现 143 个降级/需复核项（137 个价格/行情复核，7 个背景复核），核心结论可看但必须按影响分层使用。",
   "issues": [
-    {
-      "severity": "warning",
-      "file": "alert.json",
-      "path": "",
-      "code": "stale_timestamp",
-      "message": "时间戳不是当前交易日：2026-09-03T15:05:52+08:00",
-      "impact_level": "background_review",
-      "decision_action": "仅作背景复核，不单独阻断交易判断"
-    },
     {
       "severity": "warning",
       "file": "intraday.json",
@@ -57,24 +48,6 @@
       "message": "时间戳不是当前交易日：2026-09-03T16:30:31+08:00",
       "impact_level": "background_review",
       "decision_action": "仅作背景复核，不单独阻断交易判断"
-    },
-    {
-      "severity": "warning",
-      "file": "alert.json",
-      "path": "",
-      "code": "historical_alert_without_trusted_source",
-      "message": "盘中异动缺少可信源证明；当前阶段只降权参考，不阻断整站发布",
-      "impact_level": "price_review",
-      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
-    },
-    {
-      "severity": "warning",
-      "file": "alert.json",
-      "path": "quote_audit.sanity_checks",
-      "code": "historical_alert_not_cross_verified",
-      "message": "行情污染源仍降级，历史 alert 未交叉验证，只降权复盘参考",
-      "impact_level": "price_review",
-      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
     },
     {
       "severity": "info",
@@ -1333,34 +1306,12 @@
       "priority": 2,
       "impact_level": "price_review",
       "label": "二次行情复核",
-      "file": "alert.json",
-      "code": "historical_alert_without_trusted_source",
-      "problem": "盘中异动缺少可信源证明；当前阶段只降权参考，不阻断整站发布",
-      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核",
-      "next_step": "用第二行情源复核涨跌幅、quote_time 和代表股方向；未确认前只做验证。",
-      "unblock_condition": "price_review=0 或相关来源标记 trusted/cross verified。"
-    },
-    {
-      "priority": 2,
-      "impact_level": "price_review",
-      "label": "二次行情复核",
       "file": "source-health.json",
       "code": "stale_timestamp",
       "problem": "时间戳不是当前交易日：2026-08-28T09:43:29+08:00",
       "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核",
       "next_step": "用第二行情源复核涨跌幅、quote_time 和代表股方向；未确认前只做验证。",
       "unblock_condition": "price_review=0 或相关来源标记 trusted/cross verified。"
-    },
-    {
-      "priority": 4,
-      "impact_level": "background_review",
-      "label": "背景来源复核",
-      "file": "alert.json",
-      "code": "stale_timestamp",
-      "problem": "时间戳不是当前交易日：2026-09-03T15:05:52+08:00",
-      "decision_action": "仅作背景复核，不单独阻断交易判断",
-      "next_step": "补官方/交易所/公司公告来源；未补齐前不升级为核心依据。",
-      "unblock_condition": "官方来源补齐或确认不影响交易触发。"
     },
     {
       "priority": 4,
@@ -1394,16 +1345,38 @@
       "decision_action": "仅作背景复核，不单独阻断交易判断",
       "next_step": "补官方/交易所/公司公告来源；未补齐前不升级为核心依据。",
       "unblock_condition": "官方来源补齐或确认不影响交易触发。"
+    },
+    {
+      "priority": 4,
+      "impact_level": "background_review",
+      "label": "背景来源复核",
+      "file": "source-health.json",
+      "code": "source_degraded",
+      "problem": "official_policy_global_web_scan: 商务部第33、34号公告及第2、3号令已由官网原文核验；全球标杆官方域名搜索混入历史页面，已剔除并降级为非穷尽扫描。本轮没有把空结果写成完全无新闻，US现金市场尚未开盘。",
+      "decision_action": "仅作政策/背景覆盖复核，不阻断盘中价格和交易触发",
+      "next_step": "补官方/交易所/公司公告来源；未补齐前不升级为核心依据。",
+      "unblock_condition": "官方来源补齐或确认不影响交易触发。"
+    },
+    {
+      "priority": 4,
+      "impact_level": "background_review",
+      "label": "背景来源复核",
+      "file": "theme-shifts.json",
+      "code": "stale_theme_shifts",
+      "problem": "theme-shifts 日期不是当前交易日：2026-09-03",
+      "decision_action": "仅作背景复核，不单独阻断交易判断",
+      "next_step": "补官方/交易所/公司公告来源；未补齐前不升级为核心依据。",
+      "unblock_condition": "官方来源补齐或确认不影响交易触发。"
     }
   ],
   "counts": {
     "critical": 0,
-    "warning": 146,
+    "warning": 143,
     "info": 1,
     "blocking": 0,
-    "price_review": 139,
+    "price_review": 137,
     "signal_review": 0,
-    "background_review": 8
+    "background_review": 7
   },
   "rules": [
     "异常文本、JSON解析失败、必需文件缺失为 critical。",
