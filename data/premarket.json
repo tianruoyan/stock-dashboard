@@ -1,83 +1,471 @@
 {
-  "date": "2026-09-04",
-  "trade_date": "2026-09-04",
-  "timestamp": "2026-09-04T09:00:01+08:00",
-  "analysis_time": "2026-09-04T09:00:01+08:00",
-  "market_time": "2026-09-04T09:00:01+08:00",
-  "phase": "09:00盘前增量更新",
-  "status": "waiting_preopen_validation",
-  "data_status": "waiting_validation_0900",
-  "summary": "09:00已在08:30版本上完成增量更新时间；港股竞价与A股集合竞价仍须以当日实时报价验证，未取得事实的字段继续等待，不沿用旧值。",
-  "strategy": "事实：当前仅确认当日为A股交易日，港股与A股竞价事实等待实时行情验证。推断：竞价数据到位前不预设进攻、分化或防御风格。行动：09:00增量复核港股盘前状态，09:15后再核验A股集合竞价。",
-  "market_context": {
-    "as_of": "2026-09-04T08:30:57+08:00",
-    "status": "waiting_preopen_validation",
-    "facts": [
-      "2026-09-04已由已验证交易所日历确认是A股交易日。"
-    ],
-    "inference": "没有竞价事实时不使用旧日价格推导当日方向。",
-    "action": "等待港股和A股竞价报价后再更新。"
-  },
+  "timestamp": "2026-09-06T21:02:00+08:00",
+  "analysis_time": "2026-09-06T21:02:00+08:00",
+  "date": "2026-09-07",
+  "trade_date": "2026-09-07",
+  "market_time": "2026-09-04T15:05:39+08:00",
+  "phase": "周一科技消息盘前预案-周日夜间版",
+  "status": "waiting_monday_preopen_validation",
+  "data_status": "weekend_news_ready_auction_not_started",
+  "summary": "截至2026-09-06 21:02 CST，周末科技消息以AI模型、AI本地推理、AI基础设施和苹果发布会窗口为主；最新可核验市场价格停在2026-09-04美股/A股/港股收盘，2026-09-07港股竞价、A股集合竞价和日韩早盘尚未开始，不做补编。",
+  "strategy": "当前结论：等待确认，不追。已确认事实是上周五美股半导体ETF和AI芯片链明显强于纳指，但A股上周五科技硬件高位分化，先进封装、设备、存储和PCB多只代表股仍承压；周末消息提高AI应用、本地AI推理、算力基础设施和苹果链关注度，但必须等2026-09-07 09:00-09:15港股科技竞价、A股集合竞价以及核心代表股放量承接确认。高开缩量、核心冲高回落或后排不扩散时优先兑现和降低追高。",
   "us_overnight": {
-    "status": "等待外部市场事实核验",
-    "indices": [],
-    "tech_stocks": [],
+    "as_of": "2026-09-04 US close / post-market through 2026-09-04 23:59 UTC from Longbridge quote",
+    "status": "last_us_session_confirmed_monday_asia_preopen_not_started",
+    "indices": [
+      {
+        "name": "Nasdaq Composite",
+        "symbol": ".IXIC.US",
+        "change_pct": -0.29,
+        "note": "指数小跌，低于半导体ETF表现。"
+      },
+      {
+        "name": "S&P 500",
+        "symbol": ".SPX.US",
+        "change_pct": -0.38,
+        "note": "宽基回落。"
+      },
+      {
+        "name": "Dow Jones",
+        "symbol": ".DJI.US",
+        "change_pct": -0.51,
+        "note": "价值权重偏弱。"
+      },
+      {
+        "name": "iShares Semiconductor ETF",
+        "symbol": "SOXX.US",
+        "change_pct": 3.52,
+        "note": "作为费城半导体替代观察，半导体明显强于纳指。"
+      },
+      {
+        "name": "VanEck Semiconductor ETF",
+        "symbol": "SMH.US",
+        "change_pct": 2.61,
+        "note": "AI芯片权重推动。"
+      },
+      {
+        "name": "Nasdaq 100 ETF",
+        "symbol": "QQQ.US",
+        "change_pct": 0.18,
+        "note": "大型科技整体温和。"
+      }
+    ],
+    "tech_stocks": [
+      {
+        "name": "NVIDIA",
+        "symbol": "NVDA.US",
+        "change_pct": 0.84,
+        "post_market_pct_vs_close": -0.37,
+        "mapping": "AI算力、GPU、服务器链"
+      },
+      {
+        "name": "AMD",
+        "symbol": "AMD.US",
+        "change_pct": 4.69,
+        "post_market_pct_vs_close": -0.28,
+        "mapping": "AI GPU、服务器CPU、先进封装"
+      },
+      {
+        "name": "Broadcom",
+        "symbol": "AVGO.US",
+        "change_pct": 0.21,
+        "post_market_pct_vs_close": -0.23,
+        "mapping": "交换芯片、CPO/网络"
+      },
+      {
+        "name": "Marvell",
+        "symbol": "MRVL.US",
+        "change_pct": 7.05,
+        "post_market_pct_vs_close": -0.52,
+        "mapping": "AI网络、交换/定制芯片"
+      },
+      {
+        "name": "Micron",
+        "symbol": "MU.US",
+        "change_pct": 6.1,
+        "post_market_pct_vs_close": -0.16,
+        "mapping": "HBM/DRAM/存储"
+      },
+      {
+        "name": "TSMC ADR",
+        "symbol": "TSM.US",
+        "change_pct": 2.85,
+        "post_market_pct_vs_close": -0.22,
+        "mapping": "晶圆代工、先进制程"
+      },
+      {
+        "name": "Apple",
+        "symbol": "AAPL.US",
+        "change_pct": -2.51,
+        "post_market_pct_vs_close": 0.01,
+        "mapping": "消费电子/端侧AI，事件窗口但股价承压"
+      },
+      {
+        "name": "Microsoft",
+        "symbol": "MSFT.US",
+        "change_pct": -2.04,
+        "post_market_pct_vs_close": -0.02,
+        "mapping": "云与AI应用，周五偏弱"
+      },
+      {
+        "name": "Alphabet",
+        "symbol": "GOOGL.US",
+        "change_pct": -1.11,
+        "post_market_pct_vs_close": 0.1,
+        "mapping": "AI应用/云，周五偏弱"
+      },
+      {
+        "name": "Amazon",
+        "symbol": "AMZN.US",
+        "change_pct": -0.15,
+        "post_market_pct_vs_close": -0.1,
+        "mapping": "云基础设施，基本持平"
+      },
+      {
+        "name": "Tesla",
+        "symbol": "TSLA.US",
+        "change_pct": -5.92,
+        "post_market_pct_vs_close": -0.34,
+        "mapping": "机器人/智能驾驶，显著承压"
+      }
+    ],
     "japan_korea": {
-      "status": "等待实时行情验证",
+      "status": "not_started_as_of_2026-09-06_21:02_CST",
       "indices": [],
       "stocks": [],
-      "note": "未取得本轮可核验报价，不沿用旧值。"
+      "note": "2026-09-07日韩早盘尚未开市；不沿用2026-09-04旧报价模拟早盘。"
     },
-    "hot_sectors": [],
-    "weak_sectors": [],
-    "conclusion": "外部市场映射等待验证。"
+    "hot_sectors": [
+      "美股半导体ETF、AI网络芯片、存储/HBM、代工链"
+    ],
+    "weak_sectors": [
+      "Tesla/机器人映射、Apple消费电子事件窗口、部分云平台权重"
+    ],
+    "conclusion": "外部环境对AI芯片、存储和高速互联偏正面，但A股上周五硬件高位承压，周一必须看竞价和开盘30分钟承接。"
   },
   "hk_auction": {
-    "window": "09:00",
-    "status": "等待验证",
+    "window": "2026-09-07 09:00-09:15 HKT",
+    "status": "not_started",
     "indices": [],
     "sectors": [],
     "stocks": [],
-    "sentiment": "09:00港股盘前窗口已到，尚无本轮可核验竞价报价；等待验证。"
+    "sentiment": "截至2026-09-06 21:02 CST，周一港股竞价未开始；上一港股交易日恒生科技+2.27%、腾讯+2.26%、阿里+2.42%、百度+4.81%、小米+3.64%，但中芯国际-1.25%、华虹半导体-8.43%，显示互联网/AI应用强于港股半导体制造。"
   },
-  "overnight_news": [],
-  "a_share_mapping": [],
-  "strong_lines": [],
-  "watch_lines": [
-    "港股竞价、A股集合竞价、指数与观察池代表股的同向性。"
-  ],
-  "risk_lines": [
-    "竞价事实到位前禁止沿用旧值或把外盘叙事直接映射为A股结论。"
-  ],
-  "opening_plan": [
-    "09:00增量更新；09:15后按实际竞价验证；数据缺失时继续明确等待。"
-  ],
-  "action_conditions": [
-    "只有当日行情时间、来源和代表股涨跌幅完整后，才形成方向性判断。"
-  ],
-  "invalidation_conditions": [
-    "任一行情日期不是当日，或报价仍停留在未开市状态。"
-  ],
-  "sources": [
-    "V2已验证A股交易日历"
-  ],
-  "source_notes": [
-    "本地阶段守卫只负责当日文件与等待边界，不生成未经核验的市场事实。"
-  ],
-  "stage_updates": [
+  "overnight_news": [
     {
-      "stage": "08:30",
-      "timestamp": "2026-09-04T08:30:57+08:00",
-      "status": "waiting_validation",
-      "note": "当日文件已落盘；没有可核验竞价事实的字段保持等待验证。"
+      "text": "OpenAI于2026-09-03发布GPT-6 Astra安全概览，确认Astra为已广泛部署的更高能力模型，并强调更强网络能力与安全防护。",
+      "source": "OpenAI",
+      "tag": "公告/官方"
     },
     {
-      "stage": "09:00",
-      "timestamp": "2026-09-04T09:00:01+08:00",
-      "status": "waiting_validation",
-      "note": "当日文件已落盘；没有可核验竞价事实的字段保持等待验证。"
+      "text": "NVIDIA新闻归档显示2026-09-03 IFA相关本地AI推理更新，RTX Spark Windows工作站与Microsoft及PC伙伴合作，利好端侧/本地AI和AI PC叙事。",
+      "source": "NVIDIA Newsroom",
+      "tag": "公告/官方"
+    },
+    {
+      "text": "NVIDIA新闻归档显示2026-09-03“收购Hugging Face”公告条目；若交易条件与监管细节后续确认，AI开发者生态、模型分发与算力平台绑定预期会升温。",
+      "source": "NVIDIA Newsroom",
+      "tag": "公告/官方"
+    },
+    {
+      "text": "Apple Developer于2026-08-26提示2026-09-09 10:00 PT举行特别活动，消费电子/端侧AI处于事件预热窗口。",
+      "source": "Apple Developer",
+      "tag": "公告/官方"
+    },
+    {
+      "text": "AMD新闻页2026-08-31至09-02连续出现AI基础设施和数据中心效率相关内容，包括AMD/Cisco/HUMAIN及LUMI-AI方向，强化非NVIDIA算力链观察。",
+      "source": "AMD Newsroom",
+      "tag": "公告/官方"
     }
   ],
-  "generation_mode": "automatic_stage_guard",
-  "data_boundary": "不交易、不修改用户资产、不改变V2生产状态；未开始或未取得报价的市场明确写等待验证。"
+  "weekend_news": [
+    "AI模型：OpenAI发布GPT-6 Astra安全概览，说明高能力模型进入新一轮部署与安全治理窗口，AI应用和安全工具链关注度提升。",
+    "本地AI/AI PC：NVIDIA在IFA 2026推动RTX Spark本地AI推理，与Microsoft及PC伙伴合作，映射端侧AI、AI PC、GPU工作站和本地推理软件。",
+    "AI开发者生态：NVIDIA官网新闻归档出现收购Hugging Face公告条目，若后续监管/交易条件落地，可能强化模型分发、开发者平台、云算力与GPU生态绑定。",
+    "数据中心：AMD新闻页强调AI基础设施与数据中心效率，非NVIDIA算力链、服务器CPU/GPU和先进封装仍有观察价值。",
+    "消费电子：Apple 9月9日特别活动临近，苹果链进入事件窗口，但AAPL上周五-2.51%提示预期兑现压力。"
+  ],
+  "weekend_news_details": [
+    {
+      "line": "AI模型",
+      "confirmed": true,
+      "source": "https://openai.com/index/safety-overview-gpt-6-astra/",
+      "implication": "AI应用、安全、算力需求叙事升温，但A股需看软件与硬件谁先承接。"
+    },
+    {
+      "line": "本地AI/AI PC",
+      "confirmed": true,
+      "source": "https://nvidianews.nvidia.com/news/",
+      "implication": "映射AI PC、GPU整机、端侧模型和消费电子零部件。"
+    },
+    {
+      "line": "AI开发者生态",
+      "confirmed": true,
+      "source": "https://nvidianews.nvidia.com/news/",
+      "implication": "更偏中长期平台生态，短线重点看NVDA链和国内AI应用竞价是否共振。"
+    },
+    {
+      "line": "数据中心效率",
+      "confirmed": true,
+      "source": "https://www.amd.com/en/newsroom.html",
+      "implication": "非NVIDIA算力、服务器、先进封装和高速互联观察。"
+    },
+    {
+      "line": "Apple事件窗口",
+      "confirmed": true,
+      "source": "https://developer.apple.com/news/?id=s6spdug0",
+      "implication": "消费电子有预热，但周五股价弱，适合低位承接核验，不适合事件前无量追高。"
+    }
+  ],
+  "a_share_mapping": [
+    "AI算力/服务器：工业富联、寒武纪、海光信息、浪潮信息；先看是否强于科创50/半导体ETF。",
+    "CPO/光模块：中际旭创、新易盛、天孚通信、光迅科技、华工科技；美国MRVL/AVGO强势提供映射，但A股上周五后排分化，需放量承接。",
+    "存储/HBM：澜起科技、兆易创新、佰维存储、江波龙；MU大涨偏正面，但A股上周五存储代表普跌，开盘只看止跌确认。",
+    "先进封装/设备材料：长电科技、通富微电、北方华创、中微公司、华海清科、安集科技；外盘强不等于A股同步，需至少核心股低开不破、量能修复。",
+    "AI PC/消费电子：立讯精密、歌尔股份、蓝思科技、鹏鼎控股、水晶光电；苹果发布会窗口带关注，但AAPL弱，优先观察低位补涨和供应链订单线索。",
+    "机器人/智能驾驶：德赛西威、拓普集团、绿的谐波、埃斯顿；TSLA显著下跌，除非A股独立转强，否则不追。"
+  ],
+  "a_share_mapping_details": [
+    {
+      "theme": "AI算力/服务器",
+      "core": [
+        "工业富联",
+        "寒武纪",
+        "海光信息",
+        "浪潮信息"
+      ],
+      "elasticity": [
+        "PCB/液冷/电源后排"
+      ],
+      "pressure": [
+        "前期高位且量价背离个股"
+      ]
+    },
+    {
+      "theme": "CPO/光模块",
+      "core": [
+        "中际旭创",
+        "新易盛",
+        "天孚通信"
+      ],
+      "elasticity": [
+        "光迅科技",
+        "华工科技"
+      ],
+      "pressure": [
+        "高位缩量冲高回落"
+      ]
+    },
+    {
+      "theme": "存储/HBM",
+      "core": [
+        "澜起科技",
+        "兆易创新"
+      ],
+      "elasticity": [
+        "佰维存储",
+        "江波龙"
+      ],
+      "pressure": [
+        "上周五已破位或高位兑现品种"
+      ]
+    },
+    {
+      "theme": "先进封装/设备材料",
+      "core": [
+        "长电科技",
+        "通富微电",
+        "北方华创",
+        "中微公司"
+      ],
+      "elasticity": [
+        "华海清科",
+        "安集科技"
+      ],
+      "pressure": [
+        "外盘强但A股竞价无承接的补跌方向"
+      ]
+    },
+    {
+      "theme": "消费电子/端侧AI",
+      "core": [
+        "立讯精密",
+        "歌尔股份"
+      ],
+      "elasticity": [
+        "蓝思科技",
+        "鹏鼎控股",
+        "水晶光电"
+      ],
+      "pressure": [
+        "Apple事件前高开无量方向"
+      ]
+    },
+    {
+      "theme": "机器人/智能驾驶",
+      "core": [
+        "德赛西威",
+        "绿的谐波",
+        "埃斯顿"
+      ],
+      "elasticity": [
+        "拓普集团",
+        "步科股份"
+      ],
+      "pressure": [
+        "TSLA映射和上周五A股代表股下跌方向"
+      ]
+    }
+  ],
+  "hk_mapping": [
+    "AI应用/互联网：腾讯控股、阿里巴巴、百度、小米；上一港股交易日强于半导体，周一先看恒生科技竞价是否延续。",
+    "半导体制造/设备：中芯国际、华虹半导体、上海复旦；上一交易日华虹大跌，若竞价继续弱，会压制A股制造和设备情绪。",
+    "智能驾驶/机器人：小鹏汽车、理想汽车、小米集团；TSLA弱会形成反向压力，需港股汽车链竞价独立修复。"
+  ],
+  "hk_mapping_details": [
+    {
+      "theme": "AI应用/互联网",
+      "stocks": [
+        "腾讯控股 700.HK +2.26%",
+        "阿里巴巴 9988.HK +2.42%",
+        "百度集团 9888.HK +4.81%",
+        "小米集团 1810.HK +3.64%"
+      ],
+      "condition": "恒生科技竞价延续强势且成交放大。"
+    },
+    {
+      "theme": "半导体制造",
+      "stocks": [
+        "中芯国际 981.HK -1.25%",
+        "华虹半导体 1347.HK -8.43%"
+      ],
+      "condition": "若华虹/中芯竞价继续弱，A股半导体设备材料需降低预期。"
+    },
+    {
+      "theme": "智能驾驶",
+      "stocks": [
+        "理想汽车 2015.HK +3.10%",
+        "小鹏汽车 9868.HK +1.40%"
+      ],
+      "condition": "必须抵消TSLA下跌映射。"
+    }
+  ],
+  "strong_lines": [
+    "美股半导体ETF与AI网络/存储链：SOXX +3.52%、SMH +2.61%、MRVL +7.05%、MU +6.10%、AMD +4.69%。",
+    "AI应用与本地AI推理：OpenAI GPT-6 Astra与NVIDIA RTX Spark消息提高模型应用、本地推理和AI PC关注度。",
+    "港股上一交易日互联网/AI应用：恒生科技+2.27%，腾讯、阿里、百度、小米均上涨。"
+  ],
+  "strong_line_details": [
+    {
+      "name": "海外半导体",
+      "evidence": [
+        "SOXX +3.52%",
+        "SMH +2.61%",
+        "MRVL +7.05%",
+        "MU +6.10%"
+      ],
+      "action": "只作为映射候选，等待A股竞价。"
+    },
+    {
+      "name": "AI应用/本地推理",
+      "evidence": [
+        "OpenAI 2026-09-03公告",
+        "NVIDIA 2026-09-03 IFA消息"
+      ],
+      "action": "看软件、端侧AI、AI PC是否强于硬件高位股。"
+    },
+    {
+      "name": "港股互联网",
+      "evidence": [
+        "HSTECH +2.27%",
+        "700.HK +2.26%",
+        "9988.HK +2.42%"
+      ],
+      "action": "9:00-9:15验证是否延续。"
+    }
+  ],
+  "watch_lines": [
+    "CPO/光模块：外盘MRVL/AVGO偏强，A股中际旭创、新易盛、天孚通信上周五相对抗跌但后排分化，开盘看放量不破。",
+    "存储/HBM：MU大涨但A股澜起科技、兆易创新、佰维存储、江波龙上周五仍跌，先看止跌再看扩散。",
+    "消费电子/端侧AI：Apple 9月9日事件窗口临近，AAPL周五-2.51%，预期兑现压力大于无脑催化。",
+    "机器人/智能驾驶：TSLA -5.92%，A股机器人代表股上周五多下跌，只有行业宽度明显修复才从风险线回到观察线。"
+  ],
+  "watch_line_details": [
+    {
+      "name": "CPO/光模块",
+      "confirm": "核心股高开后不回落或低开后放量收复开盘价，后排跟随。",
+      "fail": "核心冲高回落，光迅/华工等后排继续弱。"
+    },
+    {
+      "name": "存储/HBM",
+      "confirm": "澜起、兆易、佰维、江波龙至少两只强于半导体ETF。",
+      "fail": "MU映射未兑现，A股继续低开低走。"
+    },
+    {
+      "name": "消费电子",
+      "confirm": "苹果链低位补涨而非高位缩量冲刺。",
+      "fail": "事件前高开兑现。"
+    },
+    {
+      "name": "机器人/智能驾驶",
+      "confirm": "机器人指数与核心股同步修复。",
+      "fail": "TSLA压力传导，A股代表股继续下探。"
+    }
+  ],
+  "risk_lines": [
+    "高开兑现：海外半导体强势可能带来A股高开，但上周五A股硬件多只代表股收跌，高开缩量容易兑现。",
+    "半导体制造分化：港股中芯国际、华虹半导体上一交易日弱，可能压制A股设备材料映射。",
+    "模型发布不等于订单落地：OpenAI/NVIDIA消息偏产业关注度，短线仍需成交、涨停宽度和代表股确认。",
+    "机器人/智能驾驶承压：TSLA大跌和A股机器人代表弱，未见竞价修复前不追。",
+    "数据缺口：2026-09-07港股竞价、日韩早盘和A股集合竞价尚未发生，当前结论不能替代当日开盘核验。"
+  ],
+  "risk_line_details": [
+    {
+      "name": "高开兑现",
+      "trigger": "核心高开>3%但5-15分钟成交不足、后排不跟。",
+      "response": "不追，等回落承接。"
+    },
+    {
+      "name": "半导体制造拖累",
+      "trigger": "华虹/中芯竞价继续弱。",
+      "response": "降低A股设备材料预期。"
+    },
+    {
+      "name": "机器人压力",
+      "trigger": "TSLA映射叠加A股核心低开。",
+      "response": "保持风险线。"
+    }
+  ],
+  "opening_plan": [
+    "09:00-09:15先看恒生科技、腾讯、阿里、百度、小米，以及中芯国际/华虹半导体竞价强弱；互联网强、半导体制造弱则科技内部偏应用不偏制造。",
+    "09:15-09:25看A股集合竞价：AI硬件核心若高开缩量且后排不跟，不追；若低开后迅速收复并放量，可转为等待确认。",
+    "09:30-10:00只认可放量确认：主题3分钟涨幅、方向占比和成交放大同时出现，再从观察线提高到强线。",
+    "低位补涨优先于高位追涨：AI应用、端侧AI、消费电子低位链若承接强，可作为科技内部切换；高位CPO/存储只做确认不做预设。",
+    "主结论维持等待确认/不追；盘中若核心和宽度共振转强，再更新看板结论。"
+  ],
+  "action_conditions": [
+    "加强：恒生科技竞价强，A股核心股放量承接，后排扩散，成交不萎缩。",
+    "继续等待：核心个股分化、ETF弱于个股、涨停宽度不足或只是一两只高位股表演。",
+    "失效：高开低走、港股半导体制造继续弱、机器人/智能驾驶继续受TSLA拖累、跌停/炸板扩大。"
+  ],
+  "invalidation_conditions": [
+    "2026-09-07 09:15后港股科技竞价未延续，或半导体制造继续压制。",
+    "A股CPO、存储、设备核心不能强于半导体ETF/科创50。",
+    "外盘强势只带来高开，10:00前没有成交与宽度确认。"
+  ],
+  "sources": [
+    "OpenAI GPT-6 Astra safety overview: https://openai.com/index/safety-overview-gpt-6-astra/",
+    "NVIDIA Newsroom archive: https://nvidianews.nvidia.com/news/",
+    "Apple Developer special event notice: https://developer.apple.com/news/?id=s6spdug0",
+    "AMD Newsroom: https://www.amd.com/en/newsroom.html",
+    "Longbridge CLI quotes captured locally at 2026-09-06 21:02 CST",
+    "V2 shadow cockpit snapshot through 2026-09-04 15:05 CST"
+  ],
+  "source_notes": [
+    "Longbridge quote数据用于价格事实，不读取账户、持仓、订单或自选。",
+    "NVIDIA收购Hugging Face条目来自NVIDIA官网新闻归档；短线交易含义仍需后续公告细节和盘面确认。",
+    "周一港股竞价、日韩早盘和A股集合竞价尚未开始，字段保留为空数组或说明。"
+  ],
+  "data_boundary": "不交易、不修改用户资产、不同步同花顺、不改变V1/V2生产状态；仅维护静态看板JSON并发布。",
+  "disclaimer": "这不是投资建议。"
 }
