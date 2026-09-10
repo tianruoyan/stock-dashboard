@@ -145,23 +145,47 @@ def merge_rows(old: list, new: list) -> list:
     return list(merged.values())
 
 
+def usable_saved(row: dict, codes: list, now: datetime) -> bool:
+    try:
+        if row.get("code") not in codes or not row.get("source"):
+            return False
+        at = datetime.fromisoformat(row["quote_time"]).astimezone(TZ)
+        if at > now + timedelta(minutes=2):
+            return False
+        positive(row["close"])
+        if not math.isfinite(float(row["change_pct"])):
+            return False
+        if row["code"] in US:
+            expected = now.date() - timedelta(days=1)
+            while expected.weekday() >= 5:
+                expected -= timedelta(days=1)
+            return at.astimezone(ZoneInfo("America/New_York")).date() == expected
+        return at.date() == now.date() and time(8) <= at.time() <= time(9, 25)
+    except (TypeError, ValueError, KeyError):
+        return False
+
+
 def apply_facts(payload: dict, rows: dict, now: datetime) -> dict:
     output = copy.deepcopy(payload)
     us = output.setdefault("us_overnight", {})
     for field, codes in [("indices", list(US)[:3]), ("tech_stocks", list(US)[3:])]:
-        us[field] = merge_rows(us.get(field) or [], [rows[c] for c in codes if c in rows])
+        kept = [r for r in us.get(field) or [] if isinstance(r, dict) and usable_saved(r, codes, now)]
+        us[field] = merge_rows(kept, [rows[c] for c in codes if c in rows])
     jk = us.get("japan_korea")
     if not isinstance(jk, dict):
         jk = {}
     for field, codes in [("indices", list(ASIA)[:2]), ("stocks", list(ASIA)[2:])]:
-        jk[field] = merge_rows(jk.get(field) or [], [rows[c] for c in codes if c in rows])
+        kept = [r for r in jk.get(field) or [] if isinstance(r, dict) and usable_saved(r, codes, now)]
+        jk[field] = merge_rows(kept, [rows[c] for c in codes if c in rows])
     jk["status"] = "已取得早盘行情" if jk["indices"] else "日韩早盘行情暂未取到，暂不判断对A股的影响。"
     us["japan_korea"] = jk
     if output.get("generation_mode") == "automatic_stage_guard":
         us["conclusion"] = "；".join(f"{r['name']}{r['change_pct']:+.2f}%" for r in us["indices"]) or "隔夜美股行情暂未取到，暂不判断外盘方向。"
         us["reason"] = "以上为行情事实；新闻催化与A股影响需另行核实。"
         us["impact_to_a_share"] = "先对照A股相关板块及代表股的实际涨跌，不能仅凭海外上涨或下跌决定买卖。"
-        output["summary"] = (us["conclusion"] + "。" if us["indices"] else "隔夜美股报价暂缺。") + "日韩早盘见下方；港股竞价报价仍缺，开盘后的港股行情单独展示。"
+        auction = output.get("hk_auction") or {}
+        hk_note = "港股竞价报价仍缺，开盘后的港股行情单独展示。" if not auction.get("indices") and not auction.get("stocks") else "港股盘前记录见下方。"
+        output["summary"] = (us["conclusion"] + "。" if us["indices"] else "隔夜美股报价暂缺。") + "日韩早盘见下方；" + hk_note
         output["strategy"] = [{"action": "等待A股确认", "logic": ["外盘行情用于确定观察方向；是否参与，还要看A股相关板块及代表股是否同步走强。", "缺少港股竞价或A股代表股依据时，不给出买入或加仓结论。"]}]
     hk = output.setdefault("hk_auction", {})
     if not hk.get("indices") and not hk.get("stocks"):

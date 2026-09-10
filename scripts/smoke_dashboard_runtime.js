@@ -328,6 +328,25 @@ async function main() {
     issues.push(issue("critical", "runtime_exception", `${error.name}: ${error.message}`));
   }
 
+  // Regression: data gaps and negated words must not become market facts.
+  if (typeof context.renderPremarket === 'function') {
+    const target = document.getElementById('premarket');
+    const saved = target.innerHTML;
+    const fixture = {timestamp: new Date().toISOString(), market_context: {},
+      hk_auction: {sentiment: '不能判断竞价强弱'},
+      us_overnight: {japan_korea: {indices: [{name: '日经225', change_pct: -1.2, note: '09:25 北京时间'}]}},
+      hk_followup: {indices: [{name: '恒生指数', change_pct: -0.5}]}};
+    context.renderPremarket(fixture);
+    const rendered = target.innerHTML;
+    for (const text of ['日经225', '-1.2%', '港股开盘后补充', '尚未取得集合竞价涨跌停统计']) {
+      if (!rendered.includes(text)) issues.push(issue('critical', 'premarket_external_missing', `盘前回归缺少：${text}`, 'premarket'));
+    }
+    if (rendered.includes('偏进攻') || rendered.includes('涨停 <b>0</b>')) {
+      issues.push(issue('critical', 'premarket_missing_facts_invented', '缺失竞价数据被推断为进攻或零涨跌停', 'premarket'));
+    }
+    target.innerHTML = saved;
+  }
+
   for (const errorText of consoleErrors) {
     if (/optional missing: data\/signal-review\.json/.test(errorText)) continue;
     if (/load failed:\s*data\/signal-review\.json/.test(errorText)) continue;

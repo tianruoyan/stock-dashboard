@@ -4118,6 +4118,9 @@ function renderPremarket(data) {
   let html = "";
   const concisePremarket = typeof data.strategy === "string";
   html += renderPremarketDecision(data);
+  if (data.external_updated_at) {
+    html += `<p class="muted">外盘行情补充：${escapeHtml(String(data.external_updated_at).replace('T', ' ').slice(0, 16))}；各条行情时间见下方，未改写原盘前分析时间。</p>`;
+  }
 
   // === Codex 格式: 集合竞价 + 情绪判断 ===
   if (data.market_context || data.strong_lines || data.watch_lines) {
@@ -4126,7 +4129,11 @@ function renderPremarket(data) {
     if (data.market_context) {
       const mood = (ctx.limit_diff || 0) >= 0 ? 'up' : 'down';
       html += '<div class="subsection"><h3>⚡ 集合竞价情绪</h3>';
-      html += `<div class="breadth">涨停 <b>${ctx.limit_up_count||0}</b> / 跌停 <b>${ctx.limit_down_count||0}</b> · 差值 <span class="${mood}">${ctx.limit_diff||0}</span> · 涨停:跌停 <b>${ctx.limit_ratio||'-'}</b>${ctx.denominator ? `<span class="muted"> (${ctx.denominator})</span>` : ''}</div>`;
+      if (typeof ctx.limit_up_count === 'number' && typeof ctx.limit_down_count === 'number') {
+        html += `<div class="breadth">涨停 <b>${ctx.limit_up_count}</b> / 跌停 <b>${ctx.limit_down_count}</b> · 差值 <span class="${mood}">${ctx.limit_diff ?? ctx.limit_up_count - ctx.limit_down_count}</span> · 涨停:跌停 <b>${ctx.limit_ratio ?? '—'}</b>${ctx.denominator ? `<span class="muted"> (${escapeHtml(ctx.denominator)})</span>` : ''}</div>`;
+      } else {
+        html += '<p class="muted">尚未取得集合竞价涨跌停统计，不能据此判断开盘情绪。</p>';
+      }
       html += '</div>';
     }
     if (ctx.open_style || ctx.sentiment_judgement || ctx.benefit_themes || ctx.risk_points) {
@@ -4157,7 +4164,7 @@ function renderPremarket(data) {
     // 强主线/观察线/风险线 三栏
     if (data.strong_lines || data.watch_lines || data.risk_lines) {
       html += '<div class="subsection"><div class="line-grid">';
-      if (data.strong_lines) {
+      if (data.strong_lines?.length) {
         html += '<div><h3>🔥 强主线</h3>' + renderBulletList(data.strong_lines.slice(0, 3), "news-list strong") + '</div>';
       }
       if (data.watch_lines) {
@@ -4241,7 +4248,7 @@ function renderPremarket(data) {
     html += '<div class="index-row">' + renderIndexRow(data.hk_followup.indices || []) + '</div>';
     html += '<div class="tag-row">' + (data.hk_followup.stocks || []).map(s => `<span class="tag">${escapeHtml(formatMarketTag(s))}</span>`).join(' ') + '</div></div>';
   }
-  if (data.overnight_news && !concisePremarket) {
+  if (data.overnight_news?.length && !concisePremarket) {
     html += '<div class="subsection"><h3>📰 隔夜要闻</h3>';
     html += renderBulletList(data.overnight_news.slice(0, 6).map(n => typeof n === "string" ? n : n.text || n.title || ""), "news-list");
     html += '</div>';
@@ -4391,17 +4398,16 @@ function renderPremarketDecision(data) {
     </div>
     <div class="decision-card action">
       <span class="decision-label">下一步验证</span>
-      <b>${escapeHtml(ctx.limit_up_count == null ? "等9:25数据" : "看竞价强弱")}</b>
+      <b>${escapeHtml(ctx.limit_up_count == null ? "竞价统计未取得，先看盘中实际表现" : "看竞价强弱")}</b>
       <span>${escapeHtml(newsText || verify || "看涨跌停、低开收敛和承接扩散")}</span>
     </div>
   </div>`;
 }
 
 function inferPremarketStyle(data) {
-  const text = [data.summary, data.us_overnight?.conclusion, data.hk_auction?.sentiment].filter(Boolean).join(" ");
-  if (/防御|压制|承压|风险/.test(text)) return "分化偏防御";
-  if (/提振|共振|强/.test(text)) return "偏进攻";
-  if (/中性|分化/.test(text)) return "分化中性";
+  // Rendering is not a model: negations such as “不能判断强弱” are not bullish.
+  // Only explicitly supplied open_style can determine the trading stance.
+  if (typeof data.open_style === 'string') return data.open_style;
   return "";
 }
 
