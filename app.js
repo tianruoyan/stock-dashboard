@@ -4184,6 +4184,9 @@ function renderPremarket(data) {
   // === 旧格式兼容: 美股隔夜 + 要闻 + 策略卡片 ===
   if (data.us_overnight) {
     html += '<div class="subsection"><h3>🇺🇸 隔夜外部环境</h3>';
+    if (data.external_data_notice) {
+      html += `<p class="muted">${escapeHtml(data.external_data_notice)}</p>`;
+    }
     if (data.us_overnight.conclusion) {
       html += renderBulletList(takePremarketPoints(data.us_overnight.conclusion, 4), "premarket-points");
     }
@@ -4193,16 +4196,16 @@ function renderPremarket(data) {
     if (data.us_overnight.reason) {
       html += renderBulletList(takePremarketPoints(data.us_overnight.reason, 3), "premarket-points compact");
     }
-    if (data.us_overnight.tech_stocks) {
+    if (data.us_overnight.tech_stocks?.length) {
       html += '<div class="tag-row">重点科技股：' + data.us_overnight.tech_stocks.map(s => `<span class="tag">${escapeHtml(formatMarketTag(s))}</span>`).join(" ") + '</div>';
     }
     if (data.us_overnight.japan_korea) {
       html += renderJapanKoreaMorning(data.us_overnight.japan_korea);
     }
-    if (data.us_overnight.hot_sectors) {
+    if (data.us_overnight.hot_sectors?.length) {
       html += '<div class="tag-row">热点：' + data.us_overnight.hot_sectors.map(s => `<span class="tag">${escapeHtml(s)}</span>`).join(" ") + '</div>';
     }
-    if (data.us_overnight.weak_sectors) {
+    if (data.us_overnight.weak_sectors?.length) {
       html += '<div class="tag-row">弱势：' + data.us_overnight.weak_sectors.map(s => `<span class="tag">${escapeHtml(s)}</span>`).join(" ") + '</div>';
     }
     if (data.us_overnight.impact_to_a_share) {
@@ -4218,10 +4221,10 @@ function renderPremarket(data) {
     if (data.hk_auction.indices) {
       html += '<div class="index-row">' + renderIndexRow(data.hk_auction.indices) + '</div>';
     }
-    if (data.hk_auction.sectors) {
+    if (data.hk_auction.sectors?.length) {
       html += '<div class="tag-row">板块：' + data.hk_auction.sectors.map(s => `<span class="tag">${escapeHtml(formatMarketTag(s))}</span>`).join(" ") + '</div>';
     }
-    if (data.hk_auction.stocks) {
+    if (data.hk_auction.stocks?.length) {
       html += '<div class="tag-row">代表股：' + data.hk_auction.stocks.slice(0, 6).map(s => `<span class="tag">${escapeHtml(formatMarketTag(s))}</span>`).join(" ") + '</div>';
     }
     if (data.hk_auction.sentiment) {
@@ -4231,6 +4234,12 @@ function renderPremarket(data) {
       html += '<h3>港股映射</h3>' + renderMappingChain(data.hk_auction.mapping_chain);
     }
     html += '</div>';
+  }
+  if (data.hk_followup) {
+    html += '<div class="subsection"><h3>🇭🇰 港股开盘后补充</h3>';
+    html += `<p class="muted">${escapeHtml(data.hk_followup.note || "开盘后行情，不替代盘前竞价记录。")}</p>`;
+    html += '<div class="index-row">' + renderIndexRow(data.hk_followup.indices || []) + '</div>';
+    html += '<div class="tag-row">' + (data.hk_followup.stocks || []).map(s => `<span class="tag">${escapeHtml(formatMarketTag(s))}</span>`).join(' ') + '</div></div>';
   }
   if (data.overnight_news && !concisePremarket) {
     html += '<div class="subsection"><h3>📰 隔夜要闻</h3>';
@@ -4272,6 +4281,10 @@ function renderJapanKoreaMorning(jk) {
       : fallback;
   }
   if (jk && typeof jk === "object") {
+    const rows = [...(Array.isArray(jk.indices) ? jk.indices : []), ...(Array.isArray(jk.stocks) ? jk.stocks : [])];
+    if (rows.length) {
+      return '<h3>日韩早盘</h3><div class="index-row">' + renderIndexRow(rows) + '</div>';
+    }
     const statusText = JSON.stringify(jk);
     if (/降级|未核实|待确认|再确认|乱码|decode|failed|error/i.test(statusText) || hasMojibake(statusText)) {
       return renderJapanKoreaDegraded(jk.pending_confirmation || jk.confirm_list || jk.watch || jk.watch_list);

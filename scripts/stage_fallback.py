@@ -10,6 +10,7 @@ from pathlib import Path
 from typing import Any, Sequence
 
 from update_intraday_market import fetch_indices, fetch_industries, fetch_watchlist_quotes, latest_quote_time
+from premarket_external import refresh as refresh_external
 
 
 TZ = timezone(timedelta(hours=8))
@@ -655,12 +656,16 @@ def execute(
         written = ensure_premarket(root, now, "08:30")
     elif selected == "premarket-0900":
         if not current_payload(read_json(root / "data" / "premarket.json"), day):
-            ensure_premarket(root, now.replace(hour=8, minute=30, second=0, microsecond=0), "08:30")
+            ensure_premarket(root, now, "08:30")
         written = ensure_premarket(root, now, "09:00")
     elif selected == "postmarket-1630":
         written = ensure_postmarket(root, now, v2_environment)
     else:
         raise RuntimeError(f"未知阶段：{selected}")
+
+    if selected.startswith("premarket-"):
+        # A dated skeleton is not collected evidence. Retry independently of stage rank.
+        written = refresh_external(root, now) or written
 
     should_publish = publish and (written or not health_ok(root, selected, day))
     published = False

@@ -105,6 +105,24 @@ def watchlist_payload(day: str = "20260901") -> dict:
 
 
 class StageFallbackTests(unittest.TestCase):
+    def setUp(self) -> None:
+        collector = patch("stage_fallback.refresh_external", return_value=False)
+        self.external = collector.start()
+        self.addCleanup(collector.stop)
+
+    def test_completed_stage_still_checks_external_quotes(self) -> None:
+        tmp, root, calendar = self.make_root()
+        self.addCleanup(tmp.cleanup)
+        now = datetime(2026, 9, 1, 10, 0, tzinfo=TZ)
+        execute(root, now, publish=False, calendar_path=calendar)
+        self.external.reset_mock()
+        self.external.return_value = True
+        result = execute(root, now, publish=False, calendar_path=calendar)
+        self.external.assert_called_once_with(root, now)
+        self.assertTrue(result["written"])
+        payload = read_json(root / "data" / "premarket.json")
+        self.assertEqual(payload["stage_updates"][0]["timestamp"], now.isoformat())
+
     def make_root(self) -> tuple[tempfile.TemporaryDirectory, Path, Path]:
         tmp = tempfile.TemporaryDirectory()
         root = Path(tmp.name)
