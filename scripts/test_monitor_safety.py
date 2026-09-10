@@ -8,6 +8,7 @@ from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from unittest.mock import patch
 import build_automation_health as health
+import build_decision_feed as feed
 from local_http_guard import LocalHTTPGuard
 
 
@@ -17,6 +18,14 @@ class GuardHandler(LocalHTTPGuard, SimpleHTTPRequestHandler):
 
 
 class MonitorSafetyTests(unittest.TestCase):
+    def test_old_weekday_watch_cannot_be_current_opportunity(self):
+        files={'opportunity-watch.json':{'items':[
+            {'theme':'旧线索','source_reason':'周二等待触发'},
+            {'theme':'当日线索','source_reason':'周四等待触发'}]}}
+        titles=[row['title'] for row in feed.build_opportunities(files,'2026-09-10')]
+        self.assertNotIn('待触发：旧线索',titles)
+        self.assertIn('待触发：当日线索',titles)
+
     def test_current_file_is_not_current_analysis(self):
         spec = next(s for s in health.EXPECTED if s['id'] == 'intraday')
         now = datetime(2026, 9, 10, 14, 30, tzinfo=health.TZ)

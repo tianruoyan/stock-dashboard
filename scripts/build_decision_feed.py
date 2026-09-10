@@ -321,6 +321,8 @@ def build_opportunities(files: dict[str, Any], current_date: str) -> list[dict[s
 
     for watch in opportunity_watch_candidates(files):
         text = compact_json(watch)
+        if has_stale_relative_time(text, current_date):
+            continue
         items.append(decision_item(
             title=f"待触发：{watch.get('theme')}",
             item_type="opportunity_watch",
