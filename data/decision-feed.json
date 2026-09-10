@@ -1,9 +1,9 @@
 {
-  "timestamp": "2026-09-10T16:45:37+08:00",
+  "timestamp": "2026-09-10T21:50:39+08:00",
   "current_signal_date": "2026-09-10",
   "quality_gate": {
     "status": "degraded",
-    "summary": "发现 143 个降级/需复核项（140 个价格/行情复核，4 个背景复核），核心结论可看但必须按影响分层使用。",
+    "summary": "发现 141 个降级/需复核项（140 个价格/行情复核，1 个背景复核），核心结论可看但必须按影响分层使用。",
     "decision_flags": [
       "行情/涨跌幅需二次源复核",
       "盘中异动源降级，alert 类信号降权",
@@ -12,9 +12,9 @@
     ],
     "blocking_count": 0,
     "price_review_count": 140,
-    "background_review_count": 4
+    "background_review_count": 1
   },
-  "summary": "16:30兜底已确认当日收盘指数和行业结构；先判断全市场，再映射观察池。 数据质量：发现 143 个降级/需复核项（140 个价格/行情复核，4 个背景复核），核心结论可看但必须按影响分层使用。",
+  "summary": "16:30兜底已确认当日收盘指数和行业结构；先判断全市场，再映射观察池。 数据质量：发现 141 个降级/需复核项（140 个价格/行情复核，1 个背景复核），核心结论可看但必须按影响分层使用。",
   "observation_coverage": {
     "summary": "主动扫描捕捉 6 条：元件与科技硬件 / 电力与厨卫防御轮动 / 元件与科技硬件 / 农渔弱势与医药分化",
     "independent_count": 14,
@@ -35,7 +35,7 @@
     "stance": "风险优先，只做验证",
     "action": "不把候选方向当交易机会；先看风险收敛、数据恢复和核心承接。",
     "reasons": [
-      "发现 143 个降级/需复核项（140 个价格/行情复核，4 个背景复核），核心结论可看但必须按影响分层使用。",
+      "发现 141 个降级/需复核项（140 个价格/行情复核，1 个背景复核），核心结论可看但必须按影响分层使用。",
       "A/B级风险 8 条",
       "风险优先冲突 2 条",
       "可用机会 0 条，降权候选 8 条"
@@ -51,7 +51,6 @@
       "#3 主线变化：AI应用/物理AI：优先看港股互联网和A股软件/AI应用是否强于硬件高位；仅在放量扩散后提高确认度。 数据质量恢复或二次行情源确认前，不升级为可用机会。"
     ],
     "verification_focus": [
-      "核心股低开后放量收复开盘价或跌幅明显收敛",
       "题材3分钟涨跌幅>=1.5%，方向占比>=70%，成交放大>=5x"
     ],
     "quality_actions": [
@@ -405,23 +404,22 @@
       "upgrade_condition": "只观察元件封板与PCB、CPO、交换机能否同步，不按单一分支追涨。 补齐涨停/封板数量、成交放大和尾盘承接证据。 至少2-3只核心股强于板块ETF或指数。 数据质量恢复或二次行情源确认前，不升级为可用机会。"
     },
     {
-      "title": "待触发：半导体设备材料",
+      "title": "待触发：交换机/高速以太网",
       "type": "opportunity_watch",
       "trigger_reason": "盘前/晚间注意点已转为盘中追踪清单，等待实时行情触发。",
-      "conclusion": "半导体设备材料；制造端压制/等待修复；外盘芯片强但港股制造端上周五弱、A股设备材料代表多跌，短线仍偏等待。；北方华创、中微公司、华海清科至少两至三只强于ETF，并且中芯/华虹不继续拖累后再提高确认度。",
+      "conclusion": "美国PPI与欧洲央行加息叠加，美股科技开盘承压，9月11日A股科技竞价先风控；美国劳工统计局公布8月最终需求PPI环比上涨0.4%、同比上涨5.4%，剔除食品、能源和贸易服务后环比上涨0.3%、同比上涨4.7%；欧洲央行同日将三项关键利率上调25个基点。21:43腾讯行情显示纳斯达克指数跌0.78%、纳指100ETF…",
       "confidence": "low",
       "evidence": [],
       "source_files": [
         "opportunity-watch.json"
       ],
       "watch_next": [
-        "核心股低开后放量收复开盘价或跌幅明显收敛",
-        "同题材后排不再扩大负反馈，跌停/炸板数量下降",
-        "板块ETF或指数不再创新低并出现承接"
+        "题材3分钟涨跌幅>=1.5%，方向占比>=70%，成交放大>=5x",
+        "板块内出现批量涨停/封板或后排扩散",
+        "核心股、ETF、后排扩散同向确认"
       ],
-      "invalidation": "核心股继续放量下跌",
+      "invalidation": "核心股高开低走或冲高回落",
       "tags": [
-        "科技硬件链",
         "风控"
       ],
       "quality_flags": [
@@ -437,7 +435,7 @@
         "缺少可核验证据",
         "数据源降级需二次确认"
       ],
-      "next_action": "核心股低开后放量收复开盘价或跌幅明显收敛",
+      "next_action": "题材3分钟涨跌幅>=1.5%，方向占比>=70%，成交放大>=5x",
       "observation_source": "数据派生",
       "independent_observation": false,
       "signal_score": 12,
@@ -452,13 +450,13 @@
       ],
       "upgrade_rank": 6,
       "upgrade_priority": "仅复核",
-      "upgrade_condition": "核心股低开后放量收复开盘价或跌幅明显收敛。 数据质量恢复或二次行情源确认前，不升级为可用机会。"
+      "upgrade_condition": "题材3分钟涨跌幅>=1.5%，方向占比>=70%，成交放大>=5x。 数据质量恢复或二次行情源确认前，不升级为可用机会。"
     },
     {
-      "title": "待触发：AI算力",
+      "title": "待触发：半导体设备",
       "type": "opportunity_watch",
       "trigger_reason": "盘前/晚间注意点已转为盘中追踪清单，等待实时行情触发。",
-      "conclusion": "AI数据中心硬件；外盘强/A股等待承接；SOXX、SMH、AMD、MRVL、MU周五强势提高映射，但A股上周五硬件高位分化，主线只可等待确认。；周一先看工业富联、寒武纪、海光信息、浪潮信息与科创50/半导体ETF是否同步放量；高开缩量不追。；消费电子/端侧AI；Apple事件窗口/兑现压力并存；Apple 9月9日特别活动临近，NVIDIA本地AI推理消息…",
+      "conclusion": "美国PPI与欧洲央行加息叠加，美股科技开盘承压，9月11日A股科技竞价先风控；美国劳工统计局公布8月最终需求PPI环比上涨0.4%、同比上涨5.4%，剔除食品、能源和贸易服务后环比上涨0.3%、同比上涨4.7%；欧洲央行同日将三项关键利率上调25个基点。21:43腾讯行情显示纳斯达克指数跌0.78%、纳指100ETF…",
       "confidence": "low",
       "evidence": [],
       "source_files": [
@@ -467,8 +465,7 @@
       "watch_next": [
         "题材3分钟涨跌幅>=1.5%，方向占比>=70%，成交放大>=5x",
         "板块内出现批量涨停/封板或后排扩散",
-        "核心股、ETF、后排扩散同向确认",
-        "核心股低开后放量收复开盘价或跌幅明显收敛"
+        "核心股、ETF、后排扩散同向确认"
       ],
       "invalidation": "核心股高开低走或冲高回落",
       "tags": [
@@ -506,23 +503,23 @@
       "upgrade_condition": "题材3分钟涨跌幅>=1.5%，方向占比>=70%，成交放大>=5x。 数据质量恢复或二次行情源确认前，不升级为可用机会。"
     },
     {
-      "title": "待触发：创新药/CRO",
+      "title": "待触发：PCB/电子布",
       "type": "opportunity_watch",
       "trigger_reason": "盘前/晚间注意点已转为盘中追踪清单，等待实时行情触发。",
-      "conclusion": "创新药/CRO；收盘强弱对立/修复未确认；2026-09-10收盘医药内部强弱对立：津药药业与百迈科涨停，永安药业与千金药业跌停；医药ETF易方达-1.34%、创新药ETF广发-1.76%、港股通创新药ETF汇添富-2.52%，修复未确认。；次日不预设加码；先看永安药业、千金药业跌停能否打开，再看医药与创新药ETF能否同…",
+      "conclusion": "美国PPI与欧洲央行加息叠加，美股科技开盘承压，9月11日A股科技竞价先风控；美国劳工统计局公布8月最终需求PPI环比上涨0.4%、同比上涨5.4%，剔除食品、能源和贸易服务后环比上涨0.3%、同比上涨4.7%；欧洲央行同日将三项关键利率上调25个基点。21:43腾讯行情显示纳斯达克指数跌0.78%、纳指100ETF…",
       "confidence": "low",
       "evidence": [],
       "source_files": [
         "opportunity-watch.json"
       ],
       "watch_next": [
-        "核心股低开后放量收复开盘价或跌幅明显收敛",
-        "同题材后排不再扩大负反馈，跌停/炸板数量下降",
-        "板块ETF或指数不再创新低并出现承接"
+        "题材3分钟涨跌幅>=1.5%，方向占比>=70%，成交放大>=5x",
+        "板块内出现批量涨停/封板或后排扩散",
+        "核心股、ETF、后排扩散同向确认"
       ],
-      "invalidation": "核心股继续放量下跌",
+      "invalidation": "核心股高开低走或冲高回落",
       "tags": [
-        "创新药/CRO",
+        "科技硬件链",
         "风控"
       ],
       "quality_flags": [
@@ -538,7 +535,7 @@
         "缺少可核验证据",
         "数据源降级需二次确认"
       ],
-      "next_action": "核心股低开后放量收复开盘价或跌幅明显收敛",
+      "next_action": "题材3分钟涨跌幅>=1.5%，方向占比>=70%，成交放大>=5x",
       "observation_source": "数据派生",
       "independent_observation": false,
       "signal_score": 12,
@@ -553,7 +550,7 @@
       ],
       "upgrade_rank": 8,
       "upgrade_priority": "仅复核",
-      "upgrade_condition": "核心股低开后放量收复开盘价或跌幅明显收敛。 数据质量恢复或二次行情源确认前，不升级为可用机会。"
+      "upgrade_condition": "题材3分钟涨跌幅>=1.5%，方向占比>=70%，成交放大>=5x。 数据质量恢复或二次行情源确认前，不升级为可用机会。"
     }
   ],
   "risks": [
@@ -561,7 +558,7 @@
       "title": "数据质量降级",
       "type": "data_quality",
       "trigger_reason": "风控兜底触发：市场宽度、数据质量或回撤条件触发风险优先。",
-      "conclusion": "发现 143 个降级/需复核项（140 个价格/行情复核，4 个背景复核），核心结论可看但必须按影响分层使用。",
+      "conclusion": "发现 141 个降级/需复核项（140 个价格/行情复核，1 个背景复核），核心结论可看但必须按影响分层使用。",
       "confidence": "high",
       "evidence": [
         "时间戳不是当前交易日：2026-08-28T09:43:29+08:00",
@@ -891,6 +888,169 @@
   ],
   "verifications": [
     {
+      "title": "盘中追踪：交换机/高速以太网",
+      "type": "opportunity_watch",
+      "trigger_reason": "盘前/晚间注意点已转为盘中追踪清单，等待实时行情触发。",
+      "conclusion": "美国PPI与欧洲央行加息叠加，美股科技开盘承压，9月11日A股科技竞价先风控；美国劳工统计局公布8月最终需求PPI环比上涨0.4%、同比上涨5.4%，剔除食品、能源和贸易服务后环比上涨0.3%、同比上涨4.7%；欧洲央行同日将三项关键利率上调25个基点。21:43腾讯行情显示纳斯达克指数跌0.78…",
+      "confidence": "low",
+      "evidence": [],
+      "source_files": [
+        "opportunity-watch.json"
+      ],
+      "watch_next": [
+        "题材3分钟涨跌幅>=1.5%，方向占比>=70%，成交放大>=5x",
+        "板块内出现批量涨停/封板或后排扩散",
+        "核心股、ETF、后排扩散同向确认"
+      ],
+      "invalidation": "核心股高开低走或冲高回落",
+      "tags": [
+        "风控"
+      ],
+      "quality_flags": [],
+      "tone": "neutral",
+      "discovery_type": "premarket_watch_queue",
+      "evidence_score": 28,
+      "missing_evidence": [
+        "缺少可核验证据"
+      ],
+      "next_action": "题材3分钟涨跌幅>=1.5%，方向占比>=70%，成交放大>=5x",
+      "observation_source": "数据派生",
+      "independent_observation": false,
+      "signal_score": 47,
+      "signal_grade": "D",
+      "use_action": "仅复核",
+      "use_reasons": [
+        "缺少证据",
+        "有下一步验证",
+        "有证伪条件",
+        "有来源文件",
+        "有证据缺口"
+      ]
+    },
+    {
+      "title": "盘中追踪：半导体设备",
+      "type": "opportunity_watch",
+      "trigger_reason": "盘前/晚间注意点已转为盘中追踪清单，等待实时行情触发。",
+      "conclusion": "美国PPI与欧洲央行加息叠加，美股科技开盘承压，9月11日A股科技竞价先风控；美国劳工统计局公布8月最终需求PPI环比上涨0.4%、同比上涨5.4%，剔除食品、能源和贸易服务后环比上涨0.3%、同比上涨4.7%；欧洲央行同日将三项关键利率上调25个基点。21:43腾讯行情显示纳斯达克指数跌0.78…",
+      "confidence": "low",
+      "evidence": [],
+      "source_files": [
+        "opportunity-watch.json"
+      ],
+      "watch_next": [
+        "题材3分钟涨跌幅>=1.5%，方向占比>=70%，成交放大>=5x",
+        "板块内出现批量涨停/封板或后排扩散",
+        "核心股、ETF、后排扩散同向确认"
+      ],
+      "invalidation": "核心股高开低走或冲高回落",
+      "tags": [
+        "科技硬件链",
+        "风控"
+      ],
+      "quality_flags": [],
+      "tone": "neutral",
+      "discovery_type": "premarket_watch_queue",
+      "evidence_score": 28,
+      "missing_evidence": [
+        "缺少可核验证据"
+      ],
+      "next_action": "题材3分钟涨跌幅>=1.5%，方向占比>=70%，成交放大>=5x",
+      "observation_source": "数据派生",
+      "independent_observation": false,
+      "signal_score": 47,
+      "signal_grade": "D",
+      "use_action": "仅复核",
+      "use_reasons": [
+        "缺少证据",
+        "有下一步验证",
+        "有证伪条件",
+        "有来源文件",
+        "有证据缺口"
+      ]
+    },
+    {
+      "title": "盘中追踪：PCB/电子布",
+      "type": "opportunity_watch",
+      "trigger_reason": "盘前/晚间注意点已转为盘中追踪清单，等待实时行情触发。",
+      "conclusion": "美国PPI与欧洲央行加息叠加，美股科技开盘承压，9月11日A股科技竞价先风控；美国劳工统计局公布8月最终需求PPI环比上涨0.4%、同比上涨5.4%，剔除食品、能源和贸易服务后环比上涨0.3%、同比上涨4.7%；欧洲央行同日将三项关键利率上调25个基点。21:43腾讯行情显示纳斯达克指数跌0.78…",
+      "confidence": "low",
+      "evidence": [],
+      "source_files": [
+        "opportunity-watch.json"
+      ],
+      "watch_next": [
+        "题材3分钟涨跌幅>=1.5%，方向占比>=70%，成交放大>=5x",
+        "板块内出现批量涨停/封板或后排扩散",
+        "核心股、ETF、后排扩散同向确认"
+      ],
+      "invalidation": "核心股高开低走或冲高回落",
+      "tags": [
+        "科技硬件链",
+        "风控"
+      ],
+      "quality_flags": [],
+      "tone": "neutral",
+      "discovery_type": "premarket_watch_queue",
+      "evidence_score": 28,
+      "missing_evidence": [
+        "缺少可核验证据"
+      ],
+      "next_action": "题材3分钟涨跌幅>=1.5%，方向占比>=70%，成交放大>=5x",
+      "observation_source": "数据派生",
+      "independent_observation": false,
+      "signal_score": 47,
+      "signal_grade": "D",
+      "use_action": "仅复核",
+      "use_reasons": [
+        "缺少证据",
+        "有下一步验证",
+        "有证伪条件",
+        "有来源文件",
+        "有证据缺口"
+      ]
+    },
+    {
+      "title": "盘中追踪：金融/消费防御",
+      "type": "opportunity_watch",
+      "trigger_reason": "盘前/晚间注意点已转为盘中追踪清单，等待实时行情触发。",
+      "conclusion": "美国PPI与欧洲央行加息叠加，美股科技开盘承压，9月11日A股科技竞价先风控；美国劳工统计局公布8月最终需求PPI环比上涨0.4%、同比上涨5.4%，剔除食品、能源和贸易服务后环比上涨0.3%、同比上涨4.7%；欧洲央行同日将三项关键利率上调25个基点。21:43腾讯行情显示纳斯达克指数跌0.78…",
+      "confidence": "low",
+      "evidence": [],
+      "source_files": [
+        "opportunity-watch.json"
+      ],
+      "watch_next": [
+        "券商+保险或畜牧+白酒至少两个方向同步放量走强",
+        "科技主线或科创50走弱时老登板块对指数形成贡献",
+        "涨停/成交额向金融、消费防御或资源权重扩散"
+      ],
+      "invalidation": "核心股高开低走或冲高回落",
+      "tags": [
+        "金融/消费防御",
+        "风控"
+      ],
+      "quality_flags": [],
+      "tone": "neutral",
+      "discovery_type": "premarket_watch_queue",
+      "evidence_score": 28,
+      "missing_evidence": [
+        "缺少可核验证据"
+      ],
+      "next_action": "券商+保险或畜牧+白酒至少两个方向同步放量走强",
+      "observation_source": "数据派生",
+      "independent_observation": false,
+      "signal_score": 47,
+      "signal_grade": "D",
+      "use_action": "仅复核",
+      "use_reasons": [
+        "缺少证据",
+        "有下一步验证",
+        "有证伪条件",
+        "有来源文件",
+        "有证据缺口"
+      ]
+    },
+    {
       "title": "盘中追踪：半导体设备材料",
       "type": "opportunity_watch",
       "trigger_reason": "盘前/晚间注意点已转为盘中追踪清单，等待实时行情触发。",
@@ -932,48 +1092,6 @@
       ]
     },
     {
-      "title": "盘中追踪：AI算力",
-      "type": "opportunity_watch",
-      "trigger_reason": "盘前/晚间注意点已转为盘中追踪清单，等待实时行情触发。",
-      "conclusion": "AI数据中心硬件；外盘强/A股等待承接；SOXX、SMH、AMD、MRVL、MU周五强势提高映射，但A股上周五硬件高位分化，主线只可等待确认。；周一先看工业富联、寒武纪、海光信息、浪潮信息与科创50/半导体ETF是否同步放量；高开缩量不追。；消费电子/端侧AI；Apple事件窗口/兑现压力并存；A…",
-      "confidence": "low",
-      "evidence": [],
-      "source_files": [
-        "opportunity-watch.json"
-      ],
-      "watch_next": [
-        "题材3分钟涨跌幅>=1.5%，方向占比>=70%，成交放大>=5x",
-        "板块内出现批量涨停/封板或后排扩散",
-        "核心股、ETF、后排扩散同向确认",
-        "核心股低开后放量收复开盘价或跌幅明显收敛"
-      ],
-      "invalidation": "核心股高开低走或冲高回落",
-      "tags": [
-        "科技硬件链",
-        "风控"
-      ],
-      "quality_flags": [],
-      "tone": "neutral",
-      "discovery_type": "premarket_watch_queue",
-      "evidence_score": 28,
-      "missing_evidence": [
-        "缺少可核验证据"
-      ],
-      "next_action": "题材3分钟涨跌幅>=1.5%，方向占比>=70%，成交放大>=5x",
-      "observation_source": "数据派生",
-      "independent_observation": false,
-      "signal_score": 47,
-      "signal_grade": "D",
-      "use_action": "仅复核",
-      "use_reasons": [
-        "缺少证据",
-        "有下一步验证",
-        "有证伪条件",
-        "有来源文件",
-        "有证据缺口"
-      ]
-    },
-    {
       "title": "盘中追踪：创新药/CRO",
       "type": "opportunity_watch",
       "trigger_reason": "盘前/晚间注意点已转为盘中追踪清单，等待实时行情触发。",
@@ -1001,132 +1119,6 @@
         "缺少可核验证据"
       ],
       "next_action": "核心股低开后放量收复开盘价或跌幅明显收敛",
-      "observation_source": "数据派生",
-      "independent_observation": false,
-      "signal_score": 47,
-      "signal_grade": "D",
-      "use_action": "仅复核",
-      "use_reasons": [
-        "缺少证据",
-        "有下一步验证",
-        "有证伪条件",
-        "有来源文件",
-        "有证据缺口"
-      ]
-    },
-    {
-      "title": "盘中追踪：存储/HBM",
-      "type": "opportunity_watch",
-      "trigger_reason": "盘前/晚间注意点已转为盘中追踪清单，等待实时行情触发。",
-      "conclusion": "江波龙H股定价较A股收盘显著折价，9月7日竞价防存储链估值扰动；江波龙是本地存储专题核心代表。公司9月4日收盘后公告H股最终发行价236港元、预计9月8日上市；按20:05可核验汇率简单折算约201.92元，较A股当日347.00元收盘价低约41.81%。A/H市场结构和流动性不同，不能机械推导A…",
-      "confidence": "low",
-      "evidence": [],
-      "source_files": [
-        "opportunity-watch.json"
-      ],
-      "watch_next": [
-        "题材3分钟涨跌幅>=1.5%，方向占比>=70%，成交放大>=5x",
-        "板块内出现批量涨停/封板或后排扩散",
-        "核心股、ETF、后排扩散同向确认",
-        "核心股低开后放量收复开盘价或跌幅明显收敛"
-      ],
-      "invalidation": "核心股高开低走或冲高回落",
-      "tags": [
-        "科技硬件链",
-        "风控"
-      ],
-      "quality_flags": [],
-      "tone": "neutral",
-      "discovery_type": "premarket_watch_queue",
-      "evidence_score": 28,
-      "missing_evidence": [
-        "缺少可核验证据"
-      ],
-      "next_action": "题材3分钟涨跌幅>=1.5%，方向占比>=70%，成交放大>=5x",
-      "observation_source": "数据派生",
-      "independent_observation": false,
-      "signal_score": 47,
-      "signal_grade": "D",
-      "use_action": "仅复核",
-      "use_reasons": [
-        "缺少证据",
-        "有下一步验证",
-        "有证伪条件",
-        "有来源文件",
-        "有证据缺口"
-      ]
-    },
-    {
-      "title": "盘中追踪：CPO/光模块",
-      "type": "opportunity_watch",
-      "trigger_reason": "盘前/晚间注意点已转为盘中追踪清单，等待实时行情触发。",
-      "conclusion": "美国8月非农显著超预期，利率重估可能放大科技成长波动；美国8月非农就业增加16.2万人，显著高于道琼斯一致预期5.3万人，失业率4.1%符合预期。强就业可能降低宽松预期并推升利率敏感资产波动；20:33标普500期货约跌0.24%、纽约黄金约跌2.48%，但美股尚未正式开盘，方向仍需后续价格确认。…",
-      "confidence": "low",
-      "evidence": [],
-      "source_files": [
-        "opportunity-watch.json"
-      ],
-      "watch_next": [
-        "题材3分钟涨跌幅>=1.5%，方向占比>=70%，成交放大>=5x",
-        "板块内出现批量涨停/封板或后排扩散",
-        "核心股、ETF、后排扩散同向确认",
-        "核心股低开后放量收复开盘价或跌幅明显收敛"
-      ],
-      "invalidation": "核心股高开低走或冲高回落",
-      "tags": [
-        "科技硬件链",
-        "风控"
-      ],
-      "quality_flags": [],
-      "tone": "neutral",
-      "discovery_type": "premarket_watch_queue",
-      "evidence_score": 28,
-      "missing_evidence": [
-        "缺少可核验证据"
-      ],
-      "next_action": "题材3分钟涨跌幅>=1.5%，方向占比>=70%，成交放大>=5x",
-      "observation_source": "数据派生",
-      "independent_observation": false,
-      "signal_score": 47,
-      "signal_grade": "D",
-      "use_action": "仅复核",
-      "use_reasons": [
-        "缺少证据",
-        "有下一步验证",
-        "有证伪条件",
-        "有来源文件",
-        "有证据缺口"
-      ]
-    },
-    {
-      "title": "盘中追踪：机器人/工业自动化",
-      "type": "opportunity_watch",
-      "trigger_reason": "盘前/晚间注意点已转为盘中追踪清单，等待实时行情触发。",
-      "conclusion": "机器人/工业自动化；收盘分化/主线未确认；2026-09-10收盘机械设备与机器人未进入可核验行业涨幅前排；结构池中专用设备大连重工涨停、通用设备宏盛股份跌停，低位装备内部对立，机器人/工业自动化主线未确认。；次日仅观察机器人行业宽度与减速器、伺服、控制器代表股；至少3只核心同步转强且专用、通用设…",
-      "confidence": "low",
-      "evidence": [],
-      "source_files": [
-        "opportunity-watch.json"
-      ],
-      "watch_next": [
-        "题材3分钟涨跌幅>=1.5%，方向占比>=70%，成交放大>=5x",
-        "板块内出现批量涨停/封板或后排扩散",
-        "核心股、ETF、后排扩散同向确认"
-      ],
-      "invalidation": "核心股高开低走或冲高回落",
-      "tags": [
-        "科技硬件链",
-        "机器人/工业自动化",
-        "风控"
-      ],
-      "quality_flags": [],
-      "tone": "neutral",
-      "discovery_type": "premarket_watch_queue",
-      "evidence_score": 28,
-      "missing_evidence": [
-        "缺少可核验证据"
-      ],
-      "next_action": "题材3分钟涨跌幅>=1.5%，方向占比>=70%，成交放大>=5x",
       "observation_source": "数据派生",
       "independent_observation": false,
       "signal_score": 47,
