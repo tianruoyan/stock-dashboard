@@ -7,8 +7,16 @@
   "phase": "09:00盘前增量更新",
   "status": "waiting_preopen_validation",
   "data_status": "waiting_validation_0900",
-  "summary": "09:00已在08:30版本上完成增量更新时间；港股竞价与A股集合竞价仍须以当日实时报价验证，未取得事实的字段继续等待，不沿用旧值。",
-  "strategy": "事实：当前仅确认当日为A股交易日，港股与A股竞价事实等待实时行情验证。\n\n推断：竞价数据到位前不预设进攻、分化或防御风格。\n\n行动：09:00增量复核港股盘前状态，09:15后再核验A股集合竞价。",
+  "summary": "道琼斯-0.77%；标普500-0.48%；纳斯达克-0.64%。日韩早盘见下方；港股竞价报价仍缺，开盘后的港股行情单独展示。",
+  "strategy": [
+    {
+      "action": "等待A股确认",
+      "logic": [
+        "外盘行情用于确定观察方向；是否参与，还要看A股相关板块及代表股是否同步走强。",
+        "缺少港股竞价或A股代表股依据时，不给出买入或加仓结论。"
+      ]
+    }
+  ],
   "market_context": {
     "as_of": "2026-09-10T08:43:12+08:00",
     "status": "waiting_preopen_validation",
@@ -20,17 +28,157 @@
   },
   "us_overnight": {
     "status": "等待外部市场事实核验",
-    "indices": [],
-    "tech_stocks": [],
+    "indices": [
+      {
+        "code": "usDJI",
+        "name": "道琼斯",
+        "close": 52380.66,
+        "previous_close": 52786.07,
+        "change_pct": -0.77,
+        "quote_time": "2026-09-10T04:43:19+08:00",
+        "collected_at": "2026-09-10T10:27:14+08:00",
+        "available_at": "2026-09-10T10:27:14+08:00",
+        "source": "腾讯财经",
+        "source_url": "https://qt.gtimg.cn/q=usDJI",
+        "note": "09-10 04:43 北京时间 · 腾讯财经",
+        "status": "09-10 04:43 北京时间 · 腾讯财经"
+      },
+      {
+        "code": "usINX",
+        "name": "标普500",
+        "close": 7636.36,
+        "previous_close": 7673.52,
+        "change_pct": -0.48,
+        "quote_time": "2026-09-10T04:43:19+08:00",
+        "collected_at": "2026-09-10T10:27:14+08:00",
+        "available_at": "2026-09-10T10:27:14+08:00",
+        "source": "腾讯财经",
+        "source_url": "https://qt.gtimg.cn/q=usINX",
+        "note": "09-10 04:43 北京时间 · 腾讯财经",
+        "status": "09-10 04:43 北京时间 · 腾讯财经"
+      },
+      {
+        "code": "usIXIC",
+        "name": "纳斯达克",
+        "close": 26253.34,
+        "previous_close": 26421.41,
+        "change_pct": -0.64,
+        "quote_time": "2026-09-10T05:15:59+08:00",
+        "collected_at": "2026-09-10T10:27:14+08:00",
+        "available_at": "2026-09-10T10:27:14+08:00",
+        "source": "腾讯财经",
+        "source_url": "https://qt.gtimg.cn/q=usIXIC",
+        "note": "09-10 05:15 北京时间 · 腾讯财经",
+        "status": "09-10 05:15 北京时间 · 腾讯财经"
+      }
+    ],
+    "tech_stocks": [
+      {
+        "code": "usNVDA",
+        "name": "英伟达",
+        "close": 223.67,
+        "previous_close": 225.73,
+        "change_pct": -0.91,
+        "quote_time": "2026-09-10T04:00:01+08:00",
+        "collected_at": "2026-09-10T10:27:14+08:00",
+        "available_at": "2026-09-10T10:27:14+08:00",
+        "source": "腾讯财经",
+        "source_url": "https://qt.gtimg.cn/q=usNVDA",
+        "note": "09-10 04:00 北京时间 · 腾讯财经",
+        "status": "09-10 04:00 北京时间 · 腾讯财经"
+      },
+      {
+        "code": "usMU",
+        "name": "美光科技",
+        "close": 1027.77,
+        "previous_close": 1000.26,
+        "change_pct": 2.75,
+        "quote_time": "2026-09-10T04:00:01+08:00",
+        "collected_at": "2026-09-10T10:27:14+08:00",
+        "available_at": "2026-09-10T10:27:14+08:00",
+        "source": "腾讯财经",
+        "source_url": "https://qt.gtimg.cn/q=usMU",
+        "note": "09-10 04:00 北京时间 · 腾讯财经",
+        "status": "09-10 04:00 北京时间 · 腾讯财经"
+      }
+    ],
     "japan_korea": {
-      "status": "等待实时行情验证",
-      "indices": [],
-      "stocks": [],
+      "status": "已取得早盘行情",
+      "indices": [
+        {
+          "code": "^N225",
+          "name": "日经225",
+          "close": 64383.7812,
+          "previous_close": 65142.78,
+          "change_pct": -1.17,
+          "quote_time": "2026-09-10T09:25:00+08:00",
+          "bar_start": "2026-09-10T09:24:00+08:00",
+          "collected_at": "2026-09-10T10:27:14+08:00",
+          "available_at": "2026-09-10T10:27:14+08:00",
+          "historical_backfill": true,
+          "source": "雅虎财经",
+          "source_url": "https://finance.yahoo.com/quote/%5EN225/",
+          "note": "09-10 09:25 北京时间 · 雅虎财经 · 10:27补采，不作为当时已知信息",
+          "status": "09-10 09:25 北京时间 · 雅虎财经 · 10:27补采，不作为当时已知信息"
+        },
+        {
+          "code": "^KS11",
+          "name": "韩国KOSPI",
+          "close": 6917.1201,
+          "previous_close": 7051.64,
+          "change_pct": -1.91,
+          "quote_time": "2026-09-10T09:25:00+08:00",
+          "bar_start": "2026-09-10T09:24:00+08:00",
+          "collected_at": "2026-09-10T10:27:14+08:00",
+          "available_at": "2026-09-10T10:27:14+08:00",
+          "historical_backfill": true,
+          "source": "雅虎财经",
+          "source_url": "https://finance.yahoo.com/quote/%5EKS11/",
+          "note": "09-10 09:25 北京时间 · 雅虎财经 · 10:27补采，不作为当时已知信息",
+          "status": "09-10 09:25 北京时间 · 雅虎财经 · 10:27补采，不作为当时已知信息"
+        }
+      ],
+      "stocks": [
+        {
+          "code": "005930.KS",
+          "name": "三星电子",
+          "close": 264250.0,
+          "previous_close": 269500.0,
+          "change_pct": -1.95,
+          "quote_time": "2026-09-10T09:25:00+08:00",
+          "bar_start": "2026-09-10T09:24:00+08:00",
+          "collected_at": "2026-09-10T10:27:14+08:00",
+          "available_at": "2026-09-10T10:27:14+08:00",
+          "historical_backfill": true,
+          "source": "雅虎财经",
+          "source_url": "https://finance.yahoo.com/quote/005930.KS/",
+          "note": "09-10 09:25 北京时间 · 雅虎财经 · 10:27补采，不作为当时已知信息",
+          "status": "09-10 09:25 北京时间 · 雅虎财经 · 10:27补采，不作为当时已知信息"
+        },
+        {
+          "code": "000660.KS",
+          "name": "SK海力士",
+          "close": 1820000.0,
+          "previous_close": 1856000.0,
+          "change_pct": -1.94,
+          "quote_time": "2026-09-10T09:25:00+08:00",
+          "bar_start": "2026-09-10T09:24:00+08:00",
+          "collected_at": "2026-09-10T10:27:14+08:00",
+          "available_at": "2026-09-10T10:27:14+08:00",
+          "historical_backfill": true,
+          "source": "雅虎财经",
+          "source_url": "https://finance.yahoo.com/quote/000660.KS/",
+          "note": "09-10 09:25 北京时间 · 雅虎财经 · 10:27补采，不作为当时已知信息",
+          "status": "09-10 09:25 北京时间 · 雅虎财经 · 10:27补采，不作为当时已知信息"
+        }
+      ],
       "note": "未取得本轮可核验报价，不沿用旧值。"
     },
     "hot_sectors": [],
     "weak_sectors": [],
-    "conclusion": "外部市场映射等待验证。"
+    "conclusion": "道琼斯-0.77%；标普500-0.48%；纳斯达克-0.64%",
+    "reason": "以上为行情事实；新闻催化与A股影响需另行核实。",
+    "impact_to_a_share": "先对照A股相关板块及代表股的实际涨跌，不能仅凭海外上涨或下跌决定买卖。"
   },
   "hk_auction": {
     "window": "09:00",
@@ -38,7 +186,7 @@
     "indices": [],
     "sectors": [],
     "stocks": [],
-    "sentiment": "09:00港股盘前窗口已到，尚无本轮可核验竞价报价；等待验证。"
+    "sentiment": "当前公开行情接口不提供可核验的港股竞价参考价，不能判断竞价强弱。已过盘前时段；下方开盘后行情不替代早上的竞价记录。"
   },
   "overnight_news": [],
   "a_share_mapping": [],
@@ -79,5 +227,70 @@
     }
   ],
   "generation_mode": "automatic_stage_guard",
-  "data_boundary": "不交易、不修改用户资产、不改变V2生产状态；未开始或未取得报价的市场明确写等待验证。"
+  "data_boundary": "不交易、不修改用户资产、不改变V2生产状态；未开始或未取得报价的市场明确写等待验证。",
+  "hk_followup": {
+    "indices": [
+      {
+        "code": "hkHSI",
+        "name": "恒生指数",
+        "close": 24947.81,
+        "previous_close": 25274.96,
+        "change_pct": -1.29,
+        "quote_time": "2026-09-10T10:12:12+08:00",
+        "collected_at": "2026-09-10T10:27:14+08:00",
+        "available_at": "2026-09-10T10:27:14+08:00",
+        "source": "腾讯财经",
+        "source_url": "https://qt.gtimg.cn/q=hkHSI",
+        "note": "09-10 10:12 北京时间 · 腾讯财经 · 延时报价",
+        "status": "09-10 10:12 北京时间 · 腾讯财经 · 延时报价"
+      },
+      {
+        "code": "hkHSTECH",
+        "name": "恒生科技",
+        "close": 4328.93,
+        "previous_close": 4420.79,
+        "change_pct": -2.08,
+        "quote_time": "2026-09-10T10:12:12+08:00",
+        "collected_at": "2026-09-10T10:27:14+08:00",
+        "available_at": "2026-09-10T10:27:14+08:00",
+        "source": "腾讯财经",
+        "source_url": "https://qt.gtimg.cn/q=hkHSTECH",
+        "note": "09-10 10:12 北京时间 · 腾讯财经 · 延时报价",
+        "status": "09-10 10:12 北京时间 · 腾讯财经 · 延时报价"
+      }
+    ],
+    "stocks": [
+      {
+        "code": "hk00700",
+        "name": "腾讯控股",
+        "close": 428.2,
+        "previous_close": 434.0,
+        "change_pct": -1.34,
+        "quote_time": "2026-09-10T10:12:05+08:00",
+        "collected_at": "2026-09-10T10:27:14+08:00",
+        "available_at": "2026-09-10T10:27:14+08:00",
+        "source": "腾讯财经",
+        "source_url": "https://qt.gtimg.cn/q=hk00700",
+        "note": "09-10 10:12 北京时间 · 腾讯财经 · 延时报价",
+        "status": "09-10 10:12 北京时间 · 腾讯财经 · 延时报价"
+      },
+      {
+        "code": "hk00981",
+        "name": "中芯国际",
+        "close": 63.75,
+        "previous_close": 65.0,
+        "change_pct": -1.92,
+        "quote_time": "2026-09-10T10:12:06+08:00",
+        "collected_at": "2026-09-10T10:27:14+08:00",
+        "available_at": "2026-09-10T10:27:14+08:00",
+        "source": "腾讯财经",
+        "source_url": "https://qt.gtimg.cn/q=hk00981",
+        "note": "09-10 10:12 北京时间 · 腾讯财经 · 延时报价",
+        "status": "09-10 10:12 北京时间 · 腾讯财经 · 延时报价"
+      }
+    ],
+    "note": "开盘后补充，按各条报价时间阅读；不代表09:00港股盘前判断。"
+  },
+  "external_data_notice": "",
+  "external_updated_at": "2026-09-10T10:27:14+08:00"
 }
