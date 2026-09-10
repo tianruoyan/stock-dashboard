@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """本地看板服务器 — 支持配置保存"""
 import json, os, socket, sys, urllib.parse, urllib.request
+from scripts.local_http_guard import LocalHTTPGuard
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 
 CONFIG_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "config")
@@ -53,7 +54,7 @@ def lookup_stock(query):
         "source": "东方财富搜索"
     }
 
-class DashboardServer(SimpleHTTPRequestHandler):
+class DashboardServer(LocalHTTPGuard, SimpleHTTPRequestHandler):
     def log_request(self, code="-", size="-"):
         """Keep routine local traffic off disk.
 

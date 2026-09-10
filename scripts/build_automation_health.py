@@ -28,7 +28,7 @@ EXPECTED = [
 def main() -> int:
     now = datetime.now(TZ)
     current_date = current_signal_date()
-    target_date = now.date().isoformat()
+    _, target_date = calendar_dates(now)
     source_health = load_json(DATA_DIR / "source-health.json")
     quality = load_json(DATA_DIR / "quality-report.json")
     rows = [check_expected(item, now, current_date, source_health, quality) for item in EXPECTED]
@@ -87,14 +87,47 @@ def build_next_session_readiness(now: datetime, target_date: str) -> dict[str, A
     }
 
 
+
+def required_evidence_at(spec: dict[str, Any], now: datetime, day: str) -> datetime:
+    """Latest completed checkpoint, with five minutes for scheduled generation."""
+    due = due_datetime(day, spec["due"])
+    if spec["id"] != "intraday":
+        return due
+    checkpoints = ["09:30", "10:00", "10:30", "11:00", "11:30", "13:00", "13:30", "14:00", "14:30", "15:00"]
+    eligible = [due_datetime(day, point) for point in checkpoints
+                if due_datetime(day, point) + timedelta(minutes=5) <= now]
+    return max(eligible) if eligible else due_datetime(day, "09:30")
+
+
+def evidence_issue(spec: dict[str, Any], data: dict[str, Any], now: datetime, day: str) -> str:
+    required = required_evidence_at(spec, now, day)
+    stamp = parse_timestamp(data.get("analysis_time") or data.get("timestamp"))
+    if not stamp:
+        return "分析时间缺失或无法解析"
+    if stamp > now + timedelta(seconds=60):
+        return "分析时间异常超前"
+    if stamp.date().isoformat() != day or stamp < required:
+        return f"分析未覆盖应有检查点 {required.strftime('%H:%M')}"
+    if spec["id"] == "intraday":
+        quote = parse_timestamp(data.get("market_data_as_of") or data.get("market_time"))
+        if not quote:
+            return "行情时间缺失，不能以文件生成时间替代"
+        if quote > now + timedelta(seconds=60):
+            return "行情时间异常超前"
+        if quote.date().isoformat() != day or quote < required - timedelta(minutes=5):
+            return f"行情未覆盖应有检查点 {required.strftime('%H:%M')}"
+    return ""
+
+
 def next_session_row(spec: dict[str, Any], now: datetime, target_date: str) -> dict[str, Any]:
     path = DATA_DIR / spec["file"]
     data = load_json(path)
     ts = data.get("timestamp") if isinstance(data, dict) else ""
     file_date = signal_date(ts)
-    due_at = due_datetime(target_date, spec["due"])
-    deadline = due_at + timedelta(minutes=int(spec["grace_minutes"]))
-    if file_date == target_date and isinstance(data, dict) and data.get("source_status") != "invalidated":
+    due_at = required_evidence_at(spec, now, target_date)
+    deadline = due_at + timedelta(minutes=5 if spec["id"] == "intraday" else int(spec["grace_minutes"]))
+    issue = evidence_issue(spec, data, now, target_date)
+    if file_date == target_date and isinstance(data, dict) and data.get("source_status") != "invalidated" and not issue:
         status = "ready"
         action = "已产出"
         reason = "目标交易日文件已更新"
@@ -109,7 +142,7 @@ def next_session_row(spec: dict[str, Any], now: datetime, target_date: str) -> d
     else:
         status = "overdue"
         action = "需要重跑"
-        reason = f"目标交易日尚未产出：当前文件日期 {file_date or '无'}"
+        reason = issue or f"目标交易日尚未产出：当前文件日期 {file_date or '无'}"
     return {
         "id": spec["id"],
         "label": spec["label"],
@@ -126,8 +159,8 @@ def next_session_row(spec: dict[str, Any], now: datetime, target_date: str) -> d
 
 def check_expected(spec: dict[str, Any], now: datetime, current_date: str, source_health: dict[str, Any], quality: dict[str, Any]) -> dict[str, Any]:
     path = DATA_DIR / spec["file"]
-    due_at = due_datetime(current_date, spec["due"])
-    deadline = due_at + timedelta(minutes=int(spec["grace_minutes"]))
+    due_at = required_evidence_at(spec, now, current_date)
+    deadline = due_at + timedelta(minutes=5 if spec["id"] == "intraday" else int(spec["grace_minutes"]))
     data = load_json(path)
     ts = data.get("timestamp") if isinstance(data, dict) else ""
     file_date = signal_date(ts)
@@ -154,6 +187,9 @@ def check_expected(spec: dict[str, Any], now: datetime, current_date: str, sourc
         status = "late"
         action = "复核时间戳"
         reason = f"时间戳异常超前：{ts}"
+    issue = evidence_issue(spec, data, now, current_date)
+    if status == "ok" and issue and not locals().get("weekend_evening_update", False):
+        status, action, reason = "late", "等待当前检查点数据", issue
     diagnosis = diagnose(spec, status, reason, data if isinstance(data, dict) else {}, source_health, quality)
     return {
         "id": spec["id"],
@@ -163,6 +199,7 @@ def check_expected(spec: dict[str, Any], now: datetime, current_date: str, sourc
         "deadline": now_iso(deadline),
         "timestamp": ts or "",
         "status": status,
+        "data_status": "degraded" if data.get("source_status") in {"degraded", "degraded_partial"} else ("unavailable" if status in {"late", "missing", "invalidated"} else "check_source_quality"),
         "blocking": bool(spec.get("blocking")) and status in {"missing", "invalidated", "late"},
         "action": action,
         "reason": reason,
@@ -269,14 +306,34 @@ def summarize(rows: list[dict[str, Any]]) -> str:
     return "关键自动化产出均已到位。"
 
 
+def calendar_dates(now: datetime) -> tuple[str, str]:
+    paths = [ROOT / "config/cn-market-calendar.json", Path("/Users/sweet_orange/Documents/投资/worktrees/stock-dashboard-v2/config/v2-market-calendar.json")]
+    calendar = {}
+    for path in paths:
+        payload = load_json(path)
+        rows = payload.get("calendars", [payload])
+        calendar = next((row for row in rows if row.get("market", "CN") == "CN" and row.get("verification_state") == "verified"), {})
+        if calendar:
+            break
+    def opened(day):
+        key = day.isoformat()
+        if not calendar or not calendar.get("valid_from", "") <= key <= calendar.get("valid_to", ""):
+            raise ValueError("calendar_unverified_or_outside_coverage")
+        return key in calendar.get("extra_open_days", []) or (day.weekday() not in calendar.get("weekend_days", [5,6]) and key not in calendar.get("holidays", []))
+    previous = target = now.date()
+    for _ in range(30):
+        if opened(previous):
+            break
+        previous -= timedelta(days=1)
+    for _ in range(30):
+        if opened(target):
+            break
+        target += timedelta(days=1)
+    return previous.isoformat(), target.isoformat()
+
+
 def current_signal_date() -> str:
-    dates = []
-    for name in ("alert.json", "intraday.json", "midday.json", "postmarket.json", "topics.json", "premarket.json"):
-        data = load_json(DATA_DIR / name)
-        date = signal_date(data.get("timestamp") if isinstance(data, dict) else "")
-        if date:
-            dates.append(date)
-    return sorted(dates)[-1] if dates else now_iso(datetime.now(TZ))[:10]
+    return calendar_dates(datetime.now(TZ))[0]
 
 
 def due_datetime(date: str, hhmm: str) -> datetime:
