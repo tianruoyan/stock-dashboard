@@ -165,7 +165,7 @@ def usable_saved(row: dict, codes: list, now: datetime) -> bool:
         return False
 
 
-def apply_facts(payload: dict, rows: dict, now: datetime) -> dict:
+def apply_facts(payload: dict, rows: dict, now: datetime, errors: dict | None = None) -> dict:
     output = copy.deepcopy(payload)
     us = output.setdefault("us_overnight", {})
     for field, codes in [("indices", list(US)[:3]), ("tech_stocks", list(US)[3:])]:
@@ -200,6 +200,9 @@ def apply_facts(payload: dict, rows: dict, now: datetime) -> dict:
     missing = [name for code, name in (US | ASIA).items()
                if not any(r.get("code") == code for r in us.get("indices", []) + us.get("tech_stocks", []) + jk["indices"] + jk["stocks"])]
     output["external_data_notice"] = "缺少：" + "、".join(missing) + "；联网后继续补采。" if missing else ""
+    if errors is not None:
+        failed = [(US | ASIA | HK)[code] for code in errors if code in US or code in ASIA or (code in HK and now.time() >= time(9, 45))]
+        output["external_refresh_notice"] = ("本轮未更新：" + "、".join(failed) + "。保留上次取得的数据，报价时间见各条行情；稍后自动重试。") if failed else ""
     if output != payload:
         # Do NOT touch analysis_time, timestamp, phase, or any user/model decision.
         output["external_updated_at"] = iso(now)
@@ -219,14 +222,14 @@ def refresh(root: Path, now: datetime, *, force: bool = False) -> bool:
     if not force and checked and timedelta(0) <= now - checked < timedelta(seconds=interval):
         return False
     rows, errors = collect(now)
-    updated = apply_facts(payload, rows, now)
+    updated = apply_facts(payload, rows, now, errors)
     # Re-read to avoid clobbering an analysis that finished during network IO.
     latest = read_json(path)
     if latest != payload:
         payload = latest
         if not current_payload(payload, now.date().isoformat()):
             return False
-        updated = apply_facts(payload, rows, now)
+        updated = apply_facts(payload, rows, now, errors)
     changed = updated != payload
     if changed:
         # Preserve each actual observation, with its real collection time.

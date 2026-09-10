@@ -113,6 +113,13 @@ class PremarketExternalTests(unittest.TestCase):
         self.assertEqual(result["us_overnight"]["japan_korea"]["indices"], [])
         self.assertIn("日经225", result["external_data_notice"])
 
+    def test_source_failure_visible_even_with_previous_valid_quote(self):
+        payload = premarket_skeleton(NOW, "09:00")
+        first = apply_facts(payload, {"usIXIC": tencent_row(raw(), NOW)}, NOW, {})
+        failed = apply_facts(first, {}, NOW + timedelta(minutes=15), {"usIXIC": "timeout"})
+        self.assertIn("纳斯达克", failed["external_refresh_notice"])
+        self.assertEqual(first["us_overnight"]["indices"], failed["us_overnight"]["indices"])
+
     def test_retry_throttle_and_snapshot(self):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)

@@ -4194,6 +4194,9 @@ function renderPremarket(data) {
     if (data.external_data_notice) {
       html += `<p class="muted">${escapeHtml(data.external_data_notice)}</p>`;
     }
+    if (data.external_refresh_notice) {
+      html += `<p class="muted">${escapeHtml(data.external_refresh_notice)}</p>`;
+    }
     if (data.us_overnight.conclusion) {
       html += renderBulletList(takePremarketPoints(data.us_overnight.conclusion, 4), "premarket-points");
     }
@@ -4368,7 +4371,7 @@ function cleanShortNote(text) {
 
 function renderPremarketDecision(data) {
   const ctx = data.market_context || {};
-  const style = ctx.open_style || inferPremarketStyle(data) || "等待竞价确认";
+  const style = ctx.open_style || inferPremarketStyle(data) || "等待A股确认";
   const riskPoints = ctx.risk_points || data.risk_lines || [];
   const watchLines = ctx.benefit_themes || data.watch_lines || data.strong_lines || [];
   const strongLines = data.strong_lines || [];
