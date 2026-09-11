@@ -328,6 +328,22 @@ async function main() {
     issues.push(issue("critical", "runtime_exception", `${error.name}: ${error.message}`));
   }
 
+  // The visible board panels must consume actual industry quotes when concept feeds are absent.
+  if (typeof context.buildIntradaySectorLists === 'function') {
+    const row = (name, pct, age=0) => ({name, change_pct:pct, source:'腾讯财经HTTP', quote_time:new Date(Date.now()-age).toISOString()});
+    const fixture = {concept_top5:[], concept_bottom5:[], industry_top5:[row('相对抗跌样本',-0.2)], industry_bottom5:[row('下跌样本',-5)], themes:[{name:'文字不能当行情', status:'观察强势'}]};
+    let result = context.buildIntradaySectorLists(fixture);
+    if (result.conceptTop[0]?.name !== '相对抗跌样本' || !result.strengthTitle.includes('相对抗跌行业') || !result.riskTitle.includes('跌幅靠前行业')) {
+      issues.push(issue('critical','intraday_industry_fallback','行业行情未进入可见强弱榜，或下跌被错误写为上涨','intraday'));
+    }
+    const rendered = context.renderSectorRow(result.conceptTop[0],0,'up');
+    if (!rendered.includes('sector-pct down') || !rendered.includes('腾讯财经')) issues.push(issue('critical','intraday_sign_source','抗跌榜负涨跌幅颜色或来源错误','intraday'));
+    result = context.buildIntradaySectorLists({industry_top5:[row('旧值',1,86400000),row('无数值',null),row('非数字',NaN)],themes:fixture.themes});
+    if (result.conceptTop.length) issues.push(issue('critical','intraday_invalid_quote','旧日、空值或文字标签进入涨跌排行','intraday'));
+    result = context.buildIntradaySectorLists({...fixture, concept_top5:[row('概念上涨',2)],concept_bottom5:[row('概念下跌',-1)]});
+    if (result.conceptTop[0]?.name !== '概念上涨' || !result.strengthTitle.includes('概念')) issues.push(issue('critical','intraday_concept_semantics','概念与行业口径混用','intraday'));
+  }
+
   // Regression: data gaps and negated words must not become market facts.
   if (typeof context.renderPremarket === 'function') {
     const target = document.getElementById('premarket');

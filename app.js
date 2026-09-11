@@ -3542,6 +3542,10 @@ function renderIntraday(data) {
   }
 
   const sectorLists = buildIntradaySectorLists(data);
+  const strengthHeading = document.getElementById("intraday-strength-title");
+  const riskHeading = document.getElementById("intraday-risk-title");
+  if (strengthHeading) strengthHeading.textContent = sectorLists.strengthTitle;
+  if (riskHeading) riskHeading.textContent = sectorLists.riskTitle;
   renderSectorList("concept-top", sectorLists.conceptTop, "up");
   renderSectorList("concept-bot", sectorLists.conceptBottom, "down");
   renderSectorList("industry-top", sectorLists.industryTop, "up");
@@ -3682,7 +3686,8 @@ function renderCodexIntraday(data) {
   const indexSignal = intradayIndexSignal(data);
   const widthSignal = intradayWidthSignal(data, sentiment);
   const riskSignal = intradayRiskSpreadSignal(data, risks);
-  const strongText = strong.map(t => themeDisplayName(t)).join(" / ") || "暂无明确强度证据";
+  const ranking = buildIntradaySectorLists(data);
+  const strongText = ranking.conceptTop.slice(0, 3).map(t => `${t.name} ${formatPct(t.change_pct)}`).join(" / ") || "板块涨跌行情暂未更新";
   const riskText = risks.map(t => themeDisplayName(t)).join(" / ") || "暂无明确风险证据";
   const adviceItems = intradayObservationItems(afternoonAdvice, action);
   const mainLine = themes[0] ? trendName(themes[0]) : "等待主线确认";
@@ -3708,9 +3713,9 @@ function renderCodexIntraday(data) {
           <em>${escapeHtml(widthSignal.detail)}</em>
         </div>
         <div class="snapshot-item">
-          <span>强弱证据</span>
+          <span>${escapeHtml(ranking.strengthTitle.replace(' Top 3', ''))}</span>
           <b>${escapeHtml(strongText)}</b>
-          <em>只说明盘面强度，不直接等同于优先买入</em>
+          <em>按涨跌幅排序；相对抗跌不代表已经上涨，也不是买入建议</em>
         </div>
         <div class="snapshot-item">
           <span>风险证据</span>
@@ -3842,7 +3847,7 @@ function renderSectorList(elId, sectors, dir) {
   const el = document.getElementById(elId);
   if (!el) return;
   if (!sectors || !sectors.length) {
-    el.innerHTML = '<div class="empty-sm">数据待接入</div>';
+    el.innerHTML = '<div class="empty-sm">暂未取得近期板块涨跌行情，不能判断哪些方向更强或更弱。</div>';
     return;
   }
   const cls = dir === 'up' ? 'up' : 'down';
@@ -3857,6 +3862,7 @@ function renderSectorList(elId, sectors, dir) {
 function renderSectorRow(s, i, cls) {
     if (typeof s === "string") s = { name: s };
     const pct = s.change_pct !== undefined ? s.change_pct : (s.pct !== undefined ? s.pct : null);
+    if (typeof pct === 'number') cls = pct < 0 ? 'down' : pct > 0 ? 'up' : 'neutral';
     const detail = s.detail || s.status || "";
     const barW = pct != null ? Math.min(Math.abs(pct) * 5, 100) : 0;
     const pctStr = pct != null ? `${pct > 0 ? '+' : ''}${pct}%` : '';
@@ -3869,25 +3875,42 @@ function renderSectorRow(s, i, cls) {
 }
 
 function buildIntradaySectorLists(data) {
-  const conceptTop = data.concept_top5 || data.concept_top || data.conceptTop || [];
-  const conceptBottom = data.concept_bottom5 || data.concept_bottom || data.conceptBottom || [];
-  const industryTop = data.industry_top5 || data.industry_top || data.industryTop || [];
-  const industryBottom = data.industry_bottom5 || data.industry_bottom || data.industryBottom || [];
-  const source = Array.isArray(data.themes) && data.themes.length ? data.themes : (Array.isArray(data.main_trends) ? data.main_trends : []);
-  const inferredTop = source
-    .filter(t => typeof t === "object" && /强|强化|资金|观察/.test(trendStatus(t)) && !/风险|弱|退潮/.test(trendStatus(t)))
-    .map(t => ({ name: themeDisplayName(t), status: trendStatus(t), detail: themeSubDirections(t).join(" / ") || trendStatus(t) }))
-    .slice(0, 5);
-  const inferredBottom = source
-    .filter(t => typeof t === "object" && /风险|弱|退潮|回落/.test(trendStatus(t)))
-    .map(t => ({ name: themeDisplayName(t), status: trendStatus(t), detail: themeSubDirections(t).join(" / ") || trendStatus(t) }))
-    .slice(0, 5);
+  const normalize = (items, kind) => (Array.isArray(items) ? items : []).flatMap(row => {
+    const raw = row?.change_pct ?? row?.pct;
+    if (raw === null || raw === undefined || raw === '' || typeof raw === 'boolean') return [];
+    const pct = Number(String(raw).replace(/%$/, ''));
+    const value = String(row.quote_time || row.timestamp || row.as_of || '');
+    const stamp = /^\d{14}$/.test(value) ? value.replace(/^(\d{4})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})$/, '$1-$2-$3T$4:$5:$6+08:00') : value;
+    const at = new Date(stamp);
+    const now = new Date();
+    const age = now - at;
+    const sameDay = at.toLocaleDateString('en-CA', {timeZone:'Asia/Shanghai'}) === now.toLocaleDateString('en-CA', {timeZone:'Asia/Shanghai'});
+    // Lunch/after-close records remain readable with their original times.
+    const localHour = Number(now.toLocaleTimeString('en-GB', {timeZone:'Asia/Shanghai', hour:'2-digit', hour12:false}));
+    const quoteParts = at.toLocaleTimeString('en-GB', {timeZone:'Asia/Shanghai', hour12:false}).split(':').map(Number);
+    const quoteMinute = quoteParts[0] * 60 + quoteParts[1];
+    const ttl = localHour === 12 && quoteMinute >= 11 * 60 ? 2 * 3600000 : localHour >= 15 && quoteMinute >= 14 * 60 + 45 ? 10 * 3600000 : 30 * 60000;
+    if (!Number.isFinite(pct) || !Number.isFinite(at.getTime()) || !sameDay || age < -120000 || age > ttl || !row.source || !row.name) return [];
+    const quoteClock = at.toLocaleTimeString('en-GB', {timeZone:'Asia/Shanghai', hour12:false, hour:'2-digit', minute:'2-digit'});
+    const sourceName = row.source === '腾讯财经HTTP' ? '腾讯财经' : row.source;
+    return [{...row, change_pct:pct, detail:`${kind} · ${quoteClock} · ${sourceName}`}];
+  });
+  const conceptTop = normalize(data.concept_top5 || data.concept_top || data.conceptTop, '概念');
+  const conceptBottom = normalize(data.concept_bottom5 || data.concept_bottom || data.conceptBottom, '概念');
+  const industryTop = normalize(data.industry_top5 || data.industry_top || data.industryTop, '行业');
+  const industryBottom = normalize(data.industry_bottom5 || data.industry_bottom || data.industryBottom, '行业');
+  const useConcept = conceptTop.length > 0 && conceptBottom.length > 0;
+  const top = (useConcept ? conceptTop : industryTop).sort((a,b) => b.change_pct-a.change_pct);
+  const bottom = (useConcept ? conceptBottom : industryBottom).sort((a,b) => a.change_pct-b.change_pct);
+  const kind = useConcept ? '概念' : '行业';
   return {
-    conceptTop: conceptTop.length ? conceptTop : inferredTop,
-    conceptBottom: conceptBottom.length ? conceptBottom : inferredBottom,
+    conceptTop: top,
+    conceptBottom: bottom,
+    strengthTitle: top.length ? `${top[0].change_pct > 0 ? '涨幅靠前' : '相对抗跌'}${kind} Top 3` : '板块强弱待更新',
+    riskTitle: bottom.length ? `${bottom[0].change_pct < 0 ? '跌幅靠前' : '涨幅落后'}${kind} Top 3` : '板块风险待更新',
     industryTop,
     industryBottom,
-    hasAny: !!(conceptTop.length || conceptBottom.length || industryTop.length || industryBottom.length || inferredTop.length || inferredBottom.length)
+    hasAny: !!(top.length || bottom.length)
   };
 }
 
