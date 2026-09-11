@@ -6,6 +6,7 @@ import re
 from datetime import datetime, timezone, timedelta
 from pathlib import Path
 from typing import Any
+from data_validity import risk_line, topic_current
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -424,7 +425,7 @@ def risk_theme_candidates(files: dict[str, Any], current_date: str) -> list[tupl
         if isinstance(item, dict):
             rows.append((item, "midday.json"))
     for item in as_list(current_payload(files, "topics.json", current_date).get("topics")):
-        if isinstance(item, dict):
+        if isinstance(item, dict) and topic_current(item, current_date):
             rows.append((item, "topics.json"))
     return rows
 
@@ -484,7 +485,7 @@ def build_risks(files: dict[str, Any], current_date: str) -> list[dict[str, Any]
             continue
         text = compact_json(theme)
         status = trend_status(theme)
-        if not is_risk_text(status, text):
+        if not risk_line(theme) and (theme.get("type") in {"watch_line", "strong_line"} or not is_risk_text(status, text)):
             continue
         items.append(decision_item(
             title=theme_name(theme),

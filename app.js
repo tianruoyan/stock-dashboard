@@ -160,7 +160,11 @@ function updatePanelMeta(targetId, timestamp) {
     heading?.insertAdjacentElement("afterend", meta);
   }
   const text = formatUpdateTime(timestamp);
-  meta.innerHTML = text ? `<span class="updated-dot"></span>已更新 · ${text}` : "";
+  const day = String(timestamp || '').slice(0, 10);
+  const today = new Date().toLocaleDateString('en-CA', {timeZone: 'Asia/Shanghai'});
+  const labels = {midday: '午盘判断', postmarket: '收盘复盘', evening: '晚间舆情'};
+  const historical = day && day < today && labels[targetId];
+  meta.innerHTML = text ? `<span class="updated-dot"></span>${historical ? `上次${labels[targetId]}` : '已更新'} · ${text}${historical ? '；不是今天的结果' : ''}` : "";
 }
 
 function updateIntradayPanelMeta(data) {
@@ -3579,17 +3583,34 @@ function getIntradayThemes(data) {
 
 function intradayMood(data) {
   const s = data.sentiment || {};
-  const up = Number(s.limit_up_count ?? data.limit_up_count ?? 0);
-  const down = Number(s.limit_down_count ?? data.limit_down_count ?? 0);
-  const broken = Number(s.broken_limit_count ?? data.broken_limit_count ?? 0);
+  const {up, down, broken} = intradayCounts(data);
   const judgement = s.judgement || s.interpretation || "";
   if (judgement) {
     const cls = /风险|弱|分歧|退潮|回落/.test(judgement) ? "warn" : /强|修复|进攻/.test(judgement) ? "good" : "neutral";
-    return { title: judgement, detail: up || down ? `涨停${up} / 跌停${down} / 炸板${broken || "-"}` : "等待量化确认", cls };
+    return { title: judgement, detail: limitCountText(data), cls };
   }
+  if ([up, down, broken].some(v => v === null)) return {title: '短线情绪暂不能判断', detail: limitCountText(data), cls: 'neutral'};
   if (down >= 15 || broken >= 40) return { title: "分歧偏强", detail: `涨停${up} / 跌停${down} / 炸板${broken}`, cls: "warn" };
   if (up >= 80 && down <= 10) return { title: "进攻占优", detail: `涨停${up} / 跌停${down}`, cls: "good" };
   return { title: "中性观察", detail: up || down ? `涨停${up} / 跌停${down}` : "情绪数据待更新", cls: "neutral" };
+}
+
+function availableNumber(value) {
+  if (value === null || value === undefined || typeof value === 'boolean' || String(value).trim() === '') return null;
+  const parsed = Number(value);
+  return Number.isFinite(parsed) ? parsed : null;
+}
+
+function intradayCounts(data) {
+  const s = data.sentiment || {};
+  return {up: availableNumber(s.limit_up_count ?? data.limit_up_count),
+    down: availableNumber(s.limit_down_count ?? data.limit_down_count),
+    broken: availableNumber(s.broken_limit_count ?? data.broken_limit_count)};
+}
+
+function limitCountText(data) {
+  const {up, down, broken} = intradayCounts(data);
+  return `涨停${up ?? '待更新'} / 跌停${down ?? '待更新'} / 炸板${broken ?? '待更新'}`;
 }
 
 function intradayActionText(data, strong, risks, sentiment) {
@@ -3610,12 +3631,9 @@ function intradayActionText(data, strong, risks, sentiment) {
 }
 
 function intradayWidthSignal(data, sentiment) {
-  const s = data.sentiment || {};
-  const up = Number(s.limit_up_count ?? data.limit_up_count ?? 0);
-  const down = Number(s.limit_down_count ?? data.limit_down_count ?? 0);
-  const broken = Number(s.broken_limit_count ?? data.broken_limit_count ?? 0);
-  if (!up && !down && !broken) {
-    return { title: "宽度待更新", detail: sentiment.detail || "等待涨跌停和炸板数据", cls: "neutral" };
+  const {up, down, broken} = intradayCounts(data);
+  if ([up, down, broken].some(v => v === null)) {
+    return { title: limitCountText(data), detail: "统计未齐，不能据此判断短线情绪改善", cls: "neutral" };
   }
   const cls = down >= 20 || broken >= 30 ? "risk" : up >= 70 && down <= 10 ? "good" : "action";
   return {
@@ -3626,9 +3644,7 @@ function intradayWidthSignal(data, sentiment) {
 }
 
 function intradayRiskSpreadSignal(data, risks) {
-  const s = data.sentiment || {};
-  const down = Number(s.limit_down_count ?? data.limit_down_count ?? 0);
-  const broken = Number(s.broken_limit_count ?? data.broken_limit_count ?? 0);
+  const {down, broken} = intradayCounts(data);
   const riskNames = risks.slice(0, 2).map(t => themeDisplayName(t)).join(" / ");
   if (down >= 20 || broken >= 30) {
     return {
@@ -3640,7 +3656,8 @@ function intradayRiskSpreadSignal(data, risks) {
   if (riskNames) {
     return { title: "局部风险线", detail: `${riskNames}；只作为回避证据，不替代今日结论`, cls: "warn" };
   }
-  return { title: "暂未扩散", detail: "没有看到明确风险线时，继续看宽度和前排承接", cls: "neutral" };
+  if (down === null || broken === null) return {title: '风险扩散情况待确认', detail: '跌停或炸板统计不完整，不能理解为没有风险', cls: 'neutral'};
+  return { title: "尚未触发扩散预警", detail: "已有跌停和炸板统计未触发预警；仍需关注个股风险", cls: "neutral" };
 }
 
 function intradayIndexSignal(data) {
@@ -3689,7 +3706,12 @@ function renderCodexIntraday(data) {
   const ranking = buildIntradaySectorLists(data);
   const strongText = ranking.conceptTop.slice(0, 3).map(t => `${t.name} ${formatPct(t.change_pct)}`).join(" / ") || "板块涨跌行情暂未更新";
   const riskText = risks.map(t => themeDisplayName(t)).join(" / ") || "暂无明确风险证据";
-  const adviceItems = intradayObservationItems(afternoonAdvice, action);
+  const originalAdvice = intradayObservationItems(afternoonAdvice, action);
+  const countsComplete = Object.values(intradayCounts(data)).every(v => v !== null);
+  const breadth = data.market_structure_facts?.breadth || {};
+  const breadthComplete = ['advance_count', 'decline_count', 'flat_count'].every(k => availableNumber(breadth[k]) !== null);
+  const replacedMissing = originalAdvice.filter(item => countsComplete && breadthComplete && /涨跌家数|涨跌停结构|全A/.test(item) && /尚未取得|未取得|缺失/.test(item) && !/推断|行动|等待.*后/.test(item));
+  const adviceItems = originalAdvice.filter(item => !replacedMissing.includes(item));
   const mainLine = themes[0] ? trendName(themes[0]) : "等待主线确认";
   const mainLineStatus = themes[0]?.status || data.summary || "看强方向是否继续扩散";
 
@@ -3698,7 +3720,7 @@ function renderCodexIntraday(data) {
       <h3>盘中事实速读</h3>
       <div class="snapshot-grid">
         <div class="snapshot-item snapshot-wide">
-          <span>当前主线</span>
+          <span>${themes[0]?.type === 'strong_line' && !/未确认|观察|待/.test(mainLineStatus) ? '当前主线' : '重点观察'}</span>
           <b>${escapeHtml(mainLine)}</b>
           <em>${escapeHtml(mainLineStatus)}</em>
         </div>
@@ -3708,9 +3730,14 @@ function renderCodexIntraday(data) {
           <em>${escapeHtml(indexSignal.detail)}</em>
         </div>
         <div class="snapshot-item">
-          <span>宽度</span>
+          <span>短线情绪</span>
           <b>${escapeHtml(widthSignal.title)}</b>
           <em>${escapeHtml(widthSignal.detail)}</em>
+        </div>
+        <div class="snapshot-item">
+          <span>多数股票在涨还是跌</span>
+          <b>${breadthComplete ? `上涨${breadth.advance_count} / 下跌${breadth.decline_count} / 平盘${breadth.flat_count}` : '涨跌家数待更新'}</b>
+          <em>${breadthComplete ? `${escapeHtml(formatUpdateTime(breadth.as_of))} · ${escapeHtml(breadth.source_name || '')}；${breadth.missing_quote_count || 0}只缺报价未计入` : '不能用涨跌停数量代替全市场涨跌家数'}</em>
         </div>
         <div class="snapshot-item">
           <span>${escapeHtml(ranking.strengthTitle.replace(' Top 3', ''))}</span>
@@ -3720,7 +3747,7 @@ function renderCodexIntraday(data) {
         <div class="snapshot-item">
           <span>风险证据</span>
           <b>${escapeHtml(riskSignal.title)}</b>
-          <em>${escapeHtml(riskText === "暂无明确风险证据" ? riskSignal.detail : `${riskText}；${riskSignal.detail}`)}</em>
+          <em>${escapeHtml(riskSignal.detail)}</em>
         </div>
         <div class="snapshot-item snapshot-wide">
           <span>盘中观察</span>
@@ -3728,6 +3755,7 @@ function renderCodexIntraday(data) {
           <ul class="snapshot-list">
             ${adviceItems.map(item => `<li>${escapeHtml(item)}</li>`).join("")}
           </ul>
+          ${replacedMissing.length ? `<p>统计已补齐；上次分析尚未纳入这些新数据，原判断未改写。</p><details><summary>查看原分析中的数据限制</summary>${replacedMissing.map(x => `<p>${escapeHtml(x)}</p>`).join('')}</details>` : ''}
         </div>
       </div>
     </div>
@@ -3821,12 +3849,13 @@ function arrayTextItems(value) {
 }
 
 function displaySignalText(item) {
-  if (typeof item === "string") return item;
+  if (typeof item === "string") return investorText(item);
   if (!item || typeof item !== "object") return "";
+  if (item.metric) return structuredSignalText(item);
   const body = signalTextValue(item.strategy || item.text || item.action || item.note || item.reason || item.detail || item.watch_next || "");
   const label = item.level || item.status || item.name || item.title || item.metric || item.type || "";
-  if (label && body) return `${label}：${body}`;
-  return body || label || structuredSignalText(item);
+  if (label && body) return investorText(`${label}：${body}`);
+  return investorText(body || label || structuredSignalText(item));
 }
 
 function signalTextValue(value) {
@@ -3837,10 +3866,18 @@ function signalTextValue(value) {
 
 function structuredSignalText(item) {
   if (!item || typeof item !== "object") return "";
-  const title = item.metric || item.label || item.name || item.title || item.type || item.source || "证据";
+  const labels = {pct: '涨跌幅', sector_pct: '行业涨跌幅', change_pct: '个股涨跌幅', limit_up_count: '涨停家数', limit_down_count: '跌停家数', amount_yi: '成交额（亿元）', volume_ratio: '成交放大倍数', price: '价格'};
+  const title = item.label || item.name || item.title || labels[item.metric] || '事实依据';
   const value = item.value !== undefined ? ` ${formatDisplayValue(item.value)}` : "";
   const detail = item.detail || item.text || item.reason || item.note || "";
-  return `${title}${value}${detail ? `：${detail}` : ""}`;
+  return investorText(detail || `${title}${value}`);
+}
+
+function investorText(value) {
+  return String(value || '').replace(/V2\s*shadow(?:同日)?事实/g, '同日行情统计')
+    .replace(/V2\s*shadow/g, '补充行情').replace(/sector_pct/g, '行业涨跌幅')
+    .replace(/limit_up_count/g, '涨停家数').replace(/limit_down_count/g, '跌停家数')
+    .replace(/\bpct\b/g, '涨跌幅');
 }
 
 function renderSectorList(elId, sectors, dir) {
@@ -4767,20 +4804,24 @@ function renderPostmarket(data) {
 }
 
 function renderPostmarketSentimentIndicator(indicator) {
-  if (!indicator || !Number.isFinite(Number(indicator.score))) return "";
+  if (!indicator) return '';
+  if (indicator.method_version !== 'v1_sentiment_five_factors_20260911' || availableNumber(indicator.score) === null) {
+    const rows = Array.isArray(indicator.components) ? indicator.components : [];
+    return `<div class="subsection"><h3>市场情绪</h3><p>统计尚不足以给出可比较的情绪温度，先看已取得的事实。</p>${rows.map(row => `<p>${escapeHtml(investorText(row.evidence || row.detail || row.name || ''))}</p>`).join('')}<p>${escapeHtml((indicator.missing_components || []).join('、'))}</p></div>`;
+  }
   const score = Math.max(0, Math.min(100, Number(indicator.score)));
   const level = indicator.level || "待分档";
   const direction = indicator.direction || indicator.interpretation || "";
   const components = Array.isArray(indicator.components) ? indicator.components : [];
   const tone = score >= 75 ? "hot" : score >= 60 ? "warm" : score >= 45 ? "mixed" : score >= 30 ? "cool" : "cold";
   const componentHtml = components.map(item => {
-    const componentScore = Number(item.score);
-    const scoreText = Number.isFinite(componentScore) ? componentScore.toFixed(1) : "--";
+    const componentScore = availableNumber(item.score);
+    const scoreText = componentScore !== null ? componentScore.toFixed(1) : "待更新";
     const weightText = Number.isFinite(Number(item.weight_pct)) ? ` · 权重${Number(item.weight_pct)}%` : "";
     return `<div class="sentiment-component">
       <span>${escapeHtml(item.name || "分项")}${escapeHtml(weightText)}</span>
       <b>${escapeHtml(scoreText)}</b>
-      <small>${escapeHtml(item.evidence || item.detail || "")}</small>
+      <small>${escapeHtml(investorText(item.evidence || item.detail || ""))}</small>
     </div>`;
   }).join("");
   return `<div class="subsection sentiment-temperature ${tone}">
@@ -4797,8 +4838,8 @@ function renderPostmarketSentimentIndicator(indicator) {
 
 function renderPostmarketDecision(data) {
   const hotspots = Array.isArray(data.hotspots) ? data.hotspots : [];
-  const strong = hotspots.find(h => /强/.test(h.status || "")) || hotspots[0];
-  const riskLine = hotspots.find(h => /风险|弱|退潮/.test([h.status, h.continuity].join(" ")));
+  const riskLine = hotspots.find(isExplicitRiskLine);
+  const strong = hotspots.find(h => h.type === 'strong_line' && !isExplicitRiskLine(h)) || hotspots.find(h => !isExplicitRiskLine(h));
   const patch = data.closing_auction_patch || {};
   const watch = data.next_day_watch || patch.watch_next_day || [];
   const reviewText = data.review?.summary || data.review?.one_sentence || data.index?.summary || "";
@@ -4818,14 +4859,14 @@ function renderPostmarketDecision(data) {
       <span>${escapeHtml(patch.impact || "等待尾盘校验")}</span>
     </div>
     <div class="decision-card ${tone}">
-      <span class="decision-label">强线</span>
-      <b>${escapeHtml(strong ? trendName(strong) : "等待主线确认")}</b>
+      <span class="decision-label">${strong?.type === 'strong_line' ? '强主线' : '相对强势观察'}</span>
+      <b>${escapeHtml(strong ? (strong.name || trendName(strong)) : "等待主线确认")}</b>
       <span>${escapeHtml(strongDetail)}</span>
     </div>
     <div class="decision-card risk">
       <span class="decision-label">风险线</span>
-      <b>${escapeHtml(riskLine ? trendName(riskLine) : "暂无明确风险线")}</b>
-      <span>${escapeHtml(riskDetail)}</span>
+      <b>${escapeHtml(riskLine ? (riskLine.name || trendName(riskLine)) : (data.risk?.length ? '仍有需要防范的风险' : '风险信息待补充'))}</b>
+      <span>${escapeHtml(investorText(riskLine ? riskDetail : (data.risk?.[0] || '没有完整风险依据，不能理解为没有风险')))}</span>
     </div>
     <div class="decision-card action">
       <span class="decision-label">明日看点</span>
@@ -4833,6 +4874,12 @@ function renderPostmarketDecision(data) {
       <ul class="decision-mini-list">${watchItems.slice(0, 4).map(item => `<li>${escapeHtml(item)}</li>`).join("")}</ul>
     </div>
   </div>`;
+}
+
+function isExplicitRiskLine(item) {
+  if (item.type === 'risk_line' || item.role === 'risk_line') return true;
+  if (item.type === 'watch_line' || item.type === 'strong_line') return false;
+  return /风险线|相对弱势|退潮|排名居后|弱化/.test([item.name, item.status, item.continuity].join(' '));
 }
 
 function postmarketStrongDetail(strong, fallback) {
@@ -4854,7 +4901,7 @@ function postmarketRiskDetail(riskLine) {
 function postmarketWatchItems(watch, limitUp, limitDown, broken) {
   const rows = Array.isArray(watch) ? watch : [];
   if (rows.length) return rows.map(item => typeof item === "string" ? item : (item.text || item.title || item.name || "")).filter(Boolean);
-  return [`涨停${limitUp || "-"} / 跌停${limitDown || "-"} / 炸板${broken || "-"}`];
+  return [`涨停${limitUp ?? "待更新"} / 跌停${limitDown ?? "待更新"} / 炸板${broken ?? "待更新"}`];
 }
 
 /* =========================
@@ -5144,6 +5191,14 @@ function renderTopics(data) {
     (hidden.length ? `<details class="compact-details topics-all"><summary>展开全部专题（${topics.length}）</summary><div class="grid">${hidden.map(t => renderTopicCard(t)).join("")}</div></details>` : "");
 }
 
+function topicNeedsReview(topic) {
+  const stamp = topic.source_as_of || topic.updated_at || topic.timestamp;
+  const cutoff = String(cached('data/postmarket.json')?.timestamp || new Date().toISOString()).slice(0, 10);
+  if (!stamp || String(stamp).slice(0, 10) < cutoff) return true;
+  if (topic.valid_until && (!Number.isFinite(Date.parse(topic.valid_until)) || Date.parse(topic.valid_until) < Date.now())) return true;
+  return false;
+}
+
 function normalizeTopicsForDisplay(topics) {
   return topics.slice().sort((a, b) => {
     const freshDiff = Number(Boolean(b.updated_at || b.timestamp)) - Number(Boolean(a.updated_at || a.timestamp));
@@ -5167,6 +5222,7 @@ function topicImportanceScore(topic) {
 }
 
 function renderTopicCard(t) {
+    if (topicNeedsReview(t)) return `<div class="card"><div class="card-head"><b>${escapeHtml(t.name)}</b></div><p>旧研究待复核 · ${escapeHtml(formatUpdateTime(t.source_as_of || t.updated_at || t.timestamp) || '时间未记录')}</p><p>先核对最新催化、行业表现和代表股；不沿用旧的买卖条件。</p><details><summary>查看当时的研究记录</summary><p>${escapeHtml(t.conclusion || t.core_view || '')}</p><p>${escapeHtml(t.action || '')}</p></details></div>`;
     const statusText = String(t.status || "");
     const statusCls = statusText.includes("强化") || statusText.includes("强主线") ? "strong" :
                       statusText.includes("弱化") || statusText.includes("退潮") || statusText.includes("风险") ? "sentiment" : "";
@@ -5187,6 +5243,8 @@ function renderTopicCard(t) {
 }
 
 function pickVisibleTopics(topics) {
+  const recent = topics.filter(t => !topicNeedsReview(t));
+  if (recent.length < topics.length) return recent.slice(0, 3).concat(topics.filter(topicNeedsReview).slice(0, Math.max(0, 3 - recent.length)));
   const integrated = topics.filter(t => t.display === "integrated" || t.level === "母题材");
   if (integrated.length) return integrated.slice(0, 4);
   const focus = topics.find(t => /强化|强|观察|博弈/.test([t.status, t.action].join(" ")) && !/风险|弱|降级|回避/.test([t.status, t.action, t.note].join(" "))) || topics[0];
@@ -5202,6 +5260,8 @@ function pickVisibleTopics(topics) {
 }
 
 function renderTopicsDecision(topics) {
+  const reviewCount = topics.filter(topicNeedsReview).length;
+  topics = topics.filter(t => !topicNeedsReview(t));
   const integrated = topics.filter(t => t.display === "integrated" || t.level === "母题材");
   const decisionTopics = integrated.length ? integrated : topics;
   const riskTopics = decisionTopics.filter(t => /风险|弱|降级|回避/.test([t.status, t.action, t.note].join(" ")));
@@ -5209,15 +5269,15 @@ function renderTopicsDecision(topics) {
   const focus = activeTopics[0] || decisionTopics[0];
   const risk = riskTopics[0];
   const updatedCount = topics.length;
-  const watchText = focus?.conclusion || focus?.action || "等待专题更新";
+  const watchText = focus?.action || "等待专题更新";
   return `<div class="decision-strip topics-decision">
     <div class="decision-card primary">
-      <span class="decision-label">7月主线焦点</span>
+      <span class="decision-label">近期专题重点</span>
       <b>${escapeHtml(focus?.name || "暂无")}</b>
       <span>${escapeHtml(focus?.status || "观察")}</span>
     </div>
     <div class="decision-card action">
-      <span class="decision-label">有意义的结论</span>
+      <span class="decision-label">研究结论与下一步</span>
       <b>${escapeHtml(focus?.conclusion || focus?.action || "等待盘面确认")}</b>
       <span>${escapeHtml(watchText)}</span>
     </div>
@@ -5228,7 +5288,7 @@ function renderTopicsDecision(topics) {
     </div>
     <div class="decision-card neutral">
       <span class="decision-label">关联题材</span>
-      <b>${integrated.length || updatedCount} 组</b>
+      <b>${integrated.length || updatedCount} 组近期研究 · ${reviewCount}组待复核</b>
       <span>${escapeHtml(decisionTopics.slice(0, 3).map(t => t.name).join(" / "))}</span>
     </div>
   </div>`;

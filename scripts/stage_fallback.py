@@ -11,6 +11,7 @@ from typing import Any, Sequence
 
 from update_intraday_market import fetch_indices, fetch_industries, fetch_watchlist_quotes, latest_quote_time
 from premarket_external import refresh as refresh_external
+from market_sentiment import sentiment_payload
 
 
 TZ = timezone(timedelta(hours=8))
@@ -343,44 +344,6 @@ def representative_evidence(row: dict[str, Any]) -> dict[str, Any]:
         "source": row["source"],
         "timestamp": row["quote_time"],
         "detail": f"{row['name']} {row['code']} {float(row['change_pct']):+.2f}%，价格{row['price']}。",
-    }
-
-
-def sentiment_payload(indices: list[dict[str, Any]], breadth: dict[str, int]) -> dict[str, Any]:
-    rising = sum(1 for item in indices if float(item.get("change_pct") or 0) > 0)
-    falling = sum(1 for item in indices if float(item.get("change_pct") or 0) < 0)
-    score = 50 + (rising - falling) * 5
-    advance = breadth.get("advance_count")
-    decline = breadth.get("decline_count")
-    if advance is not None and decline is not None:
-        score += 10 if advance > decline else (-10 if advance < decline else 0)
-    score = max(0, min(100, score))
-    level = "偏强" if score >= 65 else ("偏弱" if score <= 35 else "中性分化")
-    components = [
-        {
-            "name": "指数结构",
-            "score": max(0, min(100, 50 + (rising - falling) * 10)),
-            "weight": 0.6,
-            "evidence": f"{rising}个主要指数上涨、{falling}个下跌。",
-        },
-        {
-            "name": "市场宽度",
-            "score": 50 if advance is None or decline is None else (65 if advance > decline else 35),
-            "weight": 0.4,
-            "evidence": (
-                f"V2 shadow同日事实：上涨{advance}家、下跌{decline}家。"
-                if advance is not None and decline is not None
-                else "V2 shadow没有可用的同日上涨下跌家数，维持中性并降权。"
-            ),
-        },
-    ]
-    return {
-        "score": score,
-        "level": level,
-        "judgement": f"收盘情绪为{level}；先看指数与宽度，再映射观察池。",
-        "components": components,
-        "method": "指数结构60%+V2 shadow同日宽度40%；宽度缺失时不做强弱升级。",
-        "limitations": ["没有当日V2宽度事实时，情绪分只使用指数并按中性降权。"],
     }
 
 

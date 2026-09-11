@@ -7,6 +7,7 @@ import subprocess
 from datetime import datetime, timezone, timedelta
 from pathlib import Path
 from typing import Any
+from data_validity import risk_line
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -276,6 +277,8 @@ def check_postmarket_risk_hotspots(feed: dict[str, Any], issues: list[dict[str, 
         postmarket = json.loads((ROOT / "data" / "postmarket.json").read_text(encoding="utf-8"))
     except Exception:
         return
+    if str(postmarket.get("trade_date") or postmarket.get("timestamp") or "")[:10] != feed.get("current_signal_date"):
+        return  # Yesterday's risks belong to the dated close review, not today's signal feed.
     rendered = {
         normalize_conflict_title(item.get("title"))
         for item in (feed.get("risks") or []) + (feed.get("verifications") or [])
@@ -290,8 +293,7 @@ def check_postmarket_risk_hotspots(feed: dict[str, Any], issues: list[dict[str, 
         if not isinstance(item, dict):
             continue
         name = str(item.get("name") or "")
-        text = json.dumps(item, ensure_ascii=False)
-        if not re.search(r"风险|分歧|退潮|反抽失败|弱|回落|炸板|跌停|不支持全面进攻", text):
+        if not risk_line(item):
             continue
         key = normalize_conflict_title(name)
         if key and key not in rendered:
@@ -724,7 +726,7 @@ def check_section_health_derived_dates(section_health: dict[str, Any], issues: l
                     "derived_file_false_stale",
                     f"{section.get('label') or section.get('id')} 将派生报告 {row['file']} 误判为非当前交易日"
                 ))
-            if row["file"] in reason and "非当前交易日" in reason and payload.get("current_signal_date") == current_date:
+            if re.search(re.escape(row["file"]) + r"\s+非当前交易日", reason) and payload.get("current_signal_date") == current_date:
                 issues.append(issue(
                     "warning",
                     "data/section-health.json",

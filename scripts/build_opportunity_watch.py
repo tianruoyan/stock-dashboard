@@ -6,6 +6,7 @@ import re
 from datetime import datetime, timezone, timedelta
 from pathlib import Path
 from typing import Any
+from data_validity import topic_current
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -108,6 +109,8 @@ def items_from_evening(data: dict[str, Any]) -> list[dict[str, Any]]:
 def items_from_topics(data: dict[str, Any]) -> list[dict[str, Any]]:
     rows: list[dict[str, Any]] = []
     for topic in data.get("topics") or []:
+        if not isinstance(topic, dict) or not topic_current(topic, str(data.get("trade_date") or data.get("timestamp") or "")[:10]):
+            continue
         text = compact_text([topic.get("name"), topic.get("status"), topic.get("conclusion"), topic.get("action"), topic.get("note")])
         theme = normalize_theme(topic.get("name") or "") or first_theme(text)
         if theme:

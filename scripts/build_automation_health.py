@@ -6,6 +6,7 @@ import re
 from datetime import datetime, timezone, timedelta
 from pathlib import Path
 from typing import Any
+from data_validity import source_window
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -120,6 +121,11 @@ def evidence_issue(spec: dict[str, Any], data: dict[str, Any], now: datetime, da
 
 
 def next_session_row(spec: dict[str, Any], now: datetime, target_date: str) -> dict[str, Any]:
+    if spec["id"] == "alerts" and target_date == now.date().isoformat():
+        row = monitor_health_row(spec, now, target_date)
+        row["status"] = {"ok": "ready", "waiting": "pending", "late": "overdue"}[row["status"]]
+        row["file_date"] = str(row["timestamp"])[:10]
+        return row
     path = DATA_DIR / spec["file"]
     data = load_json(path)
     ts = data.get("timestamp") if isinstance(data, dict) else ""
@@ -158,6 +164,8 @@ def next_session_row(spec: dict[str, Any], now: datetime, target_date: str) -> d
 
 
 def check_expected(spec: dict[str, Any], now: datetime, current_date: str, source_health: dict[str, Any], quality: dict[str, Any]) -> dict[str, Any]:
+    if spec["id"] == "alerts":
+        return monitor_health_row(spec, now, current_date)
     path = DATA_DIR / spec["file"]
     due_at = required_evidence_at(spec, now, current_date)
     deadline = due_at + timedelta(minutes=5 if spec["id"] == "intraday" else int(spec["grace_minutes"]))
@@ -279,9 +287,30 @@ def degraded_sources(source_health: dict[str, Any]) -> list[tuple[str, str]]:
     for name, source in iterator:
         if not isinstance(source, dict):
             continue
+        if source_window(source) != "current":
+            continue
         if source.get("status") in {"degraded", "bad", "failed"}:
             rows.append((str(name), str(source.get("note") or source.get("detail") or source.get("usage") or source.get("status"))))
     return rows
+
+
+def monitor_health_row(spec, now, day):
+    from intraday_recovery import is_trading_day
+    live = load_json(ROOT / "logs" / "monitor-signal-bridge-status.json")
+    monitor = live.get("monitor") or {}
+    stamp = parse_timestamp(live.get("checked_at"))
+    heartbeat = parse_timestamp(monitor.get("heartbeat_at"))
+    active = is_trading_day(ROOT, now) and ("09:30" <= now.strftime("%H:%M") < "11:30" or "13:00" <= now.strftime("%H:%M") < "15:00")
+    recent = bool(stamp and heartbeat and 0 <= (now - stamp).total_seconds() <= 180 and 0 <= (now - heartbeat).total_seconds() <= 180)
+    healthy = recent and monitor.get("healthy") is True
+    status = "waiting" if not active else ("ok" if healthy else "late")
+    reason = "当前不在连续交易时段，保留最近触发供回看" if not active else ("监控和行情检查正常；没有新异动不等于没有运行" if healthy else "监控或行情检查未通过，等待恢复；不能视为市场没有异动")
+    return {"id": "alerts", "label": "盘中异动", "file": "data/alert.json", "due": "交易时段持续检查",
+            "timestamp": live.get("checked_at", ""), "deadline": now_iso(now), "status": status,
+            "data_status": "check_source_quality" if healthy else "unavailable", "blocking": active and not healthy,
+            "action": "查看最新触发" if healthy else "查看监控状态", "reason": reason,
+            "failure_type": "none" if healthy else ("not_due" if not active else "monitor_or_quote_unavailable"),
+            "diagnosis": reason, "next_actions": [], "related_sources": []}
 
 
 def overall_status(rows: list[dict[str, Any]]) -> str:

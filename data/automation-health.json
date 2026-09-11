@@ -1,15 +1,15 @@
 {
-  "timestamp": "2026-09-11T11:15:17+08:00",
+  "timestamp": "2026-09-11T11:19:22+08:00",
   "current_signal_date": "2026-09-11",
   "target_trade_date": "2026-09-11",
-  "overall_status": "waiting",
-  "summary": "5 个自动化尚未到产出窗口：盘中异动、午盘分析、盘后复盘、晚间舆情。",
+  "overall_status": "blocked",
+  "summary": "1 个自动化产出异常：盘中异动。",
   "counts": {
     "ok": 2,
-    "late": 0,
+    "late": 1,
     "missing": 0,
     "invalidated": 0,
-    "waiting": 5
+    "waiting": 4
   },
   "processes": [
     {
@@ -54,19 +54,17 @@
       "id": "alerts",
       "label": "盘中异动",
       "file": "data/alert.json",
-      "due": "15:00",
-      "deadline": "2026-09-11T15:05:00+08:00",
-      "timestamp": "2026-09-11T11:15:09+08:00",
-      "status": "waiting",
-      "data_status": "check_source_quality",
-      "blocking": false,
-      "action": "等待产出",
-      "reason": "计划 15:00 后产出",
-      "failure_type": "not_due",
-      "diagnosis": "尚未到该自动化的计划产出窗口。",
-      "next_actions": [
-        "到 15:00 后再检查是否产出。"
-      ],
+      "due": "交易时段持续检查",
+      "timestamp": "2026-09-11T11:19:16+08:00",
+      "deadline": "2026-09-11T11:19:22+08:00",
+      "status": "late",
+      "data_status": "unavailable",
+      "blocking": true,
+      "action": "查看监控状态",
+      "reason": "监控或行情检查未通过，等待恢复；不能视为市场没有异动",
+      "failure_type": "monitor_or_quote_unavailable",
+      "diagnosis": "监控或行情检查未通过，等待恢复；不能视为市场没有异动",
+      "next_actions": [],
       "related_sources": []
     },
     {
@@ -148,11 +146,11 @@
   ],
   "next_session_readiness": {
     "target_trade_date": "2026-09-11",
-    "status": "pending",
-    "summary": "2026-09-11 开盘链路待产出：盘中异动 15:00。",
-    "pending_count": 5,
+    "status": "overdue",
+    "summary": "2026-09-11 有 1 个产出已过窗口未更新。",
+    "pending_count": 4,
     "ready_count": 2,
-    "overdue_count": 0,
+    "overdue_count": 1,
     "items": [
       {
         "id": "premarket",
@@ -182,13 +180,19 @@
         "id": "alerts",
         "label": "盘中异动",
         "file": "data/alert.json",
-        "due": "15:00",
-        "deadline": "2026-09-11T15:05:00+08:00",
-        "timestamp": "2026-09-11T11:15:09+08:00",
-        "file_date": "2026-09-11",
-        "status": "pending",
-        "action": "等待产出",
-        "reason": "计划 15:00 后产出"
+        "due": "交易时段持续检查",
+        "timestamp": "2026-09-11T11:19:16+08:00",
+        "deadline": "2026-09-11T11:19:22+08:00",
+        "status": "overdue",
+        "data_status": "unavailable",
+        "blocking": true,
+        "action": "查看监控状态",
+        "reason": "监控或行情检查未通过，等待恢复；不能视为市场没有异动",
+        "failure_type": "monitor_or_quote_unavailable",
+        "diagnosis": "监控或行情检查未通过，等待恢复；不能视为市场没有异动",
+        "next_actions": [],
+        "related_sources": [],
+        "file_date": "2026-09-11"
       },
       {
         "id": "midday",

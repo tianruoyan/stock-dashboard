@@ -6,6 +6,7 @@ import re
 from datetime import datetime, timezone, timedelta
 from pathlib import Path
 from typing import Any
+from data_validity import source_window
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -171,6 +172,8 @@ def degraded_source_flags(source_health: Any) -> list[str]:
     iterator = sources.items() if isinstance(sources, dict) else []
     for name, source in iterator:
         if not isinstance(source, dict):
+            continue
+        if source_window(source) != "current":
             continue
         if source.get("status") in {"degraded", "bad", "failed"}:
             rows.append(source_flag_message(name, source))

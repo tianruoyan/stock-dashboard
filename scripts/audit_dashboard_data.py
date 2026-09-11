@@ -7,6 +7,7 @@ import re
 from datetime import datetime, timezone, timedelta
 from pathlib import Path
 from typing import Any
+from data_validity import source_window
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -380,6 +381,8 @@ def validate_postmarket(data: Any, issues: list[dict[str, Any]]) -> None:
         issues.append(issue("warning", "postmarket.json", "missing_review_evidence", "review.evidence 缺失"))
     sentiment = data.get("sentiment_indicator") or {}
     for key in ("score", "level", "components", "method"):
+        if key == "score" and sentiment.get("method_version") == "v1_sentiment_five_factors_20260911" and sentiment.get("missing_components"):
+            continue
         if sentiment.get(key) in (None, "", []):
             issues.append(issue("warning", "postmarket.json", "missing_sentiment_indicator_field", f"sentiment_indicator.{key} 缺失"))
     for index, item in enumerate(data.get("hotspots") or []):
@@ -872,11 +875,21 @@ def validate_source_health(data: Any, issues: list[dict[str, Any]]) -> None:
         iterator = sources.items()
     else:
         iterator = ((item.get("id") or item.get("name") or "unknown", item) for item in sources if isinstance(item, dict))
+    historical = unknown = 0
     for name, source in iterator:
+        if not isinstance(source, dict):
+            continue
+        window = source_window(source)
+        if window != "current":
+            historical += window == "history"
+            unknown += window == "unknown"
+            continue
         status = source.get("status")
         if status in {"degraded", "bad", "failed"}:
             code = "source_failed" if status == "failed" else "source_degraded"
             issues.append(issue("warning", "source-health.json", code, f"{name}: {source.get('note') or source.get('detail') or source.get('usage') or status}"))
+    if historical or unknown:
+        issues.append(issue("info", "source-health.json", "source_history_separated", f"{historical}条历史检测、{unknown}条时间待核验记录已与当前故障分开；未认定这些来源已恢复。"))
 
 
 def validate_decision_feed(data: Any, issues: list[dict[str, Any]], current_date: str) -> None:

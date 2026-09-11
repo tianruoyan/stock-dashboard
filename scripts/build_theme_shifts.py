@@ -6,6 +6,7 @@ import re
 from datetime import datetime, timezone, timedelta
 from pathlib import Path
 from typing import Any
+from data_validity import topic_current
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -55,6 +56,8 @@ def collect_candidates(intraday: dict[str, Any], midday: dict[str, Any], postmar
         ("topics.json", as_list(topics.get("topics"))),
     ):
         for item in values:
+            if source == "topics.json" and (not isinstance(item, dict) or not topic_current(item, str(topics.get("trade_date") or topics.get("timestamp") or "")[:10])):
+                continue
             if isinstance(item, dict):
                 rows.append(normalize_item(item, source))
             elif isinstance(item, str):
