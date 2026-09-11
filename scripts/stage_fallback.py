@@ -656,7 +656,7 @@ def refresh_hk_close(root: Path, now: datetime) -> bool:
             raw = fetch_quotes([code])
             row = tencent_row(raw[0], now)
             at = parse_datetime(row["quote_time"])
-            if at is None or at.time() < time(16):
+            if row.get("code") != code or at is None or at.time() < time(16, 8):
                 raise ValueError("收盘报价尚未返回")
             rows.append(row)
         except Exception:

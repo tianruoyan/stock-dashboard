@@ -311,7 +311,7 @@ class StageFallbackTests(unittest.TestCase):
         path = root / "data/postmarket.json"
         write_json(path, original)
         row = {"name": "恒生指数", "change_pct": 1, "quote_time": "2026-09-11T16:08:00+08:00"}
-        with patch("stage_fallback.fetch_quotes", return_value=[[]]), patch("stage_fallback.tencent_row", return_value=row):
+        with patch("stage_fallback.fetch_quotes", side_effect=lambda codes: [{"code": codes[0]}]), patch("stage_fallback.tencent_row", side_effect=lambda raw, now: {**row, "code": raw["code"]}):
             self.assertTrue(refresh_hk_close(root, datetime(2026, 9, 11, 16, 30, tzinfo=TZ)))
         updated = read_json(path)
         self.assertEqual(updated["timestamp"], original["timestamp"])
