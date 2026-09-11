@@ -47,7 +47,7 @@ def sentiment_payload(indices, breadth):
     wide = strong is not None and total is not None and 0 < total and strong <= total
     add("涨幅超过5%的股票占比", 20, 100 * strong / total / .06 if wide else None,
         f"{strong:g}/{total:g}只股票涨幅超过5%。" if wide else "缺少涨幅超过5%的股票数量或同范围有效股票总数。")
-    complete_indices = len(changes) == 5 and all(x is not None for x in changes)
+    complete_indices = len(changes) == 5 and len({row.get("code") or row.get("name") for row in indices}) == 5 and all(x is not None for x in changes)
     add("五大核心指数", 15, 50 + 10 * sum(changes) / 5 if complete_indices else None,
         "；".join(f"{row.get('name', '指数')}{change:+.2f}%" for row, change in zip(indices, changes)) if complete_indices else "五大指数报价不齐。")
     missing = [row["name"] for row in components if row["score"] is None]

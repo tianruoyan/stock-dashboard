@@ -100,7 +100,10 @@ function render(file, data) {
   else if (file === "data/intraday.json") renderIntraday(data);
   else if (file === "data/premarket.json") renderPremarket(data);
   else if (file === "data/midday.json") renderMidday(data);
-  else if (file === "data/postmarket.json") renderPostmarket(data);
+  else if (file === "data/postmarket.json") {
+    renderPostmarket(data);
+    if (cached('data/topics.json')) renderTopics(cached('data/topics.json'));
+  }
   else if (file === "data/watchlist-quotes.json") renderWatchlistDecision();
   else if (file === "data/evening-sentiment.json") renderEvening(data);
   else if (file === "data/topics.json") renderTopics(data);

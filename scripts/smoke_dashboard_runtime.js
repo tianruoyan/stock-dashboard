@@ -328,6 +328,21 @@ async function main() {
     issues.push(issue("critical", "runtime_exception", `${error.name}: ${error.message}`));
   }
 
+  if (typeof context.intradayCounts === 'function') {
+    const check = (condition, code, message) => { if (!condition) issues.push(issue('critical', code, message, 'investor-review')); };
+    const absent = {sentiment:{limit_up_count:null, limit_down_count:null, broken_limit_count:null}};
+    const zeros = {sentiment:{limit_up_count:0, limit_down_count:0, broken_limit_count:0}};
+    check(context.intradayCounts(absent).down === null, 'missing_not_zero', '缺失跌停统计被转成0');
+    check(context.intradayWidthSignal(zeros,{}).title.includes('涨停0'), 'zero_is_valid', '真实0值被当成缺失');
+    check(context.intradayRiskSpreadSignal(absent,[]).title.includes('待确认'), 'missing_not_safe', '缺失统计被判断为没有风险');
+    check(context.renderPostmarketDecision({hotspots:[{type:'risk_line',name:'农业回落',status:'收盘排名居后'}]}).includes('农业回落'), 'risk_type_visible', '明确风险类型未在盘后顶部展示');
+    check(!context.isExplicitRiskLine({type:'watch_line',risk:'若下跌则失效'}), 'watch_not_risk', '条件性风险被误判为当前风险线');
+    check(!context.renderPostmarketSentimentIndicator({score:15,components:[]}).includes('15.0分'), 'legacy_score_hidden', '旧算法分数冒充当前情绪分');
+    check(!context.renderPostmarketSentimentIndicator({method_version:'v1_sentiment_five_factors_20260911',score:null,components:[]}).includes('0.0分'), 'missing_score_hidden', '缺失情绪分被显示为0分');
+    check(!/sector_pct|limit_up_count/.test(context.structuredSignalText({metric:'sector_pct',value:-2,detail:'行业下跌2%'})), 'evidence_plain_language', '证据暴露工程字段');
+    check(context.renderTopicCard({name:'旧专题',updated_at:'2020-01-01T15:00:00+08:00',action:'周一买入'}).includes('旧研究待复核'), 'old_topic_labeled', '旧专题未标记待复核');
+  }
+
   // The visible board panels must consume actual industry quotes when concept feeds are absent.
   if (typeof context.buildIntradaySectorLists === 'function') {
     const row = (name, pct, age=0) => ({name, change_pct:pct, source:'腾讯财经HTTP', quote_time:new Date(Date.now()-age).toISOString()});
