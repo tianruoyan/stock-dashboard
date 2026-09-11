@@ -1,15 +1,15 @@
 {
-  "timestamp": "2026-09-11T14:58:41+08:00",
+  "timestamp": "2026-09-11T15:03:36+08:00",
   "current_signal_date": "2026-09-11",
   "target_trade_date": "2026-09-11",
-  "overall_status": "blocked",
-  "summary": "1 个自动化产出异常：盘中异动。",
+  "overall_status": "waiting",
+  "summary": "4 个自动化尚未到产出窗口：盘中异动、盘后复盘、晚间舆情、专题跟踪。",
   "counts": {
     "ok": 3,
-    "late": 1,
+    "late": 0,
     "missing": 0,
     "invalidated": 0,
-    "waiting": 3
+    "waiting": 4
   },
   "processes": [
     {
@@ -55,15 +55,15 @@
       "label": "盘中异动",
       "file": "data/alert.json",
       "due": "交易时段持续检查",
-      "timestamp": "2026-09-11T14:57:48+08:00",
-      "deadline": "2026-09-11T14:58:41+08:00",
-      "status": "late",
+      "timestamp": "2026-09-11T15:02:43+08:00",
+      "deadline": "2026-09-11T15:03:36+08:00",
+      "status": "waiting",
       "data_status": "unavailable",
-      "blocking": true,
+      "blocking": false,
       "action": "查看监控状态",
-      "reason": "监控或行情检查未通过，等待恢复；不能视为市场没有异动",
-      "failure_type": "monitor_or_quote_unavailable",
-      "diagnosis": "监控或行情检查未通过，等待恢复；不能视为市场没有异动",
+      "reason": "当前不在连续交易时段，保留最近触发供回看",
+      "failure_type": "not_due",
+      "diagnosis": "当前不在连续交易时段，保留最近触发供回看",
       "next_actions": [
         "继续检查最新行情与监控心跳；保留历史触发，不补造错过的信号。"
       ],
@@ -148,11 +148,11 @@
   ],
   "next_session_readiness": {
     "target_trade_date": "2026-09-11",
-    "status": "overdue",
-    "summary": "2026-09-11 有 1 个产出已过窗口未更新。",
-    "pending_count": 3,
+    "status": "pending",
+    "summary": "2026-09-11 开盘链路待产出：盘中异动 交易时段持续检查。",
+    "pending_count": 4,
     "ready_count": 3,
-    "overdue_count": 1,
+    "overdue_count": 0,
     "items": [
       {
         "id": "premarket",
@@ -183,15 +183,15 @@
         "label": "盘中异动",
         "file": "data/alert.json",
         "due": "交易时段持续检查",
-        "timestamp": "2026-09-11T14:57:48+08:00",
-        "deadline": "2026-09-11T14:58:41+08:00",
-        "status": "overdue",
+        "timestamp": "2026-09-11T15:02:43+08:00",
+        "deadline": "2026-09-11T15:03:36+08:00",
+        "status": "pending",
         "data_status": "unavailable",
-        "blocking": true,
+        "blocking": false,
         "action": "查看监控状态",
-        "reason": "监控或行情检查未通过，等待恢复；不能视为市场没有异动",
-        "failure_type": "monitor_or_quote_unavailable",
-        "diagnosis": "监控或行情检查未通过，等待恢复；不能视为市场没有异动",
+        "reason": "当前不在连续交易时段，保留最近触发供回看",
+        "failure_type": "not_due",
+        "diagnosis": "当前不在连续交易时段，保留最近触发供回看",
         "next_actions": [
           "继续检查最新行情与监控心跳；保留历史触发，不补造错过的信号。"
         ],
