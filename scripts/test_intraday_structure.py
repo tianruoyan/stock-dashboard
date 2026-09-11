@@ -19,6 +19,13 @@ class MarketStructureTests(unittest.TestCase):
     def test_partial_quotes_are_explicit(self):
         self.assertEqual(current_breadth(self.row, self.now)["missing_quote_count"], 5)
 
+    def test_close_statistics_do_not_expire_as_intraday_ticks(self):
+        now = self.now.replace(hour=17)
+        close = {**self.row, "as_of": self.now.replace(hour=15, minute=8).isoformat()}
+        self.assertEqual(current_breadth(close, now)["advance_count"], 300)
+        with self.assertRaises(ValueError):
+            current_breadth(self.row, now)
+
     def test_wrong_day_stale_future_and_naive_rejected(self):
         for stamp in (self.now - timedelta(days=1), self.now - timedelta(minutes=21),
                       self.now + timedelta(minutes=3), self.now.replace(tzinfo=None)):

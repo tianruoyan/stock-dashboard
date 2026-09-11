@@ -134,7 +134,7 @@ def run(
         "state": "dry_run" if dry_run else "completed",
         "verified": states.count("passed"),
         "mismatched": states.count("mismatch"),
-        "pending": sum(1 for state in states if state in {"pending", "unprocessed", "insufficient_precision"}),
+        "pending": sum(1 for state in states if state in {"pending", "unprocessed", "insufficient_precision", "same_source"}),
         "not_backfilled": states.count("too_late_no_backfill"),
         "changed": changed,
         "alert_changed": alert_changed,

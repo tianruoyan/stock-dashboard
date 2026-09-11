@@ -5264,7 +5264,11 @@ function renderTopicCard(t) {
       ${conclusion ? `<div class="topic-conclusion">${escapeHtml(conclusion)}</div>` : ""}
       ${related.length ? `<div class="topic-related">${related.slice(0, 6).map(v => `<span>${escapeHtml(v)}</span>`).join("")}</div>` : ""}
       ${t.action ? `<div class="card-body">${escapeHtml(t.action)}</div>` : ""}
+      ${Array.isArray(t.representatives) ? t.representatives.map(row => `<div class="evidence-line">${escapeHtml(row.name)} ${escapeHtml(row.code)}：${escapeHtml(String(row.change_pct))}% · ${escapeHtml(formatUpdateTime(row.quote_time))} · ${escapeHtml(row.source)}</div>`).join('') : ''}
+      ${t.risk ? `<p class="card-body">风险：${escapeHtml(t.risk)}</p>` : ''}
+      ${t.invalidate ? `<p class="card-body">停止关注本次机会的条件：${escapeHtml(t.invalidate)}</p>` : ''}
       ${t.note ? `<details class="alert-detail"><summary>更新依据</summary><div>${escapeHtml(t.note)}</div></details>` : ""}
+      ${Array.isArray(t.history) && t.history.length ? `<details class="alert-detail"><summary>查看上一次研究记录</summary><div>${escapeHtml(t.history[t.history.length - 1].updated_at || '')}：${escapeHtml(t.history[t.history.length - 1].conclusion || '')}</div></details>` : ''}
     </div>`;
 }
 

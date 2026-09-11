@@ -48,6 +48,13 @@ def theme_record(timestamp: str, side: str = "up", speed: float = 1.8) -> dict:
 
 
 class MonitorSignalBridgeTests(unittest.TestCase):
+    def test_primary_quote_provenance_is_kept_for_independence_check(self):
+        record = theme_record("2026-09-11T10:01:02")
+        record["details"]["theme"]["leaders"][0]["metrics"]["tick"]["source"] = "腾讯财经HTTP"
+        alert = convert_record(record)
+        self.assertEqual(alert["leaders"][0]["source"], "腾讯财经HTTP")
+        self.assertEqual(alert["quote_audit"]["primary_source"], "腾讯财经HTTP")
+
     def test_converts_opportunity_with_real_short_window_quote(self) -> None:
         alert = convert_record(theme_record("2026-07-22T10:01:02"))
         self.assertIsNotNone(alert)
