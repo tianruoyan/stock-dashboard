@@ -310,7 +310,7 @@ def monitor_health_row(spec, now, day):
             "data_status": "check_source_quality" if healthy else "unavailable", "blocking": active and not healthy,
             "action": "查看最新触发" if healthy else "查看监控状态", "reason": reason,
             "failure_type": "none" if healthy else ("not_due" if not active else "monitor_or_quote_unavailable"),
-            "diagnosis": reason, "next_actions": [], "related_sources": []}
+            "diagnosis": reason, "next_actions": ["继续检查最新行情与监控心跳；保留历史触发，不补造错过的信号。"], "related_sources": []}
 
 
 def overall_status(rows: list[dict[str, Any]]) -> str:

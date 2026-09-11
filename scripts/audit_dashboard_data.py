@@ -1298,7 +1298,7 @@ def summarize(status: str, issues: list[dict[str, Any]]) -> str:
             parts.append(f"{signal_review} 个信号复核")
         if background:
             parts.append(f"{background} 个背景复核")
-        return f"发现 {warning} 个降级/需复核项（{'，'.join(parts) or '需复核'}），核心结论可看但必须按影响分层使用。"
+        return f"共 {len(issues)} 条检查提示，其中 {warning} 条需处理、{info} 条背景记录（{'，'.join(parts) or '需复核'}）。"
     return f"数据结构检查通过，仅有 {info} 个提示项。"
 
 

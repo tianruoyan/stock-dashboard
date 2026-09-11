@@ -1702,7 +1702,7 @@ function buildDashboardStockPicks(strongThemes, riskThemes, mode, alertStocks = 
     .filter(row => mode === "risk" ? isDashboardRiskPick(row) : isDashboardStrongPick(row))
     .sort((a, b) => (b.signal.score || 0) - (a.signal.score || 0))
     .slice(0, 5)
-    .map(row => ({ name: displayStockName(row.stock.name || row.stock.code), reason: row.reason }));
+    .map(row => ({ name: `${displayStockName(row.stock.name || row.stock.code)}${row.stock.code ? ` ${String(row.stock.code).toUpperCase()}` : ''}`, reason: row.reason }));
 
   if (rows.length) return { rows, source: "个人池" };
 
@@ -3606,9 +3606,21 @@ function availableNumber(value) {
 
 function intradayCounts(data) {
   const s = data.sentiment || {};
-  return {up: availableNumber(s.limit_up_count ?? data.limit_up_count),
-    down: availableNumber(s.limit_down_count ?? data.limit_down_count),
-    broken: availableNumber(s.broken_limit_count ?? data.broken_limit_count)};
+  const pools = data.market_structure_facts?.pools;
+  const map = {limit_up_count:'limit_up', limit_down_count:'limit_down', broken_limit_count:'broken_board'};
+  const get = key => pools
+    ? (recentStructureFact(pools[map[key]]?.as_of) ? availableNumber(pools[map[key]]?.count) : null)
+    : availableNumber(Object.prototype.hasOwnProperty.call(s, key) ? s[key] : data[key]);
+  return {up: get('limit_up_count'), down: get('limit_down_count'), broken: get('broken_limit_count')};
+}
+
+function recentStructureFact(stamp) {
+  const time = Date.parse(stamp || '');
+  if (!Number.isFinite(time) || time > Date.now() + 120000) return false;
+  const parts = new Intl.DateTimeFormat('en-GB', {timeZone:'Asia/Shanghai',hour:'2-digit',minute:'2-digit',hourCycle:'h23'}).format(new Date()).split(':').map(Number);
+  const minute = parts[0] * 60 + parts[1];
+  const trading = (minute >= 570 && minute < 690) || (minute >= 780 && minute < 900);
+  return !trading || Date.now() - time <= 20 * 60000;
 }
 
 function limitCountText(data) {
@@ -3712,7 +3724,7 @@ function renderCodexIntraday(data) {
   const originalAdvice = intradayObservationItems(afternoonAdvice, action);
   const countsComplete = Object.values(intradayCounts(data)).every(v => v !== null);
   const breadth = data.market_structure_facts?.breadth || {};
-  const breadthComplete = ['advance_count', 'decline_count', 'flat_count'].every(k => availableNumber(breadth[k]) !== null);
+  const breadthComplete = recentStructureFact(breadth.as_of) && ['advance_count', 'decline_count', 'flat_count'].every(k => availableNumber(breadth[k]) !== null);
   const replacedMissing = originalAdvice.filter(item => countsComplete && breadthComplete && /涨跌家数|涨跌停结构|全A/.test(item) && /尚未取得|未取得|缺失/.test(item) && !/推断|行动|等待.*后/.test(item));
   const adviceItems = originalAdvice.filter(item => !replacedMissing.includes(item));
   const mainLine = themes[0] ? trendName(themes[0]) : "等待主线确认";
@@ -4125,7 +4137,7 @@ function splitPremarketText(text) {
 function renderBulletList(items, className = "news-list") {
   const list = (items || []).map(item => String(item || "").trim()).filter(Boolean);
   if (!list.length) return "";
-  return `<ul class="${className}">${list.map(item => `<li>${escapeHtml(item)}</li>`).join("")}</ul>`;
+  return `<ul class="${className}">${list.map(item => `<li>${escapeHtml(investorText(item))}</li>`).join("")}</ul>`;
 }
 
 function takePremarketPoints(text, limit = 2, maxLength = null) {
