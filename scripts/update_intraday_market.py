@@ -9,6 +9,8 @@ from datetime import datetime, time, timezone
 from pathlib import Path
 from typing import Any, Dict, Iterable, List, Optional
 
+from intraday_structure import apply_facts, collect
+
 
 ROOT = Path(__file__).resolve().parent.parent
 INTRADAY_PATH = ROOT / "data" / "intraday.json"
@@ -187,7 +189,7 @@ def fetch_watchlist_quotes(path: Path = WATCHLIST_PATH) -> Dict[str, Any]:
         "timestamp": now_iso(),
         "quote_as_of": quote_as_of,
         "source": "腾讯财经HTTP",
-        "summary": f"观察池{len(rows)}只，{len(rows) - missing}只取得当日收盘行情，{missing}只待补。",
+        "summary": f"观察池{len(rows)}只，{len(rows) - missing}只返回行情，{missing}只待补；行情日期和时点以每只股票标注为准。",
         "stocks": rows,
     }
 
@@ -249,6 +251,9 @@ def update(path: Path) -> Dict[str, Any]:
     payload = json.loads(path.read_text(encoding="utf-8"))
     indices = fetch_indices()
     industries = fetch_industries()
+    structure = collect()
+    # Network calls may overlap a new analyst snapshot; merge into the latest file.
+    payload = json.loads(path.read_text(encoding="utf-8"))
     collected_at = now_iso()
     quote_as_of = latest_quote_time(indices).isoformat(timespec="seconds")
 
@@ -281,6 +286,7 @@ def update(path: Path) -> Dict[str, Any]:
         "analysis_timestamp_unchanged": True,
         "time_basis": "行情源时间",
     }
+    apply_facts(payload, structure)
     write_atomic(path, payload)
     watchlist_quotes = fetch_watchlist_quotes()
     write_atomic(WATCHLIST_QUOTES_PATH, watchlist_quotes)
@@ -290,6 +296,9 @@ def update(path: Path) -> Dict[str, Any]:
         "market_data_collected_at": collected_at,
         "indices": len(indices),
         "industries": len(industries),
+        "structure": {"breadth_available": structure["breadth"] is not None,
+                      "pool_counts": {k: v["count"] for k, v in structure["pools"].items()},
+                      "missing": list(structure["errors"])},
         "watchlist_quotes": len(watchlist_quotes.get("stocks", [])),
         "watchlist_quote_as_of": watchlist_quotes.get("quote_as_of"),
     }
@@ -304,7 +313,8 @@ def main() -> int:
     except Exception as exc:
         print(json.dumps({"status": "failed", "error": str(exc)}, ensure_ascii=False))
         return 1
-    print(json.dumps({"status": "ok", **result}, ensure_ascii=False))
+    status = "partial" if result.get("structure", {}).get("missing") else "ok"
+    print(json.dumps({"status": status, **result}, ensure_ascii=False))
     return 0
 
 
