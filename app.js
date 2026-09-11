@@ -4643,6 +4643,12 @@ function renderPostmarket(data) {
   let html = "";
   html += renderPostmarketDecision(data);
   html += renderPostmarketSentimentIndicator(data.sentiment_indicator);
+  if (data.hk_close_followup?.quotes?.length) {
+    const hk = data.hk_close_followup;
+    html += `<div class="subsection"><h3>港股收盘补充</h3><p>${escapeHtml(hk.summary || '')}</p>` +
+      hk.quotes.map(row => `<div class="evidence-line">${escapeHtml(row.name)} ${escapeHtml(row.code || '')}：${escapeHtml(String(row.change_pct))}% · ${escapeHtml(formatUpdateTime(row.quote_time))} · ${escapeHtml(row.source || '')}</div>`).join('') +
+      `<p class="muted">${escapeHtml(hk.note || '')}</p></div>`;
+  }
 
   // === Codex 格式: hotspots + review ===
   if (data.hotspots || data.review) {
@@ -4652,14 +4658,14 @@ function renderPostmarket(data) {
     }
 
     // 一句话总结
-    if (data.review?.one_sentence) {
+    if (data.review?.one_sentence && data.review.one_sentence !== data.index?.summary) {
       html += `<div class="subsection"><h3>📋 收盘总结</h3><div class="breadth">${data.review.one_sentence}</div></div>`;
     }
 
     // 收盘竞价/尾盘补丁
     if (data.closing_auction_patch) {
       const cap = data.closing_auction_patch;
-      html += '<div class="subsection closing-auction"><h3>⏱️ 收盘竞价补丁</h3>';
+      html += '<div class="subsection closing-auction"><h3>⏱️ 尾盘表现</h3>';
       if (cap.summary) html += `<div class="breadth">${escapeHtml(cap.summary)}</div>`;
       if (cap.signals?.length) {
         html += '<ul class="news-list">' + cap.signals.map(s => `<li>${escapeHtml(typeof s === "string" ? s : `${s.name || s.signal || "尾盘信号"}：${s.detail || s.text || s.impact || ""}`)}</li>`).join('') + '</ul>';
@@ -4672,10 +4678,14 @@ function renderPostmarket(data) {
     // 涨跌统计（新格式：index.market_breadth；旧格式：index 顶层）
     if (data.index) {
       const mb = data.index.market_breadth || {};
+      const breadth = data.market_breadth || {};
       const stats = [
-        { k: '涨停', v: mb.limit_up ?? data.index['涨停'] },
-        { k: '跌停', v: mb.limit_down ?? data.index['跌停'] },
-        { k: '炸板', v: mb.broken_board ?? data.index['炸板'] },
+        { k: '上涨', v: breadth.advance_count },
+        { k: '下跌', v: breadth.decline_count },
+        { k: '平盘', v: breadth.flat_count },
+        { k: '涨停', v: mb.limit_up ?? breadth.limit_up_count ?? data.index['涨停'] },
+        { k: '跌停', v: mb.limit_down ?? breadth.limit_down_count ?? data.index['跌停'] },
+        { k: '炸板', v: mb.broken_board ?? breadth.broken_board_count ?? data.index['炸板'] },
         { k: '5%-8%', v: mb.up5_8 ?? data.index['涨幅5%至不足8%'] },
         { k: '8%+', v: mb.up8 ?? data.index['涨幅8%以上'] },
         { k: '跌5%+', v: mb.down5 },
@@ -4683,7 +4693,8 @@ function renderPostmarket(data) {
       ].filter(x => x.v !== undefined && x.v !== null);
       if (stats.length) {
         html += '<div class="subsection"><h3>📊 涨跌统计</h3><div class="index-row">';
-        html += stats.map(s => `<span class="index-item"><b>${s.k}</b> <span class="up">${s.v}</span></span>`).join('');
+        html += stats.map(s => `<span class="index-item"><b>${s.k}</b> <span class="${/跌|炸/.test(s.k) ? 'down' : /平/.test(s.k) ? 'muted' : 'up'}">${s.v}</span></span>`).join('');
+        if (breadth.missing_quote_count) html += `<span class="muted">${escapeHtml(String(breadth.missing_quote_count))}只暂无有效报价，未计入涨跌家数</span>`;
         html += '</div></div>';
       }
     }

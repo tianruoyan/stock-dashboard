@@ -49,7 +49,8 @@ def tencent_row(raw: dict, now: datetime) -> dict:
         if at.date() != now.date():
             raise ValueError("previous session is not today's HK quote")
         # Last trade is not an indicative auction price, even before 09:30.
-        if at.time() < time(9, 30) or now - at > timedelta(minutes=30):
+        closing_quote = now.time() >= time(16, 10) and at.time() >= time(16)
+        if at.time() < time(9, 30) or (now - at > timedelta(minutes=30) and not closing_quote):
             raise ValueError("no current HK continuous-session quote")
     else:
         raise ValueError("unknown symbol")

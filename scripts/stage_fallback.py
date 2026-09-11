@@ -10,8 +10,9 @@ from pathlib import Path
 from typing import Any, Sequence
 
 from update_intraday_market import fetch_indices, fetch_industries, fetch_watchlist_quotes, latest_quote_time
-from premarket_external import refresh as refresh_external
+from premarket_external import refresh as refresh_external, HK, fetch_quotes, tencent_row
 from market_sentiment import sentiment_payload
+from intraday_structure import collect as collect_structure, apply_facts as apply_structure_facts
 
 
 TZ = timezone(timedelta(hours=8))
@@ -307,6 +308,9 @@ def v2_same_day_facts(path: Path, day: str) -> dict[str, Any]:
     for dimension in payload.get("dimensions") or []:
         if not isinstance(dimension, dict) or signal_date(dimension.get("as_of")) != day:
             continue
+        dimension_time = parse_datetime(dimension.get("as_of"))
+        if dimension_time is None or dimension_time.time() < time(15):
+            continue
         fact_rows = [str(item) for item in dimension.get("fact_summary") or [] if str(item).strip()]
         if fact_rows:
             facts.append(
@@ -412,6 +416,21 @@ def build_postmarket_payload(
             "policy": "V2只作同日事实补证，不改变V1生产地位。",
         }
     )
+    structure = collect_structure(now=now)
+    current_breadth = structure.get("breadth")
+    if current_breadth and parse_datetime(current_breadth.get("as_of")).time() >= time(15):
+        for key in ("advance_count", "decline_count", "flat_count", "total_count", "missing_quote_count"):
+            breadth[key] = current_breadth[key]
+        breadth["breadth_as_of"] = current_breadth["as_of"]
+        breadth["breadth_source"] = current_breadth["source_name"]
+    for pool_name, target in (("limit_up", "limit_up_count"), ("limit_down", "limit_down_count"), ("broken_board", "broken_board_count")):
+        pool = structure.get("pools", {}).get(pool_name)
+        if pool:
+            breadth[target] = pool["count"]
+    if "limit_up_count" in breadth:
+        breadth["effective_limit_up_count"] = breadth["limit_up_count"]
+    breadth["as_of"] = None
+    breadth["source"] = "各项统计按各自来源及时间记录"
     positive = sorted(watch_rows, key=lambda item: float(item["change_pct"]), reverse=True)[:3]
     negative = sorted(watch_rows, key=lambda item: float(item["change_pct"]))[:3]
     evidence = [
@@ -432,7 +451,7 @@ def build_postmarket_payload(
         {
             "name": f"行业相对强势：{top_names}",
             "type": "watch_line",
-            "status": "当日收盘行业排名居前，题材归因和持续性待次日验证",
+            "status": "今天相对强，下一交易日再看能否继续上涨",
             "evidence": [
                 {
                     "type": "price_action",
@@ -445,7 +464,7 @@ def build_postmarket_payload(
                 for item in top5
             ],
             "continuity": "只有当日收盘行业排名，不用单日排名替代连续性证据。",
-            "risk": "尚未完成题材归因及行业内代表股扩散核验，不能直接升级为交易主线。",
+            "risk": "还需核实是否有共同的消息或订单带动；少数股票上涨，不代表整个方向都值得追。",
             "action": "次日先看行业宽度和代表股承接，不追高。",
             "confirm": "行业继续前排且至少两类代表股同向扩散。",
             "invalidate": "行业排名快速回落或仅少数高标维持。",
@@ -494,7 +513,7 @@ def build_postmarket_payload(
         "generated_at": now_iso(now),
         "analysis_time": now_iso(now),
         "analysis_as_of": quote_as_of,
-        "phase": "16:30盘后自动兜底补产",
+        "phase": "A股收盘复盘" if now.time() < time(16, 30) else "收盘复盘",
         "status": status,
         "quality_state": "usable" if v2.get("status") == "current" else "degraded",
         "quality_summary": "收盘指数、行业与观察池行情为当日可核验事实；V2同日宽度缺失时保持降级。",
@@ -509,8 +528,9 @@ def build_postmarket_payload(
             "industry_bottom5": bottom5,
         },
         "market_breadth": breadth,
+        "market_structure_facts": structure,
         "review": {
-            "one_sentence": "16:30兜底已确认当日收盘指数和行业结构；先判断全市场，再映射观察池。",
+            "one_sentence": summary,
             "summary": summary,
             "evidence": evidence,
             "facts": [summary, f"行业相对前排为{top_names}；相对后排为{bottom_names}。"],
@@ -531,30 +551,30 @@ def build_postmarket_payload(
                 "invalidate": "高开低走、后排不扩散或行情源日期异常。",
             }
         ],
-        "primary_action": "只做次日验证，不交易、不修改用户资产。",
+        "primary_action": "下一交易日先看强势方向能否延续，条件不足不追高。",
         "closing_auction_patch": {
-            "summary": "16:30兜底仅保存当日15:00后可核验收盘行情；没有当日14:30快照时不补造尾盘历史。",
+            "summary": "已保存A股收盘行情；尚未取得完整尾盘走势，不能判断是否尾盘抢筹或集中卖出。",
             "snapshot_1500": {"timestamp": quote_as_of, "indices": close_map, "note": "当日可核验收盘快照。"},
             "signals": ["主要指数收盘事实已保存。", "缺少的14:30历史快照未补造。"],
-            "impact": "次日判断以正式收盘和当日宽度事实为基础，尾盘节奏缺失时降权。",
-            "watch_next_day": ["竞价承接、行业扩散、观察池与板块同步性。"],
+            "impact": "下一交易日先看多数股票是否止跌，再看强势股能否继续上涨。",
+            "watch_next_day": ["开盘后能否稳住、同板块是否有更多股票上涨、自选股是否跟上。"],
             "snapshot_1432": None,
             "deviation": None,
             "tail_28min": {"direction": "unknown", "note": "缺少当日连续尾盘快照，不计算。"},
             "representative_changes": [],
             "auction_reversal_stocks": [],
         },
-        "sentiment_indicator": sentiment_payload(indices, v2.get("breadth") or {}),
+        "sentiment_indicator": sentiment_payload(indices, breadth),
         "risk": [
-            "V2 shadow同日宽度缺失时，不生成上涨下跌家数、涨跌停或炸板结论。",
-            "只有15:00收盘快照时，不用当前行情补造14:30尾盘路径。",
+            "如果多数股票仍在下跌，少数个股上涨不能视为全市场回暖。",
+            "缺少完整尾盘走势时，不能仅凭收盘价格判断是否有资金抢筹。",
         ],
         "sources": [
             "腾讯财经HTTP：当日指数、行业及观察池收盘行情。",
             "V2 shadow：仅在trade_date与as_of均为当日时补充市场环境事实。",
         ],
         "automation_fallback_notes": [
-            "本文件仅在16:30发现V1盘后文件非当日或字段不完整时生成。",
+            "15:10起检查A股收盘复盘，16:30起独立补充港股收盘；网络恢复后重试。",
             "统一发布器负责构建、审计、提交和推送。",
         ],
         "v2_shadow_facts": v2.get("facts") or [],
@@ -573,20 +593,102 @@ def ensure_postmarket(root: Path, now: datetime, v2_environment: Path = DEFAULT_
     return True
 
 
+def refresh_close_structure(root: Path, now: datetime, *, force: bool = False) -> bool:
+    path = root / "data/postmarket.json"
+    original = read_json(path)
+    if not postmarket_complete(original, now.date().isoformat()):
+        return False
+    checked = parse_datetime((original.get("market_structure_facts") or {}).get("collected_at"))
+    if not force and checked and timedelta(0) <= now - checked < timedelta(minutes=15):
+        return False
+    facts = collect_structure(now=now)
+    # Network requests may overlap an authored review. Merge facts into the latest version.
+    payload = read_json(path)
+    if not postmarket_complete(payload, now.date().isoformat()):
+        return False
+    breadth = payload.setdefault("market_breadth", {})
+    row = facts.get("breadth")
+    if row and parse_datetime(row.get("as_of")).time() >= time(15):
+        for key in ("advance_count", "decline_count", "flat_count", "total_count", "missing_quote_count"):
+            breadth[key] = row[key]
+        breadth["breadth_as_of"] = row["as_of"]
+        breadth["breadth_source"] = row["source_name"]
+    for pool_name, target in (("limit_up", "limit_up_count"), ("limit_down", "limit_down_count"), ("broken_board", "broken_board_count")):
+        pool = facts.get("pools", {}).get(pool_name)
+        if pool:
+            breadth[target] = pool["count"]
+            breadth[target + "_as_of"] = pool["as_of"]
+    if "limit_up_count" in breadth:
+        breadth["effective_limit_up_count"] = breadth["limit_up_count"]
+    breadth["as_of"] = None
+    payload["market_structure_facts"] = facts
+    payload["sentiment_indicator"] = sentiment_payload(payload["index"]["a_share_indices"], breadth)
+    payload["sentiment_indicator_as_of"] = now_iso(now)
+    breadth["status"] = "收盘统计已更新" if not facts.get("errors") else "部分收盘统计等待更新"
+    breadth["note"] = (f"{breadth['missing_quote_count']}只暂无有效报价，未计入涨跌家数。"
+                       if breadth.get("missing_quote_count") else "各项按已取得的收盘统计展示。")
+    breadth["source"] = "各项统计按各自来源及时间记录"
+    if payload.get("source_mode") == "automatic_1630_close_fallback":
+        payload["risk"] = ["如果多数股票仍在下跌，少数个股上涨不能视为全市场回暖。", "缺少完整尾盘走势时，不能仅凭收盘价格判断是否有资金抢筹。"]
+        payload["closing_auction_patch"]["impact"] = "下一交易日先看多数股票是否止跌，再看强势股能否继续上涨。"
+    write_json_atomic(path, payload)
+    intraday_path = root / "data/intraday.json"
+    intraday = read_json(intraday_path)
+    quote_at = parse_datetime(intraday.get("market_data_as_of"))
+    if quote_at and quote_at.date() == now.date() and quote_at.time() >= time(15):
+        apply_structure_facts(intraday, facts)
+        write_json_atomic(intraday_path, intraday)
+    return True
+
+
+def refresh_hk_close(root: Path, now: datetime) -> bool:
+    """Append closing facts without rewriting the original A-share judgement."""
+    path = root / "data" / "postmarket.json"
+    payload = read_json(path)
+    if not current_payload(payload, now.date().isoformat()):
+        return False
+    previous = payload.get("hk_close_followup") or {}
+    if previous.get("complete"):
+        return False
+    rows, missing = [], []
+    for code in HK:
+        try:
+            raw = fetch_quotes([code])
+            row = tencent_row(raw[0], now)
+            at = parse_datetime(row["quote_time"])
+            if at is None or at.time() < time(16):
+                raise ValueError("收盘报价尚未返回")
+            rows.append(row)
+        except Exception:
+            missing.append(HK[code])
+    if not rows:
+        return False
+    followup = {"timestamp": now_iso(now), "complete": not missing, "quotes": rows,
+                "summary": "；".join(f"{r['name']}{r['change_pct']:+.2f}%" for r in rows),
+                "note": "港股收盘补充，不改写A股收盘时的判断。" + ("待补：" + "、".join(missing) if missing else "")}
+    if previous.get("quotes") == rows:
+        return False
+    payload["hk_close_followup"] = followup
+    write_json_atomic(path, payload)
+    return True
+
+
 def due_stage(now: datetime) -> str | None:
     current = now.astimezone(TZ).time()
     if current < time(8, 30):
         return None
     if current < time(9, 0):
         return "premarket-0830"
-    if current < time(16, 30):
+    if current < time(15, 10):
         return "premarket-0900"
+    if current < time(16, 30):
+        return "postmarket-1510"
     return "postmarket-1630"
 
 
 def health_ok(root: Path, stage: str, day: str) -> bool:
     payload = read_json(root / "data" / "automation-health.json")
-    target = "postmarket" if stage == "postmarket-1630" else "premarket"
+    target = "postmarket" if stage.startswith("postmarket-") else "premarket"
     if signal_date(payload.get("timestamp")) != day:
         return False
     for item in payload.get("processes") or []:
@@ -621,8 +723,11 @@ def execute(
         if not current_payload(read_json(root / "data" / "premarket.json"), day):
             ensure_premarket(root, now, "08:30")
         written = ensure_premarket(root, now, "09:00")
-    elif selected == "postmarket-1630":
+    elif selected in {"postmarket-1510", "postmarket-1630"}:
         written = ensure_postmarket(root, now, v2_environment)
+        written = refresh_close_structure(root, now) or written
+        if selected == "postmarket-1630":
+            written = refresh_hk_close(root, now) or written
     else:
         raise RuntimeError(f"未知阶段：{selected}")
 
@@ -657,12 +762,12 @@ def write_status(root: Path, payload: dict[str, Any], now: datetime) -> None:
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="V1盘前08:30/09:00与盘后16:30阶段守卫")
+    parser = argparse.ArgumentParser(description="V1盘前08:30/09:00、A股收盘15:10与港股收盘16:30补充")
     parser.add_argument("--root", type=Path, default=ROOT)
     parser.add_argument("--now", help="测试或人工补跑时间，ISO 8601")
     parser.add_argument(
         "--stage",
-        choices=("premarket-0830", "premarket-0900", "postmarket-1630"),
+        choices=("premarket-0830", "premarket-0900", "postmarket-1510", "postmarket-1630"),
         help="显式阶段；默认按北京时间自动选择",
     )
     parser.add_argument("--no-publish", action="store_true")

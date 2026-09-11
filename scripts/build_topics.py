@@ -1,165 +1,120 @@
 #!/usr/bin/env python3
+"""Refresh core research representatives, never the user's stock-pool membership."""
 from __future__ import annotations
-
 import json
-from datetime import datetime
+import math
+from datetime import datetime, time, timedelta
 from pathlib import Path
-from typing import Any
-
+from update_intraday_market import fetch_quotes, parse_quote_time
 
 ROOT = Path(__file__).resolve().parents[1]
-DATA_DIR = ROOT / "data"
-TOPICS_PATH = DATA_DIR / "topics.json"
-POSTMARKET_PATH = DATA_DIR / "postmarket.json"
+TOPICS_PATH = ROOT / "data/topics.json"
+POSTMARKET_PATH = ROOT / "data/postmarket.json"
+# A subset of already configured research representatives, not a full board.
+CORE = {
+    "机器人/工业自动化": {"sz002747": "埃斯顿", "sh688160": "步科股份", "sh688017": "绿的谐波"},
+    "医药修复链": {"sz002422": "科伦药业", "sz000739": "普洛药业", "sh600276": "恒瑞医药"},
+}
 
-
-def load_json(path: Path) -> dict[str, Any]:
+def load_json(path):
     try:
         value = json.loads(path.read_text(encoding="utf-8"))
-    except (OSError, UnicodeDecodeError, json.JSONDecodeError):
+        return value if isinstance(value, dict) else {}
+    except (OSError, ValueError):
         return {}
-    return value if isinstance(value, dict) else {}
 
-
-def as_list(value: Any) -> list[Any]:
-    return value if isinstance(value, list) else []
-
-
-def as_dict(value: Any) -> dict[str, Any]:
-    return value if isinstance(value, dict) else {}
-
-
-def find_named(rows: list[Any], name: str) -> dict[str, Any]:
-    return next(
-        (
-            item
-            for item in rows
-            if isinstance(item, dict)
-            and str(item.get("name") or item.get("industry") or "") == name
-        ),
-        {},
-    )
-
-
-def integer(value: Any) -> int:
+def parse_timestamp(value):
     try:
-        return int(value)
-    except (TypeError, ValueError):
-        return 0
-
-
-def parse_timestamp(value: Any) -> datetime | None:
-    text = str(value or "").strip().replace("Z", "+00:00")
-    if not text:
-        return None
-    try:
-        return datetime.fromisoformat(text)
-    except ValueError:
+        parsed = datetime.fromisoformat(str(value).replace("Z", "+00:00"))
+        return parsed if parsed.tzinfo else None
+    except (ValueError, TypeError):
         return None
 
-
-def main() -> int:
-    topics = load_json(TOPICS_PATH)
-    postmarket = load_json(POSTMARKET_PATH)
-    source_as_of = str(postmarket.get("timestamp") or "")
-    rows = [item for item in as_list(topics.get("topics")) if isinstance(item, dict)]
-    if not source_as_of or not rows:
-        print("topics-refresh: waiting - 专题或盘后数据不可用")
-        return 0
-
-    source_time = parse_timestamp(source_as_of)
-    topics_time = parse_timestamp(topics.get("timestamp"))
-    if source_time and topics_time and source_time <= topics_time:
-        print(
-            "topics-refresh: waiting - 盘后证据不晚于当前专题，"
-            f"保留{topics.get('timestamp')}盘中结论"
-        )
-        return 0
-
-    breadth = as_dict(postmarket.get("market_breadth"))
-    machinery = find_named(as_list(postmarket.get("hotspots")), "机械设备/低位装备")
-    industry_concentration = as_list(breadth.get("industry_concentration"))
-    industry_gte8 = as_list(breadth.get("industry_gte8"))
-    limit_industries = {
-        str(item.get("name") or ""): integer(item.get("limit_up_count"))
-        for item in as_list(breadth.get("limit_pool_industry"))
-        if isinstance(item, dict)
-    }
-    theme_concentration = as_list(breadth.get("theme_concentration"))
-
-    updates: dict[str, dict[str, Any]] = {}
-    machinery_breadth = find_named(industry_concentration, "机械设备")
-    if machinery and machinery_breadth:
-        strong_count = integer(machinery_breadth.get("count"))
-        special_limit = limit_industries.get("专用设备", 0)
-        general_limit = limit_industries.get("通用设备", 0)
-        updates["机器人/工业自动化"] = {
-            "status": "观察",
-            "conclusion": (
-                "机械设备收盘明显活跃，但专用设备和通用设备的涨停中混有电网、"
-                "油服和军工，机器人主线尚未确认。"
-            ),
-            "action": (
-                "次日先看绿的谐波、埃斯顿、步科股份等核心股是否至少3只同步转强，"
-                "再看减速器、伺服、控制器和机器视觉是否出现涨停扩散；"
-                "两者缺一，只按低位装备轮动观察。"
-            ),
-            "note": (
-                f"机械设备{strong_count}只涨超5%，专用设备{special_limit}只、"
-                f"通用设备{general_limit}只涨停；这些强势股并非来自同一机器人产业催化。"
-            ),
-            "updated_at": source_as_of,
-        }
-
-    medical_breadth = find_named(industry_concentration, "医药生物")
-    medical_gte8 = find_named(industry_gte8, "医药生物")
-    medical_theme = find_named(theme_concentration, "医药")
-    if medical_breadth and medical_theme:
-        strong_count = integer(medical_breadth.get("count"))
-        very_strong_count = integer(medical_gte8.get("count"))
-        limit_count = integer(medical_theme.get("limit_up_count"))
-        industries = as_dict(medical_theme.get("industries"))
-        representatives = "、".join(str(value) for value in as_list(medical_theme.get("representatives"))[:6])
-        updates["医药修复链"] = {
-            "status": "观察",
-            "conclusion": (
-                f"医药收盘出现{limit_count}只涨停、{strong_count}只涨超5%，低位修复已经出现；"
-                f"但涨停主要分布在中药{integer(industries.get('中药Ⅱ'))}只、"
-                f"化学制药{integer(industries.get('化学制药'))}只和"
-                f"医疗器械{integer(industries.get('医疗器械'))}只，尚未形成全行业一致主线。"
-            ),
-            "action": (
-                f"次日先看化学制药涨停能否继续增加、医药涨超5%的股票能否保持在"
-                f"{strong_count}只以上，再看恒瑞、科伦、普洛等核心股是否多数上涨；"
-                "否则只按低位轮动观察。"
-            ),
-            "note": (
-                f"医药生物涨超8%的股票有{very_strong_count}只；"
-                f"涨停代表包括{representatives or '等待代表股名单'}，当前强点偏中药和少数化学制药。"
-            ),
-            "updated_at": source_as_of,
-        }
-
-    updated_names = []
-    for item in rows:
-        name = str(item.get("name") or "")
-        if name not in updates:
+def closing_representatives(raw, expected, now):
+    rows = {}
+    for row in raw:
+        code, f = row.get("query_code"), row.get("fields") or []
+        if code not in expected or len(f) <= 37 or f[1] != expected[code]:
             continue
-        item.update(updates[name])
-        updated_names.append(name)
+        try:
+            price, previous, high, pct = [float(f[i]) for i in (3, 4, 33, 32)]
+            at = parse_quote_time(f[30])
+            if not all(math.isfinite(v) for v in (price, previous, high, pct)) or min(price, previous, high) <= 0:
+                continue
+            if at is None or at.date() != now.date() or at.time() < time(15) or at > now + timedelta(seconds=60):
+                continue
+            if abs((price / previous - 1) * 100 - pct) > .05:
+                continue
+        except (ValueError, TypeError):
+            continue
+        rows[code] = {"code": code, "name": f[1], "price": price, "change_pct": pct,
+                      "quote_time": at.isoformat(timespec="seconds"), "source": "腾讯财经HTTP"}
+    return [rows[code] for code in expected if code in rows]
 
-    if not updated_names:
-        print("topics-refresh: waiting - 当天盘后证据不足，保留原专题结论")
+def topic_update(name, quotes, now, postmarket_time):
+    if len(quotes) != len(CORE[name]):
+        return None
+    up = sum(row["change_pct"] > 0 for row in quotes)
+    down = sum(row["change_pct"] < 0 for row in quotes)
+    flat = len(quotes) - up - down
+    state = "代表股多数走弱" if down >= 2 else "代表股多数上涨，继续观察" if up >= 2 else "代表股表现分化"
+    evidence = [f"{r['name']} {r['code']} {r['change_pct']:+.2f}%，报{r['price']}；{r['quote_time']}；{r['source']}。" for r in quotes]
+    return {"status": state, "conclusion": f"跟踪的{len(quotes)}只代表股中，{up}只上涨、{down}只下跌、{flat}只平盘。这里只反映这组股票，尚不能代表整个板块。",
+            "action": "下一交易日先看这些代表股是否多数走强，再看同板块是否有更多股票跟涨；缺少扩散时不追高。",
+            "risk": "样本不覆盖整个板块；没有新的公告或订单证据，不能据此认定产业逻辑改善。",
+            "invalidate": "代表股多数转跌，或仅一只股票上涨而其他继续走弱。",
+            "note": " ".join(evidence), "evidence": evidence, "representatives": quotes,
+            "updated_at": now.isoformat(timespec="seconds"), "last_checked_at": now.isoformat(timespec="seconds"),
+            "source_as_of": max(row["quote_time"] for row in quotes), "postmarket_source_as_of": postmarket_time,
+            "update_scope": "closing_representatives_only"}
+
+def main():
+    now = datetime.now().astimezone()
+    topics, postmarket = load_json(TOPICS_PATH), load_json(POSTMARKET_PATH)
+    close_at = parse_timestamp(postmarket.get("timestamp"))
+    if not close_at or close_at.date() != now.date() or close_at.time() < time(15) or now.time() < time(15):
+        print("topics-refresh: waiting - 等待当日收盘，不改写旧研究")
         return 0
-
-    topics["topics"] = rows
-    TOPICS_PATH.write_text(
-        json.dumps(topics, ensure_ascii=False, indent=2) + "\n",
-        encoding="utf-8",
-    )
-    print(f"topics-refresh: ok - 已更新{'、'.join(updated_names)}，依据截至{source_as_of}")
+    updates = {}
+    for item in topics.get("topics") or []:
+        name = item.get("name")
+        if name not in CORE:
+            continue
+        updated_at = parse_timestamp(item.get("updated_at"))
+        if updated_at and updated_at >= close_at:
+            continue
+        try:
+            quotes = closing_representatives(fetch_quotes(CORE[name]), CORE[name], now)
+            update = topic_update(name, quotes, now, postmarket["timestamp"])
+            if update:
+                updates[name] = update
+        except Exception:
+            pass
+    if not updates:
+        print("topics-refresh: waiting - 已更新的记录保持不变；缺少的收盘报价待重试")
+        return 0
+    topics = load_json(TOPICS_PATH)  # Do not overwrite concurrently authored research.
+    changed = []
+    for item in topics.get("topics") or []:
+        name = item.get("name")
+        updated_at = parse_timestamp(item.get("updated_at"))
+        if name not in updates or (updated_at and updated_at >= close_at):
+            continue
+        history = item.setdefault("history", [])
+        history.append({k: v for k, v in item.items() if k != "history"})
+        item.update(updates[name])
+        changed.append(name)
+    if changed:
+        topics["timestamp"] = now.isoformat(timespec="seconds")
+        topics["trade_date"] = now.date().isoformat()
+        topics["source_as_of"] = postmarket["timestamp"]
+        topics["status"] = "partial_topics_refreshed"
+        temp = TOPICS_PATH.with_suffix(".json.tmp")
+        temp.write_text(json.dumps(topics, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+        json.loads(temp.read_text(encoding="utf-8"))
+        temp.replace(TOPICS_PATH)
+    print("topics-refresh: ok - 更新收盘代表股核对：" + "、".join(changed) + "；不替代完整产业研究")
     return 0
-
 
 if __name__ == "__main__":
     raise SystemExit(main())

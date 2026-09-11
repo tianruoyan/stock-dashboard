@@ -64,6 +64,15 @@ class AlertQuoteVerifierTests(unittest.TestCase):
         self.assertEqual(alert["confirmation_level"], "candidate")
         self.assertTrue(result["quote_audit"]["sanity_checks"]["cross_source_verified"])
 
+    def test_tencent_cannot_cross_verify_itself(self):
+        payload = sample_payload([("甲公司", 2.0), ("乙公司", 1.5)])
+        payload["alerts"][0].setdefault("quote_audit", {})["primary_source"] = "腾讯财经HTTP"
+        result = enrich_payload(payload, self.identity, self.loader, self.now)
+        self.assertFalse(result["alerts"][0]["quote_audit"]["sanity_checks"]["cross_source_verified"])
+        self.assertEqual(result["alerts"][0]["quote_audit"]["secondary_verification"]["state"], "same_source")
+        independent = enrich_payload(payload, self.identity, self.loader, self.now, formal_minute_loader=self.loader)
+        self.assertTrue(independent["alerts"][0]["quote_audit"]["sanity_checks"]["cross_source_verified"])
+
     def test_direction_or_magnitude_mismatch_stays_unverified(self) -> None:
         payload = sample_payload([("甲公司", -2.0), ("乙公司", -1.5)])
         result = enrich_payload(payload, self.identity, self.loader, self.now)

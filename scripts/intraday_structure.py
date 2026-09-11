@@ -5,7 +5,7 @@ import json
 import urllib.parse
 import urllib.request
 from concurrent.futures import ThreadPoolExecutor
-from datetime import datetime
+from datetime import datetime, time
 from pathlib import Path
 from zoneinfo import ZoneInfo
 
@@ -24,7 +24,8 @@ def current_breadth(value, now):
     if stamp.tzinfo is None or value.get("trade_date") != now.date().isoformat():
         raise ValueError("市场统计日期不匹配")
     age = (now - stamp).total_seconds()
-    if stamp.astimezone(CN).date() != now.date() or not -120 <= age <= 1200:
+    closing_fact = now.time() >= time(15) and stamp.astimezone(CN).time() >= time(15) and age >= 0
+    if stamp.astimezone(CN).date() != now.date() or (not -120 <= age <= 1200 and not closing_fact):
         raise ValueError("市场统计等待更新")
     fields = ("advance_count", "decline_count", "flat_count", "total_count", "missing_quote_count")
     if any(type(value.get(k)) is not int or value[k] < 0 for k in fields):

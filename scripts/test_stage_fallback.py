@@ -13,6 +13,10 @@ from stage_fallback import (
     execute,
     postmarket_complete,
     read_json,
+    due_stage,
+    refresh_hk_close,
+    refresh_close_structure,
+    v2_same_day_facts,
 )
 
 
@@ -109,6 +113,9 @@ class StageFallbackTests(unittest.TestCase):
         collector = patch("stage_fallback.refresh_external", return_value=False)
         self.external = collector.start()
         self.addCleanup(collector.stop)
+        structure = patch("stage_fallback.collect_structure", return_value={"breadth": None, "pools": {}, "errors": {}})
+        structure.start()
+        self.addCleanup(structure.stop)
 
     def test_completed_stage_still_checks_external_quotes(self) -> None:
         tmp, root, calendar = self.make_root()
@@ -291,6 +298,58 @@ class StageFallbackTests(unittest.TestCase):
         for item in payload["index"]["a_share_indices"]:
             item["quote_time"] = "20260901145600"
         self.assertFalse(postmarket_complete(payload, "2026-09-01"))
+
+    def test_a_share_close_is_due_before_hk_close(self):
+        self.assertEqual(due_stage(datetime(2026, 9, 11, 15, 9, tzinfo=TZ)), "premarket-0900")
+        self.assertEqual(due_stage(datetime(2026, 9, 11, 15, 10, tzinfo=TZ)), "postmarket-1510")
+        self.assertEqual(due_stage(datetime(2026, 9, 11, 16, 30, tzinfo=TZ)), "postmarket-1630")
+
+    def test_hk_supplement_does_not_rewrite_a_share_analysis(self):
+        tmp, root, _ = self.make_root()
+        self.addCleanup(tmp.cleanup)
+        original = {"trade_date": "2026-09-11", "timestamp": "2026-09-11T15:12:00+08:00", "review": {"summary": "当时判断"}}
+        path = root / "data/postmarket.json"
+        write_json(path, original)
+        row = {"name": "恒生指数", "change_pct": 1, "quote_time": "2026-09-11T16:08:00+08:00"}
+        with patch("stage_fallback.fetch_quotes", return_value=[[]]), patch("stage_fallback.tencent_row", return_value=row):
+            self.assertTrue(refresh_hk_close(root, datetime(2026, 9, 11, 16, 30, tzinfo=TZ)))
+        updated = read_json(path)
+        self.assertEqual(updated["timestamp"], original["timestamp"])
+        self.assertEqual(updated["review"], original["review"])
+        self.assertTrue(updated["hk_close_followup"]["complete"])
+
+    def test_hk_quote_before_close_not_called_closing(self):
+        tmp, root, _ = self.make_root()
+        self.addCleanup(tmp.cleanup)
+        write_json(root / "data/postmarket.json", {"trade_date": "2026-09-11", "timestamp": "2026-09-11T15:12:00+08:00"})
+        row = {"name": "恒生指数", "change_pct": 1, "quote_time": "2026-09-11T15:40:00+08:00"}
+        with patch("stage_fallback.fetch_quotes", return_value=[[]]), patch("stage_fallback.tencent_row", return_value=row):
+            self.assertFalse(refresh_hk_close(root, datetime(2026, 9, 11, 16, 30, tzinfo=TZ)))
+
+    def test_morning_v2_statistics_cannot_be_called_close(self):
+        tmp, root, _ = self.make_root()
+        self.addCleanup(tmp.cleanup)
+        path = root / "v2.json"
+        write_json(path, {"trade_date": "2026-09-11", "as_of": "2026-09-11T15:10:00+08:00", "dimensions": [
+            {"as_of": "2026-09-11T10:30:00+08:00", "fact_summary": ["上涨3000家、下跌2000家。"]}]})
+        self.assertEqual(v2_same_day_facts(path, "2026-09-11")["breadth"], {})
+
+    def test_retry_refreshes_facts_without_rewriting_judgement_time(self):
+        tmp, root, _ = self.make_root()
+        self.addCleanup(tmp.cleanup)
+        now = datetime(2026, 9, 1, 15, 20, tzinfo=TZ)
+        with patch("stage_fallback.fetch_indices", return_value=index_rows()), patch("stage_fallback.fetch_industries", return_value=industry_rows()), patch("stage_fallback.fetch_watchlist_quotes", return_value=watchlist_payload()):
+            ensure_postmarket(root, now, root / "none.json")
+        before = read_json(root / "data/postmarket.json")
+        facts = {"collected_at": now.isoformat(), "breadth": None, "errors": {"breadth": "待更新"},
+                 "pools": {"limit_up": {"count": 0, "as_of": now.isoformat()}, "limit_down": {"count": 12, "as_of": now.isoformat()}}}
+        with patch("stage_fallback.collect_structure", return_value=facts):
+            self.assertTrue(refresh_close_structure(root, now, force=True))
+        after = read_json(root / "data/postmarket.json")
+        self.assertEqual(after["timestamp"], before["timestamp"])
+        self.assertEqual(after["review"], before["review"])
+        self.assertEqual(after["market_breadth"]["limit_up_count"], 0)
+        self.assertEqual(after["market_breadth"]["limit_down_count"], 12)
 
 
 if __name__ == "__main__":

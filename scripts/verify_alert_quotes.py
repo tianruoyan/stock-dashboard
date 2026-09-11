@@ -223,7 +223,8 @@ def enrich_payload(
             and previous.get("fingerprint") == fingerprint
             and not live_eligible
         )
-        if preserve_previous:
+        same_source = "腾讯" in str(audit.get("primary_source") or "") and formal_minute_loader is None
+        if preserve_previous and not same_source:
             if previous.get("state") == "passed" and isinstance(audit.get("missing_confirmation"), str):
                 audit["missing_confirmation"] = remove_cross_source_missing(audit["missing_confirmation"])
                 alert["quote_audit"] = audit
@@ -276,6 +277,9 @@ def verify_alert(
     formal_tick_loader: TickLoader | None = None,
 ) -> Dict[str, Any]:
     verification_source = "富途行情" if formal_minute_loader is not None else "腾讯分钟行情"
+    primary_source = str((alert.get("quote_audit") or {}).get("primary_source") or "")
+    if "腾讯" in primary_source and formal_minute_loader is None:
+        return verification_result("same_source", now, reason="当前两份报价都来自腾讯，不能算独立核验；等待富途行情确认。", source=verification_source)
     event_at = parse_datetime(alert.get("time"))
     if event_at is None:
         return verification_result("pending", now, reason="异动时间无法解析，等待下一轮。", source=verification_source)

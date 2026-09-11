@@ -423,6 +423,7 @@ def representative_leaders(kind: str, details: dict[str, Any], side: str) -> lis
             "code": str(tick.get("symbol") or ""),
             "change_pct": round(speed or 0.0, 4),
             "quote_time": tick.get("timestamp"),
+            "source": tick.get("source") or "本地盘中监控",
             "score": round(score, 2) if score is not None else None,
             "factors": factors,
         })
@@ -489,7 +490,8 @@ def item_quote_audit(timestamp: datetime, leaders: list[dict[str, Any]], board: 
     direction_valid = direction_ratio is not None and direction_ratio >= 0.6
     max_move = max([abs(as_float(item.get("change_pct")) or 0) for item in leaders] or [0])
     return {
-        "provider": "本地盘中监控",
+        "provider": "本地盘中监控、腾讯财经HTTP" if any("腾讯" in str(row.get("source")) for row in leaders) else "本地盘中监控",
+        "primary_source": "腾讯财经HTTP" if any("腾讯" in str(row.get("source")) for row in leaders) else "本地盘中监控",
         "quote_time": timestamp.replace(microsecond=0).isoformat(),
         "pct_field": "3分钟涨跌幅",
         "sample_count": len(leaders),
