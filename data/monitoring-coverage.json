@@ -1,11 +1,11 @@
 {
-  "timestamp": "2026-09-11T14:33:06+08:00",
+  "timestamp": "2026-09-11T14:34:38+08:00",
   "current_signal_date": "2026-09-11",
   "overall_status": "degraded",
-  "summary": "4 个监测维度需降权，1 个背景维度需复核。",
+  "summary": "3 个监测维度需降权，1 个背景维度需复核。",
   "counts": {
     "critical": 0,
-    "warning": 4,
+    "warning": 3,
     "info": 1
   },
   "blind_spots": [
@@ -23,7 +23,7 @@
       ],
       "fallback_action": "只把 alert 当成线索，必须结合指数、板块宽度和个股原始报价确认。",
       "fallback_checks": [
-        "宽度替代：9:25/9:30先看涨停40、跌停16、炸板18、跌5%以上-是否收敛；不收敛则风险优先。",
+        "宽度替代：9:25/9:30先看涨停40、跌停19、炸板18、跌5%以上-是否收敛；不收敛则风险优先。",
         "主线替代：先看半导体设备/材料/制造/封测能否同步扩散；单点强不升级。",
         "新线替代：从行业与题材涨幅、成交和涨停新增中寻找首次扩散方向；没有宽度不升级。",
         "雷达替代：数据质量降级：污染 alert 修复前，盘中异动信号必须降权；观察池个股涨跌幅以已审计源为准。",
@@ -31,26 +31,6 @@
       ],
       "source_files": [
         "data/alert.json",
-        "data/data-trust.json"
-      ]
-    },
-    {
-      "id": "intraday-structure-degraded",
-      "title": "盘中结构降权",
-      "severity": "warning",
-      "conclusion": "盘面宽度、行业/概念强弱和午后建议可看，但实时涨跌幅需复核。",
-      "impacted_decisions": [
-        "强主线不能直接外推为进攻",
-        "机会候选只能等待确认",
-        "风险项优先级高于机会项"
-      ],
-      "evidence": [
-        "盘中全景已 30 分钟未刷新，超过 15 分钟 SLA"
-      ],
-      "fallback_action": "优先看涨跌停/炸板/尾盘承接等结构证据，不用单个涨跌幅做结论。",
-      "fallback_checks": [],
-      "source_files": [
-        "data/intraday.json",
         "data/data-trust.json"
       ]
     },
