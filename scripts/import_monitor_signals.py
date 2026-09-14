@@ -308,6 +308,11 @@ def convert_record(record: dict[str, Any]) -> Optional[dict[str, Any]]:
     rules = details.get("trigger_rules") if isinstance(details.get("trigger_rules"), list) else []
     reason = normalize_reason(record.get("body") or record.get("title") or "")
     audit = item_quote_audit(timestamp, leaders, board, alert_class)
+    if kind.startswith("industry_strength"):
+        # 这里是行业与个股的日内强弱核验，不得把日内涨跌幅伪装成 3 分钟急拉。
+        audit["pct_field"] = "日内涨跌幅"
+        audit["industry_day_change_pct"] = board.get("move")
+        audit["board_3m_change_pct"] = None
     key = str(record.get("key") or f"{kind}:{sector}:{side}")
     digest = hashlib.sha1(f"{key}|{timestamp.isoformat()}".encode("utf-8")).hexdigest()[:12]
     alert: dict[str, Any] = {

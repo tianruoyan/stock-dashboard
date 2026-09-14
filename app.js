@@ -2886,7 +2886,7 @@ function renderAlerts(data) {
       : "";
     const factors = (a.leaders || []).slice(0, 3)
       .flatMap(l => Array.isArray(l.factors)
-        ? l.factors.filter(f => !(l.metric_label === "日内" && /日内涨幅|日内涨跌幅|当日涨幅/.test(String(f)))).slice(0, 2).map(f => `${l.name}：${f}`)
+        ? l.factors.filter(f => !(l.metric_label === "日内" && /^日内/.test(String(f)))).slice(0, 2).map(f => `${l.name}：${f}`)
         : [])
       .slice(0, 4);
     const factorHtml = factors.length ? `<div class="alert-factors">${factors.map(f => `<span>${escapeHtml(f)}</span>`).join("")}</div>` : "";
@@ -2894,8 +2894,9 @@ function renderAlerts(data) {
       ? `<div class="alert-resolution ${resolution.cls}"><b>${escapeHtml(resolution.label)}</b><span>${escapeHtml(resolution.detail)}</span></div>`
       : "";
     const confirmationHtml = renderAlertConfirmation(a, confirmation, purpose);
+    const freshnessMinutes = a.signal_type === "持续走强观察" ? 15 : 5;
     const staleHtml = !isFresh
-      ? `<div class="alert-resolution stale"><b>已超过5分钟</b><span>只作为历史触发参考，不作为当前交易/风险触发。</span></div>`
+      ? `<div class="alert-resolution stale"><b>已超过${freshnessMinutes}分钟</b><span>只作为历史触发参考，不作为当前交易/风险触发。</span></div>`
       : "";
 
     const sectorName = displayAlertSector(a);
@@ -2925,7 +2926,9 @@ function alertDisplaySort(a, b) {
 
 function isAlertFresh(alert, now = Date.now()) {
   const eventTime = alert?._eventTime || alert?._received || 0;
-  return !!eventTime && now - eventTime <= ALERT_CURRENT_MS && eventTime <= now + FUTURE_ALERT_TOLERANCE;
+  // 行业持续走强由行业事实每 15 分钟更新一次；其余短周期异动仍按 5 分钟处理。
+  const freshnessWindow = alert?.signal_type === "持续走强观察" ? 15 * 60 * 1000 : ALERT_CURRENT_MS;
+  return !!eventTime && now - eventTime <= freshnessWindow && eventTime <= now + FUTURE_ALERT_TOLERANCE;
 }
 
 function freshestAlertAgeMs(alerts, now = Date.now()) {

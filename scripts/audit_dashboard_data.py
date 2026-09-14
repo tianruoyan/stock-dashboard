@@ -657,16 +657,17 @@ def validate_alert_quote_audit(data: dict[str, Any], alerts: list[Any], polluted
     if polluted and sanity.get("cross_source_verified") is not True:
         severity = "critical" if requires_trade_gate else "warning"
         code = "alert_quote_not_cross_verified" if requires_trade_gate else "historical_alert_not_cross_verified"
-        issues.append(issue(severity, "alert.json", code, "行情污染源仍降级，当前盘中 active alerts 必须 quote_audit.sanity_checks.cross_source_verified=true 后才能发布" if requires_trade_gate else "行情污染源仍降级，历史 alert 未交叉验证，只降权复盘参考", "quote_audit.sanity_checks"))
+        issues.append(issue(severity, "alert.json", code, "行情污染源仍降级，明确确认的盘中交易信号必须 quote_audit.sanity_checks.cross_source_verified=true 后才能发布" if requires_trade_gate else "行情污染源仍降级，观察或历史信号未交叉验证，只能降权参考", "quote_audit.sanity_checks"))
 
 
 def alert_requires_trade_gate(data: dict[str, Any], alerts: list[Any], now: datetime, phase: str) -> bool:
     if phase not in {"morning", "afternoon"}:
         return False
+    # 只有被上游明确标成“确认”的信号才可能进入交易门禁。
+    # 观察、等待确认、风险提示或缺省状态都不能被默认为可交易信号。
     confirmed = [
         item for item in alerts
-        if isinstance(item, dict)
-        and item.get("confirmation_level") not in {"candidate", "invalidated"}
+        if isinstance(item, dict) and item.get("confirmation_level") == "confirmed"
     ]
     if not confirmed:
         return False
