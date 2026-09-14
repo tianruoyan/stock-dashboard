@@ -1308,14 +1308,14 @@
       "is_old_economy": false,
       "source_watch_id": "传说游资票走势关联",
       "quote_audit": {
-        "provider": "本地盘中监控、腾讯财经HTTP",
+        "provider": "本地盘中监控、富途行情（腾讯备用）",
         "primary_source": "腾讯财经HTTP",
         "quote_time": "2026-09-14T10:54:21+08:00",
         "pct_field": "3分钟涨跌幅",
         "sample_count": 3,
         "max_abs_leader_change_pct": 1.32,
         "sanity_checks": {
-          "cross_source_verified": false,
+          "cross_source_verified": true,
           "price_move_valid": true,
           "volume_valid": false,
           "direction_ratio_valid": true,
@@ -1326,7 +1326,75 @@
         "direction_ratio": 0.8,
         "volume_ratio": 1.0,
         "relative_volume_vs_yesterday": null,
-        "missing_confirmation": "等待富途行情按触发时点交叉核验；通过前只作候选或观察，不作为确认交易信号。"
+        "missing_confirmation": "等待富途行情按触发时点交叉核验；通过前只作候选或观察，不作为确认交易信号。",
+        "secondary_source": "富途行情",
+        "secondary_verification": {
+          "state": "passed",
+          "checked_at": "2026-09-14T10:55:59+08:00",
+          "source": "富途行情",
+          "reason": "富途行情已按代表股触发时点对齐，方向和价格变化相互支持。",
+          "representatives": [
+            {
+              "股票": "宏昌电子",
+              "代码": "603002.SH",
+              "监控涨跌幅": 1.32,
+              "富途涨跌幅": 1.32,
+              "腾讯涨跌幅": 1.2182,
+              "起始分钟": "10:51:21",
+              "结束分钟": "10:54:21",
+              "对齐方式": "逐笔行情同一时点对齐",
+              "时间偏差秒": 0.6,
+              "可比涨跌范围": [
+                1.2672,
+                1.32
+              ],
+              "方向一致": true,
+              "幅度一致": true,
+              "复核结论": "一致"
+            },
+            {
+              "股票": "中京电子",
+              "代码": "002579.SZ",
+              "监控涨跌幅": 0.0,
+              "富途涨跌幅": 0.0,
+              "腾讯涨跌幅": 0.0,
+              "起始分钟": "10:51:18",
+              "结束分钟": "10:54:18",
+              "对齐方式": "逐笔行情同一时点对齐",
+              "时间偏差秒": 0.0,
+              "可比涨跌范围": [
+                0.0,
+                0.0
+              ],
+              "方向一致": false,
+              "幅度一致": false,
+              "复核结论": "行情精度不足"
+            },
+            {
+              "股票": "卓郎智能",
+              "代码": "600545.SH",
+              "监控涨跌幅": 0.7092,
+              "富途涨跌幅": 0.7092,
+              "腾讯涨跌幅": 0.9479,
+              "起始分钟": "10:51:15",
+              "结束分钟": "10:54:19",
+              "对齐方式": "逐笔行情同一时点对齐",
+              "时间偏差秒": 3.15,
+              "可比涨跌范围": [
+                0.7092,
+                0.9456
+              ],
+              "方向一致": true,
+              "幅度一致": true,
+              "复核结论": "一致"
+            }
+          ],
+          "window_minutes": 3,
+          "direction_agreement_ratio": 1.0,
+          "magnitude_agreement_ratio": 1.0,
+          "fingerprint": "375b2b54a5a6b0a21cd4",
+          "verifier_version": "futu-opend-2026-07-27.3"
+        }
       },
       "source_status": "invalidated",
       "valid_until": "2026-09-14T10:59:21+08:00",
@@ -1340,12 +1408,12 @@
   "quote_audit": {
     "provider": "本地盘中监控、富途行情（腾讯备用）",
     "quote_time": "2026-09-14T10:54:21+08:00",
-    "pct_field": "各异动卡标注的3分钟涨跌幅",
+    "pct_field": "各异动卡标注的短周期涨跌幅",
     "sanity_checks": {
       "sample_count": 10,
       "max_abs_leader_change_pct": 6.17,
       "cross_source_verified": false,
-      "verified_alert_count": 7
+      "verified_alert_count": 8
     }
   },
   "note": "异动来自本地短周期监控；候选卡须经富途行情按触发时点复核后才能升级。"
