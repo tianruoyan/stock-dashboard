@@ -291,7 +291,7 @@ def read_signal_records(path: Path, now: datetime) -> list[dict[str, Any]]:
 
 def convert_record(record: dict[str, Any]) -> Optional[dict[str, Any]]:
     kind = str(record.get("kind") or "")
-    if kind not in {"small_deng", "small_deng_down", "old_deng", "old_deng_down", "style_move", "volume_watch"}:
+    if kind not in {"small_deng", "small_deng_down", "old_deng", "old_deng_down", "style_move", "volume_watch", "industry_strength", "industry_strength_down"}:
         return None
     timestamp = parse_datetime(record.get("timestamp"))
     if timestamp is None:
@@ -384,6 +384,8 @@ def representative_leaders(kind: str, details: dict[str, Any], side: str) -> lis
     if kind.startswith("small_deng"):
         theme = details.get("theme") if isinstance(details.get("theme"), dict) else {}
         rows = theme.get("laggards" if side == "down" else "leaders") or []
+    elif kind.startswith("industry_strength"):
+        rows = details.get("leaders") if isinstance(details.get("leaders"), list) else []
     elif kind.startswith("old_deng"):
         directions = details.get("directions") if isinstance(details.get("directions"), list) else []
         ordered = sorted(directions, key=lambda item: as_float(item.get("speed_pct")) or 0, reverse=side != "down")
@@ -401,6 +403,34 @@ def representative_leaders(kind: str, details: dict[str, Any], side: str) -> lis
     seen: set[str] = set()
     for row in rows:
         if not isinstance(row, dict):
+            continue
+        if kind.startswith("industry_strength"):
+            name = str(row.get("name") or "").strip()
+            if not name or name in seen:
+                continue
+            day_change = as_float(row.get("day_change_pct"))
+            speed = as_float(row.get("speed_pct"))
+            amount_ratio = as_float(row.get("amount_ratio"))
+            factors = []
+            if day_change is not None:
+                factors.append(f"日内{day_change:+.2f}%")
+            if speed is not None:
+                factors.append(f"3分钟{speed:+.2f}%")
+            if amount_ratio is not None:
+                factors.append(f"成交放大{amount_ratio:.2f}x")
+            leaders.append({
+                "name": name,
+                "code": str(row.get("symbol") or ""),
+                "change_pct": round(day_change or 0.0, 4),
+                "metric_label": "日内",
+                "quote_time": row.get("timestamp"),
+                "source": row.get("source") or "腾讯财经HTTP",
+                "score": None,
+                "factors": factors,
+            })
+            seen.add(name)
+            if len(leaders) >= 3:
+                break
             continue
         metrics = row.get("metrics") if isinstance(row.get("metrics"), dict) else row
         tick = metrics.get("tick") if isinstance(metrics.get("tick"), dict) else {}
@@ -434,6 +464,10 @@ def representative_leaders(kind: str, details: dict[str, Any], side: str) -> lis
 
 
 def classify_record(kind: str, details: dict[str, Any], side: str, sector: str = "") -> tuple[str, str, str]:
+    if kind == "industry_strength":
+        return "", "持续走强观察", ""
+    if kind == "industry_strength_down":
+        return "risk", "行业转弱提醒", ""
     if kind in {"old_deng", "old_deng_down", "style_move"}:
         return "style", "风格观察", "candidate"
     if kind == "small_deng_down":
@@ -448,6 +482,14 @@ def classify_record(kind: str, details: dict[str, Any], side: str, sector: str =
 
 
 def board_metrics(kind: str, details: dict[str, Any], side: str) -> dict[str, Any]:
+    if kind.startswith("industry_strength"):
+        industry = details.get("industry") if isinstance(details.get("industry"), dict) else {}
+        return {
+            "move": as_float(industry.get("change_pct")),
+            "volume": None,
+            "direction_ratio": None,
+            "relative_volume": None,
+        }
     if kind.startswith("small_deng"):
         theme = details.get("theme") if isinstance(details.get("theme"), dict) else {}
         return {
@@ -621,6 +663,10 @@ def dedupe_alerts(alerts: Iterable[dict[str, Any]]) -> list[dict[str, Any]]:
 
 
 def display_type(kind: str, record: dict[str, Any], side: str) -> str:
+    if kind == "industry_strength":
+        return "行业走强，跟踪持续性"
+    if kind == "industry_strength_down":
+        return "行业转弱，提示风险"
     if kind == "small_deng":
         return "小登题材短周期拉动"
     if kind == "small_deng_down":

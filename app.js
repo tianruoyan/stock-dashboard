@@ -2871,10 +2871,13 @@ function renderAlerts(data) {
                   '';
     const leaders = (a.leaders || []).slice(0, 3).map(l => {
       const move = Number(l.change_pct);
+      const isDayMove = l.metric_label === "日内";
+      const label = isDayMove ? "日内" : "3m";
       const moveText = Number.isFinite(move)
-        ? `<span class="pct ${move >= 0 ? 'up' : 'down'}">3m ${move > 0 ? '+' : ''}${move.toFixed(2)}%</span>`
-        : '<span class="pct muted">3m --</span>';
-      return `<span class="leader" title="触发窗口的3分钟涨跌幅，不是实时股价">${l.name} ${moveText}</span>`;
+        ? `<span class="pct ${move >= 0 ? 'up' : 'down'}">${label} ${move > 0 ? '+' : ''}${move.toFixed(2)}%</span>`
+        : `<span class="pct muted">${label} --</span>`;
+      const title = isDayMove ? "当前日内涨跌幅，不代表短线急拉" : "触发窗口的3分钟涨跌幅，不是实时股价";
+      return `<span class="leader" title="${title}">${l.name} ${moveText}</span>`;
     }).join(" ");
     const reason = String(a.reason || "");
     const shortReason = truncateText(reason, 58);
@@ -2883,7 +2886,7 @@ function renderAlerts(data) {
       : "";
     const factors = (a.leaders || []).slice(0, 3)
       .flatMap(l => Array.isArray(l.factors)
-        ? l.factors.filter(f => !/日内涨幅|日内涨跌幅|当日涨幅/.test(String(f))).slice(0, 2).map(f => `${l.name}：${f}`)
+        ? l.factors.filter(f => !(l.metric_label === "日内" && /日内涨幅|日内涨跌幅|当日涨幅/.test(String(f)))).slice(0, 2).map(f => `${l.name}：${f}`)
         : [])
       .slice(0, 4);
     const factorHtml = factors.length ? `<div class="alert-factors">${factors.map(f => `<span>${escapeHtml(f)}</span>`).join("")}</div>` : "";

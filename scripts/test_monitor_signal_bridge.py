@@ -72,6 +72,26 @@ class MonitorSignalBridgeTests(unittest.TestCase):
         self.assertEqual(alert["signal_type"], "风险提示")
         self.assertLess(alert["leaders"][0]["change_pct"], 0)
 
+    def test_converts_industry_strength_as_day_move_observation(self) -> None:
+        record = {
+            "timestamp": "2026-09-14T10:38:00+08:00",
+            "kind": "industry_strength",
+            "key": "industry_strength:创新药/CRO研发服务:up",
+            "theme": "创新药/CRO研发服务",
+            "side": "up",
+            "body": "医疗服务日内+3.40%，代表股同步走强；这是持续走强观察。",
+            "details": {
+                "theme": {"name": "创新药/CRO研发服务", "speed_pct": 0.2, "amount_ratio": 1.1, "rising_ratio": 1.0},
+                "industry": {"name": "医疗服务", "change_pct": 3.4},
+                "leaders": [{"symbol": "300347", "name": "泰格医药", "day_change_pct": 6.3, "speed_pct": 0.4, "amount_ratio": 1.2, "timestamp": "2026-09-14T10:38:00+08:00", "source": "腾讯财经HTTP"}],
+            },
+        }
+        alert = convert_record(record)
+        self.assertEqual(alert["signal_type"], "持续走强观察")
+        self.assertNotIn("confirmation_level", alert)
+        self.assertEqual(alert["leaders"][0]["metric_label"], "日内")
+        self.assertEqual(alert["leaders"][0]["change_pct"], 6.3)
+
     def test_bridge_preserves_completed_futu_verification_for_same_alert(self) -> None:
         previous_alert = convert_record(theme_record("2026-07-22T10:01:02"))
         previous_alert["quote_audit"].update({
