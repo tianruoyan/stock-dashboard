@@ -1,15 +1,15 @@
 {
-  "timestamp": "2026-09-15T11:34:15+08:00",
+  "timestamp": "2026-09-15T11:37:03+08:00",
   "current_signal_date": "2026-09-15",
   "target_trade_date": "2026-09-15",
   "overall_status": "waiting",
-  "summary": "5 个自动化尚未到产出窗口：盘中异动、午盘分析、盘后复盘、晚间舆情。",
+  "summary": "4 个自动化尚未到产出窗口：盘中异动、盘后复盘、晚间舆情、专题跟踪。",
   "counts": {
-    "ok": 2,
+    "ok": 3,
     "late": 0,
     "missing": 0,
     "invalidated": 0,
-    "waiting": 5
+    "waiting": 4
   },
   "processes": [
     {
@@ -36,8 +36,8 @@
       "label": "盘中全景",
       "file": "data/intraday.json",
       "due": "15:05",
-      "deadline": "2026-09-15T11:05:00+08:00",
-      "timestamp": "2026-09-15T11:02:00+08:00",
+      "deadline": "2026-09-15T11:35:00+08:00",
+      "timestamp": "2026-09-15T11:33:00+08:00",
       "status": "ok",
       "data_status": "check_source_quality",
       "blocking": false,
@@ -55,14 +55,14 @@
       "label": "盘中异动",
       "file": "data/alert.json",
       "due": "交易时段持续检查",
-      "timestamp": "2026-09-15T11:33:32+08:00",
-      "deadline": "2026-09-15T11:34:15+08:00",
+      "timestamp": "2026-09-15T11:36:32+08:00",
+      "deadline": "2026-09-15T11:37:03+08:00",
       "status": "waiting",
-      "data_status": "check_source_quality",
+      "data_status": "unavailable",
       "blocking": false,
-      "action": "查看最新触发",
+      "action": "查看监控状态",
       "reason": "当前不在连续交易时段，保留最近触发供回看",
-      "failure_type": "none",
+      "failure_type": "not_due",
       "diagnosis": "当前不在连续交易时段，保留最近触发供回看",
       "next_actions": [
         "继续检查最新行情与监控心跳；保留历史触发，不补造错过的信号。"
@@ -75,16 +75,16 @@
       "file": "data/midday.json",
       "due": "11:30",
       "deadline": "2026-09-15T12:00:00+08:00",
-      "timestamp": "2026-09-14T11:33:00+08:00",
-      "status": "waiting",
+      "timestamp": "2026-09-15T11:33:00+08:00",
+      "status": "ok",
       "data_status": "check_source_quality",
       "blocking": false,
-      "action": "等待当日产出",
-      "reason": "时间戳不是当前交易日：2026-09-14T11:33:00+08:00",
-      "failure_type": "not_due",
-      "diagnosis": "尚未到该自动化的计划产出窗口。",
+      "action": "正常使用",
+      "reason": "当日产出已到位",
+      "failure_type": "none",
+      "diagnosis": "产出正常，未发现自动化层异常。",
       "next_actions": [
-        "到 11:30 后再检查是否产出。"
+        "正常读取；仍需结合数据质量卡判断是否降权。"
       ],
       "related_sources": []
     },
@@ -150,8 +150,8 @@
     "target_trade_date": "2026-09-15",
     "status": "pending",
     "summary": "2026-09-15 开盘链路待产出：盘中异动 交易时段持续检查。",
-    "pending_count": 5,
-    "ready_count": 2,
+    "pending_count": 4,
+    "ready_count": 3,
     "overdue_count": 0,
     "items": [
       {
@@ -171,8 +171,8 @@
         "label": "盘中全景",
         "file": "data/intraday.json",
         "due": "15:05",
-        "deadline": "2026-09-15T11:05:00+08:00",
-        "timestamp": "2026-09-15T11:02:00+08:00",
+        "deadline": "2026-09-15T11:35:00+08:00",
+        "timestamp": "2026-09-15T11:33:00+08:00",
         "file_date": "2026-09-15",
         "status": "ready",
         "action": "已产出",
@@ -183,14 +183,14 @@
         "label": "盘中异动",
         "file": "data/alert.json",
         "due": "交易时段持续检查",
-        "timestamp": "2026-09-15T11:33:32+08:00",
-        "deadline": "2026-09-15T11:34:15+08:00",
+        "timestamp": "2026-09-15T11:36:32+08:00",
+        "deadline": "2026-09-15T11:37:03+08:00",
         "status": "pending",
-        "data_status": "check_source_quality",
+        "data_status": "unavailable",
         "blocking": false,
-        "action": "查看最新触发",
+        "action": "查看监控状态",
         "reason": "当前不在连续交易时段，保留最近触发供回看",
-        "failure_type": "none",
+        "failure_type": "not_due",
         "diagnosis": "当前不在连续交易时段，保留最近触发供回看",
         "next_actions": [
           "继续检查最新行情与监控心跳；保留历史触发，不补造错过的信号。"
@@ -204,11 +204,11 @@
         "file": "data/midday.json",
         "due": "11:30",
         "deadline": "2026-09-15T12:00:00+08:00",
-        "timestamp": "2026-09-14T11:33:00+08:00",
-        "file_date": "2026-09-14",
-        "status": "pending",
-        "action": "等待宽限",
-        "reason": "已到计划时间，宽限至 12:00"
+        "timestamp": "2026-09-15T11:33:00+08:00",
+        "file_date": "2026-09-15",
+        "status": "ready",
+        "action": "已产出",
+        "reason": "目标交易日文件已更新"
       },
       {
         "id": "postmarket",
