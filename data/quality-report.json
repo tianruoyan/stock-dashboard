@@ -1,8 +1,8 @@
 {
-  "timestamp": "2026-09-15T19:53:15+08:00",
+  "timestamp": "2026-09-15T22:10:22+08:00",
   "current_signal_date": "2026-09-15",
   "status": "degraded",
-  "summary": "共 6 条检查提示，其中 4 条需处理、2 条背景记录（3 个价格/行情复核，2 个信号复核，1 个背景复核）。",
+  "summary": "共 5 条检查提示，其中 4 条需处理、1 条背景记录（3 个价格/行情复核，2 个信号复核）。",
   "issues": [
     {
       "severity": "warning",
@@ -39,15 +39,6 @@
       "message": "alerts[4] 候选异动未达到最低短周期价格、方向占比和成交门槛，不得作为当前候选展示",
       "impact_level": "signal_review",
       "decision_action": "仅作历史复核，不得恢复为当前候选"
-    },
-    {
-      "severity": "info",
-      "file": "evening-sentiment.json",
-      "path": "",
-      "code": "evening_not_current",
-      "message": "晚间舆情不是当前交易日，不参与今日总控",
-      "impact_level": "background_review",
-      "decision_action": "仅作背景复核，不单独阻断交易判断"
     },
     {
       "severity": "info",
@@ -92,27 +83,16 @@
       "decision_action": "仅作历史复核，不得恢复为当前候选",
       "next_step": "修正字段结构、证据、触发原因和升级条件；未通过前降权展示。",
       "unblock_condition": "signal_review=0，decision-feed/核心 JSON 契约通过。"
-    },
-    {
-      "priority": 4,
-      "impact_level": "background_review",
-      "label": "背景来源复核",
-      "file": "evening-sentiment.json",
-      "code": "evening_not_current",
-      "problem": "晚间舆情不是当前交易日，不参与今日总控",
-      "decision_action": "仅作背景复核，不单独阻断交易判断",
-      "next_step": "补官方/交易所/公司公告来源；未补齐前不升级为核心依据。",
-      "unblock_condition": "官方来源补齐或确认不影响交易触发。"
     }
   ],
   "counts": {
     "critical": 0,
     "warning": 4,
-    "info": 2,
+    "info": 1,
     "blocking": 0,
     "price_review": 3,
     "signal_review": 2,
-    "background_review": 1
+    "background_review": 0
   },
   "rules": [
     "异常文本、JSON解析失败、必需文件缺失为 critical。",
