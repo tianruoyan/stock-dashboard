@@ -1,15 +1,14 @@
 {
-  "timestamp": "2026-09-16T10:22:18+08:00",
+  "timestamp": "2026-09-16T10:48:23+08:00",
   "current_signal_date": "2026-09-16",
   "quality_gate": {
     "status": "degraded",
-    "summary": "共 7 条检查提示，其中 5 条需处理、2 条背景记录（3 个价格/行情复核，4 个背景复核）。",
+    "summary": "共 6 条检查提示，其中 4 条需处理、2 条背景记录（2 个价格/行情复核，4 个背景复核）。",
     "decision_flags": [
-      "行情/涨跌幅需二次源复核",
-      "盘中异动源降级，alert 类信号降权"
+      "行情/涨跌幅需二次源复核"
     ],
     "blocking_count": 0,
-    "price_review_count": 3,
+    "price_review_count": 2,
     "background_review_count": 4
   },
   "summary": "10:03 A股指数仍分化：上证-0.36%、深证-0.52%、创业板-0.27%、沪深300-0.53%，科创50逆势+1.36%；上涨2545家、下跌2765家、平盘248家，宽度已由开盘明显偏弱修复至接近平衡，涨停29只、跌停4只、炸板6只。互联网电商+1.85%、医疗服务+1.67%、通信设备+1.63%、半导体+1.33%居前；观察池中科创半导体…",
@@ -32,10 +31,10 @@
     "stance": "风险优先，只做验证",
     "action": "不把候选方向当交易机会；先看风险收敛、数据恢复和核心承接。",
     "reasons": [
-      "共 7 条检查提示，其中 5 条需处理、2 条背景记录（3 个价格/行情复核，4 个背景复核）。",
+      "共 6 条检查提示，其中 4 条需处理、2 条背景记录（2 个价格/行情复核，4 个背景复核）。",
       "A/B级风险 5 条",
       "可用机会 0 条，降权候选 8 条",
-      "先处理：二次行情复核（alert.json）"
+      "先处理：二次行情复核（source-health.json）"
     ],
     "risk_focus": [
       "数据质量降级",
@@ -53,15 +52,15 @@
     "quality_actions": [
       {
         "label": "二次行情复核",
-        "file": "alert.json",
+        "file": "source-health.json",
         "next_step": "用第二行情源复核涨跌幅、quote_time 和代表股方向；未确认前只做验证。",
         "unblock_condition": "price_review=0 或相关来源标记 trusted/cross verified。"
       },
       {
-        "label": "二次行情复核",
-        "file": "source-health.json",
-        "next_step": "用第二行情源复核涨跌幅、quote_time 和代表股方向；未确认前只做验证。",
-        "unblock_condition": "price_review=0 或相关来源标记 trusted/cross verified。"
+        "label": "背景来源复核",
+        "file": "midday.json",
+        "next_step": "补官方/交易所/公司公告来源；未补齐前不升级为核心依据。",
+        "unblock_condition": "官方来源补齐或确认不影响交易触发。"
       }
     ]
   },
@@ -171,7 +170,6 @@
       "tags": [],
       "quality_flags": [
         "行情/涨跌幅需二次源复核",
-        "盘中异动源降级，alert 类信号降权",
         "全局数据降级，主线变化需二次确认"
       ],
       "tone": "good",
@@ -183,7 +181,7 @@
       "next_action": "只跟踪前排承接，不追高；等待10:30继续验证宽度和成交推进。",
       "observation_source": "主线变化扫描",
       "independent_observation": true,
-      "signal_score": 62,
+      "signal_score": 67,
       "signal_grade": "C",
       "use_action": "降权观察",
       "use_reasons": [
@@ -217,8 +215,7 @@
         "科技硬件链"
       ],
       "quality_flags": [
-        "行情/涨跌幅需二次源复核",
-        "盘中异动源降级，alert 类信号降权"
+        "行情/涨跌幅需二次源复核"
       ],
       "tone": "good",
       "discovery_type": "active_market_scan",
@@ -229,7 +226,7 @@
       "next_action": "看核心个股、ETF、后排扩散和尾盘承接是否同向确认。",
       "observation_source": "主动盘面扫描",
       "independent_observation": true,
-      "signal_score": 51,
+      "signal_score": 56,
       "signal_grade": "C",
       "use_action": "降权观察",
       "use_reasons": [
@@ -264,8 +261,7 @@
         "风控"
       ],
       "quality_flags": [
-        "行情/涨跌幅需二次源复核",
-        "盘中异动源降级，alert 类信号降权"
+        "行情/涨跌幅需二次源复核"
       ],
       "tone": "good",
       "discovery_type": "premarket_watch_queue",
@@ -277,7 +273,7 @@
       "next_action": "核心股低开后放量收复开盘价或跌幅明显收敛",
       "observation_source": "数据派生",
       "independent_observation": false,
-      "signal_score": 22,
+      "signal_score": 27,
       "signal_grade": "D",
       "use_action": "仅复核",
       "use_reasons": [
@@ -313,8 +309,7 @@
         "风控"
       ],
       "quality_flags": [
-        "行情/涨跌幅需二次源复核",
-        "盘中异动源降级，alert 类信号降权"
+        "行情/涨跌幅需二次源复核"
       ],
       "tone": "good",
       "discovery_type": "premarket_watch_queue",
@@ -326,7 +321,7 @@
       "next_action": "核心股低开后放量收复开盘价或跌幅明显收敛",
       "observation_source": "数据派生",
       "independent_observation": false,
-      "signal_score": 22,
+      "signal_score": 27,
       "signal_grade": "D",
       "use_action": "仅复核",
       "use_reasons": [
@@ -361,8 +356,7 @@
         "风控"
       ],
       "quality_flags": [
-        "行情/涨跌幅需二次源复核",
-        "盘中异动源降级，alert 类信号降权"
+        "行情/涨跌幅需二次源复核"
       ],
       "tone": "good",
       "discovery_type": "premarket_watch_queue",
@@ -374,7 +368,7 @@
       "next_action": "核心股低开后放量收复开盘价或跌幅明显收敛",
       "observation_source": "数据派生",
       "independent_observation": false,
-      "signal_score": 22,
+      "signal_score": 27,
       "signal_grade": "D",
       "use_action": "仅复核",
       "use_reasons": [
@@ -409,8 +403,7 @@
         "风控"
       ],
       "quality_flags": [
-        "行情/涨跌幅需二次源复核",
-        "盘中异动源降级，alert 类信号降权"
+        "行情/涨跌幅需二次源复核"
       ],
       "tone": "good",
       "discovery_type": "premarket_watch_queue",
@@ -422,7 +415,7 @@
       "next_action": "题材3分钟涨跌幅>=1.5%，方向占比>=70%，成交放大>=5x",
       "observation_source": "数据派生",
       "independent_observation": false,
-      "signal_score": 22,
+      "signal_score": 27,
       "signal_grade": "D",
       "use_action": "仅复核",
       "use_reasons": [
@@ -457,8 +450,7 @@
         "风控"
       ],
       "quality_flags": [
-        "行情/涨跌幅需二次源复核",
-        "盘中异动源降级，alert 类信号降权"
+        "行情/涨跌幅需二次源复核"
       ],
       "tone": "good",
       "discovery_type": "premarket_watch_queue",
@@ -470,7 +462,7 @@
       "next_action": "题材3分钟涨跌幅>=1.5%，方向占比>=70%，成交放大>=5x",
       "observation_source": "数据派生",
       "independent_observation": false,
-      "signal_score": 22,
+      "signal_score": 27,
       "signal_grade": "D",
       "use_action": "仅复核",
       "use_reasons": [
@@ -505,8 +497,7 @@
         "风控"
       ],
       "quality_flags": [
-        "行情/涨跌幅需二次源复核",
-        "盘中异动源降级，alert 类信号降权"
+        "行情/涨跌幅需二次源复核"
       ],
       "tone": "good",
       "discovery_type": "premarket_watch_queue",
@@ -518,7 +509,7 @@
       "next_action": "题材3分钟涨跌幅>=1.5%，方向占比>=70%，成交放大>=5x",
       "observation_source": "数据派生",
       "independent_observation": false,
-      "signal_score": 22,
+      "signal_score": 27,
       "signal_grade": "D",
       "use_action": "仅复核",
       "use_reasons": [
@@ -538,7 +529,7 @@
       "title": "数据质量降级",
       "type": "data_quality",
       "trigger_reason": "风控兜底触发：市场宽度、数据质量或回撤条件触发风险优先。",
-      "conclusion": "共 7 条检查提示，其中 5 条需处理、2 条背景记录（3 个价格/行情复核，4 个背景复核）。",
+      "conclusion": "共 6 条检查提示，其中 4 条需处理、2 条背景记录（2 个价格/行情复核，4 个背景复核）。",
       "confidence": "high",
       "evidence": [
         "时间戳不是当前交易日：2026-09-15T11:33:00+08:00",
