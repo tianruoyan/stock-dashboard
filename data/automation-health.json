@@ -1,15 +1,15 @@
 {
-  "timestamp": "2026-09-16T15:25:21+08:00",
+  "timestamp": "2026-09-16T15:40:27+08:00",
   "current_signal_date": "2026-09-16",
   "target_trade_date": "2026-09-16",
-  "overall_status": "waiting",
-  "summary": "3 个自动化尚未到产出窗口：盘中异动、晚间舆情、专题跟踪。",
+  "overall_status": "degraded",
+  "summary": "1 个自动化产出异常：专题跟踪。",
   "counts": {
     "ok": 4,
-    "late": 0,
+    "late": 1,
     "missing": 0,
     "invalidated": 0,
-    "waiting": 3
+    "waiting": 2
   },
   "processes": [
     {
@@ -56,7 +56,7 @@
       "file": "data/alert.json",
       "due": "交易时段持续检查",
       "timestamp": "2026-09-16T15:10:53+08:00",
-      "deadline": "2026-09-16T15:25:21+08:00",
+      "deadline": "2026-09-16T15:40:27+08:00",
       "status": "waiting",
       "data_status": "unavailable",
       "blocking": false,
@@ -133,15 +133,16 @@
       "due": "15:30",
       "deadline": "2026-09-16T18:30:00+08:00",
       "timestamp": "2026-09-16T15:10:13+08:00",
-      "status": "waiting",
-      "data_status": "check_source_quality",
+      "status": "late",
+      "data_status": "unavailable",
       "blocking": false,
-      "action": "等待产出",
-      "reason": "计划 15:30 后产出",
-      "failure_type": "not_due",
-      "diagnosis": "尚未到该自动化的计划产出窗口。",
+      "action": "等待当前检查点数据",
+      "reason": "分析未覆盖应有检查点 15:30",
+      "failure_type": "stale_or_time_anomaly",
+      "diagnosis": "分析未覆盖应有检查点 15:30",
       "next_actions": [
-        "到 15:30 后再检查是否产出。"
+        "核对文件 timestamp 是否由自动化真实写入。",
+        "重跑自动化，避免使用上一交易日或异常超前数据。"
       ],
       "related_sources": []
     }
@@ -184,7 +185,7 @@
         "file": "data/alert.json",
         "due": "交易时段持续检查",
         "timestamp": "2026-09-16T15:10:53+08:00",
-        "deadline": "2026-09-16T15:25:21+08:00",
+        "deadline": "2026-09-16T15:40:27+08:00",
         "status": "pending",
         "data_status": "unavailable",
         "blocking": false,
@@ -243,8 +244,8 @@
         "timestamp": "2026-09-16T15:10:13+08:00",
         "file_date": "2026-09-16",
         "status": "pending",
-        "action": "等待产出",
-        "reason": "计划 15:30 后产出"
+        "action": "等待宽限",
+        "reason": "已到计划时间，宽限至 18:30"
       }
     ]
   },
