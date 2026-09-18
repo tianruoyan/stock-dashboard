@@ -1,18 +1,9 @@
 {
-  "timestamp": "2026-09-18T09:35:12+08:00",
+  "timestamp": "2026-09-18T09:35:18+08:00",
   "current_signal_date": "2026-09-18",
   "status": "degraded",
-  "summary": "共 9 条检查提示，其中 7 条需处理、2 条背景记录（3 个价格/行情复核，6 个背景复核）。",
+  "summary": "共 7 条检查提示，其中 5 条需处理、2 条背景记录（3 个价格/行情复核，4 个背景复核）。",
   "issues": [
-    {
-      "severity": "warning",
-      "file": "intraday.json",
-      "path": "",
-      "code": "stale_timestamp",
-      "message": "时间戳不是当前交易日：2026-09-16T15:02:09+08:00",
-      "impact_level": "background_review",
-      "decision_action": "仅作背景复核，不单独阻断交易判断"
-    },
     {
       "severity": "warning",
       "file": "midday.json",
@@ -75,15 +66,6 @@
       "message": "785条历史检测、1条时间待核验记录已与当前故障分开；未认定这些来源已恢复。",
       "impact_level": "price_review",
       "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
-    },
-    {
-      "severity": "warning",
-      "file": "theme-shifts.json",
-      "path": "",
-      "code": "stale_theme_shifts",
-      "message": "theme-shifts 日期不是当前交易日：2026-09-16",
-      "impact_level": "background_review",
-      "decision_action": "仅作背景复核，不单独阻断交易判断"
     }
   ],
   "action_plan": [
@@ -113,17 +95,6 @@
       "priority": 4,
       "impact_level": "background_review",
       "label": "背景来源复核",
-      "file": "intraday.json",
-      "code": "stale_timestamp",
-      "problem": "时间戳不是当前交易日：2026-09-16T15:02:09+08:00",
-      "decision_action": "仅作背景复核，不单独阻断交易判断",
-      "next_step": "补官方/交易所/公司公告来源；未补齐前不升级为核心依据。",
-      "unblock_condition": "官方来源补齐或确认不影响交易触发。"
-    },
-    {
-      "priority": 4,
-      "impact_level": "background_review",
-      "label": "背景来源复核",
       "file": "midday.json",
       "code": "stale_timestamp",
       "problem": "时间戳不是当前交易日：2026-09-16T11:31:02+08:00",
@@ -146,9 +117,20 @@
       "priority": 4,
       "impact_level": "background_review",
       "label": "背景来源复核",
-      "file": "theme-shifts.json",
-      "code": "stale_theme_shifts",
-      "problem": "theme-shifts 日期不是当前交易日：2026-09-16",
+      "file": "topics.json",
+      "code": "stale_timestamp",
+      "problem": "时间戳不是当前交易日：2026-09-16T16:36:34+08:00",
+      "decision_action": "仅作背景复核，不单独阻断交易判断",
+      "next_step": "补官方/交易所/公司公告来源；未补齐前不升级为核心依据。",
+      "unblock_condition": "官方来源补齐或确认不影响交易触发。"
+    },
+    {
+      "priority": 4,
+      "impact_level": "background_review",
+      "label": "背景来源复核",
+      "file": "evening-sentiment.json",
+      "code": "evening_not_current",
+      "problem": "晚间舆情不是当前交易日，不参与今日总控",
       "decision_action": "仅作背景复核，不单独阻断交易判断",
       "next_step": "补官方/交易所/公司公告来源；未补齐前不升级为核心依据。",
       "unblock_condition": "官方来源补齐或确认不影响交易触发。"
@@ -156,12 +138,12 @@
   ],
   "counts": {
     "critical": 0,
-    "warning": 7,
+    "warning": 5,
     "info": 2,
     "blocking": 0,
     "price_review": 3,
     "signal_review": 0,
-    "background_review": 6
+    "background_review": 4
   },
   "rules": [
     "异常文本、JSON解析失败、必需文件缺失为 critical。",
