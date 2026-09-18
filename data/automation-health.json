@@ -1,12 +1,12 @@
 {
-  "timestamp": "2026-09-18T16:30:32+08:00",
+  "timestamp": "2026-09-18T16:32:10+08:00",
   "current_signal_date": "2026-09-18",
   "target_trade_date": "2026-09-18",
-  "overall_status": "degraded",
-  "summary": "1 个自动化产出异常：专题跟踪。",
+  "overall_status": "waiting",
+  "summary": "2 个自动化尚未到产出窗口：盘中异动、晚间舆情。",
   "counts": {
-    "ok": 4,
-    "late": 1,
+    "ok": 5,
+    "late": 0,
     "missing": 0,
     "invalidated": 0,
     "waiting": 2
@@ -56,7 +56,7 @@
       "file": "data/alert.json",
       "due": "交易时段持续检查",
       "timestamp": "2026-09-18T15:10:14+08:00",
-      "deadline": "2026-09-18T16:30:32+08:00",
+      "deadline": "2026-09-18T16:32:10+08:00",
       "status": "waiting",
       "data_status": "unavailable",
       "blocking": false,
@@ -94,7 +94,7 @@
       "file": "data/postmarket.json",
       "due": "15:10",
       "deadline": "2026-09-18T15:20:00+08:00",
-      "timestamp": "2026-09-18T15:10:45+08:00",
+      "timestamp": "2026-09-18T16:31:10+08:00",
       "status": "ok",
       "data_status": "check_source_quality",
       "blocking": false,
@@ -132,17 +132,16 @@
       "file": "data/topics.json",
       "due": "15:30",
       "deadline": "2026-09-18T18:30:00+08:00",
-      "timestamp": "2026-09-18T15:10:48+08:00",
-      "status": "late",
-      "data_status": "unavailable",
+      "timestamp": "2026-09-18T16:32:10+08:00",
+      "status": "ok",
+      "data_status": "check_source_quality",
       "blocking": false,
-      "action": "等待当前检查点数据",
-      "reason": "分析未覆盖应有检查点 15:30",
-      "failure_type": "stale_or_time_anomaly",
-      "diagnosis": "分析未覆盖应有检查点 15:30",
+      "action": "正常使用",
+      "reason": "当日产出已到位",
+      "failure_type": "none",
+      "diagnosis": "产出正常，未发现自动化层异常。",
       "next_actions": [
-        "核对文件 timestamp 是否由自动化真实写入。",
-        "重跑自动化，避免使用上一交易日或异常超前数据。"
+        "正常读取；仍需结合数据质量卡判断是否降权。"
       ],
       "related_sources": []
     }
@@ -151,8 +150,8 @@
     "target_trade_date": "2026-09-18",
     "status": "pending",
     "summary": "2026-09-18 开盘链路待产出：盘中异动 交易时段持续检查。",
-    "pending_count": 3,
-    "ready_count": 4,
+    "pending_count": 2,
+    "ready_count": 5,
     "overdue_count": 0,
     "items": [
       {
@@ -185,7 +184,7 @@
         "file": "data/alert.json",
         "due": "交易时段持续检查",
         "timestamp": "2026-09-18T15:10:14+08:00",
-        "deadline": "2026-09-18T16:30:32+08:00",
+        "deadline": "2026-09-18T16:32:10+08:00",
         "status": "pending",
         "data_status": "unavailable",
         "blocking": false,
@@ -217,7 +216,7 @@
         "file": "data/postmarket.json",
         "due": "15:10",
         "deadline": "2026-09-18T15:20:00+08:00",
-        "timestamp": "2026-09-18T15:10:45+08:00",
+        "timestamp": "2026-09-18T16:31:10+08:00",
         "file_date": "2026-09-18",
         "status": "ready",
         "action": "已产出",
@@ -241,11 +240,11 @@
         "file": "data/topics.json",
         "due": "15:30",
         "deadline": "2026-09-18T18:30:00+08:00",
-        "timestamp": "2026-09-18T15:10:48+08:00",
+        "timestamp": "2026-09-18T16:32:10+08:00",
         "file_date": "2026-09-18",
-        "status": "pending",
-        "action": "等待宽限",
-        "reason": "已到计划时间，宽限至 18:30"
+        "status": "ready",
+        "action": "已产出",
+        "reason": "目标交易日文件已更新"
       }
     ]
   },
