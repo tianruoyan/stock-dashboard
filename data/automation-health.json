@@ -1,15 +1,15 @@
 {
-  "timestamp": "2026-09-18T14:57:07+08:00",
+  "timestamp": "2026-09-18T15:00:44+08:00",
   "current_signal_date": "2026-09-18",
   "target_trade_date": "2026-09-18",
   "overall_status": "waiting",
-  "summary": "3 个自动化尚未到产出窗口：盘后复盘、晚间舆情、专题跟踪。",
+  "summary": "4 个自动化尚未到产出窗口：盘中异动、盘后复盘、晚间舆情、专题跟踪。",
   "counts": {
-    "ok": 4,
+    "ok": 3,
     "late": 0,
     "missing": 0,
     "invalidated": 0,
-    "waiting": 3
+    "waiting": 4
   },
   "processes": [
     {
@@ -55,15 +55,15 @@
       "label": "盘中异动",
       "file": "data/alert.json",
       "due": "交易时段持续检查",
-      "timestamp": "2026-09-18T14:56:12+08:00",
-      "deadline": "2026-09-18T14:57:07+08:00",
-      "status": "ok",
+      "timestamp": "2026-09-18T15:00:13+08:00",
+      "deadline": "2026-09-18T15:00:44+08:00",
+      "status": "waiting",
       "data_status": "check_source_quality",
       "blocking": false,
       "action": "查看最新触发",
-      "reason": "监控和行情检查正常；没有新异动不等于没有运行",
+      "reason": "当前不在连续交易时段，保留最近触发供回看",
       "failure_type": "none",
-      "diagnosis": "监控和行情检查正常；没有新异动不等于没有运行",
+      "diagnosis": "当前不在连续交易时段，保留最近触发供回看",
       "next_actions": [
         "继续检查最新行情与监控心跳；保留历史触发，不补造错过的信号。"
       ],
@@ -149,9 +149,9 @@
   "next_session_readiness": {
     "target_trade_date": "2026-09-18",
     "status": "pending",
-    "summary": "2026-09-18 开盘链路待产出：盘后复盘 15:10。",
-    "pending_count": 3,
-    "ready_count": 4,
+    "summary": "2026-09-18 开盘链路待产出：盘中异动 交易时段持续检查。",
+    "pending_count": 4,
+    "ready_count": 3,
     "overdue_count": 0,
     "items": [
       {
@@ -183,15 +183,15 @@
         "label": "盘中异动",
         "file": "data/alert.json",
         "due": "交易时段持续检查",
-        "timestamp": "2026-09-18T14:56:12+08:00",
-        "deadline": "2026-09-18T14:57:07+08:00",
-        "status": "ready",
+        "timestamp": "2026-09-18T15:00:13+08:00",
+        "deadline": "2026-09-18T15:00:44+08:00",
+        "status": "pending",
         "data_status": "check_source_quality",
         "blocking": false,
         "action": "查看最新触发",
-        "reason": "监控和行情检查正常；没有新异动不等于没有运行",
+        "reason": "当前不在连续交易时段，保留最近触发供回看",
         "failure_type": "none",
-        "diagnosis": "监控和行情检查正常；没有新异动不等于没有运行",
+        "diagnosis": "当前不在连续交易时段，保留最近触发供回看",
         "next_actions": [
           "继续检查最新行情与监控心跳；保留历史触发，不补造错过的信号。"
         ],
