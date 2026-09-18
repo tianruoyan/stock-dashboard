@@ -1,11 +1,11 @@
 {
-  "timestamp": "2026-09-18T16:32:11+08:00",
+  "timestamp": "2026-09-18T16:32:42+08:00",
   "current_signal_date": "2026-09-18",
   "overall_status": "degraded",
-  "summary": "4 个监测维度需降权，1 个背景维度需复核。",
+  "summary": "3 个监测维度需降权，1 个背景维度需复核。",
   "counts": {
     "critical": 0,
-    "warning": 4,
+    "warning": 3,
     "info": 1
   },
   "blind_spots": [
@@ -27,30 +27,11 @@
         "主线替代：先看半导体设备/材料/制造/封测能否同步扩散；单点强不升级。",
         "新线替代：从行业与题材涨幅、成交和涨停新增中寻找首次扩散方向；没有宽度不升级。",
         "雷达替代：数据质量降级：污染 alert 修复前，盘中异动信号必须降权；观察池个股涨跌幅以已审计源为准。",
-        "雷达替代：汽车弱线：等待明确转强证据，避免弱势反抽。"
+        "雷达替代：行业相对弱势：商用车、渔业、乘用车：次日等待行业和代表股同步止跌。"
       ],
       "source_files": [
         "data/alert.json",
         "data/data-trust.json"
-      ]
-    },
-    {
-      "id": "postmarket-close-degraded",
-      "title": "盘后复盘降权",
-      "severity": "warning",
-      "conclusion": "收盘复盘可参考，但港股收盘窗口和部分补充行情源需要复核。",
-      "impacted_decisions": [
-        "次日方向只作为预案",
-        "需等待次日竞价验证"
-      ],
-      "evidence": [
-        "closing_auction_patch.summary 缺失；closing_auction_patch.signals 缺失"
-      ],
-      "fallback_action": "把盘后结论拆成次日验证条件，不直接继承为次日交易方向。",
-      "fallback_checks": [],
-      "source_files": [
-        "data/postmarket.json",
-        "data/source-health.json"
       ]
     },
     {
@@ -81,7 +62,7 @@
         "风险栏优先级高于机会栏"
       ],
       "evidence": [
-        "共 20 条检查提示，其中 18 条需处理、2 条背景记录（3 个价格/行情复核，3 个信号复核，14 个背景复核）。"
+        "共 7 条检查提示，其中 5 条需处理、2 条背景记录（3 个价格/行情复核，3 个信号复核，1 个背景复核）。"
       ],
       "fallback_action": "只跟踪验证条件；若风险项不收敛，不升级任何机会。",
       "fallback_checks": [],
