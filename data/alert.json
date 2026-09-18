@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-09-18T09:57:37+08:00",
+  "timestamp": "2026-09-18T10:05:38+08:00",
   "source_status": "monitor_live",
   "alerts": [
     {
@@ -835,17 +835,385 @@
       "trigger_rule": "小登风格轮动：同一大风格下≥3个关联板块同向急跌",
       "alert_class": "style",
       "confirmation_level": "candidate"
+    },
+    {
+      "id": "monitor-20260918-100110-21d1a60b79c7",
+      "time": "2026-09-18T10:01:10+08:00",
+      "sector": "半导体材料/设备",
+      "type": "历史触发（交叉复核失效）",
+      "reason": "触发时观察到半导体材料与零部件多个分支同向上涨，但成交放大仅1.00x，富途与腾讯按同一触发时点复核后方向或幅度存在明显冲突。该事件已失效，仅作历史观察，不得作为当前候选或交易依据。",
+      "leaders": [
+        {
+          "name": "华海清科",
+          "code": "688120",
+          "change_pct": 2.157,
+          "quote_time": "2026-09-18T10:01:09",
+          "source": "腾讯财经HTTP",
+          "score": 34.39,
+          "factors": [
+            "3分钟+2.16%",
+            "成交放大1.00x",
+            "日内+1.69%"
+          ]
+        },
+        {
+          "name": "江丰电子",
+          "code": "300666",
+          "change_pct": 1.4419,
+          "quote_time": "2026-09-18T10:01:06",
+          "source": "腾讯财经HTTP",
+          "score": 25.72,
+          "factors": [
+            "3分钟+1.44%",
+            "成交放大1.00x",
+            "日内+1.56%"
+          ]
+        },
+        {
+          "name": "安集科技",
+          "code": "688019",
+          "change_pct": 1.1405,
+          "quote_time": "2026-09-18T10:01:10",
+          "source": "腾讯财经HTTP",
+          "score": 22.78,
+          "factors": [
+            "3分钟+1.14%",
+            "成交放大1.00x",
+            "日内+1.79%"
+          ]
+        }
+      ],
+      "signal_type": "历史观察（已失效）",
+      "is_old_economy": false,
+      "source_watch_id": "7月半导体扩产组合",
+      "quote_audit": {
+        "provider": "本地盘中监控、富途行情（腾讯备用）",
+        "primary_source": "腾讯财经HTTP",
+        "quote_time": "2026-09-18T10:01:10+08:00",
+        "pct_field": "3分钟涨跌幅",
+        "sample_count": 3,
+        "max_abs_leader_change_pct": 2.157,
+        "sanity_checks": {
+          "cross_source_verified": false,
+          "price_move_valid": true,
+          "volume_valid": false,
+          "direction_ratio_valid": true,
+          "limit_down_count_valid": false
+        },
+        "board_3m_change_pct": 1.8532,
+        "direction_ratio": 1.0,
+        "volume_ratio": 1.0,
+        "relative_volume_vs_yesterday": null,
+        "missing_confirmation": "等待富途行情按触发时点交叉核验；通过前只作候选或观察，不作为确认交易信号。",
+        "secondary_source": "富途行情",
+        "secondary_verification": {
+          "state": "mismatch",
+          "checked_at": "2026-09-18T10:03:21+08:00",
+          "source": "富途行情",
+          "reason": "对齐同一触发时点后，代表股方向或价格变化仍存在明显冲突，维持待确认/失效。",
+          "representatives": [
+            {
+              "股票": "华海清科",
+              "代码": "688120.SH",
+              "监控涨跌幅": 2.157,
+              "富途涨跌幅": 1.4914,
+              "腾讯涨跌幅": 1.4456,
+              "起始分钟": "09:58:08",
+              "结束分钟": "10:01:09",
+              "对齐方式": "逐笔行情同一时点对齐",
+              "时间偏差秒": 0.76,
+              "可比涨跌范围": [
+                1.2654,
+                1.5603
+              ],
+              "方向一致": false,
+              "幅度一致": false,
+              "复核结论": "明显冲突"
+            },
+            {
+              "股票": "江丰电子",
+              "代码": "300666.SZ",
+              "监控涨跌幅": 1.4419,
+              "富途涨跌幅": 1.1058,
+              "腾讯涨跌幅": 1.0789,
+              "起始分钟": "09:58:06",
+              "结束分钟": "10:01:06",
+              "对齐方式": "逐笔行情同一时点对齐",
+              "时间偏差秒": 0.0,
+              "可比涨跌范围": [
+                1.0536,
+                1.3064
+              ],
+              "方向一致": true,
+              "幅度一致": false,
+              "复核结论": "行情精度不足"
+            },
+            {
+              "股票": "安集科技",
+              "代码": "688019.SH",
+              "监控涨跌幅": 1.1405,
+              "富途涨跌幅": 0.7922,
+              "腾讯涨跌幅": 0.9852,
+              "起始分钟": "09:58:10",
+              "结束分钟": "10:01:10",
+              "对齐方式": "逐笔行情同一时点对齐",
+              "时间偏差秒": 0.43,
+              "可比涨跌范围": [
+                0.7922,
+                1.1091
+              ],
+              "方向一致": true,
+              "幅度一致": true,
+              "复核结论": "一致"
+            }
+          ],
+          "window_minutes": 3,
+          "direction_agreement_ratio": 0.5,
+          "magnitude_agreement_ratio": 0.5,
+          "fingerprint": "71435f760240a51d5c22",
+          "verifier_version": "futu-opend-2026-07-27.3"
+        }
+      },
+      "source_status": "invalidated_cross_source_mismatch",
+      "valid_until": "2026-09-18T10:06:10+08:00",
+      "trigger_rule": "小登风格轮动：同一大风格下≥3个关联板块同向急拉",
+      "alert_class": "style",
+      "confirmation_level": "invalidated"
+    },
+    {
+      "id": "monitor-20260918-100234-108ce710460b",
+      "time": "2026-09-18T10:02:34+08:00",
+      "sector": "封装",
+      "type": "小登题材短周期拉动",
+      "reason": "触发规则：小登股异动：3分钟平均涨跌幅≥1.5%，上涨占比≥70%，且成交放大≥5x；小登底池拉起预警：板块行情缺失时，底池3分钟平均涨幅≥1.5%，上涨占比≥70%，且成交放大≥5x\n异动性质：上涨攻势中的拉起。3分钟价格推进、上涨占比、强势股数量和前排日内状态同时确认。\n结论：封装上涨攻势较强且扩散较好，华天科技领涨。\n题材：封装，当前动态龙头：华天科技 / 长电科技 / 通富微电。\n强度：底池样本 3分钟涨跌幅 2.56%，上涨占比 100%，强势股 5 只。\n成交：3分钟放大 5.68x，有后排扩散。\n当前动态龙头分数：华天科技(87.0)，长电科技(46.0)，通富微电(44.6)。\n主要贡献因子：华天科技: 3分钟涨跌幅 7.17%，成交放大 13.86x，日内涨幅 9.40%；长电科技: 3分钟涨跌幅 1.45%，成交放大 4.72x，日内涨幅 3.32%；通富微电: 3分钟涨跌幅 2.08%，成交放大 4.97x，日内涨幅 3.69%\n观察点：龙头是否维持日内高位、后排是否继续补涨、成交是否继续放大。\n风险提示：这是题材强度分析，不构成买卖建议。",
+      "leaders": [
+        {
+          "name": "华天科技",
+          "code": "002185",
+          "change_pct": 7.1727,
+          "quote_time": "2026-09-18T10:02:30",
+          "source": "腾讯财经HTTP",
+          "score": 87.0,
+          "factors": [
+            "3分钟+7.17%",
+            "成交放大13.86x",
+            "日内+9.40%"
+          ]
+        },
+        {
+          "name": "长电科技",
+          "code": "600584",
+          "change_pct": 1.4493,
+          "quote_time": "2026-09-18T10:02:34",
+          "source": "腾讯财经HTTP",
+          "score": 45.99,
+          "factors": [
+            "3分钟+1.45%",
+            "成交放大4.72x",
+            "日内+3.32%"
+          ]
+        },
+        {
+          "name": "通富微电",
+          "code": "002156",
+          "change_pct": 2.0767,
+          "quote_time": "2026-09-18T10:02:30",
+          "source": "腾讯财经HTTP",
+          "score": 44.62,
+          "factors": [
+            "3分钟+2.08%",
+            "成交放大4.97x",
+            "日内+3.69%"
+          ]
+        }
+      ],
+      "signal_type": "🎯交易信号",
+      "is_old_economy": false,
+      "source_watch_id": "封装",
+      "quote_audit": {
+        "provider": "本地盘中监控、富途行情（腾讯备用）",
+        "primary_source": "腾讯财经HTTP",
+        "quote_time": "2026-09-18T10:02:34+08:00",
+        "pct_field": "3分钟涨跌幅",
+        "sample_count": 3,
+        "max_abs_leader_change_pct": 7.1727,
+        "sanity_checks": {
+          "cross_source_verified": true,
+          "price_move_valid": true,
+          "volume_valid": true,
+          "direction_ratio_valid": true,
+          "limit_down_count_valid": false
+        },
+        "board_3m_change_pct": 2.5645,
+        "direction_ratio": 1.0,
+        "volume_ratio": 5.6751,
+        "relative_volume_vs_yesterday": null,
+        "missing_confirmation": "等待富途行情按触发时点交叉核验；通过前只作候选或观察，不作为确认交易信号。",
+        "secondary_source": "富途行情",
+        "secondary_verification": {
+          "state": "passed",
+          "checked_at": "2026-09-18T10:04:23+08:00",
+          "source": "富途行情",
+          "reason": "富途行情已按代表股触发时点对齐，方向和价格变化相互支持。",
+          "representatives": [
+            {
+              "股票": "华天科技",
+              "代码": "002185.SZ",
+              "监控涨跌幅": 7.1727,
+              "富途涨跌幅": 7.1727,
+              "腾讯涨跌幅": 3.8829,
+              "起始分钟": "09:59:30",
+              "结束分钟": "10:02:30",
+              "对齐方式": "逐笔行情同一时点对齐",
+              "时间偏差秒": 0.0,
+              "可比涨跌范围": [
+                5.5589,
+                7.8349
+              ],
+              "方向一致": true,
+              "幅度一致": true,
+              "复核结论": "一致"
+            },
+            {
+              "股票": "长电科技",
+              "代码": "600584.SH",
+              "监控涨跌幅": 1.4493,
+              "富途涨跌幅": 1.4199,
+              "腾讯涨跌幅": 1.4217,
+              "起始分钟": "09:59:33",
+              "结束分钟": "10:02:33",
+              "对齐方式": "逐笔行情同一时点对齐",
+              "时间偏差秒": 0.19,
+              "可比涨跌范围": [
+                1.4054,
+                1.6377
+              ],
+              "方向一致": true,
+              "幅度一致": true,
+              "复核结论": "一致"
+            },
+            {
+              "股票": "通富微电",
+              "代码": "002156.SZ",
+              "监控涨跌幅": 2.0767,
+              "富途涨跌幅": 2.0767,
+              "腾讯涨跌幅": 1.6729,
+              "起始分钟": "09:59:30",
+              "结束分钟": "10:02:30",
+              "对齐方式": "逐笔行情同一时点对齐",
+              "时间偏差秒": 0.0,
+              "可比涨跌范围": [
+                1.9754,
+                2.1277
+              ],
+              "方向一致": true,
+              "幅度一致": true,
+              "复核结论": "一致"
+            }
+          ],
+          "window_minutes": 3,
+          "direction_agreement_ratio": 1.0,
+          "magnitude_agreement_ratio": 1.0,
+          "fingerprint": "9c32ae7badfb5071305e",
+          "verifier_version": "futu-opend-2026-07-27.3"
+        }
+      },
+      "source_status": "degraded_partial",
+      "valid_until": "2026-09-18T10:07:34+08:00",
+      "trigger_rule": "小登股异动：3分钟平均涨跌幅≥1.5%，上涨占比≥70%，且成交放大≥5x；小登底池拉起预警：板块行情缺失时，底池3分钟平均涨幅≥1.5%，上涨占比≥70%，且成交放大≥5x",
+      "alert_class": "opportunity",
+      "confirmation_level": "candidate",
+      "limit_up_count": 0,
+      "limit_down_count": 0
+    },
+    {
+      "id": "monitor-20260918-100501-40ab8b8fb075",
+      "time": "2026-09-18T10:05:01+08:00",
+      "sector": "创新药/CRO研发服务",
+      "type": "行业走强，跟踪持续性",
+      "reason": "行业先走强：医疗服务日内+2.35%。代表股篮子平均+2.12%，3/4只上涨，其中2只涨幅达到2%以上。这是持续走强观察，不等同于短线急拉；等3分钟放量、更多跟涨或涨停结构再考虑升级。",
+      "leaders": [
+        {
+          "name": "昭衍新药",
+          "code": "603127",
+          "change_pct": 5.24,
+          "metric_label": "日内",
+          "quote_time": "2026-09-18T10:04:58",
+          "source": "腾讯财经HTTP",
+          "score": null,
+          "factors": [
+            "日内+5.24%",
+            "3分钟-0.45%",
+            "成交放大0.72x"
+          ]
+        },
+        {
+          "name": "泰格医药",
+          "code": "300347",
+          "change_pct": 2.54,
+          "metric_label": "日内",
+          "quote_time": "2026-09-18T10:04:57",
+          "source": "腾讯财经HTTP",
+          "score": null,
+          "factors": [
+            "日内+2.54%",
+            "3分钟-0.10%",
+            "成交放大0.95x"
+          ]
+        },
+        {
+          "name": "药明康德",
+          "code": "603259",
+          "change_pct": 0.86,
+          "metric_label": "日内",
+          "quote_time": "2026-09-18T10:04:58",
+          "source": "腾讯财经HTTP",
+          "score": null,
+          "factors": [
+            "日内+0.86%",
+            "3分钟-0.69%",
+            "成交放大0.98x"
+          ]
+        }
+      ],
+      "signal_type": "持续走强观察",
+      "is_old_economy": false,
+      "source_watch_id": "创新药/CRO研发服务",
+      "quote_audit": {
+        "provider": "本地盘中监控、腾讯财经HTTP",
+        "primary_source": "腾讯财经HTTP",
+        "quote_time": "2026-09-18T10:05:01+08:00",
+        "pct_field": "日内涨跌幅",
+        "sample_count": 3,
+        "max_abs_leader_change_pct": 5.24,
+        "sanity_checks": {
+          "cross_source_verified": false,
+          "price_move_valid": true,
+          "volume_valid": false,
+          "direction_ratio_valid": false,
+          "limit_down_count_valid": false
+        },
+        "board_3m_change_pct": null,
+        "direction_ratio": null,
+        "volume_ratio": null,
+        "relative_volume_vs_yesterday": null,
+        "missing_confirmation": "等待富途行情按触发时点交叉核验；通过前只作候选或观察，不作为确认交易信号。",
+        "industry_day_change_pct": 2.35
+      },
+      "source_status": "monitor_live_unverified",
+      "valid_until": "2026-09-18T10:10:01+08:00",
+      "trigger_rule": ""
     }
   ],
   "quote_audit": {
     "provider": "本地盘中监控、富途行情（腾讯备用）",
-    "quote_time": "2026-09-18T09:45:31+08:00",
-    "pct_field": "各异动卡标注的短周期涨跌幅",
+    "quote_time": "2026-09-18T10:05:01+08:00",
+    "pct_field": "各异动卡标注的3分钟涨跌幅",
     "sanity_checks": {
-      "sample_count": 6,
+      "sample_count": 9,
       "max_abs_leader_change_pct": 7.4289,
       "cross_source_verified": false,
-      "verified_alert_count": 3
+      "verified_alert_count": 4
     }
   },
   "note": "异动来自本地短周期监控；候选卡须经富途行情按触发时点复核后才能升级。"
