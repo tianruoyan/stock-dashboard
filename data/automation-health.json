@@ -1,15 +1,15 @@
 {
-  "timestamp": "2026-09-18T07:19:19+08:00",
+  "timestamp": "2026-09-18T09:19:09+08:00",
   "current_signal_date": "2026-09-18",
   "target_trade_date": "2026-09-18",
-  "overall_status": "waiting",
-  "summary": "7 个自动化尚未到产出窗口：盘前简报、盘中全景、盘中异动、午盘分析。",
+  "overall_status": "degraded",
+  "summary": "1 个自动化产出异常：盘前简报。",
   "counts": {
     "ok": 0,
-    "late": 0,
+    "late": 1,
     "missing": 0,
     "invalidated": 0,
-    "waiting": 7
+    "waiting": 6
   },
   "processes": [
     {
@@ -19,15 +19,16 @@
       "due": "08:30",
       "deadline": "2026-09-18T08:35:00+08:00",
       "timestamp": "2026-09-17T13:10:34+08:00",
-      "status": "waiting",
-      "data_status": "check_source_quality",
+      "status": "late",
+      "data_status": "unavailable",
       "blocking": false,
-      "action": "等待产出",
-      "reason": "计划 08:30 后产出",
-      "failure_type": "not_due",
-      "diagnosis": "尚未到该自动化的计划产出窗口。",
+      "action": "重跑该自动化",
+      "reason": "时间戳不是当前交易日：2026-09-17T13:10:34+08:00",
+      "failure_type": "stale_or_time_anomaly",
+      "diagnosis": "时间戳不是当前交易日：2026-09-17T13:10:34+08:00",
       "next_actions": [
-        "到 08:30 后再检查是否产出。"
+        "核对文件 timestamp 是否由自动化真实写入。",
+        "重跑自动化，避免使用上一交易日或异常超前数据。"
       ],
       "related_sources": []
     },
@@ -56,7 +57,7 @@
       "file": "data/alert.json",
       "due": "交易时段持续检查",
       "timestamp": "2026-09-17T13:10:32+08:00",
-      "deadline": "2026-09-18T07:19:19+08:00",
+      "deadline": "2026-09-18T09:19:09+08:00",
       "status": "waiting",
       "data_status": "unavailable",
       "blocking": false,
@@ -148,11 +149,11 @@
   ],
   "next_session_readiness": {
     "target_trade_date": "2026-09-18",
-    "status": "pending",
-    "summary": "2026-09-18 开盘链路待产出：盘前简报 08:30。",
-    "pending_count": 7,
+    "status": "overdue",
+    "summary": "2026-09-18 有 1 个产出已过窗口未更新。",
+    "pending_count": 6,
     "ready_count": 0,
-    "overdue_count": 0,
+    "overdue_count": 1,
     "items": [
       {
         "id": "premarket",
@@ -162,9 +163,9 @@
         "deadline": "2026-09-18T08:35:00+08:00",
         "timestamp": "2026-09-17T13:10:34+08:00",
         "file_date": "2026-09-17",
-        "status": "pending",
-        "action": "等待产出",
-        "reason": "计划 08:30 后产出"
+        "status": "overdue",
+        "action": "需要重跑",
+        "reason": "分析未覆盖应有检查点 08:30"
       },
       {
         "id": "intraday",
@@ -184,7 +185,7 @@
         "file": "data/alert.json",
         "due": "交易时段持续检查",
         "timestamp": "2026-09-17T13:10:32+08:00",
-        "deadline": "2026-09-18T07:19:19+08:00",
+        "deadline": "2026-09-18T09:19:09+08:00",
         "status": "pending",
         "data_status": "unavailable",
         "blocking": false,
