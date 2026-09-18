@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-09-18T09:43:35+08:00",
+  "timestamp": "2026-09-18T09:49:36+08:00",
   "source_status": "monitor_live",
   "alerts": [
     {
@@ -691,14 +691,158 @@
       "trigger_rule": "小登风格轮动：同一大风格下≥3个关联板块同向急跌",
       "alert_class": "style",
       "confirmation_level": "candidate"
+    },
+    {
+      "id": "monitor-20260918-094531-aeb208ab8419",
+      "time": "2026-09-18T09:45:31+08:00",
+      "sector": "7月半导体扩产组合",
+      "type": "风格共振转弱",
+      "reason": "触发规则：小登风格轮动：同一大风格下≥3个关联板块同向急跌\n结论：7月半导体扩产组合 出现风格杀信号，3个关联板块5分钟窗口内同向急跌。\n关联板块：液冷 5分钟涨跌幅 -1.72%，上涨 20%/下跌 80%，成交 1.00x；覆铜板 5分钟涨跌幅 -1.59%，上涨 25%/下跌 75%，成交 1.00x；电子布 5分钟涨跌幅 -1.58%，上涨 20%/下跌 80%，成交 1.00x\n观察点：是否继续扩散到同风格后排，成交放大是否伴随价格延续。\n风险提示：这是风格级盘面信号，不构成买卖建议。",
+      "leaders": [
+        {
+          "name": "中国巨石",
+          "code": "600176",
+          "change_pct": -1.558,
+          "quote_time": "2026-09-18T09:45:27",
+          "source": "腾讯财经HTTP",
+          "score": 40.4,
+          "factors": [
+            "3分钟-1.56%",
+            "成交放大1.00x",
+            "日内-4.86%"
+          ]
+        },
+        {
+          "name": "山东玻纤",
+          "code": "605006",
+          "change_pct": -1.7575,
+          "quote_time": "2026-09-18T09:45:28",
+          "source": "腾讯财经HTTP",
+          "score": 38.9,
+          "factors": [
+            "3分钟-1.76%",
+            "成交放大1.00x",
+            "日内-3.84%"
+          ]
+        },
+        {
+          "name": "宏和科技",
+          "code": "603256",
+          "change_pct": -2.4478,
+          "quote_time": "2026-09-18T09:45:28",
+          "source": "腾讯财经HTTP",
+          "score": 32.56,
+          "factors": [
+            "3分钟-2.45%",
+            "成交放大1.00x",
+            "日内+0.74%"
+          ]
+        }
+      ],
+      "signal_type": "风格观察",
+      "is_old_economy": false,
+      "source_watch_id": "7月半导体扩产组合",
+      "quote_audit": {
+        "provider": "本地盘中监控、富途行情（腾讯备用）",
+        "primary_source": "腾讯财经HTTP",
+        "quote_time": "2026-09-18T09:45:31+08:00",
+        "pct_field": "3分钟涨跌幅",
+        "sample_count": 3,
+        "max_abs_leader_change_pct": 2.4478,
+        "sanity_checks": {
+          "cross_source_verified": false,
+          "price_move_valid": true,
+          "volume_valid": false,
+          "direction_ratio_valid": true,
+          "limit_down_count_valid": false
+        },
+        "board_3m_change_pct": -1.7179,
+        "direction_ratio": 0.8,
+        "volume_ratio": 1.0,
+        "relative_volume_vs_yesterday": null,
+        "missing_confirmation": "等待富途行情按触发时点交叉核验；通过前只作候选或观察，不作为确认交易信号。",
+        "secondary_source": "富途行情",
+        "secondary_verification": {
+          "state": "mismatch",
+          "checked_at": "2026-09-18T09:47:14+08:00",
+          "source": "富途行情",
+          "reason": "对齐同一触发时点后，代表股方向或价格变化仍存在明显冲突，维持待确认/失效。",
+          "representatives": [
+            {
+              "股票": "中国巨石",
+              "代码": "600176.SH",
+              "监控涨跌幅": -1.558,
+              "富途涨跌幅": -0.7961,
+              "腾讯涨跌幅": -0.1549,
+              "起始分钟": "09:42:27",
+              "结束分钟": "09:45:27",
+              "对齐方式": "逐笔行情同一时点对齐",
+              "时间偏差秒": 0.39,
+              "可比涨跌范围": [
+                -0.8621,
+                -0.598
+              ],
+              "方向一致": false,
+              "幅度一致": false,
+              "复核结论": "明显冲突"
+            },
+            {
+              "股票": "山东玻纤",
+              "代码": "605006.SH",
+              "监控涨跌幅": -1.7575,
+              "富途涨跌幅": -1.6422,
+              "腾讯涨跌幅": -1.462,
+              "起始分钟": "09:42:28",
+              "结束分钟": "09:45:27",
+              "对齐方式": "逐笔行情同一时点对齐",
+              "时间偏差秒": 0.22,
+              "可比涨跌范围": [
+                -1.7595,
+                -1.5836
+              ],
+              "方向一致": true,
+              "幅度一致": true,
+              "复核结论": "一致"
+            },
+            {
+              "股票": "宏和科技",
+              "代码": "603256.SH",
+              "监控涨跌幅": -2.4478,
+              "富途涨跌幅": -2.0034,
+              "腾讯涨跌幅": -1.65,
+              "起始分钟": "09:42:28",
+              "结束分钟": "09:45:28",
+              "对齐方式": "逐笔行情同一时点对齐",
+              "时间偏差秒": 0.09,
+              "可比涨跌范围": [
+                -2.0637,
+                -1.9048
+              ],
+              "方向一致": false,
+              "幅度一致": false,
+              "复核结论": "明显冲突"
+            }
+          ],
+          "window_minutes": 3,
+          "direction_agreement_ratio": 0.3333,
+          "magnitude_agreement_ratio": 0.3333,
+          "fingerprint": "765434cdc9d5eb4f68dc",
+          "verifier_version": "futu-opend-2026-07-27.3"
+        }
+      },
+      "source_status": "degraded_partial",
+      "valid_until": "2026-09-18T09:50:31+08:00",
+      "trigger_rule": "小登风格轮动：同一大风格下≥3个关联板块同向急跌",
+      "alert_class": "style",
+      "confirmation_level": "candidate"
     }
   ],
   "quote_audit": {
     "provider": "本地盘中监控、富途行情（腾讯备用）",
-    "quote_time": "2026-09-18T09:34:49+08:00",
+    "quote_time": "2026-09-18T09:45:31+08:00",
     "pct_field": "各异动卡标注的短周期涨跌幅",
     "sanity_checks": {
-      "sample_count": 5,
+      "sample_count": 6,
       "max_abs_leader_change_pct": 7.4289,
       "cross_source_verified": false,
       "verified_alert_count": 3
