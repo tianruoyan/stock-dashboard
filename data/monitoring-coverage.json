@@ -1,11 +1,11 @@
 {
-  "timestamp": "2026-09-21T10:36:20+08:00",
+  "timestamp": "2026-09-21T10:38:42+08:00",
   "current_signal_date": "2026-09-21",
   "overall_status": "degraded",
-  "summary": "3 个监测维度需降权，1 个背景维度需复核。",
+  "summary": "4 个监测维度需降权，1 个背景维度需复核。",
   "counts": {
     "critical": 0,
-    "warning": 3,
+    "warning": 4,
     "info": 1
   },
   "blind_spots": [
@@ -32,6 +32,25 @@
       "source_files": [
         "data/alert.json",
         "data/data-trust.json"
+      ]
+    },
+    {
+      "id": "premarket-cross-market-degraded",
+      "title": "盘前外部映射降权",
+      "severity": "warning",
+      "conclusion": "美股/港股/日韩映射可以提供方向，但部分实时外部源非终值或需复核。",
+      "impacted_decisions": [
+        "盘前提振/压制判断不能单独作为开盘动作",
+        "科技映射链需要9:25竞价和9:30后承接确认"
+      ],
+      "evidence": [
+        "早盘盘前已 92 分钟未刷新，超过 90 分钟 SLA"
+      ],
+      "fallback_action": "开盘只按竞价确认后的 A 股反馈升级，不把外盘映射直接升为强主线。",
+      "fallback_checks": [],
+      "source_files": [
+        "data/premarket.json",
+        "data/source-health.json"
       ]
     },
     {
