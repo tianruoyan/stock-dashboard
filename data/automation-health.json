@@ -1,15 +1,15 @@
 {
-  "timestamp": "2026-09-21T13:48:54+08:00",
+  "timestamp": "2026-09-21T15:33:34+08:00",
   "current_signal_date": "2026-09-21",
   "target_trade_date": "2026-09-21",
   "overall_status": "degraded",
-  "summary": "2 个自动化产出异常：盘中全景、午盘分析。",
+  "summary": "4 个自动化产出异常：盘中全景、午盘分析、盘后复盘、专题跟踪。",
   "counts": {
-    "ok": 2,
-    "late": 2,
+    "ok": 1,
+    "late": 4,
     "missing": 0,
     "invalidated": 0,
-    "waiting": 3
+    "waiting": 2
   },
   "processes": [
     {
@@ -36,15 +36,15 @@
       "label": "盘中全景",
       "file": "data/intraday.json",
       "due": "15:05",
-      "deadline": "2026-09-21T13:35:00+08:00",
+      "deadline": "2026-09-21T15:05:00+08:00",
       "timestamp": "2026-09-21T10:32:05+08:00",
       "status": "late",
       "data_status": "unavailable",
       "blocking": false,
       "action": "等待当前检查点数据",
-      "reason": "分析未覆盖应有检查点 13:30",
+      "reason": "分析未覆盖应有检查点 15:00",
       "failure_type": "stale_or_time_anomaly",
-      "diagnosis": "分析未覆盖应有检查点 13:30",
+      "diagnosis": "分析未覆盖应有检查点 15:00",
       "next_actions": [
         "核对文件 timestamp 是否由自动化真实写入。",
         "重跑自动化，避免使用上一交易日或异常超前数据。"
@@ -57,14 +57,14 @@
       "file": "data/alert.json",
       "due": "交易时段持续检查",
       "timestamp": "2026-09-21T13:48:51+08:00",
-      "deadline": "2026-09-21T13:48:54+08:00",
-      "status": "ok",
-      "data_status": "check_source_quality",
+      "deadline": "2026-09-21T15:33:34+08:00",
+      "status": "waiting",
+      "data_status": "unavailable",
       "blocking": false,
-      "action": "查看最新触发",
-      "reason": "监控和行情检查正常；没有新异动不等于没有运行",
-      "failure_type": "none",
-      "diagnosis": "监控和行情检查正常；没有新异动不等于没有运行",
+      "action": "查看监控状态",
+      "reason": "当前不在连续交易时段，保留最近触发供回看",
+      "failure_type": "not_due",
+      "diagnosis": "当前不在连续交易时段，保留最近触发供回看",
       "next_actions": [
         "继续检查最新行情与监控心跳；保留历史触发，不补造错过的信号。"
       ],
@@ -97,15 +97,16 @@
       "due": "15:10",
       "deadline": "2026-09-21T15:20:00+08:00",
       "timestamp": "2026-09-18T16:32:37+08:00",
-      "status": "waiting",
-      "data_status": "check_source_quality",
+      "status": "late",
+      "data_status": "unavailable",
       "blocking": false,
-      "action": "等待产出",
-      "reason": "计划 15:10 后产出",
-      "failure_type": "not_due",
-      "diagnosis": "尚未到该自动化的计划产出窗口。",
+      "action": "重跑该自动化",
+      "reason": "时间戳不是当前交易日：2026-09-18T16:32:37+08:00",
+      "failure_type": "stale_or_time_anomaly",
+      "diagnosis": "时间戳不是当前交易日：2026-09-18T16:32:37+08:00",
       "next_actions": [
-        "到 15:10 后再检查是否产出。"
+        "核对文件 timestamp 是否由自动化真实写入。",
+        "重跑自动化，避免使用上一交易日或异常超前数据。"
       ],
       "related_sources": []
     },
@@ -135,15 +136,16 @@
       "due": "15:30",
       "deadline": "2026-09-21T18:30:00+08:00",
       "timestamp": "2026-09-21T10:55:52+08:00",
-      "status": "waiting",
-      "data_status": "check_source_quality",
+      "status": "late",
+      "data_status": "unavailable",
       "blocking": false,
-      "action": "等待产出",
-      "reason": "计划 15:30 后产出",
-      "failure_type": "not_due",
-      "diagnosis": "尚未到该自动化的计划产出窗口。",
+      "action": "等待当前检查点数据",
+      "reason": "分析未覆盖应有检查点 15:30",
+      "failure_type": "stale_or_time_anomaly",
+      "diagnosis": "分析未覆盖应有检查点 15:30",
       "next_actions": [
-        "到 15:30 后再检查是否产出。"
+        "核对文件 timestamp 是否由自动化真实写入。",
+        "重跑自动化，避免使用上一交易日或异常超前数据。"
       ],
       "related_sources": []
     }
@@ -151,10 +153,10 @@
   "next_session_readiness": {
     "target_trade_date": "2026-09-21",
     "status": "overdue",
-    "summary": "2026-09-21 有 2 个产出已过窗口未更新。",
+    "summary": "2026-09-21 有 3 个产出已过窗口未更新。",
     "pending_count": 3,
-    "ready_count": 2,
-    "overdue_count": 2,
+    "ready_count": 1,
+    "overdue_count": 3,
     "items": [
       {
         "id": "premarket",
@@ -173,12 +175,12 @@
         "label": "盘中全景",
         "file": "data/intraday.json",
         "due": "15:05",
-        "deadline": "2026-09-21T13:35:00+08:00",
+        "deadline": "2026-09-21T15:05:00+08:00",
         "timestamp": "2026-09-21T10:32:05+08:00",
         "file_date": "2026-09-21",
         "status": "overdue",
         "action": "需要重跑",
-        "reason": "分析未覆盖应有检查点 13:30"
+        "reason": "分析未覆盖应有检查点 15:00"
       },
       {
         "id": "alerts",
@@ -186,14 +188,14 @@
         "file": "data/alert.json",
         "due": "交易时段持续检查",
         "timestamp": "2026-09-21T13:48:51+08:00",
-        "deadline": "2026-09-21T13:48:54+08:00",
-        "status": "ready",
-        "data_status": "check_source_quality",
+        "deadline": "2026-09-21T15:33:34+08:00",
+        "status": "pending",
+        "data_status": "unavailable",
         "blocking": false,
-        "action": "查看最新触发",
-        "reason": "监控和行情检查正常；没有新异动不等于没有运行",
-        "failure_type": "none",
-        "diagnosis": "监控和行情检查正常；没有新异动不等于没有运行",
+        "action": "查看监控状态",
+        "reason": "当前不在连续交易时段，保留最近触发供回看",
+        "failure_type": "not_due",
+        "diagnosis": "当前不在连续交易时段，保留最近触发供回看",
         "next_actions": [
           "继续检查最新行情与监控心跳；保留历史触发，不补造错过的信号。"
         ],
@@ -220,9 +222,9 @@
         "deadline": "2026-09-21T15:20:00+08:00",
         "timestamp": "2026-09-18T16:32:37+08:00",
         "file_date": "2026-09-18",
-        "status": "pending",
-        "action": "等待产出",
-        "reason": "计划 15:10 后产出"
+        "status": "overdue",
+        "action": "需要重跑",
+        "reason": "分析未覆盖应有检查点 15:10"
       },
       {
         "id": "evening",
@@ -245,8 +247,8 @@
         "timestamp": "2026-09-21T10:55:52+08:00",
         "file_date": "2026-09-21",
         "status": "pending",
-        "action": "等待产出",
-        "reason": "计划 15:30 后产出"
+        "action": "等待宽限",
+        "reason": "已到计划时间，宽限至 18:30"
       }
     ]
   },
