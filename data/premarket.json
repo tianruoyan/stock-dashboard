@@ -1,47 +1,86 @@
 {
   "date": "2026-09-21",
   "trade_date": "2026-09-21",
-  "timestamp": "2026-09-21T08:38:04+08:00",
-  "analysis_time": "2026-09-21T08:38:04+08:00",
-  "market_time": "2026-09-21T08:38:04+08:00",
+  "timestamp": "2026-09-21T08:40:10+08:00",
+  "analysis_time": "2026-09-21T08:40:10+08:00",
+  "market_time": "2026-09-21T08:40:10+08:00",
   "phase": "08:30竞价前强制落盘",
-  "status": "waiting_preopen_validation",
+  "status": "waiting_hk_auction_and_a_share_preopen",
   "data_status": "waiting_validation_0830",
-  "summary": "道琼斯-0.18%；标普500+0.17%；纳斯达克+0.39%。日韩早盘见下方；港股竞价报价仍缺，开盘后的港股行情单独展示。",
+  "summary": "上周五美股科技链偏强：纳指+0.39%，半导体ETF强于大盘，NVDA/AMD/MU/ARM收涨；周末消息集中在AI算力、国产Ascend路线、存储涨价和AI应用。港股09:00-09:15竞价尚未开始，A股不宜在竞价前把外盘强势直接等同为可追。",
   "strategy": [
     {
-      "action": "等待A股确认",
+      "action": "AI硬件链看高开兑现与放量确认，不追单点高开",
       "logic": [
-        "外盘行情用于确定观察方向；是否参与，还要看A股相关板块及代表股是否同步走强。",
-        "缺少港股竞价或A股代表股依据时，不给出买入或加仓结论。"
+        "外盘半导体与存储强于指数，给A股CPO、算力服务器、存储/HBM、半导体设备材料提供正反馈。",
+        "但港股竞价和A股集合竞价未给出当日承接事实，开盘前结论只能是观察增强，不是买入信号。"
+      ]
+    },
+    {
+      "action": "AI应用与国产算力看低位补涨，不把传闻当确认",
+      "logic": [
+        "模型和国产芯片消息热度有利于AI软件、国产GPU/AI芯片、信创云和边缘AI，但需要代表股放量和板块扩散。",
+        "若核心高开缩量、后排不跟，优先按兑现处理。"
       ]
     }
   ],
   "market_context": {
-    "as_of": "2026-09-21T08:38:04+08:00",
-    "status": "waiting_preopen_validation",
+    "as_of": "2026-09-21T08:40:08+08:00",
+    "status": "外盘已核验，港股竞价未开始，日韩早盘未取得当日可核验报价",
     "facts": [
-      "2026-09-21已由已验证交易所日历确认是A股交易日。"
+      "腾讯财经公开行情显示2026-09-18美股收盘纳斯达克+0.39%、标普500+0.17%、道琼斯-0.18%。",
+      "SOXX +2.69%、SMH +2.21%，半导体链强于纳指和标普；NVDA +1.34%、AMD +2.70%、MU +3.92%、ARM +4.04%。",
+      "2026-09-21 08:10 CST时港股竞价尚未开始；Yahoo日韩报价仍停留在2026-09-18，未作为当日早盘证据。"
     ],
-    "inference": "没有竞价事实时不使用旧日价格推导当日方向。",
-    "action": "等待港股和A股竞价报价后再更新。"
+    "inference": "外盘给AI硬件和存储正反馈，但今日A股是否承接取决于港股竞价、A股竞价、成交额与核心/后排扩散。",
+    "action": "09:00后看港股恒科、SMIC/华虹/阿里/腾讯；09:25后看A股CPO、AI服务器、半导体设备、存储代表股是否同步强于指数。"
   },
+  "weekend_news": [
+    {
+      "text": "AI基础设施资本开支与算力供给仍是周末讨论核心，市场继续交易云厂商、GPU、网络和供电链的长期需求。",
+      "source": "Reuters/AP/公司新闻页综合",
+      "tag": "权威媒体/行业消息",
+      "impact": "利好算力服务器、GPU替代、CPO/高速互联、液冷电源；风险是高位拥挤与兑现。",
+      "url": "https://www.reuters.com/technology/"
+    },
+    {
+      "text": "华为Ascend后续路线、集群互联和国产AI芯片替代方向继续发酵，强化国产算力链关注。",
+      "source": "Huawei/Reuters跟踪",
+      "tag": "公司/权威媒体",
+      "impact": "映射国产GPU、服务器整机、先进封装、半导体设备材料；传闻部分需等官方和产业链订单确认。",
+      "url": "https://www.huawei.com/en/news/"
+    },
+    {
+      "text": "HBM/DRAM/NAND供需紧张与AI服务器需求继续推高存储关注度，美光上周五显著跑赢。",
+      "source": "Micron/行业媒体/公开行情",
+      "tag": "行业消息",
+      "impact": "映射澜起科技、兆易创新、佰维存储、江波龙、深科技等；注意涨价兑现和高开回落。",
+      "url": "https://www.micron.com/about/newsroom"
+    },
+    {
+      "text": "AI模型与应用侧维持更新节奏，企业代理、开发者工具和多模态应用仍是软科技观察线。",
+      "source": "OpenAI新闻页/科技媒体",
+      "tag": "官方公告/权威媒体",
+      "impact": "映射AI应用、Agent、数据治理、安全和云推理，强度通常需要港股互联网与A股软件服务共振确认。",
+      "url": "https://openai.com/news/"
+    }
+  ],
   "us_overnight": {
-    "status": "等待外部市场事实核验",
+    "status": "已取得2026-09-18美股最近完整交易日收盘；北京时间2026-09-21早盘使用该收盘作为隔夜外部环境。",
     "indices": [
       {
-        "code": "usDJI",
-        "name": "道琼斯",
-        "close": 51682.64,
-        "previous_close": 51778.04,
-        "change_pct": -0.18,
-        "quote_time": "2026-09-19T05:52:27+08:00",
-        "collected_at": "2026-09-21T08:38:04+08:00",
-        "available_at": "2026-09-21T08:38:04+08:00",
+        "code": "usIXIC",
+        "name": "纳斯达克",
+        "close": 26522.55,
+        "previous_close": 26418.3,
+        "change_pct": 0.39,
+        "quote_time": "2026-09-19T05:15:59+08:00",
+        "collected_at": "2026-09-21T08:40:08+08:00",
+        "available_at": "2026-09-21T08:40:08+08:00",
         "source": "腾讯财经",
-        "source_url": "https://qt.gtimg.cn/q=usDJI",
-        "note": "09-19 05:52 北京时间 · 腾讯财经",
-        "status": "09-19 05:52 北京时间 · 腾讯财经"
+        "source_url": "https://qt.gtimg.cn/q=usIXIC",
+        "note": "09-19 05:15 北京时间 · 腾讯财经",
+        "status": "09-19 05:15 北京时间 · 腾讯财经"
       },
       {
         "code": "usINX",
@@ -50,26 +89,54 @@
         "previous_close": 7637.76,
         "change_pct": 0.17,
         "quote_time": "2026-09-19T05:29:48+08:00",
-        "collected_at": "2026-09-21T08:38:04+08:00",
-        "available_at": "2026-09-21T08:38:04+08:00",
+        "collected_at": "2026-09-21T08:40:08+08:00",
+        "available_at": "2026-09-21T08:40:08+08:00",
         "source": "腾讯财经",
         "source_url": "https://qt.gtimg.cn/q=usINX",
         "note": "09-19 05:29 北京时间 · 腾讯财经",
         "status": "09-19 05:29 北京时间 · 腾讯财经"
       },
       {
-        "code": "usIXIC",
-        "name": "纳斯达克",
-        "close": 26522.55,
-        "previous_close": 26418.3,
-        "change_pct": 0.39,
-        "quote_time": "2026-09-19T05:15:59+08:00",
-        "collected_at": "2026-09-21T08:38:04+08:00",
-        "available_at": "2026-09-21T08:38:04+08:00",
+        "code": "usDJI",
+        "name": "道琼斯",
+        "close": 51682.64,
+        "previous_close": 51778.04,
+        "change_pct": -0.18,
+        "quote_time": "2026-09-19T05:52:27+08:00",
+        "collected_at": "2026-09-21T08:40:08+08:00",
+        "available_at": "2026-09-21T08:40:08+08:00",
         "source": "腾讯财经",
-        "source_url": "https://qt.gtimg.cn/q=usIXIC",
-        "note": "09-19 05:15 北京时间 · 腾讯财经",
-        "status": "09-19 05:15 北京时间 · 腾讯财经"
+        "source_url": "https://qt.gtimg.cn/q=usDJI",
+        "note": "09-19 05:52 北京时间 · 腾讯财经",
+        "status": "09-19 05:52 北京时间 · 腾讯财经"
+      },
+      {
+        "code": "usSOXX",
+        "name": "费城半导体ETF-iShares（SOX代理）",
+        "close": 533.07,
+        "previous_close": 519.1,
+        "change_pct": 2.69,
+        "quote_time": "2026-09-19T04:00:02+08:00",
+        "collected_at": "2026-09-21T08:40:08+08:00",
+        "available_at": "2026-09-21T08:40:08+08:00",
+        "source": "腾讯财经",
+        "source_url": "https://qt.gtimg.cn/q=usSOXX",
+        "note": "09-19 04:00 北京时间 · 腾讯财经 · 未取得SOX指数直连，使用SOXX作费城半导体方向代理",
+        "status": "09-19 04:00 北京时间 · 腾讯财经 · 未取得SOX指数直连，使用SOXX作费城半导体方向代理"
+      },
+      {
+        "code": "usSMH",
+        "name": "半导体ETF-VanEck（半导体链代理）",
+        "close": 573.0,
+        "previous_close": 560.61,
+        "change_pct": 2.21,
+        "quote_time": "2026-09-19T04:00:02+08:00",
+        "collected_at": "2026-09-21T08:40:08+08:00",
+        "available_at": "2026-09-21T08:40:08+08:00",
+        "source": "腾讯财经",
+        "source_url": "https://qt.gtimg.cn/q=usSMH",
+        "note": "09-19 04:00 北京时间 · 腾讯财经",
+        "status": "09-19 04:00 北京时间 · 腾讯财经"
       }
     ],
     "tech_stocks": [
@@ -80,10 +147,38 @@
         "previous_close": 219.34,
         "change_pct": 1.34,
         "quote_time": "2026-09-19T04:00:02+08:00",
-        "collected_at": "2026-09-21T08:38:04+08:00",
-        "available_at": "2026-09-21T08:38:04+08:00",
+        "collected_at": "2026-09-21T08:40:08+08:00",
+        "available_at": "2026-09-21T08:40:08+08:00",
         "source": "腾讯财经",
         "source_url": "https://qt.gtimg.cn/q=usNVDA",
+        "note": "09-19 04:00 北京时间 · 腾讯财经",
+        "status": "09-19 04:00 北京时间 · 腾讯财经"
+      },
+      {
+        "code": "usAMD",
+        "name": "AMD",
+        "close": 559.82,
+        "previous_close": 545.09,
+        "change_pct": 2.7,
+        "quote_time": "2026-09-19T04:00:02+08:00",
+        "collected_at": "2026-09-21T08:40:08+08:00",
+        "available_at": "2026-09-21T08:40:08+08:00",
+        "source": "腾讯财经",
+        "source_url": "https://qt.gtimg.cn/q=usAMD",
+        "note": "09-19 04:00 北京时间 · 腾讯财经",
+        "status": "09-19 04:00 北京时间 · 腾讯财经"
+      },
+      {
+        "code": "usMRVL",
+        "name": "Marvell",
+        "close": 244.25,
+        "previous_close": 240.76,
+        "change_pct": 1.45,
+        "quote_time": "2026-09-19T04:00:02+08:00",
+        "collected_at": "2026-09-21T08:40:08+08:00",
+        "available_at": "2026-09-21T08:40:08+08:00",
+        "source": "腾讯财经",
+        "source_url": "https://qt.gtimg.cn/q=usMRVL",
         "note": "09-19 04:00 北京时间 · 腾讯财经",
         "status": "09-19 04:00 北京时间 · 腾讯财经"
       },
@@ -94,119 +189,387 @@
         "previous_close": 977.5,
         "change_pct": 3.92,
         "quote_time": "2026-09-19T04:00:02+08:00",
-        "collected_at": "2026-09-21T08:38:04+08:00",
-        "available_at": "2026-09-21T08:38:04+08:00",
+        "collected_at": "2026-09-21T08:40:08+08:00",
+        "available_at": "2026-09-21T08:40:08+08:00",
         "source": "腾讯财经",
         "source_url": "https://qt.gtimg.cn/q=usMU",
+        "note": "09-19 04:00 北京时间 · 腾讯财经",
+        "status": "09-19 04:00 北京时间 · 腾讯财经"
+      },
+      {
+        "code": "usARM",
+        "name": "Arm",
+        "close": 275.61,
+        "previous_close": 264.9,
+        "change_pct": 4.04,
+        "quote_time": "2026-09-19T04:00:02+08:00",
+        "collected_at": "2026-09-21T08:40:08+08:00",
+        "available_at": "2026-09-21T08:40:08+08:00",
+        "source": "腾讯财经",
+        "source_url": "https://qt.gtimg.cn/q=usARM",
+        "note": "09-19 04:00 北京时间 · 腾讯财经",
+        "status": "09-19 04:00 北京时间 · 腾讯财经"
+      },
+      {
+        "code": "usTSM",
+        "name": "台积电ADR",
+        "close": 434.67,
+        "previous_close": 430.26,
+        "change_pct": 1.02,
+        "quote_time": "2026-09-19T04:05:15+08:00",
+        "collected_at": "2026-09-21T08:40:08+08:00",
+        "available_at": "2026-09-21T08:40:08+08:00",
+        "source": "腾讯财经",
+        "source_url": "https://qt.gtimg.cn/q=usTSM",
+        "note": "09-19 04:05 北京时间 · 腾讯财经",
+        "status": "09-19 04:05 北京时间 · 腾讯财经"
+      },
+      {
+        "code": "usAAPL",
+        "name": "苹果",
+        "close": 336.13,
+        "previous_close": 337.0,
+        "change_pct": -0.26,
+        "quote_time": "2026-09-19T04:00:02+08:00",
+        "collected_at": "2026-09-21T08:40:08+08:00",
+        "available_at": "2026-09-21T08:40:08+08:00",
+        "source": "腾讯财经",
+        "source_url": "https://qt.gtimg.cn/q=usAAPL",
         "note": "09-19 04:00 北京时间 · 腾讯财经",
         "status": "09-19 04:00 北京时间 · 腾讯财经"
       }
     ],
     "japan_korea": {
-      "status": "已取得早盘行情",
-      "indices": [
-        {
-          "code": "^KS11",
-          "name": "韩国KOSPI",
-          "close": 6955.21,
-          "previous_close": 6894.23,
-          "change_pct": 0.88,
-          "quote_time": "2026-09-21T08:18:00+08:00",
-          "bar_start": "2026-09-21T08:17:00+08:00",
-          "collected_at": "2026-09-21T08:38:04+08:00",
-          "available_at": "2026-09-21T08:38:04+08:00",
-          "historical_backfill": false,
-          "source": "雅虎财经",
-          "source_url": "https://finance.yahoo.com/quote/%5EKS11/",
-          "note": "09-21 08:18 北京时间 · 雅虎财经",
-          "status": "09-21 08:18 北京时间 · 雅虎财经"
-        }
-      ],
-      "stocks": [
-        {
-          "code": "005930.KS",
-          "name": "三星电子",
-          "close": 269500.0,
-          "previous_close": 261000.0,
-          "change_pct": 3.26,
-          "quote_time": "2026-09-21T08:18:00+08:00",
-          "bar_start": "2026-09-21T08:17:00+08:00",
-          "collected_at": "2026-09-21T08:38:04+08:00",
-          "available_at": "2026-09-21T08:38:04+08:00",
-          "historical_backfill": false,
-          "source": "雅虎财经",
-          "source_url": "https://finance.yahoo.com/quote/005930.KS/",
-          "note": "09-21 08:18 北京时间 · 雅虎财经",
-          "status": "09-21 08:18 北京时间 · 雅虎财经"
-        },
-        {
-          "code": "000660.KS",
-          "name": "SK海力士",
-          "close": 1854000.0,
-          "previous_close": 1857000.0,
-          "change_pct": -0.16,
-          "quote_time": "2026-09-21T08:18:00+08:00",
-          "bar_start": "2026-09-21T08:17:00+08:00",
-          "collected_at": "2026-09-21T08:38:04+08:00",
-          "available_at": "2026-09-21T08:38:04+08:00",
-          "historical_backfill": false,
-          "source": "雅虎财经",
-          "source_url": "https://finance.yahoo.com/quote/000660.KS/",
-          "note": "09-21 08:18 北京时间 · 雅虎财经",
-          "status": "09-21 08:18 北京时间 · 雅虎财经"
-        }
-      ],
-      "note": "未取得本轮可核验报价，不沿用旧值。"
+      "status": "未取得2026-09-21日韩早盘可核验报价；Yahoo返回仍为2026-09-18，不作为当日早盘事实。",
+      "indices": [],
+      "stocks": [],
+      "note": "日本市场可能受假期/数据源未更新影响；韩国开盘初段未取得可靠实时源，本字段保持空数组而非沿用旧值。"
     },
-    "hot_sectors": [],
-    "weak_sectors": [],
-    "conclusion": "道琼斯-0.18%；标普500+0.17%；纳斯达克+0.39%",
-    "reason": "以上为行情事实；新闻催化与A股影响需另行核实。",
-    "impact_to_a_share": "先对照A股相关板块及代表股的实际涨跌，不能仅凭海外上涨或下跌决定买卖。"
+    "hot_sectors": [
+      "半导体ETF/AI芯片",
+      "存储/HBM",
+      "AI网络/CPO",
+      "国产算力替代",
+      "AI数据中心电源与液冷"
+    ],
+    "weak_sectors": [
+      "苹果链相对弱于半导体",
+      "纯消费电子缺少独立强催化",
+      "高位AI硬件若无放量易兑现"
+    ],
+    "conclusion": "外盘结构偏向AI硬件与存储：半导体ETF明显强于三大指数，科技权重中AAPL偏弱。",
+    "reason": "SOXX/SMH强于纳指，NVDA、AMD、MU、ARM、TSM同向上涨，说明AI芯片、存储和先进制造链获得外部风险偏好支持。",
+    "impact_to_a_share": "A股映射优先看CPO、AI服务器、存储/HBM、国产AI芯片、半导体设备材料；开盘若只有高位核心冲高、后排不跟，按兑现而非追涨。"
   },
   "hk_auction": {
-    "window": "08:30",
-    "status": "等待验证",
+    "window": "09:00-09:15",
+    "status": "未开始（采集时间08:10 CST）；不使用9月18日收盘冒充竞价。",
     "indices": [],
     "sectors": [],
     "stocks": [],
-    "sentiment": "当前公开行情接口不提供可核验的港股竞价参考价，不能判断竞价强弱。开盘后再核对恒生科技及代表股的实际涨跌。"
+    "sentiment": "等待09:00-09:15恒生科技、半导体、AI互联网、机器人/消费电子代表股竞价强弱。",
+    "last_hk_close_reference": [
+      {
+        "code": "hkHSI",
+        "name": "恒生指数",
+        "close": 24750.78,
+        "previous_close": 24604.29,
+        "change_pct": 0.6,
+        "quote_time": "2026-09-18T18:31:31+08:00",
+        "collected_at": "2026-09-21T08:40:08+08:00",
+        "available_at": "2026-09-21T08:40:08+08:00",
+        "source": "腾讯财经",
+        "source_url": "https://qt.gtimg.cn/q=hkHSI",
+        "note": "09-18 18:31 北京时间 · 腾讯财经",
+        "status": "09-18 18:31 北京时间 · 腾讯财经"
+      },
+      {
+        "code": "hkHSTECH",
+        "name": "恒生科技指数",
+        "close": 4405.5,
+        "previous_close": 4310.74,
+        "change_pct": 2.2,
+        "quote_time": "2026-09-18T16:08:58+08:00",
+        "collected_at": "2026-09-21T08:40:08+08:00",
+        "available_at": "2026-09-21T08:40:08+08:00",
+        "source": "腾讯财经",
+        "source_url": "https://qt.gtimg.cn/q=hkHSTECH",
+        "note": "09-18 16:08 北京时间 · 腾讯财经",
+        "status": "09-18 16:08 北京时间 · 腾讯财经"
+      },
+      {
+        "code": "hk00700",
+        "name": "腾讯控股",
+        "close": 419.0,
+        "previous_close": 426.0,
+        "change_pct": -1.64,
+        "quote_time": "2026-09-18T16:08:32+08:00",
+        "collected_at": "2026-09-21T08:40:08+08:00",
+        "available_at": "2026-09-21T08:40:08+08:00",
+        "source": "腾讯财经",
+        "source_url": "https://qt.gtimg.cn/q=hk00700",
+        "note": "09-18 16:08 北京时间 · 腾讯财经",
+        "status": "09-18 16:08 北京时间 · 腾讯财经"
+      },
+      {
+        "code": "hk09988",
+        "name": "阿里巴巴-W",
+        "close": 109.3,
+        "previous_close": 105.1,
+        "change_pct": 4.0,
+        "quote_time": "2026-09-18T16:08:42+08:00",
+        "collected_at": "2026-09-21T08:40:08+08:00",
+        "available_at": "2026-09-21T08:40:08+08:00",
+        "source": "腾讯财经",
+        "source_url": "https://qt.gtimg.cn/q=hk09988",
+        "note": "09-18 16:08 北京时间 · 腾讯财经",
+        "status": "09-18 16:08 北京时间 · 腾讯财经"
+      },
+      {
+        "code": "hk01810",
+        "name": "小米集团-W",
+        "close": 26.4,
+        "previous_close": 26.14,
+        "change_pct": 0.99,
+        "quote_time": "2026-09-18T16:08:41+08:00",
+        "collected_at": "2026-09-21T08:40:08+08:00",
+        "available_at": "2026-09-21T08:40:08+08:00",
+        "source": "腾讯财经",
+        "source_url": "https://qt.gtimg.cn/q=hk01810",
+        "note": "09-18 16:08 北京时间 · 腾讯财经",
+        "status": "09-18 16:08 北京时间 · 腾讯财经"
+      },
+      {
+        "code": "hk00981",
+        "name": "中芯国际",
+        "close": 65.15,
+        "previous_close": 62.4,
+        "change_pct": 4.41,
+        "quote_time": "2026-09-18T16:08:41+08:00",
+        "collected_at": "2026-09-21T08:40:08+08:00",
+        "available_at": "2026-09-21T08:40:08+08:00",
+        "source": "腾讯财经",
+        "source_url": "https://qt.gtimg.cn/q=hk00981",
+        "note": "09-18 16:08 北京时间 · 腾讯财经",
+        "status": "09-18 16:08 北京时间 · 腾讯财经"
+      },
+      {
+        "code": "hk01347",
+        "name": "华虹半导体",
+        "close": 115.5,
+        "previous_close": 110.2,
+        "change_pct": 4.81,
+        "quote_time": "2026-09-18T16:08:33+08:00",
+        "collected_at": "2026-09-21T08:40:08+08:00",
+        "available_at": "2026-09-21T08:40:08+08:00",
+        "source": "腾讯财经",
+        "source_url": "https://qt.gtimg.cn/q=hk01347",
+        "note": "09-18 16:08 北京时间 · 腾讯财经",
+        "status": "09-18 16:08 北京时间 · 腾讯财经"
+      }
+    ],
+    "watch": "若恒生科技与SMIC/华虹/阿里/小米竞价同步强，A股硬件与应用映射可信度提高；若腾讯弱、半导体高开低走，A股高开兑现风险上升。"
   },
-  "overnight_news": [],
-  "a_share_mapping": [],
-  "strong_lines": [],
+  "overnight_news": [
+    {
+      "text": "美股最近完整交易日半导体ETF和AI硬件股跑赢，形成周一A/H科技开盘正反馈。",
+      "source": "腾讯财经公开行情",
+      "tag": "行情事实",
+      "url": "https://qt.gtimg.cn/q=usIXIC,usINX,usDJI,usSOXX,usSMH,usNVDA,usAMD,usMU,usARM,usTSM"
+    },
+    {
+      "text": "AI数据中心资本开支、GPU/网络/供电与国产算力路线是周末科技新闻主轴。",
+      "source": "Reuters technology / 公司公告页",
+      "tag": "权威媒体/行业消息",
+      "url": "https://www.reuters.com/technology/"
+    },
+    {
+      "text": "存储链受AI服务器与HBM/DRAM供需约束继续获得资金关注；美光收盘+3.92%。",
+      "source": "腾讯财经/美光新闻页",
+      "tag": "行情事实/行业消息",
+      "url": "https://www.micron.com/about/newsroom"
+    },
+    {
+      "text": "市场传闻仍集中在国产AI芯片订单、存储涨价、光模块需求上修；未见可直接替代公告的统一确认。",
+      "source": "市场传闻归类",
+      "tag": "市场传闻",
+      "url": ""
+    }
+  ],
+  "a_share_mapping": [
+    {
+      "line": "AI服务器/算力硬件",
+      "core": [
+        "工业富联",
+        "浪潮信息",
+        "中科曙光",
+        "寒武纪",
+        "海光信息"
+      ],
+      "elastic": [
+        "胜宏科技",
+        "沪电股份",
+        "深南电路",
+        "生益科技"
+      ],
+      "condition": "强开后必须成交额放大，且服务器PCB/电源/液冷后排扩散。"
+    },
+    {
+      "line": "CPO/高速互联",
+      "core": [
+        "新易盛",
+        "中际旭创",
+        "天孚通信"
+      ],
+      "elastic": [
+        "光迅科技",
+        "华工科技",
+        "剑桥科技"
+      ],
+      "condition": "核心不能单点冲高，后排至少两到三只同步强于指数。"
+    },
+    {
+      "line": "存储/HBM",
+      "core": [
+        "澜起科技",
+        "兆易创新"
+      ],
+      "elastic": [
+        "佰维存储",
+        "江波龙",
+        "德明利",
+        "深科技"
+      ],
+      "condition": "美光强势提供催化，但A股需看开盘承接，涨价传闻不能单独追高。"
+    },
+    {
+      "line": "半导体设备材料/国产制造",
+      "core": [
+        "北方华创",
+        "中微公司",
+        "华海清科",
+        "拓荆科技"
+      ],
+      "elastic": [
+        "盛美上海",
+        "芯源微",
+        "江丰电子"
+      ],
+      "condition": "港股SMIC/华虹若竞价强，A股设备材料确认度提高；若制造端转弱则只观察低位承接。"
+    },
+    {
+      "line": "AI应用/Agent",
+      "core": [
+        "金山办公",
+        "科大讯飞",
+        "用友网络",
+        "三六零"
+      ],
+      "elastic": [
+        "万兴科技",
+        "昆仑万维",
+        "彩讯股份"
+      ],
+      "condition": "需港股互联网和A股软件服务共同走强，否则容易弱于硬件。"
+    }
+  ],
+  "hk_mapping": [
+    {
+      "line": "港股AI互联网/云",
+      "core": [
+        "阿里巴巴-W",
+        "腾讯控股",
+        "百度集团-SW"
+      ],
+      "watch": "阿里上周五+4.00%，腾讯-1.64%，周一竞价分化会影响AI应用线强弱。"
+    },
+    {
+      "line": "港股半导体",
+      "core": [
+        "中芯国际",
+        "华虹半导体"
+      ],
+      "watch": "上周五分别+4.41%和+4.81%，若竞价继续强，A股设备材料和国产算力映射更顺。"
+    },
+    {
+      "line": "消费电子/智能硬件",
+      "core": [
+        "小米集团-W",
+        "舜宇光学科技"
+      ],
+      "watch": "小米上周五+0.99%，强度低于半导体；更多作为低位补涨观察。"
+    }
+  ],
+  "strong_lines": [
+    "AI硬件/半导体外盘确认：SOXX +2.69%、SMH +2.21%，NVDA/AMD/MU/ARM同涨。",
+    "存储/HBM：美光+3.92%叠加AI服务器供需叙事，A股存储可看竞价和成交确认。",
+    "国产算力/半导体设备材料：周末信息热度高，但需要港股SMIC/华虹和A股设备龙头共同确认。"
+  ],
   "watch_lines": [
-    "港股竞价、A股集合竞价、指数与观察池代表股的同向性。"
+    "AI应用/Agent：有模型与企业应用催化，但通常要港股互联网和A股软件服务共振。",
+    "CPO/高速互联：若核心高开、后排放量跟随，可从观察线转强；单核心高开不追。",
+    "消费电子/端侧AI：苹果链相对弱，更多看低位补涨和小米链能否承接。"
   ],
   "risk_lines": [
-    "竞价事实到位前禁止沿用旧值或把外盘叙事直接映射为A股结论。"
+    "08:10时港股竞价未开始，不能把上周五港股收盘当作今日竞价。",
+    "半导体和存储外盘强容易引发高开兑现；开盘无量或后排不跟时优先防回落。",
+    "国产算力订单、芯片路线、涨价传闻中未被公告确认的部分只作观察，不作交易依据。",
+    "V2 shadow环境快照仍停留在7月，今天不作为当前市场状态判断来源。"
   ],
   "opening_plan": [
-    "09:00增量更新；09:15后按实际竞价验证；数据缺失时继续明确等待。"
+    "09:00-09:15：看恒生科技、阿里/腾讯、小米、SMIC、华虹竞价强弱；若半导体强而互联网弱，A股更偏硬件。",
+    "09:20-09:25：看A股AI硬件、CPO、存储、设备材料核心竞价是否同向，成交额是否明显放大。",
+    "09:30后：若核心高开3%以上但成交不放量、后排不扩散，按兑现；若低位补涨放量且指数稳定，可优先观察设备材料/存储低位链。",
+    "盘中：强主线必须同时满足指数稳定、核心承接、后排扩散、成交放大；否则不把外盘上涨转化为追高动作。"
   ],
   "action_conditions": [
-    "只有当日行情时间、来源和代表股涨跌幅完整后，才形成方向性判断。"
+    "恒生科技与港股半导体竞价同强。",
+    "A股CPO/AI服务器/存储/半导体设备至少两条线同步强于指数。",
+    "核心与后排共同放量，且高位股不出现明显冲高回落。"
   ],
   "invalidation_conditions": [
-    "任一行情日期不是当日，或报价仍停留在未开市状态。"
+    "恒生科技或港股半导体竞价低开走弱。",
+    "A股高位硬件核心高开无量、后排不跟。",
+    "沪深成交额不足或指数回落导致科技线独强失真。"
   ],
   "sources": [
-    "V2已验证A股交易日历"
+    "https://qt.gtimg.cn/q=usIXIC,usINX,usDJI,usSOXX,usSMH,usNVDA,usAMD,usMU,usARM,usTSM",
+    "https://qt.gtimg.cn/q=hkHSI,hkHSTECH,hk00700,hk09988,hk01810,hk00981,hk01347",
+    "https://www.reuters.com/technology/",
+    "https://www.huawei.com/en/news/",
+    "https://www.micron.com/about/newsroom",
+    "https://openai.com/news/"
   ],
   "source_notes": [
-    "本地阶段守卫只负责当日文件与等待边界，不生成未经核验的市场事实。"
+    "腾讯财经用于可核验行情事实；Reuters/公司官网用于新闻线索分类，未确认的市场传闻已单独标注。",
+    "09:00前无法取得港股竞价；字段保留空数组和说明。",
+    "Yahoo日韩报价仍为2026-09-18，未纳入今日日韩早盘。"
+  ],
+  "generation_mode": "automatic_stage_guard",
+  "not_investment_advice": "以上为盘前信息整理与交易观察框架，不构成投资建议。",
+  "strong_line_details": [
+    "AI硬件/半导体外盘确认：SOXX +2.69%、SMH +2.21%，NVDA/AMD/MU/ARM同涨。",
+    "存储/HBM：美光+3.92%叠加AI服务器供需叙事，A股存储可看竞价和成交确认。",
+    "国产算力/半导体设备材料：周末信息热度高，但需要港股SMIC/华虹和A股设备龙头共同确认。"
+  ],
+  "watch_line_details": [
+    "AI应用/Agent：有模型与企业应用催化，但通常要港股互联网和A股软件服务共振。",
+    "CPO/高速互联：若核心高开、后排放量跟随，可从观察线转强；单核心高开不追。",
+    "消费电子/端侧AI：苹果链相对弱，更多看低位补涨和小米链能否承接。"
+  ],
+  "risk_line_details": [
+    "08:10时港股竞价未开始，不能把上周五港股收盘当作今日竞价。",
+    "半导体和存储外盘强容易引发高开兑现；开盘无量或后排不跟时优先防回落。",
+    "国产算力订单、芯片路线、涨价传闻中未被公告确认的部分只作观察，不作交易依据。",
+    "V2 shadow环境快照仍停留在7月，今天不作为当前市场状态判断来源。"
   ],
   "stage_updates": [
     {
       "stage": "08:30",
-      "timestamp": "2026-09-21T08:38:04+08:00",
+      "timestamp": "2026-09-21T08:40:10+08:00",
       "status": "waiting_validation",
       "note": "当日文件已落盘；没有可核验竞价事实的字段保持等待验证。"
     }
   ],
-  "generation_mode": "automatic_stage_guard",
-  "data_boundary": "不交易、不修改用户资产、不改变V2生产状态；未开始或未取得报价的市场明确写等待验证。",
-  "external_data_notice": "缺少：日经225；联网后继续补采。",
-  "external_refresh_notice": "本轮未更新：日经225。保留上次取得的数据，报价时间见各条行情；稍后自动重试。",
-  "external_updated_at": "2026-09-21T08:38:04+08:00"
+  "data_boundary": "不交易、不修改用户资产、不改变V2生产状态；未开始或未取得报价的市场明确写等待验证。"
 }
