@@ -1,15 +1,15 @@
 {
-  "timestamp": "2026-09-23T21:20:18+08:00",
+  "timestamp": "2026-09-23T21:35:54+08:00",
   "current_signal_date": "2026-09-23",
   "target_trade_date": "2026-09-23",
   "overall_status": "degraded",
-  "summary": "2 个自动化产出异常：盘中全景、午盘分析。",
+  "summary": "3 个自动化产出异常：盘中全景、午盘分析、晚间舆情。",
   "counts": {
     "ok": 3,
-    "late": 2,
+    "late": 3,
     "missing": 0,
     "invalidated": 0,
-    "waiting": 2
+    "waiting": 1
   },
   "processes": [
     {
@@ -57,7 +57,7 @@
       "file": "data/alert.json",
       "due": "交易时段持续检查",
       "timestamp": "2026-09-23T13:31:07+08:00",
-      "deadline": "2026-09-23T21:20:18+08:00",
+      "deadline": "2026-09-23T21:35:54+08:00",
       "status": "waiting",
       "data_status": "unavailable",
       "blocking": false,
@@ -116,15 +116,16 @@
       "due": "20:00",
       "deadline": "2026-09-23T21:30:00+08:00",
       "timestamp": "2026-09-15T22:06:00+08:00",
-      "status": "waiting",
-      "data_status": "check_source_quality",
+      "status": "late",
+      "data_status": "unavailable",
       "blocking": false,
-      "action": "等待当日产出",
+      "action": "重跑该自动化",
       "reason": "时间戳不是当前交易日：2026-09-15T22:06:00+08:00",
-      "failure_type": "not_due",
-      "diagnosis": "尚未到该自动化的计划产出窗口。",
+      "failure_type": "stale_or_time_anomaly",
+      "diagnosis": "时间戳不是当前交易日：2026-09-15T22:06:00+08:00",
       "next_actions": [
-        "到 20:00 后再检查是否产出。"
+        "核对文件 timestamp 是否由自动化真实写入。",
+        "重跑自动化，避免使用上一交易日或异常超前数据。"
       ],
       "related_sources": []
     },
@@ -151,10 +152,10 @@
   "next_session_readiness": {
     "target_trade_date": "2026-09-23",
     "status": "overdue",
-    "summary": "2026-09-23 有 2 个产出已过窗口未更新。",
-    "pending_count": 2,
+    "summary": "2026-09-23 有 3 个产出已过窗口未更新。",
+    "pending_count": 1,
     "ready_count": 3,
-    "overdue_count": 2,
+    "overdue_count": 3,
     "items": [
       {
         "id": "premarket",
@@ -186,7 +187,7 @@
         "file": "data/alert.json",
         "due": "交易时段持续检查",
         "timestamp": "2026-09-23T13:31:07+08:00",
-        "deadline": "2026-09-23T21:20:18+08:00",
+        "deadline": "2026-09-23T21:35:54+08:00",
         "status": "pending",
         "data_status": "unavailable",
         "blocking": false,
@@ -232,9 +233,9 @@
         "deadline": "2026-09-23T21:30:00+08:00",
         "timestamp": "2026-09-15T22:06:00+08:00",
         "file_date": "2026-09-15",
-        "status": "pending",
-        "action": "等待宽限",
-        "reason": "已到计划时间，宽限至 21:30"
+        "status": "overdue",
+        "action": "需要重跑",
+        "reason": "分析未覆盖应有检查点 20:00"
       },
       {
         "id": "topics",
