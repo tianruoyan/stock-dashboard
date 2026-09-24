@@ -38,6 +38,11 @@ def parse_quote_time(value: Any) -> Optional[datetime]:
             return parsed.replace(tzinfo=datetime.now().astimezone().tzinfo)
         except ValueError:
             continue
+    try:
+        parsed = datetime.fromisoformat(text.replace("Z", "+00:00"))
+        return parsed if parsed.tzinfo is not None else parsed.replace(tzinfo=datetime.now().astimezone().tzinfo)
+    except ValueError:
+        pass
     return None
 
 
@@ -247,6 +252,80 @@ def write_atomic(path: Path, payload: Dict[str, Any]) -> None:
     tmp.replace(path)
 
 
+def refresh_current_projection(payload: Dict[str, Any], indices: List[Dict[str, Any]],
+                               industries: List[Dict[str, Any]], structure: Dict[str, Any],
+                               quote_as_of: str, collected_at: str) -> None:
+    """Replace an obsolete intraday conclusion with a dated factual snapshot.
+
+    Quote refreshes used to update only nested market fields.  When the prior
+    analyst snapshot belonged to another trading day, the page therefore kept
+    showing its old conclusion beside today's prices.  This projection is
+    intentionally conservative: it makes a current, evidence-labelled market
+    observation and never reuses the prior day's breadth or theme judgement.
+    """
+    quote_day = parse_quote_time(quote_as_of)
+    if quote_day is None:
+        return
+    day = quote_day.date().isoformat()
+    top = sorted(industries, key=lambda item: item["change_pct"], reverse=True)[:3]
+    bottom = sorted(industries, key=lambda item: item["change_pct"])[:3]
+    index_text = "、".join(
+        f"{item['name']}{float(item['change_pct']):+.2f}%" for item in indices
+    )
+    top_text = "、".join(f"{item['name']}{float(item['change_pct']):+.2f}%" for item in top)
+    bottom_text = "、".join(f"{item['name']}{float(item['change_pct']):+.2f}%" for item in bottom)
+    pools = structure.get("pools") if isinstance(structure.get("pools"), dict) else {}
+    limit_up = pools.get("limit_up", {}).get("count")
+    limit_down = pools.get("limit_down", {}).get("count")
+    broken = pools.get("broken_board", {}).get("count")
+    breadth_missing = bool((structure.get("errors") or {}).get("breadth"))
+    breadth_text = (
+        "全市场上涨与下跌家数暂未取得，不把旧日宽度数据当作今天的情绪。"
+        if breadth_missing else "全市场涨跌家数已取得，详见市场宽度。"
+    )
+    pool_text = f"涨停{limit_up}只、跌停{limit_down}只、炸板{broken}只" if None not in (limit_up, limit_down, broken) else "涨跌停结构待补"
+
+    payload.update({
+        "date": day,
+        "trade_date": day,
+        "timestamp": collected_at,
+        "updated_at": collected_at,
+        "analysis_time": collected_at,
+        "market_time": quote_as_of,
+        "phase": f"盘中行情更新（{quote_day.strftime('%H:%M')}可核验行情）",
+        "status": "usable_intraday_factual_snapshot" if not breadth_missing else "partial_intraday_factual_snapshot",
+        "summary": f"{quote_day.strftime('%H:%M')}五大指数同步走弱：{index_text}。相对抗跌的行业为{top_text}；跌幅居前为{bottom_text}。{pool_text}；{breadth_text}",
+        "sentiment": {
+            "judgement": "指数同步走弱，盘中先按风险释放不足处理；宽度未齐，不给整体情绪打分。",
+            "limit_up_count": limit_up,
+            "limit_down_count": limit_down,
+            "broken_limit_count": broken,
+            "breadth_status": "待补" if breadth_missing else "已取得",
+            "advance_count": None if breadth_missing else payload.get("market_breadth", {}).get("advance_count"),
+            "decline_count": None if breadth_missing else payload.get("market_breadth", {}).get("decline_count"),
+            "flat_count": None if breadth_missing else payload.get("market_breadth", {}).get("flat_count"),
+        },
+        "main_trends": [{
+            "name": "盘中市场状态",
+            "type": "risk_line",
+            "status": "五大指数同步走弱，暂不把局部抗跌行业视为可追主线。",
+            "continuity": f"{index_text}；{pool_text}。",
+            "evidence": [
+                {"type": "index_quote", "metric": "change_pct", "value": item["change_pct"], "name": item["name"], "code": item["code"], "source": item["source"], "timestamp": item["quote_time"], "detail": f"{item['name']}{float(item['change_pct']):+.2f}%"}
+                for item in indices
+            ],
+            "inference": f"{top_text}相对抗跌，但仅凭行业排名不足以确认交易主线。",
+            "risk": f"{bottom_text}跌幅靠前；{breadth_text}",
+            "action": "先观察指数是否止跌、跌幅较大行业是否缩窄；没有共同回稳前不追逆势拉升。",
+            "strengthen_condition": "至少两项核心指数止跌回升，且全市场宽度补齐后不继续恶化。",
+            "invalidation_condition": "核心指数继续扩大跌幅，或跌停、炸板数量明显增加。",
+        }],
+        "actions": ["先观察指数是否止跌及市场宽度是否补齐；当前不使用上一交易日的主线与情绪结论。"],
+        "themes": [],
+        "data_boundary": "本轮为实时行情事实更新；未取得的全市场宽度不补造，也不沿用旧日结论。",
+    })
+
+
 def update(path: Path) -> Dict[str, Any]:
     payload = json.loads(path.read_text(encoding="utf-8"))
     indices = fetch_indices()
@@ -287,6 +366,12 @@ def update(path: Path) -> Dict[str, Any]:
         "time_basis": "行情源时间",
     }
     apply_facts(payload, structure)
+    # A quote-only refresh may follow a failed scheduled analysis.  If the
+    # visible snapshot is from another day, publish a current factual view so
+    # the page cannot pair today's prices with yesterday's conclusion.
+    previous_day = str(payload.get("trade_date") or payload.get("date") or "")
+    if previous_day != quote_as_of[:10]:
+        refresh_current_projection(payload, indices, industries, structure, quote_as_of, collected_at)
     write_atomic(path, payload)
     watchlist_quotes = fetch_watchlist_quotes()
     write_atomic(WATCHLIST_QUOTES_PATH, watchlist_quotes)

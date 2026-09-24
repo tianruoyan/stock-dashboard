@@ -8,7 +8,7 @@ from pathlib import Path
 from unittest.mock import patch
 
 from intraday_recovery import TZ, assess_freshness, is_trading_day, recover, retry_delay_seconds
-from update_intraday_market import merge_index_rows, normalize_index_section, parse_quote_time
+from update_intraday_market import merge_index_rows, normalize_index_section, parse_quote_time, refresh_current_projection
 
 
 def payload(quote_time: str) -> dict:
@@ -69,6 +69,20 @@ class IntradayRecoveryTests(unittest.TestCase):
 
     def test_quote_time_parser(self) -> None:
         self.assertEqual(parse_quote_time("20260722103015").strftime("%F %T"), "2026-07-22 10:30:15")
+
+    def test_stale_projection_is_replaced_by_dated_factual_snapshot(self) -> None:
+        current = {"trade_date": "2026-07-21", "summary": "旧日结论", "market_breadth": {}}
+        indices = [{"name": "上证指数", "code": "sh000001", "change_pct": -1.0,
+                    "source": "测试源", "quote_time": "20260722103015"}]
+        industries = [{"name": "行业A", "change_pct": 1.0}, {"name": "行业B", "change_pct": -2.0}]
+        structure = {"pools": {"limit_up": {"count": 10}, "limit_down": {"count": 5}, "broken_board": {"count": 2}},
+                     "errors": {"breadth": "待补"}}
+        refresh_current_projection(current, indices, industries, structure,
+                                   "2026-07-22T10:30:15+08:00", "2026-07-22T10:31:00+08:00")
+        self.assertEqual(current["trade_date"], "2026-07-22")
+        self.assertIn("五大指数同步走弱", current["summary"])
+        self.assertEqual(current["sentiment"]["advance_count"], None)
+        self.assertIn("不把旧日宽度数据", current["summary"])
 
     def test_verified_calendar_stops_holiday_retries(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
