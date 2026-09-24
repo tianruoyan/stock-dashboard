@@ -1,9 +1,18 @@
 {
-  "timestamp": "2026-09-24T12:52:29+08:00",
+  "timestamp": "2026-09-24T13:24:04+08:00",
   "current_signal_date": "2026-09-24",
   "status": "degraded",
-  "summary": "共 8 条检查提示，其中 6 条需处理、2 条背景记录（2 个价格/行情复核，6 个背景复核）。",
+  "summary": "共 9 条检查提示，其中 7 条需处理、2 条背景记录（1 个交易阻断，2 个价格/行情复核，6 个背景复核）。",
   "issues": [
+    {
+      "severity": "warning",
+      "file": "alert.json",
+      "path": "",
+      "code": "invalidated_source",
+      "message": "盘中监控心跳超时，等待自动恢复。",
+      "impact_level": "blocking",
+      "decision_action": "对应信号等待重产，页面必须显示阻断"
+    },
     {
       "severity": "warning",
       "file": "intraday.json",
@@ -79,6 +88,17 @@
   ],
   "action_plan": [
     {
+      "priority": 1,
+      "impact_level": "blocking",
+      "label": "先修复阻断",
+      "file": "alert.json",
+      "code": "invalidated_source",
+      "problem": "盘中监控心跳超时，等待自动恢复。",
+      "decision_action": "对应信号等待重产，页面必须显示阻断",
+      "next_step": "暂停对应交易触发；等待污染批次撤下、可信行情源恢复并重产 JSON。",
+      "unblock_condition": "quality-report blocking=0，相关文件不再 invalidated/missing。"
+    },
+    {
       "priority": 2,
       "impact_level": "price_review",
       "label": "二次行情复核",
@@ -132,24 +152,13 @@
       "decision_action": "仅作背景复核，不单独阻断交易判断",
       "next_step": "补官方/交易所/公司公告来源；未补齐前不升级为核心依据。",
       "unblock_condition": "官方来源补齐或确认不影响交易触发。"
-    },
-    {
-      "priority": 4,
-      "impact_level": "background_review",
-      "label": "背景来源复核",
-      "file": "topics.json",
-      "code": "stale_timestamp",
-      "problem": "时间戳不是当前交易日：2026-09-23T21:20:17+08:00",
-      "decision_action": "仅作背景复核，不单独阻断交易判断",
-      "next_step": "补官方/交易所/公司公告来源；未补齐前不升级为核心依据。",
-      "unblock_condition": "官方来源补齐或确认不影响交易触发。"
     }
   ],
   "counts": {
     "critical": 0,
-    "warning": 6,
+    "warning": 7,
     "info": 2,
-    "blocking": 0,
+    "blocking": 1,
     "price_review": 2,
     "signal_review": 0,
     "background_review": 6
