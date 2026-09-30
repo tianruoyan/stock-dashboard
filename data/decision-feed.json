@@ -1,26 +1,27 @@
 {
-  "timestamp": "2026-09-30T19:59:27+08:00",
+  "timestamp": "2026-09-30T20:03:40+08:00",
   "current_signal_date": "2026-09-30",
   "quality_gate": {
     "status": "degraded",
-    "summary": "共 20 条检查提示，其中 18 条需处理、2 条背景记录（19 个价格/行情复核，1 个背景复核）。",
+    "summary": "共 22 条检查提示，其中 21 条需处理、1 条背景记录（19 个价格/行情复核，3 个信号复核）。",
     "decision_flags": [
       "行情/涨跌幅需二次源复核",
+      "机会信号需降权转验证",
       "盘中异动源降级，alert 类信号降权"
     ],
     "blocking_count": 0,
     "price_review_count": 19,
-    "background_review_count": 1
+    "background_review_count": 0
   },
-  "summary": "上证指数+0.31%、深证成指-0.11%、创业板指-0.23%、科创50-2.51%、沪深300+0.29%；两市成交额按上证与深证成指口径估算约14380.18亿元。 数据质量：共 20 条检查提示，其中 18 条需处理、2 条背景记录（19 个价格/行情复核，1 个背景复核）。",
+  "summary": "上证指数+0.31%、深证成指-0.11%、创业板指-0.23%、科创50-2.51%、沪深300+0.29%；两市成交额按上证与深证成指口径估算约14380.18亿元。 数据质量：共 22 条检查提示，其中 21 条需处理、1 条背景记录（19 个价格/行情复核，3 个信号复核）。",
   "observation_coverage": {
     "summary": "主动扫描捕捉 2 条：收盘分化：医药强、科技弱 / 上午市场结构",
-    "independent_count": 9,
-    "inherited_count": 14,
+    "independent_count": 11,
+    "inherited_count": 6,
     "active_market_count": 2,
     "postmarket_scan_count": 1,
     "topic_inherited_count": 2,
-    "verification_count": 2,
+    "verification_count": 4,
     "active_titles": [
       "收盘分化：医药强、科技弱",
       "上午市场结构"
@@ -31,10 +32,10 @@
     "stance": "风险优先，只做验证",
     "action": "不把候选方向当交易机会；先看风险收敛、数据恢复和核心承接。",
     "reasons": [
-      "共 20 条检查提示，其中 18 条需处理、2 条背景记录（19 个价格/行情复核，1 个背景复核）。",
+      "共 22 条检查提示，其中 21 条需处理、1 条背景记录（19 个价格/行情复核，3 个信号复核）。",
       "A/B级风险 8 条",
       "风险优先冲突 2 条",
-      "可用机会 0 条，降权候选 7 条"
+      "可用机会 0 条，降权候选 3 条"
     ],
     "risk_focus": [
       "数据质量降级",
@@ -44,11 +45,12 @@
     "upgrade_watch": [
       "#1 主线变化：机器人/工业自动化：下一交易日先看这些代表股是否多数走强，再看同板块是否有更多股票跟涨；缺少扩散时不追高。 数据质量恢复或二次行情源确认前，不升级为可用机会。",
       "#2 待触发：创新药/CRO：题材3分钟涨跌幅>=1.5%，方向占比>=70%，成交放大>=5x。 数据质量恢复或二次行情源确认前，不升级为可用机会。",
-      "#3 待触发：PCB/电子布：核心股低开后放量收复开盘价或跌幅明显收敛。 数据质量恢复或二次行情源确认前，不升级为可用机会。"
+      "#3 待触发：机器人/工业自动化：核心股低开后放量收复开盘价或跌幅明显收敛。 数据质量恢复或二次行情源确认前，不升级为可用机会。"
     ],
     "verification_focus": [
       "题材3分钟涨跌幅>=1.5%，方向占比>=70%，成交放大>=5x",
-      "核心股低开后放量收复开盘价或跌幅明显收敛"
+      "核心股低开后放量收复开盘价或跌幅明显收敛",
+      "不追强势医药，次日先等科技止跌与全市场宽度改善共同确认。"
     ],
     "quality_actions": [
       {
@@ -66,7 +68,7 @@
     ]
   },
   "signal_queue": {
-    "summary": "无可用机会，4 条风险优先，5 条只做验证，4 条禁用直用。",
+    "summary": "无可用机会，4 条风险优先，5 条只做验证，3 条禁用直用。",
     "active_opportunities": [],
     "trackable_risks": [
       {
@@ -108,22 +110,22 @@
         "reason": "题材3分钟涨跌幅>=1.5%，方向占比>=70%，成交放大>=5x"
       },
       {
-        "title": "待触发：PCB/电子布",
-        "grade": "D",
-        "use_action": "仅复核",
-        "reason": "核心股低开后放量收复开盘价或跌幅明显收敛"
-      },
-      {
         "title": "待触发：机器人/工业自动化",
         "grade": "D",
         "use_action": "仅复核",
         "reason": "核心股低开后放量收复开盘价或跌幅明显收敛"
       },
       {
-        "title": "待触发：半导体设备",
+        "title": "盘中追踪：创新药/CRO",
         "grade": "D",
         "use_action": "仅复核",
         "reason": "题材3分钟涨跌幅>=1.5%，方向占比>=70%，成交放大>=5x"
+      },
+      {
+        "title": "盘中追踪：机器人/工业自动化",
+        "grade": "D",
+        "use_action": "仅复核",
+        "reason": "核心股低开后放量收复开盘价或跌幅明显收敛"
       }
     ],
     "disabled_signals": [
@@ -137,12 +139,6 @@
         "grade": "D",
         "use_action": "仅复核",
         "reason": "题材3分钟涨跌幅>=1.5%，方向占比>=70%，成交放大>=5x"
-      },
-      {
-        "title": "待触发：PCB/电子布",
-        "grade": "D",
-        "use_action": "仅复核",
-        "reason": "核心股低开后放量收复开盘价或跌幅明显收敛"
       },
       {
         "title": "待触发：机器人/工业自动化",
@@ -178,6 +174,7 @@
       ],
       "quality_flags": [
         "行情/涨跌幅需二次源复核",
+        "机会信号需降权转验证",
         "盘中异动源降级，alert 类信号降权",
         "全局数据降级，主线变化需二次确认"
       ],
@@ -190,7 +187,7 @@
       "next_action": "下一交易日先看这些代表股是否多数走强，再看同板块是否有更多股票跟涨；缺少扩散时不追高。",
       "observation_source": "主线变化扫描",
       "independent_observation": true,
-      "signal_score": 62,
+      "signal_score": 57,
       "signal_grade": "C",
       "use_action": "降权观察",
       "use_reasons": [
@@ -226,6 +223,7 @@
       ],
       "quality_flags": [
         "行情/涨跌幅需二次源复核",
+        "机会信号需降权转验证",
         "盘中异动源降级，alert 类信号降权"
       ],
       "tone": "good",
@@ -238,7 +236,7 @@
       "next_action": "题材3分钟涨跌幅>=1.5%，方向占比>=70%，成交放大>=5x",
       "observation_source": "数据派生",
       "independent_observation": false,
-      "signal_score": 22,
+      "signal_score": 17,
       "signal_grade": "D",
       "use_action": "仅复核",
       "use_reasons": [
@@ -251,55 +249,6 @@
       "upgrade_rank": 2,
       "upgrade_priority": "仅复核",
       "upgrade_condition": "题材3分钟涨跌幅>=1.5%，方向占比>=70%，成交放大>=5x。 数据质量恢复或二次行情源确认前，不升级为可用机会。"
-    },
-    {
-      "title": "待触发：PCB/电子布",
-      "type": "opportunity_watch",
-      "trigger_reason": "盘前/晚间注意点已转为盘中追踪清单，等待实时行情触发。",
-      "conclusion": "山东玻纤股东拟减持不超总股本3%，单股竞价风险需优先核验；山东玻纤公告显示，持股12.87%的上海东兴计划自公告披露15个交易日后的3个月内减持不超过19,608,039股，占公司总股本不超过3.00%，其中集中竞价不超过1.00%、大宗交易不超过2.00%。山东玻纤9月15日已收跌6.44%，减持计划虽非次日立即卖…；上海东兴持有山东玻纤84,114,3…",
-      "confidence": "low",
-      "evidence": [],
-      "source_files": [
-        "opportunity-watch.json"
-      ],
-      "watch_next": [
-        "核心股低开后放量收复开盘价或跌幅明显收敛",
-        "同题材后排不再扩大负反馈，跌停/炸板数量下降",
-        "板块ETF或指数不再创新低并出现承接",
-        "题材3分钟涨跌幅>=1.5%，方向占比>=70%，成交放大>=5x"
-      ],
-      "invalidation": "核心股继续放量下跌",
-      "tags": [
-        "科技硬件链",
-        "风控"
-      ],
-      "quality_flags": [
-        "行情/涨跌幅需二次源复核",
-        "盘中异动源降级，alert 类信号降权"
-      ],
-      "tone": "good",
-      "discovery_type": "premarket_watch_queue",
-      "evidence_score": 21,
-      "missing_evidence": [
-        "缺少可核验证据",
-        "数据源降级需二次确认"
-      ],
-      "next_action": "核心股低开后放量收复开盘价或跌幅明显收敛",
-      "observation_source": "数据派生",
-      "independent_observation": false,
-      "signal_score": 22,
-      "signal_grade": "D",
-      "use_action": "仅复核",
-      "use_reasons": [
-        "缺少证据",
-        "有下一步验证",
-        "有证伪条件",
-        "有来源文件",
-        "数据质量降权"
-      ],
-      "upgrade_rank": 3,
-      "upgrade_priority": "仅复核",
-      "upgrade_condition": "核心股低开后放量收复开盘价或跌幅明显收敛。 数据质量恢复或二次行情源确认前，不升级为可用机会。"
     },
     {
       "title": "待触发：机器人/工业自动化",
@@ -323,6 +272,7 @@
       ],
       "quality_flags": [
         "行情/涨跌幅需二次源复核",
+        "机会信号需降权转验证",
         "盘中异动源降级，alert 类信号降权"
       ],
       "tone": "good",
@@ -335,7 +285,7 @@
       "next_action": "核心股低开后放量收复开盘价或跌幅明显收敛",
       "observation_source": "数据派生",
       "independent_observation": false,
-      "signal_score": 22,
+      "signal_score": 17,
       "signal_grade": "D",
       "use_action": "仅复核",
       "use_reasons": [
@@ -345,153 +295,9 @@
         "有来源文件",
         "数据质量降权"
       ],
-      "upgrade_rank": 4,
+      "upgrade_rank": 3,
       "upgrade_priority": "仅复核",
       "upgrade_condition": "核心股低开后放量收复开盘价或跌幅明显收敛。 数据质量恢复或二次行情源确认前，不升级为可用机会。"
-    },
-    {
-      "title": "待触发：半导体设备",
-      "type": "opportunity_watch",
-      "trigger_reason": "盘前/晚间注意点已转为盘中追踪清单，等待实时行情触发。",
-      "conclusion": "长川科技披露筹划发行H股股票并在香港联交所上市，并同步提交相关治理制度与股东会议案；当前仍需股东会、监管及交易所等程序，公告标题与现有公开材料不能确认最终发行规模、定价或完成时间。；可能提升融资与国际化预期，也存在后续发行规模和稀释不确定性；长川科技当日涨5.39%，不以单一公告方向追涨或转空。；半导体设备公司事项",
-      "confidence": "low",
-      "evidence": [],
-      "source_files": [
-        "opportunity-watch.json"
-      ],
-      "watch_next": [
-        "题材3分钟涨跌幅>=1.5%，方向占比>=70%，成交放大>=5x",
-        "板块内出现批量涨停/封板或后排扩散",
-        "核心股、ETF、后排扩散同向确认"
-      ],
-      "invalidation": "核心股高开低走或冲高回落",
-      "tags": [
-        "科技硬件链",
-        "风控"
-      ],
-      "quality_flags": [
-        "行情/涨跌幅需二次源复核",
-        "盘中异动源降级，alert 类信号降权"
-      ],
-      "tone": "good",
-      "discovery_type": "premarket_watch_queue",
-      "evidence_score": 21,
-      "missing_evidence": [
-        "缺少可核验证据",
-        "数据源降级需二次确认"
-      ],
-      "next_action": "题材3分钟涨跌幅>=1.5%，方向占比>=70%，成交放大>=5x",
-      "observation_source": "数据派生",
-      "independent_observation": false,
-      "signal_score": 22,
-      "signal_grade": "D",
-      "use_action": "仅复核",
-      "use_reasons": [
-        "缺少证据",
-        "有下一步验证",
-        "有证伪条件",
-        "有来源文件",
-        "数据质量降权"
-      ],
-      "upgrade_rank": 5,
-      "upgrade_priority": "仅复核",
-      "upgrade_condition": "题材3分钟涨跌幅>=1.5%，方向占比>=70%，成交放大>=5x。 数据质量恢复或二次行情源确认前，不升级为可用机会。"
-    },
-    {
-      "title": "待触发：存储/HBM",
-      "type": "opportunity_watch",
-      "trigger_reason": "盘前/晚间注意点已转为盘中追踪清单，等待实时行情触发。",
-      "conclusion": "22:02腾讯行情显示WTI原油103.41美元、涨1.99%，布伦特原油107.45美元、涨1.67%；纽约10:01道指-0.68%、标普500-0.22%、纳斯达克-0.29%、QQQ-0.06%，英伟达+0.81%、台积电ADR-0.12%、美光+1.61%。路透社报道沙特东西向输油管道停运与新的地区袭击继续…",
-      "confidence": "low",
-      "evidence": [],
-      "source_files": [
-        "opportunity-watch.json"
-      ],
-      "watch_next": [
-        "题材3分钟涨跌幅>=1.5%，方向占比>=70%，成交放大>=5x",
-        "板块内出现批量涨停/封板或后排扩散",
-        "核心股、ETF、后排扩散同向确认"
-      ],
-      "invalidation": "核心股高开低走或冲高回落",
-      "tags": [
-        "科技硬件链",
-        "风控"
-      ],
-      "quality_flags": [
-        "行情/涨跌幅需二次源复核",
-        "盘中异动源降级，alert 类信号降权"
-      ],
-      "tone": "good",
-      "discovery_type": "premarket_watch_queue",
-      "evidence_score": 21,
-      "missing_evidence": [
-        "缺少可核验证据",
-        "数据源降级需二次确认"
-      ],
-      "next_action": "题材3分钟涨跌幅>=1.5%，方向占比>=70%，成交放大>=5x",
-      "observation_source": "数据派生",
-      "independent_observation": false,
-      "signal_score": 22,
-      "signal_grade": "D",
-      "use_action": "仅复核",
-      "use_reasons": [
-        "缺少证据",
-        "有下一步验证",
-        "有证伪条件",
-        "有来源文件",
-        "数据质量降权"
-      ],
-      "upgrade_rank": 6,
-      "upgrade_priority": "仅复核",
-      "upgrade_condition": "题材3分钟涨跌幅>=1.5%，方向占比>=70%，成交放大>=5x。 数据质量恢复或二次行情源确认前，不升级为可用机会。"
-    },
-    {
-      "title": "待触发：AI算力",
-      "type": "opportunity_watch",
-      "trigger_reason": "盘前/晚间注意点已转为盘中追踪清单，等待实时行情触发。",
-      "conclusion": "22:02腾讯行情显示WTI原油103.41美元、涨1.99%，布伦特原油107.45美元、涨1.67%；纽约10:01道指-0.68%、标普500-0.22%、纳斯达克-0.29%、QQQ-0.06%，英伟达+0.81%、台积电ADR-0.12%、美光+1.61%。路透社报道沙特东西向输油管道停运与新的地区袭击继续…",
-      "confidence": "low",
-      "evidence": [],
-      "source_files": [
-        "opportunity-watch.json"
-      ],
-      "watch_next": [
-        "题材3分钟涨跌幅>=1.5%，方向占比>=70%，成交放大>=5x",
-        "板块内出现批量涨停/封板或后排扩散",
-        "核心股、ETF、后排扩散同向确认"
-      ],
-      "invalidation": "核心股高开低走或冲高回落",
-      "tags": [
-        "科技硬件链",
-        "风控"
-      ],
-      "quality_flags": [
-        "行情/涨跌幅需二次源复核",
-        "盘中异动源降级，alert 类信号降权"
-      ],
-      "tone": "good",
-      "discovery_type": "premarket_watch_queue",
-      "evidence_score": 21,
-      "missing_evidence": [
-        "缺少可核验证据",
-        "数据源降级需二次确认"
-      ],
-      "next_action": "题材3分钟涨跌幅>=1.5%，方向占比>=70%，成交放大>=5x",
-      "observation_source": "数据派生",
-      "independent_observation": false,
-      "signal_score": 22,
-      "signal_grade": "D",
-      "use_action": "仅复核",
-      "use_reasons": [
-        "缺少证据",
-        "有下一步验证",
-        "有证伪条件",
-        "有来源文件",
-        "数据质量降权"
-      ],
-      "upgrade_rank": 7,
-      "upgrade_priority": "仅复核",
-      "upgrade_condition": "题材3分钟涨跌幅>=1.5%，方向占比>=70%，成交放大>=5x。 数据质量恢复或二次行情源确认前，不升级为可用机会。"
     }
   ],
   "risks": [
@@ -499,12 +305,13 @@
       "title": "数据质量降级",
       "type": "data_quality",
       "trigger_reason": "风控兜底触发：市场宽度、数据质量或回撤条件触发风险优先。",
-      "conclusion": "共 20 条检查提示，其中 18 条需处理、2 条背景记录（19 个价格/行情复核，1 个背景复核）。",
+      "conclusion": "共 22 条检查提示，其中 21 条需处理、1 条背景记录（19 个价格/行情复核，3 个信号复核）。",
       "confidence": "high",
       "evidence": [
         "时间戳不是当前交易日：2026-08-28T09:43:29+08:00",
-        "行情污染源仍降级，观察或历史信号未交叉验证，只能降权参考",
-        "昭衍新药 触发窗口涨跌幅 10.0，3分钟窗口需回查原始行情源"
+        "news[0].text 缺失",
+        "news[1].text 缺失",
+        "news[2].text 缺失"
       ],
       "source_files": [
         "quality-report.json",
@@ -521,7 +328,7 @@
       "quality_flags": [],
       "tone": "risk",
       "discovery_type": "risk_guardrail",
-      "evidence_score": 88,
+      "evidence_score": 90,
       "missing_evidence": [],
       "next_action": "污染 alert 修复前，盘中异动信号必须降权；观察池个股涨跌幅以已审计源为准。",
       "observation_source": "系统风控扫描",
@@ -894,48 +701,6 @@
       ]
     },
     {
-      "title": "盘中追踪：PCB/电子布",
-      "type": "opportunity_watch",
-      "trigger_reason": "盘前/晚间注意点已转为盘中追踪清单，等待实时行情触发。",
-      "conclusion": "山东玻纤股东拟减持不超总股本3%，单股竞价风险需优先核验；山东玻纤公告显示，持股12.87%的上海东兴计划自公告披露15个交易日后的3个月内减持不超过19,608,039股，占公司总股本不超过3.00%，其中集中竞价不超过1.00%、大宗交易不超过2.00%。山东玻纤9月15日已收跌6.44%，减…",
-      "confidence": "low",
-      "evidence": [],
-      "source_files": [
-        "opportunity-watch.json"
-      ],
-      "watch_next": [
-        "核心股低开后放量收复开盘价或跌幅明显收敛",
-        "同题材后排不再扩大负反馈，跌停/炸板数量下降",
-        "板块ETF或指数不再创新低并出现承接",
-        "题材3分钟涨跌幅>=1.5%，方向占比>=70%，成交放大>=5x"
-      ],
-      "invalidation": "核心股继续放量下跌",
-      "tags": [
-        "科技硬件链",
-        "风控"
-      ],
-      "quality_flags": [],
-      "tone": "neutral",
-      "discovery_type": "premarket_watch_queue",
-      "evidence_score": 28,
-      "missing_evidence": [
-        "缺少可核验证据"
-      ],
-      "next_action": "核心股低开后放量收复开盘价或跌幅明显收敛",
-      "observation_source": "数据派生",
-      "independent_observation": false,
-      "signal_score": 47,
-      "signal_grade": "D",
-      "use_action": "仅复核",
-      "use_reasons": [
-        "缺少证据",
-        "有下一步验证",
-        "有证伪条件",
-        "有来源文件",
-        "有证据缺口"
-      ]
-    },
-    {
       "title": "盘中追踪：机器人/工业自动化",
       "type": "opportunity_watch",
       "trigger_reason": "盘前/晚间注意点已转为盘中追踪清单，等待实时行情触发。",
@@ -963,129 +728,6 @@
         "缺少可核验证据"
       ],
       "next_action": "核心股低开后放量收复开盘价或跌幅明显收敛",
-      "observation_source": "数据派生",
-      "independent_observation": false,
-      "signal_score": 47,
-      "signal_grade": "D",
-      "use_action": "仅复核",
-      "use_reasons": [
-        "缺少证据",
-        "有下一步验证",
-        "有证伪条件",
-        "有来源文件",
-        "有证据缺口"
-      ]
-    },
-    {
-      "title": "盘中追踪：半导体设备",
-      "type": "opportunity_watch",
-      "trigger_reason": "盘前/晚间注意点已转为盘中追踪清单，等待实时行情触发。",
-      "conclusion": "长川科技披露筹划发行H股股票并在香港联交所上市，并同步提交相关治理制度与股东会议案；当前仍需股东会、监管及交易所等程序，公告标题与现有公开材料不能确认最终发行规模、定价或完成时间。；可能提升融资与国际化预期，也存在后续发行规模和稀释不确定性；长川科技当日涨5.39%，不以单一公告方向追涨或转空。；…",
-      "confidence": "low",
-      "evidence": [],
-      "source_files": [
-        "opportunity-watch.json"
-      ],
-      "watch_next": [
-        "题材3分钟涨跌幅>=1.5%，方向占比>=70%，成交放大>=5x",
-        "板块内出现批量涨停/封板或后排扩散",
-        "核心股、ETF、后排扩散同向确认"
-      ],
-      "invalidation": "核心股高开低走或冲高回落",
-      "tags": [
-        "科技硬件链",
-        "风控"
-      ],
-      "quality_flags": [],
-      "tone": "neutral",
-      "discovery_type": "premarket_watch_queue",
-      "evidence_score": 28,
-      "missing_evidence": [
-        "缺少可核验证据"
-      ],
-      "next_action": "题材3分钟涨跌幅>=1.5%，方向占比>=70%，成交放大>=5x",
-      "observation_source": "数据派生",
-      "independent_observation": false,
-      "signal_score": 47,
-      "signal_grade": "D",
-      "use_action": "仅复核",
-      "use_reasons": [
-        "缺少证据",
-        "有下一步验证",
-        "有证伪条件",
-        "有来源文件",
-        "有证据缺口"
-      ]
-    },
-    {
-      "title": "盘中追踪：存储/HBM",
-      "type": "opportunity_watch",
-      "trigger_reason": "盘前/晚间注意点已转为盘中追踪清单，等待实时行情触发。",
-      "conclusion": "22:02腾讯行情显示WTI原油103.41美元、涨1.99%，布伦特原油107.45美元、涨1.67%；纽约10:01道指-0.68%、标普500-0.22%、纳斯达克-0.29%、QQQ-0.06%，英伟达+0.81%、台积电ADR-0.12%、美光+1.61%。路透社报道沙特东西向输油管道停…",
-      "confidence": "low",
-      "evidence": [],
-      "source_files": [
-        "opportunity-watch.json"
-      ],
-      "watch_next": [
-        "题材3分钟涨跌幅>=1.5%，方向占比>=70%，成交放大>=5x",
-        "板块内出现批量涨停/封板或后排扩散",
-        "核心股、ETF、后排扩散同向确认"
-      ],
-      "invalidation": "核心股高开低走或冲高回落",
-      "tags": [
-        "科技硬件链",
-        "风控"
-      ],
-      "quality_flags": [],
-      "tone": "neutral",
-      "discovery_type": "premarket_watch_queue",
-      "evidence_score": 28,
-      "missing_evidence": [
-        "缺少可核验证据"
-      ],
-      "next_action": "题材3分钟涨跌幅>=1.5%，方向占比>=70%，成交放大>=5x",
-      "observation_source": "数据派生",
-      "independent_observation": false,
-      "signal_score": 47,
-      "signal_grade": "D",
-      "use_action": "仅复核",
-      "use_reasons": [
-        "缺少证据",
-        "有下一步验证",
-        "有证伪条件",
-        "有来源文件",
-        "有证据缺口"
-      ]
-    },
-    {
-      "title": "盘中追踪：AI算力",
-      "type": "opportunity_watch",
-      "trigger_reason": "盘前/晚间注意点已转为盘中追踪清单，等待实时行情触发。",
-      "conclusion": "22:02腾讯行情显示WTI原油103.41美元、涨1.99%，布伦特原油107.45美元、涨1.67%；纽约10:01道指-0.68%、标普500-0.22%、纳斯达克-0.29%、QQQ-0.06%，英伟达+0.81%、台积电ADR-0.12%、美光+1.61%。路透社报道沙特东西向输油管道停…",
-      "confidence": "low",
-      "evidence": [],
-      "source_files": [
-        "opportunity-watch.json"
-      ],
-      "watch_next": [
-        "题材3分钟涨跌幅>=1.5%，方向占比>=70%，成交放大>=5x",
-        "板块内出现批量涨停/封板或后排扩散",
-        "核心股、ETF、后排扩散同向确认"
-      ],
-      "invalidation": "核心股高开低走或冲高回落",
-      "tags": [
-        "科技硬件链",
-        "风控"
-      ],
-      "quality_flags": [],
-      "tone": "neutral",
-      "discovery_type": "premarket_watch_queue",
-      "evidence_score": 28,
-      "missing_evidence": [
-        "缺少可核验证据"
-      ],
-      "next_action": "题材3分钟涨跌幅>=1.5%，方向占比>=70%，成交放大>=5x",
       "observation_source": "数据派生",
       "independent_observation": false,
       "signal_score": 47,
@@ -1157,6 +799,74 @@
       "evidence_score": 35,
       "missing_evidence": [],
       "next_action": "13:00先核验上涨家数是否重新领先、炸板是否增加。",
+      "observation_source": "验证队列",
+      "independent_observation": true,
+      "signal_score": 60,
+      "signal_grade": "B",
+      "use_action": "等待确认",
+      "use_reasons": [
+        "缺少证据",
+        "有下一步验证",
+        "有证伪条件",
+        "有来源文件"
+      ]
+    },
+    {
+      "title": "科技硬件链验证",
+      "type": "verification",
+      "trigger_reason": "验证队列触发：前序结论需要用下一交易窗口确认或证伪。",
+      "conclusion": "科技：等待科创50、半导体和代表股共同止跌，再评估。",
+      "confidence": "actionable",
+      "evidence": [],
+      "source_files": [
+        "midday.json"
+      ],
+      "watch_next": [
+        "科技：等待科创50、半导体和代表股共同止跌，再评估。"
+      ],
+      "invalidation": "条件不出现或反向出现，即撤销对应方向判断。",
+      "tags": [
+        "科技硬件链"
+      ],
+      "quality_flags": [],
+      "tone": "neutral",
+      "discovery_type": "verification_queue",
+      "evidence_score": 35,
+      "missing_evidence": [],
+      "next_action": "科技：等待科创50、半导体和代表股共同止跌，再评估。",
+      "observation_source": "验证队列",
+      "independent_observation": true,
+      "signal_score": 60,
+      "signal_grade": "B",
+      "use_action": "等待确认",
+      "use_reasons": [
+        "缺少证据",
+        "有下一步验证",
+        "有证伪条件",
+        "有来源文件"
+      ]
+    },
+    {
+      "title": "验证条件",
+      "type": "verification",
+      "trigger_reason": "验证队列触发：前序结论需要用下一交易窗口确认或证伪。",
+      "conclusion": "强势行业：生物制品、医疗服务、种植业的宽度、成交和代表股承接。",
+      "confidence": "actionable",
+      "evidence": [],
+      "source_files": [
+        "postmarket.json"
+      ],
+      "watch_next": [
+        "强势行业：生物制品、医疗服务、种植业的宽度、成交和代表股承接。"
+      ],
+      "invalidation": "条件不出现或反向出现，即撤销对应方向判断。",
+      "tags": [],
+      "quality_flags": [],
+      "tone": "neutral",
+      "discovery_type": "verification_queue",
+      "evidence_score": 35,
+      "missing_evidence": [],
+      "next_action": "强势行业：生物制品、医疗服务、种植业的宽度、成交和代表股承接。",
       "observation_source": "验证队列",
       "independent_observation": true,
       "signal_score": 60,
