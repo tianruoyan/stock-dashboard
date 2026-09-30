@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-09-30T10:29:54+08:00",
+  "timestamp": "2026-09-30T10:32:10+08:00",
   "current_signal_date": "2026-09-30",
   "quality_gate": {
     "status": "degraded",
@@ -13,17 +13,19 @@
     "price_review_count": 3,
     "background_review_count": 4
   },
-  "summary": "10:02市场宽度偏多（上涨3010、下跌2000）；指数表现为上证指数+{\"name\":\"上证指数\",\"code\":\"sh000001\",\"value\":3846.65,\"change\":16.2,\"pct\":0.42,\"change_pct\":0.42,\"open\":3839.25,\"high\":3847.68,\"low\":3836.48,\"amoun…",
+  "summary": "10:31市场宽度转弱（上涨2394、下跌2790），指数表现为上证指数+{\"name\":\"上证指数\",\"code\":\"sh000001\",\"value\":3836.05,\"change\":5.6,\"pct\":0.15,\"change_pct\":0.15,\"open\":3839.25,\"high\":3847.68,\"low\":3836.05,\"amount…",
   "observation_coverage": {
-    "summary": "独立盘面/盘后扫描 3 条，但缺少纯主动新线。",
-    "independent_count": 3,
+    "summary": "主动扫描捕捉 1 条：盘中风险偏好回落，医药局部承接",
+    "independent_count": 4,
     "inherited_count": 12,
-    "active_market_count": 0,
+    "active_market_count": 1,
     "postmarket_scan_count": 0,
     "topic_inherited_count": 0,
     "verification_count": 1,
-    "active_titles": [],
-    "status": "independent"
+    "active_titles": [
+      "盘中风险偏好回落，医药局部承接"
+    ],
+    "status": "active"
   },
   "decision_brief": {
     "stance": "风险优先，只做验证",
@@ -31,17 +33,17 @@
     "reasons": [
       "共 8 条检查提示，其中 6 条需处理、2 条背景记录（3 个价格/行情复核，1 个信号复核，4 个背景复核）。",
       "A/B级风险 2 条",
-      "风险优先冲突 1 条",
-      "可用机会 0 条，降权候选 6 条"
+      "可用机会 0 条，降权候选 7 条",
+      "先处理：二次行情复核（alert.json）"
     ],
     "risk_focus": [
       "数据质量降级",
-      "主线变化：创新药/CRO"
+      "盘中风险偏好回落，医药局部承接"
     ],
     "upgrade_watch": [
-      "#1 待触发：创新药/CRO：核心股低开后放量收复开盘价或跌幅明显收敛。 数据质量恢复或二次行情源确认前，不升级为可用机会。",
-      "#2 待触发：PCB/电子布：核心股低开后放量收复开盘价或跌幅明显收敛。 数据质量恢复或二次行情源确认前，不升级为可用机会。",
-      "#3 待触发：机器人/工业自动化：核心股低开后放量收复开盘价或跌幅明显收敛。 数据质量恢复或二次行情源确认前，不升级为可用机会。"
+      "#1 主线变化：科技硬件链：不追盘中拉升；医药仅观察承接，科技与地产链继续等待止跌和宽度修复。 数据质量恢复或二次行情源确认前，不升级为可用机会。",
+      "#2 待触发：创新药/CRO：核心股低开后放量收复开盘价或跌幅明显收敛。 数据质量恢复或二次行情源确认前，不升级为可用机会。",
+      "#3 待触发：PCB/电子布：核心股低开后放量收复开盘价或跌幅明显收敛。 数据质量恢复或二次行情源确认前，不升级为可用机会。"
     ],
     "verification_focus": [
       "核心股低开后放量收复开盘价或跌幅明显收敛"
@@ -62,7 +64,7 @@
     ]
   },
   "signal_queue": {
-    "summary": "无可用机会，2 条风险优先，5 条只做验证，4 条禁用直用。",
+    "summary": "无可用机会，2 条风险优先，5 条只做验证，3 条禁用直用。",
     "active_opportunities": [],
     "trackable_risks": [
       {
@@ -72,13 +74,19 @@
         "reason": "污染 alert 修复前，盘中异动信号必须降权；观察池个股涨跌幅以已审计源为准。"
       },
       {
-        "title": "主线变化：创新药/CRO",
+        "title": "盘中风险偏好回落，医药局部承接",
         "grade": "A",
         "use_action": "可跟踪",
-        "reason": "保留医药方向观察，等待代表股与行业宽度持续；不追涨，回避跌幅继续扩大的弱势地产链。"
+        "reason": "不追盘中拉升；医药仅观察承接，科技与地产链继续等待止跌和宽度修复。"
       }
     ],
     "verification_queue": [
+      {
+        "title": "主线变化：科技硬件链",
+        "grade": "C",
+        "use_action": "降权观察",
+        "reason": "不追盘中拉升；医药仅观察承接，科技与地产链继续等待止跌和宽度修复。"
+      },
       {
         "title": "待触发：创新药/CRO",
         "grade": "D",
@@ -102,20 +110,9 @@
         "grade": "D",
         "use_action": "仅复核",
         "reason": "题材3分钟涨跌幅>=1.5%，方向占比>=70%，成交放大>=5x"
-      },
-      {
-        "title": "待触发：存储/HBM",
-        "grade": "D",
-        "use_action": "仅复核",
-        "reason": "题材3分钟涨跌幅>=1.5%，方向占比>=70%，成交放大>=5x"
       }
     ],
     "disabled_signals": [
-      {
-        "title": "冲突主线机会",
-        "use_action": "禁用追高",
-        "reason": "同一主线存在风险优先冲突，只保留验证条件，不作为交易触发。"
-      },
       {
         "title": "待触发：创新药/CRO",
         "grade": "D",
@@ -137,6 +134,56 @@
     ]
   },
   "opportunities": [
+    {
+      "title": "主线变化：科技硬件链",
+      "type": "theme_shift",
+      "trigger_reason": "主线变化扫描触发：升温/降温/抱团/风险状态出现边际变化。",
+      "conclusion": "科技硬件链 有升温迹象，但仍需量价和后排扩散验证。",
+      "confidence": "low",
+      "evidence": [
+        "上证指数+0.15%",
+        "深证成指-0.13%",
+        "创业板指-0.15%",
+        "科创50-2.03%",
+        "沪深300+0.0%"
+      ],
+      "source_files": [
+        "intraday.json"
+      ],
+      "watch_next": [
+        "不追盘中拉升；医药仅观察承接，科技与地产链继续等待止跌和宽度修复。"
+      ],
+      "invalidation": "科技硬件链 需要次日竞价、量能和后排扩散共同确认。",
+      "tags": [],
+      "quality_flags": [
+        "行情/涨跌幅需二次源复核",
+        "盘中异动源降级，alert 类信号降权",
+        "机会信号需降权转验证",
+        "全局数据降级，主线变化需二次确认"
+      ],
+      "tone": "good",
+      "discovery_type": "theme_shift_scan",
+      "evidence_score": 83,
+      "missing_evidence": [
+        "数据源降级需二次确认"
+      ],
+      "next_action": "不追盘中拉升；医药仅观察承接，科技与地产链继续等待止跌和宽度修复。",
+      "observation_source": "主线变化扫描",
+      "independent_observation": true,
+      "signal_score": 57,
+      "signal_grade": "C",
+      "use_action": "降权观察",
+      "use_reasons": [
+        "有可核验证据",
+        "有下一步验证",
+        "有证伪条件",
+        "有来源文件",
+        "数据质量降权"
+      ],
+      "upgrade_rank": 1,
+      "upgrade_priority": "优先验证",
+      "upgrade_condition": "不追盘中拉升；医药仅观察承接，科技与地产链继续等待止跌和宽度修复。 数据质量恢复或二次行情源确认前，不升级为可用机会。"
+    },
     {
       "title": "待触发：创新药/CRO",
       "type": "opportunity_watch",
@@ -182,7 +229,7 @@
         "有来源文件",
         "数据质量降权"
       ],
-      "upgrade_rank": 1,
+      "upgrade_rank": 2,
       "upgrade_priority": "仅复核",
       "upgrade_condition": "核心股低开后放量收复开盘价或跌幅明显收敛。 数据质量恢复或二次行情源确认前，不升级为可用机会。"
     },
@@ -232,7 +279,7 @@
         "有来源文件",
         "数据质量降权"
       ],
-      "upgrade_rank": 2,
+      "upgrade_rank": 3,
       "upgrade_priority": "仅复核",
       "upgrade_condition": "核心股低开后放量收复开盘价或跌幅明显收敛。 数据质量恢复或二次行情源确认前，不升级为可用机会。"
     },
@@ -281,7 +328,7 @@
         "有来源文件",
         "数据质量降权"
       ],
-      "upgrade_rank": 3,
+      "upgrade_rank": 4,
       "upgrade_priority": "仅复核",
       "upgrade_condition": "核心股低开后放量收复开盘价或跌幅明显收敛。 数据质量恢复或二次行情源确认前，不升级为可用机会。"
     },
@@ -330,7 +377,7 @@
         "有来源文件",
         "数据质量降权"
       ],
-      "upgrade_rank": 4,
+      "upgrade_rank": 5,
       "upgrade_priority": "仅复核",
       "upgrade_condition": "题材3分钟涨跌幅>=1.5%，方向占比>=70%，成交放大>=5x。 数据质量恢复或二次行情源确认前，不升级为可用机会。"
     },
@@ -379,7 +426,7 @@
         "有来源文件",
         "数据质量降权"
       ],
-      "upgrade_rank": 5,
+      "upgrade_rank": 6,
       "upgrade_priority": "仅复核",
       "upgrade_condition": "题材3分钟涨跌幅>=1.5%，方向占比>=70%，成交放大>=5x。 数据质量恢复或二次行情源确认前，不升级为可用机会。"
     },
@@ -428,7 +475,7 @@
         "有来源文件",
         "数据质量降权"
       ],
-      "upgrade_rank": 6,
+      "upgrade_rank": 7,
       "upgrade_priority": "仅复核",
       "upgrade_condition": "题材3分钟涨跌幅>=1.5%，方向占比>=70%，成交放大>=5x。 数据质量恢复或二次行情源确认前，不升级为可用机会。"
     }
@@ -478,35 +525,40 @@
       ]
     },
     {
-      "title": "主线变化：创新药/CRO",
-      "type": "theme_shift",
-      "trigger_reason": "主线变化扫描触发：升温/降温/抱团/风险状态出现边际变化。",
-      "conclusion": "创新药/CRO 强点集中但扩散不足，属于抱团/拥挤结构。",
+      "title": "盘中风险偏好回落，医药局部承接",
+      "type": "theme",
+      "trigger_reason": "主动盘面扫描触发：涨跌停、炸板、尾盘承接或板块扩散出现可验证变化。",
+      "conclusion": "若下跌家数继续扩大、科创50与半导体持续走弱，医药局部强势不足以确认可追主线。",
       "confidence": "high",
       "evidence": [
-        "上证指数+0.42%",
-        "深证成指+0.49%",
-        "创业板指+0.79%",
-        "科创50-0.39%",
-        "沪深300+0.37%"
+        "上证指数",
+        "深证成指",
+        "创业板指",
+        "科创50",
+        "沪深300"
       ],
       "source_files": [
         "intraday.json"
       ],
       "watch_next": [
-        "保留医药方向观察，等待代表股与行业宽度持续；不追涨，回避跌幅继续扩大的弱势地产链。"
+        "不追盘中拉升；医药仅观察承接，科技与地产链继续等待止跌和宽度修复。"
       ],
-      "invalidation": "风险信号收敛、后排扩散恢复且核心股放量承接。",
+      "invalidation": "盘中风险偏好回落，医药局部承接风险信号收敛、核心股重新放量承接，则风险降级。",
       "tags": [
-        "创新药/CRO"
+        "科技硬件链",
+        "创新药/CRO",
+        "金融/消费防御",
+        "风控"
       ],
       "quality_flags": [],
       "tone": "risk",
-      "discovery_type": "theme_shift_scan",
-      "evidence_score": 90,
-      "missing_evidence": [],
-      "next_action": "保留医药方向观察，等待代表股与行业宽度持续；不追涨，回避跌幅继续扩大的弱势地产链。",
-      "observation_source": "主线变化扫描",
+      "discovery_type": "active_market_scan",
+      "evidence_score": 98,
+      "missing_evidence": [
+        "缺少代表股验证"
+      ],
+      "next_action": "不追盘中拉升；医药仅观察承接，科技与地产链继续等待止跌和宽度修复。",
+      "observation_source": "主动盘面扫描",
       "independent_observation": true,
       "signal_score": 100,
       "signal_grade": "A",
@@ -516,7 +568,7 @@
         "有下一步验证",
         "有证伪条件",
         "有来源文件",
-        "证据链较完整"
+        "有证据缺口"
       ]
     }
   ],
@@ -772,27 +824,26 @@
       "title": "创新药/CRO验证",
       "type": "verification",
       "trigger_reason": "验证队列触发：前序结论需要用下一交易窗口确认或证伪。",
-      "conclusion": "医药方向仅作观察，等待扩散与承接确认；不追涨，弱势地产链继续以风险回避为主。",
+      "conclusion": "不追盘中拉升；医药仅观察承接，科技与地产链等待止跌和宽度修复。",
       "confidence": "actionable",
       "evidence": [],
       "source_files": [
         "intraday.json"
       ],
       "watch_next": [
-        "医药方向仅作观察，等待扩散与承接确认；不追涨，弱势地产链继续以风险回避为主。"
+        "不追盘中拉升；医药仅观察承接，科技与地产链等待止跌和宽度修复。"
       ],
       "invalidation": "条件不出现或反向出现，即撤销对应方向判断。",
       "tags": [
         "创新药/CRO",
-        "金融/消费防御",
-        "风控"
+        "金融/消费防御"
       ],
       "quality_flags": [],
-      "tone": "risk",
+      "tone": "neutral",
       "discovery_type": "verification_queue",
       "evidence_score": 35,
       "missing_evidence": [],
-      "next_action": "医药方向仅作观察，等待扩散与承接确认；不追涨，弱势地产链继续以风险回避为主。",
+      "next_action": "不追盘中拉升；医药仅观察承接，科技与地产链等待止跌和宽度修复。",
       "observation_source": "验证队列",
       "independent_observation": true,
       "signal_score": 60,
@@ -806,22 +857,7 @@
       ]
     }
   ],
-  "conflicts": [
-    {
-      "theme": "创新药/CRO",
-      "sections": [
-        "risks",
-        "verifications"
-      ],
-      "verdict": "风险优先，只做验证",
-      "severity": "risk_first",
-      "action": "先按风险栏处理；只有风险收敛、核心股承接和数据质量恢复后，才允许从验证栏升级。",
-      "evidence": [
-        "风险：A级/可跟踪，创新药/CRO 强点集中但扩散不足，属于抱团/拥挤结构。",
-        "验证：B级/等待确认，医药方向仅作观察，等待扩散与承接确认；不追涨，弱势地产链继续以风险回避为主。"
-      ]
-    }
-  ],
+  "conflicts": [],
   "rules": [
     "每条机会/风险必须带 source_files；没有证据时置信度不得高于 low。",
     "机会只代表候选方向，必须经过下一步验证，不生成交易指令。",
