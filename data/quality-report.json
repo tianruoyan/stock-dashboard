@@ -1,8 +1,8 @@
 {
-  "timestamp": "2026-10-08T09:24:19+08:00",
+  "timestamp": "2026-10-08T09:25:50+08:00",
   "current_signal_date": "2026-10-08",
   "status": "degraded",
-  "summary": "共 29 条检查提示，其中 27 条需处理、2 条背景记录（19 个价格/行情复核，3 个信号复核，7 个背景复核）。",
+  "summary": "共 27 条检查提示，其中 25 条需处理、2 条背景记录（19 个价格/行情复核，3 个信号复核，5 个背景复核）。",
   "issues": [
     {
       "severity": "warning",
@@ -10,15 +10,6 @@
       "path": "",
       "code": "stale_timestamp",
       "message": "时间戳不是当前交易日：2026-09-30T15:05:54+08:00",
-      "impact_level": "background_review",
-      "decision_action": "仅作背景复核，不单独阻断交易判断"
-    },
-    {
-      "severity": "warning",
-      "file": "intraday.json",
-      "path": "",
-      "code": "stale_timestamp",
-      "message": "时间戳不是当前交易日：2026-09-30T15:01:50+08:00",
       "impact_level": "background_review",
       "decision_action": "仅作背景复核，不单独阻断交易判断"
     },
@@ -255,15 +246,6 @@
       "message": "786条历史检测、1条时间待核验记录已与当前故障分开；未认定这些来源已恢复。",
       "impact_level": "price_review",
       "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
-    },
-    {
-      "severity": "warning",
-      "file": "theme-shifts.json",
-      "path": "",
-      "code": "stale_theme_shifts",
-      "message": "theme-shifts 日期不是当前交易日：2026-10-04",
-      "impact_level": "background_review",
-      "decision_action": "仅作背景复核，不单独阻断交易判断"
     }
   ],
   "action_plan": [
@@ -315,9 +297,9 @@
       "priority": 4,
       "impact_level": "background_review",
       "label": "背景来源复核",
-      "file": "intraday.json",
+      "file": "midday.json",
       "code": "stale_timestamp",
-      "problem": "时间戳不是当前交易日：2026-09-30T15:01:50+08:00",
+      "problem": "时间戳不是当前交易日：2026-09-30T11:30:59+08:00",
       "decision_action": "仅作背景复核，不单独阻断交易判断",
       "next_step": "补官方/交易所/公司公告来源；未补齐前不升级为核心依据。",
       "unblock_condition": "官方来源补齐或确认不影响交易触发。"
@@ -326,9 +308,9 @@
       "priority": 4,
       "impact_level": "background_review",
       "label": "背景来源复核",
-      "file": "midday.json",
+      "file": "postmarket.json",
       "code": "stale_timestamp",
-      "problem": "时间戳不是当前交易日：2026-09-30T11:30:59+08:00",
+      "problem": "时间戳不是当前交易日：2026-09-30T15:10:00+08:00",
       "decision_action": "仅作背景复核，不单独阻断交易判断",
       "next_step": "补官方/交易所/公司公告来源；未补齐前不升级为核心依据。",
       "unblock_condition": "官方来源补齐或确认不影响交易触发。"
@@ -336,12 +318,12 @@
   ],
   "counts": {
     "critical": 0,
-    "warning": 27,
+    "warning": 25,
     "info": 2,
     "blocking": 0,
     "price_review": 19,
     "signal_review": 3,
-    "background_review": 7
+    "background_review": 5
   },
   "rules": [
     "异常文本、JSON解析失败、必需文件缺失为 critical。",
