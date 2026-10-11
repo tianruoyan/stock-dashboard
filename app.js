@@ -4889,6 +4889,7 @@ function renderPostmarketSentimentIndicator(indicator) {
     </div>
     <div class="sentiment-temperature-track" role="img" aria-label="${escapeHtml(`${indicator.name || "市场情绪温度"} ${score.toFixed(1)}分`)}"><span style="width:${score}%"></span></div>
     ${direction ? `<div class="sentiment-temperature-direction">${escapeHtml(direction)}</div>` : ""}
+    ${indicator.display_note ? `<p>${escapeHtml(indicator.display_note)}</p>` : ""}
     ${componentHtml ? `<div class="sentiment-components">${componentHtml}</div>` : ""}
     ${indicator.method ? `<details class="evidence-details"><summary>计算口径</summary><div class="evidence-line">${escapeHtml(indicator.method)}</div></details>` : ""}
   </div>`;

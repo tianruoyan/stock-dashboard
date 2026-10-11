@@ -11,6 +11,9 @@ from zoneinfo import ZoneInfo
 
 CN = ZoneInfo("Asia/Shanghai")
 SHARED_BREADTH = Path.home() / "stock-dashboard-v2-local/local_inputs/market-breadth.json"
+BREADTH_FIELDS = ("advance_count", "decline_count", "flat_count", "total_count", "missing_quote_count",
+                  "up5_count", "valid_a_share_count", "strong_5pct_rule", "close_detail_archive",
+                  "collected_at", "historical_backfill", "scope")
 POOLS = {
     "limit_up": ("getTopicZTPool", "fbt:asc", "limit_up_count"),
     "limit_down": ("getTopicDTPool", "fund:asc", "limit_down_count"),
@@ -32,11 +35,18 @@ def current_breadth(value, now):
         raise ValueError("市场统计数量不完整")
     if sum(value[k] for k in fields[:3]) != value["total_count"] or value["total_count"] < 4000:
         raise ValueError("市场统计覆盖或合计异常")
-    if value.get("quality_state") not in {"ok", "healthy", "degraded", "complete"}:
+    if value.get("quality_state") not in {"ok", "healthy", "degraded", "complete", "usable"}:
         raise ValueError("市场统计未通过来源校验")
     if not all(value.get(k) for k in ("source_name", "source_url", "scope")):
         raise ValueError("市场统计缺少来源")
     result = {k: value[k] for k in (*fields, "as_of", "trade_date", "source_name", "source_url", "scope", "quality_state")}
+    if value.get("up5_count") is not None:
+        strong, total = value.get("up5_count"), value.get("valid_a_share_count")
+        if (type(strong) is not int or type(total) is not int or total != value["total_count"]
+                or not 0 <= strong <= value["advance_count"]
+                or value.get("strong_5pct_rule") != "source_change_pct > 5.0"):
+            raise ValueError("强势股统计范围或数量不一致")
+        result.update({key: value.get(key) for key in BREADTH_FIELDS if key in value})
     result["quality_note"] = value.get("quality_note", "")
     result["ingestion_note"] = "读取共享公开行情统计；不是新增的独立行情源，也不是双源验证"
     return result
@@ -95,8 +105,8 @@ def apply_facts(payload, facts):
     breadth = payload.setdefault("market_breadth", {})
     sentiment = payload.setdefault("sentiment", {})
     fresh = facts["breadth"]
-    for key in ("advance_count", "decline_count", "flat_count", "total_count", "missing_quote_count"):
-        breadth[key] = fresh[key] if fresh else None
+    for key in BREADTH_FIELDS:
+        breadth[key] = fresh.get(key) if fresh else None
     breadth["breadth_as_of"] = fresh["as_of"] if fresh else None
     breadth["breadth_source"] = fresh["source_name"] if fresh else None
     for key, (_, _, sentiment_key) in POOLS.items():

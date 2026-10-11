@@ -5,6 +5,7 @@ import argparse
 import json
 import re
 import subprocess
+import sys
 from datetime import datetime, time, timedelta, timezone
 from pathlib import Path
 from typing import Any, Sequence
@@ -12,7 +13,8 @@ from typing import Any, Sequence
 from update_intraday_market import fetch_indices, fetch_industries, fetch_watchlist_quotes, latest_quote_time
 from premarket_external import refresh as refresh_external, HK, fetch_quotes, tencent_row
 from market_sentiment import sentiment_payload
-from intraday_structure import collect as collect_structure, apply_facts as apply_structure_facts
+from intraday_structure import collect as collect_structure, apply_facts as apply_structure_facts, BREADTH_FIELDS, SHARED_BREADTH
+from close_sentiment import update_close_sentiment
 
 
 TZ = timezone(timedelta(hours=8))
@@ -421,8 +423,8 @@ def build_postmarket_payload(
     structure = collect_structure(now=collected_at, trade_date=now.date())
     current_breadth = structure.get("breadth")
     if current_breadth and parse_datetime(current_breadth.get("as_of")).time() >= time(15):
-        for key in ("advance_count", "decline_count", "flat_count", "total_count", "missing_quote_count"):
-            breadth[key] = current_breadth[key]
+        for key in BREADTH_FIELDS:
+            breadth[key] = current_breadth.get(key)
         breadth["breadth_as_of"] = current_breadth["as_of"]
         breadth["breadth_source"] = current_breadth["source_name"]
     for pool_name, target in (("limit_up", "limit_up_count"), ("limit_down", "limit_down_count"), ("broken_board", "broken_board_count")):
@@ -597,24 +599,40 @@ def ensure_postmarket(root: Path, now: datetime, v2_environment: Path = DEFAULT_
     return True
 
 
-def refresh_close_structure(root: Path, now: datetime, *, force: bool = False) -> bool:
+def refresh_close_structure(root: Path, now: datetime, *, force: bool = False, trade_date=None) -> bool:
     path = root / "data/postmarket.json"
     original = read_json(path)
-    if not postmarket_complete(original, now.date().isoformat()):
+    if not postmarket_complete(original, (trade_date or now.date()).isoformat()):
         return False
     checked = parse_datetime((original.get("market_structure_facts") or {}).get("collected_at"))
     if not force and checked and timedelta(0) <= now - checked < timedelta(minutes=15):
         return False
-    facts = collect_structure(now=now)
+    # V1's existing minute guard retries this at most every 15 minutes; a failed
+    # V2 model pipeline must not prevent the independent public close statistics.
+    shared = read_json(SHARED_BREADTH)
+    stamp = parse_datetime(shared.get("as_of"))
+    complete_close = (shared.get("trade_date") == now.date().isoformat() and stamp
+                      and stamp.time() >= time(15) and shared.get("up5_count") is not None
+                      and shared.get("close_detail_archive"))
+    if root.resolve() == ROOT and trade_date is None and not complete_close:
+        runtime = SHARED_BREADTH.parents[1]
+        command = runtime / "scripts/collect_v2_market_facts.py"
+        if command.exists():
+            try:
+                subprocess.run([sys.executable, str(command), "--date", now.date().isoformat(), "--breadth-only"],
+                               cwd=runtime, capture_output=True, text=True, timeout=180, check=False)
+            except subprocess.TimeoutExpired:
+                pass  # collect_structure below records the missing fact, never invents zero.
+    facts = collect_structure(now=now, trade_date=trade_date) if trade_date else collect_structure(now=now)
     # Network requests may overlap an authored review. Merge facts into the latest version.
     payload = read_json(path)
-    if not postmarket_complete(payload, now.date().isoformat()):
+    if not postmarket_complete(payload, (trade_date or now.date()).isoformat()):
         return False
     breadth = payload.setdefault("market_breadth", {})
     row = facts.get("breadth")
     if row and parse_datetime(row.get("as_of")).time() >= time(15):
-        for key in ("advance_count", "decline_count", "flat_count", "total_count", "missing_quote_count"):
-            breadth[key] = row[key]
+        for key in BREADTH_FIELDS:
+            breadth[key] = row.get(key)
         breadth["breadth_as_of"] = row["as_of"]
         breadth["breadth_source"] = row["source_name"]
     for pool_name, target in (("limit_up", "limit_up_count"), ("limit_down", "limit_down_count"), ("broken_board", "broken_board_count")):
@@ -626,13 +644,12 @@ def refresh_close_structure(root: Path, now: datetime, *, force: bool = False) -
         breadth["effective_limit_up_count"] = breadth["limit_up_count"]
     breadth["as_of"] = None
     payload["market_structure_facts"] = facts
-    payload["sentiment_indicator"] = sentiment_payload(payload["index"]["a_share_indices"], breadth)
-    payload["sentiment_indicator_as_of"] = now_iso(now)
+    update_close_sentiment(root, payload, now)
     breadth["status"] = "收盘统计已更新" if not facts.get("errors") else "部分收盘统计等待更新"
     breadth["note"] = (f"{breadth['missing_quote_count']}只暂无有效报价，未计入涨跌家数。"
                        if breadth.get("missing_quote_count") else "各项按已取得的收盘统计展示。")
     breadth["source"] = "各项统计按各自来源及时间记录"
-    if payload.get("source_mode") == "automatic_1630_close_fallback":
+    if payload.get("source_mode") == "automatic_1630_close_fallback" and trade_date is None:
         payload["risk"] = ["如果多数股票仍在下跌，少数个股上涨不能视为全市场回暖。", "缺少完整尾盘走势时，不能仅凭收盘价格判断是否有资金抢筹。"]
         payload["closing_auction_patch"]["impact"] = "下一交易日先看多数股票是否止跌，再看强势股能否继续上涨。"
     write_json_atomic(path, payload)
@@ -708,7 +725,11 @@ def recover_latest_close(root: Path, now: datetime, calendar_path: Path | None =
         return False
     existing = read_json(root / "data/postmarket.json")
     day = target.date().isoformat()
-    if postmarket_complete(existing, day) or str(existing.get("trade_date") or "") > day:
+    if postmarket_complete(existing, day):
+        if (existing.get("sentiment_indicator") or {}).get("score") is None:
+            return refresh_close_structure(root, now, trade_date=target.date())
+        return False
+    if str(existing.get("trade_date") or "") > day:
         return False
     # Actual collection time is retained. Quotes must independently prove the requested session.
     payload = build_postmarket_payload(root, target, v2_environment, collected_at=now)
