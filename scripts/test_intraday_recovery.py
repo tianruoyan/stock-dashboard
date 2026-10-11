@@ -80,9 +80,21 @@ class IntradayRecoveryTests(unittest.TestCase):
         refresh_current_projection(current, indices, industries, structure,
                                    "2026-07-22T10:30:15+08:00", "2026-07-22T10:31:00+08:00")
         self.assertEqual(current["trade_date"], "2026-07-22")
-        self.assertIn("五大指数同步走弱", current["summary"])
+        self.assertIn("已取得的指数全部下跌", current["summary"])
         self.assertEqual(current["sentiment"]["advance_count"], None)
         self.assertIn("不把旧日宽度数据", current["summary"])
+
+    def test_projection_direction_follows_quotes_and_never_reuses_old_breadth(self) -> None:
+        for changes, expected in [([1] * 5, "全部上涨"), ([-1] * 5, "全部下跌"), ([1, -1, 0], "分化"), ([0] * 5, "方向不明")]:
+            current = {"market_breadth": {"advance_count": 9999}}
+            indices = [{"name": str(i), "code": str(i), "change_pct": pct,
+                        "source": "test", "quote_time": "20261009100000"} for i, pct in enumerate(changes)]
+            refresh_current_projection(current, indices, [], {}, "2026-10-09T10:00:00+08:00", "2026-10-09T10:00:01+08:00")
+            self.assertIn(expected, current["summary"])
+            self.assertIsNone(current["sentiment"]["advance_count"])
+            if all(pct > 0 for pct in changes):
+                self.assertNotIn("同步走弱", current["summary"])
+                self.assertEqual(current["main_trends"][0]["type"], "watch_line")
 
     def test_verified_calendar_stops_holiday_retries(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:

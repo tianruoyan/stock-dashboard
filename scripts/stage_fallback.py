@@ -382,7 +382,9 @@ def build_postmarket_payload(
     root: Path,
     now: datetime,
     v2_environment: Path = DEFAULT_V2_ENVIRONMENT,
+    *, collected_at: datetime | None = None,
 ) -> dict[str, Any]:
+    collected_at = collected_at or now
     day = now.date().isoformat()
     indices = fetch_indices()
     validate_close_indices(indices, now)
@@ -416,7 +418,7 @@ def build_postmarket_payload(
             "policy": "V2只作同日事实补证，不改变V1生产地位。",
         }
     )
-    structure = collect_structure(now=now)
+    structure = collect_structure(now=collected_at, trade_date=now.date())
     current_breadth = structure.get("breadth")
     if current_breadth and parse_datetime(current_breadth.get("as_of")).time() >= time(15):
         for key in ("advance_count", "decline_count", "flat_count", "total_count", "missing_quote_count"):
@@ -508,10 +510,12 @@ def build_postmarket_payload(
     return {
         "date": day,
         "trade_date": day,
-        "timestamp": now_iso(now),
-        "updated_at": now_iso(now),
-        "generated_at": now_iso(now),
-        "analysis_time": now_iso(now),
+        "timestamp": quote_as_of if collected_at.date() != now.date() else now_iso(now),
+        "timestamp_semantics": "行情截至时间" if collected_at.date() != now.date() else "当日生成时间",
+        "updated_at": now_iso(collected_at),
+        "generated_at": now_iso(collected_at),
+        "analysis_time": now_iso(collected_at),
+        "historical_backfill": collected_at.date() != now.date(),
         "analysis_as_of": quote_as_of,
         "phase": "A股收盘复盘" if now.time() < time(16, 30) else "收盘复盘",
         "status": status,
@@ -686,6 +690,33 @@ def due_stage(now: datetime) -> str | None:
     return "postmarket-1630"
 
 
+def latest_closed_day(root: Path, now: datetime, calendar_path: Path | None = None) -> datetime | None:
+    """Find an actual completed session, including recovery after a weekend."""
+    for offset in range(32):
+        candidate = now - timedelta(days=offset)
+        if offset == 0 and now.time() < time(15, 10):
+            continue
+        if is_trading_day(root, candidate, calendar_path):
+            return candidate.replace(hour=16, minute=30, second=0, microsecond=0)
+    return None
+
+
+def recover_latest_close(root: Path, now: datetime, calendar_path: Path | None = None,
+                         v2_environment: Path = DEFAULT_V2_ENVIRONMENT) -> bool:
+    target = latest_closed_day(root, now, calendar_path)
+    if target is None or target.date() == now.date():
+        return False
+    existing = read_json(root / "data/postmarket.json")
+    day = target.date().isoformat()
+    if postmarket_complete(existing, day) or str(existing.get("trade_date") or "") > day:
+        return False
+    # Actual collection time is retained. Quotes must independently prove the requested session.
+    payload = build_postmarket_payload(root, target, v2_environment, collected_at=now)
+    payload["data_boundary"] = "补采最近已收盘交易日的可核验事实，不是当时已发布的判断；未取得的历史盘中时点不补造。"
+    write_json_atomic(root / "data/postmarket.json", payload)
+    return True
+
+
 def health_ok(root: Path, stage: str, day: str) -> bool:
     payload = read_json(root / "data" / "automation-health.json")
     target = "postmarket" if stage.startswith("postmarket-") else "premarket"
@@ -708,11 +739,19 @@ def execute(
     publish: bool = True,
     calendar_path: Path | None = None,
     v2_environment: Path = DEFAULT_V2_ENVIRONMENT,
+    recover_missed: bool = False,
 ) -> dict[str, Any]:
     now = now.astimezone(TZ)
     day = now.date().isoformat()
     if not is_trading_day(root, now, calendar_path):
-        return {"state": "non_trading_day", "date": day, "written": False, "published": False}
+        previous = read_json(root / "logs/stage-fallback-status.json")
+        retry_at = parse_datetime(previous.get("next_retry_at"))
+        written = recover_latest_close(root, now, calendar_path, v2_environment) if recover_missed and (retry_at is None or now >= retry_at) else False
+        published = False
+        if written and publish:
+            result = run_command([str(root / "scripts/publish_dashboard.sh")], root)
+            published = result.returncode == 0
+        return {"state": "recovered_previous_close" if written else "non_trading_day", "date": day, "written": written, "published": published}
     selected = stage or due_stage(now)
     if selected is None:
         return {"state": "not_due", "date": day, "written": False, "published": False}
@@ -771,6 +810,7 @@ def main() -> int:
         help="显式阶段；默认按北京时间自动选择",
     )
     parser.add_argument("--no-publish", action="store_true")
+    parser.add_argument("--recover-latest-close", action="store_true", help="休市期间补采最近收盘事实，不回造历史判断")
     parser.add_argument("--calendar", type=Path)
     parser.add_argument("--v2-environment", type=Path, default=DEFAULT_V2_ENVIRONMENT)
     args = parser.parse_args()
@@ -786,9 +826,10 @@ def main() -> int:
             publish=not args.no_publish,
             calendar_path=args.calendar,
             v2_environment=args.v2_environment,
+            recover_missed=args.recover_latest_close,
         )
     except Exception as exc:
-        result = {"state": "failed", "error": str(exc), "date": now.date().isoformat()}
+        result = {"state": "failed", "error": str(exc), "date": now.date().isoformat(), "next_retry_at": now_iso(now + timedelta(minutes=5))}
         write_status(root, result, now)
         print(json.dumps(result, ensure_ascii=False))
         return 1

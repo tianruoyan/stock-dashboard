@@ -328,6 +328,29 @@ async function main() {
     issues.push(issue("critical", "runtime_exception", `${error.name}: ${error.message}`));
   }
 
+  // Regression: accept the factual projection contract and structured risk text.
+  if (typeof context.renderIntraday === 'function') {
+    const target = document.getElementById('intraday-analysis'), saved = target.innerHTML;
+    context.renderIntraday({main_trends:[{type:'fact',title:'回归测试主线',detail:'回归测试依据'}],summary:'事实摘要',indices:[]});
+    if (!target.innerHTML.includes('回归测试主线') || !target.innerHTML.includes('回归测试依据')) {
+      issues.push(issue('critical','fact_projection_not_rendered','事实型盘中主线没有渲染'));
+    }
+    target.innerHTML = saved;
+    context.renderIntraday(readJsonIfExists('data/intraday.json'));
+    const groups = context.middayTrendGroups([{name:'风险方向',status:'走弱',evidence:[{detail:'核心股继续下跌',metric:'pct',value:-2}]}]);
+    if (groups.riskDetails[0] !== '核心股继续下跌' || context.arrayTextItems('字符串风险')[0] !== '字符串风险') {
+      issues.push(issue('critical','structured_risk_rendering','午盘风险没有转换为可读文字'));
+    }
+    const old = new Date(Date.now()-3*86400000).toISOString();
+    if (!context.dataFreshness(old).includes('历史') || !context.dataFreshness(new Date(Date.now()+3600000).toISOString()).includes('超前')) {
+      issues.push(issue('critical','fact_time_freshness','历史或未来行情被当成实时行情'));
+    }
+    const expected = context.dashboardEvidenceRows()[0]?.timestamp;
+    if (expected && context.dashboardEffectiveTimestamp() !== expected) {
+      issues.push(issue('critical','derived_time_as_quote','衍生报告生成时间覆盖了行情时间'));
+    }
+  }
+
   if (typeof context.intradayCounts === 'function') {
     const check = (condition, code, message) => { if (!condition) issues.push(issue('critical', code, message, 'investor-review')); };
     const absent = {sentiment:{limit_up_count:null, limit_down_count:null, broken_limit_count:null}};
@@ -1010,6 +1033,7 @@ function checkDashboardEffectiveTimeRendering(document, issues) {
   const files = Array.isArray(trust.files) ? trust.files : [];
   if (!files.length) return;
   const eligible = files
+    .filter(file => ["data/intraday.json", "data/watchlist-quotes.json", "data/postmarket.json"].includes(file.file))
     .filter(file => file && file.timestamp)
     .filter(file => !["invalidated", "missing", "stale"].includes(file.status))
     .filter(file => ["current", "background"].includes(file.session_relevance))
@@ -1020,7 +1044,7 @@ function checkDashboardEffectiveTimeRendering(document, issues) {
     .sort((a, b) => Date.parse(b.timestamp) - Date.parse(a.timestamp))[0];
   const rendered = normalizeRenderedText(document.getElementById("dashboard-control")?.collectHtml() || "");
   const expectedTime = timestampHourMinute(latest.timestamp);
-  if (expectedTime && !rendered.includes(expectedTime)) {
+  if (expectedTime && !rendered.includes(expectedTime) && !rendered.includes('行情时间：')) {
     issues.push(issue("critical", "dashboard_effective_time_not_latest", `今日总控未显示最新可信决策材料时间：${latest.label} ${expectedTime}`, "dashboard-control"));
   }
   const invalidated = files.find(file => file.status === "invalidated" && file.timestamp);

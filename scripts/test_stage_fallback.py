@@ -17,6 +17,8 @@ from stage_fallback import (
     refresh_hk_close,
     refresh_close_structure,
     v2_same_day_facts,
+    recover_latest_close,
+    latest_closed_day,
 )
 
 
@@ -109,6 +111,21 @@ def watchlist_payload(day: str = "20260901") -> dict:
 
 
 class StageFallbackTests(unittest.TestCase):
+    def test_weekend_backfill_keeps_actual_collection_time(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            calendar = write_calendar(root)
+            now = datetime(2026, 10, 11, 12, 0, tzinfo=TZ)
+            self.assertEqual(latest_closed_day(root, now, calendar).date().isoformat(), "2026-10-09")
+            with patch("stage_fallback.fetch_indices", return_value=index_rows("20261009")), patch("stage_fallback.fetch_industries", return_value=industry_rows("20261009")), patch("stage_fallback.fetch_watchlist_quotes", return_value=watchlist_payload("20261009")):
+                self.assertTrue(recover_latest_close(root, now, calendar))
+            result = read_json(root / "data/postmarket.json")
+            self.assertEqual(result["trade_date"], "2026-10-09")
+            self.assertEqual(result["generated_at"], now.isoformat())
+            self.assertEqual(result["analysis_time"], now.isoformat())
+            self.assertTrue(result["historical_backfill"])
+            self.assertTrue(postmarket_complete(result, "2026-10-09"))
+
     def setUp(self) -> None:
         collector = patch("stage_fallback.refresh_external", return_value=False)
         self.external = collector.start()

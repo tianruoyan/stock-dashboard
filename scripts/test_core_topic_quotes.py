@@ -26,6 +26,16 @@ class CoreTopicTests(unittest.TestCase):
     def test_partial_cannot_refresh_the_whole_topic(self):
         self.assertIsNone(topic_update("医药修复链", [], self.now, self.now.isoformat()))
 
+    def test_weekend_recovery_keeps_friday_quote_time(self):
+        sunday = self.now + timedelta(days=2)
+        raw = [self.raw(code, name) for code, name in self.expected.items()]
+        self.assertEqual(closing_representatives(raw, self.expected, sunday), [])
+        quotes = closing_representatives(raw, self.expected, sunday, self.now.date())
+        self.assertEqual(len(quotes), 3)
+        result = topic_update("医药修复链", quotes, sunday, self.now.isoformat())
+        self.assertTrue(result["source_as_of"].startswith("2026-09-11"))
+        self.assertTrue(result["updated_at"].startswith("2026-09-13"))
+
     def test_stale_wrong_identity_or_price_rejected(self):
         for row in (self.raw("sh600276", "恒瑞医药", stamp="20260910153100"),
                     self.raw("sh600276", "恒瑞医药", stamp="20260911143000"),

@@ -17,4 +17,6 @@ cleanup() {
 trap cleanup EXIT INT TERM
 
 PUBLISH_MESSAGE="Update required V1 market stage" \
-  "$PYTHON_BIN" scripts/stage_fallback.py
+  "$PYTHON_BIN" scripts/stage_fallback.py --recover-latest-close
+
+"$PYTHON_BIN" scripts/refresh_evening_public.py

@@ -284,43 +284,63 @@ def refresh_current_projection(payload: Dict[str, Any], indices: List[Dict[str, 
         if breadth_missing else "全市场涨跌家数已取得，详见市场宽度。"
     )
     pool_text = f"涨停{limit_up}只、跌停{limit_down}只、炸板{broken}只" if None not in (limit_up, limit_down, broken) else "涨跌停结构待补"
+    moves = [float(item["change_pct"]) for item in indices if item.get("change_pct") is not None]
+    up, down = sum(value > 0 for value in moves), sum(value < 0 for value in moves)
+    if moves and down == len(moves):
+        direction, action = "已取得的指数全部下跌", "先看指数是否止跌、下跌股票是否减少，不追逆势急拉。"
+    elif moves and up == len(moves):
+        direction, action = "已取得的指数全部上涨", "观察上涨是否扩散到多数股票，代表股回踩有承接后再考虑，不追急拉。"
+    elif up > down:
+        direction, action = "已取得的指数上涨居多", "观察上涨股票是否增加，避免仅凭少数指数上涨追高。"
+    elif down > up:
+        direction, action = "已取得的指数下跌居多", "先看弱势指数是否止跌，避免把局部上涨当成全面转强。"
+    else:
+        direction, action = "指数涨跌分化或方向不明", "等待指数、市场涨跌家数与代表股方向一致。"
+    breadth = structure.get("breadth") or {}
+    breadth_complete = all(breadth.get(key) is not None for key in ("advance_count", "decline_count", "flat_count"))
+    breadth_missing = breadth_missing or not breadth_complete
+    breadth_text = ("全市场上涨与下跌家数暂未取得，不把旧日宽度数据当作今天的情绪。" if breadth_missing
+                    else f"上涨{breadth['advance_count']}家、下跌{breadth['decline_count']}家、平盘{breadth['flat_count']}家。")
+    judgement = f"{direction}；{breadth_text}指数表现不能单独代表整体赚钱效应。"
 
     payload.update({
         "date": day,
         "trade_date": day,
-        "timestamp": collected_at,
+        "timestamp": quote_as_of if str(collected_at)[:10] != day else collected_at,
+        "generated_at": collected_at,
+        "historical_backfill": str(collected_at)[:10] != day,
         "updated_at": collected_at,
         "analysis_time": collected_at,
         "market_time": quote_as_of,
         "phase": f"盘中行情更新（{quote_day.strftime('%H:%M')}可核验行情）",
         "status": "usable_intraday_factual_snapshot" if not breadth_missing else "partial_intraday_factual_snapshot",
-        "summary": f"{quote_day.strftime('%H:%M')}五大指数同步走弱：{index_text}。相对抗跌的行业为{top_text}；跌幅居前为{bottom_text}。{pool_text}；{breadth_text}",
+        "summary": f"{quote_day.strftime('%H:%M')}{direction}：{index_text}。行业表现居前：{top_text or '暂缺'}；居后：{bottom_text or '暂缺'}。{pool_text}；{breadth_text}",
         "sentiment": {
-            "judgement": "指数同步走弱，盘中先按风险释放不足处理；宽度未齐，不给整体情绪打分。",
+            "judgement": judgement,
             "limit_up_count": limit_up,
             "limit_down_count": limit_down,
             "broken_limit_count": broken,
             "breadth_status": "待补" if breadth_missing else "已取得",
-            "advance_count": None if breadth_missing else payload.get("market_breadth", {}).get("advance_count"),
-            "decline_count": None if breadth_missing else payload.get("market_breadth", {}).get("decline_count"),
-            "flat_count": None if breadth_missing else payload.get("market_breadth", {}).get("flat_count"),
+            "advance_count": None if breadth_missing else breadth.get("advance_count"),
+            "decline_count": None if breadth_missing else breadth.get("decline_count"),
+            "flat_count": None if breadth_missing else breadth.get("flat_count"),
         },
         "main_trends": [{
             "name": "盘中市场状态",
-            "type": "risk_line",
-            "status": "五大指数同步走弱，暂不把局部抗跌行业视为可追主线。",
+            "type": "risk_line" if down > up else "watch_line",
+            "status": judgement,
             "continuity": f"{index_text}；{pool_text}。",
             "evidence": [
                 {"type": "index_quote", "metric": "change_pct", "value": item["change_pct"], "name": item["name"], "code": item["code"], "source": item["source"], "timestamp": item["quote_time"], "detail": f"{item['name']}{float(item['change_pct']):+.2f}%"}
                 for item in indices
             ],
-            "inference": f"{top_text}相对抗跌，但仅凭行业排名不足以确认交易主线。",
-            "risk": f"{bottom_text}跌幅靠前；{breadth_text}",
-            "action": "先观察指数是否止跌、跌幅较大行业是否缩窄；没有共同回稳前不追逆势拉升。",
-            "strengthen_condition": "至少两项核心指数止跌回升，且全市场宽度补齐后不继续恶化。",
-            "invalidation_condition": "核心指数继续扩大跌幅，或跌停、炸板数量明显增加。",
+            "inference": "仅凭指数与行业排名不足以确认交易主线。",
+            "risk": f"局部强势未必扩散到多数股票；{breadth_text}",
+            "action": action,
+            "strengthen_condition": "指数与多数股票保持同向，行业内代表股也能确认方向。",
+            "invalidation_condition": "指数与多数股票转为反向，原方向判断需要重新检查。",
         }],
-        "actions": ["先观察指数是否止跌及市场宽度是否补齐；当前不使用上一交易日的主线与情绪结论。"],
+        "actions": [action, "当前不使用上一交易日的主线与情绪结论。"],
         "themes": [],
         "data_boundary": "本轮为实时行情事实更新；未取得的全市场宽度不补造，也不沿用旧日结论。",
     })
@@ -330,7 +350,7 @@ def update(path: Path) -> Dict[str, Any]:
     payload = json.loads(path.read_text(encoding="utf-8"))
     indices = fetch_indices()
     industries = fetch_industries()
-    structure = collect()
+    structure = collect(trade_date=latest_quote_time(indices).date())
     # Network calls may overlap a new analyst snapshot; merge into the latest file.
     payload = json.loads(path.read_text(encoding="utf-8"))
     collected_at = now_iso()

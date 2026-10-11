@@ -30,7 +30,7 @@ def parse_timestamp(value):
     except (ValueError, TypeError):
         return None
 
-def closing_representatives(raw, expected, now):
+def closing_representatives(raw, expected, now, trade_date=None):
     rows = {}
     for row in raw:
         code, f = row.get("query_code"), row.get("fields") or []
@@ -41,7 +41,7 @@ def closing_representatives(raw, expected, now):
             at = parse_quote_time(f[30])
             if not all(math.isfinite(v) for v in (price, previous, high, pct)) or min(price, previous, high) <= 0:
                 continue
-            if at is None or at.date() != now.date() or at.time() < time(15) or at > now + timedelta(seconds=60):
+            if at is None or at.date() != (trade_date or now.date()) or at.time() < time(15) or at > now + timedelta(seconds=60):
                 continue
             if abs((price / previous - 1) * 100 - pct) > .05:
                 continue
@@ -72,7 +72,7 @@ def main():
     now = datetime.now().astimezone()
     topics, postmarket = load_json(TOPICS_PATH), load_json(POSTMARKET_PATH)
     close_at = parse_timestamp(postmarket.get("timestamp"))
-    if not close_at or close_at.date() != now.date() or close_at.time() < time(15) or now.time() < time(15):
+    if not close_at or close_at > now or close_at.time() < time(15):
         print("topics-refresh: waiting - 等待当日收盘，不改写旧研究")
         return 0
     updates = {}
@@ -84,7 +84,7 @@ def main():
         if updated_at and updated_at >= close_at:
             continue
         try:
-            quotes = closing_representatives(fetch_quotes(CORE[name]), CORE[name], now)
+            quotes = closing_representatives(fetch_quotes(CORE[name]), CORE[name], now, close_at.date())
             update = topic_update(name, quotes, now, postmarket["timestamp"])
             if update:
                 updates[name] = update
@@ -106,7 +106,7 @@ def main():
         changed.append(name)
     if changed:
         topics["timestamp"] = now.isoformat(timespec="seconds")
-        topics["trade_date"] = now.date().isoformat()
+        topics["trade_date"] = close_at.date().isoformat()
         topics["source_as_of"] = postmarket["timestamp"]
         topics["status"] = "partial_topics_refreshed"
         temp = TOPICS_PATH.with_suffix(".json.tmp")

@@ -55,6 +55,11 @@ def lookup_stock(query):
     }
 
 class DashboardServer(LocalHTTPGuard, SimpleHTTPRequestHandler):
+    def end_headers(self):
+        # Revalidate static HTML/JS as well as data after a local deployment.
+        self.send_header("Cache-Control", "no-cache, must-revalidate")
+        super().end_headers()
+
     def log_request(self, code="-", size="-"):
         """Keep routine local traffic off disk.
 

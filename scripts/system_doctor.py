@@ -11,6 +11,8 @@ from dataclasses import asdict, dataclass
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Callable
+from zoneinfo import ZoneInfo
+from stage_fallback import latest_closed_day, parse_datetime
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -107,6 +109,20 @@ def run_checks() -> list[Check]:
             if path.stat().st_size > 8 * 1024 * 1024:
                 large_logs.append(f"{path.name}:{path.stat().st_size // (1024 * 1024)}MB")
     checks.append(Check("Runtime log bounds", "warning" if large_logs else "ok", ", ".join(large_logs) if large_logs else "all active logs <= 8MB"))
+    target = latest_closed_day(ROOT, datetime.now(ZoneInfo("Asia/Shanghai")))
+    for label, path, key in (
+        ("V1 market evidence", ROOT / "data/intraday.json", "market_data_as_of"),
+        ("V2 market evidence", V2_RUNTIME / "data/v2/v22/market-environment.json", "as_of"),
+    ):
+        try:
+            payload = json.loads(path.read_text(encoding="utf-8"))
+            stamp = parse_datetime(payload.get(key))
+            fresh = bool(target and stamp and stamp.date() >= target.date() and stamp <= datetime.now(ZoneInfo("Asia/Shanghai")))
+            checks.append(Check(label, "ok" if fresh else "warning", f"quote_time={payload.get(key)}; latest_completed_session={target.date() if target else 'unverified'}"))
+        except (OSError, ValueError) as exc:
+            checks.append(Check(label, "warning", f"market evidence unavailable: {exc}"))
+    for filename in ("smoke-report.json", "runtime-smoke-report.json"):
+        checks.append(capture(f"V1 {filename}", "critical", lambda filename=filename: json.loads((ROOT / "data" / filename).read_text()).get("status") == "ok", "page checks passed", "page checks missing or failed"))
     return checks
 
 

@@ -70,18 +70,19 @@ def fetch_pool(key, now):
             "time_basis": "来源交易日与实际采集时间；接口不提供逐股报价时间"}
 
 
-def collect(now=None, breadth_path=SHARED_BREADTH):
+def collect(now=None, breadth_path=SHARED_BREADTH, trade_date=None):
     now = now or datetime.now(CN)
+    business_now = now if trade_date is None or trade_date == now.date() else datetime.combine(trade_date, time(23, 59), CN)
     result = {"collected_at": now.isoformat(timespec="seconds"), "breadth": None,
               "pools": {}, "errors": {}}
     try:
         value = json.loads(breadth_path.read_text(encoding="utf-8"))
-        result["breadth"] = current_breadth(value, now)
+        result["breadth"] = current_breadth(value, business_now)
     except (OSError, ValueError, KeyError, TypeError):
         result["errors"]["breadth"] = "涨跌家数暂未取得完整、近期统计"
     # A single failed pool must not block the other market facts.
     with ThreadPoolExecutor(max_workers=3) as executor:
-        futures = {key: executor.submit(fetch_pool, key, now) for key in POOLS}
+        futures = {key: executor.submit(fetch_pool, key, business_now) for key in POOLS}
         for key, future in futures.items():
             try:
                 result["pools"][key] = future.result()

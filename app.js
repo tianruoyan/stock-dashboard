@@ -17,6 +17,7 @@ const FILES = [
   "data/signal-review.json",
   "config/watchlist.json",
   "config/alert-config.json",
+  "config/cn-market-calendar.json",
   "data/requirements.json",
   "data/source-health.json",
   "data/section-health.json"
@@ -295,8 +296,11 @@ function renderDashboardControl() {
   if (decisionGate) {
     style = { title: decisionGate.title, cls: decisionGate.cls, reason: decisionGate.reason };
   }
-  const position = inferPositionRange(style, decisionGate);
-  const latest = dashboardEffectiveTimestamp() || latestTimestamp([intraday, postmarket, alert]);
+  const latest = dashboardEffectiveTimestamp();
+  const freshness = dataFreshness(latest);
+  const staleConclusion = !latest || /历史|等待更新|待确认|超前/.test(freshness);
+  if (staleConclusion) style = { title: "行情未更新，暂不形成新的操作结论", cls: "neutral", reason: "下方保留最近一次判断供回看，不能直接当作当前买卖依据。" };
+  const position = staleConclusion ? {range: "暂不提供", note: "行情补齐前，不沿用旧仓位建议。"} : inferPositionRange(style, decisionGate);
   const conclusionMeta = dashboardConclusionMeta(latest);
   const marketThemes = dashboardMarketThemeSummary(intraday, postmarket);
   const priority = marketThemes.priority;
@@ -307,7 +311,7 @@ function renderDashboardControl() {
       <div class="control-eyebrow">核心结论</div>
       <div class="control-title">${escapeHtml(style.title)}</div>
       <div class="control-sub">${escapeHtml(style.reason)}</div>
-      <div class="control-meta">有效时间：${escapeHtml(latest ? formatUpdateTime(latest) : "待更新")} · ${escapeHtml(dataFreshness(latest))}</div>
+      <div class="control-meta">行情时间：${escapeHtml(latest ? formatUpdateTime(latest) : "待更新")} · ${escapeHtml(freshness)}</div>
       <div class="control-meta">结论类型：${escapeHtml(conclusionMeta.type)} · 依据刷新：${escapeHtml(conclusionMeta.basis)} · 页面刷新：${escapeHtml(conclusionMeta.refresh)}</div>
     </div>
     <div class="control-position">
@@ -359,7 +363,6 @@ function dashboardMarketThemeSummary(intraday, postmarket) {
 }
 
 function dashboardConclusionMeta(latest) {
-  const trust = cached("data/data-trust.json") || {};
   const phase = inferSessionPhaseByTime();
   const typeMap = {
     premarket: "盘前预案",
@@ -371,14 +374,11 @@ function dashboardConclusionMeta(latest) {
     evening: "晚间舆情",
     overnight: "盘后/隔夜复盘"
   };
-  const usable = Array.isArray(trust.files) ? trust.files
-    .filter(file => file?.timestamp && file.usable !== false)
-    .filter(file => ["current", "background"].includes(file.session_relevance))
-    .sort((a, b) => Date.parse(b.timestamp) - Date.parse(a.timestamp)) : [];
-  const basis = usable.slice(0, 2).map(file => `${file.label || file.file} ${formatUpdateTime(file.timestamp)}`).join("；")
+  const usable = dashboardEvidenceRows();
+  const basis = usable.slice(0, 2).map(file => `${file.label} ${formatUpdateTime(file.timestamp)}`).join("；")
     || (latest ? formatUpdateTime(latest) : "待更新");
   return {
-    type: typeMap[phase] || "动态结论",
+    type: !isMarketOpenDate() || /历史|等待更新/.test(dataFreshness(latest)) ? "最近行情回看" : (typeMap[phase] || "动态结论"),
     basis,
     refresh: `当前${formatRefreshInterval(currentRefreshIntervalMs())}`
   };
@@ -582,14 +582,33 @@ function dashboardTrustGate() {
 }
 
 function dashboardEffectiveTimestamp() {
-  const trust = cached("data/data-trust.json");
-  if (!trust || !Array.isArray(trust.files) || trust.current_signal_date !== currentSignalDate()) return "";
-  const usable = trust.files
-    .filter(file => file && file.timestamp)
-    .filter(file => !["invalidated", "missing", "stale"].includes(file.status))
-    .filter(file => ["current", "background"].includes(file.session_relevance))
-    .filter(file => !["blocked", "unknown", "phase_expired", "future"].includes(file.freshness_status));
-  return latestTimestamp(usable.map(file => ({ timestamp: file.timestamp })));
+  return dashboardEvidenceRows()[0]?.timestamp || "";
+}
+
+function dashboardEvidenceRows() {
+  // Rebuilding a derived report does not refresh its underlying market facts.
+  return [["data/intraday.json", "盘中行情"], ["data/watchlist-quotes.json", "个股行情"], ["data/postmarket.json", "收盘行情"]]
+    .map(([file, label]) => {
+      const data = cached(file) || {};
+      const rows = Array.isArray(data.indices) ? data.indices : (data.index?.a_share_indices || data.quotes || []);
+      const stamps = (Array.isArray(rows) ? rows : []).map(row => row.quote_time || row.as_of).filter(Boolean);
+      const raw = data.market_data_as_of || data.market_time || data.quote_as_of || stamps.sort((a,b) => parseTimestampMs(b)-parseTimestampMs(a))[0];
+      return {label, timestamp: raw ? new Date(parseTimestampMs(raw)).toISOString() : ""};
+    }).filter(row => row.timestamp && parseTimestampMs(row.timestamp) <= Date.now() + 120000)
+    .sort((a,b) => parseTimestampMs(b.timestamp)-parseTimestampMs(a.timestamp));
+}
+
+function shanghaiClock(now = new Date()) {
+  const parts = Object.fromEntries(new Intl.DateTimeFormat('en-GB', {timeZone:'Asia/Shanghai', year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',hourCycle:'h23'}).formatToParts(now).map(p => [p.type,p.value]));
+  const date = `${parts.year}-${parts.month}-${parts.day}`;
+  return {date, minute:Number(parts.hour)*60+Number(parts.minute), weekday:new Date(`${date}T12:00:00+08:00`).getUTCDay()};
+}
+
+function isMarketOpenDate(now = new Date()) {
+  const clock = shanghaiClock(now), calendar = cached('config/cn-market-calendar.json') || {};
+  if (calendar.verification_state !== 'verified' || clock.date < calendar.valid_from || clock.date > calendar.valid_to) return false;
+  if ((calendar.extra_open_days || []).includes(clock.date)) return true;
+  return ![0,6].includes(clock.weekday) && !(calendar.holidays || []).includes(clock.date);
 }
 
 function dashboardDecisionGate() {
@@ -706,11 +725,17 @@ function currentDayData(data) {
 
 function dataFreshness(timestamp) {
   if (!timestamp) return "暂无有效数据";
-  const ms = Date.now() - Date.parse(timestamp);
-  if (Number.isNaN(ms)) return "时间格式待确认";
-  if (ms < 10 * 60 * 1000) return "实时有效";
-  if (ms < 90 * 60 * 1000) return "盘中可用";
-  return "注意是否为上一阶段数据";
+  const quote = parseTimestampMs(timestamp), now = new Date(), clock = shanghaiClock(now);
+  if (!quote) return "时间格式待确认";
+  const ms = now.getTime() - quote;
+  if (ms < -120000) return "行情时间超前，待确认";
+  if (shanghaiClock(new Date(quote)).date !== clock.date) return "历史行情，仅供回看";
+  if (!isMarketOpenDate(now)) return "休市期间，仅供回看";
+  if (clock.minute >= 900) return shanghaiClock(new Date(quote)).minute >= 900 ? "已收盘，仅供复盘" : "收盘行情等待更新";
+  if (clock.minute >= 690 && clock.minute < 780 && shanghaiClock(new Date(quote)).minute >= 685) return "午间休市，上午行情";
+  if (ms >= 0 && ms < 10 * 60 * 1000) return "行情已更新";
+  if (ms >= 0 && ms < 20 * 60 * 1000) return "盘中行情，注意时差";
+  return "行情等待更新";
 }
 
 function renderDataQualityGate() {
@@ -3565,7 +3590,7 @@ function renderIntraday(data) {
   renderSectorList("industry-bot", sectorLists.industryBottom, "down");
   data._hasSectorDisplay = sectorLists.hasAny;
 
-  if (data.main_trends && data.main_trends.length && (typeof data.main_trends[0] === 'object' ? data.main_trends[0].status : true)) {
+  if (getIntradayThemes(data).length || data.summary || data.sentiment) {
     renderCodexIntraday(data);
     return;
   }
@@ -3587,7 +3612,9 @@ function getIntradayThemes(data) {
   const source = Array.isArray(data.main_trends) && data.main_trends.length
     ? data.main_trends
     : (Array.isArray(data.themes) ? data.themes : []);
-  return source.filter(Boolean);
+  return source.filter(Boolean).map(item => typeof item === 'object'
+    ? {...item, name:item.name || item.title, status:item.status || item.detail || item.reason || '', evidence:item.evidence || []}
+    : item);
 }
 
 function intradayMood(data) {
@@ -3865,8 +3892,7 @@ function intradayAdviceItems(data) {
 }
 
 function arrayTextItems(value) {
-  if (!Array.isArray(value)) return [];
-  return value.map(displaySignalText).filter(Boolean);
+  return (Array.isArray(value) ? value : (value ? [value] : [])).map(displaySignalText).filter(Boolean);
 }
 
 function displaySignalText(item) {
@@ -4578,7 +4604,7 @@ function renderMiddayDecision(data) {
   const limitDown = Number(sentiment.limit_down_count || sentiment.limit_down || 0);
   const broken = Number(sentiment.break_board_count || sentiment.broken_limit_count || 0);
   const mood = broken >= 30 || limitDown >= 15 ? "分歧警戒" : limitUp >= 60 && limitDown <= 10 ? "午后可攻可守" : "等待确认";
-  const riskText = Array.isArray(risks) && risks.length ? (typeof risks[0] === "string" ? risks[0] : risks[0].text) : "暂未给出风险阈值";
+  const riskText = arrayTextItems(risks)[0] || "暂未给出风险阈值";
   const strongTitle = groups.strong[0] || "等待强方向确认";
   const strongDetail = groups.strong.slice(1, 4).join(" / ") || `涨停${limitUp || "-"} / 跌停${limitDown || "-"} / 炸板${broken || "-"}`;
   const riskTitle = groups.risk[0] || (risks.length ? "先盯分歧" : "暂无明确");
@@ -4622,7 +4648,7 @@ function middayTrendGroups(trends) {
     }
     if (/风险线|主要风险|负反馈|跌停|不参与|回避|反抽失败|退潮|走弱/.test(statusText)) {
       risk.push(name);
-      if (Array.isArray(trend?.evidence) && trend.evidence[0]) riskDetails.push(trend.evidence[0]);
+      if (Array.isArray(trend?.evidence) && trend.evidence[0]) riskDetails.push(displaySignalText(trend.evidence[0]));
     } else if (
       /强主线|确认|观察偏强|观察线偏强|资金回流|扩散/.test(statusText) &&
       !/不扩散|扩散不足|不升级|不是强主线|轮动但不扩散/.test(statusText)
@@ -5404,5 +5430,5 @@ function renderSourceHealth(data) {
    时间 / 状态
 ========================= */
 function updateTime() {
-  document.getElementById("status").innerText = navigator.onLine ? "🟢 LIVE" : "🔴 OFFLINE";
+  document.getElementById("status").innerText = navigator.onLine ? (isMarketOpenDate() ? dataFreshness(dashboardEffectiveTimestamp()) : "休市 · 最近行情回看") : "网络未连接";
 }
