@@ -19,6 +19,21 @@ class MarketStructureTests(unittest.TestCase):
     def test_partial_quotes_are_explicit(self):
         self.assertEqual(current_breadth(self.row, self.now)["missing_quote_count"], 5)
 
+    def test_strong_breadth_transfer_accepts_normal_primary_source(self):
+        row = dict(self.row, quality_state="usable", up5_count=123, valid_a_share_count=5500,
+                   strong_5pct_rule="source_change_pct > 5.0", close_detail_archive="public/archive.json")
+        valid = current_breadth(row, self.now)
+        payload = {}
+        apply_facts(payload, {"breadth": valid, "pools": {}, "errors": {}})
+        self.assertEqual(payload["market_breadth"]["up5_count"], 123)
+        self.assertEqual(payload["market_breadth"]["valid_a_share_count"], 5500)
+        for change in ({"up5_count": 301}, {"up5_count": True}, {"valid_a_share_count": 5501},
+                       {"strong_5pct_rule": "pct >= 5"}):
+            with self.assertRaises(ValueError):
+                current_breadth(dict(row, **change), self.now)
+        apply_facts(payload, {"breadth": self.row, "pools": {}, "errors": {}})
+        self.assertIsNone(payload["market_breadth"]["up5_count"])
+
     def test_close_statistics_do_not_expire_as_intraday_ticks(self):
         now = self.now.replace(hour=17)
         close = {**self.row, "as_of": self.now.replace(hour=15, minute=8).isoformat()}

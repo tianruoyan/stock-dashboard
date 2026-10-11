@@ -46,7 +46,7 @@ def sentiment_payload(indices, breadth):
         f"涨停{up:g}只、炸板{broken:g}只。" if sealed else "涨停或炸板统计不足。")
     wide = strong is not None and total is not None and 0 < total and strong <= total
     add("涨幅超过5%的股票占比", 20, 100 * strong / total / .06 if wide else None,
-        f"{strong:g}/{total:g}只股票涨幅超过5%。" if wide else "缺少涨幅超过5%的股票数量或同范围有效股票总数。")
+        f"{total:g}只有效报价股票中，{strong:g}只涨幅超过5%，占比{strong / total * 100:.2f}%。" if wide else "缺少涨幅超过5%的股票数量或同范围有效股票总数。")
     complete_indices = len(changes) == 5 and len({row.get("code") or row.get("name") for row in indices}) == 5 and all(x is not None for x in changes)
     add("五大核心指数", 15, 50 + 10 * sum(changes) / 5 if complete_indices else None,
         "；".join(f"{row.get('name', '指数')}{change:+.2f}%" for row, change in zip(indices, changes)) if complete_indices else "五大指数报价不齐。")
@@ -55,5 +55,5 @@ def sentiment_payload(indices, breadth):
     level = "统计未齐" if score is None else ("热" if score >= 75 else "偏暖" if score >= 60 else "分化" if score >= 45 else "偏冷" if score >= 30 else "冰点")
     return {"method_version": VERSION, "score": score, "level": level, "components": components,
             "missing_components": missing, "judgement": f"市场情绪：{level}",
-            "method": "涨跌停差25%＋涨跌停比20%＋封板质量20%＋5%以上强势股宽度20%＋核心指数15%；分项齐全后才计算总分。",
+            "method": "涨跌停差25%＋涨跌停比20%＋封板质量20%＋涨幅超过5%的股票占比20%＋核心指数15%；分项齐全后才计算总分。",
             "limitations": ["缺失分项不补50分、不重分配权重；旧算法分数不参与同口径比较。"]}
