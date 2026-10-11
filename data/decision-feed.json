@@ -1,26 +1,27 @@
 {
-  "timestamp": "2026-10-11T13:46:11+08:00",
+  "timestamp": "2026-10-11T20:11:58+08:00",
   "current_signal_date": "2026-10-11",
   "quality_gate": {
     "status": "degraded",
-    "summary": "共 9 条检查提示，其中 8 条需处理、1 条背景记录（1 个交易阻断，2 个价格/行情复核，6 个背景复核）。",
+    "summary": "共 9 条检查提示，其中 8 条需处理、1 条背景记录（1 个交易阻断，2 个价格/行情复核，1 个信号复核，5 个背景复核）。",
     "decision_flags": [
       "交易阻断项未修复，相关信号不可直接用",
-      "行情/涨跌幅需二次源复核"
+      "行情/涨跌幅需二次源复核",
+      "机会信号需降权转验证"
     ],
     "blocking_count": 1,
     "price_review_count": 2,
-    "background_review_count": 6
+    "background_review_count": 5
   },
-  "summary": "当前时段尚无可用盘面结论。 数据质量：共 9 条检查提示，其中 8 条需处理、1 条背景记录（1 个交易阻断，2 个价格/行情复核，6 个背景复核）。",
+  "summary": "当前时段尚无可用盘面结论。 数据质量：共 9 条检查提示，其中 8 条需处理、1 条背景记录（1 个交易阻断，2 个价格/行情复核，1 个信号复核，5 个背景复核）。",
   "observation_coverage": {
-    "summary": "独立盘面/盘后扫描 4 条，但缺少纯主动新线。",
-    "independent_count": 4,
-    "inherited_count": 10,
+    "summary": "独立盘面/盘后扫描 1 条，但缺少纯主动新线。",
+    "independent_count": 1,
+    "inherited_count": 6,
     "active_market_count": 0,
     "postmarket_scan_count": 0,
     "topic_inherited_count": 0,
-    "verification_count": 1,
+    "verification_count": 0,
     "active_titles": [],
     "status": "independent"
   },
@@ -28,21 +29,20 @@
     "stance": "风险优先，只做验证",
     "action": "不把候选方向当交易机会；先看风险收敛、数据恢复和核心承接。",
     "reasons": [
-      "共 9 条检查提示，其中 8 条需处理、1 条背景记录（1 个交易阻断，2 个价格/行情复核，6 个背景复核）。",
+      "共 9 条检查提示，其中 8 条需处理、1 条背景记录（1 个交易阻断，2 个价格/行情复核，1 个信号复核，5 个背景复核）。",
       "A/B级风险 1 条",
-      "可用机会 0 条，降权候选 7 条",
+      "可用机会 0 条，降权候选 3 条",
       "先处理：先修复阻断（alert.json）"
     ],
     "risk_focus": [
       "数据质量降级"
     ],
     "upgrade_watch": [
-      "#1 主线变化：创新药/CRO：下一交易日先看这些代表股是否多数走强，再看同板块是否有更多股票跟涨；缺少扩散时不追高。 数据质量恢复或二次行情源确认前，不升级为可用机会。",
-      "#2 主线变化：机器人/工业自动化：下一交易日先看这些代表股是否多数走强，再看同板块是否有更多股票跟涨；缺少扩散时不追高。 数据质量恢复或二次行情源确认前，不升级为可用机会。",
-      "#3 待触发：创新药/CRO：核心股低开后放量收复开盘价或跌幅明显收敛。 数据质量恢复或二次行情源确认前，不升级为可用机会。"
+      "#1 待触发：交换机/高速以太网：题材3分钟涨跌幅>=1.5%，方向占比>=70%，成交放大>=5x。 数据质量恢复或二次行情源确认前，不升级为可用机会。",
+      "#2 待触发：存储/HBM：题材3分钟涨跌幅>=1.5%，方向占比>=70%，成交放大>=5x。 数据质量恢复或二次行情源确认前，不升级为可用机会。",
+      "#3 待触发：AI算力：题材3分钟涨跌幅>=1.5%，方向占比>=70%，成交放大>=5x。 数据质量恢复或二次行情源确认前，不升级为可用机会。"
     ],
     "verification_focus": [
-      "核心股低开后放量收复开盘价或跌幅明显收敛",
       "题材3分钟涨跌幅>=1.5%，方向占比>=70%，成交放大>=5x"
     ],
     "quality_actions": [
@@ -73,31 +73,31 @@
     ],
     "verification_queue": [
       {
-        "title": "主线变化：创新药/CRO",
-        "grade": "C",
-        "use_action": "降权观察",
-        "reason": "下一交易日先看这些代表股是否多数走强，再看同板块是否有更多股票跟涨；缺少扩散时不追高。"
-      },
-      {
-        "title": "主线变化：机器人/工业自动化",
-        "grade": "C",
-        "use_action": "降权观察",
-        "reason": "下一交易日先看这些代表股是否多数走强，再看同板块是否有更多股票跟涨；缺少扩散时不追高。"
-      },
-      {
-        "title": "待触发：创新药/CRO",
-        "grade": "D",
-        "use_action": "仅复核",
-        "reason": "核心股低开后放量收复开盘价或跌幅明显收敛"
-      },
-      {
-        "title": "待触发：机器人/工业自动化",
+        "title": "待触发：交换机/高速以太网",
         "grade": "D",
         "use_action": "仅复核",
         "reason": "题材3分钟涨跌幅>=1.5%，方向占比>=70%，成交放大>=5x"
       },
       {
-        "title": "待触发：交换机/高速以太网",
+        "title": "待触发：存储/HBM",
+        "grade": "D",
+        "use_action": "仅复核",
+        "reason": "题材3分钟涨跌幅>=1.5%，方向占比>=70%，成交放大>=5x"
+      },
+      {
+        "title": "待触发：AI算力",
+        "grade": "D",
+        "use_action": "仅复核",
+        "reason": "题材3分钟涨跌幅>=1.5%，方向占比>=70%，成交放大>=5x"
+      },
+      {
+        "title": "盘中追踪：交换机/高速以太网",
+        "grade": "D",
+        "use_action": "仅复核",
+        "reason": "题材3分钟涨跌幅>=1.5%，方向占比>=70%，成交放大>=5x"
+      },
+      {
+        "title": "盘中追踪：存储/HBM",
         "grade": "D",
         "use_action": "仅复核",
         "reason": "题材3分钟涨跌幅>=1.5%，方向占比>=70%，成交放大>=5x"
@@ -105,19 +105,19 @@
     ],
     "disabled_signals": [
       {
-        "title": "待触发：创新药/CRO",
-        "grade": "D",
-        "use_action": "仅复核",
-        "reason": "核心股低开后放量收复开盘价或跌幅明显收敛"
-      },
-      {
-        "title": "待触发：机器人/工业自动化",
+        "title": "待触发：交换机/高速以太网",
         "grade": "D",
         "use_action": "仅复核",
         "reason": "题材3分钟涨跌幅>=1.5%，方向占比>=70%，成交放大>=5x"
       },
       {
-        "title": "待触发：交换机/高速以太网",
+        "title": "待触发：存储/HBM",
+        "grade": "D",
+        "use_action": "仅复核",
+        "reason": "题材3分钟涨跌幅>=1.5%，方向占比>=70%，成交放大>=5x"
+      },
+      {
+        "title": "待触发：AI算力",
         "grade": "D",
         "use_action": "仅复核",
         "reason": "题材3分钟涨跌幅>=1.5%，方向占比>=70%，成交放大>=5x"
@@ -125,204 +125,6 @@
     ]
   },
   "opportunities": [
-    {
-      "title": "主线变化：创新药/CRO",
-      "type": "theme_shift",
-      "trigger_reason": "主线变化扫描触发：升温/降温/抱团/风险状态出现边际变化。",
-      "conclusion": "创新药/CRO 有新出现或轮动增强迹象，需看次日扩散确认。",
-      "confidence": "low",
-      "evidence": [
-        "科伦药业 sz002422 +2.50%，报39.72；2026-10-09T16:14:45+08:00；腾讯财经HTTP。",
-        "普洛药业 sz000739 -6.82%，报25.4；2026-10-09T16:14:54+08:00；腾讯财经HTTP。",
-        "恒瑞医药 sh600276 -0.34%，报46.85；2026-10-09T16:14:53+08:00；腾讯财经HTTP。",
-        "样本不覆盖整个板块；没有新的公告或订单证据，不能据此认定产业逻辑改善。",
-        "科伦药业 sz002422 +2.50%，报39.72；2026-10-09T16:14:45+08:00；腾讯财经HTTP。 普洛药业 sz000739 -6.82%，报25.4；2026-10-09T16:14:54+08:00；腾讯财经HTTP。 恒瑞医药 sh600276 -0.34%，报46.85；2026-10-09T16:14:53+08:0…"
-      ],
-      "source_files": [
-        "topics.json"
-      ],
-      "watch_next": [
-        "下一交易日先看这些代表股是否多数走强，再看同板块是否有更多股票跟涨；缺少扩散时不追高。"
-      ],
-      "invalidation": "创新药/CRO 需要次日竞价、量能和后排扩散共同确认。",
-      "tags": [
-        "创新药/CRO"
-      ],
-      "quality_flags": [
-        "交易阻断项未修复，相关信号不可直接用",
-        "行情/涨跌幅需二次源复核",
-        "全局数据降级，主线变化需二次确认"
-      ],
-      "tone": "good",
-      "discovery_type": "theme_shift_scan",
-      "evidence_score": 98,
-      "missing_evidence": [
-        "数据源降级需二次确认"
-      ],
-      "next_action": "下一交易日先看这些代表股是否多数走强，再看同板块是否有更多股票跟涨；缺少扩散时不追高。",
-      "observation_source": "主线变化扫描",
-      "independent_observation": true,
-      "signal_score": 62,
-      "signal_grade": "C",
-      "use_action": "降权观察",
-      "use_reasons": [
-        "有可核验证据",
-        "有下一步验证",
-        "有证伪条件",
-        "有来源文件",
-        "数据质量降权"
-      ],
-      "upgrade_rank": 1,
-      "upgrade_priority": "优先验证",
-      "upgrade_condition": "下一交易日先看这些代表股是否多数走强，再看同板块是否有更多股票跟涨；缺少扩散时不追高。 数据质量恢复或二次行情源确认前，不升级为可用机会。"
-    },
-    {
-      "title": "主线变化：机器人/工业自动化",
-      "type": "theme_shift",
-      "trigger_reason": "主线变化扫描触发：升温/降温/抱团/风险状态出现边际变化。",
-      "conclusion": "机器人/工业自动化 有新出现或轮动增强迹象，需看次日扩散确认。",
-      "confidence": "low",
-      "evidence": [
-        "埃斯顿 sz002747 +0.67%，报27.04；2026-10-09T16:14:48+08:00；腾讯财经HTTP。",
-        "步科股份 sh688160 +1.50%，报88.92；2026-10-09T16:14:56+08:00；腾讯财经HTTP。",
-        "绿的谐波 sh688017 +3.08%，报263.76；2026-10-09T16:14:46+08:00；腾讯财经HTTP。",
-        "样本不覆盖整个板块；没有新的公告或订单证据，不能据此认定产业逻辑改善。",
-        "埃斯顿 sz002747 +0.67%，报27.04；2026-10-09T16:14:48+08:00；腾讯财经HTTP。 步科股份 sh688160 +1.50%，报88.92；2026-10-09T16:14:56+08:00；腾讯财经HTTP。 绿的谐波 sh688017 +3.08%，报263.76；2026-10-09T16:14:46+08:…"
-      ],
-      "source_files": [
-        "topics.json"
-      ],
-      "watch_next": [
-        "下一交易日先看这些代表股是否多数走强，再看同板块是否有更多股票跟涨；缺少扩散时不追高。"
-      ],
-      "invalidation": "机器人/工业自动化 需要次日竞价、量能和后排扩散共同确认。",
-      "tags": [
-        "机器人/工业自动化"
-      ],
-      "quality_flags": [
-        "交易阻断项未修复，相关信号不可直接用",
-        "行情/涨跌幅需二次源复核",
-        "全局数据降级，主线变化需二次确认"
-      ],
-      "tone": "good",
-      "discovery_type": "theme_shift_scan",
-      "evidence_score": 98,
-      "missing_evidence": [
-        "数据源降级需二次确认"
-      ],
-      "next_action": "下一交易日先看这些代表股是否多数走强，再看同板块是否有更多股票跟涨；缺少扩散时不追高。",
-      "observation_source": "主线变化扫描",
-      "independent_observation": true,
-      "signal_score": 62,
-      "signal_grade": "C",
-      "use_action": "降权观察",
-      "use_reasons": [
-        "有可核验证据",
-        "有下一步验证",
-        "有证伪条件",
-        "有来源文件",
-        "数据质量降权"
-      ],
-      "upgrade_rank": 2,
-      "upgrade_priority": "优先验证",
-      "upgrade_condition": "下一交易日先看这些代表股是否多数走强，再看同板块是否有更多股票跟涨；缺少扩散时不追高。 数据质量恢复或二次行情源确认前，不升级为可用机会。"
-    },
-    {
-      "title": "待触发：创新药/CRO",
-      "type": "opportunity_watch",
-      "trigger_reason": "盘前/晚间注意点已转为盘中追踪清单，等待实时行情触发。",
-      "conclusion": "创新药/CRO；代表股多数走弱；跟踪的3只代表股中，1只上涨、2只下跌、0只平盘。这里只反映这组股票，尚不能代表整个板块。；下一交易日先看这些代表股是否多数走强，再看同板块是否有更多股票跟涨；缺少扩散时不追高。；科伦药业 sz002422 +2.50%，报39.72；2026-10-09T16:14:45+08:00；腾…",
-      "confidence": "low",
-      "evidence": [],
-      "source_files": [
-        "opportunity-watch.json"
-      ],
-      "watch_next": [
-        "核心股低开后放量收复开盘价或跌幅明显收敛",
-        "同题材后排不再扩大负反馈，跌停/炸板数量下降",
-        "板块ETF或指数不再创新低并出现承接"
-      ],
-      "invalidation": "核心股继续放量下跌",
-      "tags": [
-        "创新药/CRO",
-        "风控"
-      ],
-      "quality_flags": [
-        "交易阻断项未修复，相关信号不可直接用",
-        "行情/涨跌幅需二次源复核"
-      ],
-      "tone": "good",
-      "discovery_type": "premarket_watch_queue",
-      "evidence_score": 21,
-      "missing_evidence": [
-        "缺少可核验证据",
-        "数据源降级需二次确认"
-      ],
-      "next_action": "核心股低开后放量收复开盘价或跌幅明显收敛",
-      "observation_source": "数据派生",
-      "independent_observation": false,
-      "signal_score": 22,
-      "signal_grade": "D",
-      "use_action": "仅复核",
-      "use_reasons": [
-        "缺少证据",
-        "有下一步验证",
-        "有证伪条件",
-        "有来源文件",
-        "数据质量降权"
-      ],
-      "upgrade_rank": 3,
-      "upgrade_priority": "仅复核",
-      "upgrade_condition": "核心股低开后放量收复开盘价或跌幅明显收敛。 数据质量恢复或二次行情源确认前，不升级为可用机会。"
-    },
-    {
-      "title": "待触发：机器人/工业自动化",
-      "type": "opportunity_watch",
-      "trigger_reason": "盘前/晚间注意点已转为盘中追踪清单，等待实时行情触发。",
-      "conclusion": "机器人/工业自动化；代表股多数上涨，继续观察；跟踪的3只代表股中，3只上涨、0只下跌、0只平盘。这里只反映这组股票，尚不能代表整个板块。；下一交易日先看这些代表股是否多数走强，再看同板块是否有更多股票跟涨；缺少扩散时不追高。；埃斯顿 sz002747 +0.67%，报27.04；2026-10-09T16:14:48…",
-      "confidence": "low",
-      "evidence": [],
-      "source_files": [
-        "opportunity-watch.json"
-      ],
-      "watch_next": [
-        "题材3分钟涨跌幅>=1.5%，方向占比>=70%，成交放大>=5x",
-        "板块内出现批量涨停/封板或后排扩散",
-        "核心股、ETF、后排扩散同向确认"
-      ],
-      "invalidation": "核心股高开低走或冲高回落",
-      "tags": [
-        "机器人/工业自动化",
-        "风控"
-      ],
-      "quality_flags": [
-        "交易阻断项未修复，相关信号不可直接用",
-        "行情/涨跌幅需二次源复核"
-      ],
-      "tone": "good",
-      "discovery_type": "premarket_watch_queue",
-      "evidence_score": 21,
-      "missing_evidence": [
-        "缺少可核验证据",
-        "数据源降级需二次确认"
-      ],
-      "next_action": "题材3分钟涨跌幅>=1.5%，方向占比>=70%，成交放大>=5x",
-      "observation_source": "数据派生",
-      "independent_observation": false,
-      "signal_score": 22,
-      "signal_grade": "D",
-      "use_action": "仅复核",
-      "use_reasons": [
-        "缺少证据",
-        "有下一步验证",
-        "有证伪条件",
-        "有来源文件",
-        "数据质量降权"
-      ],
-      "upgrade_rank": 4,
-      "upgrade_priority": "仅复核",
-      "upgrade_condition": "题材3分钟涨跌幅>=1.5%，方向占比>=70%，成交放大>=5x。 数据质量恢复或二次行情源确认前，不升级为可用机会。"
-    },
     {
       "title": "待触发：交换机/高速以太网",
       "type": "opportunity_watch",
@@ -344,7 +146,8 @@
       ],
       "quality_flags": [
         "交易阻断项未修复，相关信号不可直接用",
-        "行情/涨跌幅需二次源复核"
+        "行情/涨跌幅需二次源复核",
+        "机会信号需降权转验证"
       ],
       "tone": "good",
       "discovery_type": "premarket_watch_queue",
@@ -356,7 +159,7 @@
       "next_action": "题材3分钟涨跌幅>=1.5%，方向占比>=70%，成交放大>=5x",
       "observation_source": "数据派生",
       "independent_observation": false,
-      "signal_score": 22,
+      "signal_score": 17,
       "signal_grade": "D",
       "use_action": "仅复核",
       "use_reasons": [
@@ -366,7 +169,7 @@
         "有来源文件",
         "数据质量降权"
       ],
-      "upgrade_rank": 5,
+      "upgrade_rank": 1,
       "upgrade_priority": "仅复核",
       "upgrade_condition": "题材3分钟涨跌幅>=1.5%，方向占比>=70%，成交放大>=5x。 数据质量恢复或二次行情源确认前，不升级为可用机会。"
     },
@@ -374,7 +177,7 @@
       "title": "待触发：存储/HBM",
       "type": "opportunity_watch",
       "trigger_reason": "盘前/晚间注意点已转为盘中追踪清单，等待实时行情触发。",
-      "conclusion": "隔夜美股收盘英伟达-0.52%、美光科技-0.66%、超威半导体-2.03%、特斯拉+2.05%、苹果-1.11%；该方向已进入次日预案，但仍需A股代表股确认。；下一交易日观察A股相关代表股是否同向，不把海外走势直接当作买卖信号。；外盘观察",
+      "conclusion": "市场传闻层面仍围绕HBM涨价、AI算力CAPEX、国产替代扩散发酵；未见可直接替代公司公告的新增可靠证据，按观察线处理。；隔夜美股收盘英伟达-0.52%、美光科技-0.66%、超威半导体-2.03%、特斯拉+2.05%、苹果-1.11%；该方向已进入次日预案，但仍需A股代表股确认。；下一交易日观察A股相关代表股是否同向，不把海外走势直接当作买卖信号。；外盘…",
       "confidence": "low",
       "evidence": [],
       "source_files": [
@@ -392,7 +195,8 @@
       ],
       "quality_flags": [
         "交易阻断项未修复，相关信号不可直接用",
-        "行情/涨跌幅需二次源复核"
+        "行情/涨跌幅需二次源复核",
+        "机会信号需降权转验证"
       ],
       "tone": "good",
       "discovery_type": "premarket_watch_queue",
@@ -404,7 +208,7 @@
       "next_action": "题材3分钟涨跌幅>=1.5%，方向占比>=70%，成交放大>=5x",
       "observation_source": "数据派生",
       "independent_observation": false,
-      "signal_score": 22,
+      "signal_score": 17,
       "signal_grade": "D",
       "use_action": "仅复核",
       "use_reasons": [
@@ -414,7 +218,7 @@
         "有来源文件",
         "数据质量降权"
       ],
-      "upgrade_rank": 6,
+      "upgrade_rank": 2,
       "upgrade_priority": "仅复核",
       "upgrade_condition": "题材3分钟涨跌幅>=1.5%，方向占比>=70%，成交放大>=5x。 数据质量恢复或二次行情源确认前，不升级为可用机会。"
     },
@@ -422,7 +226,7 @@
       "title": "待触发：AI算力",
       "type": "opportunity_watch",
       "trigger_reason": "盘前/晚间注意点已转为盘中追踪清单，等待实时行情触发。",
-      "conclusion": "隔夜美股收盘英伟达-0.52%、美光科技-0.66%、超威半导体-2.03%、特斯拉+2.05%、苹果-1.11%；该方向已进入次日预案，但仍需A股代表股确认。；下一交易日观察A股相关代表股是否同向，不把海外走势直接当作买卖信号。；外盘观察",
+      "conclusion": "市场传闻层面仍围绕HBM涨价、AI算力CAPEX、国产替代扩散发酵；未见可直接替代公司公告的新增可靠证据，按观察线处理。；隔夜美股收盘英伟达-0.52%、美光科技-0.66%、超威半导体-2.03%、特斯拉+2.05%、苹果-1.11%；该方向已进入次日预案，但仍需A股代表股确认。；下一交易日观察A股相关代表股是否同向，不把海外走势直接当作买卖信号。；外盘…",
       "confidence": "low",
       "evidence": [],
       "source_files": [
@@ -440,7 +244,8 @@
       ],
       "quality_flags": [
         "交易阻断项未修复，相关信号不可直接用",
-        "行情/涨跌幅需二次源复核"
+        "行情/涨跌幅需二次源复核",
+        "机会信号需降权转验证"
       ],
       "tone": "good",
       "discovery_type": "premarket_watch_queue",
@@ -452,7 +257,7 @@
       "next_action": "题材3分钟涨跌幅>=1.5%，方向占比>=70%，成交放大>=5x",
       "observation_source": "数据派生",
       "independent_observation": false,
-      "signal_score": 22,
+      "signal_score": 17,
       "signal_grade": "D",
       "use_action": "仅复核",
       "use_reasons": [
@@ -462,7 +267,7 @@
         "有来源文件",
         "数据质量降权"
       ],
-      "upgrade_rank": 7,
+      "upgrade_rank": 3,
       "upgrade_priority": "仅复核",
       "upgrade_condition": "题材3分钟涨跌幅>=1.5%，方向占比>=70%，成交放大>=5x。 数据质量恢复或二次行情源确认前，不升级为可用机会。"
     }
@@ -472,7 +277,7 @@
       "title": "数据质量降级",
       "type": "data_quality",
       "trigger_reason": "风控兜底触发：市场宽度、数据质量或回撤条件触发风险优先。",
-      "conclusion": "共 9 条检查提示，其中 8 条需处理、1 条背景记录（1 个交易阻断，2 个价格/行情复核，6 个背景复核）。",
+      "conclusion": "共 9 条检查提示，其中 8 条需处理、1 条背景记录（1 个交易阻断，2 个价格/行情复核，1 个信号复核，5 个背景复核）。",
       "confidence": "high",
       "evidence": [
         "时间戳不是当前交易日：2026-10-09T13:35:46+08:00",
@@ -513,88 +318,6 @@
     }
   ],
   "verifications": [
-    {
-      "title": "盘中追踪：创新药/CRO",
-      "type": "opportunity_watch",
-      "trigger_reason": "盘前/晚间注意点已转为盘中追踪清单，等待实时行情触发。",
-      "conclusion": "创新药/CRO；代表股多数走弱；跟踪的3只代表股中，1只上涨、2只下跌、0只平盘。这里只反映这组股票，尚不能代表整个板块。；下一交易日先看这些代表股是否多数走强，再看同板块是否有更多股票跟涨；缺少扩散时不追高。；科伦药业 sz002422 +2.50%，报39.72；2026-10-09T16:14:…",
-      "confidence": "low",
-      "evidence": [],
-      "source_files": [
-        "opportunity-watch.json"
-      ],
-      "watch_next": [
-        "核心股低开后放量收复开盘价或跌幅明显收敛",
-        "同题材后排不再扩大负反馈，跌停/炸板数量下降",
-        "板块ETF或指数不再创新低并出现承接"
-      ],
-      "invalidation": "核心股继续放量下跌",
-      "tags": [
-        "创新药/CRO",
-        "风控"
-      ],
-      "quality_flags": [],
-      "tone": "neutral",
-      "discovery_type": "premarket_watch_queue",
-      "evidence_score": 28,
-      "missing_evidence": [
-        "缺少可核验证据"
-      ],
-      "next_action": "核心股低开后放量收复开盘价或跌幅明显收敛",
-      "observation_source": "数据派生",
-      "independent_observation": false,
-      "signal_score": 47,
-      "signal_grade": "D",
-      "use_action": "仅复核",
-      "use_reasons": [
-        "缺少证据",
-        "有下一步验证",
-        "有证伪条件",
-        "有来源文件",
-        "有证据缺口"
-      ]
-    },
-    {
-      "title": "盘中追踪：机器人/工业自动化",
-      "type": "opportunity_watch",
-      "trigger_reason": "盘前/晚间注意点已转为盘中追踪清单，等待实时行情触发。",
-      "conclusion": "机器人/工业自动化；代表股多数上涨，继续观察；跟踪的3只代表股中，3只上涨、0只下跌、0只平盘。这里只反映这组股票，尚不能代表整个板块。；下一交易日先看这些代表股是否多数走强，再看同板块是否有更多股票跟涨；缺少扩散时不追高。；埃斯顿 sz002747 +0.67%，报27.04；2026-10-0…",
-      "confidence": "low",
-      "evidence": [],
-      "source_files": [
-        "opportunity-watch.json"
-      ],
-      "watch_next": [
-        "题材3分钟涨跌幅>=1.5%，方向占比>=70%，成交放大>=5x",
-        "板块内出现批量涨停/封板或后排扩散",
-        "核心股、ETF、后排扩散同向确认"
-      ],
-      "invalidation": "核心股高开低走或冲高回落",
-      "tags": [
-        "机器人/工业自动化",
-        "风控"
-      ],
-      "quality_flags": [],
-      "tone": "neutral",
-      "discovery_type": "premarket_watch_queue",
-      "evidence_score": 28,
-      "missing_evidence": [
-        "缺少可核验证据"
-      ],
-      "next_action": "题材3分钟涨跌幅>=1.5%，方向占比>=70%，成交放大>=5x",
-      "observation_source": "数据派生",
-      "independent_observation": false,
-      "signal_score": 47,
-      "signal_grade": "D",
-      "use_action": "仅复核",
-      "use_reasons": [
-        "缺少证据",
-        "有下一步验证",
-        "有证伪条件",
-        "有来源文件",
-        "有证据缺口"
-      ]
-    },
     {
       "title": "盘中追踪：交换机/高速以太网",
       "type": "opportunity_watch",
@@ -639,7 +362,7 @@
       "title": "盘中追踪：存储/HBM",
       "type": "opportunity_watch",
       "trigger_reason": "盘前/晚间注意点已转为盘中追踪清单，等待实时行情触发。",
-      "conclusion": "隔夜美股收盘英伟达-0.52%、美光科技-0.66%、超威半导体-2.03%、特斯拉+2.05%、苹果-1.11%；该方向已进入次日预案，但仍需A股代表股确认。；下一交易日观察A股相关代表股是否同向，不把海外走势直接当作买卖信号。；外盘观察",
+      "conclusion": "市场传闻层面仍围绕HBM涨价、AI算力CAPEX、国产替代扩散发酵；未见可直接替代公司公告的新增可靠证据，按观察线处理。；隔夜美股收盘英伟达-0.52%、美光科技-0.66%、超威半导体-2.03%、特斯拉+2.05%、苹果-1.11%；该方向已进入次日预案，但仍需A股代表股确认。；下一交易日观察…",
       "confidence": "low",
       "evidence": [],
       "source_files": [
@@ -680,7 +403,7 @@
       "title": "盘中追踪：AI算力",
       "type": "opportunity_watch",
       "trigger_reason": "盘前/晚间注意点已转为盘中追踪清单，等待实时行情触发。",
-      "conclusion": "隔夜美股收盘英伟达-0.52%、美光科技-0.66%、超威半导体-2.03%、特斯拉+2.05%、苹果-1.11%；该方向已进入次日预案，但仍需A股代表股确认。；下一交易日观察A股相关代表股是否同向，不把海外走势直接当作买卖信号。；外盘观察",
+      "conclusion": "市场传闻层面仍围绕HBM涨价、AI算力CAPEX、国产替代扩散发酵；未见可直接替代公司公告的新增可靠证据，按观察线处理。；隔夜美股收盘英伟达-0.52%、美光科技-0.66%、超威半导体-2.03%、特斯拉+2.05%、苹果-1.11%；该方向已进入次日预案，但仍需A股代表股确认。；下一交易日观察…",
       "confidence": "low",
       "evidence": [],
       "source_files": [
@@ -715,39 +438,6 @@
         "有证伪条件",
         "有来源文件",
         "有证据缺口"
-      ]
-    },
-    {
-      "title": "验证条件",
-      "type": "verification",
-      "trigger_reason": "验证队列触发：前序结论需要用下一交易窗口确认或证伪。",
-      "conclusion": "下一交易日先看这些代表股是否多数走强，再看同板块是否有更多股票跟涨；缺少扩散时不追高。",
-      "confidence": "actionable",
-      "evidence": [],
-      "source_files": [
-        "theme-shifts.json"
-      ],
-      "watch_next": [
-        "下一交易日先看这些代表股是否多数走强，再看同板块是否有更多股票跟涨；缺少扩散时不追高。"
-      ],
-      "invalidation": "条件不出现或反向出现，即撤销对应方向判断。",
-      "tags": [],
-      "quality_flags": [],
-      "tone": "neutral",
-      "discovery_type": "verification_queue",
-      "evidence_score": 35,
-      "missing_evidence": [],
-      "next_action": "下一交易日先看这些代表股是否多数走强，再看同板块是否有更多股票跟涨；缺少扩散时不追高。",
-      "observation_source": "验证队列",
-      "independent_observation": true,
-      "signal_score": 60,
-      "signal_grade": "B",
-      "use_action": "等待确认",
-      "use_reasons": [
-        "缺少证据",
-        "有下一步验证",
-        "有证伪条件",
-        "有来源文件"
       ]
     }
   ],
