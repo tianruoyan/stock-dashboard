@@ -125,7 +125,7 @@ def run(
     )
     after = canonical_json(enriched)
     alert_changed = before != after
-    source_health_update = prepare_source_health_update(source_health_path, enriched)
+    source_health_update = prepare_source_health_update(source_health_path, enriched, now)
     source_health_changed = bool(source_health_update and source_health_update[2])
     changed = alert_changed or source_health_changed
 
@@ -811,7 +811,8 @@ def normalize_user_facing_text(value: str) -> str:
     )
 
 
-def prepare_source_health_update(path: Path, payload: Dict[str, Any]) -> Optional[tuple[bytes, Dict[str, Any], bool]]:
+def prepare_source_health_update(path: Path, payload: Dict[str, Any], now: datetime | None = None) -> Optional[tuple[bytes, Dict[str, Any], bool]]:
+    now = (now or datetime.now(TZ)).astimezone(TZ)
     try:
         raw = path.read_bytes()
         source_health = json.loads(raw.decode("utf-8"))
@@ -823,17 +824,20 @@ def prepare_source_health_update(path: Path, payload: Dict[str, Any]) -> Optiona
     for alert in payload.get("alerts") or []:
         if not isinstance(alert, dict):
             continue
-        verification = ((alert.get("quote_audit") or {}).get("secondary_verification") or {})
+        audit = alert.get("quote_audit")
+        verification = audit.get("secondary_verification") if isinstance(audit, dict) else None
         if not isinstance(verification, dict) or verification.get("state") not in {"passed", "mismatch", "insufficient_precision"}:
             continue
         if verification.get("source") != "富途行情" or verification.get("verifier_version") != VERIFIER_VERSION:
             continue
-        if not verification.get("checked_at"):
+        checked_at = parse_datetime(verification.get("checked_at"))
+        if checked_at is None or checked_at > now + timedelta(seconds=120):
             continue
         verifications.append(verification)
     if not verifications:
         return raw, source_health, False
-    latest_check = max(str(item.get("checked_at")) for item in verifications)
+    latest = max(verifications, key=lambda item: parse_datetime(item["checked_at"]))
+    latest_check = latest["checked_at"]
     quote_count = sum(
         1
         for item in verifications
@@ -845,10 +849,17 @@ def prepare_source_health_update(path: Path, payload: Dict[str, Any]) -> Optiona
     precision_count = sum(item.get("state") == "insufficient_precision" for item in verifications)
     sources = source_health.get("sources")
     if not isinstance(sources, dict):
-        sources = {}
-        source_health["sources"] = sources
-    sources.pop("tencent_minute_alert_verifier", None)
+        # An unexpected source container is a contract issue, not authorization
+        # to replace existing observations with a new empty map.
+        return raw, source_health, False
+    existing = sources.get("futu_minute_alert_verifier")
+    existing = existing if isinstance(existing, dict) else {}
+    previous_checks = [parse_datetime(existing.get(key)) for key in ("last_check", "checked_at", "as_of", "timestamp", "updated_at")]
+    # Replaying old alert evidence cannot roll back a newer source observation.
+    if any(stamp is not None and stamp > parse_datetime(latest_check) for stamp in previous_checks):
+        return raw, source_health, False
     sources["futu_minute_alert_verifier"] = {
+        **existing,
         "status": "ok",
         "last_check": latest_check,
         "usage": "盘中异动代表股第二行情源交叉验证",
@@ -859,7 +870,12 @@ def prepare_source_health_update(path: Path, payload: Dict[str, Any]) -> Optiona
         "sample_count": quote_count,
         "errors": [],
     }
-    return raw, source_health, canonical_json(json.loads(raw.decode("utf-8"))) != canonical_json(source_health)
+    changed = canonical_json(json.loads(raw.decode("utf-8"))) != canonical_json(source_health)
+    if changed:
+        # This is document generation time, never a refresh of other sources.
+        # Identical evidence is a no-op and must not keep renewing this timestamp.
+        source_health["timestamp"] = now.replace(microsecond=0).isoformat()
+    return raw, source_health, changed
 
 
 def alert_fingerprint(alert: Dict[str, Any]) -> str:

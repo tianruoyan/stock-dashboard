@@ -27,6 +27,8 @@ let cache = {};
 let refreshTimer = null;
 let refreshInFlight = null;
 let refreshRequested = false;
+let pageSuspended = false;
+let lastAlertTemporalKey = "";
 const REQUEST_TIMEOUT_MS = 12000;
 const loadFailures = new Map();
 
@@ -39,6 +41,21 @@ window.onerror = function(msg, url, line) {
 
 init();
 setInterval(updateTime, 1000);
+window.addEventListener?.('pagehide', () => {
+  pageSuspended = true;
+  if (refreshTimer) clearTimeout(refreshTimer);
+  refreshTimer = null;
+});
+window.addEventListener?.('pageshow', () => {
+  pageSuspended = false;
+  updateAll({ scheduleNext: true });
+});
+document.addEventListener?.('visibilitychange', () => {
+  if (!document.hidden && !pageSuspended) {
+    refreshTimeSensitiveAlerts();
+    updateAll({ scheduleNext: true });
+  }
+});
 
 function init() { updateAll({ scheduleNext: shouldAutoScheduleRefresh() }); }
 
@@ -161,7 +178,7 @@ function currentRefreshIntervalMs(now = new Date()) {
 }
 
 function shouldAutoScheduleRefresh() {
-  return typeof window !== "undefined" && window.document === document;
+  return !pageSuspended && typeof window !== "undefined" && window.document === document;
 }
 
 /* =========================
@@ -341,6 +358,7 @@ function cached(path) {
 }
 
 function renderGlobalDecisionModules() {
+  rerenderAlertsIfLoaded();
   renderDashboardControl();
   renderDataQualityGate();
   renderOpportunityRiskRadar();
@@ -2887,19 +2905,13 @@ function sortAlertsByEventTime(alerts) {
   );
 }
 
-function alertEventTime(alert, baseTimestamp, fallbackMs) {
+function alertEventTime(alert, baseTimestamp) {
   const rawTime = String(alert.time || "");
-  if (/^\d{4}-\d{2}-\d{2}T/.test(rawTime)) {
-    const parsedIso = Date.parse(rawTime);
-    return Number.isNaN(parsedIso) ? fallbackMs : parsedIso;
-  }
+  if (/^\d{4}-\d{2}-\d{2}T/.test(rawTime)) return alertDeadlineMs(rawTime) || 0;
+  if (!/^\d{2}:\d{2}:\d{2}$/.test(rawTime)) return 0;
   const idDate = String(alert.id || "").match(/^(\d{4})(\d{2})(\d{2})/);
-  const base = idDate
-    ? `${idDate[1]}-${idDate[2]}-${idDate[3]}`
-    : (baseTimestamp ? String(baseTimestamp).slice(0, 10) : new Date(fallbackMs).toISOString().slice(0, 10));
-  const time = /^\d{2}:\d{2}:\d{2}$/.test(rawTime) ? rawTime : "00:00:00";
-  const parsed = Date.parse(`${base}T${time}+08:00`);
-  return Number.isNaN(parsed) ? fallbackMs : parsed;
+  const base = idDate ? `${idDate[1]}-${idDate[2]}-${idDate[3]}` : String(baseTimestamp || "").slice(0, 10);
+  return alertDeadlineMs(`${base}T${rawTime}+08:00`) || 0;
 }
 
 function displayAlertTime(alert) {
@@ -2932,7 +2944,7 @@ function renderAlerts(data) {
   const displayAlerts = sortAlertsByEventTime([
     ...intradayOpportunityAlerts(data.timestamp),
     ...saved
-  ]).sort(alertDisplaySort).slice(0, MAX_ALERTS);
+  ].map(a => ({ ...a, _sessionClosed: data.source_status === "monitor_session_closed" }))).sort(alertDisplaySort).slice(0, MAX_ALERTS);
   const monitorNoTrigger = data.source_status === "monitor_live_no_trigger";
 
   renderAlertsSummary(displayAlerts, data.timestamp, null, data);
@@ -2945,8 +2957,8 @@ function renderAlerts(data) {
 
   const monitorState = monitorNoTrigger
     ? `<div class="alert-monitor-state">
-        <span class="badge signal">监控正常</span>
-        <div><b>当前暂无短周期规则触发</b><span>下方“全景机会”来自最新盘面解释，不是3分钟异动直接触发。</span></div>
+        <span class="badge watch">最近检查</span>
+        <div><b>上次检查未见短周期规则触发</b><span>下方“全景机会”来自最新盘面解释，不是3分钟异动直接触发。</span></div>
       </div>`
     : "";
   el.innerHTML = monitorState + displayAlerts.map((a, i) => {
@@ -2966,7 +2978,7 @@ function renderAlerts(data) {
                 purpose === "trade" ? "card hot" :
                 purpose === "risk" ? "card risk-card" : "card";
     const fadeCls = isStale ? " faded" : isOld ? " dim" : "";
-    const ageLabel = ageMin < 1 ? "刚刚" : ageMin < 60 ? `${ageMin}分钟前` : `${Math.floor(ageMin / 60)}小时前`;
+    const ageLabel = !a._eventTime ? "时间待核对" : ageMin < 1 ? "刚刚" : ageMin < 60 ? `${ageMin}分钟前` : `${Math.floor(ageMin / 60)}小时前`;
 
     const badge = confirmation === "invalidated" ? '<span class="badge watch">已失效</span>' :
                   !isFresh ? '<span class="badge watch">历史触发</span>' :
@@ -3005,9 +3017,8 @@ function renderAlerts(data) {
       ? `<div class="alert-resolution ${resolution.cls}"><b>${escapeHtml(resolution.label)}</b><span>${escapeHtml(resolution.detail)}</span></div>`
       : "";
     const confirmationHtml = renderAlertConfirmation(a, confirmation, purpose);
-    const freshnessMinutes = a.signal_type === "持续走强观察" ? 15 : 5;
     const staleHtml = !isFresh
-      ? `<div class="alert-resolution stale"><b>已超过${freshnessMinutes}分钟</b><span>只作为历史触发参考，不作为当前交易/风险触发。</span></div>`
+      ? `<div class="alert-resolution stale"><b>${escapeHtml(alertFreshnessLabel(a, now))}</b><span>只作为历史触发参考，不作为当前交易/风险触发。</span></div>`
       : "";
 
     const sectorName = displayAlertSector(a);
@@ -3035,11 +3046,45 @@ function alertDisplaySort(a, b) {
     (b._received || 0) - (a._received || 0);
 }
 
-function isAlertFresh(alert, now = Date.now()) {
-  const eventTime = alert?._eventTime || alert?._received || 0;
-  // 行业持续走强由行业事实每 15 分钟更新一次；其余短周期异动仍按 5 分钟处理。
+function alertDeadlineMs(value) {
+  // Deadlines need an explicit timezone; device-local parsing could extend a signal.
+  if (typeof value !== "string" || !/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?(?:Z|[+-]\d{2}:\d{2})$/.test(value)) return NaN;
+  if (Number(value.slice(11, 13)) > 23 || Number(value.slice(14, 16)) > 59 || Number(value.slice(17, 19)) > 59) return NaN;
+  const day = value.slice(0, 10);
+  const parsedDay = new Date(`${day}T00:00:00Z`);
+  if (!Number.isFinite(parsedDay.getTime()) || parsedDay.toISOString().slice(0, 10) !== day) return NaN;
+  return Date.parse(value);
+}
+
+function alertFreshnessLabel(alert, now = Date.now()) {
+  if (alert?.confirmation_level === "invalidated" || alert?.source_status === "invalidated") return "原信号已失效";
+  if (alert?._sessionClosed || alert?.source_status === "monitor_session_closed") return "已收盘，仅供回看";
+  const eventTime = alert?._eventTime || 0;
+  if (!Number.isFinite(eventTime) || !eventTime || eventTime > now + FUTURE_ALERT_TOLERANCE) return "触发时间待核对";
+  if (!alert?._syntheticOpportunity && !alert?._syntheticRisk) {
+    const deadline = alertDeadlineMs(alert?.valid_until);
+    if (!Number.isFinite(deadline) || deadline < eventTime) return "有效期限待核对";
+    if (now >= deadline) return "有效期已过";
+  }
+  // Preserve the existing 5-minute / sustained-strength 15-minute display windows.
   const freshnessWindow = alert?.signal_type === "持续走强观察" ? 15 * 60 * 1000 : ALERT_CURRENT_MS;
-  return !!eventTime && now - eventTime <= freshnessWindow && eventTime <= now + FUTURE_ALERT_TOLERANCE;
+  return now - eventTime > freshnessWindow ? "已超过当前观察窗口" : "";
+}
+
+function isAlertFresh(alert, now = Date.now()) {
+  return alertFreshnessLabel(alert, now) === "";
+}
+
+function refreshTimeSensitiveAlerts() {
+  const data = cached("data/alert.json");
+  if (!data) return;
+  const now = Date.now();
+  const rows = (data.alerts || []).map(a => normalizeAlertTime({ ...a }, data.timestamp, now));
+  const key = JSON.stringify([Math.floor(now / 60000), data.source_status, rows.map(a => alertFreshnessLabel(a, now))]);
+  if (key !== lastAlertTemporalKey) {
+    lastAlertTemporalKey = key;
+    renderAlerts(data);
+  }
 }
 
 function freshestAlertAgeMs(alerts, now = Date.now()) {
@@ -3376,8 +3421,8 @@ function renderAlertsSummary(alerts, timestamp, invalidatedState = null, sourceD
       <div class="decision-strip alerts-decision">
         <div class="decision-card neutral">
           <span class="decision-label">短周期监控</span>
-          <b>运行正常</b>
-          <span>当前没有达到价格、成交和扩散门槛的新异动</span>
+          <b>上次检查未见触发</b>
+          <span>${escapeHtml(formatUpdateTime(timestamp) || "检查时间待核对")} · 当时没有达到价格、成交和扩散门槛的新异动</span>
         </div>
         <div class="decision-card action">
           <span class="decision-label">当前动作</span>
@@ -3416,7 +3461,7 @@ function renderAlertsSummary(alerts, timestamp, invalidatedState = null, sourceD
       <div class="decision-strip alerts-decision">
         <div class="decision-card neutral">
           <span class="decision-label">当前状态</span>
-          <b>无5分钟内新触发</b>
+          <b>当前没有有效触发</b>
           <span>最近一次 ${escapeHtml(ageText)}，下方只作历史回看</span>
         </div>
         <div class="decision-card action">
@@ -3532,8 +3577,9 @@ function alertPurpose(alert) {
 
 function alertConfirmationLevel(alert, isFresh = isAlertFresh(alert)) {
   const explicit = alert?.confirmation_level;
-  if (explicit === "confirmed" || explicit === "candidate" || explicit === "invalidated") return explicit;
-  if (!isFresh) return "invalidated";
+  if (!isFresh || explicit === "invalidated") return "invalidated";
+  if (explicit === "candidate") return "candidate";
+  if (explicit === "confirmed") return hasTrustedQuoteAudit(alert) ? "confirmed" : "candidate";
   if (alertPurpose(alert) !== "trade") return "";
   if (hasTrustedQuoteAudit(alert) && hasActionableTradeEvidence(alert)) return "confirmed";
   return hasActionableTradeEvidence(alert) ? "candidate" : "invalidated";
@@ -3543,23 +3589,26 @@ function hasTrustedQuoteAudit(alert) {
   const audit = alert?.quote_audit;
   if (!audit || typeof audit !== "object") return false;
   const sanity = audit.sanity_checks || {};
+  const secondary = audit.secondary_verification;
   return Boolean(audit.provider || audit.source) &&
     Boolean(audit.quote_time || alert.valid_until) &&
+    (!secondary || secondary.state === "passed") &&
+    !["price_move_valid", "volume_valid", "direction_ratio_valid"].some(key => sanity[key] === false) &&
     sanity.cross_source_verified === true;
 }
 
 function renderAlertConfirmation(alert, confirmation, purpose) {
-  if (purpose !== "trade") return "";
+  if (purpose !== "trade" || !isAlertFresh(alert)) return "";
   if (confirmation === "confirmed") {
     return `<div class="alert-confirm"><b>为什么升级</b><span>${escapeHtml(alertConfirmReason(alert))}</span></div>`;
   }
   if (confirmation === "candidate") {
     if (hasTrustedQuoteAudit(alert)) {
-      return `<div class="alert-confirm candidate"><b>行情已核验，仍待交易确认</b><span>代表股短周期方向与腾讯分钟行情一致；仍等待封单、后排扩散或ETF同向。</span></div>`;
+      return `<div class="alert-confirm candidate"><b>行情已核验，仍待交易确认</b><span>代表股短周期行情已有第二来源核验；仍等待封单、后排扩散或ETF同向。</span></div>`;
     }
     return `<div class="alert-confirm candidate"><b>还差确认</b><span>等待交叉行情源、封单/后排扩散或ETF同向确认。</span></div>`;
   }
-  return `<div class="alert-resolution stale"><b>未达机会条件</b><span>缺少短周期价格、成交、扩散或 quote_audit 证明。</span></div>`;
+  return `<div class="alert-resolution stale"><b>未达机会条件</b><span>缺少短周期价格、成交、扩散或行情核验依据。</span></div>`;
 }
 
 function alertConfirmReason(alert) {
@@ -5406,11 +5455,26 @@ function renderTopics(data) {
     (hidden.length ? `<details class="compact-details topics-all"><summary>展开全部专题（${topics.length}）</summary><div class="grid">${hidden.map(t => renderTopicCard(t)).join("")}</div></details>` : "");
 }
 
+function topicResearchTimestamp(topic) {
+  const field = ["analysis_time", "research_updated_at", "updated_at", "timestamp"].find(key => Object.prototype.hasOwnProperty.call(topic, key));
+  return field ? topic[field] : "";
+}
+
 function topicNeedsReview(topic) {
-  const stamp = topic.source_as_of || topic.updated_at || topic.timestamp;
-  const cutoff = String(cached('data/postmarket.json')?.timestamp || new Date().toISOString()).slice(0, 10);
-  if (!stamp || String(stamp).slice(0, 10) < cutoff) return true;
-  if (topic.valid_until && (!Number.isFinite(Date.parse(topic.valid_until)) || Date.parse(topic.valid_until) < Date.now())) return true;
+  if (topic.update_scope === "closing_representatives_only" || topic.source_status === "invalidated") return true;
+  const cutoff = String(cached('data/postmarket.json')?.timestamp || shanghaiClock().date).slice(0, 10);
+  const awareStamp = value => {
+    const raw = typeof value === "string" ? value.replace(/(T\d{2}:\d{2})(Z|[+-]\d{2}:\d{2})$/, '$1:00$2') : value;
+    return alertDeadlineMs(raw);
+  };
+  const research = awareStamp(topicResearchTimestamp(topic));
+  const current = stamp => Number.isFinite(stamp) && stamp <= Date.now() && shanghaiClock(new Date(stamp)).date === cutoff;
+  if (!current(research)) return true;
+  if (Object.prototype.hasOwnProperty.call(topic, "source_as_of") && !current(awareStamp(topic.source_as_of))) return true;
+  if (Object.prototype.hasOwnProperty.call(topic, "valid_until")) {
+    const deadline = awareStamp(topic.valid_until);
+    if (!Number.isFinite(deadline) || deadline <= Date.now() || deadline < research) return true;
+  }
   return false;
 }
 
@@ -5436,14 +5500,22 @@ function topicImportanceScore(topic) {
   return score;
 }
 
+function renderTopicRepresentativeFacts(t) {
+  const facts = t.representative_facts || (t.update_scope === "closing_representatives_only" ? t : null);
+  if (!facts || typeof facts !== "object") return "";
+  const summary = userFacingText(facts.summary || facts.conclusion || "");
+  const evidence = arrayTextItems(facts.evidence);
+  return `<details class="alert-detail"><summary>代表股事实核对 · 不等同于专题研究更新</summary><div>${escapeHtml(formatUpdateTime(facts.source_as_of || facts.updated_at) || "行情时间待核对")}</div>${summary ? `<p>${escapeHtml(summary)}</p>` : ""}${evidence.map(row => `<p>${escapeHtml(row)}</p>`).join("")}</details>`;
+}
+
 function renderTopicCard(t) {
-    if (topicNeedsReview(t)) return `<div class="card"><div class="card-head"><b>${escapeHtml(t.name)}</b></div><p>旧研究待复核 · ${escapeHtml(formatUpdateTime(t.source_as_of || t.updated_at || t.timestamp) || '时间未记录')}</p><p>先核对最新催化、行业表现和代表股；不沿用旧的买卖条件。</p><details><summary>查看当时的研究记录</summary><p>${escapeHtml(t.conclusion || t.core_view || '')}</p><p>${escapeHtml(t.action || '')}</p></details></div>`;
+    if (topicNeedsReview(t)) return `<div class="card"><div class="card-head"><b>${escapeHtml(t.name)}</b></div><p>旧研究待复核 · ${escapeHtml(formatUpdateTime(topicResearchTimestamp(t)) || '研究时间未记录')}</p><p>先核对最新催化、行业表现和代表股；不沿用旧的买卖条件。</p><details><summary>查看当时的研究记录</summary><p>${escapeHtml(t.conclusion || t.core_view || '')}</p><p>${escapeHtml(t.action || '')}</p></details>${renderTopicRepresentativeFacts(t)}</div>`;
     const statusText = String(t.status || "");
     const statusCls = statusText.includes("强化") || statusText.includes("强主线") ? "strong" :
                       statusText.includes("弱化") || statusText.includes("退潮") || statusText.includes("风险") ? "sentiment" : "";
     const statusBadge = statusCls === "strong" ? "🔥" :
                         statusCls === "sentiment" ? "🔻" : "➖";
-    const updatedAt = formatUpdateTime(t.updated_at || t.timestamp);
+    const updatedAt = formatUpdateTime(topicResearchTimestamp(t));
     const conclusion = t.conclusion || t.core_view || "";
     const related = Array.isArray(t.related_topics) ? t.related_topics : [];
     return `<div class="card ${statusCls}">
@@ -5454,6 +5526,7 @@ function renderTopicCard(t) {
       ${related.length ? `<div class="topic-related">${related.slice(0, 6).map(v => `<span>${escapeHtml(v)}</span>`).join("")}</div>` : ""}
       ${t.action ? `<div class="card-body">${escapeHtml(t.action)}</div>` : ""}
       ${Array.isArray(t.representatives) ? t.representatives.map(row => `<div class="evidence-line">${escapeHtml(row.name)} ${escapeHtml(String(row.code || '').replace(/^(sh|sz)/, ''))}：${escapeHtml(String(row.change_pct))}% · ${escapeHtml(formatUpdateTime(row.quote_time))} · ${escapeHtml(String(row.source || '').replace('HTTP', ''))}</div>`).join('') : ''}
+      ${renderTopicRepresentativeFacts(t)}
       ${t.risk ? `<p class="card-body">风险：${escapeHtml(t.risk)}</p>` : ''}
       ${t.invalidate ? `<p class="card-body">暂不参与的情况：${escapeHtml(t.invalidate)}</p>` : ''}
       ${t.note ? `<details class="alert-detail"><summary>更新依据</summary><div>${escapeHtml(t.note)}</div></details>` : ""}
@@ -5587,5 +5660,6 @@ function renderSourceHealth(data) {
    时间 / 状态
 ========================= */
 function updateTime() {
+  refreshTimeSensitiveAlerts();
   document.getElementById("status").innerText = loadFailures.size ? ([...loadFailures.values()].some(item => item.retained) ? "部分更新暂不可用 · 保留上次结果" : "部分数据待获取") : navigator.onLine ? (isMarketOpenDate() ? dataFreshness(dashboardEffectiveTimestamp()) : "休市 · 最近行情回看") : "网络未连接";
 }

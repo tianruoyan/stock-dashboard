@@ -32,17 +32,41 @@ def risk_line(item):
     return bool(re.search(r"风险线|相对弱势|退潮|排名居后|弱化", " ".join(str(item.get(k) or "") for k in ("name", "status", "continuity"))))
 
 
-def topic_current(topic, day):
-    stamp = str(topic.get("source_as_of") or topic.get("updated_at") or topic.get("timestamp") or "")
-    if stamp[:10] != day:
+def topic_current(topic, day, now=None):
+    """Validate actual research, not a file/representative collection refresh.
+
+    All supplied evidence dates must be real, timezone-aware instants. A source
+    date alone does not establish when the research was authored, and neither
+    a newer source nor nested representative facts may refresh old research.
+    """
+    if not isinstance(topic, dict) or not iso_trade_date(day):
         return False
-    end = topic.get("valid_until")
-    if end:
+    if topic.get("update_scope") == "closing_representatives_only" or topic.get("source_status") == "invalidated":
+        return False
+    now = now or datetime.now(TZ)
+    if now.tzinfo is None:
+        return False
+    now = now.astimezone(TZ)
+
+    def aware_stamp(value):
         try:
-            deadline = datetime.fromisoformat(str(end).replace("Z", "+00:00"))
-            if deadline.tzinfo is None or deadline < datetime.now(TZ):
-                return False
-        except ValueError:
+            stamp = datetime.fromisoformat(str(value).replace("Z", "+00:00"))
+            return stamp.astimezone(TZ) if stamp.tzinfo is not None else None
+        except (ValueError, TypeError):
+            return None
+
+    research_value = next((topic[key] for key in ("analysis_time", "research_updated_at", "updated_at", "timestamp")
+                           if key in topic), None)
+    research = aware_stamp(research_value)
+    if not research or research.date().isoformat() != day or research > now:
+        return False
+    if "source_as_of" in topic:
+        source = aware_stamp(topic["source_as_of"])
+        if not source or source.date().isoformat() != day or source > now:
+            return False
+    if "valid_until" in topic:
+        deadline = aware_stamp(topic["valid_until"])
+        if not deadline or deadline <= now or deadline < research:
             return False
     return True
 

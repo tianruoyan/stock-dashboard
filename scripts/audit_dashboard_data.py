@@ -8,6 +8,7 @@ from datetime import datetime, timezone, timedelta
 from pathlib import Path
 from typing import Any
 from data_validity import premarket_timing, source_window
+from alert_validity import alert_cross_verified, alert_quote_audit, alert_time_state
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -62,7 +63,7 @@ def main() -> int:
     phase = trading_phase(now)
     validate_alert(files.get("alert.json"), files.get("source-health.json"), issues, now, phase)
     validate_evening(files.get("evening-sentiment.json"), issues, current_date)
-    validate_source_health(files.get("source-health.json"), issues)
+    validate_source_health(files.get("source-health.json"), issues, now)
     validate_automation_health(files.get("automation-health.json"), issues, current_date)
     validate_theme_shifts(files.get("theme-shifts.json"), issues, current_date)
     validate_decision_feed(files.get("decision-feed.json"), issues, current_date)
@@ -428,7 +429,7 @@ CORE_CONTRACTS: dict[str, dict[str, type | tuple[type, ...]]] = {
         "morning_snapshot": dict,
         "morning_review": dict,
         "afternoon_watch": list,
-        "risk": list,
+        "risk": (str, list),
     },
     "postmarket.json": {
         "index": dict,
@@ -489,6 +490,11 @@ def validate_contract_items(file_name: str, data: dict[str, Any], issues: list[d
         review = data.get("morning_review") or {}
         if isinstance(review, dict) and not isinstance(review.get("one_sentence"), str):
             issues.append(issue("warning", file_name, "schema_contract_type", "morning_review.one_sentence 必须是字符串", "morning_review.one_sentence"))
+        if isinstance(data.get("risk"), list):
+            for index, value in enumerate(data["risk"]):
+                if not isinstance(value, str):
+                    path = f"risk[{index}]"
+                    issues.append(issue("warning", file_name, "schema_contract_type", f"{path} 必须是字符串", path))
     elif file_name == "postmarket.json":
         validate_array_objects(file_name, data.get("hotspots"), "hotspots", ("name", "evidence"), issues)
     elif file_name == "evening-sentiment.json":
@@ -582,7 +588,7 @@ def validate_alert(data: Any, source_health: Any, issues: list[dict[str, Any]], 
         return
     if data.get("source_status") == "invalidated" and alerts:
         issues.append(issue("critical", "alert.json", "invalidated_alert_has_rows", "source_status=invalidated 时 alerts 必须为空，禁止展示已撤下污染批次"))
-    polluted = has_polluted_quote_source(source_health)
+    polluted = has_polluted_quote_source(source_health, now)
     trusted_proof = alert_trusted_source_text(data)
     requires_trade_gate = alert_requires_trade_gate(data, alerts, now, phase)
     if alerts and polluted and not has_trusted_alert_source(trusted_proof):
@@ -594,11 +600,20 @@ def validate_alert(data: Any, source_health: Any, issues: list[dict[str, Any]], 
             code,
             "盘中异动缺少可信源证明；当前阶段只降权参考，不阻断整站发布" if not requires_trade_gate else "行情污染源仍降级，但 alert.json 存在 active alerts 且缺少可信源证明；禁止发布为盘中交易依据"
         ))
-    validate_alert_quote_audit(data, alerts, polluted, issues, requires_trade_gate)
+    # Batch metadata covers retained history too. A stale unverified record must
+    # neither certify nor block a different, current event's individual audit.
+    validate_alert_quote_audit(data, alerts, polluted, issues, False)
+    if requires_trade_gate:
+        for item in alerts:
+            if isinstance(item, dict) and item.get("confirmation_level") == "confirmed" and alert_item_is_fresh(data, item, now, phase):
+                row_data = {"quote_audit": alert_quote_audit(item, data.get("quote_audit"))}
+                validate_alert_quote_audit(row_data, [item], polluted, issues, True)
     for index, item in enumerate(alerts):
         if not isinstance(item, dict):
             issues.append(issue("critical", "alert.json", "bad_alert_item", f"alerts[{index}] 不是对象", f"alerts[{index}]"))
             continue
+        if alert_time_state(item, data, now) == "unknown":
+            issues.append(issue("warning", "alert.json", "alert_validity_unverified", f"alerts[{index}] 触发时间或有效期无法核验，不作为当前触发", f"alerts[{index}].valid_until"))
         for key in ("id", "time", "sector", "type", "leaders", "signal_type"):
             if item.get(key) in (None, "", []):
                 issues.append(issue("warning", "alert.json", "missing_alert_field", f"alerts[{index}].{key} 缺失", f"alerts[{index}]"))
@@ -677,10 +692,10 @@ def validate_alert_quote_audit(data: dict[str, Any], alerts: list[Any], polluted
             severity = "critical" if requires_trade_gate else "warning"
             code = "bad_alert_quote_audit" if requires_trade_gate else "historical_alert_quote_audit_incomplete"
             issues.append(issue(severity, "alert.json", code, f"quote_audit.sanity_checks.sample_count 非数字：{sanity.get('sample_count')}", "quote_audit.sanity_checks"))
-    if polluted and sanity.get("cross_source_verified") is not True:
+    if (polluted or requires_trade_gate) and not alert_cross_verified(audit):
         severity = "critical" if requires_trade_gate else "warning"
         code = "alert_quote_not_cross_verified" if requires_trade_gate else "historical_alert_not_cross_verified"
-        issues.append(issue(severity, "alert.json", code, "行情污染源仍降级，明确确认的盘中交易信号必须 quote_audit.sanity_checks.cross_source_verified=true 后才能发布" if requires_trade_gate else "行情污染源仍降级，观察或历史信号未交叉验证，只能降权参考", "quote_audit.sanity_checks"))
+        issues.append(issue(severity, "alert.json", code, "明确确认的当前盘中交易信号必须通过逐条交叉行情核验后才能发布" if requires_trade_gate else "当前行情污染源仍降级，观察或历史信号未交叉验证，只能降权参考", "quote_audit.sanity_checks"))
 
 
 def alert_requires_trade_gate(data: dict[str, Any], alerts: list[Any], now: datetime, phase: str) -> bool:
@@ -694,11 +709,7 @@ def alert_requires_trade_gate(data: dict[str, Any], alerts: list[Any], now: date
     ]
     if not confirmed:
         return False
-    latest = latest_alert_event_time(data, confirmed, now)
-    if latest is None:
-        return True
-    age_seconds = (now - latest).total_seconds()
-    return 0 <= age_seconds <= 5 * 60
+    return any(alert_item_is_fresh(data, item, now, phase) for item in confirmed)
 
 
 def validate_candidate_alert_evidence(
@@ -803,11 +814,7 @@ def numeric_value(value: Any) -> float | None:
 def alert_item_is_fresh(data: dict[str, Any], item: dict[str, Any], now: datetime, phase: str) -> bool:
     if phase not in {"morning", "afternoon"}:
         return False
-    event_time = latest_alert_event_time(data, [item], now)
-    if event_time is None:
-        return True
-    age_seconds = (now - event_time).total_seconds()
-    return 0 <= age_seconds <= 5 * 60
+    return alert_time_state(item, data, now) == "current"
 
 
 def latest_alert_event_time(data: dict[str, Any], alerts: list[Any], now: datetime) -> datetime | None:
@@ -849,13 +856,15 @@ def max_abs_alert_leader_pct(alerts: list[Any]) -> float | None:
     return max(values) if values else None
 
 
-def has_polluted_quote_source(source_health: Any) -> bool:
+def has_polluted_quote_source(source_health: Any, now: datetime | None = None) -> bool:
     if not isinstance(source_health, dict):
         return False
     sources = source_health.get("sources") or {}
     iterator = sources.items() if isinstance(sources, dict) else []
     for name, source in iterator:
         if not isinstance(source, dict):
+            continue
+        if source_window(source, now) != "current":
             continue
         status = source.get("status")
         text = f"{name} {source.get('note') or ''} {source.get('detail') or ''} {source.get('usage') or ''}"
@@ -891,7 +900,7 @@ def validate_evening(data: Any, issues: list[dict[str, Any]], current_date: str)
                 issues.append(issue("warning", "evening-sentiment.json", "missing_p0_field", f"p0_alerts[{index}].{key} 缺失"))
 
 
-def validate_source_health(data: Any, issues: list[dict[str, Any]]) -> None:
+def validate_source_health(data: Any, issues: list[dict[str, Any]], now: datetime | None = None) -> None:
     if not isinstance(data, dict):
         return
     sources = data.get("sources") or {}
@@ -903,7 +912,7 @@ def validate_source_health(data: Any, issues: list[dict[str, Any]]) -> None:
     for name, source in iterator:
         if not isinstance(source, dict):
             continue
-        window = source_window(source)
+        window = source_window(source, now)
         if window != "current":
             historical += window == "history"
             unknown += window == "unknown"
@@ -1221,6 +1230,7 @@ def issue_impact(code: str, file: str, message: str) -> tuple[str, str]:
         "missing_decision_brief_field",
         "schema_contract_missing",
         "schema_contract_type",
+        "alert_validity_unverified",
     }:
         return "signal_review", "机会信号必须降权并转入验证"
     return "background_review", "仅作背景复核，不单独阻断交易判断"

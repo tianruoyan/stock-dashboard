@@ -77,6 +77,12 @@ let v22EnvironmentDecision = null;
 let v22DecisionCandidate = null;
 let v2LoadInFlight = false;
 let radarRefreshTimer = null;
+let v2RefreshPromise = null;
+let v2RefreshListenersBound = false;
+let v2PageHidden = false;
+const v2ReadCache = new Map();
+const v2SourceReads = new Map();
+const v22Learning = { replay: null, evaluation: null, comparison: null };
 let logicCatalogState = { entries: [], categories: [] };
 let logicSearchQuery = "";
 let logicCategory = "all";
@@ -92,7 +98,47 @@ const USER_SOURCE_LABELS = { ths_cloud: "同花顺云", manual_add: "手动添�
 
 // Infrastructure timeout only: this does not change any investment or signal threshold.
 const V2_READ_TIMEOUT_MS = 12000;
+function isV2Record(value) {
+  return Boolean(value && typeof value === "object" && !Array.isArray(value));
+}
+
+function hasV2SafeRows(value) {
+  if (Array.isArray(value)) return value.every(item => item !== null && hasV2SafeRows(item));
+  if (isV2Record(value)) return Object.values(value).every(hasV2SafeRows);
+  return true;
+}
+
+// Validate the source contract before replacing any last-known-good view.
+// Empty arrays are valid results; error objects, null rows and wrong field types are not.
+function validateV2Payload(url, data) {
+  if (!isV2Record(data) || data.error || !hasV2SafeRows(data)) return false;
+  const file = String(url).split("?")[0].split("/").pop();
+  const records = (...keys) => keys.every(key => isV2Record(data[key]));
+  const rows = (...keys) => keys.every(key => Array.isArray(data[key]) && data[key].every(isV2Record));
+  switch (file) {
+    case "decision-system.json": return records("system", "data_quality_gate", "market_environment") && rows("opportunity_radar", "validation_queue") &&
+      ["style_map", "stock_pool", "research_library", "portfolio_risk", "governance"].every(key => data[key] === undefined || isV2Record(data[key])) &&
+      ["opportunity_history", "source_registry"].every(key => data[key] === undefined || (Array.isArray(data[key]) && data[key].every(isV2Record)));
+    case "market-environment.json": return records("user_view") && rows("dimensions", "source_status");
+    case "environment-decision.json": return records("state_transition") && rows("style_regimes", "cross_market_mappings", "g5_links");
+    case "decision-system-candidate.json": return records("summary") && rows("current_cases", "validation_cases", "history_cases");
+    case "stock-pool-shadow.json": return records("formal_observation", "temporary_candidates") &&
+      [data.formal_observation.items, data.temporary_candidates.items]
+        .every(value => Array.isArray(value) && value.every(isV2Record)) &&
+      (data.formal_observation.near_ready_items === undefined || (Array.isArray(data.formal_observation.near_ready_items) && data.formal_observation.near_ready_items.every(isV2Record)));
+    case "replay-index.json": return Number.isFinite(data.snapshot_count) && rows("snapshots");
+    case "model-evaluation.json": return Number.isFinite(data.record_count) && records("recommendation");
+    case "parallel-comparison.json": return records("v2_baseline", "v22_candidate", "cutover");
+    default: return false;
+  }
+}
+
+// This derivative can only read the eight already-published static assets.
+const V2_PUBLIC_READS = new Set([V2_DATA_URL, V22_STOCK_POOL_URL, V22_MARKET_ENVIRONMENT_URL,
+  V22_ENVIRONMENT_DECISION_URL, V22_DECISION_CANDIDATE_URL, V22_REPLAY_URL, V22_EVALUATION_URL, V22_PARALLEL_URL]);
+
 async function readV2Json(url) {
+  if (!V2_PUBLIC_READS.has(String(url).split("?")[0])) throw new Error("此资料未公开");
   const controller = typeof AbortController === "function" ? new AbortController() : null;
   let timer;
   const timeout = new Promise((_, reject) => {
@@ -105,11 +151,45 @@ async function readV2Json(url) {
     const response = await fetch(url, { cache: "no-store", ...(controller ? { signal: controller.signal } : {}) });
     if (!response.ok) throw new Error("资料读取失败");
     const payload = await response.json();
-    if (!payload || typeof payload !== "object" || Array.isArray(payload)) throw new Error("资料格式不完整");
+    if (!validateV2Payload(url, payload)) throw new Error("资料格式不完整");
     return payload;
   })();
   try { return await Promise.race([read, timeout]); }
   finally { clearTimeout(timer); }
+}
+
+// Each source settles independently and has its own bounded fetch + body deadline.
+// A late timed-out response has no path to mutate the cache or the UI.
+function refreshV2Source(key, label, read, render, unavailable) {
+  if (v2SourceReads.has(key)) return v2SourceReads.get(key);
+  const pending = (async () => {
+    try {
+      const data = await read();
+      render(data);
+      v2ReadCache.set(key, { data, render });
+      dataReadStatus.set(key, { label, data, failed: false });
+      return true;
+    } catch (_error) {
+      recordDataStatus(key, label, null, true);
+      const previous = v2ReadCache.get(key);
+      if (previous) previous.render(previous.data);
+      else if (unavailable) unavailable();
+      return false;
+    } finally {
+      renderDataStatus();
+      v2SourceReads.delete(key);
+    }
+  })();
+  v2SourceReads.set(key, pending);
+  return pending;
+}
+
+function readV2Source(url) {
+  return readV2Json(`${url}?v=${Date.now()}`);
+}
+
+function hasV2Target(...ids) {
+  return ids.some(id => document.getElementById(id));
 }
 
 function escapeHtml(value) {
@@ -466,16 +546,15 @@ function renderMarketSentimentV22(view) {
 }
 
 async function loadMarketEnvironmentV22() {
-  const target = document.getElementById("market-environment-v22-summary");
-  try {
-    renderEnvironmentV22(await readV2Json(`${V22_MARKET_ENVIRONMENT_URL}?v=${Date.now()}`));
-  } catch (_error) {
-    recordDataStatus("market", "市场资料", null, true);
-    if (target && !v22MarketEnvironment) target.innerHTML = '<div class="empty-state">市场资料暂不可用，请稍后刷新。</div>';
-  }
+  if (!hasV2Target("market-environment", "market-environment-v22-summary", "home-market-action", "intraday-market-overview")) return;
+  return refreshV2Source("market", "市场资料", () => readV2Source(V22_MARKET_ENVIRONMENT_URL), renderEnvironmentV22, () => {
+    const target = document.getElementById("market-environment-v22-summary");
+    if (target) target.innerHTML = '<div class="empty-state">市场资料暂不可用，请稍后刷新。</div>';
+  });
 }
 
 function renderEnvironmentDecisionV22(data) {
+  v22EnvironmentDecision = data;
   recordDataStatus("environment", "市场判断", data);
   const decisionTarget = document.getElementById("market-environment-v22-decision");
   const styleTarget = document.getElementById("style-regime-v22");
@@ -606,23 +685,18 @@ function renderIntradayMarketOverview() {
 }
 
 async function loadEnvironmentDecisionV22() {
-  if (!document.getElementById("market-environment-v22-decision") && !document.getElementById("opportunity-risk-radar")) return;
-  try {
-    v22EnvironmentDecision = await readV2Json(`${V22_ENVIRONMENT_DECISION_URL}?v=${Date.now()}`);
-    renderEnvironmentDecisionV22(v22EnvironmentDecision);
-    if (v2State) {
-      if (v22DecisionCandidate) renderDecisionCandidateV22(v22DecisionCandidate);
-      else {
-        const radar = radarByCurrentTime(v2State);
-        renderRadar(radar.current);
-        renderValidation(list(v2State.validation_queue));
-      }
+  if (!hasV2Target("market-environment-v22-decision", "opportunity-risk-radar", "intraday-market-overview")) return;
+  return refreshV2Source("environment", "市场判断", () => readV2Source(V22_ENVIRONMENT_DECISION_URL), data => {
+    renderEnvironmentDecisionV22(data);
+    if (v22DecisionCandidate) renderDecisionCandidateV22(v22DecisionCandidate);
+    else if (v2State) {
+      renderRadar(radarByCurrentTime(v2State).current);
+      renderValidation(list(v2State.validation_queue));
     }
-  } catch (_error) {
+  }, () => {
     const target = document.getElementById("market-environment-v22-decision");
-    recordDataStatus("environment", "市场判断", null, true);
-    if (target && !v22EnvironmentDecision) target.innerHTML = '<div class="empty-state">市场判断暂不可用，请稍后刷新。</div>';
-  }
+    if (target) target.innerHTML = '<div class="empty-state">市场判断暂不可用，请稍后刷新。</div>';
+  });
 }
 
 function environmentGateFor(card) {
@@ -1027,10 +1101,14 @@ function renderStockPoolLayers() {
     const observationLabel = [sideLabel, tierLabel, item.evidence_grade ? `证据 ${item.evidence_grade}` : ""].filter(Boolean).join(" · ");
     return `<article class="asset-layer-card"><div><strong>${escapeHtml(item.name)}</strong><span>${escapeHtml(stockCodeLabel(item.code))}</span></div>${renderLayerQuote(item.quote)}<p>当前判断：${escapeHtml(humanText(item.ai_view || "等待确认"))}</p><p>${escapeHtml(observationLabel)}</p><p>还需补充：${list(item.missing_requirements).slice(0, 3).map(value => escapeHtml(humanText(value))).join("、") || "无"}</p></article>`;
   }).join("");
-  summary.innerHTML = `<div class="layer-summary"><span>我的关注 <b>${escapeHtml(userUnavailable ? "—" : userItems.length)}</b></span><span>正式观察 <b>${escapeHtml(formal.active_count ?? 0)}</b></span><span>系统发现 <b>${escapeHtml(v22StockPool?.temporary_candidates?.count ?? 0)}</b></span></div><p class="layer-boundary-note">系统发现不会自动进入我的关注；正式观察也不会自动成为交易候选，需明确允许并通过市场门禁。</p>`;
+  summary.innerHTML = `<div class="layer-summary"><span>我的关注 <b>${escapeHtml(userUnavailable ? "—" : userItems.length)}</b></span><span>正式观察 <b>${escapeHtml(v22StockPool ? (formal.active_count ?? 0) : "—")}</b></span><span>系统发现 <b>${escapeHtml(v22StockPool ? (v22StockPool.temporary_candidates?.count ?? 0) : "—")}</b></span></div><p class="layer-boundary-note">系统发现不会自动进入我的关注；正式观察也不会自动成为交易候选，需明确允许并通过市场门禁。</p>`;
   userTarget.innerHTML = userItems.slice(0, 8).map(item => `<article class="asset-layer-card user-owned"><div><strong>${escapeHtml(item["名称"] || "名称待核验")}</strong><span>${escapeHtml(stockCodeLabel(item["代码"]))}</span></div>${renderLayerQuote(findUserAssetQuote(item["代码"]))}<p>我的优先级：${escapeHtml(USER_PRIORITY_LABELS[item["用户优先级"]] || "未设置")} · 关注目的：${escapeHtml(USER_INTENT_LABELS[item["关注目的"]] || "未设置")}</p><p>我的备注：${escapeHtml(item["用户备注"] || "未填写")}</p><small>来源：${list(item["有效来源"]).map(value => escapeHtml(USER_SOURCE_LABELS[value] || "用户确认来源")).join(" / ") || "等待核验"}</small></article>`).join("") || `<div class="layer-empty">${userUnavailable ? "公开分享不提供用户自选，不能据此判断关注清单是否为空。" : "当前清单中没有已确认的自选股票。"}</div>`;
   formalTarget.innerHTML = `${activeFormal.length ? "" : '<p class="layer-warning">当前没有正式观察结果；以下标的是研究信息较完整的待确认对象。</p>'}${formalCards || '<div class="layer-empty">当前未形成正式观察。</div>'}`;
   temporaryTarget.innerHTML = temporary.slice(0, 8).map(item => `<article class="asset-layer-card temporary"><div><strong>${escapeHtml(item.name)}</strong><span>${escapeHtml(stockCodeLabel(item.code))}</span></div>${renderLayerQuote(item.quote)}<p>${escapeHtml(humanText(item.ai_view || "系统发现，尚未加入我的关注"))}</p><p>发现依据：${escapeHtml(humanText(item.discovery_context || "等待补充"))}</p><small>风险：${escapeHtml(humanText(item.risk || "等待核验"))}</small></article>`).join("") || '<div class="layer-empty">当前系统线索没有可核验代表股。</div>';
+  if (!v22StockPool) {
+    formalTarget.innerHTML = '<div class="layer-empty">正式观察资料暂不可用，不能判断清单是否为空。</div>';
+    temporaryTarget.innerHTML = '<div class="layer-empty">系统发现资料暂不可用，不能判断是否有新线索。</div>';
+  }
 }
 
 function renderCockpitUserContext() {
@@ -1038,15 +1116,16 @@ function renderCockpitUserContext() {
 }
 
 async function loadStockPoolLayers() {
-  if (!document.getElementById("stock-pool-v22")) return;
-  try {
-    v22StockPool = await readV2Json(`${V22_STOCK_POOL_URL}?v=${Date.now()}`);
-    privateUserAssets = { "状态": "安全分享版不发布", "数量": 0, "用户自选": [] };
+  if (!hasV2Target("stock-pool-v22")) return;
+  privateUserAssets = { "状态": "安全分享版不发布", "数量": 0, "用户自选": [] };
+  return refreshV2Source("stockPool", "公开股票池", () => readV2Source(V22_STOCK_POOL_URL), data => {
+    v22StockPool = data;
     renderStockPoolLayers();
-  } catch (_error) {
+  }, () => {
+    renderStockPoolLayers();
     const target = document.getElementById("stock-pool-v22-summary");
     if (target) target.innerHTML = '<div class="empty-state">公开股票池资料暂未读到，不能判断清单是否为空。</div>';
-  }
+  });
 }
 
 function renderReview(data, model) {
@@ -1237,7 +1316,6 @@ function renderAll(data, refreshReason = "自动更新") {
   const radar = radarByCurrentTime(data);
   setText("v2-mode", "公开只读 · V2 试用观察");
   setText("v2-updated", `结论依据截至 ${compactTime(system.decision_as_of)}（北京时间）`);
-  setText("v2-refresh-status", `页面读取于 ${compactTimeWithSeconds(new Date().toISOString())}（北京时间），不代表行情已更新`);
   const error = document.getElementById("page-load-error");
   if (error) error.innerHTML = "";
   recordDataStatus("decision", "结论依据", data);
@@ -1282,6 +1360,11 @@ function renderDecisionCandidateV22(data) {
     setText("home-v22-candidate-copy", "这些方向来自旧日期，等待最新资料后再核对。");
     setText("v22-case-projection-note", `观察资料日期：${snapshotInfo(data).date || "尚未核验"}，仅供回看。`);
   }
+  if (snapshotInfo(data).current && list(data.current_cases).length && !radarByCurrentTime({ opportunity_radar: data.current_cases }).current.length) {
+    setText("home-v22-candidate-state", "观察有效期已结束");
+    setText("home-v22-candidate-copy", "已列方向已过有效时间或缺少明确期限，等待新的观察资料。");
+    setText("v22-case-projection-note", "已列方向当前没有有效观察期限，仅保留回看。");
+  }
   const clueTarget = document.getElementById("v22-clue-explanation");
   if (clueTarget) {
     clueTarget.textContent = currentClues || parkedClues
@@ -1298,15 +1381,12 @@ function renderDecisionCandidateV22(data) {
 }
 
 async function loadDecisionCandidateV22() {
-  if (!document.getElementById("opportunity-risk-radar") && !document.getElementById("home-v22-candidate-state") && !document.getElementById("research-themes") && !document.getElementById("cockpit-user-assets")) return;
-  try {
-    renderDecisionCandidateV22(await readV2Json(`${V22_DECISION_CANDIDATE_URL}?v=${Date.now()}`));
-  } catch (_error) {
-    recordDataStatus("candidate", "机会观察资料", null, true);
+  if (!hasV2Target("opportunity-risk-radar", "home-v22-candidate-state", "research-themes", "cockpit-user-assets")) return;
+  return refreshV2Source("candidate", "机会观察资料", () => readV2Source(V22_DECISION_CANDIDATE_URL), renderDecisionCandidateV22, () => {
     setText("home-v22-candidate-state", "暂未更新");
-    setText("home-v22-candidate-copy", "当前结果暂未更新。");
-    setText("v22-case-projection-note", v22DecisionCandidate ? "更新失败，保留上次资料，请核对日期。" : "机会观察资料暂不可用。");
-  }
+    setText("home-v22-candidate-copy", "机会观察资料暂不可用，请稍后核对。");
+    setText("v22-case-projection-note", "机会观察资料暂不可用。");
+  });
 }
 
 function renderV22Learning(replay, evaluation, comparison) {
@@ -1314,57 +1394,91 @@ function renderV22Learning(replay, evaluation, comparison) {
   if (!target) return;
   const baseline = comparison?.v2_baseline || {};
   const candidate = comparison?.v22_candidate || {};
-  target.innerHTML = `<div class="v22-learning-grid"><article><span>已记录当时行情</span><strong>${escapeHtml(replay?.trigger_quote_snapshot_count ?? 0)} 次</strong><p>同时保留 ${escapeHtml(replay?.decision_case_snapshot_count ?? replay?.snapshot_count ?? 0)} 次当时判断，后续不会覆盖。</p></article><article><span>已有后续结果</span><strong>${escapeHtml(evaluation?.record_count ?? 0)} 例</strong><p>${escapeHtml(humanText(evaluation?.recommendation?.reason || "等待更多结果。"))}</p></article><article><span>等待确认的方向</span><strong>${escapeHtml(baseline.validation_count ?? 0)} → ${escapeHtml(candidate.validation_count ?? 0)}</strong><p>只有依据完整的方向才进入当前机会。</p></article></div><div class="v22-learning-hold"><strong>当前结论：继续观察</strong><p>${escapeHtml(humanText(comparison?.cutover?.reason || "仍需积累结果。"))}</p></div>`;
+  target.innerHTML = `<div class="v22-learning-grid"><article><span>已记录当时行情</span><strong>${escapeHtml(replay ? (replay.trigger_quote_snapshot_count ?? 0) : "—")} 次</strong><p>同时保留 ${escapeHtml(replay ? (replay.decision_case_snapshot_count ?? replay.snapshot_count ?? 0) : "—")} 次当时判断，后续不会覆盖。</p></article><article><span>已有后续结果</span><strong>${escapeHtml(evaluation?.record_count ?? "—")} 例</strong><p>${escapeHtml(humanText(evaluation?.recommendation?.reason || (evaluation ? "等待更多结果。" : "评估资料暂不可用。")))}</p></article><article><span>等待确认的方向</span><strong>${escapeHtml(comparison ? (baseline.validation_count ?? 0) : "—")} → ${escapeHtml(comparison ? (candidate.validation_count ?? 0) : "—")}</strong><p>只有依据完整的方向才进入当前机会。</p></article></div><div class="v22-learning-hold"><strong>当前结论：继续观察</strong><p>${escapeHtml(humanText(comparison?.cutover?.reason || (comparison ? "仍需积累结果。" : "对照资料暂不可用。")))}</p></div>`;
 }
 
 async function loadV22Learning() {
-  const target = document.getElementById("v22-learning-summary");
-  if (!target) return;
-  try {
-    const [replayResponse, evaluationResponse, parallelResponse] = await Promise.all([
-      fetch(`${V22_REPLAY_URL}?v=${Date.now()}`, { cache: "no-store" }),
-      fetch(`${V22_EVALUATION_URL}?v=${Date.now()}`, { cache: "no-store" }),
-      fetch(`${V22_PARALLEL_URL}?v=${Date.now()}`, { cache: "no-store" })
-    ]);
-    if (!replayResponse.ok || !evaluationResponse.ok || !parallelResponse.ok) throw new Error("回溯结果暂不可用");
-    renderV22Learning(await replayResponse.json(), await evaluationResponse.json(), await parallelResponse.json());
-  } catch (_error) {
-    target.innerHTML = '<div class="empty-state">回溯结果暂未更新，保留上次可用结果。</div>';
-  }
+  if (!hasV2Target("v22-learning-summary")) return;
+  return Promise.allSettled([
+    ["replay", "回溯记录", V22_REPLAY_URL],
+    ["evaluation", "评估记录", V22_EVALUATION_URL],
+    ["comparison", "对照记录", V22_PARALLEL_URL]
+  ].map(([key, label, url]) => refreshV2Source(key, label, () => readV2Source(url), data => {
+    v22Learning[key] = data;
+    renderV22Learning(v22Learning.replay, v22Learning.evaluation, v22Learning.comparison);
+  }, () => renderV22Learning(v22Learning.replay, v22Learning.evaluation, v22Learning.comparison))));
 }
 
-async function loadV2(refreshReason = "自动更新") {
-  if (v2LoadInFlight) return;
-  v2LoadInFlight = true;
-  try {
-    const data = await readV2Json(`${V2_DATA_URL}?v=${Date.now()}`);
-    if (!data.system || !data.data_quality_gate || !data.market_environment) throw new Error("结论资料不完整");
-    renderAll(data, refreshReason);
-    await loadCockpitPhaseView();
-  } catch (_error) {
-    const radar = document.getElementById("opportunity-risk-radar") || document.getElementById("page-load-error");
-    if (radar && !v2State) radar.innerHTML = '<div class="empty-state error-state">数据暂时没有更新成功，请稍后重试。</div>';
-    recordDataStatus("decision", "结论依据", null, true);
-    if (!v2State) renderHomeUnavailable();
-    setText("v2-refresh-status", v2State ? "更新失败，保留上次资料，请核对日期" : "更新失败，结论暂不可用");
-  } finally {
-    v2LoadInFlight = false;
+function renderV2CachedViews() {
+  if (v2State) renderAll(v2State);
+  if (v22MarketEnvironment) renderEnvironmentV22(v22MarketEnvironment);
+  if (v22EnvironmentDecision) renderEnvironmentDecisionV22(v22EnvironmentDecision);
+  if (v22DecisionCandidate) renderDecisionCandidateV22(v22DecisionCandidate);
+  for (const [key, cached] of v2ReadCache) {
+    if (!["decision", "market", "environment", "candidate"].includes(key)) cached.render(cached.data);
   }
+  renderDataStatus();
+}
+
+function loadV2(refreshReason = "自动更新") {
+  // Recompute expiry even when a request is pending or every request fails.
+  renderV2CachedViews();
+  if (v2RefreshPromise) return v2RefreshPromise;
+  v2LoadInFlight = true;
+  v2RefreshPromise = (async () => {
+    try {
+      await Promise.allSettled([
+        refreshV2Source("decision", "结论依据", () => readV2Source(V2_DATA_URL), renderAll, () => {
+          const target = document.getElementById("opportunity-risk-radar") || document.getElementById("page-load-error");
+          if (target) target.innerHTML = '<div class="empty-state error-state">结论资料暂不可用，请稍后刷新。</div>';
+          renderHomeUnavailable();
+        }),
+        loadMarketEnvironmentV22(), loadEnvironmentDecisionV22(), loadDecisionCandidateV22(),
+        loadStockPoolLayers(), loadIndustryTracking(), loadCockpitPhaseView(), loadV22Learning(), loadLogicCatalog(),
+      ]);
+    } finally {
+      try {
+        renderV2CachedViews();
+        const failed = [...dataReadStatus.values()].some(row => row.failed);
+        setText("v2-refresh-status", failed
+          ? `更新失败的资料保留原日期或显示暂不可用；最近尝试 ${compactTimeWithSeconds(new Date().toISOString())}（北京时间）`
+          : `页面读取于 ${compactTimeWithSeconds(new Date().toISOString())}（北京时间），不代表行情已更新`);
+      } finally {
+        v2LoadInFlight = false;
+        v2RefreshPromise = null;
+      }
+    }
+  })();
+  return v2RefreshPromise;
+}
+
+function stopV2RefreshTimer() {
+  if (radarRefreshTimer !== null) clearInterval(radarRefreshTimer);
+  radarRefreshTimer = null;
 }
 
 function startRadarAutoRefresh() {
-  if ((!document.getElementById("opportunity-risk-radar") && !document.body.classList.contains("trading-session-page")) || radarRefreshTimer) return;
-  radarRefreshTimer = setInterval(() => {
-    if (document.visibilityState === "visible") loadV2("30秒自动更新");
-  }, 30000);
+  if (!v2PageHidden && document.visibilityState !== "hidden" && radarRefreshTimer === null) {
+    radarRefreshTimer = setInterval(() => {
+      if (!v2PageHidden && document.visibilityState !== "hidden") loadV2("30秒自动更新");
+    }, 30000);
+  }
+  if (v2RefreshListenersBound) return;
+  v2RefreshListenersBound = true;
   document.addEventListener("visibilitychange", () => {
-    if (document.visibilityState === "visible") loadV2("返回页面更新");
+    if (document.visibilityState === "hidden") stopV2RefreshTimer();
+    else if (!v2PageHidden) { startRadarAutoRefresh(); loadV2("返回页面更新"); }
   });
   if (typeof window.addEventListener === "function") {
-    window.addEventListener("focus", () => loadV2("重新聚焦更新"));
-    window.addEventListener("pagehide", () => {
-      if (radarRefreshTimer) clearInterval(radarRefreshTimer);
-      radarRefreshTimer = null;
+    window.addEventListener("focus", () => {
+      if (!v2PageHidden && document.visibilityState !== "hidden") { startRadarAutoRefresh(); loadV2("重新聚焦更新"); }
+    });
+    window.addEventListener("pagehide", () => { v2PageHidden = true; stopV2RefreshTimer(); });
+    window.addEventListener("pageshow", event => {
+      const resumed = v2PageHidden || Boolean(event?.persisted);
+      v2PageHidden = false;
+      startRadarAutoRefresh();
+      if (resumed && document.visibilityState !== "hidden") loadV2("返回页面更新");
     });
   }
 }
@@ -1380,12 +1494,5 @@ prepareShareMode();
 bindFilters();
 bindStockSearch();
 bindLogicCatalog();
-loadStockPoolLayers();
-loadIndustryTracking();
-loadMarketEnvironmentV22();
-loadEnvironmentDecisionV22();
-loadDecisionCandidateV22();
-loadV22Learning();
-loadLogicCatalog();
 startRadarAutoRefresh();
 loadV2("首次加载");

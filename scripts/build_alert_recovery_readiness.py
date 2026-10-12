@@ -6,6 +6,8 @@ import re
 from datetime import datetime, timezone, timedelta
 from pathlib import Path
 from typing import Any
+from data_validity import source_window
+from alert_validity import alert_cross_verified, alert_quote_audit, alert_quote_failed, alert_time_state
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -22,47 +24,83 @@ def main() -> int:
     source_health = load_json(DATA_DIR / "source-health.json")
     alert = load_json(DATA_DIR / "alert.json")
     quality = load_json(DATA_DIR / "quality-report.json")
-    current_date = signal_date(alert.get("timestamp")) or quality.get("current_signal_date") or now_iso()[:10]
+    report = build_report(source_health, alert, quality, datetime.now(TZ))
+    OUT.write_text(json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    print(f"alert-recovery-readiness: {report['status']} - {report['summary']}")
+    return 0
+
+
+def build_report(source_health: dict[str, Any], alert: dict[str, Any], quality: dict[str, Any], now: datetime) -> dict[str, Any]:
+    current_date = signal_date(alert.get("timestamp")) or quality.get("current_signal_date") or now.date().isoformat()
     source_rows = source_health.get("sources") if isinstance(source_health, dict) else {}
     source_rows = source_rows if isinstance(source_rows, dict) else {}
-    trusted = trusted_source_rows(source_rows)
-    forbidden = forbidden_source_rows(source_rows)
-    active_alerts = alert.get("alerts") if isinstance(alert.get("alerts"), list) else []
+    trusted = trusted_source_rows(source_rows, now)
+    forbidden = forbidden_source_rows(source_rows, now)
+    history = [source_view(key, row, now) for key, row in source_rows.items() if isinstance(row, dict) and source_window(row, now) == "history"]
+    unknown = [source_view(key, row, now) for key, row in source_rows.items() if isinstance(row, dict) and source_window(row, now) == "unknown"]
+    alerts = alert.get("alerts") if isinstance(alert.get("alerts"), list) else []
+    states = [alert_time_state(item, alert, now) for item in alerts]
+    active_alerts = [item for item, state in zip(alerts, states) if state == "current"]
     invalidated = alert.get("source_status") == "invalidated"
     live_no_trigger = alert.get("source_status") == "monitor_live_no_trigger"
     session_closed = alert.get("source_status") == "monitor_session_closed"
     quote_audit = alert.get("quote_audit") if isinstance(alert.get("quote_audit"), dict) else {}
+    verified = sum(alert_cross_verified(alert_quote_audit(item, quote_audit)) for item in active_alerts)
 
-    if active_alerts:
-      status, summary = active_alert_status(quote_audit, forbidden, active_alerts)
-    elif live_no_trigger:
-      status = "monitoring_no_trigger"
-      summary = "盘中短周期监控运行正常，当前没有达到规则门槛的新异动。"
-    elif session_closed:
-      status = "session_closed"
-      summary = "盘中监控已按计划收盘，今日触发仅供复盘。"
+    if session_closed:
+        status = "session_closed"
+        summary = "盘中监控已按计划收盘，保留的触发仅供复盘。"
     elif invalidated and trusted:
-      status = "ready_to_recover"
-      summary = "旧盘中异动批次已撤下；可信行情源可用于重产，但必须带交叉验证审计。"
+        status = "ready_to_recover"
+        summary = "旧盘中异动批次已撤下；当前可信行情源可用于重产，但必须带交叉验证审计。"
     elif invalidated:
-      status = "blocked"
-      summary = "旧盘中异动批次已撤下，但可信行情源不足，暂不能恢复盘中异动触发。"
+        status = "blocked"
+        summary = "旧盘中异动批次已撤下，但当前可信行情源不足，暂不能恢复盘中异动触发。"
+    elif active_alerts:
+        # An aged failure is not a current outage, but it is not proof of recovery
+        # for a candidate that still explicitly uses that same failed source.
+        unresolved = forbidden + [row for row in history + unknown if row["id"] in FORBIDDEN_WHEN_DEGRADED and row["status"] in {"degraded", "bad", "failed"}]
+        status, summary = active_alert_status(quote_audit, unresolved, active_alerts)
+    elif live_no_trigger:
+        # A retained no-trigger document, even freshly generated, is not a
+        # monitor heartbeat or a quote refresh. The automation-health report
+        # owns that live-health check; do not borrow the sources' 24-hour window.
+        status = "waiting"
+        summary = "上次记录为暂无规则触发；当前监控状态需由心跳和行情刷新确认。"
+    elif alerts:
+        status = "historical_only" if all(state in {"expired", "invalidated"} for state in states) else "waiting_review"
+        summary = "保留的异动均已过期或失效，仅供复盘。" if status == "historical_only" else "保留的异动缺少可核验的当前有效期，暂不作为当前触发。"
     else:
-      status = "waiting"
-      summary = "盘中异动暂无 active alerts，等待下一次盘中扫描。"
+        status = "waiting"
+        summary = "盘中异动暂无有效触发，等待下一次盘中扫描。"
 
     report = {
-        "timestamp": now_iso(),
+        "timestamp": now.replace(microsecond=0).isoformat(),
         "current_signal_date": current_date,
         "status": status,
         "summary": summary,
         "alert_state": {
             "source_status": alert.get("source_status") or "active",
+            "total_count": len(alerts),
             "active_count": len(active_alerts),
+            "current_count": len(active_alerts),
+            "expired_count": states.count("expired"),
+            "closed_count": states.count("closed"),
+            "invalidated_count": states.count("invalidated"),
+            "time_unverified_count": states.count("unknown"),
+            "verified_count": verified,
+            "unverified_count": len(active_alerts) - verified,
             "note": alert.get("note") or "",
         },
         "trusted_sources": trusted,
         "forbidden_sources": forbidden,
+        "historical_sources": history,
+        "unverified_sources": unknown,
+        "source_counts": {
+            "current": sum(source_window(row, now) == "current" for row in source_rows.values() if isinstance(row, dict)),
+            "historical": len(history),
+            "unverified": len(unknown),
+        },
         "recovery_policy": {
             "primary_quote_source": "tencent_http",
             "structure_source": "eastmoney_push2_akshare",
@@ -89,26 +127,25 @@ def main() -> int:
             "该文件供自动化进程和构建门禁使用，不进入交易主页面。",
             "盘中异动恢复必须优先使用腾讯 A股批量报价和分钟线，东财只用于涨跌停/炸板结构数据。",
             "同花顺/新浪/akshare 解码异常期间不得作为 active alert 的唯一报价依据。",
+            "历史来源检测保留原状态，不计为当前故障，也不代表已恢复；文件生成时间不刷新任何来源检测时间。",
+            "current_count 与 active_count 仅统计当前有效期内记录；unverified_count 为其中未通过交叉核验的数量，时间无法核验另计。",
         ],
     }
-    OUT.write_text(json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
-    print(f"alert-recovery-readiness: {status} - {summary}")
-    return 0
+    return report
 
 
 def active_alert_status(quote_audit: dict[str, Any], forbidden: list[dict[str, Any]], alerts: list[Any]) -> tuple[str, str]:
-    sanity = quote_audit.get("sanity_checks") if isinstance(quote_audit, dict) else {}
-    sanity = sanity if isinstance(sanity, dict) else {}
-    cross_verified = sanity.get("cross_source_verified") is True
-    source_text = json.dumps(quote_audit, ensure_ascii=False)
-    forbidden_used = any(row["id"] in source_text for row in forbidden)
+    audits = [alert_quote_audit(item, quote_audit) for item in alerts if isinstance(item, dict)]
+    forbidden_used = any(row["id"] in json.dumps(audit, ensure_ascii=False) for row in forbidden for audit in audits)
+    if not audits or forbidden_used or any(not quote_audit_complete(audit) or alert_quote_failed(audit) for audit in audits):
+        return "active_needs_review", "当前异动的行情审计不完整或存在冲突，需复核后使用。"
     confirmed = [item for item in alerts if isinstance(item, dict) and item.get("confirmation_level") == "confirmed"]
     candidates = [item for item in alerts if isinstance(item, dict) and item.get("confirmation_level") == "candidate"]
-    if confirmed and cross_verified and not forbidden_used:
-        return "active_verified", "盘中异动已带交叉验证审计，可作为提示但仍需看盘面承接。"
-    if not confirmed and candidates and quote_audit_complete(quote_audit):
+    if confirmed and all(alert_cross_verified(alert_quote_audit(item, quote_audit)) for item in confirmed):
+        return "active_verified", "当前确认异动已带交叉验证审计，可作为提示但仍需看盘面承接。"
+    if not confirmed and len(candidates) == len(alerts):
         return "candidate_visible", "盘中候选异动证据完整，可展示为待确认；未通过双源核验前不得升级为确认机会。"
-    return "active_needs_review", "盘中异动已有 active alerts，但 quote_audit 不完整或仍引用异常源，需复核后使用。"
+    return "active_needs_review", "当前异动尚未通过确认门禁，需复核后使用。"
 
 
 def quote_audit_complete(quote_audit: dict[str, Any]) -> bool:
@@ -122,38 +159,41 @@ def quote_audit_complete(quote_audit: dict[str, Any]) -> bool:
     return all(key in sanity for key in ("sample_count", "max_abs_leader_change_pct", "cross_source_verified"))
 
 
-def trusted_source_rows(sources: dict[str, Any]) -> list[dict[str, Any]]:
+def trusted_source_rows(sources: dict[str, Any], now: datetime | None = None) -> list[dict[str, Any]]:
     rows = []
     for source_id in TRUSTED_INTRADAY_SOURCES:
         source = sources.get(source_id)
         if not isinstance(source, dict):
             continue
-        if source.get("status") in {"ok", "ok_empty"}:
-            rows.append(source_view(source_id, source))
+        if source.get("status") in {"ok", "ok_empty"} and source_window(source, now) == "current":
+            rows.append(source_view(source_id, source, now))
     return rows
 
 
-def forbidden_source_rows(sources: dict[str, Any]) -> list[dict[str, Any]]:
+def forbidden_source_rows(sources: dict[str, Any], now: datetime | None = None) -> list[dict[str, Any]]:
     rows = []
     for source_id in FORBIDDEN_WHEN_DEGRADED:
         source = sources.get(source_id)
         if not isinstance(source, dict):
             continue
-        if source.get("status") in {"degraded", "bad", "failed"}:
-            rows.append(source_view(source_id, source))
+        if source.get("status") in {"degraded", "bad", "failed"} and source_window(source, now) == "current":
+            rows.append(source_view(source_id, source, now))
     return rows
 
 
-def source_view(source_id: str, source: dict[str, Any]) -> dict[str, str]:
+def source_view(source_id: str, source: dict[str, Any], now: datetime | None = None) -> dict[str, str]:
     return {
         "id": source_id,
         "status": str(source.get("status") or ""),
+        "window": source_window(source, now),
         "checked_at": str(source.get("checked_at") or source.get("last_check") or ""),
         "usage": str(source.get("usage") or source.get("detail") or source.get("note") or ""),
     }
 
 
 def next_actions(status: str, trusted: list[dict[str, Any]], forbidden: list[dict[str, Any]], invalidated: bool, active_alerts: list[Any]) -> list[str]:
+    if status in {"historical_only", "waiting_review"}:
+        return ["保留历史记录，等待监控产生带有效期的新触发；不补造历史触发或核验。"]
     if status == "monitoring_no_trigger":
         return ["继续运行短周期扫描；只有达到价格、成交和扩散门槛后才生成候选异动。"]
     if status == "session_closed":

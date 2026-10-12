@@ -20,7 +20,8 @@ class CoreTopicTests(unittest.TestCase):
         self.assertEqual(len(quotes), 3)
         self.assertEqual(result["status"], "代表股多数走弱")
         self.assertNotIn("雅克科技", str(result))
-        self.assertNotIn("修复已经出现", result["conclusion"])
+        self.assertNotIn("修复已经出现", result["summary"])
+        self.assertNotIn("conclusion", result)
         self.assertTrue(all(row["source"] and row["code"] and row["quote_time"] for row in quotes))
 
     def test_partial_cannot_refresh_the_whole_topic(self):

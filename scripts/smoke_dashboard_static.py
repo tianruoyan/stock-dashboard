@@ -8,6 +8,7 @@ from datetime import datetime, timezone, timedelta
 from pathlib import Path
 from typing import Any
 from data_validity import risk_line
+from audit_dashboard_data import alert_requires_trade_gate as data_alert_requires_trade_gate
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -408,23 +409,9 @@ def check_alert_quote_audit(issues: list[dict[str, Any]]) -> None:
             issues.append(issue("critical" if trade_gate else "warning", "data/alert.json", "missing_quote_audit_field", f"quote_audit.sanity_checks.{key} 缺失"))
 
 
-def alert_requires_trade_gate(data: dict[str, Any], alerts: list[Any]) -> bool:
-    now = datetime.now(TZ)
-    phase = trading_phase(now)
-    if phase not in {"morning", "afternoon"}:
-        return False
-    confirmed = [
-        item for item in alerts
-        if isinstance(item, dict)
-        and item.get("confirmation_level") not in {"candidate", "invalidated"}
-    ]
-    if not confirmed:
-        return False
-    latest = latest_alert_event_time(data, confirmed, now)
-    if latest is None:
-        return True
-    age_seconds = (now - latest).total_seconds()
-    return 0 <= age_seconds <= 5 * 60
+def alert_requires_trade_gate(data: dict[str, Any], alerts: list[Any], now: datetime | None = None) -> bool:
+    now = now or datetime.now(TZ)
+    return data_alert_requires_trade_gate(data, alerts, now, trading_phase(now))
 
 
 def latest_alert_event_time(data: dict[str, Any], alerts: list[Any], now: datetime) -> datetime | None:

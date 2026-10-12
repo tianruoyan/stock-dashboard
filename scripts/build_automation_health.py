@@ -6,7 +6,8 @@ import re
 from datetime import datetime, timezone, timedelta
 from pathlib import Path
 from typing import Any
-from data_validity import source_window
+from data_validity import source_window, topic_current
+from intraday_recovery import close_quote_issue, index_quote_rows, parse_datetime
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -51,12 +52,13 @@ def main() -> int:
         "processes": rows,
         "next_session_readiness": next_session,
         "rules": [
-            "ok：当日文件已产出且未撤下。",
+            "ok：实际分析与所需行情分别覆盖检查点，不能以文件或采集时间代替。",
             "waiting：当前时间尚未到该自动化应产出窗口。",
             "late/missing：到点后仍未产出或时间戳非当日。",
             "invalidated：文件存在但 source_status=invalidated，不得作为交易依据。",
             "failure_type/diagnosis/next_actions 用于区分数据源污染、产出缺失、时间戳异常和等待窗口。",
             "next_session_readiness 用于跨日/开盘前提示下一交易日必须产出的文件，不替代当前信号日期状态。",
+            "专题15:30要求真实研究；18:30只是宽限截止，不是第二个研究生产任务。代表股事实补采不刷新研究时间。",
         ],
     }
     OUT.write_text(json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
@@ -100,24 +102,96 @@ def required_evidence_at(spec: dict[str, Any], now: datetime, day: str) -> datet
     return max(eligible) if eligible else due_datetime(day, "09:30")
 
 
-def evidence_issue(spec: dict[str, Any], data: dict[str, Any], now: datetime, day: str) -> str:
-    required = required_evidence_at(spec, now, day)
-    stamp = parse_timestamp(data.get("analysis_time") or data.get("timestamp"))
+def timestamp_coverage(value: Any, required: datetime, now: datetime, label: str) -> dict[str, Any]:
+    stamp = parse_datetime(value)
+    result = {"status": "ready", "timestamp": now_iso(stamp) if stamp else "",
+              "required_at": now_iso(required), "reason": ""}
     if not stamp:
-        return "分析时间缺失或无法解析"
-    if stamp > now + timedelta(seconds=60):
-        return "分析时间异常超前"
-    if stamp.date().isoformat() != day or stamp < required:
-        return f"分析未覆盖应有检查点 {required.strftime('%H:%M')}"
+        result.update(status="missing", reason=f"{label}时间缺失或无法解析")
+    elif stamp > now + timedelta(seconds=60):
+        result.update(status="future", reason=f"{label}时间异常超前")
+    elif stamp.date() != required.date() or stamp < required:
+        result.update(status="stale", reason=f"{label}未覆盖应有检查点 {required.strftime('%H:%M')}")
+    return result
+
+
+def topic_coverage(data: dict[str, Any], now: datetime, required: datetime) -> dict[str, Any]:
+    """Check individual research, independently of file and quote refreshes."""
+    research, representatives = [], []
+    for item in data.get("topics") or []:
+        if not isinstance(item, dict):
+            continue
+        stamp = item.get("analysis_time") or item.get("research_updated_at") or item.get("updated_at") or item.get("timestamp")
+        row = timestamp_coverage(stamp, required, now, "专题研究")
+        row["name"] = item.get("name") or "未命名专题"
+        if item.get("update_scope") == "closing_representatives_only":
+            row.update(status="missing", timestamp="", reason="仅更新代表股事实，未产出专题研究")
+        elif not item.get("conclusion") or item.get("source_status") == "invalidated":
+            row.update(status="missing", reason="专题研究结论缺失或已撤下")
+        elif row["status"] == "ready" and not topic_current(item, required.date().isoformat(), now=now):
+            row.update(status="missing", reason="专题研究或来源时间无效、超前、非当日或已过有效期")
+        research.append(row)
+        facts = item.get("representative_facts")
+        # Read old producer output truthfully without rewriting its history.
+        if not isinstance(facts, dict) and item.get("update_scope") == "closing_representatives_only":
+            facts = item
+        if isinstance(facts, dict):
+            rep_required = required.replace(hour=15, minute=0)
+            rep = timestamp_coverage(facts.get("source_as_of"), rep_required, now, "代表股行情")
+            quotes = facts.get("representatives") or []
+            issue = close_quote_issue({"indices": quotes}, now, required.date().isoformat()) if quotes else "代表股明细缺失"
+            if issue:
+                rep.update(status="missing", reason=issue)
+            rep["name"] = row["name"]
+            representatives.append(rep)
+    ready = sum(row["status"] == "ready" for row in research)
+    status = "ready" if research and ready == len(research) else ("partial" if ready else "missing")
+    reason = "" if status == "ready" else f"专题研究未覆盖15:30检查点（{ready}/{len(research)}项）；代表股事实更新不替代研究"
+    rep_ready = sum(row["status"] == "ready" for row in representatives)
+    return {
+        "research_coverage": {"status": status, "ready_count": ready, "total_count": len(research),
+                              "required_at": now_iso(required), "reason": reason, "items": research},
+        "representative_coverage": {"status": "available" if rep_ready else "missing", "ready_count": rep_ready,
+                                    "total_count": len(research), "scope": "representatives_only", "items": representatives},
+        "producer_scope": "representative_facts_only_in_repo",
+        "research_producer": "external_codex_schedule_requires_mac_verification",
+        "research_due": "15:30", "grace_deadline": "18:30", "grace_is_producer": False,
+    }
+
+
+def evidence_coverage(spec: dict[str, Any], data: dict[str, Any], now: datetime, day: str) -> dict[str, Any]:
+    required = required_evidence_at(spec, now, day)
+    if spec["id"] == "topics":
+        return topic_coverage(data, now, required)
+    analysis = timestamp_coverage(data.get("analysis_time") or data.get("timestamp"), required, now, "分析")
+    if "intraday_factual_snapshot" in str(data.get("status") or ""):
+        analysis.update(status="missing", reason="仅有行情事实快照，尚无本检查点分析")
+    result = {"analysis_coverage": analysis}
     if spec["id"] == "intraday":
-        quote = parse_timestamp(data.get("market_data_as_of") or data.get("market_time"))
-        if not quote:
-            return "行情时间缺失，不能以文件生成时间替代"
-        if quote > now + timedelta(seconds=60):
-            return "行情时间异常超前"
-        if quote.date().isoformat() != day or quote < required - timedelta(minutes=5):
-            return f"行情未覆盖应有检查点 {required.strftime('%H:%M')}"
-    return ""
+        result["recovery_scope"] = "quotes_only"
+        result["analysis_producer"] = "external_codex_schedule_requires_mac_verification"
+        close = required.hour == 15
+        quote_required = required if close else required - timedelta(minutes=5)
+        rows = index_quote_rows(data)
+        stamps = [parse_datetime(row.get("quote_time")) for row in rows]
+        valid = [stamp for stamp in stamps if stamp]
+        value = min(valid) if valid else (data.get("market_data_as_of") or data.get("market_time"))
+        quote = timestamp_coverage(value, quote_required, now, "行情")
+        if close:
+            issue = close_quote_issue(data, now, day)
+            if issue:
+                state = "future" if "超前" in issue else ("missing" if "缺少" in issue else "stale")
+                quote.update(status=state, reason=issue)
+        elif rows and (len(valid) != len(rows) or any(stamp > now + timedelta(seconds=60) for stamp in valid)):
+            quote.update(status="missing", reason="部分指数行情时间缺失或异常超前")
+        result["quote_coverage"] = quote
+    return result
+
+
+def evidence_issue(spec: dict[str, Any], data: dict[str, Any], now: datetime, day: str) -> str:
+    coverage = evidence_coverage(spec, data, now, day)
+    keys = ("research_coverage",) if spec["id"] == "topics" else ("analysis_coverage", "quote_coverage")
+    return "；".join(coverage[key]["reason"] for key in keys if key in coverage and coverage[key].get("reason"))
 
 
 def next_session_row(spec: dict[str, Any], now: datetime, target_date: str) -> dict[str, Any]:
@@ -128,6 +202,7 @@ def next_session_row(spec: dict[str, Any], now: datetime, target_date: str) -> d
         return row
     path = DATA_DIR / spec["file"]
     data = load_json(path)
+    data = data if isinstance(data, dict) else {}
     ts = data.get("timestamp") if isinstance(data, dict) else ""
     file_date = signal_date(ts)
     due_at = required_evidence_at(spec, now, target_date)
@@ -160,6 +235,7 @@ def next_session_row(spec: dict[str, Any], now: datetime, target_date: str) -> d
         "status": status,
         "action": action,
         "reason": reason,
+        **evidence_coverage(spec, data, now, target_date),
     }
 
 
@@ -170,6 +246,7 @@ def check_expected(spec: dict[str, Any], now: datetime, current_date: str, sourc
     due_at = required_evidence_at(spec, now, current_date)
     deadline = due_at + timedelta(minutes=5 if spec["id"] == "intraday" else int(spec["grace_minutes"]))
     data = load_json(path)
+    data = data if isinstance(data, dict) else {}
     ts = data.get("timestamp") if isinstance(data, dict) else ""
     file_date = signal_date(ts)
     status = "ok"
@@ -196,8 +273,9 @@ def check_expected(spec: dict[str, Any], now: datetime, current_date: str, sourc
         action = "复核时间戳"
         reason = f"时间戳异常超前：{ts}"
     issue = evidence_issue(spec, data, now, current_date)
-    if status == "ok" and issue and not locals().get("weekend_evening_update", False):
-        status, action, reason = "late", "等待当前检查点数据", issue
+    if status == "ok" and issue:
+        status = "waiting" if now < deadline else "late"
+        action, reason = "等待当前检查点数据", issue
     diagnosis = diagnose(spec, status, reason, data if isinstance(data, dict) else {}, source_health, quality)
     return {
         "id": spec["id"],
@@ -215,6 +293,7 @@ def check_expected(spec: dict[str, Any], now: datetime, current_date: str, sourc
         "diagnosis": diagnosis["diagnosis"],
         "next_actions": diagnosis["next_actions"],
         "related_sources": diagnosis["related_sources"],
+        **evidence_coverage(spec, data, now, current_date),
     }
 
 
@@ -232,11 +311,33 @@ def diagnose(spec: dict[str, Any], status: str, reason: str, data: dict[str, Any
             "next_actions": ["正常读取；仍需结合数据质量卡判断是否降权。"],
             "related_sources": [],
         }
+    if spec["id"] == "topics" and status != "invalidated":
+        return {
+            "failure_type": "research_checkpoint_pending" if status == "waiting" else "missing_topic_research",
+            "diagnosis": reason,
+            "next_actions": [
+                "15:30是专题研究检查点；18:30仅为宽限截止，不是第二次生产任务。",
+                "build_topics.py只补代表股事实；重跑不能补齐缺失研究，不能改写原研究时间。",
+                "需在Mac核验仓库外的实际研究任务、Codex调度和运行日志；此处未验证或修改该调度。",
+            ],
+            "related_sources": [],
+        }
+    if spec["id"] == "intraday" and status in {"late", "missing"}:
+        return {
+            "failure_type": "missing_intraday_checkpoint",
+            "diagnosis": reason,
+            "next_actions": [
+                "分别检查行情与分析覆盖；收盘行情必须来自当日15:00及之后的真实报价。",
+                "行情恢复只补事实，保留原分析时间，不补造错过的15:00分析。",
+                "缺失分析需在Mac核验仓库外的研究任务与Codex调度；不能由补采成功视为恢复。",
+            ],
+            "related_sources": [name for name, _ in source_flags[:3]],
+        }
     if status == "waiting":
         return {
             "failure_type": "not_due",
-            "diagnosis": "尚未到该自动化的计划产出窗口。",
-            "next_actions": [f"到 {spec['due']} 后再检查是否产出。"],
+            "diagnosis": reason,
+            "next_actions": [f"计划 {spec['due']} 产出；宽限内继续检查实际证据。"],
             "related_sources": [],
         }
     if status == "invalidated":

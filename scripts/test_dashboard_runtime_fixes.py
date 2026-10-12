@@ -21,7 +21,9 @@ class DashboardRuntimeFixTests(unittest.TestCase):
     def test_live_monitor_without_trigger_is_explained_in_user_language(self) -> None:
         app = (Path(__file__).resolve().parents[1] / "app.js").read_text(encoding="utf-8")
         self.assertIn('source_status === "monitor_live_no_trigger"', app)
-        self.assertIn("当前暂无短周期规则触发", app)
+        self.assertIn("上次检查未见短周期规则触发", app)
+        self.assertIn("当时没有达到价格、成交和扩散门槛的新异动", app)
+        self.assertNotIn("<b>运行正常</b>", app)
         self.assertIn("全景卡只作盘面解释，不冒充3分钟异动", app)
 
     def test_monitoring_coverage_accepts_text_sentiment(self) -> None:

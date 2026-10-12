@@ -15,6 +15,9 @@ ROOT = Path(__file__).resolve().parent.parent
 INTRADAY_PATH = ROOT / "data" / "intraday.json"
 STATUS_PATH = ROOT / "logs" / "intraday-recovery-status.json"
 STALE_AFTER = timedelta(minutes=20)
+# This collector covers mainland indices. HK/other markets must use their own
+# verified session cutoff, rather than inheriting this A-share close boundary.
+CN_CLOSE = time(15, 0)
 
 
 @dataclass(frozen=True)
@@ -43,10 +46,38 @@ def parse_datetime(value: Any) -> Optional[datetime]:
 
 
 def latest_index_quote(payload: Dict[str, Any]) -> Optional[datetime]:
-    rows = payload.get("indices") or payload.get("index", {}).get("a_share_indices") or []
+    rows = index_quote_rows(payload)
     values = [parse_datetime(item.get("quote_time")) for item in rows if isinstance(item, dict)]
     valid = [value for value in values if value is not None]
     return max(valid) if valid else parse_datetime(payload.get("market_data_as_of"))
+
+
+def index_quote_rows(payload: Dict[str, Any]) -> list[Dict[str, Any]]:
+    section = payload.get("index") or {}
+    rows = payload.get("indices") or (section.get("a_share_indices") if isinstance(section, dict) else section) or []
+    return [row for row in rows if isinstance(row, dict)] if isinstance(rows, list) else []
+
+
+def close_quote_issue(payload: Dict[str, Any], now: datetime, day: Optional[str] = None) -> str:
+    """Validate source timestamps, never collection/file/analysis timestamps.
+
+    Every available index must cover the close: a newer maximum timestamp must
+    not conceal an old or missing quote in the same snapshot.
+    """
+    now = now.astimezone(TZ)
+    day = day or now.date().isoformat()
+    rows = index_quote_rows(payload)
+    stamps = ([parse_datetime(row.get("quote_time")) for row in rows] if rows else
+              [parse_datetime(payload.get("market_data_as_of") or payload.get("market_time"))])
+    if any(stamp is None for stamp in stamps):
+        return "缺少可验证的指数行情时间"
+    if any(stamp > now for stamp in stamps):
+        return "行情时间异常超前"
+    if any(stamp.date().isoformat() != day for stamp in stamps):
+        return "尚无完整当日可验证收盘行情"
+    if any(stamp.time() < CN_CLOSE for stamp in stamps):
+        return "收盘行情未覆盖15:00检查点"
+    return ""
 
 
 def is_trading_day(root: Path, now: datetime) -> bool:
@@ -91,8 +122,9 @@ def assess_freshness(payload: Dict[str, Any], now: datetime, trading_day: bool =
         fresh = quote_time.time() >= time(11, 25)
         reason = "午间最新行情已保存" if fresh else "上午收盘行情未补齐"
     elif phase == "收盘补偿":
-        fresh = quote_time.time() >= time(14, 55)
-        reason = "收盘行情已保存" if fresh else "收盘行情未补齐"
+        issue = close_quote_issue(payload, now)
+        fresh = not issue
+        reason = issue or "收盘行情已保存"
     elif phase == "下午交易" and now.time() < time(13, 5):
         fresh = quote_time.time() >= time(11, 25)
         reason = "午后开盘容忍窗口内" if fresh else "午前行情未补齐"
