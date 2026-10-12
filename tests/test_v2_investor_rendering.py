@@ -10,5 +10,5 @@ class InvestorRenderingTests(unittest.TestCase):
     def test_node_dom_contracts(self):
         if not shutil.which("node"):
             self.skipTest("Node.js is required for frontend DOM-contract tests")
-        result = subprocess.run(["node", "--test", str(ROOT / "tests/test_v2_investor_rendering.cjs")], cwd=ROOT, capture_output=True, text=True)
+        result = subprocess.run(["node", "--test", str(ROOT / "tests/test_v2_investor_rendering.cjs"), str(ROOT / "tests/test_v2_refresh_cycle.cjs")], cwd=ROOT, capture_output=True, text=True)
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)

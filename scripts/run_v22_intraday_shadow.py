@@ -4,7 +4,7 @@ from __future__ import annotations
 import argparse
 import json
 import sys
-from datetime import datetime, time
+from datetime import datetime
 from pathlib import Path
 
 
@@ -21,13 +21,8 @@ def main() -> int:
     parser.add_argument("--force-checkpoint", action="store_true")
     parser.add_argument("--dry-run", action="store_true")
     args = parser.parse_args()
-    wall_clock = datetime.now().astimezone()
-    if (
-        args.at is None
-        and not args.force_checkpoint
-        and (wall_clock.weekday() >= 5 or not (time(9, 20) <= wall_clock.time() <= time(15, 10)))
-    ):
-        return 0
+    # The runner owns the verified exchange calendar, timezone and all configured
+    # windows. A second host-local gate silently skipped legitimate checkpoints.
     try:
         report = V22IntradayShadowRunner(ROOT).run(at=args.at, force_checkpoint=args.force_checkpoint, dry_run=args.dry_run)
     except Exception as exc:
@@ -41,8 +36,9 @@ def main() -> int:
             "reason": report.get("reason"),
             "summary": report.get("summary"),
         }, ensure_ascii=False))
-    return 1 if report.get("state") == "failed" else 0
+    return 1 if report.get("state") in {"failed", "waiting_update"} else 0
 
 
 if __name__ == "__main__":
     raise SystemExit(main())
+

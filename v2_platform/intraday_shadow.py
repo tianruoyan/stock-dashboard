@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import fcntl
 import json
+import hashlib
 import subprocess
 import sys
 from contextlib import contextmanager
@@ -16,6 +17,16 @@ from v2_platform.learning import TradingCalendar, as_list, load_json, write_json
 STATUS_OUTPUT = "data/v2/v22/intraday-shadow-status.json"
 RUNTIME_STATE = ".v2_runtime/v22-intraday-shadow-state.json"
 LOCK_FILE = ".v2_runtime/v22-intraday-shadow.lock"
+MARKET_OUTPUTS = {
+    "local_inputs/market-breadth.json": ("as_of",),
+    "local_inputs/market-liquidity.json": ("as_of",),
+    "data/v2/decision-system.json": ("system", "decision_as_of"),
+    "data/v2/v22/market-environment.json": ("as_of",),
+    "data/v2/v22/decision-cases.json": ("as_of",),
+}
+FACT_HEALTH = "data/v2/public-market-fact-health.json"
+STATUS_ARTIFACTS = ("data/v2/v22/time-semantics.json", "data/v2/v22/cockpit-phase-view.json")
+TRIGGER_REPORT = "data/v2/v22/trigger-quote-capture-report.json"
 
 
 def now_local(timezone_name: str = "Asia/Shanghai") -> datetime:
@@ -78,24 +89,44 @@ class V22IntradayShadowRunner:
                 "guardrails": self.config.get("guardrails"),
             }
         with self._lock():
+            # Another invocation may have completed while this one selected a slot.
+            runtime = load_json(self.root / RUNTIME_STATE)
+            completed = runtime.get("completed") if isinstance(runtime.get("completed"), dict) else {}
+            if completed.get(key) == "completed" and not force_checkpoint:
+                return self._skip("checkpoint_already_completed", observed, checkpoint)
+            paths = (*MARKET_OUTPUTS, FACT_HEALTH, *STATUS_ARTIFACTS, TRIGGER_REPORT)
+            before = {path: self._artifact_signature(path) for path in paths}
             results = []
             failed = False
             for name, command in commands:
-                result = self.command_runner(command, cwd=self.root, capture_output=True, text=True)
+                try:
+                    result = self.command_runner(command, cwd=self.root, capture_output=True, text=True)
+                except (OSError, subprocess.SubprocessError) as exc:
+                    result = subprocess.CompletedProcess(command, 1, "", type(exc).__name__)
+                producer = self._producer_status(result.stdout)
+                producer_state = producer.get("state")
                 row = {
                     "name": name,
                     "returncode": result.returncode,
-                    "state": "completed" if result.returncode == 0 else "failed",
+                    "state": "process_completed" if result.returncode == 0 else "failed",
+                    "producer_state": producer_state,
                     "stdout_tail": (result.stdout or "")[-500:].strip(),
                     "stderr_tail": (result.stderr or "")[-500:].strip(),
                 }
                 results.append(row)
-                if result.returncode != 0:
+                if result.returncode != 0 or producer_state in {"failed", "blocked", "error"}:
+                    row["state"] = "failed"
                     failed = True
                     break
-            trigger_report = load_json(self.root / "data/v2/v22/trigger-quote-capture-report.json")
-            time_semantics = load_json(self.root / "data/v2/v22/time-semantics.json")
-            state = "failed" if failed else "completed"
+            finished_at = now_local(str(self.timezone)) if at is None else observed
+            freshness = self._freshness(checkpoint, finished_at, before)
+            waiting = not failed and (not freshness["verified"] or any(
+                row.get("producer_state") in {"waiting_update", "retained", "stale"} for row in results
+            ))
+            trigger_updated = before[TRIGGER_REPORT] != self._artifact_signature(TRIGGER_REPORT)
+            trigger_report = load_json(self.root / TRIGGER_REPORT) if trigger_updated else {}
+            time_semantics = load_json(self.root / STATUS_ARTIFACTS[0])
+            state = "failed" if failed else "waiting_update" if waiting else "completed"
             recovery = checkpoint.get("recovery") is True
             report = {
                 "schema_version": 1,
@@ -105,7 +136,10 @@ class V22IntradayShadowRunner:
                 "trade_date": observed.date().isoformat(),
                 "checkpoint": {"id": checkpoint.get("id"), "label": checkpoint.get("label")},
                 "observed_at": observed.isoformat(timespec="seconds"),
+                "finished_at": finished_at.isoformat(timespec="seconds"),
                 "steps": results,
+                "freshness": freshness,
+                "reason": "source_outputs_not_fresh" if waiting else None,
                 "trigger_capture": {
                     "created_snapshot_count": int(trigger_report.get("created_snapshot_count") or 0),
                     "total_snapshot_count": int(trigger_report.get("total_snapshot_count") or 0),
@@ -113,11 +147,13 @@ class V22IntradayShadowRunner:
                     "summary": trigger_report.get("summary") or "本检查点没有生成触发行情快照。",
                 },
                 "same_day_comparison": {
-                    "allowed": bool((time_semantics.get("comparison") or {}).get("allowed")),
+                    "allowed": state == "completed" and freshness["state"] == "fresh" and bool((time_semantics.get("comparison") or {}).get("allowed")),
                     "reason": (time_semantics.get("comparison") or {}).get("reason") or "尚未形成同日双轨证据。",
                 },
                 "summary": (
-                    "断线恢复补采完成。"
+                    "行情或产物尚未更新，保留原始证据时间，等待重试。"
+                    if waiting
+                    else "断线恢复补采完成。"
                     if recovery and not failed
                     else "断线恢复补采失败，保留上一次成功结果。"
                     if recovery
@@ -129,19 +165,104 @@ class V22IntradayShadowRunner:
             }
             write_json(self.root / STATUS_OUTPUT, report)
             history = self.root / "data/v2/v22/intraday-shadow-runs" / observed.date().isoformat() / f"{checkpoint['id']}.json"
-            if not history.exists() or not failed:
+            if not history.exists() or state == "completed":
                 write_json(history, report)
-            if not failed:
+            if state == "completed":
                 completed[key] = "completed"
                 write_json(self.root / RUNTIME_STATE, {
                     "schema_version": 1,
                     "updated_at": observed.isoformat(timespec="seconds"),
                     "completed": completed,
+                    "last_market_completed_at": (
+                        observed.isoformat(timespec="seconds") if freshness["state"] == "fresh"
+                        else runtime.get("last_market_completed_at")
+                    ),
                 })
             return report
 
+    @staticmethod
+    def _producer_status(stdout: str | None) -> dict[str, Any]:
+        for line in reversed((stdout or "").splitlines()):
+            try:
+                value = json.loads(line)
+            except (TypeError, ValueError):
+                continue
+            if isinstance(value, dict):
+                return value
+        return {}
+
+    def _artifact_signature(self, relative: str) -> tuple[Any, ...] | None:
+        path = self.root / relative
+        try:
+            stat = path.stat()
+            # Atomic replacement is evidence of an actual producer write even if
+            # a verified unchanged quote has identical bytes. It is never a market time.
+            return (stat.st_ino, stat.st_mtime_ns, hashlib.sha256(path.read_bytes()).hexdigest())
+        except OSError:
+            return None
+
+    def _freshness(self, checkpoint: dict[str, Any], observed: datetime, before: dict[str, Any]) -> dict[str, Any]:
+        status_only = checkpoint.get("pipeline") == "status_only"
+        required = STATUS_ARTIFACTS if status_only else (*MARKET_OUTPUTS, FACT_HEALTH)
+        issues = []
+        sources = []
+        for relative in required:
+            signature = self._artifact_signature(relative)
+            payload = load_json(self.root / relative)
+            if signature is None or not payload:
+                issues.append({"path": relative, "reason": "missing_or_invalid_output"})
+                continue
+            if signature == before.get(relative):
+                issues.append({"path": relative, "reason": "output_not_produced_this_run"})
+            if relative not in MARKET_OUTPUTS:
+                continue
+            raw: Any = payload
+            for key in MARKET_OUTPUTS[relative]:
+                raw = raw.get(key) if isinstance(raw, dict) else None
+            try:
+                source_at = datetime.fromisoformat(str(raw))
+                if source_at.tzinfo is None:
+                    raise ValueError("source_timezone_required")
+                source_at = source_at.astimezone(self.timezone)
+            except (TypeError, ValueError):
+                issues.append({"path": relative, "reason": "source_as_of_missing_or_naive"})
+                continue
+            age = (observed - source_at).total_seconds()
+            # After the cash session ends, its closing quote remains valid for
+            # close_freeze. A newly built report cannot refresh an older quote.
+            reference = observed
+            if observed.timetz().replace(tzinfo=None) >= time(15, 0):
+                reference = observed.replace(hour=15, minute=0, second=0, microsecond=0)
+            max_age = max(60, int((self.config.get("recovery") or {}).get("stale_after_seconds") or 600))
+            reason = None
+            if source_at.date() != observed.date() or (payload.get("trade_date") and payload["trade_date"] != observed.date().isoformat()):
+                reason = "source_trade_date_mismatch"
+            elif age < 0:
+                reason = "source_in_future"
+            elif checkpoint.get("pipeline") == "close" and source_at < reference:
+                reason = "close_source_before_1500_cutoff"
+            elif (reference - source_at).total_seconds() > max_age:
+                reason = "source_stale"
+            if reason:
+                issues.append({"path": relative, "reason": reason})
+            sources.append({"path": relative, "source_as_of": raw, "age_seconds": age})
+        if not status_only:
+            health = load_json(self.root / FACT_HEALTH)
+            if health.get("state") not in {"usable", "degraded"} or (health.get("guardrails") or {}).get("retained_previous_same_day_facts"):
+                issues.append({"path": FACT_HEALTH, "reason": "source_not_refreshed"})
+            if health.get("trade_date") != observed.date().isoformat():
+                issues.append({"path": FACT_HEALTH, "reason": "source_trade_date_mismatch"})
+        return {
+            "state": "status_only" if status_only and not issues else "fresh" if not issues else "waiting_update",
+            "verified": not issues,
+            "market_data_refreshed": not status_only and not issues,
+            "sources": sources,
+            "issues": issues,
+            "generated_at_used_as_source_time": False,
+        }
+
     def _checkpoint(self, observed: datetime) -> dict[str, Any] | None:
-        current = observed.timetz().replace(tzinfo=None)
+        current = observed.timetz().replace(tzinfo=None, second=0, microsecond=0)
         for item in as_list(self.config.get("checkpoints")):
             if not isinstance(item, dict):
                 continue
@@ -177,7 +298,7 @@ class V22IntradayShadowRunner:
         recovery = self.config.get("recovery")
         if not isinstance(recovery, dict) or recovery.get("enabled") is not True:
             return None
-        current = observed.timetz().replace(tzinfo=None)
+        current = observed.timetz().replace(tzinfo=None, second=0, microsecond=0)
         active = False
         active_start = None
         for item in as_list(recovery.get("active_windows")):
@@ -193,7 +314,7 @@ class V22IntradayShadowRunner:
             return None
         last_success = None
         try:
-            last_success = datetime.fromisoformat(str(runtime.get("updated_at") or ""))
+            last_success = datetime.fromisoformat(str(runtime.get("last_market_completed_at", runtime.get("updated_at")) or ""))
             if last_success.tzinfo is None:
                 last_success = last_success.replace(tzinfo=self.timezone)
             last_success = last_success.astimezone(self.timezone)
@@ -284,3 +405,4 @@ class V22IntradayShadowRunner:
             "observed_at": observed.isoformat(timespec="seconds"),
             "guardrails": self.config.get("guardrails"),
         }
+
