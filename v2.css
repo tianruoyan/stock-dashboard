@@ -887,3 +887,56 @@ input:focus, select:focus { border-color: rgba(94, 116, 100, .52); box-shadow: 0
   .v22-learning-grid { grid-template-columns: 1fr; }
   .logic-catalog, .logic-search-controls, .logic-detail-grid { grid-template-columns: 1fr; }
 }
+
+
+
+/* Investor-facing date, uncertainty and complete decision conditions. */
+.data-freshness-notice, .historical-notice {
+  padding: 12px 16px; margin: 0 0 16px; border: 1px solid var(--line);
+  border-radius: 12px; background: var(--surface-strong); line-height: 1.65;
+  font-size: 14px; overflow-wrap: anywhere;
+}
+.data-freshness-notice.degraded, .historical-notice { background: #fff5df; color: #77531f; border-color: #dec48d; }
+.data-freshness-notice.blocked { background: #fff0ed; color: #873d34; border-color: #d3a39b; }
+.historical-notice p { margin: 4px 0 0; }
+.historical-content { grid-column: 1 / -1; min-width: 0; }
+.historical-content > summary { cursor: pointer; padding: 12px 0; font-weight: 600; }
+.historical-notice { grid-column: 1 / -1; }
+.investor-conditions { min-width: 0; }
+.investor-conditions ul { margin: 8px 0 0; padding-left: 20px; }
+.investor-conditions li { margin: 6px 0; line-height: 1.65; overflow-wrap: anywhere; }
+.investor-conditions p, .radar-conclusion p, .action-line, .case-decision-copy p { overflow-wrap: anywhere; white-space: normal; }
+.system-meta { flex-wrap: wrap; }
+.system-meta time { white-space: normal; }
+
+.radar-overflow { grid-column: 1 / -1; }
+.radar-overflow > summary { cursor: pointer; padding: 12px; font-weight: 600; }
+
+/* Investor readability floor: explicit child sizes must not shrink key content. */
+.v2-shell p, .v2-shell li, .v2-shell summary,
+.v2-shell label, .v2-shell input, .v2-shell select, .v2-shell textarea, .v2-shell button,
+.v2-shell .action-line, .v2-shell .action-line strong,
+.v2-shell .investor-conditions > strong,
+.v2-shell .risk-invalidation-grid strong,
+.v2-shell .radar-conclusion strong, .v2-shell .radar-trigger strong,
+.v2-shell .case-decision-copy strong, .v2-shell .case-why-copy strong,
+.v2-shell .environment-gate strong, .v2-shell .environment-gate span,
+.v2-shell .environment-fact-line, .v2-shell .environment-fact-line b,
+.v2-shell .market-stats span, .v2-shell .sentiment-driver-grid b,
+.v2-shell .sentiment-driver-grid span, .v2-shell .cockpit-phase-list strong,
+.v2-shell .stock-chip, .v2-shell .stock-chip b,
+.v2-shell .asset-layer-card > div > strong {
+  font-size: 14px !important;
+  line-height: 1.7 !important;
+  white-space: normal !important;
+  overflow-wrap: anywhere;
+  word-break: normal;
+}
+.v2-shell p :is(span, strong, b, em, a),
+.v2-shell li :is(span, strong, b, em, a),
+.v2-shell summary :is(span, strong, b) {
+  font-size: inherit !important;
+  line-height: inherit !important;
+  white-space: normal !important;
+  overflow-wrap: anywhere;
+}

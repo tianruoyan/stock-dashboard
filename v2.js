@@ -61,7 +61,7 @@ const SOURCE_LABELS = {
 };
 
 const ROLE_LABELS = { unclassified: "角色未确定", core: "中军", leader: "龙头", platform: "平台", high_beta: "弹性" };
-const POOL_LABELS = { watch_only: "个人观察", small_deng: "小登观察", old_deng: "老登观察", middle_deng: "中登观察" };
+const POOL_LABELS = { watch_only: "个人观察", small_deng: "前沿科技观察", old_deng: "成熟价值观察", middle_deng: "产业化成长观察" };
 const LAYER_LABELS = { fact: "事实", inference: "推断", action: "建议" };
 const INPUT_LABELS = {
   microcap: "微盘结构", sentiment: "情绪结构", official_events: "官方事件", outcome_prices: "结果价格",
@@ -83,6 +83,8 @@ let radarRefreshTimer = null;
 let logicCatalogState = { entries: [], categories: [] };
 let logicSearchQuery = "";
 let logicCategory = "all";
+let displayedRadarCards = [];
+const dataReadStatus = new Map();
 
 const BLOGGER_PLATFORM_LABELS = {
   xiaohongshu: "小红书", weibo: "微博", wechat: "微信公众号", douyin: "抖音", bilibili: "哔哩哔哩", other: "其他"
@@ -90,6 +92,28 @@ const BLOGGER_PLATFORM_LABELS = {
 const USER_PRIORITY_LABELS = { high: "高", normal: "普通", low: "低" };
 const USER_INTENT_LABELS = { holding: "持仓", swing: "波段关注", watch: "等待机会", research: "长期研究", event: "事件跟踪", "未设置": "未设置" };
 const USER_SOURCE_LABELS = { ths_cloud: "同花顺云", manual_add: "手动添加", broker_sync: "券商同步" };
+
+// Infrastructure timeout only: this does not change any investment or signal threshold.
+const V2_READ_TIMEOUT_MS = 12000;
+async function readV2Json(url) {
+  const controller = typeof AbortController === "function" ? new AbortController() : null;
+  let timer;
+  const timeout = new Promise((_, reject) => {
+    timer = setTimeout(() => {
+      if (controller) controller.abort();
+      reject(new Error("资料读取超时"));
+    }, V2_READ_TIMEOUT_MS);
+  });
+  const read = (async () => {
+    const response = await fetch(url, { cache: "no-store", ...(controller ? { signal: controller.signal } : {}) });
+    if (!response.ok) throw new Error("资料读取失败");
+    const payload = await response.json();
+    if (!payload || typeof payload !== "object" || Array.isArray(payload)) throw new Error("资料格式不完整");
+    return payload;
+  })();
+  try { return await Promise.race([read, timeout]); }
+  finally { clearTimeout(timer); }
+}
 
 function escapeHtml(value) {
   return String(value ?? "")
@@ -101,17 +125,21 @@ function escapeHtml(value) {
 }
 
 function humanText(value) {
+  if (Array.isArray(value)) return value.map(humanText).filter(Boolean).join("；");
+  if (value && typeof value === "object") {
+    return humanText(value.detail || value.summary || value.conclusion || value.text || value.strategy || value.label || value.title || "");
+  }
   return String(value ?? "")
-    .replace(/当前没有决策就绪案例/g, "当前没有值得出手的机会")
-    .replace(/决策就绪案例/g, "值得行动的方向")
-    .replace(/决策就绪/g, "值得行动")
-    .replace(/环境门禁等待核验。?/g, "当前市场还不支持出手。")
+    .replace(/当前没有决策就绪案例/g, "当前没有已完成确认的观察机会")
+    .replace(/决策就绪案例/g, "已完成确认的观察方向")
+    .replace(/决策就绪/g, "已完成确认")
+    .replace(/环境门禁等待核验。?/g, "市场条件尚未确认，先等待。")
     .replace(/环境门禁/g, "市场是否支持")
     .replace(/全局或案例证据仍有降级项，只能保守使用。?/g, "部分关键信息还没跟上，只能保守看待。")
     .replace(/风险路径可以提前提醒，但仍需核验位置、流动性与恢复条件。?/g, "风险已经出现，但还要看股价位置、成交和是否止跌。")
     .replace(/盘前预案已转入实盘验证；只有当日市场事实与代表股同向确认后，才可能升级机会。?/g, "盘前判断已经进入盘中检查；只有代表股和板块一起走强，才考虑行动。")
     .replace(/海外方向与A股代表股同向，传导得到阶段性确认。?/g, "外盘和A股代表股方向一致，但仍要看清是一起上涨还是一起下跌。")
-    .replace(/等待风险收敛，不追/g, "先不追高，等跌停减少、高位股止跌")
+    .replace(/等待风险收敛，不追/g, "等风险减弱，先不追高")
     .replace(/行情闭环/g, "行情信息完整")
     .replace(/候选投影/g, "观察结果")
     .replace(/V1继续生产，V2继续影子/g, "V1继续正常使用，V2继续试用观察")
@@ -136,8 +164,8 @@ function humanText(value) {
     .replace(/\bquote_audit\b/gi, "个股行情核对")
     .replace(/\bG[0-7]\b/g, "判断条件")
     .replace(/有效时间待补，不能进入决策就绪/g, "尚未设定有效观察时间，只能继续观察")
-    .replace(/有效时间待补，不能进入值得行动/g, "没有明确观察期限，先不行动")
-    .replace(/来自当前交易日可审计市场事实；个股涨跌幅由独立行情字段计算。?/g, "来自当前交易日市场事实；涨跌幅为该股票当时真实行情。")
+    .replace(/有效时间待补，不能进入已完成确认/g, "没有明确观察期限，先不行动")
+    .replace(/来自当前交易日可审计市场事实；个股涨跌幅由独立行情字段计算。?/g, "来自所标交易日的市场事实；个股涨跌幅由独立行情字段计算。")
     .replace(/可审计/g, "可核验")
     .replace(/环境门禁/g, "市场环境判断")
     .replace(/回避\/降级集合/g, "降低关注方向")
@@ -145,17 +173,15 @@ function humanText(value) {
     .replace(/流动性仍待数据源补采/g, "流动性尚未确认")
     .replace(/；两侧使用同一交易日和过滤规则。?/g, "。")
     .replace(/(?:和|与)来源共同确认/g, "共振确认")
-    .replace(/完整行业上涨下跌宽度/g, "板块扩散程度尚未确认")
-    .replace(/行业成交额与历史基线/g, "板块成交承接尚未确认")
-    .replace(/核心、中军和后排的连续时点确认/g, "核心、中军和后排持续共振尚未确认")
-    .replace(/板块成交承接尚未确认/g, "还不知道放量后有没有资金接住")
-    .replace(/核心、中军和后排持续共振尚未确认/g, "核心股和板块内其他股票还没有一起走强")
+    .replace(/完整行业上涨下跌宽度/g, "板块内上涨与下跌股票的完整数据")
+    .replace(/行业成交额与历史基线/g, "板块成交额和可比较的历史成交额")
+    .replace(/核心、中军和后排的连续时点确认/g, "核心股和其他股票在连续观察时点共同确认")
     .replace(/涨停代表较集中，但仍需行业宽度、成交和非涨停中军确认。?/g, "涨停股集中在这个板块，但还要看板块内多数股票是否跟涨、成交是否放大，以及核心股以外是否有资金跟进。")
     .replace(/行业上涨宽度、成交和非涨停中军同向确认/g, "板块内多数股票上涨、成交放大，核心股以外也有资金跟进")
-    .replace(/市场宽度、情绪和核心代表股至少两项继续走弱/g, "下跌股票继续增多、跌停没有减少、核心股继续走弱，三项中出现两项就按风险处理")
-    .replace(/风险维度收敛，市场宽度和核心代表股转为同向承接/g, "下跌股票和跌停明显减少，核心股止跌回升时，原风险判断失效")
-    .replace(/全市场风险状态和抑制维度限制机会升级。?/g, "大盘和赚钱效应都偏弱，暂时不能把它当成可操作机会。")
-    .replace(/A\/H任一侧共振断裂/g, "A股或港股代表股不再一起走强")
+    .replace(/市场宽度、情绪和核心代表股至少两项继续走弱/g, "市场上涨下跌家数、情绪和核心代表股三方面，至少两项继续走弱")
+    .replace(/风险维度收敛，市场宽度和核心代表股转为同向承接/g, "风险信号减弱，市场上涨下跌家数和核心代表股出现同方向的资金承接")
+    .replace(/全市场风险状态和抑制维度限制机会升级。?/g, "部分市场条件不满足，暂时只观察。")
+    .replace(/A\/H任一侧共振断裂/g, "A股或港股代表股不再保持同向表现")
     .replace(/代表股转为背离/g, "代表股走势不一致")
     .replace(/涨跌停集中度消失或行业宽度反向/g, "涨跌停不再集中在该板块，或板块内多数股票转向")
     .replace(/核心股低开后放量收复开盘价或跌幅明显收敛/g, "核心股低开后放量站回开盘价，或跌幅明显收窄")
@@ -164,7 +190,7 @@ function humanText(value) {
     .replace(/后排不扩散且成交萎缩/g, "板块内其他股票没有跟涨，成交也在缩小")
     .replace(/行业宽度/g, "板块内多数股票表现")
     .replace(/非涨停中军/g, "没有涨停的核心股")
-    .replace(/同向承接/g, "一起止跌回升")
+    .replace(/同向承接/g, "同方向的资金承接")
     .replace(/风险维度/g, "风险信号")
     .replace(/早期候选/g, "初步观察")
     .replace(/机会升级/g, "加强关注")
@@ -173,7 +199,7 @@ function humanText(value) {
     .replace(/V2\.2尚无触发价格与主要结果窗口均完整的案例，不计算命中率，也不改变规则。?/g, "目前还没有同时记录当时价格和后续表现的完整案例，因此不统计胜率，也不调整判断方法。")
     .replace(/V2证据属于\d{4}-\d{2}-\d{2}，V2\.2市场事实属于\d{4}-\d{2}-\d{2}；交易日未统一，暂不比较命中率。?/g, "两个版本使用的交易日期不同，目前不能公平比较胜率。")
     .replace(/适用与不适用市场环境/g, "什么行情适合关注、什么行情应该回避")
-    .replace(/情绪或市场宽度已有改善，但另一侧证据尚未同步，当前仍属于修复观察。?/g, "上涨股票增多了，但强势股能否继续上涨、高位股回落时是否有人接盘还没有确认。多数股票在修复，追高仍容易亏钱。")
+    .replace(/情绪或市场宽度已有改善，但另一侧证据尚未同步，当前仍属于修复观察。?/g, "市场情绪或上涨下跌家数已有改善，但另一项还没有同时确认，仍需观察修复能否持续。")
     .replace(/篮子成交额已完整覆盖/g, "代表股成交额已有数据")
     .replace(/已有同日篮子成交额/g, "代表股已有当天成交额")
     .replace(/篮子成交额覆盖不足/g, "代表股成交额数据不完整")
@@ -217,19 +243,84 @@ function sourceLabel(value) {
 function compactTime(value) {
   if (!value) return "时间未知";
   const parsed = new Date(value);
-  if (Number.isNaN(parsed.getTime())) return String(value);
+  if (Number.isNaN(parsed.getTime())) return "时间未确认";
   return new Intl.DateTimeFormat("zh-CN", {
-    month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit", hour12: false
+    timeZone: "Asia/Shanghai", year: "numeric", month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit", hour12: false
   }).format(parsed);
 }
 
 function compactTimeWithSeconds(value) {
   if (!value) return "时间未知";
   const parsed = new Date(value);
-  if (Number.isNaN(parsed.getTime())) return String(value);
+  if (Number.isNaN(parsed.getTime())) return "时间未确认";
   return new Intl.DateTimeFormat("zh-CN", {
-    month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit", second: "2-digit", hour12: false
+    timeZone: "Asia/Shanghai", year: "numeric", month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit", second: "2-digit", hour12: false
   }).format(parsed);
+}
+
+// These are display safeguards only. Do not alter the source data or decision thresholds.
+function chinaDate(value = Date.now()) {
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return "";
+  return new Intl.DateTimeFormat("en-CA", { timeZone: "Asia/Shanghai", year: "numeric", month: "2-digit", day: "2-digit" }).format(date);
+}
+
+function snapshotInfo(data) {
+  const asOf = data?.source_as_of || data?.user_view?.["行情时点"] || data?.as_of || data?.system?.decision_as_of || "";
+  const millis = asOf ? new Date(asOf).getTime() : NaN;
+  const evidenceDate = Number.isFinite(millis) ? chinaDate(asOf) : "";
+  const declaredDate = data?.trade_date || "";
+  const date = evidenceDate || declaredDate;
+  const today = chinaDate();
+  const verified = Number.isFinite(millis) && millis <= Date.now() && (!declaredDate || declaredDate === evidenceDate);
+  return { asOf, date, current: Boolean(verified && evidenceDate === today), historical: Boolean(evidenceDate && evidenceDate < today), verified };
+}
+
+function datedContent(data, content, title = "判断") {
+  const info = snapshotInfo(data);
+  if (info.current) return content;
+  const label = info.historical ? `历史资料（${info.date}）` : "资料日期尚未核验";
+  return `<div class="historical-notice"><strong>${escapeHtml(label)}</strong><p>以下内容仅供回看，不能作为今天的${escapeHtml(title)}。</p></div><details class="historical-content"><summary>查看当时的${escapeHtml(title)}与依据</summary>${content}</details>`;
+}
+
+function recordDataStatus(key, label, data, failed = false) {
+  const previous = dataReadStatus.get(key);
+  dataReadStatus.set(key, { label, data: data || previous?.data, failed: failed || Boolean(data && data === previous?.data && previous?.failed) });
+  renderDataStatus();
+}
+
+function renderDataStatus() {
+  const rows = [...dataReadStatus.values()];
+  const failed = rows.filter(row => row.failed);
+  const dated = rows.filter(row => row.data).map(row => ({ ...row, ...snapshotInfo(row.data) }));
+  const old = dated.filter(row => !row.current);
+  const quality = dated.find(row => row.data?.data_quality_gate?.state && row.data.data_quality_gate.state !== "usable");
+  const status = document.getElementById("v2-status");
+  const notice = document.getElementById("v2-data-notice");
+  let label = "资料已读取";
+  let message = "V2 试用观察，不自动交易。各区标注资料时间，页面刷新不代表行情更新。";
+  let tone = "neutral";
+  if (failed.length) {
+    label = "部分资料更新失败";
+    tone = "blocked";
+    message = `${failed.map(row => row.label).join("、")}更新失败。${failed.some(row => row.data) ? "保留上次资料，请核对日期；旧结论不能当作当前信号。" : "相关结论暂不可用，请稍后刷新。"}`;
+  } else if (old.length) {
+    label = old.every(row => row.historical) ? "历史资料，等待最新行情" : "资料日期待核验";
+    tone = "degraded";
+    message = old.map(row => `${row.label}：${row.date || "日期未知"}`).join("；") + "。这些资料仅供回看，不能用于判断今天的机会或风险。";
+  }
+  if (!failed.length && !old.length && quality) {
+    label = quality.data.data_quality_gate.state === "blocked" ? "关键资料不足" : "部分资料待核验";
+    tone = "degraded";
+    message = "资料已读取，但仍有缺失或未核验内容。请查看各项依据，不把待确认内容当成已确认信号。";
+  }
+  if (status) { status.hidden = false; status.textContent = label; status.className = `pill ${tone}`; }
+  if (notice) { notice.className = `data-freshness-notice ${tone}`; notice.textContent = message; }
+}
+
+function conditionList(title, values, empty = "条件尚未记录，暂不据此行动") {
+  const items = list(values).map(userEvidenceText).filter(Boolean);
+  return `<div class="investor-conditions"><strong>${escapeHtml(title)}</strong>${items.length ? `<ul>${items.map(item => `<li>${escapeHtml(item)}</li>`).join("")}</ul>` : `<p>${escapeHtml(empty)}</p>`}</div>`;
 }
 
 function humanTimeText(value) {
@@ -255,7 +346,7 @@ function renderQuality(data) {
   if (!target) return;
   const state = data?.state || "blocked";
   const display = state === "usable"
-    ? { label: "信息已更新", headline: "当前结论可以使用", copy: "事实、时点与来源已完成当前轮核对。" }
+    ? { label: "当次资料检查通过", headline: "完整度检查通过，仍需核对日期", copy: "这是对当次资料的检查结果，不代表行情已更新到现在。" }
     : state === "blocked"
       ? { label: "关键数据不足", headline: "暂不形成操作结论", copy: "关键事实不足或存在冲突，当前页面只保留等待。" }
       : { label: "部分信息待更新", headline: "结论仅基于已确认事实", copy: "仍在核对的内容不会被 AI 补写，也不会作为交易依据。" };
@@ -286,6 +377,7 @@ function renderEnvironment(data) {
       <div class="market-detail-section"><strong>涨停与跌停梯队</strong><p class="ladder-note">数据截至 ${escapeHtml(compactTime(sentiment.as_of))} · ${sourceLink(sentiment.source)}</p><div class="ladder-grid"><div><strong>涨停梯队</strong>${ladderRows(sentiment.limit_up_ladder, "板") || `<p>${escapeHtml(sentiment.limit_up_ladder?.note || "数据缺失")}</p>`}</div><div><strong>跌停梯队</strong>${ladderRows(sentiment.limit_down_ladder, "连跌停") || `<p>${escapeHtml(sentiment.limit_down_ladder?.note || "数据缺失")}</p>`}</div></div><p class="ladder-note">晋级表现：${escapeHtml(stateLabel(sentiment.promotion_rate?.state || "data_missing"))} · 高位亏钱效应：${escapeHtml(stateLabel(sentiment.high_level_loss_effect?.state || "data_missing"))}</p></div>
       ${crossMarket.length ? `<div class="market-detail-section"><strong>外盘对A股的影响</strong><div class="cross-market-grid">${crossMarket.map(item => `<div class="cross-market-item"><b>${escapeHtml(item.market)}</b><span>${escapeHtml(stateLabel(item.quality_state || "loaded"))}</span><p>${escapeHtml(humanText(item.conclusion))}</p></div>`).join("")}</div></div>` : ""}
     </details>`;
+  target.innerHTML = datedContent(v2State || data, target.innerHTML, "市场判断");
 }
 
 const ENVIRONMENT_LEVEL_LABELS = {
@@ -328,10 +420,11 @@ function crossMarketTradeView(item) {
   }
   return { signal: "仅供参考", conclusion: `${themes}：${market}变化暂时只能作背景${stockNote}。`, action: "不能单独作为买卖理由。" };
 }
-const G5_LABELS = { support: "大盘支持", partial_support: "部分板块可做", neutral: "大盘方向不明", suppress: "大盘偏弱，先不做", block: "风险较高，停止操作" };
+const G5_LABELS = { support: "市场条件支持", partial_support: "部分条件支持", neutral: "市场条件中性", suppress: "部分条件不满足", block: "风险条件阻止行动" };
 
 function renderEnvironmentV22(data) {
   v22MarketEnvironment = data;
+  recordDataStatus("market", "市场资料", data);
   const summary = document.getElementById("market-environment-v22-summary");
   const dimensionsTarget = document.getElementById("market-environment-v22-dimensions");
   const sourcesTarget = document.getElementById("market-environment-v22-sources");
@@ -345,6 +438,8 @@ function renderEnvironmentV22(data) {
   const evidence = new Map(list(data?.evidence_refs).map(item => [item.evidence_ref_id, item]));
   summary.innerHTML = `<div class="environment-shadow-summary"><div><span class="eyebrow">今日市场结论</span><strong>${escapeHtml(view["当前允许"] || "等待确认")}</strong><p>${escapeHtml(view["当前判断"] || "今天的数据还没有更新完整。")}</p></div><div class="environment-summary-aside"><span>市场状态</span><b>${escapeHtml(view["标题"] || "等待判断")}</b><small>${escapeHtml(view["交易日"] || "日期待确认")} · ${escapeHtml(view["阶段"] || "时间待确认")}</small></div></div><p class="environment-shadow-time">行情与信息截至 ${escapeHtml(compactTime(view["行情时点"]))}</p>`;
   renderMarketSentimentV22(data?.sentiment_view || {});
+  const sentimentTarget = document.getElementById("market-sentiment-v22");
+  if (sentimentTarget) sentimentTarget.innerHTML = datedContent(data, sentimentTarget.innerHTML, "情绪判断");
   dimensionsTarget.innerHTML = dimensions.map(item => {
     const refs = list(item.evidence_ref_ids).map(id => evidence.get(id)).filter(Boolean);
     const stockMap = new Map();
@@ -359,6 +454,8 @@ function renderEnvironmentV22(data) {
   const conflicts = list(data?.conflicts);
   const sourceRows = list(data?.source_status);
   sourcesTarget.innerHTML = `<div class="environment-source-grid">${sourceRows.map(item => `<div><strong>${escapeHtml(item.label || "数据来源")}</strong><span>${escapeHtml(ENVIRONMENT_SOURCE_STATE_LABELS[item.state] || "等待确认")} · ${escapeHtml(compactTime(item.as_of))}</span><p>${escapeHtml(humanText(item.note || ""))}</p></div>`).join("")}</div>${conflicts.length ? `<div class="environment-conflict-note"><strong>数据不一致</strong>${conflicts.map(item => `<p>${escapeHtml(item.metric_name || "这项数据")}：${escapeHtml(humanText(item.resolution || "暂时不用于交易判断。"))}</p>`).join("")}</div>` : '<p class="environment-no-conflict">当前数据之间没有明显矛盾。</p>'}`;
+  summary.innerHTML = datedContent(data, summary.innerHTML, "市场判断");
+  dimensionsTarget.innerHTML = datedContent(data, dimensionsTarget.innerHTML, "市场依据");
   applyV22MarketPageCurrentView();
   renderIntradayMarketOverview();
 }
@@ -374,15 +471,15 @@ function renderMarketSentimentV22(view) {
 async function loadMarketEnvironmentV22() {
   const target = document.getElementById("market-environment-v22-summary");
   try {
-    const response = await fetch(`${V22_MARKET_ENVIRONMENT_URL}?v=${Date.now()}`, { cache: "no-store" });
-    if (!response.ok) throw new Error("八维环境暂不可用");
-    renderEnvironmentV22(await response.json());
+    renderEnvironmentV22(await readV2Json(`${V22_MARKET_ENVIRONMENT_URL}?v=${Date.now()}`));
   } catch (_error) {
-    if (target) target.innerHTML = '<div class="empty-state">市场环境暂时没有更新成功，保留上次可用结果。</div>';
+    recordDataStatus("market", "市场资料", null, true);
+    if (target && !v22MarketEnvironment) target.innerHTML = '<div class="empty-state">市场资料暂不可用，请稍后刷新。</div>';
   }
 }
 
 function renderEnvironmentDecisionV22(data) {
+  recordDataStatus("environment", "市场判断", data);
   const decisionTarget = document.getElementById("market-environment-v22-decision");
   const styleTarget = document.getElementById("style-regime-v22");
   const crossTarget = document.getElementById("cross-market-v22");
@@ -397,13 +494,14 @@ function renderEnvironmentDecisionV22(data) {
   const styles = list(data?.style_regimes);
   styleTarget.innerHTML = `<div class="environment-subsection-title"><strong>当前风格表现</strong><span>截至 ${escapeHtml(compactTime(data?.as_of))}</span></div><div class="style-regime-grid">${styles.map(item => {
     const representative = list(item.representative_securities).slice(0, 4);
-    return `<article><div class="state-row"><h3>${escapeHtml(item.label || "风格")}</h3><span>${escapeHtml(STYLE_STATE_LABELS[item.price_state] || "还需确认")}</span></div><p>${escapeHtml(humanText(item.conclusion || "暂时看不清这个方向。"))}</p>${representative.length ? `<div class="compact-evidence-list">${representative.map(stock => `<span><b>${escapeHtml(stock.name || "代表对象")}</b>${hasFiniteNumber(stock.change_pct) ? ` ${Number(stock.change_pct) > 0 ? "+" : ""}${Number(stock.change_pct).toFixed(2)}%` : ""}<small>${escapeHtml(stockCodeLabel(stock.code))} · ${escapeHtml(compactTime(stock.as_of))} · ${escapeHtml(humanText(stock.source || "来源待核验"))}</small></span>`).join("")}</div>` : '<small>当天代表股行情不足，暂时不判断方向。</small>'}<p class="counter-note">需要警惕：${escapeHtml(humanText(list(item.counter_evidence)[0] || "暂时没有反向风险信息"))}</p></article>`;
+    return `<article><div class="state-row"><h3>${escapeHtml(styleLabel(item.label || "风格"))}</h3><span>${escapeHtml(STYLE_STATE_LABELS[item.price_state] || "还需确认")}</span></div><p>${escapeHtml(humanText(item.conclusion || "暂时看不清这个方向。"))}</p>${representative.length ? `<div class="compact-evidence-list">${representative.map(stock => `<span><b>${escapeHtml(stock.name || "代表对象")}</b>${hasFiniteNumber(stock.change_pct) ? ` ${Number(stock.change_pct) > 0 ? "+" : ""}${Number(stock.change_pct).toFixed(2)}%` : ""}<small>${escapeHtml(stockCodeLabel(stock.code))} · ${escapeHtml(compactTime(stock.as_of))} · ${escapeHtml(humanText(stock.source || "来源待核验"))}</small></span>`).join("")}</div>` : '<small>当天代表股行情不足，暂时不判断方向。</small>'}<p class="counter-note">需要警惕：${escapeHtml(humanText(list(item.counter_evidence)[0] || "暂时没有反向风险信息"))}</p></article>`;
   }).join("")}</div>`;
   const mappings = list(data?.cross_market_mappings);
   crossTarget.innerHTML = `<div class="environment-subsection-title"><strong>外盘对A股的影响</strong><span>直接看方向和应对</span></div><div class="cross-validation-grid">${mappings.map(item => {
     const view = crossMarketTradeView(item);
     return `<article><div class="state-row"><h3>${escapeHtml(list(item.origin_objects).slice(0, 2).join(" / ") || "外盘线索")}</h3><span>${escapeHtml(view.signal)}</span></div><p>${escapeHtml(view.conclusion)}</p><p class="cross-market-action"><b>怎么做</b>${escapeHtml(view.action)}</p><p class="counter-note">什么情况可能看错：${escapeHtml(humanText(list(item.counter_evidence)[0] || "A股代表股没有继续沿当前方向运行"))}</p></article>`;
   }).join("")}</div>`;
+  for (const target of [decisionTarget, styleTarget, crossTarget]) target.innerHTML = datedContent(data, target.innerHTML, "市场判断");
   applyV22MarketPageCurrentView();
   renderIntradayMarketOverview();
 }
@@ -417,10 +515,18 @@ function applyV22MarketPageCurrentView() {
   const view = v22MarketEnvironment.user_view || {};
   const quality = v22MarketEnvironment.quality_state || "unknown";
   const marketTarget = document.getElementById("market-environment");
-  setText("v2-updated", `信息截至 ${compactTime(v22MarketEnvironment.as_of || view["行情时点"])}`);
-  setText("home-evidence-time", compactTime(v22MarketEnvironment.as_of || view["行情时点"]));
-  setText("home-market-action", view["当前允许"] || v22MarketEnvironment.action_constraint || "等待确认");
-  setText("home-market-copy", view["当前判断"] || v22MarketEnvironment.conclusion || "当前没有可用市场结论");
+  setText("v2-updated", `市场资料截至 ${compactTime(view["行情时点"] || v22MarketEnvironment.as_of)}（北京时间）`);
+  setText("home-evidence-time", compactTime(view["行情时点"] || v22MarketEnvironment.as_of));
+  setText("home-evidence-label", "市场资料截至（北京时间）");
+  setText("home-market-action", snapshotInfo(v22MarketEnvironment).current ? (view["当前允许"] || v22MarketEnvironment.action_constraint || "等待确认") : "历史资料，等待最新行情");
+  setText("home-market-copy", snapshotInfo(v22MarketEnvironment).current ? humanText(view["当前判断"] || v22MarketEnvironment.conclusion || "当前没有可用市场结论") : "最近市场资料不属于今天，不能据此判断今天的机会与风险。");
+  const marketCurrent = snapshotInfo(v22MarketEnvironment).current;
+  const decisionCurrent = snapshotInfo(v2State).current;
+  if (marketCurrent && !decisionCurrent) {
+    renderHomeUnavailable("市场资料已更新，机会仍待核验", `市场观察：${humanText(view["当前判断"] || v22MarketEnvironment.conclusion || "等待市场结论")}。机会与风险摘要仍需最新资料。`);
+  } else if (!marketCurrent && decisionCurrent) {
+    renderHomeUnavailable("市场资料待更新，机会需复核", "机会资料已读取，但市场环境资料尚未更新到今天，暂不能合并为当前判断。");
+  }
   if (marketTarget) {
     const breadth = v22EnvironmentDimension("market_breadth");
     const liquidity = v22EnvironmentDimension("liquidity");
@@ -439,14 +545,16 @@ function applyV22MarketPageCurrentView() {
         <div class="market-detail-section"><strong>情绪判断</strong><p>${escapeHtml(humanText(sentiment?.conclusion || "等待情绪确认。"))}</p></div>
       </details>`;
   }
+  if (marketTarget) marketTarget.innerHTML = datedContent(v22MarketEnvironment, marketTarget.innerHTML, "市场判断");
   if (!document.getElementById("market-environment-v22")) return;
   const styleTarget = document.getElementById("style-map");
   if (!styleTarget || !v22EnvironmentDecision) return;
   const styles = list(v22EnvironmentDecision.style_regimes);
-  styleTarget.innerHTML = `<p class="decision-rule">截至同一交易日的四类市场风格结果。</p><div class="dimension-grid">${styles.map(item => {
+  styleTarget.innerHTML = `<p class="decision-rule">同一交易日的市场风格观察。按现有模型定义分组，不代表市值大小。</p><div class="dimension-grid">${styles.map(item => {
     const representative = list(item.representative_securities).slice(0, 4);
-    return `<article class="dimension-card"><div class="state-row"><h3>${escapeHtml(item.label || "风格观察")}</h3><span class="state-text">${escapeHtml(STYLE_STATE_LABELS[item.price_state] || "还需确认")}</span></div><p>${escapeHtml(humanText(item.conclusion || "暂时看不清这个方向。"))}</p><details class="evidence-details"><summary>查看代表股和风险</summary>${representative.length ? `<div class="compact-evidence-list">${representative.map(stock => `<span><b>${escapeHtml(stock.name || "代表对象")}</b>${hasFiniteNumber(stock.change_pct) ? ` ${Number(stock.change_pct) > 0 ? "+" : ""}${Number(stock.change_pct).toFixed(2)}%` : ""}<small>${escapeHtml(stockCodeLabel(stock.code))} · ${escapeHtml(compactTime(stock.as_of))} · ${escapeHtml(humanText(stock.source || "来源待核验"))}</small></span>`).join("")}</div>` : "<p>当天代表股行情不足，暂时不判断方向。</p>"}<p class="counter-note">需要警惕：${escapeHtml(humanText(list(item.counter_evidence)[0] || "暂时没有反向风险信息"))}</p></details></article>`;
+    return `<article class="dimension-card"><div class="state-row"><h3>${escapeHtml(styleLabel(item.label || "风格观察"))}</h3><span class="state-text">${escapeHtml(STYLE_STATE_LABELS[item.price_state] || "还需确认")}</span></div><p>${escapeHtml(humanText(item.conclusion || "暂时看不清这个方向。"))}</p><details class="evidence-details"><summary>查看代表股和风险</summary>${representative.length ? `<div class="compact-evidence-list">${representative.map(stock => `<span><b>${escapeHtml(stock.name || "代表对象")}</b>${hasFiniteNumber(stock.change_pct) ? ` ${Number(stock.change_pct) > 0 ? "+" : ""}${Number(stock.change_pct).toFixed(2)}%` : ""}<small>${escapeHtml(stockCodeLabel(stock.code))} · ${escapeHtml(compactTime(stock.as_of))} · ${escapeHtml(humanText(stock.source || "来源待核验"))}</small></span>`).join("")}</div>` : "<p>当天代表股行情不足，暂时不判断方向。</p>"}<p class="counter-note">需要警惕：${escapeHtml(humanText(list(item.counter_evidence)[0] || "暂时没有反向风险信息"))}</p></details></article>`;
   }).join("")}</div>`;
+  styleTarget.innerHTML = datedContent(v22EnvironmentDecision, styleTarget.innerHTML, "风格判断");
 }
 
 function renderIntradayMarketOverview() {
@@ -497,14 +605,13 @@ function renderIntradayMarketOverview() {
     },
   ];
   target.innerHTML = `<div class="intraday-market-grid">${cards.map(card => `<article><span>${escapeHtml(card.title)}</span><strong>${escapeHtml(card.conclusion)}</strong>${card.evidence.length ? `<ul>${card.evidence.map(item => `<li>${escapeHtml(humanText(item))}</li>`).join("")}</ul>` : ""}<p><b>对交易的影响</b>${escapeHtml(humanText(card.action))}</p></article>`).join("")}</div>`;
+  target.innerHTML = datedContent(v22MarketEnvironment, target.innerHTML, "市场判断");
 }
 
 async function loadEnvironmentDecisionV22() {
   if (!document.getElementById("market-environment-v22-decision") && !document.getElementById("opportunity-risk-radar")) return;
   try {
-    const response = await fetch(`${V22_ENVIRONMENT_DECISION_URL}?v=${Date.now()}`, { cache: "no-store" });
-    if (!response.ok) throw new Error("环境状态暂不可用");
-    v22EnvironmentDecision = await response.json();
+    v22EnvironmentDecision = await readV2Json(`${V22_ENVIRONMENT_DECISION_URL}?v=${Date.now()}`);
     renderEnvironmentDecisionV22(v22EnvironmentDecision);
     if (v2State) {
       if (v22DecisionCandidate) renderDecisionCandidateV22(v22DecisionCandidate);
@@ -516,7 +623,8 @@ async function loadEnvironmentDecisionV22() {
     }
   } catch (_error) {
     const target = document.getElementById("market-environment-v22-decision");
-    if (target) target.innerHTML = '<div class="empty-state">环境状态暂未更新，保留上次可用结果。</div>';
+    recordDataStatus("environment", "市场判断", null, true);
+    if (target && !v22EnvironmentDecision) target.innerHTML = '<div class="empty-state">市场判断暂不可用，请稍后刷新。</div>';
   }
 }
 
@@ -527,10 +635,9 @@ function environmentGateFor(card) {
 
 function renderEnvironmentGate(card) {
   const gate = environmentGateFor(card);
-  if (!gate) return '<div class="environment-gate neutral"><strong>大盘是否支持</strong><span>保持观察</span><p>当前市场不支持出手。</p></div>';
-  const rawReason = humanText(gate.reason || "当前市场不支持出手。");
-  const reason = rawReason.includes("等待核验") ? "当前市场不支持出手。" : rawReason;
-  return `<div class="environment-gate ${escapeHtml(gate.g5_result || "neutral")}"><strong>大盘是否支持</strong><span>${escapeHtml(G5_LABELS[gate.g5_result] || "保持观察")}</span><p>${escapeHtml(reason)}</p></div>`;
+  if (!gate) return '<div class="environment-gate neutral"><strong>市场条件是否满足</strong><span>尚未确认</span><p>市场条件尚未核验，先等待。</p></div>';
+  const reason = humanText(gate.reason || "市场条件尚未核验，先等待。");
+  return `<div class="environment-gate ${escapeHtml(gate.g5_result || "neutral")}"><strong>市场条件是否满足</strong><span>${escapeHtml(G5_LABELS[gate.g5_result] || "保持观察")}</span><p>${escapeHtml(reason)}</p></div>`;
 }
 
 function representativeStocks(items) {
@@ -550,6 +657,10 @@ function representativeStocks(items) {
   }).join("")}</div>`;
 }
 
+function styleLabel(value) {
+  return ({ "老登": "成熟价值（老登）", "中登": "产业化成长（中登）", "小登": "前沿科技（小登）", "微盘": "微盘股（独立市值维度）" })[value] || humanText(value);
+}
+
 function stockCodeLabel(value) {
   const raw = String(value || "").trim().toLowerCase();
   if (/^sh\d{6}$/.test(raw)) return `${raw.slice(2)}.SH`;
@@ -560,7 +671,7 @@ function stockCodeLabel(value) {
 }
 
 function cockpitPhaseList(title, values, tone = "") {
-  const rows = uniqueHumanTexts(values, 3);
+  const rows = uniqueHumanTexts(values, Infinity);
   return `<section class="cockpit-phase-list ${escapeHtml(tone)}"><strong>${escapeHtml(title)}</strong>${rows.length ? `<ul>${rows.map(item => `<li>${escapeHtml(item)}</li>`).join("")}</ul>` : '<p>等待当日数据。</p>'}</section>`;
 }
 
@@ -574,6 +685,7 @@ function renderCockpitPhaseView(data) {
   if (!target) return;
   setText("cockpit-phase-title", data?.stage_label || "当前交易阶段");
   const sections = data?.sections || {};
+  recordDataStatus("phase", "分时段资料", data);
   const availability = data?.availability || "waiting_update";
   const ready = availability === "ready" || availability === "partial";
   if (!ready) {
@@ -606,19 +718,19 @@ function renderCockpitPhaseView(data) {
       ${cockpitPhaseList("风险因素", sections.risks, "risk")}
       ${cockpitPhaseList("失效条件", sections.invalidation_conditions, "invalid")}
     </div>`;
+  target.innerHTML = datedContent(data, target.innerHTML, "本时段判断");
 }
 
 async function loadCockpitPhaseView() {
   if (!document.getElementById("cockpit-phase-view")) return;
   try {
-    let response = await fetch(`${V22_COCKPIT_PHASE_URL}?v=${Date.now()}`, { cache: "no-store" });
-    if (!response.ok) response = await fetch(`${V22_COCKPIT_PHASE_FALLBACK_URL}?v=${Date.now()}`, { cache: "no-store" });
-    if (!response.ok) throw new Error("阶段结果暂不可用");
-    const payload = await response.json();
+    let payload;
+    try { payload = await readV2Json(`${V22_COCKPIT_PHASE_URL}?v=${Date.now()}`); }
+    catch (_error) { payload = await readV2Json(`${V22_COCKPIT_PHASE_FALLBACK_URL}?v=${Date.now()}`); }
     const target = document.getElementById("cockpit-phase-view");
     const sessionKey = target?.dataset.sessionKey;
     const view = sessionKey ? payload?.sessions?.[sessionKey] : payload;
-    if (view?.source_as_of) setText("v2-updated", `信息截至 ${compactTime(view.source_as_of)}`);
+    if (view?.source_as_of) setText("v2-updated", `本时段资料截至 ${compactTime(view.source_as_of)}（北京时间）`);
     renderCockpitPhaseView(view || {
       stage_label: "当前交易阶段",
       availability: "waiting_update",
@@ -627,17 +739,15 @@ async function loadCockpitPhaseView() {
       transition_note: "不使用旧日期结论代替。",
     });
   } catch (_error) {
+    recordDataStatus("phase", "分时段资料", null, true);
     const target = document.getElementById("cockpit-phase-view");
-    if (target) target.innerHTML = '<div class="empty-state error-state">当前交易阶段结果暂未更新；旧预案不会作为今天的操作依据。</div>';
+    if (target) target.innerHTML = '<div class="empty-state error-state">本时段资料读取失败，暂不能判断；请稍后刷新。</div>';
   }
 }
 
 function visibleRiskAndInvalidation(card) {
   const risks = list(card.risk_factors).length ? list(card.risk_factors) : list(card.counter_evidence);
-  const invalidation = list(card.invalidation_conditions);
-  const riskText = risks.slice(0, 2).map(item => humanText(item)).filter(Boolean).join("；") || "暂时没有新增风险，但仍要看代表股与板块是否同向。";
-  const invalidationText = invalidation.slice(0, 3).map(item => humanText(item)).filter(Boolean).join("；") || "关键证据失效或代表股与板块背离。";
-  return `<div class="risk-invalidation-grid"><div><strong>主要风险</strong><p>${escapeHtml(riskText)}</p></div><div><strong>失效条件</strong><p>${escapeHtml(invalidationText)}</p></div></div>`;
+  return `<div class="risk-invalidation-grid">${conditionList("主要风险", risks, "风险资料暂缺，无法判断是否有新增风险")}${conditionList("什么情况会使判断失效", card.invalidation_conditions, "失效条件尚未记录，暂不据此行动")}</div>`;
 }
 
 function triggerMetrics(data) {
@@ -667,9 +777,9 @@ function evidenceDetails(card) {
   if (visibleEvidence.length) {
     rows.push(`<li class="evidence-group-title">支持证据</li>${visibleEvidence.map(item => `<li>${escapeHtml(item)}</li>`).join("")}`);
   }
-  const visibleCounter = counter.map(userEvidenceText).filter(Boolean).slice(0, 3);
-  const visibleConfirm = confirm.map(userEvidenceText).filter(Boolean).slice(0, 3);
-  const visibleInvalidation = invalidation.map(userEvidenceText).filter(Boolean).slice(0, 3);
+  const visibleCounter = counter.map(userEvidenceText).filter(Boolean);
+  const visibleConfirm = confirm.map(userEvidenceText).filter(Boolean);
+  const visibleInvalidation = invalidation.map(userEvidenceText).filter(Boolean);
   if (visibleCounter.length) rows.push(`<li class="evidence-group-title">反向证据与缺口</li>${visibleCounter.map(item => `<li>${escapeHtml(item)}</li>`).join("")}`);
   if (visibleConfirm.length) rows.push(`<li class="evidence-group-title">确认条件</li>${visibleConfirm.map(item => `<li>${escapeHtml(item)}</li>`).join("")}`);
   if (visibleInvalidation.length) rows.push(`<li class="evidence-group-title">失效条件</li>${visibleInvalidation.map(item => `<li>${escapeHtml(item)}</li>`).join("")}`);
@@ -679,12 +789,15 @@ function evidenceDetails(card) {
 function renderRadar(cards) {
   const target = document.getElementById("opportunity-risk-radar");
   if (!target) return;
+  displayedRadarCards = cards;
   if (!cards.length) {
-    target.innerHTML = '<div class="empty-state">当前没有同时满足有效时间和代表股依据的机会或风险。保持等待，不追旧信号；下方可查看待核验方向和历史触发。</div>';
+    target.innerHTML = '<div class="empty-state">尚未取得可用于当前判断的机会或风险信号；这不代表市场没有风险。下方可查看待确认方向与历史记录。</div>';
     return;
   }
-  const featured = cards.slice(0, 5);
-  target.innerHTML = featured.map(card => {
+  const filtered = cards.filter(card => activeRadarFilter === "all" || (card.kind === "risk" ? "risk" : "opportunity") === activeRadarFilter || (activeRadarFilter === "waiting" && (card.state === "waiting" || card.state === "candidate")));
+  const featured = filtered.slice(0, 5);
+  if (!filtered.length) { target.innerHTML = '<div class="empty-state">这个分类暂时没有信号。可切换到“全部”查看其他方向。</div>'; return; }
+  const renderCard = card => {
     const kind = card.kind === "risk" ? "risk" : "opportunity";
     const waiting = card.state === "waiting" || card.state === "candidate";
     const visible = activeRadarFilter === "all" || activeRadarFilter === kind || (activeRadarFilter === "waiting" && waiting);
@@ -697,11 +810,14 @@ function renderRadar(cards) {
       ${renderEnvironmentGate(card)}
       <div class="radar-evidence-lead"><strong>代表股依据</strong>${representativeStocks(list(card.representative_stocks))}</div>
       ${triggerMetrics(card.trigger_metrics)}
-      <div class="action-line"><strong>现在怎么办</strong>${escapeHtml(humanText(card.action))}</div>
+      <div class="action-line"><strong>当前观察安排</strong>${escapeHtml(humanText(card.action))}</div>
+      ${conditionList("接下来确认什么", card.confirm_conditions)}
       ${visibleRiskAndInvalidation(card)}
       ${evidenceDetails(card)}
     </article>`;
-  }).join("") + (cards.length > featured.length ? `<div class="radar-cap-note">当前共${escapeHtml(cards.length)}个方向，首屏只保留前5个重点，其余继续观察。</div>` : "");
+  };
+  target.innerHTML = featured.map(renderCard).join("") + (filtered.length > 5 ? `<details class="radar-overflow"><summary>查看其余 ${escapeHtml(filtered.length - 5)} 个方向</summary><div class="radar-grid">${filtered.slice(5).map(renderCard).join("")}</div></details>` : "");
+  target.innerHTML = datedContent(v22DecisionCandidate || v2State, target.innerHTML, "机会与风险判断");
 }
 
 function renderRadarHistory(cards) {
@@ -751,7 +867,7 @@ function renderValidation(items) {
       <div class="case-why-copy"><strong>为什么关注</strong><p>${escapeHtml(why)}</p></div>
       <div class="radar-evidence-lead"><strong>代表股依据</strong>${representativeStocks(list(item.representative_stocks)) || '<p>代表股行情尚未形成，暂不升级。</p>'}</div>
       ${renderEnvironmentGate(item)}
-      <p class="conditions"><strong>什么情况下可以加强关注</strong>${escapeHtml(humanText(list(item.confirm_conditions)[0] || "等代表股和板块一起走强"))}</p>
+      ${conditionList("需要核对的完整条件", item.confirm_conditions)}
       ${visibleRiskAndInvalidation(item)}
       ${item.valid_window_display ? `<p class="valid-window-copy">${escapeHtml(humanTimeText(item.valid_window_display))}</p>` : ""}
     </article>`;
@@ -759,6 +875,7 @@ function renderValidation(items) {
   const visible = items.slice(0, 10);
   const overflow = items.slice(10);
   target.innerHTML = `<div class="queue-list">${visible.map(queueCard).join("")}</div>${overflow.length ? `<details class="queue-overflow"><summary>查看其余 ${escapeHtml(overflow.length)} 个观察方向</summary><div class="queue-list">${overflow.map(queueCard).join("")}</div></details>` : ""}`;
+  target.innerHTML = datedContent(v22DecisionCandidate || v2State, target.innerHTML, "观察条件");
 }
 
 function keyValueBlock(title, values) {
@@ -952,7 +1069,7 @@ function renderIndustryTracking(data) {
   target.innerHTML = items.map(item => {
     const stocks = list(item.representative_stocks).map(stock => {
       const pct = Number(stock.change_pct);
-      const quote = Number.isFinite(pct) ? `${pct > 0 ? "+" : ""}${pct.toFixed(2)}%` : "行情待更新";
+      const quote = hasFiniteNumber(stock.change_pct) ? `${pct > 0 ? "+" : ""}${pct.toFixed(2)}%` : "行情待更新";
       return `<span class="tag">${escapeHtml(stock.name)} ${escapeHtml(quote)}</span>`;
     }).join("");
     const contexts = list(item.linked_market_topics).slice(0, 5).map(topic => `<span class="tag">${escapeHtml(topic.name)} · ${escapeHtml(humanText(topic.state || "待更新"))}</span>`).join("");
@@ -987,9 +1104,9 @@ function renderStockPool(data) {
     <p>${escapeHtml(list(item.domains).map(domain => domain.name).join(" / ") || "待归类")}</p>
     <div class="tag-list">${list(item.tags).slice(0, 5).map(tag => `<span class="tag">${escapeHtml(tag)}</span>`).join("")}</div>
     <details class="evidence-details"><summary>关注依据与触发条件</summary>
-      <p>${escapeHtml(item.attention_reason)}</p>
-      <p class="condition-copy">确认：${escapeHtml(list(item.trigger_conditions)[0] || "待补明确触发条件")}</p>
-      <p class="condition-copy invalidation">失效：${escapeHtml(list(item.invalidation_conditions)[0] || "待补明确失效条件")}</p>
+      <p>${escapeHtml(humanText(item.attention_reason))}</p>
+      ${conditionList("需要核对的完整条件", item.trigger_conditions)}
+      ${conditionList("什么情况会使判断失效", item.invalidation_conditions)}
       <p class="definition-version">板块角色：${escapeHtml(list(item.roles).map(value => ROLE_LABELS[value] || value).join(" / "))} · 关注来源：${escapeHtml(list(item.source_pools).map(value => POOL_LABELS[value] || value).join(" / "))}</p><p class="definition-version">为什么这样判断：${escapeHtml(humanText(list(item.role_evidence)[0] || "还缺少明确依据"))}</p>
     </details>
   </article>`).join("") || '<div class="empty-state">没有匹配的股票。</div>';
@@ -1019,7 +1136,7 @@ async function loadWatchlistSyncShadow() {
 }
 
 function renderLayerQuote(quote) {
-  if (!quote || quote.change_pct == null || !quote.as_of || !quote.source) return '<span class="asset-quote missing">行情待核验</span>';
+  if (!quote || !hasFiniteNumber(quote.change_pct) || !quote.as_of || !quote.source) return '<span class="asset-quote missing">行情待核验</span>';
   const value = Number(quote.change_pct);
   const direction = value > 0 ? "up" : (value < 0 ? "down" : "flat");
   return `<span class="asset-quote ${direction}">${escapeHtml(value > 0 ? "+" : "")}${escapeHtml(value.toFixed(2))}% · ${escapeHtml(compactTime(quote.as_of))} · ${escapeHtml(quote.source)}</span>`;
@@ -1050,6 +1167,7 @@ function renderStockPoolLayers() {
   const temporaryTarget = document.getElementById("temporary-candidate-layer");
   if (!summary || !userTarget || !formalTarget || !temporaryTarget) return;
   const userItems = list(privateUserAssets?.["用户自选"]);
+  const userUnavailable = ["尚未读取", "暂不可用"].includes(privateUserAssets?.["状态"]);
   const formal = v22StockPool?.formal_observation || {};
   const activeFormal = list(formal.items);
   const nearReady = list(formal.near_ready_items);
@@ -1061,8 +1179,8 @@ function renderStockPoolLayers() {
     const observationLabel = [sideLabel, tierLabel, item.evidence_grade ? `证据 ${item.evidence_grade}` : ""].filter(Boolean).join(" · ");
     return `<article class="asset-layer-card"><div><strong>${escapeHtml(item.name)}</strong><span>${escapeHtml(stockCodeLabel(item.code))}</span></div>${renderLayerQuote(item.quote)}<p>当前判断：${escapeHtml(humanText(item.ai_view || "等待确认"))}</p><p>${escapeHtml(observationLabel)}</p><p>还需补充：${list(item.missing_requirements).slice(0, 3).map(value => escapeHtml(humanText(value))).join("、") || "无"}</p></article>`;
   }).join("");
-  summary.innerHTML = `<div class="layer-summary"><span>我的关注 <b>${escapeHtml(userItems.length)}</b></span><span>正式观察 <b>${escapeHtml(formal.active_count ?? 0)}</b></span><span>系统发现 <b>${escapeHtml(v22StockPool?.temporary_candidates?.count ?? 0)}</b></span></div><p class="layer-boundary-note">系统发现不会自动进入我的关注；正式观察也不会自动成为交易候选，需明确允许并通过市场门禁。</p>`;
-  userTarget.innerHTML = userItems.slice(0, 8).map(item => `<article class="asset-layer-card user-owned"><div><strong>${escapeHtml(item["名称"] || "名称待核验")}</strong><span>${escapeHtml(stockCodeLabel(item["代码"]))}</span></div>${renderLayerQuote(findUserAssetQuote(item["代码"]))}<p>我的优先级：${escapeHtml(USER_PRIORITY_LABELS[item["用户优先级"]] || "未设置")} · 关注目的：${escapeHtml(USER_INTENT_LABELS[item["关注目的"]] || "未设置")}</p><p>我的备注：${escapeHtml(item["用户备注"] || "未填写")}</p><small>来源：${list(item["有效来源"]).map(value => escapeHtml(USER_SOURCE_LABELS[value] || "用户确认来源")).join(" / ") || "等待核验"}</small></article>`).join("") || '<div class="layer-empty">当前没有已确认的用户关注；同花顺同步对照仍在进行。</div>';
+  summary.innerHTML = `<div class="layer-summary"><span>我的关注 <b>${escapeHtml(userUnavailable ? "—" : userItems.length)}</b></span><span>正式观察 <b>${escapeHtml(formal.active_count ?? 0)}</b></span><span>系统发现 <b>${escapeHtml(v22StockPool?.temporary_candidates?.count ?? 0)}</b></span></div><p class="layer-boundary-note">系统发现不会自动进入我的关注；正式观察也不会自动成为交易候选，需明确允许并通过市场门禁。</p>`;
+  userTarget.innerHTML = userItems.slice(0, 8).map(item => `<article class="asset-layer-card user-owned"><div><strong>${escapeHtml(item["名称"] || "名称待核验")}</strong><span>${escapeHtml(stockCodeLabel(item["代码"]))}</span></div>${renderLayerQuote(findUserAssetQuote(item["代码"]))}<p>我的优先级：${escapeHtml(USER_PRIORITY_LABELS[item["用户优先级"]] || "未设置")} · 关注目的：${escapeHtml(USER_INTENT_LABELS[item["关注目的"]] || "未设置")}</p><p>我的备注：${escapeHtml(item["用户备注"] || "未填写")}</p><small>来源：${list(item["有效来源"]).map(value => escapeHtml(USER_SOURCE_LABELS[value] || "用户确认来源")).join(" / ") || "等待核验"}</small></article>`).join("") || `<div class="layer-empty">${userUnavailable ? "自选资料暂未读到，不能判断关注清单是否为空。" : "当前清单中没有已确认的自选股票。"}</div>`;
   formalTarget.innerHTML = `${activeFormal.length ? "" : '<p class="layer-warning">当前没有正式观察结果；以下标的是研究信息较完整的待确认对象。</p>'}${formalCards || '<div class="layer-empty">当前未形成正式观察。</div>'}`;
   temporaryTarget.innerHTML = temporary.slice(0, 8).map(item => `<article class="asset-layer-card temporary"><div><strong>${escapeHtml(item.name)}</strong><span>${escapeHtml(stockCodeLabel(item.code))}</span></div>${renderLayerQuote(item.quote)}<p>${escapeHtml(humanText(item.ai_view || "系统发现，尚未加入我的关注"))}</p><p>发现依据：${escapeHtml(humanText(item.discovery_context || "等待补充"))}</p><small>风险：${escapeHtml(humanText(item.risk || "等待核验"))}</small></article>`).join("") || '<div class="layer-empty">当前系统线索没有可核验代表股。</div>';
 }
@@ -1072,7 +1190,8 @@ function renderCockpitUserContext() {
   if (!target) return;
   const userItems = list(privateUserAssets?.["用户自选"]);
   if (!userItems.length) {
-    target.innerHTML = '<div class="cockpit-asset-message"><strong>当前没有已确认的用户资产</strong><p>机会雷达继续展示市场结果。</p></div>';
+    const unavailable = ["尚未读取", "暂不可用"].includes(privateUserAssets?.["状态"]);
+    target.innerHTML = `<div class="cockpit-asset-message"><strong>${unavailable ? "自选资料暂未读到" : "当前清单中没有已确认的自选股票"}</strong><p>${unavailable ? "暂不能核对自选股与市场机会的关联。" : "可先查看市场观察结果。"}</p></div>`;
     return;
   }
   const currentRadar = v2State ? radarByCurrentTime(v2State).current : [];
@@ -1083,7 +1202,7 @@ function renderCockpitUserContext() {
   }));
   const matches = userItems.map(item => ({ item, match: radarStocks.get(String(item["代码"] || "").toLowerCase()) })).filter(row => row.match);
   if (!matches.length) {
-    target.innerHTML = `<div class="cockpit-asset-message"><strong>当前机会未见用户关注标的参与</strong><p>已检查 ${escapeHtml(userItems.length)} 只用户确认资产；这是一条反向证据，不代表相关板块一定无效。</p></div>`;
+    target.innerHTML = `<div class="cockpit-asset-message"><strong>暂未找到自选股与所列机会的关联</strong><p>已核对 ${escapeHtml(userItems.length)} 只已确认自选股；未匹配到机会，不等于这些股票没有变化或风险。</p></div>`;
     return;
   }
   target.innerHTML = `<div class="cockpit-asset-list">${matches.slice(0, 8).map(({item, match}) => `<article><strong>${escapeHtml(item["名称"])}</strong><span>${escapeHtml(item["代码"])}</span><p>当前关联：${escapeHtml(match.card.title || "机会待核验")} · ${escapeHtml(match.card.action || "等待确认")}</p></article>`).join("")}</div>`;
@@ -1334,22 +1453,30 @@ function renderHome(data) {
   setText("home-market-action", environment.action || "等待确认");
   setText("home-market-copy", environment.headline || "市场环境等待生成");
   setText("home-opportunity-summary", opportunityCards[0]?.title || "当前没有确认机会");
-  setText("home-risk-summary", riskCards[0]?.title || "暂无新增风险信号");
-  setText("home-next-check", validation[0]?.theme || "保持等待，等条件出现");
+  setText("home-risk-summary", riskCards[0]?.title || "尚无可用的风险信号，仍需核验");
+  setText("home-next-check", validation[0] ? `${humanText(validation[0].theme || "观察方向")}：${userEvidenceText(list(validation[0].confirm_conditions)[0]) || "等待条件补全"}${list(validation[0].confirm_conditions).length > 1 ? "（还有其他条件，进入详情逐项核对）" : ""}` : "等待新的可核验资料");
   setText("home-opportunity-count", opportunities);
   setText("home-risk-count", risks);
   setText("home-validation-count", validation.length);
   setText("home-stock-count", data.stock_pool?.stock_count ?? 0);
+  setText("home-evidence-label", "结论依据截至（北京时间）");
   setText("home-evidence-time", compactTime(data.system?.decision_as_of));
+  if (!snapshotInfo(data).current) renderHomeUnavailable("历史资料，等待最新行情", "最近结论不属于今天，不能据此判断今天的机会与风险。");
+}
+
+function renderHomeUnavailable(title = "资料暂不可用", copy = "尚未读到结论，请稍后刷新。") {
+  setText("home-market-action", title);
+  setText("home-market-copy", copy);
+  setText("home-opportunity-summary", "尚未取得今日机会资料");
+  setText("home-risk-summary", "今日风险尚无法判断");
+  setText("home-next-check", "等最新行情与资料更新后，再核对条件");
+  for (const id of ["home-opportunity-count", "home-risk-count", "home-validation-count"]) setText(id, "—");
 }
 
 function setFilter(value) {
   activeRadarFilter = value;
   document.querySelectorAll("#radar-filters button").forEach(button => button.classList.toggle("active", button.dataset.filter === value));
-  document.querySelectorAll("[data-radar-kind]").forEach(card => {
-    const waiting = card.dataset.radarState === "waiting" || card.dataset.radarState === "candidate";
-    card.hidden = !(value === "all" || card.dataset.radarKind === value || (value === "waiting" && waiting));
-  });
+  renderRadar(displayedRadarCards);
 }
 
 function bindFilters() {
@@ -1392,21 +1519,12 @@ function renderAll(data, refreshReason = "自动更新") {
   v2State = data;
   const system = data.system || {};
   const radar = radarByCurrentTime(data);
-  setText("v2-mode", "AI辅助判断");
-  setText("v2-updated", `信息截至 ${compactTime(system.decision_as_of)}`);
-  setText("v2-refresh-status", `更新于 ${compactTimeWithSeconds(new Date().toISOString())} · ${refreshReason}`);
-  const qualityState = data.data_quality_gate?.state || "blocked";
-  const status = document.getElementById("v2-status");
-  if (status) {
-    const isDataStatusPage = document.body.classList.contains("page-governance") || window.location.pathname.endsWith("/v2-governance.html");
-    if (isDataStatusPage) {
-      status.hidden = false;
-      status.textContent = qualityState === "usable" ? "信息已更新" : (qualityState === "blocked" ? "关键数据不足" : "部分信息待更新");
-      status.className = `pill ${qualityState}`;
-    } else {
-      status.hidden = true;
-    }
-  }
+  setText("v2-mode", "V2 试用观察");
+  setText("v2-updated", `结论依据截至 ${compactTime(system.decision_as_of)}（北京时间）`);
+  setText("v2-refresh-status", `页面读取于 ${compactTimeWithSeconds(new Date().toISOString())}（北京时间），不代表行情已更新`);
+  const error = document.getElementById("page-load-error");
+  if (error) error.innerHTML = "";
+  recordDataStatus("decision", "结论依据", data);
   renderHome(data);
   renderQuality(data.data_quality_gate || {});
   renderEnvironment(data.market_environment || {});
@@ -1428,6 +1546,7 @@ function renderAll(data, refreshReason = "自动更新") {
 
 function renderDecisionCandidateV22(data) {
   v22DecisionCandidate = data;
+  recordDataStatus("candidate", "机会观察资料", data);
   const summary = data?.summary || {};
   const clueSummary = data?.unformed_clue_summary || {};
   const currentClues = summary.unformed_clues ?? 0;
@@ -1442,6 +1561,11 @@ function renderDecisionCandidateV22(data) {
       ? `当前有 ${readyCount} 个方向具备完整依据，另有 ${waitingCount} 个方向等待确认。`
       : `当前没有具备完整依据的机会；${waitingCount} 个方向仍在观察，保持等待。`
   );
+  if (!snapshotInfo(data).current) {
+    setText("home-v22-candidate-state", "历史观察资料");
+    setText("home-v22-candidate-copy", "这些方向来自旧日期，等待最新资料后再核对。");
+    setText("v22-case-projection-note", `观察资料日期：${snapshotInfo(data).date || "尚未核验"}，仅供回看。`);
+  }
   const clueTarget = document.getElementById("v22-clue-explanation");
   if (clueTarget) {
     clueTarget.textContent = currentClues || parkedClues
@@ -1449,9 +1573,10 @@ function renderDecisionCandidateV22(data) {
       : "当前观察方向已按代表股、市场环境、行动条件和失效条件完成核对。";
   }
   if (document.getElementById("opportunity-risk-radar")) {
-    renderRadar(list(data?.current_cases));
+    const radar = radarByCurrentTime({ opportunity_radar: data?.current_cases, opportunity_history: data?.history_cases });
+    renderRadar(radar.current);
     renderValidation(list(data?.validation_cases));
-    renderRadarHistory(list(data?.history_cases));
+    renderRadarHistory(radar.history);
   }
   if (document.getElementById("research-themes") && v2State?.research_library) renderResearchLibrary(v2State.research_library);
 }
@@ -1459,13 +1584,12 @@ function renderDecisionCandidateV22(data) {
 async function loadDecisionCandidateV22() {
   if (!document.getElementById("opportunity-risk-radar") && !document.getElementById("home-v22-candidate-state") && !document.getElementById("research-themes") && !document.getElementById("cockpit-user-assets")) return;
   try {
-    const response = await fetch(`${V22_DECISION_CANDIDATE_URL}?v=${Date.now()}`, { cache: "no-store" });
-    if (!response.ok) throw new Error("候选案例暂不可用");
-    renderDecisionCandidateV22(await response.json());
+    renderDecisionCandidateV22(await readV2Json(`${V22_DECISION_CANDIDATE_URL}?v=${Date.now()}`));
   } catch (_error) {
+    recordDataStatus("candidate", "机会观察资料", null, true);
     setText("home-v22-candidate-state", "暂未更新");
     setText("home-v22-candidate-copy", "当前结果暂未更新。");
-    setText("v22-case-projection-note", "案例结果暂未更新，保留上次可用结果。");
+    setText("v22-case-projection-note", v22DecisionCandidate ? "更新失败，保留上次资料，请核对日期。" : "机会观察资料暂不可用。");
   }
 }
 
@@ -1497,19 +1621,16 @@ async function loadV2(refreshReason = "自动更新") {
   if (v2LoadInFlight) return;
   v2LoadInFlight = true;
   try {
-    const response = await fetch(`${V2_DATA_URL}?v=${Date.now()}`, { cache: "no-store" });
-    if (!response.ok) throw new Error(`HTTP ${response.status}`);
-    renderAll(await response.json(), refreshReason);
+    const data = await readV2Json(`${V2_DATA_URL}?v=${Date.now()}`);
+    if (!data.system || !data.data_quality_gate || !data.market_environment) throw new Error("结论资料不完整");
+    renderAll(data, refreshReason);
     await loadCockpitPhaseView();
   } catch (_error) {
     const radar = document.getElementById("opportunity-risk-radar") || document.getElementById("page-load-error");
     if (radar && !v2State) radar.innerHTML = '<div class="empty-state error-state">数据暂时没有更新成功，请稍后重试。</div>';
-    setText("v2-refresh-status", `更新失败 · ${refreshReason} · 当前信息可能已过时`);
-    const status = document.getElementById("v2-status");
-    if (status) {
-      status.textContent = "加载失败";
-      status.className = "pill blocked";
-    }
+    recordDataStatus("decision", "结论依据", null, true);
+    if (!v2State) renderHomeUnavailable();
+    setText("v2-refresh-status", v2State ? "更新失败，保留上次资料，请核对日期" : "更新失败，结论暂不可用");
   } finally {
     v2LoadInFlight = false;
   }
