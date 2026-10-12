@@ -6,7 +6,7 @@ import re
 from datetime import datetime, timezone, timedelta
 from pathlib import Path
 from typing import Any
-from data_validity import source_window
+from data_validity import premarket_timing, source_window
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -37,7 +37,7 @@ def main() -> int:
     payloads = {spec["file"]: load_json(ROOT / spec["file"]) for spec in CORE_FILES}
     quality = load_json(DATA_DIR / "quality-report.json")
     source_health = load_json(DATA_DIR / "source-health.json")
-    current_date = latest_signal_date(payloads)
+    current_date = latest_signal_date(payloads, now)
     quality_issues = quality.get("issues") if isinstance(quality, dict) else []
     source_flags = degraded_source_flags(source_health)
     files = [
@@ -61,6 +61,7 @@ def main() -> int:
             "session_relevance：区分同一交易日内的当前可用、阶段回看、待产出和背景参考。",
             "freshness_status：当前阶段文件必须满足各自延迟 SLA；过期实时数据自动降权。",
             "future：文件时间戳超前当前时间，视为时间错位并降权，不参与最新有效时间。",
+            "pending：盘前预案已备好，等待适用交易日确认；不代表行情刷新或已验证信号。",
         ],
     }
     OUT.write_text(json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
@@ -75,6 +76,9 @@ def trust_row(spec: dict[str, Any], data: Any, current_date: str, quality_issues
     status = "trusted"
     ts = data.get("timestamp") if isinstance(data, dict) else ""
 
+    timing = premarket_timing(data, now) if rel == "data/premarket.json" else {}
+    pending_plan = timing.get("state") in {"upcoming", "awaiting_confirmation"}
+    invalid_plan = timing.get("state") in {"invalid_date", "invalid_timestamp"}
     row_signal_date = signal_date_for_row(rel, data, ts)
     if not path.exists() or data in (None, {}):
         status = "missing"
@@ -85,6 +89,12 @@ def trust_row(spec: dict[str, Any], data: Any, current_date: str, quality_issues
     elif isinstance(data, dict) and data.get("source_status") == "invalidated":
         status = "invalidated"
         reasons.append(data.get("note") or "数据批次已撤下")
+    elif invalid_plan:
+        status = "degraded"
+        reasons.append("盘前预案日期或编写时间缺失、无效，需核对后使用")
+    elif pending_plan:
+        status = "degraded"
+        reasons.append(f"{timing['target_date']} 盘前预案，等待当日竞价与开盘确认")
     elif row_signal_date and current_date and row_signal_date != current_date:
         status = "stale"
         reasons.append(f"数据交易日不是当前交易日：{row_signal_date}")
@@ -107,17 +117,37 @@ def trust_row(spec: dict[str, Any], data: Any, current_date: str, quality_issues
 
     reasons = clean_list(reasons)
     session = session_relevance(spec, status, phase)
+    if status not in {"missing", "invalidated"}:
+        if invalid_plan:
+            session = {"relevance": "blocked", "action": "核对日期后再用", "reason": "预案日期或编写时间无法确认"}
+        elif pending_plan:
+            session = {"relevance": "upcoming", "action": "预案已备好，等待确认",
+                       "reason": f"用于 {timing['target_date']} 开盘前准备，尚未得到当日盘面确认"}
+        elif timing.get("state") == "historical":
+            session = session_action(spec["label"], "premarket", "historical", phase)
     freshness_limit = effective_freshness_minutes(spec, phase)
     freshness = freshness_state(spec, ts, status, session["relevance"], phase, now)
     if freshness["status"] in {"stale", "future"} and status not in {"missing", "invalidated", "stale"}:
         status = worse_status(status, "degraded")
         reasons = clean_list([*reasons, freshness["reason"]])
+    use_action = action_for(status)
+    if status not in {"missing", "invalidated"}:
+        if freshness["status"] == "future":
+            use_action = "核对时间后再用"
+        elif invalid_plan:
+            use_action = "核对日期后再用"
+        elif pending_plan:
+            use_action = "仅作预案，等待确认"
+        elif timing.get("state") == "historical":
+            use_action = "仅作历史背景"
     return {
         "file": rel,
         "label": spec["label"],
         "role": spec["role"],
         "timestamp": ts or "",
         "signal_date": row_signal_date or "",
+        "target_trade_date": timing.get("target_date", ""),
+        "plan_state": timing.get("state", ""),
         "status": status,
         "session_phase": phase,
         "session_relevance": session["relevance"],
@@ -129,8 +159,8 @@ def trust_row(spec: dict[str, Any], data: Any, current_date: str, quality_issues
         "freshness_action": freshness["action"],
         "freshness_reason": freshness["reason"],
         "trust_score": trust_score(status, reasons, session["relevance"], freshness["status"]),
-        "usable": status in {"trusted", "degraded", "stale"},
-        "use_action": action_for(status),
+        "usable": status in {"trusted", "degraded", "stale"} and not (pending_plan or invalid_plan or timing.get("advance_plan") or freshness["status"] == "future"),
+        "use_action": use_action,
         "reason": trim("；".join(reasons) or "结构与时间戳正常", 220),
     }
 
@@ -271,6 +301,13 @@ def freshness_state(spec: dict[str, Any], ts: Any, status: str, relevance: str, 
     age = max(0, int((now - parsed).total_seconds() // 60))
     limit = effective_freshness_minutes(spec, phase)
     label = spec.get("label", "该文件")
+    if relevance == "upcoming" and spec.get("session") == "premarket":
+        return {
+            "status": "pending",
+            "age_minutes": age,
+            "action": "等待对应阶段确认",
+            "reason": f"{label}已备好，编写于 {parsed.strftime('%m-%d %H:%M')}；编写时间不代表行情已确认",
+        }
     if relevance != "current":
         return {
             "status": "phase_expired",
@@ -423,7 +460,8 @@ def worse_status(left: str, right: str) -> str:
     return reverse[max(order.get(left, 1), order.get(right, 1))]
 
 
-def latest_signal_date(payloads: dict[str, Any]) -> str:
+def latest_signal_date(payloads: dict[str, Any], now: datetime | None = None) -> str:
+    now = now or datetime.now(TZ)
     dates = []
     for rel in ("data/theme-shifts.json", "data/decision-feed.json"):
         data = payloads.get(rel)
@@ -431,13 +469,21 @@ def latest_signal_date(payloads: dict[str, Any]) -> str:
             dates.append(str(data.get("current_signal_date")))
     for rel in ("data/premarket.json", "data/opportunity-watch.json", "data/alert.json", "data/intraday.json", "data/midday.json", "data/postmarket.json", "data/topics.json"):
         data = payloads.get(rel)
-        date = signal_date(data.get("timestamp") if isinstance(data, dict) else "")
-        if date:
-            dates.append(date)
+        if rel == "data/premarket.json":
+            timing = premarket_timing(data, now)
+            if timing["advance_plan"] or timing["state"] in {"upcoming", "invalid_date", "invalid_timestamp"}:
+                continue
+        stamp = parse_timestamp(data.get("timestamp") if isinstance(data, dict) else "")
+        if stamp and stamp <= now + timedelta(seconds=FUTURE_TIMESTAMP_TOLERANCE_SECONDS):
+            dates.append(stamp.date().isoformat())
     return sorted(dates)[-1] if dates else now_iso()[:10]
 
 
 def signal_date_for_row(rel: str, data: Any, timestamp: Any) -> str:
+    if rel == "data/premarket.json":
+        timing = premarket_timing(data)
+        if timing["date_field"]:
+            return timing["target_date"] if timing["state"] != "invalid_date" else ""
     if isinstance(data, dict) and rel in {"data/theme-shifts.json", "data/decision-feed.json"}:
         current_signal_date = data.get("current_signal_date")
         if current_signal_date:

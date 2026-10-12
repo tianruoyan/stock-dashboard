@@ -71,6 +71,11 @@ class FakeElement {
     return index >= 0 ? this.parentNode.children[index + 1] || null : null;
   }
 
+  remove() {
+    if (this.parentNode) this.parentNode.children = this.parentNode.children.filter(child => child !== this);
+    this.parentNode = null;
+  }
+
   appendChild(child) {
     child.parentNode = this;
     this.children.push(child);
@@ -296,10 +301,9 @@ async function main() {
     Promise,
     setInterval: () => 0,
     clearInterval: () => {},
-    setTimeout: fn => {
-      if (typeof fn === "function") fn();
-      return 0;
-    },
+    AbortController,
+    setTimeout: (fn, ms) => ms <= 12000 ? setTimeout(fn, ms) : 0,
+    clearTimeout,
     fetch: async url => {
       const rel = String(url).split("?")[0].replace(/^\//, "");
       const abs = path.join(ROOT, rel);
@@ -308,6 +312,7 @@ async function main() {
         throw new Error(`missing file: ${rel}`);
       }
       return {
+        ok: true, status: 200,
         async json() {
           return JSON.parse(fs.readFileSync(abs, "utf8"));
         }
@@ -603,6 +608,16 @@ function checkDataRenderCoverage(document, issues) {
   addCoverageCheck(checks, "section-intraday", themeCoverageSnippet(intraday.main_trends), "盘中全景主线未渲染");
   addCoverageCheck(checks, "section-intraday", firstIndexName(intraday), "盘中全景指数/港股快照未渲染");
   addCoverageCheck(checks, "section-premarket", premarket.summary, "早盘 summary 未渲染");
+  for (const key of ['opening_plan', 'action_conditions', 'invalidation_conditions']) {
+    for (const text of (premarket[key] || [])) addCoverageCheck(checks, 'section-premarket', text, '盘前确认或失效条件未完整渲染');
+  }
+  for (const key of ['a_share_mapping', 'hk_mapping']) {
+    for (const row of (premarket[key] || [])) {
+      addCoverageCheck(checks, 'section-premarket', row.theme, '盘前映射方向未渲染');
+      for (const name of (row.core || [])) addCoverageCheck(checks, 'section-premarket', name, '盘前重点观察公司未渲染');
+      addCoverageCheck(checks, 'section-premarket', row.read, '盘前映射理由未渲染');
+    }
+  }
   addCoverageCheck(checks, "section-midday", midday.morning_review?.one_sentence, "午盘一句话复盘未渲染");
   addCoverageCheck(checks, "section-midday", firstActionText(midday.afternoon_watch), "午盘下午关注信号未渲染");
   addCoverageCheck(checks, "section-postmarket", postmarket.closing_auction_patch?.summary, "盘后收盘竞价补丁未渲染");
@@ -875,31 +890,31 @@ function checkDashboardThemeCards(document, issues) {
   if (/进攻盯|风险盯/.test(rendered)) {
     issues.push(issue("critical", "dashboard_watch_old_labels", "今日结论第一屏不应继续展示旧的进攻盯/风险盯口径", "dashboard-control"));
   }
-  if (!/强势验证|验证重点/.test(rendered)) {
+  if (!/强势验证|验证重点|上次验证条件/.test(rendered)) {
     issues.push(issue("critical", "dashboard_watch_new_labels_missing", "今日结论第一屏缺少强势验证/验证重点卡片", "dashboard-control"));
   }
-  if (!rendered.includes("风险/失效")) {
+  if (!/风险\/失效|上次风险记录/.test(rendered)) {
     issues.push(issue("critical", "dashboard_watch_new_labels_missing", "今日结论第一屏缺少风险/失效卡片", "dashboard-control"));
   }
   if (/甬矽电子[｜|]\s*半导体材料/.test(rendered)) {
     issues.push(issue("critical", "dashboard_packaging_stock_mislabeled", "甬矽电子属于封装/封测链，不应在今日结论中标成半导体材料", "dashboard-control"));
   }
-  if (!rendered.includes("标准板块")) {
-    issues.push(issue("critical", "dashboard_theme_standard_missing", "今日结论优先方向/暂不参与必须显示标准板块映射", "dashboard-control"));
+  if (rendered.includes("待映射")) {
+    issues.push(issue("critical", "dashboard_theme_standard_missing", "面向投资者的方向提示不能显示待映射占位词", "dashboard-control"));
   }
-  for (const label of ["结论类型", "依据刷新", "页面刷新"]) {
+  for (const label of ["行情时间", "页面检查不代表行情更新"]) {
     if (!rendered.includes(label)) {
       issues.push(issue("critical", "dashboard_conclusion_meta_missing", `今日结论缺少${label}说明`, "dashboard-control"));
     }
   }
   const order = [
-    rendered.indexOf("优先方向"),
-    rendered.indexOf("暂不参与"),
-    Math.max(rendered.indexOf("强势验证"), rendered.indexOf("验证重点")),
-    rendered.indexOf("风险/失效")
+    Math.max(rendered.indexOf("当前关注方向"), rendered.indexOf("上次关注方向")),
+    Math.max(rendered.indexOf("当前回避方向"), rendered.indexOf("上次风险提示")),
+    Math.max(rendered.indexOf("强势验证"), rendered.indexOf("验证重点"), rendered.indexOf("上次验证条件")),
+    Math.max(rendered.indexOf("风险/失效"), rendered.indexOf("上次风险记录"))
   ];
   if (order.some(index => index < 0) || order.some((index, i) => i > 0 && index < order[i - 1])) {
-    issues.push(issue("critical", "dashboard_card_order_wrong", "今日结论卡片顺序应为：优先方向、暂不参与、验证重点/强势验证、风险/失效", "dashboard-control"));
+    issues.push(issue("critical", "dashboard_card_order_wrong", "今日结论卡片顺序应为：关注方向、风险提示、验证重点/强势验证、风险/失效", "dashboard-control"));
   }
   if (/医药修复链|老登风格切换/.test(rendered)) {
     issues.push(issue("critical", "dashboard_theme_mixed_dimension", "今日结论不应直接展示混合交易状态或风格词，应显示统一交易分支", "dashboard-control"));

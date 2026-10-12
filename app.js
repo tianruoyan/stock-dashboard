@@ -25,11 +25,16 @@ const FILES = [
 
 let cache = {};
 let refreshTimer = null;
+let refreshInFlight = null;
+let refreshRequested = false;
+const REQUEST_TIMEOUT_MS = 12000;
+const loadFailures = new Map();
 
-// Debug: show errors on page
+// Keep technical detail in the console and the collapsed diagnostics panel.
 window.onerror = function(msg, url, line) {
   const status = document.getElementById('status');
-  if (status) status.textContent = '🔴 JS ERROR: ' + msg + ' line ' + line;
+  if (status) status.textContent = '页面显示遇到问题，请稍后刷新';
+  console.error('Dashboard rendering error:', msg, url, line);
 };
 
 init();
@@ -38,39 +43,105 @@ setInterval(updateTime, 1000);
 function init() { updateAll({ scheduleNext: shouldAutoScheduleRefresh() }); }
 
 /* =========================
-   主更新
+   主更新：独立请求、有限等待、保留最后有效版本
 ========================= */
-async function updateAll(options = {}) {
-  for (const file of FILES) {
-    try {
-      const res = await fetch(file + "?t=" + Date.now());
+function validDashboardPayload(file, data) {
+  if (!data || typeof data !== 'object' || Array.isArray(data)) return false;
+  const required = {
+    'data/alert.json': ['alerts'], 'data/intraday.json': ['indices', 'index', 'main_trends', 'themes', 'summary'],
+    'data/premarket.json': ['summary', 'strategy', 'market_context', 'us_overnight'],
+    'data/midday.json': ['morning_snapshot', 'morning_review', 'summary'],
+    'data/postmarket.json': ['review', 'hotspots', 'summary'],
+    'data/watchlist-quotes.json': ['stocks'], 'data/evening-sentiment.json': ['news', 'p0_alerts', 'summary'],
+    'data/topics.json': ['topics'], 'data/signal-review.json': ['signals'],
+    'data/quality-report.json': ['issues'], 'data/data-trust.json': ['files'],
+    'data/monitoring-coverage.json': ['blind_spots'], 'data/decision-feed.json': ['opportunities', 'risks', 'verifications'],
+    'data/theme-shifts.json': ['shifts'], 'data/opportunity-watch.json': ['items'],
+    'data/automation-health.json': ['processes'], 'data/source-health.json': ['sources'],
+    'data/section-health.json': ['sections'], 'data/requirements.json': ['requirements'],
+    'config/watchlist.json': ['small_deng', 'old_deng', 'watch_only'],
+    'config/alert-config.json': ['small_deng', 'old_deng', 'style_universe'],
+    'config/cn-market-calendar.json': ['holidays']
+  };
+  const keys = required[file] || [];
+  if (!keys.some(key => Object.prototype.hasOwnProperty.call(data, key))) return false;
+  const arrays = ['indices', 'main_trends', 'themes', 'strong_lines', 'watch_lines', 'risk_lines', 'alerts', 'stocks', 'topics', 'signals', 'issues', 'files', 'blind_spots', 'opportunities', 'risks', 'verifications', 'shifts', 'items', 'processes', 'sections', 'requirements', 'holidays'];
+  if (arrays.some(key => key in data && !Array.isArray(data[key]))) return false;
+  if ('summary' in data && typeof data.summary !== 'string') return false;
+  if ('timestamp' in data && !parseTimestampMs(data.timestamp)) return false;
+  return true;
+}
+
+async function fetchDashboardJson(file) {
+  const controller = typeof AbortController === 'function' ? new AbortController() : null;
+  let timer;
+  // Promise.race also bounds the body read and providers that ignore abort.
+  const timeout = new Promise((_, reject) => {
+    timer = setTimeout(() => {
+      controller?.abort();
+      reject(new Error('request_timeout'));
+    }, REQUEST_TIMEOUT_MS);
+  });
+  try {
+    return await Promise.race([timeout, (async () => {
+      const res = await fetch(file + '?t=' + Date.now(), { signal: controller?.signal, cache: 'no-store' });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const data = await res.json();
-      const dataKey = JSON.stringify(data);
-      if (!cache[file] || cache[file]._cacheKey !== dataKey) {
-        Object.defineProperty(data, "_cacheKey", { value: dataKey, enumerable: false });
-        cache[file] = data;
-        render(file, data);
-      }
-    } catch (e) {
-      if (file.includes("signal-review") || file.includes("quality-report") || file.includes("data-trust") || file.includes("monitoring-coverage") || file.includes("decision-feed") || file.includes("theme-shifts") || file.includes("opportunity-watch") || file.includes("automation-health") || file.includes("section-health")) {
-        cache[file] = null;
-        if (file.includes("signal-review")) renderSignalReview(null);
-        if (file.includes("quality-report")) renderDataQualityGate();
-        if (file.includes("data-trust")) renderDataQualityGate();
-        if (file.includes("monitoring-coverage")) renderDataQualityGate();
-        if (file.includes("decision-feed")) renderOpportunityRiskRadar();
-        if (file.includes("theme-shifts")) renderOpportunityRiskRadar();
-        if (file.includes("opportunity-watch")) rerenderAlertsIfLoaded();
-        if (file.includes("automation-health")) renderDataQualityGate();
-        if (file.includes("section-health")) renderDataQualityGate();
-      } else {
-        console.error("load failed:", file);
-      }
-    }
+      if (!validDashboardPayload(file, data)) throw new Error('invalid_payload');
+      return data;
+    })()]);
+  } finally {
+    clearTimeout(timer);
   }
-  renderGlobalDecisionModules();
-  document.getElementById("lastUpdate").innerText = new Date().toLocaleTimeString();
-  if (options.scheduleNext && shouldAutoScheduleRefresh()) scheduleNextRefresh();
+}
+
+function updateAll(options = {}) {
+  refreshRequested = refreshRequested || !!options.scheduleNext;
+  if (refreshInFlight) return refreshInFlight;
+  refreshInFlight = (async () => {
+    try {
+      await Promise.all(FILES.map(async file => {
+        try {
+          const data = await fetchDashboardJson(file);
+          const dataKey = JSON.stringify(data);
+          if (!cache[file] || cache[file]._cacheKey !== dataKey) {
+            Object.defineProperty(data, '_cacheKey', { value: dataKey, enumerable: false });
+            const previous = cache[file];
+            cache[file] = data;
+            try { render(file, data); } catch (error) { cache[file] = previous; throw error; }
+          }
+          loadFailures.delete(file);
+        } catch (error) {
+          loadFailures.set(file, { reason: String(error.message || error), at: new Date().toISOString(), retained: !!cache[file] });
+          console.error('load failed:', file, error);
+        }
+      }));
+      renderGlobalDecisionModules();
+    } finally {
+      renderRefreshStatus();
+      const lastUpdate = document.getElementById('lastUpdate');
+      if (lastUpdate) lastUpdate.innerText = `页面检查 ${formatUpdateTime(new Date().toISOString())}`;
+      refreshInFlight = null;
+      const reschedule = refreshRequested;
+      refreshRequested = false;
+      if (reschedule && shouldAutoScheduleRefresh()) scheduleNextRefresh();
+    }
+  })();
+  return refreshInFlight;
+}
+
+function renderRefreshStatus() {
+  const notice = document.getElementById('refresh-notice');
+  if (notice) {
+    const retained = [...loadFailures.values()].some(item => item.retained);
+    const hasContent = FILES.some(file => file.startsWith('data/') && cache[file]);
+    notice.textContent = !loadFailures.size ? '' : retained
+      ? '部分内容暂时无法更新，已保留上次有效结果。请核对各栏数据时间，页面会自动重试。'
+      : hasContent ? '部分内容暂未获取到，已展示可用内容。请核对各栏数据时间，页面会自动重试。'
+      : '暂未获取到数据，请稍后重试。页面会自动检查更新。';
+  }
+  const details = document.getElementById('refresh-diagnostics');
+  if (details) details.textContent = [...loadFailures.entries()].map(([file, item]) => `${file} · ${item.reason} · ${item.at}`).join('\n') || '最近一次检查未发现加载问题。';
 }
 
 function scheduleNextRefresh() {
@@ -79,9 +150,9 @@ function scheduleNextRefresh() {
 }
 
 function currentRefreshIntervalMs(now = new Date()) {
-  const day = now.getDay();
-  if (day === 0 || day === 6) return 5 * 60 * 1000;
-  const minutes = now.getHours() * 60 + now.getMinutes();
+  const clock = shanghaiClock(now);
+  if (clock.weekday === 0 || clock.weekday === 6) return 5 * 60 * 1000;
+  const minutes = clock.minute;
   if (minutes >= 9 * 60 + 15 && minutes <= 11 * 60 + 30) return 30 * 1000;
   if (minutes >= 13 * 60 && minutes <= 15 * 60) return 30 * 1000;
   if (minutes >= 8 * 60 + 30 && minutes < 9 * 60 + 15) return 60 * 1000;
@@ -229,6 +300,10 @@ function userFacingText(value) {
     .replace(/\bdecision-feed\b/g, "机会风险")
     .replace(/\bquality-report\b/g, "数据提示");
   text = text
+    .replace(/本地V2影子驾驶舱|本地V2/g, "补充市场观察")
+    .replace(/\brisk_release\b/g, "风险释放")
+    .replace(/(?:>=|≥)\s*(\d+(?:\.\d+)?)\s*x\b/gi, "至少$1倍")
+    .replace(/(?:>=|≥)\s*(\d+(?:\.\d+)?%?)/g, "不低于$1")
     .replace(/降权观察/g, "谨慎观察")
     .replace(/降权参考/g, "谨慎参考")
     .replace(/降权/g, "谨慎参考")
@@ -306,25 +381,26 @@ function renderDashboardControl() {
   const priority = marketThemes.priority;
   const avoid = marketThemes.avoid.length ? marketThemes.avoid : normalizeDashboardThemeList(risks.slice(0, 3).map(themeDisplayName));
 
-  el.innerHTML = `<div class="control-hero ${style.cls}">
+  el.innerHTML = `${renderUpcomingPlanLink()}<div class="control-hero ${style.cls}">
     <div>
       <div class="control-eyebrow">核心结论</div>
       <div class="control-title">${escapeHtml(style.title)}</div>
       <div class="control-sub">${escapeHtml(style.reason)}</div>
       <div class="control-meta">行情时间：${escapeHtml(latest ? formatUpdateTime(latest) : "待更新")} · ${escapeHtml(freshness)}</div>
-      <div class="control-meta">结论类型：${escapeHtml(conclusionMeta.type)} · 依据刷新：${escapeHtml(conclusionMeta.basis)} · 页面刷新：${escapeHtml(conclusionMeta.refresh)}</div>
+      <div class="control-meta">${escapeHtml(conclusionMeta.type)} · 行情与分析时间不同，页面检查不代表行情更新</div>
     </div>
     <div class="control-position">
-      <span>建议仓位</span>
+      <span>原策略参考仓位</span>
       <b>${escapeHtml(position.range)}</b>
       <em>${escapeHtml(position.note)}</em>
     </div>
   </div>
+  ${staleConclusion ? `<p class="history-label">上次观察记录（行情截至 ${escapeHtml(formatUpdateTime(latest) || "时间待确认")}），仅供回看</p>` : ""}
   <div class="decision-strip control-strip">
-    <div class="decision-card ${decisionGate?.riskFirst ? "neutral" : "primary"}"><span class="decision-label">优先方向</span><b>${escapeHtml(dashboardThemeMain(priority, "等待盘面确认"))}</b><span>${escapeHtml(dashboardThemeHint(priority, "按当日强弱排序，不等同于追高"))}</span></div>
-    <div class="decision-card risk"><span class="decision-label">暂不参与</span><b>${escapeHtml(dashboardThemeMain(avoid, "暂无明确"))}</b><span>${escapeHtml(dashboardThemeHint(avoid, eventWatch[0] || "看弱线和P0是否扩散"))}</span></div>
-    <div class="decision-card ${decisionGate?.riskFirst ? "neutral" : "primary"}"><span class="decision-label">${escapeHtml(decisionGate?.riskFirst ? "验证重点 · 只验证" : `强势验证 · ${strongWatch.source}`)}</span><b>${escapeHtml(dashboardPickMain(strongWatch, decisionGate?.riskFirst ? "暂无验证重点" : "暂无强势验证"))}</b><span>${escapeHtml(decisionGate?.riskFirst ? dashboardRiskFirstPickDetail(strongWatch) : dashboardPickDetail(strongWatch, "等待强主线和个股强信号同时出现"))}</span></div>
-    <div class="decision-card risk"><span class="decision-label">风险/失效 · ${escapeHtml(riskWatch.source)}</span><b>${escapeHtml(dashboardPickMain(riskWatch, "暂无硬风险"))}</b><span>${escapeHtml(dashboardPickDetail(riskWatch, "普通下跌不列入，等事件或放量破位信号"))}</span></div>
+    <div class="decision-card ${staleConclusion || decisionGate?.riskFirst ? "neutral" : "primary"}"><span class="decision-label">${staleConclusion ? "上次关注方向 · 仅回看" : "当前关注方向"}</span><b>${escapeHtml(dashboardThemeMain(priority, "暂未确认，等待新的板块行情"))}</b><span>${escapeHtml(dashboardThemeHint(priority, "按当日强弱排序，不等同于追高"))}</span></div>
+    <div class="decision-card risk"><span class="decision-label">${staleConclusion ? "上次风险提示 · 仅回看" : "当前回避方向"}</span><b>${escapeHtml(dashboardThemeMain(avoid, "暂无明确"))}</b><span>${escapeHtml(dashboardThemeHint(avoid, eventWatch[0] || "看弱线和P0是否扩散"))}</span></div>
+    <div class="decision-card ${staleConclusion || decisionGate?.riskFirst ? "neutral" : "primary"}"><span class="decision-label">${escapeHtml(staleConclusion ? "上次验证条件 · 仅回看" : decisionGate?.riskFirst ? "验证重点 · 只验证" : `强势验证 · ${strongWatch.source}`)}</span><b>${escapeHtml(dashboardPickMain(strongWatch, decisionGate?.riskFirst ? "暂无验证重点" : "暂无强势验证"))}</b><span>${escapeHtml(decisionGate?.riskFirst ? dashboardRiskFirstPickDetail(strongWatch) : dashboardPickDetail(strongWatch, "等待强主线和个股强信号同时出现"))}</span></div>
+    <div class="decision-card risk"><span class="decision-label">${staleConclusion ? "上次风险记录 · 仅回看" : `风险/失效 · ${escapeHtml(riskWatch.source)}`}</span><b>${escapeHtml(dashboardPickMain(riskWatch, "未记录明确风险，仍需新行情核对"))}</b><span>${escapeHtml(dashboardPickDetail(riskWatch, "普通下跌不列入，等事件或放量破位信号"))}</span></div>
   </div>`;
 }
 
@@ -345,7 +421,7 @@ function dashboardMarketThemeSummary(intraday, postmarket) {
     .filter(tag => !/风控|数据质量|仓位|回避/.test(tag))
     .slice(0, 5);
   const fallbackPriority = priority.length ? priority : normalizeDashboardThemeList(rows
-    .filter(row => row.bucket !== "risk")
+    .filter(row => row.bucket !== "risk" && row.priorityEligible)
     .sort((a, b) => b.score - a.score)
     .map(row => row.display))
     .slice(0, 4);
@@ -385,7 +461,7 @@ function dashboardConclusionMeta(latest) {
 }
 
 function inferSessionPhaseByTime(now = new Date()) {
-  const minutes = now.getHours() * 60 + now.getMinutes();
+  const minutes = shanghaiClock(now).minute;
   if (minutes >= 8 * 60 + 30 && minutes < 9 * 60 + 15) return "premarket";
   if (minutes >= 9 * 60 + 15 && minutes < 9 * 60 + 30) return "opening";
   if (minutes >= 9 * 60 + 30 && minutes <= 11 * 60 + 30) return "morning";
@@ -441,8 +517,9 @@ function dashboardThemeMain(items, fallback) {
 function dashboardThemeHint(items, fallback) {
   const first = items?.[0];
   if (!first) return fallback;
-  const others = (items || []).slice(1).map(item => `${item.display}（${item.standard}）`);
-  return `标准板块：${first.standard}${others.length ? `；其他：${others.join(" / ")}` : ""}`;
+  const sector = first.standard === '待映射' ? '' : `所属方向：${first.standard}`;
+  const others = (items || []).slice(1).map(item => item.display);
+  return [sector, others.length ? `另看：${others.join(' / ')}` : ''].filter(Boolean).join('；') || fallback;
 }
 
 function collectDashboardThemeRows(intraday, postmarket) {
@@ -458,7 +535,7 @@ function collectDashboardThemeRows(intraday, postmarket) {
     ...(Array.isArray(feed?.risks) ? feed.risks : []).map(item => ({ item, source: "风险", base: 64 })),
     ...(Array.isArray(shifts?.shifts) ? shifts.shifts : []).map(item => ({ item, source: "变化", base: 58 }))
   ];
-  const systemNoise = /数据质量|全市场亏钱效应|仓位|风控|实时信号|盘中异动|替代观察/;
+  const systemNoise = /数据质量|全市场亏钱效应|仓位|风控|实时信号|盘中异动|替代观察|盘中市场状态|市场状态|事实摘要/;
   const rows = raw.flatMap(({ item, source, base }) => {
     const name = themeDisplayName(item);
     const status = trendStatus(item);
@@ -467,7 +544,7 @@ function collectDashboardThemeRows(intraday, postmarket) {
     if (!name || systemNoise.test(name)) return null;
     const positive = /观察线偏强|核心抱团|轮动增强|偏强|强|强化|主线|涨停|封板|扩散|承接/.test(text);
     const negative = /风险线|风险\/|弱化|退潮|压制|负反馈|反抽失败|证伪|明显弱/.test(text);
-    const explicitStatusRisk = /风险线|弱化|退潮/.test(status);
+    const explicitStatusRisk = isExplicitRiskLine(item) || /风险线|弱化|退潮/.test(status);
     const riskConstrained = /不升级强主线|不能.*升级|风险.*未解除|只能.*观察线|不是强主线|未解除/.test(text);
     const bucket = source === "风险" || explicitStatusRisk || (negative && !positive) ? "risk" : "watch";
     let score = base;
@@ -720,7 +797,7 @@ function latestTimestamp(items) {
 }
 
 function currentDayData(data) {
-  return signalDate(data?.timestamp) === currentSignalDate() ? data : {};
+  return data && signalDate(data.timestamp) === currentSignalDate() ? data : {};
 }
 
 function dataFreshness(timestamp) {
@@ -1068,6 +1145,12 @@ function sectionBadgeView(section, trust) {
       action: "等待有效异动",
       reason: "异动区只展示有效的题材/个股变化。"
     };
+  }
+  if (trust?.freshness_status === "future") {
+    return {visible: true, status: 'degraded', action: '时间待核对', reason: '资料时间晚于当前时间，暂不作为已确认依据。'};
+  }
+  if (section.id === 'premarket' && trust?.freshness_status === 'pending') {
+    return {visible: true, status: 'degraded', action: trust.session_action || '预案已备好，等待确认', reason: trust.session_reason || '预案仍需竞价和开盘验证。'};
   }
   if (trust?.session_relevance === "upcoming") {
     return {
@@ -1497,6 +1580,7 @@ function systemStatusShort(value) {
 
 function trustActionShort(value) {
   const text = String(value || "");
+  if (/仅作预案|预案已备好/.test(text)) return "预案待确认";
   if (/等待|不可|重产|修复/.test(text)) return "不可用";
   if (/降权/.test(text)) return "降权";
   if (/正常|trusted/.test(text)) return "正常";
@@ -1509,7 +1593,7 @@ function trustPhaseShort(value) {
     current: "当前",
     historical: "阶段回看",
     background: "背景",
-    upcoming: "待产出",
+    upcoming: "等待对应阶段",
     blocked: "阻断"
   }[value] || value || "未知";
 }
@@ -1794,6 +1878,8 @@ function verificationRowFromText(text) {
     .replace(/^#\d+\s*/, "")
     .replace(/^主线变化[：:]/, "")
     .replace(/^新线观察[：:]/, "")
+    .replace(/^(?:待触发|盘中追踪)[：:｜|\s]*/, "")
+    .replace(/^(?:待触发|盘中追踪)[：:｜|\s]*/, "")
     .trim();
   const [namePart, ...rest] = cleaned.split(/[：:]/);
   const name = normalizeThemeName(namePart || "验证条件");
@@ -1874,20 +1960,20 @@ function dashboardStockThemeLabel(stock, theme) {
 function dashboardPickMain(picks, fallback) {
   const first = picks?.rows?.[0];
   if (!first) return fallback;
-  return `${first.name}｜${first.reason}`;
+  return userFacingText(first.name);
 }
 
 function dashboardPickDetail(picks, fallback) {
-  const rows = (picks?.rows || []).slice(1);
+  const rows = (picks?.rows || []);
   if (!rows.length) return fallback;
-  return rows.map(row => `${row.name}｜${row.reason}`).join("；");
+  return rows.map((row, index) => userFacingText(index ? `${row.name}：${row.reason}` : row.reason)).filter(Boolean).join("；");
 }
 
 function dashboardRiskFirstPickDetail(picks) {
   const rows = (picks?.rows || []).slice(1);
-  if (!rows.length) return "不追高，只看承接和扩散";
+  if (!rows.length) return userFacingText(picks?.rows?.[0]?.reason || "不追高，只看承接和扩散");
   const names = rows.map(row => row.name).filter(Boolean).join(" / ");
-  return names ? `另看：${names}；同样只看承接、扩散和风险收敛，不追高` : "不追高，只看承接和扩散";
+  return [userFacingText(picks?.rows?.[0]?.reason), names ? `另看：${names}` : ""].filter(Boolean).join("；") || "不追高，只看承接和扩散";
 }
 
 function isPriorityTheme(item) {
@@ -4219,27 +4305,91 @@ function renderMappingChain(items) {
 /* =========================
    盘前简报
 ========================= */
+function premarketPlanState(data, now = new Date()) {
+  const hasTradeDate = Object.prototype.hasOwnProperty.call(data, 'trade_date');
+  const raw = String(hasTradeDate ? data.trade_date : (data.date || ''));
+  const date = /^\d{4}-\d{2}-\d{2}$/.test(raw) && !Number.isNaN(Date.parse(raw)) && new Date(`${raw}T12:00:00Z`).toISOString().slice(0, 10) === raw ? raw : '';
+  const clock = shanghaiClock(now);
+  const analysisMs = Math.max(parseTimestampMs(data.analysis_time), parseTimestampMs(data.timestamp));
+  if (hasTradeDate && Object.prototype.hasOwnProperty.call(data, 'date') && data.trade_date !== data.date) return {date: '', state: 'unknown', label: '适用交易日待核对'};
+  if (!parseTimestampMs(data.timestamp)) return {date, state: 'unknown', label: '分析时间待确认'};
+  if (analysisMs > now.getTime() + 120000) return {date, state: 'uncertain', label: '分析时间异常，等待核对'};
+  if (!date) return {date: '', state: 'unknown', label: '适用交易日待确认'};
+  if (date > clock.date) return {date, state: 'upcoming', label: '待开盘验证的预案'};
+  if (date < clock.date || clock.minute >= 690) return {date, state: 'historical', label: '盘前预案回看'};
+  return {date, state: 'pending', label: '盘前预案，仍需竞价和开盘确认'};
+}
+
+function renderUpcomingPlanLink() {
+  const data = cached('data/premarket.json');
+  if (!data) return '';
+  const plan = premarketPlanState(data);
+  if (!['upcoming', 'pending'].includes(plan.state)) return '';
+  return `<div class="plan-notice"><b>${escapeHtml(plan.date)} 盘前预案已准备</b><span>尚未确认的观察计划；下方行情仍以各自时间为准。</span><a href="#section-premarket">查看关注方向和验证条件 →</a></div>`;
+}
+
+function renderPremarketPlanMeta(data) {
+  const plan = premarketPlanState(data);
+  return `<div class="plan-notice"><b>${escapeHtml(plan.date || '日期待确认')} · ${escapeHtml(plan.label)}</b><span>分析时间：${escapeHtml(formatUpdateTime(data.analysis_time || data.timestamp) || '待确认')}（北京时间）。预案中的条件不代表已经触发。</span></div>`;
+}
+
+function renderPremarketConditions(data) {
+  return [
+    ['opening_plan', '开盘后按什么顺序观察', ''],
+    ['action_conditions', '出现这些情况，才继续关注', ''],
+    ['invalidation_conditions', '出现这些情况，原判断失效', 'risk']
+  ].map(([key, title, cls]) => {
+    const rows = arrayTextItems(data[key]);
+    return rows.length ? `<div class="subsection premarket-conditions ${cls}"><h3>${title}</h3>${renderBulletList(rows.map(userFacingText), 'premarket-points')}</div>` : '';
+  }).join('');
+}
+
+function renderPremarketMappings(items, title) {
+  if (!Array.isArray(items) || !items.length) return '';
+  const stockNames = value => arrayTextItems(value).map(userFacingText).join(' / ');
+  return `<div class="subsection"><h3>${escapeHtml(title)}</h3><p class="muted">消息与相关公司的对应关系，仅为观察清单；是否成立仍看确认与失效条件。</p><div class="mapping-grid">${items.map(item => {
+    if (!item || typeof item !== 'object') return '';
+    return `<article class="mapping-card"><h4>${escapeHtml(userFacingText(item.theme || item.name || '待确认方向'))}</h4>
+      ${item.read ? `<p>${escapeHtml(userFacingText(item.read))}</p>` : ''}
+      ${item.core ? `<p><b>重点观察</b> ${escapeHtml(stockNames(item.core))}</p>` : ''}
+      ${item.elastic ? `<p><b>同方向观察</b> ${escapeHtml(stockNames(item.elastic))}</p>` : ''}
+      ${item.pressure ? `<p class="mapping-risk"><b>风险提示</b> ${escapeHtml(stockNames(item.pressure))}</p>` : ''}</article>`;
+  }).join('')}</div></div>`;
+}
+
+function renderPremarketNews(items) {
+  if (!Array.isArray(items) || !items.length) return '';
+  return `<details class="investor-details"><summary>周末消息与来源（${items.length}条）</summary><ul class="news-list">${items.map(item => {
+    if (typeof item === 'string') return `<li>${escapeHtml(userFacingText(item))}</li>`;
+    const url = /^https?:\/\//i.test(item?.url || '') ? item.url : '';
+    return `<li>${escapeHtml(userFacingText(item?.text || item?.title || ''))}${item?.source ? `<br><span class="muted">来源：${escapeHtml(item.source)}</span>` : ''}${url ? ` · <a href="${escapeHtml(url)}" target="_blank" rel="noopener noreferrer">查看原文</a>` : ''}</li>`;
+  }).join('')}</ul></details>`;
+}
+
 function renderPremarket(data) {
   updatePanelMeta("premarket", data.timestamp);
   const el = document.getElementById("premarket");
   let html = "";
   const concisePremarket = typeof data.strategy === "string";
+  html += renderPremarketPlanMeta(data);
   html += renderPremarketDecision(data);
+  html += renderPremarketConditions(data);
   if (data.external_updated_at) {
     html += `<p class="muted">外盘行情补充：${escapeHtml(String(data.external_updated_at).replace('T', ' ').slice(0, 16))}；各条行情时间见下方，未改写原盘前分析时间。</p>`;
   }
 
   // === Codex 格式: 集合竞价 + 情绪判断 ===
-  if (data.market_context || data.strong_lines || data.watch_lines) {
+  {
     const ctx = data.market_context || {};
     // 竞价情绪
-    if (data.market_context) {
+    {
       const mood = (ctx.limit_diff || 0) >= 0 ? 'up' : 'down';
-      html += '<div class="subsection"><h3>⚡ 集合竞价情绪</h3>';
+      html += '<div class="subsection"><h3>⚡ 集合竞价确认</h3>';
       if (typeof ctx.limit_up_count === 'number' && typeof ctx.limit_down_count === 'number') {
         html += `<div class="breadth">涨停 <b>${ctx.limit_up_count}</b> / 跌停 <b>${ctx.limit_down_count}</b> · 差值 <span class="${mood}">${ctx.limit_diff ?? ctx.limit_up_count - ctx.limit_down_count}</span> · 涨停:跌停 <b>${ctx.limit_ratio ?? '—'}</b>${ctx.denominator ? `<span class="muted"> (${escapeHtml(ctx.denominator)})</span>` : ''}</div>`;
       } else {
-        html += '<p class="muted">尚未取得集合竞价涨跌停统计，不能据此判断开盘情绪。</p>';
+        const waiting = premarketPlanState(data).state === 'upcoming' || (premarketPlanState(data).date === shanghaiClock().date && shanghaiClock().minute < 565);
+        html += `<p class="muted"><b>${waiting ? '待竞价' : '竞价统计待补充'}</b> · 尚未取得集合竞价涨跌停统计，不能据此判断开盘情绪。</p>`;
       }
       html += '</div>';
     }
@@ -4272,13 +4422,13 @@ function renderPremarket(data) {
     if (data.strong_lines || data.watch_lines || data.risk_lines) {
       html += '<div class="subsection"><div class="line-grid">';
       if (data.strong_lines?.length) {
-        html += '<div><h3>🔥 强主线</h3>' + renderBulletList(data.strong_lines.slice(0, 3), "news-list strong") + '</div>';
+        html += '<div><h3>🔥 预案重点方向 · 待确认</h3>' + renderBulletList(data.strong_lines.map(userFacingText), "news-list strong") + '</div>';
       }
       if (data.watch_lines) {
-        html += '<div><h3>👀 观察线</h3>' + renderBulletList(data.watch_lines.slice(0, 5), "news-list") + '</div>';
+        html += '<div><h3>👀 观察线</h3>' + renderBulletList(data.watch_lines.map(userFacingText), "news-list") + '</div>';
       }
       if (data.risk_lines) {
-        html += '<div><h3>⚠️ 风险线</h3>' + renderBulletList(data.risk_lines.slice(0, 5), "news-list risk") + '</div>';
+        html += '<div><h3>⚠️ 风险线</h3>' + renderBulletList(data.risk_lines.map(userFacingText), "news-list risk") + '</div>';
       }
       html += '</div></div>';
     }
@@ -4363,11 +4513,14 @@ function renderPremarket(data) {
     html += renderBulletList(data.overnight_news.slice(0, 6).map(n => typeof n === "string" ? n : n.text || n.title || ""), "news-list");
     html += '</div>';
   }
+  html += renderPremarketMappings(data.a_share_mapping, "A股：关注哪些公司、为什么");
+  html += renderPremarketMappings(data.hk_mapping, "港股：关注哪些公司、为什么");
+  html += renderPremarketNews(data.weekend_news);
   if (data.strategy && Array.isArray(data.strategy)) {
-    html += '<div class="subsection"><h3>🎯 今日策略</h3><div class="grid">';
+    html += '<div class="subsection"><h3>🎯 预案中的操作思路</h3><div class="grid">';
     html += data.strategy.map(s => {
       const actionCls = (s.action || "").includes("加") ? "action-buy" : (s.action || "").includes("减") ? "action-sell" : "action-hold";
-      return `<div class="card strategy-card ${actionCls}"><div class="card-head"><span class="badge ${actionCls}">${s.action}</span></div><div class="card-body">${(s.logic||[]).map(l=>'· '+l).join("<br>")}</div>${s.target?`<div class="card-body muted">关注：${s.target}</div>`:""}</div>`;
+      return `<div class="card strategy-card ${actionCls}"><div class="card-head"><span class="badge ${actionCls}">${escapeHtml(userFacingText(s.action))}</span></div><div class="card-body">${arrayTextItems(s.logic).map(l=>'· '+escapeHtml(userFacingText(l))).join("<br>")}</div>${s.target?`<div class="card-body muted">关注：${escapeHtml(userFacingText(s.target))}</div>`:""}</div>`;
     }).join("");
     html += '</div></div>';
   }
@@ -4485,7 +4638,7 @@ function renderPremarketDecision(data) {
   const verify = ctx.sentiment_judgement || data.summary || "";
   const tone = /防御|风险|压制|弱|分化/.test(style + " " + verify) ? "warn" : /进攻|提振|强/.test(style + " " + verify) ? "good" : "neutral";
   const primary = watchLines.find(line => !/暂无/.test(String(line))) || strongLines.find(line => !/暂无/.test(String(line))) || "等待9:25竞价确认";
-  const risk = riskPoints[0] || "暂无明确风险点";
+  const risk = riskPoints[0] || "风险资料待补充";
   const news = Array.isArray(data.overnight_news) ? data.overnight_news[0] : null;
   const newsText = news ? (news.text || news.title || "") : "";
   const relatedTags = positiveRelatedTopicTags(primary, watchLines.join(" "), strongLines.join(" "), newsText, verify);
@@ -4503,13 +4656,13 @@ function renderPremarketDecision(data) {
     </div>
     <div class="decision-card risk">
       <span class="decision-label">回避/降级</span>
-      <b>${escapeHtml(risk)}</b>
-      <span>${escapeHtml(riskPoints.slice(1, 3).join("；") || risk)}</span>
+      <b>${escapeHtml(userFacingText(risk))}</b>
+      <span>${escapeHtml(userFacingText(riskPoints.slice(1, 3).join("；") || risk))}</span>
     </div>
     <div class="decision-card action">
-      <span class="decision-label">下一步验证</span>
-      <b>${escapeHtml(ctx.limit_up_count == null ? "竞价统计未取得，先看盘中实际表现" : "看竞价强弱")}</b>
-      <span>${escapeHtml(newsText || verify || "看涨跌停、低开收敛和承接扩散")}</span>
+      <span class="decision-label">接下来确认什么</span>
+      <b>${escapeHtml(ctx.limit_up_count == null ? "等待竞价与开盘确认" : "看竞价强弱")}</b>
+      <span>${escapeHtml(userFacingText(arrayTextItems(data.action_conditions).join("；") || newsText || verify || "等待具体确认条件"))}</span>
     </div>
   </div>`;
 }
@@ -4593,6 +4746,9 @@ function renderMidday(data) {
 }
 
 function renderMiddayDecision(data) {
+  if (data.historical_backfill && data.evaluation_eligible === false) {
+    return `<div class="plan-notice"><b>历史记录 · 当时数据不完整</b><span>这是事后补充的事实摘要，不补造当时的午后判断或操作建议。${escapeHtml(userFacingText(data.summary || data.morning_review?.one_sentence || ''))}</span></div>`;
+  }
   const review = data.morning_review || {};
   const trends = Array.isArray(review.main_trends) ? review.main_trends : [];
   const strong = trends.find(t => /强/.test(t.status || "")) || trends[0];
@@ -5132,7 +5288,7 @@ function renderEveningDecision(data, news, p0Alerts, counts) {
   const positive = counts["正面"] || 0;
   const negative = counts["负面"] || 0;
   const neutral = counts["中性"] || 0;
-  const overall = data.sentiment_summary?.overall || (p0Alerts.length ? "P0优先" : positive > negative ? "偏正面" : negative > positive ? "偏负面" : "中性");
+  const overall = data.sentiment_summary?.overall || (p0Alerts.length ? "重要消息优先" : positive > negative ? "偏正面" : negative > positive ? "偏负面" : "中性");
   const watch = topP0?.watch_next_day || news.find(n => Array.isArray(n.verify_next_day))?.verify_next_day || [];
   const tone = /负|风险|P0|警惕/.test(overall) || p0Alerts.length ? "warn" : /正/.test(overall) ? "good" : "neutral";
   const relatedTags = positiveRelatedTopicTags(p0Alerts.map(p => [p.title, p.why_p0].join(" ")).join(" "), news.map(n => [n.title, n.text, n.tag].join(" ")).join(" "));
@@ -5140,11 +5296,11 @@ function renderEveningDecision(data, news, p0Alerts, counts) {
     <div class="decision-card ${tone}">
       <span class="decision-label">核心结论</span>
       <b>${escapeHtml(overall)}</b>
-      <span>P0 ${p0Alerts.length} / 正${positive} 负${negative} 中${neutral}</span>
+      <span>重要消息${p0Alerts.length}条 · 利好${positive}条 · 利空${negative}条 · 待观察${neutral}条</span>
     </div>
     <div class="decision-card primary">
       <span class="decision-label">关联题材</span>
-      <b>${escapeHtml(relatedTags[0] || topP0?.title || "暂无P0")}</b>
+      <b>${escapeHtml(relatedTags[0] || topP0?.title || "暂无重要消息")}</b>
       <span>${escapeHtml(relatedTags.slice(1).join(" / ") || topP0?.why_p0 || "等待晚间新增舆情")}</span>
     </div>
     <div class="decision-card risk">
@@ -5431,5 +5587,5 @@ function renderSourceHealth(data) {
    时间 / 状态
 ========================= */
 function updateTime() {
-  document.getElementById("status").innerText = navigator.onLine ? (isMarketOpenDate() ? dataFreshness(dashboardEffectiveTimestamp()) : "休市 · 最近行情回看") : "网络未连接";
+  document.getElementById("status").innerText = loadFailures.size ? ([...loadFailures.values()].some(item => item.retained) ? "部分更新暂不可用 · 保留上次结果" : "部分数据待获取") : navigator.onLine ? (isMarketOpenDate() ? dataFreshness(dashboardEffectiveTimestamp()) : "休市 · 最近行情回看") : "网络未连接";
 }

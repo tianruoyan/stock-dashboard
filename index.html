@@ -3,14 +3,14 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Stock Logic Terminal V1</title>
-  <link rel="stylesheet" href="style.css?v=20261011-close-sentiment"/>
+  <title>投资观察看板 · V1</title>
+  <link rel="stylesheet" href="style.css?v=20261011-investor-view"/>
 </head>
 
 <body>
 
 <header class="topbar">
-  <div class="left">⚙️ V1 Terminal</div>
+  <div class="left">投资观察 · V1</div>
 
   <div class="center">
     <span id="status">正在核对行情时间</span>
@@ -34,6 +34,7 @@
 </nav>
 
 <main>
+  <p id="refresh-notice" class="refresh-notice" role="status" aria-live="polite"></p>
 
   <!-- 今日结论 -->
   <section class="panel control-panel" id="section-control">
@@ -104,20 +105,19 @@
 </main>
 
 <footer class="footer">
-  <a href="http://127.0.0.1:8878/v2.html">🧭 进入 V2 系统</a>
-  <span class="muted">·</span>
-  <a href="rules.html">📐 分析模型说明书</a>
-  <span class="muted">·</span>
-  <a href="settings.html">⚙️ 参数配置</a>
-  <span class="muted">·</span>
-  <a href="data/source-health.json" target="_blank">🛰️ 数据源</a>
-  <span class="muted">·</span>
-  <a href="data/requirements.json" target="_blank">📌 需求</a>
-  <span class="muted">— 后台资料。</span>
-  <span class="muted">·</span>
-  <a href="VERSION.md" target="_blank">2026-07-22 第169版｜盘中异动自动接线</a>
+  <p>本页用于研究与观察，不构成投资建议。行情、分析与页面检查时间分别标注；缺失数据不代表风险为零。</p>
+  <a href="http://127.0.0.1:8878/v2.html">🧭 查看 V2 试验版（本机，独立验证）</a>
+  <span class="muted"> · </span><a href="rules.html">判断方法与数据说明</a>
+  <details class="investor-details">
+    <summary>维护与诊断（按需查看）</summary>
+    <a href="settings.html">参数配置</a> ·
+    <a href="data/source-health.json" target="_blank">数据源原始记录</a> ·
+    <a href="data/requirements.json" target="_blank">维护需求</a> ·
+    <a href="VERSION.md" target="_blank">版本记录</a>
+    <pre id="refresh-diagnostics">等待首次检查。</pre>
+  </details>
 </footer>
 
-<script src="app.js?v=20261011-close-sentiment"></script>
+<script src="app.js?v=20261011-investor-view"></script>
 </body>
 </html>

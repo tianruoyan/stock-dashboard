@@ -7,7 +7,7 @@ import re
 from datetime import datetime, timezone, timedelta
 from pathlib import Path
 from typing import Any
-from data_validity import source_window
+from data_validity import premarket_timing, source_window
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -34,8 +34,8 @@ def main() -> int:
     files = load_json_files()
     issues: list[dict[str, Any]] = []
     watch_names = load_watchlist_names()
-    current_date = latest_signal_date(files)
     now = datetime.now(TZ)
+    current_date = latest_signal_date(files, now)
 
     for name in REQUIRED_JSON:
         if name not in files:
@@ -48,15 +48,8 @@ def main() -> int:
                 issues.append(issue("critical", name, "bad_literal", f"发现异常文本：{bad_literal_label(literal)}"))
         if MOJIBAKE_PATTERN.search(text):
             issues.append(issue("critical", name, "mojibake_text", "发现疑似乱码文本，需先清理数据源编码"))
-        ts = data.get("timestamp") if isinstance(data, dict) else None
         if name in REQUIRED_JSON:
-            if not ts:
-                issues.append(issue("warning", name, "missing_timestamp", "缺少 timestamp"))
-            elif signal_date(ts) != current_date:
-                severity = "info" if name in {"evening-sentiment.json", "requirements.json"} else "warning"
-                issues.append(issue(severity, name, "stale_timestamp", f"时间戳不是当前交易日：{ts}"))
-            else:
-                validate_timestamp_value(name, "timestamp", ts, issues, now)
+            validate_file_timestamp(name, data, current_date, issues, now)
 
         if isinstance(data, dict) and data.get("source_status") == "invalidated":
             issues.append(issue("warning", name, "invalidated_source", data.get("note", "数据批次已撤下")))
@@ -65,7 +58,7 @@ def main() -> int:
         scan_timestamp_fields(name, data, issues, now)
 
     validate_postmarket(files.get("postmarket.json"), issues)
-    validate_core_file_contracts(files, issues)
+    validate_core_file_contracts(files, issues, now)
     phase = trading_phase(now)
     validate_alert(files.get("alert.json"), files.get("source-health.json"), issues, now, phase)
     validate_evening(files.get("evening-sentiment.json"), issues, current_date)
@@ -139,14 +132,38 @@ def load_watchlist_names() -> set[str]:
     return names
 
 
-def latest_signal_date(files: dict[str, Any]) -> str:
+def latest_signal_date(files: dict[str, Any], now: datetime | None = None) -> str:
+    now = now or datetime.now(TZ)
     dates = []
     for name in ("premarket.json", "opportunity-watch.json", "alert.json", "intraday.json", "midday.json", "postmarket.json", "topics.json"):
-        ts = files.get(name, {}).get("timestamp") if isinstance(files.get(name), dict) else None
-        date = signal_date(ts)
-        if date:
-            dates.append(date)
+        data = files.get(name)
+        if name == "premarket.json":
+            timing = premarket_timing(data, now)
+            if timing["advance_plan"] or timing["state"] in {"upcoming", "invalid_date", "invalid_timestamp"}:
+                continue
+        stamp = parse_timestamp(data.get("timestamp") if isinstance(data, dict) else None)
+        if stamp and stamp <= now + timedelta(seconds=FUTURE_TIMESTAMP_TOLERANCE_SECONDS):
+            dates.append(stamp.date().isoformat())
     return sorted(dates)[-1] if dates else now_iso()[:10]
+
+
+def validate_file_timestamp(name: str, data: Any, current_date: str, issues: list[dict[str, Any]], now: datetime) -> None:
+    ts = data.get("timestamp") if isinstance(data, dict) else None
+    if not ts:
+        issues.append(issue("warning", name, "missing_timestamp", "缺少编写时间 timestamp"))
+        return
+    if not parse_timestamp(ts):
+        issues.append(issue("warning", name, "invalid_timestamp", "编写时间无法解析，需核对后使用", "timestamp"))
+        return
+    timing = premarket_timing(data, now) if name == "premarket.json" else {}
+    if timing.get("state") == "invalid_date":
+        issues.append(issue("warning", name, "invalid_trade_date", "盘前预案适用日期无效或不一致，需核对后使用", timing["date_field"]))
+    # Target dates are plans, never quote times. Future timestamps are still scanned
+    # separately, including all nested quote_time fields.
+    row_date = timing.get("target_date") or signal_date(ts)
+    if timing.get("state") not in {"upcoming", "awaiting_confirmation"} and row_date != current_date:
+        severity = "info" if name in {"evening-sentiment.json", "requirements.json"} else "warning"
+        issues.append(issue(severity, name, "stale_timestamp", f"资料适用日期不是当前交易日：{row_date}"))
 
 
 def signal_date(value: Any) -> str:
@@ -436,7 +453,8 @@ CORE_CONTRACTS: dict[str, dict[str, type | tuple[type, ...]]] = {
 }
 
 
-def validate_core_file_contracts(files: dict[str, Any], issues: list[dict[str, Any]]) -> None:
+def validate_core_file_contracts(files: dict[str, Any], issues: list[dict[str, Any]], now: datetime | None = None) -> None:
+    now = now or datetime.now(TZ)
     for file_name, contract in CORE_CONTRACTS.items():
         data = files.get(file_name)
         if data in (None, {}):
@@ -444,7 +462,12 @@ def validate_core_file_contracts(files: dict[str, Any], issues: list[dict[str, A
         if not isinstance(data, dict):
             issues.append(issue("warning", file_name, "schema_contract_type", f"{file_name} 根节点必须是对象"))
             continue
+        timing = premarket_timing(data, now) if file_name == "premarket.json" else {}
         for path, expected in contract.items():
+            if path == "market_context" and path not in data and timing.get("auction_pending"):
+                issues.append(issue("info", file_name, "premarket_auction_pending",
+                                    f"{timing['target_date']} 盘前预案已备好，等待当日竞价后补充盘面确认", path))
+                continue
             validate_contract_path(file_name, data, path, expected, issues)
         validate_contract_items(file_name, data, issues)
 
@@ -1076,7 +1099,7 @@ def validate_data_trust(data: Any, issues: list[dict[str, Any]], current_date: s
             issues.append(issue("warning", "data-trust.json", "bad_trust_status", f"files[{index}].status 非法", f"files[{index}]"))
         if item.get("session_relevance") not in (None, "current", "historical", "upcoming", "background", "blocked"):
             issues.append(issue("warning", "data-trust.json", "bad_session_relevance", f"files[{index}].session_relevance 非法", f"files[{index}]"))
-        if item.get("freshness_status") not in (None, "fresh", "aging", "stale", "future", "unknown", "phase_expired", "blocked"):
+        if item.get("freshness_status") not in (None, "fresh", "aging", "stale", "future", "unknown", "phase_expired", "blocked", "pending"):
             issues.append(issue("warning", "data-trust.json", "bad_freshness_status", f"files[{index}].freshness_status 非法", f"files[{index}]"))
 
 

@@ -2004,3 +2004,71 @@ body {
   /* 柱状图 */
   .bar { height: 3px; }
 }
+
+/* Investor-facing plan and data-time presentation. */
+.plan-notice { display: flex; flex-direction: column; gap: 8px; padding: 16px; margin: 0 0 16px; border: 1px solid #4f6580; border-radius: 10px; background: #172538; line-height: 1.65; }
+.plan-notice span, .history-label { color: #bdc9d7; }
+.plan-notice a, .investor-details a { color: #8dbdff; }
+.history-label { margin: 18px 0 10px; font-size: 13px; line-height: 1.6; }
+.refresh-notice:empty { display: none; }
+.refresh-notice { padding: 12px 16px; border: 1px solid #947344; border-radius: 8px; color: #f7dcae; line-height: 1.6; }
+.mapping-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 290px), 1fr)); gap: 14px; }
+.mapping-card { padding: 16px; border: 1px solid #344459; border-radius: 10px; line-height: 1.7; overflow-wrap: anywhere; }
+.mapping-card h4 { font-size: 16px; margin: 0 0 10px; }
+.mapping-card p { margin: 8px 0; }
+.mapping-risk { color: #f1b9ad; }
+.premarket-conditions .premarket-points { line-height: 1.8; }
+.investor-details { margin-top: 18px; text-align: left; line-height: 1.7; }
+.investor-details summary { cursor: pointer; padding: 10px 0; color: #bccbdc; }
+.investor-details pre { white-space: pre-wrap; overflow-wrap: anywhere; font-size: 12px; }
+.footer > p { max-width: 960px; margin: 0 auto 14px; line-height: 1.7; }
+@media (max-width: 600px) { .plan-notice, .mapping-card { padding: 12px; } .topbar .right { font-size: 11px; } }
+
+/* Primary investor explanations stay readable without opening diagnostics. */
+.decision-card > span:not(.decision-label), .card-body, .premarket-points, .mapping-card p, .plan-notice span { font-size: 14px; line-height: 1.75; }
+.premarket-conditions .premarket-points { font-size: 15px; }
+@media (max-width: 600px) { .decision-card > span:not(.decision-label), .card-body, .premarket-points, .mapping-card p { font-size: 14px; } }
+
+/* Investor reading floor: explicit child rules override legacy 11–12px mobile copy. */
+.panel .card-body,
+.panel .card-leaders,
+.panel .news-list li,
+.panel .premarket-points li,
+.panel .premarket-points.compact li,
+.panel .theme-item,
+.panel .breadth,
+.panel .sentiment-text,
+.panel .sentiment-takeaway,
+.panel .sentiment-verify,
+.panel .control-sub,
+.panel .control-position em,
+.panel .watch-action,
+.panel .watch-line,
+.panel .watch-line b,
+.panel .risk-rule-row span,
+.panel .radar-reason,
+.panel .radar-detail,
+.panel .snapshot-list,
+.panel .source-note,
+.panel .mapping-card p,
+.panel .decision-card > span:not(.decision-label) {
+  font-size: 14px;
+  line-height: 1.75;
+  overflow-wrap: anywhere;
+  word-break: normal;
+  min-width: 0;
+}
+.panel .premarket-conditions .premarket-points li { font-size: 15px; }
+.panel .decision-card b, .panel .card-head { font-size: 16px; line-height: 1.6; overflow-wrap: anywhere; }
+.panel .decision-label, .panel .update-meta, .panel .control-meta { font-size: 12px; line-height: 1.6; }
+.panel .control-meta { color: #a9b8ca; }
+.control-strip { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+@media (max-width: 768px) {
+  .panel h2 { font-size: 18px; }
+  .panel h3, .panel .sector-col h3 { font-size: 16px; line-height: 1.6; }
+  .panel .sector-row, .panel .sector-row .sector-name, .panel .sector-row .sector-pct, .panel .index-item { font-size: 14px; line-height: 1.6; }
+  .panel .card, .panel .strategy-card { padding: 14px; }
+  .panel .decision-card { padding: 14px; }
+  .panel .control-strip { grid-template-columns: 1fr; }
+  .panel .watch-line, .panel .radar-detail { grid-template-columns: minmax(58px, auto) minmax(0, 1fr); }
+}
