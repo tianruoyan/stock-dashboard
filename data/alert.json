@@ -876,7 +876,7 @@
         "sample_count": 3,
         "max_abs_leader_change_pct": 0.6008,
         "sanity_checks": {
-          "cross_source_verified": false,
+          "cross_source_verified": true,
           "price_move_valid": false,
           "volume_valid": false,
           "direction_ratio_valid": true,
@@ -889,11 +889,69 @@
         "missing_confirmation": "等待富途行情按触发时点交叉核验；通过前只作候选或观察，不作为确认交易信号。",
         "secondary_source": "富途行情",
         "secondary_verification": {
-          "state": "pending",
-          "checked_at": "2026-10-12T14:06:45+08:00",
+          "state": "passed",
+          "checked_at": "2026-10-12T14:07:47+08:00",
           "source": "富途行情",
-          "reason": "等待触发分钟行情完整落盘。",
-          "representatives": [],
+          "reason": "富途行情已按代表股触发时点对齐，方向和价格变化相互支持。",
+          "representatives": [
+            {
+              "股票": "华正新材",
+              "代码": "603186.SH",
+              "监控涨跌幅": -0.1443,
+              "富途涨跌幅": -0.1443,
+              "腾讯涨跌幅": -0.1122,
+              "起始分钟": "14:02:39",
+              "结束分钟": "14:05:40",
+              "对齐方式": "逐笔行情同一时点对齐",
+              "时间偏差秒": 0.52,
+              "可比涨跌范围": [
+                -0.1443,
+                -0.1016
+              ],
+              "方向一致": true,
+              "幅度一致": true,
+              "复核结论": "一致"
+            },
+            {
+              "股票": "金安国纪",
+              "代码": "002636.SZ",
+              "监控涨跌幅": -0.6008,
+              "富途涨跌幅": -0.5855,
+              "腾讯涨跌幅": -0.6154,
+              "起始分钟": "14:02:39",
+              "结束分钟": "14:05:39",
+              "对齐方式": "逐笔行情同一时点对齐",
+              "时间偏差秒": 0.0,
+              "可比涨跌范围": [
+                -0.6008,
+                -0.5548
+              ],
+              "方向一致": true,
+              "幅度一致": true,
+              "复核结论": "一致"
+            },
+            {
+              "股票": "生益科技",
+              "代码": "600183.SH",
+              "监控涨跌幅": -0.1407,
+              "富途涨跌幅": -0.149,
+              "腾讯涨跌幅": -0.1324,
+              "起始分钟": "14:02:39",
+              "结束分钟": "14:05:39",
+              "对齐方式": "逐笔行情同一时点对齐",
+              "时间偏差秒": 0.33,
+              "可比涨跌范围": [
+                -0.149,
+                -0.1325
+              ],
+              "方向一致": true,
+              "幅度一致": true,
+              "复核结论": "一致"
+            }
+          ],
+          "window_minutes": 3,
+          "direction_agreement_ratio": 1.0,
+          "magnitude_agreement_ratio": 1.0,
           "fingerprint": "af81b615d04526bc2a84",
           "verifier_version": "futu-opend-2026-07-27.3"
         }
@@ -915,7 +973,7 @@
       "sample_count": 7,
       "max_abs_leader_change_pct": 6.7636,
       "cross_source_verified": false,
-      "verified_alert_count": 2
+      "verified_alert_count": 3
     }
   },
   "note": "异动来自本地短周期监控；候选卡须经富途行情按触发时点复核后才能升级。"
