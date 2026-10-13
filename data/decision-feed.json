@@ -1,9 +1,9 @@
 {
-  "timestamp": "2026-10-13T09:24:17+08:00",
+  "timestamp": "2026-10-13T09:25:13+08:00",
   "current_signal_date": "2026-10-13",
   "quality_gate": {
     "status": "degraded",
-    "summary": "共 10 条检查提示，其中 9 条需处理、1 条背景记录（2 个价格/行情复核，2 个信号复核，6 个背景复核）。",
+    "summary": "共 8 条检查提示，其中 7 条需处理、1 条背景记录（2 个价格/行情复核，2 个信号复核，4 个背景复核）。",
     "decision_flags": [
       "行情/涨跌幅需二次源复核",
       "机会信号需降权转验证",
@@ -11,38 +11,43 @@
     ],
     "blocking_count": 0,
     "price_review_count": 2,
-    "background_review_count": 6
+    "background_review_count": 4
   },
-  "summary": "当前时段尚无可用盘面结论。 数据质量：共 10 条检查提示，其中 9 条需处理、1 条背景记录（2 个价格/行情复核，2 个信号复核，6 个背景复核）。",
+  "summary": "09:25已取得的指数全部下跌：上证指数-0.96%、深证成指-1.79%、创业板指-2.18%、科创50-2.61%、沪深300-1.19%。行业表现居前：农林牧渔+0.00%、农产品加工+0.00%、饲料+0.00%；居后：农林牧渔+0.00%、农产品加工+0.00%、饲料+0.00%。涨停1只、跌停2只、炸板0只；全市场上涨与下跌家数暂未取得，不把旧…",
   "observation_coverage": {
-    "summary": "独立盘面/盘后扫描 1 条，但缺少纯主动新线。",
-    "independent_count": 1,
+    "summary": "主动扫描捕捉 1 条：盘中市场状态",
+    "independent_count": 4,
     "inherited_count": 4,
-    "active_market_count": 0,
+    "active_market_count": 1,
     "postmarket_scan_count": 0,
     "topic_inherited_count": 0,
-    "verification_count": 0,
-    "active_titles": [],
-    "status": "independent"
+    "verification_count": 1,
+    "active_titles": [
+      "盘中市场状态"
+    ],
+    "status": "active"
   },
   "decision_brief": {
     "stance": "风险优先，只做验证",
     "action": "不把候选方向当交易机会；先看风险收敛、数据恢复和核心承接。",
     "reasons": [
-      "共 10 条检查提示，其中 9 条需处理、1 条背景记录（2 个价格/行情复核，2 个信号复核，6 个背景复核）。",
-      "A/B级风险 1 条",
+      "共 8 条检查提示，其中 7 条需处理、1 条背景记录（2 个价格/行情复核，2 个信号复核，4 个背景复核）。",
+      "A/B级风险 3 条",
       "可用机会 0 条，降权候选 2 条",
       "先处理：二次行情复核（source-health.json）"
     ],
     "risk_focus": [
-      "数据质量降级"
+      "数据质量降级",
+      "盘中市场状态",
+      "主线变化：盘中市场状态"
     ],
     "upgrade_watch": [
       "#1 待触发：存储/HBM：题材3分钟涨跌幅>=1.5%，方向占比>=70%，成交放大>=5x。 数据质量恢复或二次行情源确认前，不升级为可用机会。",
       "#2 待触发：AI算力：题材3分钟涨跌幅>=1.5%，方向占比>=70%，成交放大>=5x。 数据质量恢复或二次行情源确认前，不升级为可用机会。"
     ],
     "verification_focus": [
-      "题材3分钟涨跌幅>=1.5%，方向占比>=70%，成交放大>=5x"
+      "题材3分钟涨跌幅>=1.5%，方向占比>=70%，成交放大>=5x",
+      "先看指数是否止跌、下跌股票是否减少，不追逆势急拉。"
     ],
     "quality_actions": [
       {
@@ -60,7 +65,7 @@
     ]
   },
   "signal_queue": {
-    "summary": "无可用机会，1 条风险优先，4 条只做验证，2 条禁用直用。",
+    "summary": "无可用机会，3 条风险优先，5 条只做验证，2 条禁用直用。",
     "active_opportunities": [],
     "trackable_risks": [
       {
@@ -68,6 +73,18 @@
         "grade": "A",
         "use_action": "可跟踪",
         "reason": "污染 alert 修复前，盘中异动信号必须降权；观察池个股涨跌幅以已审计源为准。"
+      },
+      {
+        "title": "盘中市场状态",
+        "grade": "A",
+        "use_action": "可跟踪",
+        "reason": "先看指数是否止跌、下跌股票是否减少，不追逆势急拉。"
+      },
+      {
+        "title": "主线变化：盘中市场状态",
+        "grade": "A",
+        "use_action": "可跟踪",
+        "reason": "先看指数是否止跌、下跌股票是否减少，不追逆势急拉。"
       }
     ],
     "verification_queue": [
@@ -94,6 +111,12 @@
         "grade": "D",
         "use_action": "仅复核",
         "reason": "题材3分钟涨跌幅>=1.5%，方向占比>=70%，成交放大>=5x"
+      },
+      {
+        "title": "验证条件",
+        "grade": "B",
+        "use_action": "等待确认",
+        "reason": "先看指数是否止跌、下跌股票是否减少，不追逆势急拉。"
       }
     ],
     "disabled_signals": [
@@ -216,10 +239,11 @@
       "title": "数据质量降级",
       "type": "data_quality",
       "trigger_reason": "风控兜底触发：市场宽度、数据质量或回撤条件触发风险优先。",
-      "conclusion": "共 10 条检查提示，其中 9 条需处理、1 条背景记录（2 个价格/行情复核，2 个信号复核，6 个背景复核）。",
+      "conclusion": "共 8 条检查提示，其中 7 条需处理、1 条背景记录（2 个价格/行情复核，2 个信号复核，4 个背景复核）。",
       "confidence": "high",
       "evidence": [
-        "资料适用日期不是当前交易日：2026-10-12"
+        "资料适用日期不是当前交易日：2026-10-12",
+        "资料适用日期不是当前交易日：2026-08-28"
       ],
       "source_files": [
         "quality-report.json",
@@ -236,19 +260,104 @@
       "quality_flags": [],
       "tone": "risk",
       "discovery_type": "risk_guardrail",
-      "evidence_score": 74,
+      "evidence_score": 81,
       "missing_evidence": [],
       "next_action": "污染 alert 修复前，盘中异动信号必须降权；观察池个股涨跌幅以已审计源为准。",
       "observation_source": "系统风控扫描",
       "independent_observation": true,
-      "signal_score": 84,
+      "signal_score": 96,
       "signal_grade": "A",
       "use_action": "可跟踪",
       "use_reasons": [
         "有可核验证据",
         "有下一步验证",
         "有证伪条件",
-        "有来源文件"
+        "有来源文件",
+        "证据链较完整"
+      ]
+    },
+    {
+      "title": "盘中市场状态",
+      "type": "theme",
+      "trigger_reason": "主动盘面扫描触发：涨跌停、炸板、尾盘承接或板块扩散出现可验证变化。",
+      "conclusion": "局部强势未必扩散到多数股票；全市场上涨与下跌家数暂未取得，不把旧日宽度数据当作今天的情绪。",
+      "confidence": "high",
+      "evidence": [
+        "上证指数",
+        "深证成指",
+        "创业板指",
+        "科创50",
+        "沪深300"
+      ],
+      "source_files": [
+        "intraday.json"
+      ],
+      "watch_next": [
+        "先看指数是否止跌、下跌股票是否减少，不追逆势急拉。"
+      ],
+      "invalidation": "盘中市场状态风险信号收敛、核心股重新放量承接，则风险降级。",
+      "tags": [
+        "风控"
+      ],
+      "quality_flags": [],
+      "tone": "risk",
+      "discovery_type": "active_market_scan",
+      "evidence_score": 90,
+      "missing_evidence": [],
+      "next_action": "先看指数是否止跌、下跌股票是否减少，不追逆势急拉。",
+      "observation_source": "主动盘面扫描",
+      "independent_observation": true,
+      "signal_score": 100,
+      "signal_grade": "A",
+      "use_action": "可跟踪",
+      "use_reasons": [
+        "有可核验证据",
+        "有下一步验证",
+        "有证伪条件",
+        "有来源文件",
+        "证据链较完整"
+      ]
+    },
+    {
+      "title": "主线变化：盘中市场状态",
+      "type": "theme_shift",
+      "trigger_reason": "主线变化扫描触发：升温/降温/抱团/风险状态出现边际变化。",
+      "conclusion": "盘中市场状态 出现负反馈或风险信号，优先作为风险观察。",
+      "confidence": "high",
+      "evidence": [
+        "上证指数-0.96%",
+        "深证成指-1.79%",
+        "创业板指-2.18%",
+        "科创50-2.61%",
+        "沪深300-1.19%"
+      ],
+      "source_files": [
+        "intraday.json"
+      ],
+      "watch_next": [
+        "先看指数是否止跌、下跌股票是否减少，不追逆势急拉。"
+      ],
+      "invalidation": "风险信号收敛、后排扩散恢复且核心股放量承接。",
+      "tags": [
+        "风控"
+      ],
+      "quality_flags": [],
+      "tone": "risk",
+      "discovery_type": "theme_shift_scan",
+      "evidence_score": 90,
+      "missing_evidence": [],
+      "next_action": "先看指数是否止跌、下跌股票是否减少，不追逆势急拉。",
+      "observation_source": "主线变化扫描",
+      "independent_observation": true,
+      "signal_score": 100,
+      "signal_grade": "A",
+      "use_action": "可跟踪",
+      "use_reasons": [
+        "有可核验证据",
+        "有下一步验证",
+        "有证伪条件",
+        "有来源文件",
+        "证据链较完整"
       ]
     }
   ],
@@ -333,6 +442,39 @@
         "有证伪条件",
         "有来源文件",
         "有证据缺口"
+      ]
+    },
+    {
+      "title": "验证条件",
+      "type": "verification",
+      "trigger_reason": "验证队列触发：前序结论需要用下一交易窗口确认或证伪。",
+      "conclusion": "先看指数是否止跌、下跌股票是否减少，不追逆势急拉。",
+      "confidence": "actionable",
+      "evidence": [],
+      "source_files": [
+        "intraday.json"
+      ],
+      "watch_next": [
+        "先看指数是否止跌、下跌股票是否减少，不追逆势急拉。"
+      ],
+      "invalidation": "条件不出现或反向出现，即撤销对应方向判断。",
+      "tags": [],
+      "quality_flags": [],
+      "tone": "neutral",
+      "discovery_type": "verification_queue",
+      "evidence_score": 35,
+      "missing_evidence": [],
+      "next_action": "先看指数是否止跌、下跌股票是否减少，不追逆势急拉。",
+      "observation_source": "验证队列",
+      "independent_observation": true,
+      "signal_score": 60,
+      "signal_grade": "B",
+      "use_action": "等待确认",
+      "use_reasons": [
+        "缺少证据",
+        "有下一步验证",
+        "有证伪条件",
+        "有来源文件"
       ]
     }
   ],
