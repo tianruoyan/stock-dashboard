@@ -1,15 +1,15 @@
 {
-  "timestamp": "2026-10-13T08:07:07+08:00",
+  "timestamp": "2026-10-13T08:30:43+08:00",
   "current_signal_date": "2026-10-13",
   "target_trade_date": "2026-10-13",
   "overall_status": "waiting",
-  "summary": "7 个自动化尚未到产出窗口：盘前简报、盘中全景、盘中异动、午盘分析。",
+  "summary": "6 个自动化尚未到产出窗口：盘中全景、盘中异动、午盘分析、盘后复盘。",
   "counts": {
-    "ok": 0,
+    "ok": 1,
     "late": 0,
     "missing": 0,
     "invalidated": 0,
-    "waiting": 7
+    "waiting": 6
   },
   "processes": [
     {
@@ -18,23 +18,23 @@
       "file": "data/premarket.json",
       "due": "08:30",
       "deadline": "2026-10-13T08:35:00+08:00",
-      "timestamp": "2026-10-12T09:03:51+08:00",
-      "status": "waiting",
+      "timestamp": "2026-10-13T08:30:42+08:00",
+      "status": "ok",
       "data_status": "check_source_quality",
       "blocking": false,
-      "action": "等待产出",
-      "reason": "计划 08:30 后产出",
-      "failure_type": "not_due",
-      "diagnosis": "计划 08:30 后产出",
+      "action": "正常使用",
+      "reason": "当日产出已到位",
+      "failure_type": "none",
+      "diagnosis": "产出正常，未发现自动化层异常。",
       "next_actions": [
-        "计划 08:30 产出；宽限内继续检查实际证据。"
+        "正常读取；仍需结合数据质量卡判断是否降权。"
       ],
       "related_sources": [],
       "analysis_coverage": {
-        "status": "stale",
-        "timestamp": "2026-10-12T09:03:51+08:00",
+        "status": "ready",
+        "timestamp": "2026-10-13T08:30:42+08:00",
         "required_at": "2026-10-13T08:30:00+08:00",
-        "reason": "分析未覆盖应有检查点 08:30"
+        "reason": ""
       }
     },
     {
@@ -76,7 +76,7 @@
       "file": "data/alert.json",
       "due": "交易时段持续检查",
       "timestamp": "2026-10-12T15:10:38+08:00",
-      "deadline": "2026-10-13T08:07:07+08:00",
+      "deadline": "2026-10-13T08:30:43+08:00",
       "status": "waiting",
       "data_status": "unavailable",
       "blocking": false,
@@ -302,9 +302,9 @@
   "next_session_readiness": {
     "target_trade_date": "2026-10-13",
     "status": "pending",
-    "summary": "2026-10-13 开盘链路待产出：盘前简报 08:30。",
-    "pending_count": 7,
-    "ready_count": 0,
+    "summary": "2026-10-13 开盘链路待产出：盘中全景 15:05。",
+    "pending_count": 6,
+    "ready_count": 1,
     "overdue_count": 0,
     "items": [
       {
@@ -313,16 +313,16 @@
         "file": "data/premarket.json",
         "due": "08:30",
         "deadline": "2026-10-13T08:35:00+08:00",
-        "timestamp": "2026-10-12T09:03:51+08:00",
-        "file_date": "2026-10-12",
-        "status": "pending",
-        "action": "等待产出",
-        "reason": "计划 08:30 后产出",
+        "timestamp": "2026-10-13T08:30:42+08:00",
+        "file_date": "2026-10-13",
+        "status": "ready",
+        "action": "已产出",
+        "reason": "目标交易日文件已更新",
         "analysis_coverage": {
-          "status": "stale",
-          "timestamp": "2026-10-12T09:03:51+08:00",
+          "status": "ready",
+          "timestamp": "2026-10-13T08:30:42+08:00",
           "required_at": "2026-10-13T08:30:00+08:00",
-          "reason": "分析未覆盖应有检查点 08:30"
+          "reason": ""
         }
       },
       {
@@ -357,7 +357,7 @@
         "file": "data/alert.json",
         "due": "交易时段持续检查",
         "timestamp": "2026-10-12T15:10:38+08:00",
-        "deadline": "2026-10-13T08:07:07+08:00",
+        "deadline": "2026-10-13T08:30:43+08:00",
         "status": "pending",
         "data_status": "unavailable",
         "blocking": false,
