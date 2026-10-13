@@ -1,15 +1,15 @@
 {
-  "timestamp": "2026-10-13T09:29:40+08:00",
+  "timestamp": "2026-10-13T09:31:18+08:00",
   "current_signal_date": "2026-10-13",
   "target_trade_date": "2026-10-13",
   "overall_status": "waiting",
-  "summary": "6 个自动化尚未到产出窗口：盘中全景、盘中异动、午盘分析、盘后复盘。",
+  "summary": "5 个自动化尚未到产出窗口：盘中全景、午盘分析、盘后复盘、晚间舆情。",
   "counts": {
-    "ok": 1,
+    "ok": 2,
     "late": 0,
     "missing": 0,
     "invalidated": 0,
-    "waiting": 6
+    "waiting": 5
   },
   "processes": [
     {
@@ -47,10 +47,10 @@
       "status": "waiting",
       "data_status": "check_source_quality",
       "blocking": false,
-      "action": "等待产出",
-      "reason": "计划 15:05 后产出",
+      "action": "等待当前检查点数据",
+      "reason": "仅有行情事实快照，尚无本检查点分析",
       "failure_type": "not_due",
-      "diagnosis": "计划 15:05 后产出",
+      "diagnosis": "仅有行情事实快照，尚无本检查点分析",
       "next_actions": [
         "计划 15:05 产出；宽限内继续检查实际证据。"
       ],
@@ -65,7 +65,7 @@
       "analysis_producer": "external_codex_schedule_requires_mac_verification",
       "quote_coverage": {
         "status": "ready",
-        "timestamp": "2026-10-13T09:28:42+08:00",
+        "timestamp": "2026-10-13T09:31:12+08:00",
         "required_at": "2026-10-13T09:25:00+08:00",
         "reason": ""
       }
@@ -75,15 +75,15 @@
       "label": "盘中异动",
       "file": "data/alert.json",
       "due": "交易时段持续检查",
-      "timestamp": "2026-10-13T09:28:44+08:00",
-      "deadline": "2026-10-13T09:29:40+08:00",
-      "status": "waiting",
+      "timestamp": "2026-10-13T09:30:44+08:00",
+      "deadline": "2026-10-13T09:31:18+08:00",
+      "status": "ok",
       "data_status": "check_source_quality",
       "blocking": false,
       "action": "查看最新触发",
-      "reason": "当前不在连续交易时段，保留最近触发供回看",
+      "reason": "监控和行情检查正常；没有新异动不等于没有运行",
       "failure_type": "none",
-      "diagnosis": "当前不在连续交易时段，保留最近触发供回看",
+      "diagnosis": "监控和行情检查正常；没有新异动不等于没有运行",
       "next_actions": [
         "继续检查最新行情与监控心跳；保留历史触发，不补造错过的信号。"
       ],
@@ -303,8 +303,8 @@
     "target_trade_date": "2026-10-13",
     "status": "pending",
     "summary": "2026-10-13 开盘链路待产出：盘中全景 15:05。",
-    "pending_count": 6,
-    "ready_count": 1,
+    "pending_count": 5,
+    "ready_count": 2,
     "overdue_count": 0,
     "items": [
       {
@@ -334,8 +334,8 @@
         "timestamp": "2026-10-13T09:25:12+08:00",
         "file_date": "2026-10-13",
         "status": "pending",
-        "action": "等待产出",
-        "reason": "计划 15:05 后产出",
+        "action": "等待宽限",
+        "reason": "已到计划时间，宽限至 09:35",
         "analysis_coverage": {
           "status": "missing",
           "timestamp": "2026-10-13T09:25:12+08:00",
@@ -346,7 +346,7 @@
         "analysis_producer": "external_codex_schedule_requires_mac_verification",
         "quote_coverage": {
           "status": "ready",
-          "timestamp": "2026-10-13T09:28:42+08:00",
+          "timestamp": "2026-10-13T09:31:12+08:00",
           "required_at": "2026-10-13T09:25:00+08:00",
           "reason": ""
         }
@@ -356,15 +356,15 @@
         "label": "盘中异动",
         "file": "data/alert.json",
         "due": "交易时段持续检查",
-        "timestamp": "2026-10-13T09:28:44+08:00",
-        "deadline": "2026-10-13T09:29:40+08:00",
-        "status": "pending",
+        "timestamp": "2026-10-13T09:30:44+08:00",
+        "deadline": "2026-10-13T09:31:18+08:00",
+        "status": "ready",
         "data_status": "check_source_quality",
         "blocking": false,
         "action": "查看最新触发",
-        "reason": "当前不在连续交易时段，保留最近触发供回看",
+        "reason": "监控和行情检查正常；没有新异动不等于没有运行",
         "failure_type": "none",
-        "diagnosis": "当前不在连续交易时段，保留最近触发供回看",
+        "diagnosis": "监控和行情检查正常；没有新异动不等于没有运行",
         "next_actions": [
           "继续检查最新行情与监控心跳；保留历史触发，不补造错过的信号。"
         ],
