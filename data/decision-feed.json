@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-10-13T09:27:21+08:00",
+  "timestamp": "2026-10-13T09:29:40+08:00",
   "current_signal_date": "2026-10-13",
   "quality_gate": {
     "status": "degraded",
@@ -14,7 +14,7 @@
   "summary": "09:25已取得的指数全部下跌：上证指数-0.96%、深证成指-1.79%、创业板指-2.18%、科创50-2.61%、沪深300-1.19%。行业表现居前：农林牧渔+0.00%、农产品加工+0.00%、饲料+0.00%；居后：农林牧渔+0.00%、农产品加工+0.00%、饲料+0.00%。涨停1只、跌停2只、炸板0只；全市场上涨与下跌家数暂未取得，不把旧…",
   "observation_coverage": {
     "summary": "主动扫描捕捉 1 条：盘中市场状态",
-    "independent_count": 4,
+    "independent_count": 5,
     "inherited_count": 4,
     "active_market_count": 1,
     "postmarket_scan_count": 0,
@@ -30,14 +30,14 @@
     "action": "不把候选方向当交易机会；先看风险收敛、数据恢复和核心承接。",
     "reasons": [
       "共 5 条检查提示，其中 4 条需处理、1 条背景记录（2 个价格/行情复核，3 个背景复核）。",
-      "A/B级风险 3 条",
+      "A/B级风险 4 条",
       "可用机会 0 条，降权候选 2 条",
       "先处理：二次行情复核（source-health.json）"
     ],
     "risk_focus": [
+      "全市场亏钱效应",
       "数据质量降级",
-      "盘中市场状态",
-      "主线变化：盘中市场状态"
+      "盘中市场状态"
     ],
     "upgrade_watch": [
       "#1 待触发：存储/HBM：题材3分钟涨跌幅>=1.5%，方向占比>=70%，成交放大>=5x。 数据质量恢复或二次行情源确认前，不升级为可用机会。",
@@ -63,9 +63,15 @@
     ]
   },
   "signal_queue": {
-    "summary": "无可用机会，3 条风险优先，5 条只做验证，2 条禁用直用。",
+    "summary": "无可用机会，4 条风险优先，5 条只做验证，2 条禁用直用。",
     "active_opportunities": [],
     "trackable_risks": [
+      {
+        "title": "全市场亏钱效应",
+        "grade": "A",
+        "use_action": "可跟踪",
+        "reason": "次日先看跌停/炸板是否收敛，再判断强线能否从抱团转扩散。"
+      },
       {
         "title": "数据质量降级",
         "grade": "A",
@@ -229,6 +235,47 @@
     }
   ],
   "risks": [
+    {
+      "title": "全市场亏钱效应",
+      "type": "market_breadth",
+      "trigger_reason": "风控兜底触发：市场宽度、数据质量或回撤条件触发风险优先。",
+      "conclusion": "跌停、炸板或大跌家数偏高，强线不能外推成全面进攻。",
+      "confidence": "high",
+      "evidence": [
+        "跌停约88.0只",
+        "炸板约88.0只"
+      ],
+      "source_files": [
+        "postmarket.json",
+        "intraday.json"
+      ],
+      "watch_next": [
+        "次日先看跌停/炸板是否收敛，再判断强线能否从抱团转扩散。"
+      ],
+      "invalidation": "跌停和炸板显著回落，同时涨停扩散到多个新方向。",
+      "tags": [
+        "仓位",
+        "风控"
+      ],
+      "quality_flags": [],
+      "tone": "risk",
+      "discovery_type": "risk_guardrail",
+      "evidence_score": 81,
+      "missing_evidence": [],
+      "next_action": "次日先看跌停/炸板是否收敛，再判断强线能否从抱团转扩散。",
+      "observation_source": "系统风控扫描",
+      "independent_observation": true,
+      "signal_score": 96,
+      "signal_grade": "A",
+      "use_action": "可跟踪",
+      "use_reasons": [
+        "有可核验证据",
+        "有下一步验证",
+        "有证伪条件",
+        "有来源文件",
+        "证据链较完整"
+      ]
+    },
     {
       "title": "数据质量降级",
       "type": "data_quality",
