@@ -603,7 +603,7 @@
       "is_old_economy": false,
       "source_watch_id": "创新药/CRO研发服务",
       "quote_audit": {
-        "provider": "本地盘中监控、腾讯财经HTTP",
+        "provider": "本地盘中监控、富途行情（腾讯备用）",
         "primary_source": "腾讯财经HTTP",
         "quote_time": "2026-10-13T10:45:12+08:00",
         "pct_field": "日内涨跌幅",
@@ -621,7 +621,17 @@
         "volume_ratio": null,
         "relative_volume_vs_yesterday": null,
         "missing_confirmation": "等待富途行情按触发时点交叉核验；通过前只作候选或观察，不作为确认交易信号。",
-        "industry_day_change_pct": -3.52
+        "industry_day_change_pct": -3.52,
+        "secondary_source": "富途行情",
+        "secondary_verification": {
+          "state": "too_late_no_backfill",
+          "checked_at": "2026-10-13T11:02:42+08:00",
+          "source": "富途行情",
+          "reason": "超过实时核验窗口，不事后补成已确认。",
+          "representatives": [],
+          "fingerprint": "abeaf887dff2ccea9fb1",
+          "verifier_version": "futu-opend-2026-07-27.3"
+        }
       },
       "source_status": "monitor_live_unverified",
       "valid_until": "2026-10-13T10:50:12+08:00",
@@ -682,7 +692,7 @@
       "is_old_economy": false,
       "source_watch_id": "创新药/CRO研发服务",
       "quote_audit": {
-        "provider": "本地盘中监控、腾讯财经HTTP",
+        "provider": "本地盘中监控、富途行情（腾讯备用）",
         "primary_source": "腾讯财经HTTP",
         "quote_time": "2026-10-13T11:00:46+08:00",
         "pct_field": "日内涨跌幅",
@@ -700,7 +710,75 @@
         "volume_ratio": null,
         "relative_volume_vs_yesterday": null,
         "missing_confirmation": "等待富途行情按触发时点交叉核验；通过前只作候选或观察，不作为确认交易信号。",
-        "industry_day_change_pct": -3.52
+        "industry_day_change_pct": -3.52,
+        "secondary_source": "富途行情",
+        "secondary_verification": {
+          "state": "mismatch",
+          "checked_at": "2026-10-13T11:02:42+08:00",
+          "source": "富途行情",
+          "reason": "对齐同一触发时点后，代表股方向或价格变化仍存在明显冲突，维持待确认/失效。",
+          "representatives": [
+            {
+              "股票": "康龙化成",
+              "代码": "300759.SZ",
+              "监控涨跌幅": -6.12,
+              "富途涨跌幅": -0.1527,
+              "腾讯涨跌幅": -0.4067,
+              "起始分钟": "10:57:42",
+              "结束分钟": "11:00:42",
+              "对齐方式": "逐笔行情同一时点对齐",
+              "时间偏差秒": 0.0,
+              "可比涨跌范围": [
+                -0.2035,
+                -0.1272
+              ],
+              "方向一致": false,
+              "幅度一致": false,
+              "复核结论": "明显冲突"
+            },
+            {
+              "股票": "昭衍新药",
+              "代码": "603127.SH",
+              "监控涨跌幅": -4.06,
+              "富途涨跌幅": -0.0616,
+              "腾讯涨跌幅": 0.0206,
+              "起始分钟": "10:57:44",
+              "结束分钟": "11:00:44",
+              "对齐方式": "逐笔行情同一时点对齐",
+              "时间偏差秒": 0.63,
+              "可比涨跌范围": [
+                -0.1026,
+                -0.0205
+              ],
+              "方向一致": false,
+              "幅度一致": false,
+              "复核结论": "明显冲突"
+            },
+            {
+              "股票": "泰格医药",
+              "代码": "300347.SZ",
+              "监控涨跌幅": -3.58,
+              "富途涨跌幅": 0.3713,
+              "腾讯涨跌幅": 0.0371,
+              "起始分钟": "10:57:36",
+              "结束分钟": "11:00:36",
+              "对齐方式": "逐笔行情同一时点对齐",
+              "时间偏差秒": 3.0,
+              "可比涨跌范围": [
+                0.3527,
+                0.4085
+              ],
+              "方向一致": false,
+              "幅度一致": false,
+              "复核结论": "明显冲突"
+            }
+          ],
+          "window_minutes": 3,
+          "direction_agreement_ratio": 0.0,
+          "magnitude_agreement_ratio": 0.0,
+          "fingerprint": "973ebb5ac15b76da3ade",
+          "verifier_version": "futu-opend-2026-07-27.3"
+        }
       },
       "source_status": "monitor_live_unverified",
       "valid_until": "2026-10-13T11:05:46+08:00",
@@ -711,7 +789,7 @@
   "quote_audit": {
     "provider": "本地盘中监控、富途行情（腾讯备用）",
     "quote_time": "2026-10-13T11:00:46+08:00",
-    "pct_field": "各异动卡标注的3分钟涨跌幅",
+    "pct_field": "各异动卡标注的短周期涨跌幅",
     "sanity_checks": {
       "sample_count": 6,
       "max_abs_leader_change_pct": 6.12,
