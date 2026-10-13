@@ -1,41 +1,5534 @@
 {
-  "timestamp": "2026-10-13T07:42:27+08:00",
+  "timestamp": "2026-10-13T08:07:07+08:00",
   "current_signal_date": "2026-10-12",
-  "status": "candidate_visible",
-  "summary": "盘中候选异动证据完整，可展示为待确认；未通过双源核验前不得升级为确认机会。",
+  "status": "session_closed",
+  "summary": "盘中监控已按计划收盘，保留的触发仅供复盘。",
   "alert_state": {
     "source_status": "monitor_session_closed",
-    "active_count": 12,
+    "total_count": 12,
+    "active_count": 0,
+    "current_count": 0,
+    "expired_count": 12,
+    "closed_count": 0,
+    "invalidated_count": 0,
+    "time_unverified_count": 0,
+    "verified_count": 0,
+    "unverified_count": 0,
     "note": "盘中监控已按计划结束，今日保留12条短周期触发供收盘复盘；已过交易时效，不作为当前触发。"
   },
-  "trusted_sources": [
+  "trusted_sources": [],
+  "forbidden_sources": [],
+  "historical_sources": [
     {
       "id": "tencent_http",
       "status": "ok",
+      "window": "history",
       "checked_at": "2026-07-27T11:36:30+08:00",
       "usage": "11:30 A/H指数、行业和重点样本午间快照"
     },
     {
       "id": "eastmoney_push2_akshare",
       "status": "ok",
+      "window": "history",
       "checked_at": "2026-07-10T14:32:00+08:00",
       "usage": "14:30涨跌停与炸板结构"
     },
     {
       "id": "tencent_minute",
       "status": "ok",
+      "window": "history",
       "checked_at": "2026-07-10T14:35:00+08:00",
       "usage": "14:30指数与关键样本3分钟变化"
-    }
-  ],
-  "forbidden_sources": [
+    },
+    {
+      "id": "mootdx_tdx",
+      "status": "failed_not_installed",
+      "window": "history",
+      "checked_at": "2026-07-21T15:10:00+08:00",
+      "usage": "通达信TCP高频行情备用"
+    },
     {
       "id": "ths_sina_or_akshare_quote_decode",
       "status": "degraded",
+      "window": "history",
       "checked_at": "2026-07-07T15:42:12+08:00",
       "usage": "新浪/同花顺补充报价链路"
+    },
+    {
+      "id": "tencent_hk_http",
+      "status": "ok_delayed",
+      "window": "history",
+      "checked_at": "2026-07-10T16:02:30+08:00",
+      "usage": "港股收盘方向交叉验证"
+    },
+    {
+      "id": "eastmoney_hk_akshare",
+      "status": "failed",
+      "window": "history",
+      "checked_at": "2026-07-07T16:01:14+08:00",
+      "usage": "港股结构行情交叉验证"
+    },
+    {
+      "id": "cninfo_watchlist_announcement_scan",
+      "status": "ok_after_retry",
+      "window": "history",
+      "checked_at": "2026-08-06T20:16:00+08:00",
+      "usage": "20:00配置观察池与专题样本公告全市场扫描及PDF原文核验"
+    },
+    {
+      "id": "sina_announcement_page_sample",
+      "status": "ok_empty",
+      "window": "history",
+      "checked_at": "2026-07-07T20:01:42+08:00",
+      "usage": "20:00晚间重点样本公告页抽检"
+    },
+    {
+      "id": "official_policy_global_web_scan",
+      "status": "degraded",
+      "window": "history",
+      "checked_at": "2026-08-06T20:16:00+08:00",
+      "usage": "20:00政策、全球标杆、事件日历与突发扫描"
+    },
+    {
+      "id": "v22_theme_validation_helpers",
+      "status": "degraded",
+      "window": "history",
+      "checked_at": "2026-08-06T20:16:00+08:00",
+      "usage": "产业逻辑验证的V2.2只读shadow上下文"
+    },
+    {
+      "id": "longbridge_institutional_shadow",
+      "status": "ok_no_increment",
+      "window": "history",
+      "checked_at": "2026-08-06T20:16:00+08:00",
+      "usage": "Longbridge机构观点规范化shadow只读参考"
+    },
+    {
+      "id": "tencent_hk_auction_http",
+      "status": "failed",
+      "window": "history",
+      "checked_at": "2026-07-10T09:16:00+08:00",
+      "usage": "9:15港股竞价/盘前快照"
+    },
+    {
+      "id": "yahoo_finance_quote_api",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-08-01T20:03:05+08:00",
+      "usage": "周五美股科技、网络、设备、光互联与液冷收盘交叉行情"
+    },
+    {
+      "id": "stooq_quote_csv",
+      "status": "failed",
+      "window": "history",
+      "checked_at": "2026-07-08T09:15:36+08:00",
+      "usage": "外盘指数和个股补充行情"
+    },
+    {
+      "id": "web_news_finance_search",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-15T09:18:56+08:00",
+      "usage": "美国CPI、美股收盘与海外扩产事件核验"
+    },
+    {
+      "id": "eastmoney_limit_pool_auction",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-08T09:27:36+08:00",
+      "usage": "9:25 A股涨停/跌停/炸板结构池"
+    },
+    {
+      "id": "tencent_a_quote_auction",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-08T09:27:36+08:00",
+      "usage": "9:25-9:28 指数、ETF、观察池竞价报价"
+    },
+    {
+      "id": "akshare_a_spot_watch_decode",
+      "status": "degraded",
+      "window": "history",
+      "checked_at": "2026-08-28T09:43:29+08:00",
+      "usage": "盘中观察池与题材短周期刷新"
+    },
+    {
+      "id": "eastmoney_limit_pool_intraday_0930",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-08T09:34:39+08:00",
+      "usage": "09:30开盘后涨停/跌停/炸板结构池"
+    },
+    {
+      "id": "tencent_a_quote_intraday_0930",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-08T09:34:39+08:00",
+      "usage": "09:30开盘后指数、ETF、观察池样本报价"
+    },
+    {
+      "id": "tencent_hk_open_http",
+      "status": "degraded",
+      "window": "history",
+      "checked_at": "2026-07-08T09:19:39+08:00",
+      "usage": "港股开盘前后样本快照"
+    },
+    {
+      "id": "eastmoney_board_rank_intraday_0930",
+      "status": "failed",
+      "window": "history",
+      "checked_at": "2026-07-08T09:34:39+08:00",
+      "usage": "行业/概念板块排行补充"
+    },
+    {
+      "id": "eastmoney_limit_pool_intraday_1000",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-20T10:15:06+08:00",
+      "usage": "10:00涨停池、跌停池、炸板池和行业分布"
+    },
+    {
+      "id": "tencent_a_quote_intraday_1000",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-08-06T10:04:12+08:00",
+      "usage": "10:00 A股指数、行业与重点样本实时快照"
+    },
+    {
+      "id": "tencent_hk_http_intraday_1000",
+      "status": "ok_indices_delayed_stocks",
+      "window": "history",
+      "checked_at": "2026-07-20T10:15:06+08:00",
+      "usage": "10:00港股指数和A/H映射样本"
+    },
+    {
+      "id": "eastmoney_industry_rank_intraday_1000",
+      "status": "partial",
+      "window": "history",
+      "checked_at": "2026-07-08T10:05:45+08:00",
+      "usage": "10:00行业排行补充"
+    },
+    {
+      "id": "eastmoney_limit_pool_intraday_1100",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-08T11:02:21+08:00",
+      "usage": "11:00涨停/跌停/炸板结构池"
+    },
+    {
+      "id": "tencent_a_quote_intraday_1100",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-08T11:02:21+08:00",
+      "usage": "11:00指数、ETF、观察池样本报价"
+    },
+    {
+      "id": "tencent_hk_http_intraday_1100",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-08T10:47:19+08:00",
+      "usage": "港股午前指数与重点样本快照"
+    },
+    {
+      "id": "eastmoney_board_rank_intraday_1100",
+      "status": "partial",
+      "window": "history",
+      "checked_at": "2026-07-08T11:02:21+08:00",
+      "usage": "11:00板块排行补充"
+    },
+    {
+      "id": "eastmoney_limit_pool_midday_1130",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-08T11:32:24+08:00",
+      "usage": "11:30午盘涨停/跌停/炸板结构池"
+    },
+    {
+      "id": "tencent_a_quote_midday_1130",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-13T12:46:56+08:00",
+      "usage": "11:30午盘指数、ETF、观察池样本报价"
+    },
+    {
+      "id": "tencent_hk_http_midday_1130",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-13T12:46:56+08:00",
+      "usage": "11:30港股指数与映射样本"
+    },
+    {
+      "id": "eastmoney_board_rank_midday_1130",
+      "status": "failed",
+      "window": "history",
+      "checked_at": "2026-07-13T12:46:56+08:00",
+      "usage": "11:30行业/概念板块排行补充"
+    },
+    {
+      "id": "eastmoney_limit_pool_intraday_1300",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-08T13:10:00+08:00",
+      "usage": "13:00涨停/跌停/炸板结构池"
+    },
+    {
+      "id": "tencent_a_quote_intraday_1300",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-08T13:10:00+08:00",
+      "usage": "13:00指数、ETF、观察池样本报价"
+    },
+    {
+      "id": "tencent_hk_http_intraday_1300",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-08T13:06:47+08:00",
+      "usage": "港股午后指数与重点样本快照"
+    },
+    {
+      "id": "eastmoney_board_rank_intraday_1300",
+      "status": "partial",
+      "window": "history",
+      "checked_at": "2026-07-08T13:10:00+08:00",
+      "usage": "13:00板块排行补充"
+    },
+    {
+      "id": "eastmoney_limit_pool_intraday_1330",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-22T13:56:22+08:00",
+      "usage": "午后涨停池、跌停总数、炸板池和行业分布"
+    },
+    {
+      "id": "tencent_a_quote_intraday_1330",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-08T13:35:00+08:00",
+      "usage": "13:30指数、ETF、观察池样本报价"
+    },
+    {
+      "id": "tencent_hk_http_intraday_1330",
+      "status": "ok_delayed_stocks",
+      "window": "history",
+      "checked_at": "2026-07-22T13:56:22+08:00",
+      "usage": "午后港股指数及A/H科技映射"
+    },
+    {
+      "id": "eastmoney_board_rank_intraday_1330",
+      "status": "failed",
+      "window": "history",
+      "checked_at": "2026-07-08T13:35:00+08:00",
+      "usage": "13:30行业/概念板块排行补充"
+    },
+    {
+      "id": "eastmoney_limit_pool_intraday_1400",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-08T14:04:00+08:00",
+      "usage": "14:00整点涨停/跌停/炸板结构池"
+    },
+    {
+      "id": "tencent_a_quote_intraday_1400",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-08T14:04:00+08:00",
+      "usage": "14:00整点指数、ETF、观察池样本报价"
+    },
+    {
+      "id": "tencent_hk_http_intraday_1400",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-08T14:04:00+08:00",
+      "usage": "14:00港股指数与科技/半导体/医药映射快照"
+    },
+    {
+      "id": "eastmoney_board_rank_intraday_1400",
+      "status": "failed",
+      "window": "history",
+      "checked_at": "2026-07-08T14:04:00+08:00",
+      "usage": "行业/概念板块排行补充"
+    },
+    {
+      "id": "eastmoney_limit_pool_intraday_1430",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-08T14:34:00+08:00",
+      "usage": "14:30半点涨停/跌停/炸板结构池"
+    },
+    {
+      "id": "tencent_a_quote_intraday_1430",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-08T14:34:00+08:00",
+      "usage": "14:30半点指数、ETF、观察池样本报价"
+    },
+    {
+      "id": "tencent_hk_http_intraday_1430",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-08T14:34:00+08:00",
+      "usage": "14:30港股指数与科技/半导体/医药映射快照"
+    },
+    {
+      "id": "eastmoney_board_rank_intraday_1430",
+      "status": "failed",
+      "window": "history",
+      "checked_at": "2026-07-08T14:34:00+08:00",
+      "usage": "行业/概念板块排行补充"
+    },
+    {
+      "id": "eastmoney_limit_pool_postmarket_1500",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-21T15:10:00+08:00",
+      "usage": "15:00涨停、跌停、炸板和连板结构"
+    },
+    {
+      "id": "sina_all_a_width_postmarket_1500",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-08T15:06:00+08:00",
+      "usage": "全A 5%/8%/跌5%宽度统计"
+    },
+    {
+      "id": "tencent_minute_postmarket_1455_1500",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-08-05T15:32:24+08:00",
+      "usage": "尾盘/收盘竞价校验"
+    },
+    {
+      "id": "tencent_a_quote_postmarket_1500",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-21T15:10:00+08:00",
+      "usage": "15:00核心指数、行业、观察池与专题样本收盘"
+    },
+    {
+      "id": "tencent_hk_close_http",
+      "status": "ok_preclose_crosscheck",
+      "window": "history",
+      "checked_at": "2026-07-15T16:03:24+08:00",
+      "usage": "港股收盘竞价前指数与个股方向交叉验证"
+    },
+    {
+      "id": "yahoo_finance_chart_api",
+      "status": "degraded",
+      "window": "history",
+      "checked_at": "2026-07-09T09:18:45+08:00",
+      "usage": "隔夜美股指数、日韩科技链样本与部分海外科技股报价"
+    },
+    {
+      "id": "official_policy_incremental_scan",
+      "status": "ok_empty",
+      "window": "history",
+      "checked_at": "2026-07-09T08:36:00+08:00",
+      "usage": "8:30前政策/官方增量核验"
+    },
+    {
+      "id": "monitor_log_freshness_intraday_0930",
+      "status": "failed",
+      "window": "history",
+      "checked_at": "2026-07-09T09:47:37+08:00",
+      "usage": "交易时段监控日志活跃度巡检"
+    },
+    {
+      "id": "eastmoney_push2ex_limit_pool",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-09T11:32:00+08:00",
+      "usage": "11:30午盘涨停、跌停、炸板池结构"
+    },
+    {
+      "id": "eastmoney_board_rank_intraday_1000",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-09T10:07:00+08:00",
+      "usage": "10:00行业/概念涨跌幅排行结构数据"
+    },
+    {
+      "id": "eastmoney_board_rank_intraday",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-09T13:38:07+08:00",
+      "usage": "13:30行业/概念排行"
+    },
+    {
+      "id": "eastmoney_limit_pool_intraday",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-09T13:38:07+08:00",
+      "usage": "13:30涨停池46、跌停池0、炸板池17"
+    },
+    {
+      "id": "akshare_sina_stock_zh_a_spot",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-09T19:58:00+08:00",
+      "usage": "2026-07-09盘后复盘数据源"
+    },
+    {
+      "id": "eastmoney_limit_up_pool",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-09T19:58:00+08:00",
+      "usage": "2026-07-09盘后复盘数据源"
+    },
+    {
+      "id": "eastmoney_limit_down_pool",
+      "status": "degraded",
+      "window": "history",
+      "checked_at": "2026-07-09T19:58:00+08:00",
+      "usage": "2026-07-09盘后复盘数据源"
+    },
+    {
+      "id": "eastmoney_broken_limit_pool",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-09T19:58:00+08:00",
+      "usage": "2026-07-09盘后复盘数据源"
+    },
+    {
+      "id": "eastmoney_industry_rank",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-09T19:58:00+08:00",
+      "usage": "2026-07-09盘后复盘数据源"
+    },
+    {
+      "id": "eastmoney_concept_rank",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-09T19:58:00+08:00",
+      "usage": "2026-07-09盘后复盘数据源"
+    },
+    {
+      "id": "tencent_quote",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-09T19:58:00+08:00",
+      "usage": "2026-07-09盘后复盘数据源"
+    },
+    {
+      "id": "tencent_minute_1455_1500",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-09T19:58:00+08:00",
+      "usage": "2026-07-09盘后复盘数据源"
+    },
+    {
+      "id": "cninfo_evening_watchlist_scan",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-11T20:19:06+08:00",
+      "usage": "20:00晚间观察池A股公告全市场交叉扫描"
+    },
+    {
+      "id": "official_policy_evening_scan",
+      "status": "ok_empty",
+      "window": "history",
+      "checked_at": "2026-08-02T20:00:29+08:00",
+      "usage": "工信部/发改委/商务部/中国政府网20:00政策扫描"
+    },
+    {
+      "id": "global_benchmark_evening_scan",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-08-02T20:00:29+08:00",
+      "usage": "25个配置专题的全球标杆、正式新闻与事件日历"
+    },
+    {
+      "id": "premarket_0830_web_scan",
+      "status": "degraded_partial",
+      "window": "history",
+      "checked_at": "2026-07-10T08:34:00+08:00",
+      "usage": "8:30扩产+技术迭代假设验证早报：隔夜美股、海外半导体、国内官方/公告入口搜索"
+    },
+    {
+      "id": "in_app_browser_hk_quote",
+      "status": "failed",
+      "window": "history",
+      "checked_at": "2026-07-10T09:16:00+08:00",
+      "usage": "Yahoo Finance恒生指数网页补充核验"
+    },
+    {
+      "id": "ths_watchlist_import",
+      "status": "failed",
+      "window": "history",
+      "checked_at": "2026-07-10T10:58:28+08:00",
+      "usage": "本地观察池增量导入"
+    },
+    {
+      "id": "intraday_current_publish",
+      "status": "degraded_unavailable",
+      "window": "history",
+      "checked_at": "2026-07-10T10:58:28+08:00",
+      "usage": "今日盘中全景发布"
+    },
+    {
+      "id": "tencent_a_quote_intraday_1300_20260710",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-10T13:08:03+08:00",
+      "usage": "13:00 A股指数、ETF、观察池和专项报价"
+    },
+    {
+      "id": "eastmoney_limit_pool_intraday_1300_20260710",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-10T13:08:00+08:00",
+      "usage": "13:00涨停/跌停/炸板行业题材分布"
+    },
+    {
+      "id": "eastmoney_board_rank_intraday_1300_20260710",
+      "status": "failed",
+      "window": "history",
+      "checked_at": "2026-07-10T13:06:00+08:00",
+      "usage": "13:00行业/概念涨跌幅排行补充"
+    },
+    {
+      "id": "monitor_alert_quote_audit_1323",
+      "status": "failed",
+      "window": "history",
+      "checked_at": "2026-07-10T13:26:00+08:00",
+      "usage": "13:13-13:23 正式提醒落盘前交叉验证"
+    },
+    {
+      "id": "monitor_alert_quote_audit_1327",
+      "status": "failed",
+      "window": "history",
+      "checked_at": "2026-07-10T13:27:01+08:00",
+      "usage": "13:24-13:26 新增正式提醒落盘前交叉验证"
+    },
+    {
+      "id": "monitor_alert_quote_audit_1328",
+      "status": "failed",
+      "window": "history",
+      "checked_at": "2026-07-10T13:28:31+08:00",
+      "usage": "13:27 后新增正式提醒落盘前交叉验证"
+    },
+    {
+      "id": "monitor_alert_quote_audit_1332",
+      "status": "failed",
+      "window": "history",
+      "checked_at": "2026-07-10T13:32:01+08:00",
+      "usage": "13:30-13:31 新增正式提醒落盘前交叉验证"
+    },
+    {
+      "id": "eastmoney_board_rank_intraday_1330_20260710",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-10T13:38:00+08:00",
+      "usage": "13:30行业和概念涨幅排行交叉验证"
+    },
+    {
+      "id": "monitor_alert_quote_audit_1342",
+      "status": "failed",
+      "window": "history",
+      "checked_at": "2026-07-10T13:42:31+08:00",
+      "usage": "13:33-13:42 新增正式提醒落盘前交叉验证"
+    },
+    {
+      "id": "monitor_alert_quote_audit_1345",
+      "status": "failed",
+      "window": "history",
+      "checked_at": "2026-07-10T13:45:31+08:00",
+      "usage": "13:43-13:45 新增正式提醒落盘前交叉验证"
+    },
+    {
+      "id": "monitor_alert_quote_audit_1348",
+      "status": "failed",
+      "window": "history",
+      "checked_at": "2026-07-10T13:48:31+08:00",
+      "usage": "13:46:52 新增封装提醒落盘前交叉验证"
+    },
+    {
+      "id": "monitor_alert_quote_audit_1351",
+      "status": "failed",
+      "window": "history",
+      "checked_at": "2026-07-10T13:51:31+08:00",
+      "usage": "13:50 后新增正式提醒落盘前交叉验证"
+    },
+    {
+      "id": "monitor_alert_quote_audit_1357",
+      "status": "failed",
+      "window": "history",
+      "checked_at": "2026-07-10T13:57:01+08:00",
+      "usage": "13:51 后新增正式提醒落盘前交叉验证"
+    },
+    {
+      "id": "monitor_alert_quote_audit_1401",
+      "status": "failed",
+      "window": "history",
+      "checked_at": "2026-07-10T14:01:02+08:00",
+      "usage": "13:57-14:01 新增正式提醒落盘前交叉验证"
+    },
+    {
+      "id": "eastmoney_board_rank_intraday_1400_20260710",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-10T14:01:40+08:00",
+      "usage": "14:00行业和概念涨幅排行交叉验证"
+    },
+    {
+      "id": "monitor_alert_quote_audit_1411",
+      "status": "failed",
+      "window": "history",
+      "checked_at": "2026-07-10T14:11:31+08:00",
+      "usage": "14:02-14:11 新增正式提醒落盘前交叉验证"
+    },
+    {
+      "id": "monitor_alert_quote_audit_1413",
+      "status": "failed",
+      "window": "history",
+      "checked_at": "2026-07-10T14:13:01+08:00",
+      "usage": "14:12:48 光刻胶/光刻机催化提醒落盘前交叉验证"
+    },
+    {
+      "id": "monitor_alert_quote_audit_1415",
+      "status": "failed",
+      "window": "history",
+      "checked_at": "2026-07-10T14:15:01+08:00",
+      "usage": "14:13 后新增正式提醒落盘前交叉验证"
+    },
+    {
+      "id": "monitor_alert_quote_audit_1416",
+      "status": "failed",
+      "window": "history",
+      "checked_at": "2026-07-10T14:16:32+08:00",
+      "usage": "14:16:07 存储芯片提醒落盘前交叉验证"
+    },
+    {
+      "id": "monitor_alert_quote_audit_1422",
+      "status": "failed",
+      "window": "history",
+      "checked_at": "2026-07-10T14:22:11+08:00",
+      "usage": "14:17-14:21 monitor.log 正式提醒发布门禁"
+    },
+    {
+      "id": "monitor_alert_quote_audit_1425",
+      "status": "failed",
+      "window": "history",
+      "checked_at": "2026-07-10T14:25:31+08:00",
+      "usage": "14:23-14:25 monitor.log 正式提醒发布门禁"
+    },
+    {
+      "id": "monitor_alert_quote_audit_1427",
+      "status": "failed",
+      "window": "history",
+      "checked_at": "2026-07-10T14:27:32+08:00",
+      "usage": "14:25-14:27 monitor.log 正式风险提醒发布门禁"
+    },
+    {
+      "id": "monitor_alert_quote_audit_1430",
+      "status": "failed",
+      "window": "history",
+      "checked_at": "2026-07-10T14:30:32+08:00",
+      "usage": "14:29 monitor.log 正式机会提醒发布门禁"
+    },
+    {
+      "id": "monitor_alert_quote_audit_1432",
+      "status": "failed",
+      "window": "history",
+      "checked_at": "2026-07-10T14:32:02+08:00",
+      "usage": "14:31 monitor.log 正式风险提醒发布门禁"
+    },
+    {
+      "id": "eastmoney_board_rank_intraday_1430_20260710",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-10T14:32:10+08:00",
+      "usage": "14:30行业和概念排行"
+    },
+    {
+      "id": "monitor_alert_candidate_gate_1442",
+      "status": "ok_no_candidate",
+      "window": "history",
+      "checked_at": "2026-07-10T14:42:32+08:00",
+      "usage": "14:33-14:40 monitor.log 正式提醒 candidate 门禁复核"
+    },
+    {
+      "id": "monitor_alert_candidate_gate_1445",
+      "status": "degraded_partial",
+      "window": "history",
+      "checked_at": "2026-07-10T14:45:15+08:00",
+      "usage": "14:45 monitor.log 半导体零部件弹性 risk candidate 发布门禁"
+    },
+    {
+      "id": "monitor_alert_candidate_gate_1456",
+      "status": "degraded_partial",
+      "window": "history",
+      "checked_at": "2026-07-10T14:56:49+08:00",
+      "usage": "14:56 monitor.log 多方向risk candidate发布门禁"
+    },
+    {
+      "id": "tencent_close_postmarket_20260710",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-10T15:19:44+08:00",
+      "usage": "A股收盘指数、专项样本和14:55-15:00尾盘校验"
+    },
+    {
+      "id": "eastmoney_limit_pool_postmarket_20260710",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-10T15:04:00+08:00",
+      "usage": "收盘涨停、跌停和炸板结构"
+    },
+    {
+      "id": "sina_up5_postmarket_20260710",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-10T15:09:00+08:00",
+      "usage": "收盘5%至不足8%与8%以上宽度"
+    },
+    {
+      "id": "sw_official_industry_postmarket_20260710",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-10T15:13:00+08:00",
+      "usage": "强势股申万一级行业映射"
+    },
+    {
+      "id": "eastmoney_history_limit_pool_5d_20260710",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-10T15:15:00+08:00",
+      "usage": "前5交易日热点连续性"
+    },
+    {
+      "id": "eastmoney_full_spot_postmarket_20260710",
+      "status": "failed",
+      "window": "history",
+      "checked_at": "2026-07-10T15:06:00+08:00",
+      "usage": "全A收盘列表和板块排行"
+    },
+    {
+      "id": "sina_hk_close_realtime",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-15T16:09:00+08:00",
+      "usage": "港股16:00收盘竞价终值"
+    },
+    {
+      "id": "hkex_evening_watchlist_scan",
+      "status": "degraded",
+      "window": "history",
+      "checked_at": "2026-08-02T20:00:29+08:00",
+      "usage": "20:00两只配置港股公告扫描"
+    },
+    {
+      "id": "official_policy_weekend_scan",
+      "status": "ok_empty",
+      "window": "history",
+      "checked_at": "2026-07-11T20:19:06+08:00",
+      "usage": "20:00工信部/商务部/发改委/政府网固定政策扫描"
+    },
+    {
+      "id": "global_benchmark_weekend_scan",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-11T20:19:06+08:00",
+      "usage": "20:00全球设备/材料/AI算力/HBM标杆与事件日历扫描"
+    },
+    {
+      "id": "watchlist_code_quality",
+      "status": "degraded",
+      "window": "history",
+      "checked_at": "2026-07-11T20:19:06+08:00",
+      "usage": "观察池代码规范检查"
+    },
+    {
+      "id": "cninfo_watchlist_evening_20260712",
+      "status": "ok_empty",
+      "window": "history",
+      "checked_at": "2026-07-12T20:12:33+08:00",
+      "usage": "20:00观察池108只A股公告全量扫描"
+    },
+    {
+      "id": "hkex_watchlist_evening_20260712",
+      "status": "degraded",
+      "window": "history",
+      "checked_at": "2026-07-12T20:12:33+08:00",
+      "usage": "20:00观察池5只港股公告核验"
+    },
+    {
+      "id": "official_policy_evening_20260712",
+      "status": "ok_empty",
+      "window": "history",
+      "checked_at": "2026-07-12T20:12:33+08:00",
+      "usage": "20:00工信部/商务部/发改委/政府网固定政策扫描"
+    },
+    {
+      "id": "global_benchmark_evening_20260712",
+      "status": "ok_empty",
+      "window": "history",
+      "checked_at": "2026-07-12T20:12:33+08:00",
+      "usage": "20:00全球设备/材料/AI算力/HBM标杆公司扫描"
+    },
+    {
+      "id": "company_media_evening_20260712",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-12T20:12:33+08:00",
+      "usage": "20:00观察池公司战略与定价事件扫描"
+    },
+    {
+      "id": "cninfo_watchlist_premarket_20260713",
+      "status": "ok_empty",
+      "window": "history",
+      "checked_at": "2026-07-13T08:47:00+08:00",
+      "usage": "8:30增量观察池108只A股公告扫描"
+    },
+    {
+      "id": "sina_tencent_japan_korea_early_20260713",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-13T09:18:00+08:00",
+      "usage": "日韩早盘指数与半导体设备/存储样本"
+    },
+    {
+      "id": "official_policy_premarket_20260713",
+      "status": "ok_empty",
+      "window": "history",
+      "checked_at": "2026-07-13T08:52:00+08:00",
+      "usage": "20:00至8:30工信部/商务部/发改委固定政策增量扫描"
+    },
+    {
+      "id": "global_benchmark_premarket_20260713",
+      "status": "ok_empty",
+      "window": "history",
+      "checked_at": "2026-07-13T08:52:00+08:00",
+      "usage": "20:00至8:30全球设备、材料、AI算力、HBM标杆增量扫描"
+    },
+    {
+      "id": "yahoo_finance_premarket_20260713",
+      "status": "degraded",
+      "window": "history",
+      "checked_at": "2026-07-13T08:51:00+08:00",
+      "usage": "日韩早盘交叉验证"
+    },
+    {
+      "id": "tencent_hk_auction_20260713",
+      "status": "degraded",
+      "window": "history",
+      "checked_at": "2026-07-13T09:19:00+08:00",
+      "usage": "9:15港股竞价及A/H映射"
+    },
+    {
+      "id": "sina_global_futures_20260713",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-13T09:18:00+08:00",
+      "usage": "A50与恒指期货盘前方向"
+    },
+    {
+      "id": "nasdaq_golden_dragon_20260710",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-13T09:17:00+08:00",
+      "usage": "中概股整体情绪"
+    },
+    {
+      "id": "eastmoney_auction_limit_pool_20260713",
+      "status": "degraded",
+      "window": "history",
+      "checked_at": "2026-07-13T09:27:00+08:00",
+      "usage": "9:25开盘涨停、跌停、炸板结构统计"
+    },
+    {
+      "id": "tencent_a_auction_20260713",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-13T09:28:00+08:00",
+      "usage": "A股指数、观察池开盘价及竞价成交代理"
+    },
+    {
+      "id": "eastmoney_structure_intraday_0930_20260713",
+      "status": "degraded",
+      "window": "history",
+      "checked_at": "2026-07-13T09:34:00+08:00",
+      "usage": "涨停/跌停/炸板及行业概念排行"
+    },
+    {
+      "id": "tencent_a_intraday_0930_20260713",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-13T09:35:00+08:00",
+      "usage": "A股指数、半导体、CPO、电子布、风格雷达实时行情"
+    },
+    {
+      "id": "tencent_hk_open_0930_20260713",
+      "status": "degraded",
+      "window": "history",
+      "checked_at": "2026-07-13T09:35:00+08:00",
+      "usage": "港股正式开盘交叉验证"
+    },
+    {
+      "id": "eastmoney_structure_intraday_1000_20260713",
+      "status": "degraded",
+      "window": "history",
+      "checked_at": "2026-07-13T10:14:00+08:00",
+      "usage": "10:00涨停/跌停/炸板与行业概念排行"
+    },
+    {
+      "id": "tencent_a_h_intraday_1000_20260713",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-13T10:15:00+08:00",
+      "usage": "A/H指数、科技、电子布、风格雷达实时行情"
+    },
+    {
+      "id": "eastmoney_structure_intraday_1030_20260713",
+      "status": "degraded",
+      "window": "history",
+      "checked_at": "2026-07-13T10:37:03+08:00",
+      "usage": "10:30涨停/跌停/炸板与行业概念排行"
+    },
+    {
+      "id": "tencent_a_h_intraday_1030_20260713",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-13T10:37:03+08:00",
+      "usage": "A/H指数、科技、电子布、风格雷达实时行情"
+    },
+    {
+      "id": "eastmoney_structure_intraday_1100_20260713",
+      "status": "degraded",
+      "window": "history",
+      "checked_at": "2026-07-13T11:05:12+08:00",
+      "usage": "11:00涨停/跌停/炸板与行业概念排行"
+    },
+    {
+      "id": "tencent_a_h_intraday_1100_20260713",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-13T11:05:12+08:00",
+      "usage": "A/H指数、科技、电子布、风格雷达实时行情"
+    },
+    {
+      "id": "eastmoney_structure_midday_1130_20260713",
+      "status": "degraded",
+      "window": "history",
+      "checked_at": "2026-07-13T12:46:56+08:00",
+      "usage": "11:30涨停/跌停/炸板与行业概念排行"
+    },
+    {
+      "id": "tencent_a_h_midday_1130_20260713",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-13T12:46:56+08:00",
+      "usage": "A股午间指数、观察池及港股延迟行情"
+    },
+    {
+      "id": "tencent_intraday_market_update_1300_20260713",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-13T13:17:29+08:00",
+      "usage": "13:00指数与行业排行无模型刷新"
+    },
+    {
+      "id": "tencent_a_h_intraday_1300_20260713",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-13T13:17:29+08:00",
+      "usage": "13:00核心样本、专项与A/H联动行情"
+    },
+    {
+      "id": "eastmoney_structure_intraday_1300_20260713",
+      "status": "degraded",
+      "window": "history",
+      "checked_at": "2026-07-13T13:17:29+08:00",
+      "usage": "13:00涨停/跌停/炸板结构"
+    },
+    {
+      "id": "tencent_intraday_market_update_1330_20260713",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-13T13:34:40+08:00",
+      "usage": "13:30指数与行业排行无模型刷新"
+    },
+    {
+      "id": "tencent_a_h_intraday_1330_20260713",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-13T13:34:40+08:00",
+      "usage": "13:30核心样本、专项与A/H联动行情"
+    },
+    {
+      "id": "eastmoney_structure_intraday_1330_20260713",
+      "status": "degraded",
+      "window": "history",
+      "checked_at": "2026-07-13T13:34:40+08:00",
+      "usage": "13:30涨停/跌停/炸板结构"
+    },
+    {
+      "id": "tencent_intraday_market_update_1400_20260713",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-13T14:07:30+08:00",
+      "usage": "14:00指数与行业排行无模型刷新"
+    },
+    {
+      "id": "tencent_a_h_intraday_1400_20260713",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-13T14:07:30+08:00",
+      "usage": "14:00核心样本、专项与A/H联动行情"
+    },
+    {
+      "id": "eastmoney_structure_intraday_1400_20260713",
+      "status": "degraded",
+      "window": "history",
+      "checked_at": "2026-07-13T14:07:30+08:00",
+      "usage": "14:00涨停/跌停/炸板结构"
+    },
+    {
+      "id": "tencent_intraday_market_update_1430_20260713",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-13T14:34:30+08:00",
+      "usage": "14:30指数与行业排行无模型刷新"
+    },
+    {
+      "id": "tencent_a_h_intraday_1430_20260713",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-13T14:34:30+08:00",
+      "usage": "14:30核心样本、专项与A/H联动行情"
+    },
+    {
+      "id": "eastmoney_structure_intraday_1430_20260713",
+      "status": "degraded",
+      "window": "history",
+      "checked_at": "2026-07-13T14:34:30+08:00",
+      "usage": "14:30涨停/跌停/炸板结构"
+    },
+    {
+      "id": "tencent_close_postmarket_20260713",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-13T15:12:00+08:00",
+      "usage": "A股收盘指数、观察池、专项样本与14:55至15:00分钟线"
+    },
+    {
+      "id": "eastmoney_limit_pool_postmarket_20260713",
+      "status": "degraded",
+      "window": "history",
+      "checked_at": "2026-07-13T15:12:00+08:00",
+      "usage": "收盘涨停、炸板、跌停总数及近5交易日结构"
+    },
+    {
+      "id": "sina_up5_postmarket_20260713",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-13T15:12:00+08:00",
+      "usage": "全市场涨幅不低于5%宽度统计"
+    },
+    {
+      "id": "sw_official_industry_postmarket_20260713",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-13T15:12:00+08:00",
+      "usage": "104只强势样本申万一级行业映射"
+    },
+    {
+      "id": "eastmoney_history_limit_pool_5d_20260713",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-13T15:12:00+08:00",
+      "usage": "2026-07-06至07-13六个交易日涨停题材连续性"
+    },
+    {
+      "id": "sina_hk_close_postmarket_20260713",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-13T16:10:00+08:00",
+      "usage": "港股指数与重点样本正式收盘及16:00至16:09竞价校验"
+    },
+    {
+      "id": "tencent_hk_close_postmarket_20260713",
+      "status": "degraded_delayed",
+      "window": "history",
+      "checked_at": "2026-07-13T16:10:00+08:00",
+      "usage": "港股收盘方向交叉验证"
+    },
+    {
+      "id": "cninfo_watchlist_evening_20260713",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-13T21:06:23+08:00",
+      "usage": "20:00观察池105只A股公告全量扫描"
+    },
+    {
+      "id": "tencent_close_evening_20260713",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-13T21:06:23+08:00",
+      "usage": "晚间重大公告对应标的收盘行情交叉验证"
+    },
+    {
+      "id": "official_policy_evening_20260713",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-13T21:06:23+08:00",
+      "usage": "工信部/商务部/发改委/科技部/官媒固定政策矩阵"
+    },
+    {
+      "id": "global_benchmark_evening_20260713",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-13T21:06:23+08:00",
+      "usage": "按topics-list动态扫描全球设备、材料、AI算力/存储、机器人、光通信、液冷、医药及PCB/玻纤标杆"
+    },
+    {
+      "id": "global_market_evening_20260713",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-13T21:06:23+08:00",
+      "usage": "美股盘前芯片、股指期货、油价与美债风险"
+    },
+    {
+      "id": "tsmc_monthly_revenue_20260713",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-14T08:37:52+08:00",
+      "usage": "台积电2026年6月月度收入与7月事件日历"
+    },
+    {
+      "id": "sina_us_close_premarket_20260714",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-14T08:37:52+08:00",
+      "usage": "隔夜美股三大指数、AI芯片、SOXX与中概ETF收盘"
+    },
+    {
+      "id": "sina_asia_early_premarket_20260714",
+      "status": "degraded_partial",
+      "window": "history",
+      "checked_at": "2026-07-14T08:37:52+08:00",
+      "usage": "8:30附近日韩指数方向"
+    },
+    {
+      "id": "cninfo_increment_premarket_20260714",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-14T08:37:52+08:00",
+      "usage": "20:00至8:30观察池105只A股公告增量扫描"
+    },
+    {
+      "id": "official_tsmc_premarket_20260714",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-14T08:37:52+08:00",
+      "usage": "台积电2026年6月及上半年营收验证"
+    },
+    {
+      "id": "official_policy_increment_premarket_20260714",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-14T08:37:52+08:00",
+      "usage": "工信部/商务部/发改委20:00至8:30政策增量"
+    },
+    {
+      "id": "web_market_news_premarket_20260714",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-14T08:37:52+08:00",
+      "usage": "隔夜美股收盘原因与地缘/油价风险交叉验证"
+    },
+    {
+      "id": "yahoo_finance_chart_premarket_20260714",
+      "status": "failed",
+      "window": "history",
+      "checked_at": "2026-07-14T08:37:52+08:00",
+      "usage": "隔夜美股与日韩行情备选接口"
+    },
+    {
+      "id": "tencent_a_h_close_20260714",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-14T17:49:03+08:00",
+      "usage": "A股/港股指数、行业、观察池正式收盘"
+    },
+    {
+      "id": "tencent_minute_1455_1500_20260714",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-14T17:49:03+08:00",
+      "usage": "14:55至15:00收盘竞价与尾盘资金校验"
+    },
+    {
+      "id": "sina_a_spot_close_20260714",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-14T17:49:03+08:00",
+      "usage": "全A收盘宽度、成交额与代表股行情"
+    },
+    {
+      "id": "eastmoney_structure_pools_20260714",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-14T17:49:03+08:00",
+      "usage": "涨停、跌停、炸板与行业结构"
+    },
+    {
+      "id": "eastmoney_full_market_spot_20260714",
+      "status": "failed",
+      "window": "history",
+      "checked_at": "2026-07-14T17:49:03+08:00",
+      "usage": "全市场实时快照备选"
+    },
+    {
+      "id": "eastmoney_minute_secondary_20260714",
+      "status": "failed",
+      "window": "history",
+      "checked_at": "2026-07-14T17:49:03+08:00",
+      "usage": "拓荆科技1分钟尾盘二次核验备选"
+    },
+    {
+      "id": "sw_official_classification_20260714",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-14T17:49:03+08:00",
+      "usage": "强势样本申万行业归类"
+    },
+    {
+      "id": "cninfo_ipo_filter_20260714",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-14T17:49:03+08:00",
+      "usage": "前5个交易日无涨跌幅限制新股剔除"
+    },
+    {
+      "id": "web_finance_premarket_2000",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-14T20:35:31+08:00",
+      "usage": "20:00美股盘前交叉验证"
+    },
+    {
+      "id": "cninfo_pdf_text_extraction",
+      "status": "degraded_fallback_ok",
+      "window": "history",
+      "checked_at": "2026-07-19T20:25:20+08:00",
+      "usage": "交易所公告PDF事实抽取"
+    },
+    {
+      "id": "bls_cpi_release_2030",
+      "status": "degraded_stale_or_timeout",
+      "window": "history",
+      "checked_at": "2026-07-14T20:35:31+08:00",
+      "usage": "20:30美国6月CPI正式结果核验"
+    },
+    {
+      "id": "tencent_us_http_premarket",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-15T09:18:56+08:00",
+      "usage": "7月15日盘前美股指数、芯片与ETF收盘核验"
+    },
+    {
+      "id": "eastmoney_nikkei_premarket",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-15T09:18:56+08:00",
+      "usage": "7月15日日韩早盘指数核验"
+    },
+    {
+      "id": "sina_naver_korea_premarket",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-15T09:18:56+08:00",
+      "usage": "7月15日韩国指数与半导体样本"
+    },
+    {
+      "id": "cninfo_overnight_increment",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-15T09:18:56+08:00",
+      "usage": "20:00-8:30配置池公告增量扫描"
+    },
+    {
+      "id": "tradingview_japan_scan",
+      "status": "failed_timeout",
+      "window": "history",
+      "checked_at": "2026-07-15T09:18:56+08:00",
+      "usage": "日本半导体单股早盘补充"
+    },
+    {
+      "id": "japan_single_stock_premarket",
+      "status": "degraded",
+      "window": "history",
+      "checked_at": "2026-07-15T09:18:56+08:00",
+      "usage": "东京电子、爱德万测试等日本科技单股"
+    },
+    {
+      "id": "tencent_hk_auction_20260715",
+      "status": "ok_indicative",
+      "window": "history",
+      "checked_at": "2026-07-15T09:27:04+08:00",
+      "usage": "9:15港股竞价指数、半导体、AI、互联网、创新药、汽车与券商映射"
+    },
+    {
+      "id": "sina_futures_premarket_20260715",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-15T09:27:04+08:00",
+      "usage": "9:15 A50与恒指期货方向"
+    },
+    {
+      "id": "tencent_china_adr_premarket_20260715",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-15T09:27:04+08:00",
+      "usage": "中概股整体与代表样本"
+    },
+    {
+      "id": "official_exchange_universe_auction_20260715",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-15T09:45:13+08:00",
+      "usage": "9:25 A股全市场开盘涨跌停分母与股票清单"
+    },
+    {
+      "id": "tencent_a_quote_auction_20260715",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-15T09:45:13+08:00",
+      "usage": "9:25开盘价、涨跌停价、指数与配置池报价"
+    },
+    {
+      "id": "eastmoney_limit_pool_auction_20260715",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-15T09:45:13+08:00",
+      "usage": "9:25涨停、跌停、炸板结构交叉检查"
+    },
+    {
+      "id": "tencent_hk_formal_open_20260715",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-15T09:45:13+08:00",
+      "usage": "港股正式开盘对A股科技竞价映射的校验"
+    },
+    {
+      "id": "auction_turnover_proxy_20260715",
+      "status": "degraded_estimate",
+      "window": "history",
+      "checked_at": "2026-07-15T09:45:13+08:00",
+      "usage": "9:25集合竞价成交量能参考"
+    },
+    {
+      "id": "tencent_a_intraday_1000_20260715",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-15T10:10:51+08:00",
+      "usage": "10:00指数、行业、观察池、医药、科技、专项与风格雷达"
+    },
+    {
+      "id": "eastmoney_structure_intraday_1000_20260715",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-15T10:10:51+08:00",
+      "usage": "10:00涨停、跌停、炸板结构与行业分布"
+    },
+    {
+      "id": "tencent_hk_intraday_1000_20260715",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-15T10:10:51+08:00",
+      "usage": "10:00 A/H医药、半导体、AI与指数共振"
+    },
+    {
+      "id": "intraday_recheck_1012_20260715",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-15T10:14:28+08:00",
+      "usage": "10:12医药持续性与科技反包二次校验"
+    },
+    {
+      "id": "tencent_a_close_postmarket_20260715",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-15T15:21:14+08:00",
+      "usage": "A股收盘指数、行业、观察池和专项样本"
+    },
+    {
+      "id": "tencent_minute_1455_1500_20260715",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-15T15:21:14+08:00",
+      "usage": "14:55至15:00收盘竞价/尾盘资金校验"
+    },
+    {
+      "id": "sina_all_a_close_postmarket_20260715",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-15T15:21:14+08:00",
+      "usage": "全A 5%/8%不重叠强势样本与成交额统计"
+    },
+    {
+      "id": "sw_official_classification_postmarket_20260715",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-15T15:21:14+08:00",
+      "usage": "302只强势样本申万一级行业归类"
+    },
+    {
+      "id": "eastmoney_structure_pools_postmarket_20260715",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-15T15:21:14+08:00",
+      "usage": "A股收盘涨停、跌停、炸板池及行业分布"
+    },
+    {
+      "id": "eastmoney_full_market_spot_postmarket_20260715",
+      "status": "failed",
+      "window": "history",
+      "checked_at": "2026-07-15T15:21:14+08:00",
+      "usage": "全市场行业字段备选快照"
+    },
+    {
+      "id": "tencent_hk_snapshot_postmarket_20260715",
+      "status": "ok_trading_snapshot",
+      "window": "history",
+      "checked_at": "2026-07-15T15:21:14+08:00",
+      "usage": "A股收盘时港股指数与创新药/半导体映射"
+    },
+    {
+      "id": "sina_hk_close_postmarket_20260715",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-15T16:09:00+08:00",
+      "usage": "港股16:00收盘竞价终值"
+    },
+    {
+      "id": "tencent_us_hk_premarket_20260716",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "",
+      "usage": "腾讯取得美股收盘、SOXX/核心芯片、中概互联网及港股09:13竞价指示价；港股指数本身未更新，未用昨日收盘冒充。"
+    },
+    {
+      "id": "sina_asia_futures_premarket_20260716",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "",
+      "usage": "新浪取得日经225约-0.90%、KOSPI约-6.48%、恒指期货约+0.77%及美股期货方向。"
+    },
+    {
+      "id": "yahoo_chart_premarket_20260716",
+      "status": "degraded",
+      "window": "history",
+      "checked_at": "",
+      "usage": "Yahoo Chart接口返回HTTP 429；已降级到腾讯与新浪，没有用失败源补数。"
+    },
+    {
+      "id": "cninfo_premarket_20260716",
+      "status": "degraded",
+      "window": "history",
+      "checked_at": "",
+      "usage": "巨潮当日公告接口可访问，但全量分页扫描未完成可靠覆盖；本次未声称观察池公告无重大新增，未核实公告不进入开盘结论。"
+    },
+    {
+      "id": "official_exchange_universe_auction_20260716",
+      "status": "recovered",
+      "window": "history",
+      "checked_at": "2026-07-16T09:29:00+08:00",
+      "usage": "9:25 A股全市场开盘涨跌停分母与股票清单"
+    },
+    {
+      "id": "tencent_a_quote_auction_20260716",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-16T09:29:54+08:00",
+      "usage": "9:25开盘价、涨跌停价、指数与配置池报价"
+    },
+    {
+      "id": "eastmoney_limit_pool_auction_20260716",
+      "status": "failed",
+      "window": "history",
+      "checked_at": "2026-07-16T09:27:00+08:00",
+      "usage": "9:25涨停/跌停结构池交叉检查"
+    },
+    {
+      "id": "auction_turnover_proxy_20260716",
+      "status": "degraded_estimate",
+      "window": "history",
+      "checked_at": "2026-07-16T09:26:18+08:00",
+      "usage": "9:25集合竞价成交量能参考"
+    },
+    {
+      "id": "tencent_hk_formal_open_20260716",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-16T09:30:24+08:00",
+      "usage": "港股正式开盘与A/H映射复核"
+    },
+    {
+      "id": "local_monitor_log",
+      "status": "degraded_partial",
+      "window": "history",
+      "checked_at": "2026-07-17T11:27:45+08:00",
+      "usage": "交易时段监控日志正式提醒扫描"
+    },
+    {
+      "id": "tencent_full_market_intraday_0939_20260716",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-16T09:39:30+08:00",
+      "usage": "全市场涨停/跌停/炸板及配置池开盘承接"
+    },
+    {
+      "id": "tencent_index_industry_intraday_0937_20260716",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-16T09:37:38+08:00",
+      "usage": "盘中指数、成交额与行业排行"
+    },
+    {
+      "id": "eastmoney_structure_intraday_0936_20260716",
+      "status": "failed",
+      "window": "history",
+      "checked_at": "2026-07-16T09:36:30+08:00",
+      "usage": "涨停池、跌停池、炸板池及概念归因交叉验证"
+    },
+    {
+      "id": "tencent_semiconductor_fiberglass_peers_0941_20260716",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-16T09:41:34+08:00",
+      "usage": "半导体五只专项、同行及电子布/玻纤轮动"
+    },
+    {
+      "id": "official_exchange_universe_intraday_20260716",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-16T09:39:00+08:00",
+      "usage": "盘中全市场结构统计分母"
+    },
+    {
+      "id": "alert_candidate_quality_gate_0954_20260716",
+      "status": "degraded",
+      "window": "history",
+      "checked_at": "2026-07-16T09:54:20+08:00",
+      "usage": "末尾54条候选未达到 alert-config 对短周期价格、方向占比和成交门槛的最低要求，已从当前展示批次撤下；保留候选仍仅作复核，不作为确定交易信号。"
+    },
+    {
+      "id": "tencent_index_industry_intraday_1020_20260716",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-16T10:20:42+08:00",
+      "usage": "A股5只指数、两市成交与98个行业排名"
+    },
+    {
+      "id": "tencent_focus_quotes_intraday_1020_20260716",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-16T10:20:32+08:00",
+      "usage": "配置池、半导体专项、电子布/玻纤、PCB/CPO、医药与风格雷达"
+    },
+    {
+      "id": "eastmoney_structure_intraday_1021_20260716",
+      "status": "recovered",
+      "window": "history",
+      "checked_at": "2026-07-16T10:21:48+08:00",
+      "usage": "涨停/跌停/炸板池、行业分布、连板高度"
+    },
+    {
+      "id": "sina_full_market_crosscheck_1019_20260716",
+      "status": "degraded",
+      "window": "history",
+      "checked_at": "2026-07-16T10:19:30+08:00",
+      "usage": "结构池交叉核对，不作为主结论源"
+    },
+    {
+      "id": "tencent_hk_delayed_intraday_1007_20260716",
+      "status": "degraded",
+      "window": "history",
+      "checked_at": "2026-07-16T10:22:00+08:00",
+      "usage": "港股A/H情绪映射"
+    },
+    {
+      "id": "alert_candidate_quality_gate_1033_20260716",
+      "status": "degraded",
+      "window": "history",
+      "checked_at": "2026-07-16T10:33:05+08:00",
+      "usage": "对仍在5分钟有效期内的新候选补齐3分钟涨跌、方向占比和成交放大；2条未达alert-config最低门槛的信号标记invalidated，记录保留但禁止展示为当前候选。"
+    },
+    {
+      "id": "tencent_index_industry_intraday_1050_20260716",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-16T10:50:09+08:00",
+      "usage": "A股指数、两市成交、98个行业与重点行业复核"
+    },
+    {
+      "id": "tencent_focus_quotes_intraday_1046_20260716",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-16T10:46:07+08:00",
+      "usage": "配置池、半导体专项、电子布/玻纤、PCB/CPO、医药与风格雷达"
+    },
+    {
+      "id": "eastmoney_structure_intraday_1049_20260716",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-16T10:49:30+08:00",
+      "usage": "涨停/跌停/炸板池、行业分布、连板高度"
+    },
+    {
+      "id": "tencent_hk_intraday_1040_20260716",
+      "status": "degraded",
+      "window": "history",
+      "checked_at": "2026-07-16T10:40:42+08:00",
+      "usage": "港股A/H情绪映射"
+    },
+    {
+      "id": "alert_candidate_quality_gate_1059_20260716",
+      "status": "degraded",
+      "window": "history",
+      "checked_at": "2026-07-16T10:59:30+08:00",
+      "usage": "两条仍在5分钟有效期内但未达到alert-config最低证据门槛、且未完成双源复核的候选已标记invalidated；原始记录保留，禁止作为当前交易触发。"
+    },
+    {
+      "id": "monitor_log",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "",
+      "usage": "monitor.pid alive; log fresh"
+    },
+    {
+      "id": "quote_provider_decode",
+      "status": "degraded",
+      "window": "history",
+      "checked_at": "",
+      "usage": ""
+    },
+    {
+      "id": "tencent_index_industry_intraday_1113_20260716",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-16T11:13:36+08:00",
+      "usage": "A股5只指数、两市成交和98个行业排名"
+    },
+    {
+      "id": "tencent_focus_quotes_intraday_1110_20260716",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-16T11:10:53+08:00",
+      "usage": "配置池、半导体专项、电子布/玻纤、PCB/CPO、医药与风格雷达"
+    },
+    {
+      "id": "eastmoney_structure_intraday_1110_20260716",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-16T11:10:27+08:00",
+      "usage": "涨停/跌停/炸板池、行业分布和连板高度"
+    },
+    {
+      "id": "tencent_hk_intraday_1111_20260716",
+      "status": "degraded",
+      "window": "history",
+      "checked_at": "2026-07-16T11:11:52+08:00",
+      "usage": "港股A/H情绪映射"
+    },
+    {
+      "id": "alert_candidate_quality_gate_1121_20260716",
+      "status": "degraded",
+      "window": "history",
+      "checked_at": "2026-07-16T11:21:19+08:00",
+      "usage": "11:10后16条候选均未完成腾讯/通达信双源复核且缺少可验证完整metrics，已标记invalidated；原始记录保留，禁止作为当前交易触发。"
+    },
+    {
+      "id": "watchlist_retention_policy_20260716",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-16T11:25:36+08:00",
+      "usage": "观察池只增强不删减"
+    },
+    {
+      "id": "tencent_index_industry_midday_20260716",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-16T11:30:59+08:00",
+      "usage": "A股上午收盘5只指数、成交额和98个行业排名"
+    },
+    {
+      "id": "tencent_focus_quotes_midday_20260716",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-16T11:34:17+08:00",
+      "usage": "半导体专项、电子布/玻纤、PCB/CPO、医药、算力和风格雷达上午收盘价"
+    },
+    {
+      "id": "eastmoney_structure_midday_20260716",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-16T11:34:00+08:00",
+      "usage": "午间涨停/跌停/炸板池、行业分布和连板高度"
+    },
+    {
+      "id": "tencent_hk_midday_20260716",
+      "status": "degraded",
+      "window": "history",
+      "checked_at": "2026-07-16T11:34:44+08:00",
+      "usage": "港股午间A/H情绪映射"
+    },
+    {
+      "id": "local_monitor_realtime_quote_1300",
+      "status": "degraded",
+      "window": "history",
+      "checked_at": "2026-07-16T13:09:52+08:00",
+      "usage": "13:00本地无模型监控实时行情刷新"
+    },
+    {
+      "id": "tencent_index_industry_intraday_1306_20260716",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-16T13:06:00+08:00",
+      "usage": "A股5只指数、两市成交和98个行业排名"
+    },
+    {
+      "id": "tencent_focus_quotes_intraday_1306_20260716",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-16T13:06:42+08:00",
+      "usage": "配置池、半导体专项、电子布/玻纤、PCB/CPO、医药、算力和风格雷达"
+    },
+    {
+      "id": "eastmoney_structure_intraday_1306_20260716",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-16T13:08:34+08:00",
+      "usage": "涨停/跌停/炸板池、行业分布和连板高度"
+    },
+    {
+      "id": "tencent_hk_intraday_1306_20260716",
+      "status": "degraded",
+      "window": "history",
+      "checked_at": "2026-07-16T13:06:42+08:00",
+      "usage": "港股A/H情绪映射"
+    },
+    {
+      "id": "tencent_index_industry_intraday_1330_20260716",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-16T13:30:53+08:00",
+      "usage": "A股5只指数、两市成交和98个行业排名"
+    },
+    {
+      "id": "tencent_focus_quotes_intraday_1331_20260716",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-16T13:31:49+08:00",
+      "usage": "配置池、半导体专项、电子布/玻纤、PCB/CPO、医药、算力和风格雷达"
+    },
+    {
+      "id": "eastmoney_structure_intraday_1334_20260716",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-16T13:34:45+08:00",
+      "usage": "涨停/跌停/炸板池、行业分布和连板高度"
+    },
+    {
+      "id": "tencent_hk_intraday_1331_20260716",
+      "status": "degraded",
+      "window": "history",
+      "checked_at": "2026-07-16T13:31:49+08:00",
+      "usage": "港股A/H情绪映射"
+    },
+    {
+      "id": "local_monitor_realtime_quote_1330",
+      "status": "degraded",
+      "window": "history",
+      "checked_at": "2026-07-16T13:36:17+08:00",
+      "usage": "13:30本地无模型监控异动候选"
+    },
+    {
+      "id": "tencent_index_industry_intraday_1408_20260716",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-16T14:08:36+08:00",
+      "usage": "A股5只指数、两市成交和98个行业排名"
+    },
+    {
+      "id": "tencent_focus_quotes_intraday_1408_20260716",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-16T14:08:52+08:00",
+      "usage": "配置池、半导体专项、电子布/玻纤、PCB/CPO、医药、算力和风格雷达"
+    },
+    {
+      "id": "eastmoney_structure_intraday_1407_20260716",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-16T14:07:50+08:00",
+      "usage": "涨停/跌停/炸板池、行业分布和连板高度"
+    },
+    {
+      "id": "tencent_hk_intraday_1408_20260716",
+      "status": "degraded",
+      "window": "history",
+      "checked_at": "2026-07-16T14:08:52+08:00",
+      "usage": "港股A/H情绪映射"
+    },
+    {
+      "id": "local_monitor_realtime_quote_1400",
+      "status": "degraded",
+      "window": "history",
+      "checked_at": "2026-07-16T14:09:44+08:00",
+      "usage": "14:00本地无模型监控异动候选"
+    },
+    {
+      "id": "local_monitor_realtime_quote_refresh",
+      "status": "degraded_transient",
+      "window": "history",
+      "checked_at": "2026-07-16T14:22:08+08:00",
+      "usage": "盘中题材强度与观察池实时行情刷新"
+    },
+    {
+      "id": "tencent_index_industry_intraday_1437_20260716",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-16T14:37:13+08:00",
+      "usage": "A股5只指数、两市成交和98个行业排名"
+    },
+    {
+      "id": "tencent_focus_quotes_intraday_1437_20260716",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-16T14:37:36+08:00",
+      "usage": "配置池、半导体专项、电子布/玻纤、PCB/CPO、医药、算力和风格雷达"
+    },
+    {
+      "id": "eastmoney_structure_intraday_1435_20260716",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-16T14:35:55+08:00",
+      "usage": "涨停/跌停/炸板池、行业分布和连板高度"
+    },
+    {
+      "id": "tencent_hk_intraday_1437_20260716",
+      "status": "degraded",
+      "window": "history",
+      "checked_at": "2026-07-16T14:37:36+08:00",
+      "usage": "港股A/H情绪映射"
+    },
+    {
+      "id": "local_monitor_realtime_quote_1430",
+      "status": "degraded",
+      "window": "history",
+      "checked_at": "2026-07-16T14:38:09+08:00",
+      "usage": "14:30本地无模型监控异动候选"
+    },
+    {
+      "id": "tencent_hk_snapshot_postmarket_1530_20260716",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-16T15:36:07+08:00",
+      "usage": "15:30港股指数与A/H收盘复盘校验"
+    },
+    {
+      "id": "tencent_hk_official_close_postmarket_20260716",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-16T16:12:14+08:00",
+      "usage": "港股随机收市竞价终值与A/H复盘校验"
+    },
+    {
+      "id": "tencent_a_share_close_20260717",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-19T20:25:20+08:00",
+      "usage": "周末20:00最近交易日A股指数与成交复核"
+    },
+    {
+      "id": "us_ai_hardware_close_20260717",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-19T20:25:20+08:00",
+      "usage": "周五美股AI硬件与风险传导复核"
+    },
+    {
+      "id": "tencent_us_close_20260717_corrected",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-20T09:47:26+08:00",
+      "usage": "9:15美股三大指数、AI硬件和KWEB映射"
+    },
+    {
+      "id": "tencent_hk_auction_20260720",
+      "status": "degraded",
+      "window": "history",
+      "checked_at": "2026-07-20T09:47:26+08:00",
+      "usage": "9:15港股竞价与A/H映射"
+    },
+    {
+      "id": "sina_global_futures_20260720",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-20T09:47:26+08:00",
+      "usage": "9:15 A50、恒指期货与KOSPI方向"
+    },
+    {
+      "id": "naver_korea_tech_20260720",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-20T09:47:26+08:00",
+      "usage": "9:15韩国科技链实时交叉验证"
+    },
+    {
+      "id": "japan_holiday_official_20260720",
+      "status": "ok_empty",
+      "window": "history",
+      "checked_at": "2026-07-20T09:47:26+08:00",
+      "usage": "9:15日本科技链交易日校验"
+    },
+    {
+      "id": "eastmoney_open_limit_structure_20260720",
+      "status": "degraded",
+      "window": "history",
+      "checked_at": "2026-07-20T09:47:26+08:00",
+      "usage": "9:25开盘涨跌停结构回溯"
+    },
+    {
+      "id": "tencent_a_share_open_20260720",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-20T09:47:26+08:00",
+      "usage": "9:25指数与配置池开盘价回溯"
+    },
+    {
+      "id": "tencent_industry_rank_intraday_1000",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-20T10:15:06+08:00",
+      "usage": "10:00全市场行业强弱排序"
+    },
+    {
+      "id": "tencent_a_quote_intraday_1030",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-08-06T10:34:09+08:00",
+      "usage": "10:30 A股指数、行业与重点样本实时快照"
+    },
+    {
+      "id": "eastmoney_limit_pool_intraday_1030",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-20T10:37:06+08:00",
+      "usage": "10:30涨停池、跌停池、炸板池和行业分布"
+    },
+    {
+      "id": "tencent_hk_http_intraday_1030",
+      "status": "ok_indices_delayed_stocks",
+      "window": "history",
+      "checked_at": "2026-07-20T10:37:06+08:00",
+      "usage": "10:30港股指数和A/H映射样本"
+    },
+    {
+      "id": "tencent_a_quote_intraday_1100_20260720",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-20T11:12:12+08:00",
+      "usage": "11:00指数、行业排行、观察池与专项样本"
+    },
+    {
+      "id": "eastmoney_limit_pool_intraday_1100_20260720",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-20T11:12:12+08:00",
+      "usage": "11:00涨停池、跌停池、炸板池和行业分布"
+    },
+    {
+      "id": "tencent_hk_http_intraday_1100_20260720",
+      "status": "ok_indices_delayed_stocks",
+      "window": "history",
+      "checked_at": "2026-07-20T11:12:12+08:00",
+      "usage": "11:00港股指数和A/H映射样本"
+    },
+    {
+      "id": "concept_ranking_intraday_1100_20260720",
+      "status": "degraded",
+      "window": "history",
+      "checked_at": "2026-07-20T11:12:12+08:00",
+      "usage": "11:00全市场概念排行"
+    },
+    {
+      "id": "tencent_a_quote_midday_20260720",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-20T13:43:40+08:00",
+      "usage": "11:30五大指数、行业排行、观察池与专项样本"
+    },
+    {
+      "id": "tencent_minute_midday_20260720",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-20T13:43:40+08:00",
+      "usage": "11:30精确分钟价格核验"
+    },
+    {
+      "id": "eastmoney_structure_pools_midday_20260720",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-20T13:43:40+08:00",
+      "usage": "11:30涨停池、跌停池、炸板池和行业分布"
+    },
+    {
+      "id": "tencent_hk_midday_20260720",
+      "status": "degraded_single_source",
+      "window": "history",
+      "checked_at": "2026-07-20T13:43:40+08:00",
+      "usage": "11:59:59恒指、恒科和A/H映射样本"
+    },
+    {
+      "id": "concept_ranking_midday_20260720",
+      "status": "degraded",
+      "window": "history",
+      "checked_at": "2026-07-20T13:43:40+08:00",
+      "usage": "11:30全市场概念排行"
+    },
+    {
+      "id": "tencent_a_quote_intraday_1400_20260720",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-20T14:21:52+08:00",
+      "usage": "14:10至14:20五大指数、98个有效行业与A股代表样本"
+    },
+    {
+      "id": "eastmoney_structure_pools_intraday_1400_20260720",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-20T14:21:52+08:00",
+      "usage": "14:09涨停池、跌停池、炸板池及行业分布"
+    },
+    {
+      "id": "tencent_hk_quote_intraday_1400_20260720",
+      "status": "degraded_single_source",
+      "window": "history",
+      "checked_at": "2026-07-20T14:21:52+08:00",
+      "usage": "13:56恒指、恒科及A/H映射样本"
+    },
+    {
+      "id": "concept_ranking_intraday_1400_20260720",
+      "status": "degraded",
+      "window": "history",
+      "checked_at": "2026-07-20T14:21:52+08:00",
+      "usage": "14:00全市场概念排行"
+    },
+    {
+      "id": "tencent_a_quote_intraday_1430_20260720",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-20T14:41:55+08:00",
+      "usage": "14:31至14:33五大指数、98个有效行业与A股代表样本"
+    },
+    {
+      "id": "eastmoney_structure_pools_intraday_1430_20260720",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-20T14:41:55+08:00",
+      "usage": "14:31涨停池、跌停池、炸板池及行业分布"
+    },
+    {
+      "id": "tencent_hk_quote_intraday_1430_20260720",
+      "status": "degraded_delayed_single_source",
+      "window": "history",
+      "checked_at": "2026-07-20T14:41:55+08:00",
+      "usage": "14:17恒指、恒科及A/H映射样本"
+    },
+    {
+      "id": "concept_ranking_intraday_1430_20260720",
+      "status": "degraded",
+      "window": "history",
+      "checked_at": "2026-07-20T14:41:55+08:00",
+      "usage": "14:30全市场概念排行"
+    },
+    {
+      "id": "sina_us_close_premarket_0830_20260721",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-21T08:48:55+08:00",
+      "usage": "美股三大指数7月20日收盘"
+    },
+    {
+      "id": "web_finance_us_tech_premarket_0830_20260721",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-21T08:48:55+08:00",
+      "usage": "英伟达、美光、博通、AMD隔夜涨跌"
+    },
+    {
+      "id": "tencent_japan_tech_premarket_0830_20260721",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-21T08:48:55+08:00",
+      "usage": "日经与日本设备/测试/芯片/材料早盘"
+    },
+    {
+      "id": "naver_korea_tech_premarket_0830_20260721",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-21T08:48:55+08:00",
+      "usage": "KOSPI、三星电子、SK海力士早盘"
+    },
+    {
+      "id": "tencent_hk_close_premarket_0830_20260721",
+      "status": "ok_previous_close",
+      "window": "history",
+      "checked_at": "2026-07-21T08:48:55+08:00",
+      "usage": "7月20日港股收盘背景"
+    },
+    {
+      "id": "official_event_scan_premarket_0830_20260721",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-21T08:48:55+08:00",
+      "usage": "英伟达、美光、AMD、工信部最新官方事件与日历"
+    },
+    {
+      "id": "cninfo_watchlist_announcements_premarket_0830_20260721",
+      "status": "degraded_partial",
+      "window": "history",
+      "checked_at": "2026-07-21T08:48:55+08:00",
+      "usage": "配置池隔夜公告核对"
+    },
+    {
+      "id": "tencent_us_close_premarket_0915_20260721",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-21T09:19:30+08:00",
+      "usage": "9:15美股三大指数、AI芯片和KWEB映射"
+    },
+    {
+      "id": "tencent_hk_auction_premarket_0915_20260721",
+      "status": "degraded",
+      "window": "history",
+      "checked_at": "2026-07-21T09:19:30+08:00",
+      "usage": "9:15港股竞价与A/H映射"
+    },
+    {
+      "id": "tencent_japan_tech_premarket_0915_20260721",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-21T09:19:30+08:00",
+      "usage": "日本设备、测试、芯片与材料早盘"
+    },
+    {
+      "id": "naver_korea_tech_premarket_0915_20260721",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-21T09:19:30+08:00",
+      "usage": "韩国指数、三星电子与SK海力士早盘"
+    },
+    {
+      "id": "sina_global_futures_premarket_0915_20260721",
+      "status": "ok_estimated",
+      "window": "history",
+      "checked_at": "2026-07-21T09:19:30+08:00",
+      "usage": "A50与恒指期货开盘方向"
+    },
+    {
+      "id": "mootdx_a_auction_0925_20260721",
+      "status": "unavailable",
+      "window": "history",
+      "checked_at": "2026-07-21T09:28:30+08:00",
+      "usage": "A股集合竞价全市场主源尝试"
+    },
+    {
+      "id": "tencent_a_auction_quotes_0925_20260721",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-21T09:28:30+08:00",
+      "usage": "A股指数、沪深竞价成交额与代表股开盘价"
+    },
+    {
+      "id": "eastmoney_limit_pools_auction_0925_20260721",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-21T09:28:30+08:00",
+      "usage": "A股开盘涨停/跌停结构池"
+    },
+    {
+      "id": "tencent_a_quote_intraday_0930_20260721",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-21T09:38:00+08:00",
+      "usage": "A股指数、成交额、专项股及代表股连续行情"
+    },
+    {
+      "id": "tencent_hk_quote_intraday_0930_20260721",
+      "status": "degraded",
+      "window": "history",
+      "checked_at": "2026-07-21T09:38:00+08:00",
+      "usage": "港股连续交易行情尝试"
+    },
+    {
+      "id": "sina_hk_quote_intraday_0930_20260721",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-21T09:38:00+08:00",
+      "usage": "恒指、恒科及港股科技/医药连续交易交叉验证"
+    },
+    {
+      "id": "eastmoney_structure_pools_intraday_0930_20260721",
+      "status": "degraded",
+      "window": "history",
+      "checked_at": "2026-07-21T09:38:00+08:00",
+      "usage": "A股涨停、跌停、炸板池和行业分布"
+    },
+    {
+      "id": "tencent_a_quote_intraday_1000_20260721",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-21T10:05:00+08:00",
+      "usage": "A股指数、98个行业、配置池、ETF和代表股连续行情"
+    },
+    {
+      "id": "eastmoney_structure_pools_intraday_1000_20260721",
+      "status": "degraded",
+      "window": "history",
+      "checked_at": "2026-07-21T10:05:00+08:00",
+      "usage": "涨停、跌停、炸板池和行业分布"
+    },
+    {
+      "id": "sina_hk_quote_intraday_1000_20260721",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-21T10:05:00+08:00",
+      "usage": "港股连续交易交叉验证"
+    },
+    {
+      "id": "tencent_a_quote_intraday_1030_20260721",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-21T10:36:00+08:00",
+      "usage": "A股指数、行业、配置池、ETF及代表股"
+    },
+    {
+      "id": "eastmoney_structure_pools_intraday_1030_20260721",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-21T10:36:00+08:00",
+      "usage": "涨停、跌停、炸板池及行业分布"
+    },
+    {
+      "id": "sina_hk_quote_intraday_1030_20260721",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-21T10:36:00+08:00",
+      "usage": "港股连续交易交叉验证"
+    },
+    {
+      "id": "tencent_a_quote_intraday_1100_20260721",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-21T11:17:57+08:00",
+      "usage": "A股5指数、98行业、配置池、ETF、专项股和代表股连续行情"
+    },
+    {
+      "id": "eastmoney_structure_pools_intraday_1100_20260721",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-21T11:17:57+08:00",
+      "usage": "涨停、跌停、炸板池及行业分布"
+    },
+    {
+      "id": "sina_hk_quote_intraday_1100_20260721",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-21T11:17:57+08:00",
+      "usage": "恒指、恒科及港股科技连续交易交叉验证"
+    },
+    {
+      "id": "mootdx_intraday_1100_20260721",
+      "status": "failed_unavailable",
+      "window": "history",
+      "checked_at": "2026-07-21T11:17:57+08:00",
+      "usage": "通达信TCP优先行情尝试"
+    },
+    {
+      "id": "concept_ranking_intraday_1100_20260721",
+      "status": "degraded",
+      "window": "history",
+      "checked_at": "2026-07-21T11:17:57+08:00",
+      "usage": "全市场概念排行"
+    },
+    {
+      "id": "tencent_a_quote_midday_20260721",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-21T11:37:51+08:00",
+      "usage": "A股午收5指数、98行业、配置池、ETF和重点样本"
+    },
+    {
+      "id": "eastmoney_structure_pools_midday_20260721",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-21T11:37:51+08:00",
+      "usage": "午收涨停、跌停、炸板池和行业分布"
+    },
+    {
+      "id": "sina_hk_quote_midday_20260721",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-21T11:37:51+08:00",
+      "usage": "恒指、恒科及港股科技午间A/H映射"
+    },
+    {
+      "id": "mootdx_midday_20260721",
+      "status": "failed_unavailable",
+      "window": "history",
+      "checked_at": "2026-07-21T11:37:51+08:00",
+      "usage": "通达信TCP优先行情尝试"
+    },
+    {
+      "id": "concept_ranking_midday_20260721",
+      "status": "degraded",
+      "window": "history",
+      "checked_at": "2026-07-21T11:37:51+08:00",
+      "usage": "全市场概念排行"
+    },
+    {
+      "id": "tencent_a_quote_intraday_1400_20260721",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-21T14:06:08+08:00",
+      "usage": "A股14:00五指数、496行业、配置池与重点样本"
+    },
+    {
+      "id": "eastmoney_structure_pools_intraday_1400_20260721",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-21T14:06:08+08:00",
+      "usage": "14:00涨停、跌停、炸板池和行业分布"
+    },
+    {
+      "id": "tencent_hk_quote_intraday_1400_20260721",
+      "status": "degraded_delayed_single_source",
+      "window": "history",
+      "checked_at": "2026-07-21T14:06:08+08:00",
+      "usage": "恒指、恒科及港股科技A/H映射"
+    },
+    {
+      "id": "mootdx_intraday_1400_20260721",
+      "status": "failed_unavailable",
+      "window": "history",
+      "checked_at": "2026-07-21T14:06:08+08:00",
+      "usage": "通达信TCP优先行情尝试"
+    },
+    {
+      "id": "concept_ranking_intraday_1400_20260721",
+      "status": "degraded",
+      "window": "history",
+      "checked_at": "2026-07-21T14:06:08+08:00",
+      "usage": "全市场概念排行"
+    },
+    {
+      "id": "tencent_a_quote_intraday_1430_20260721",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-21T14:39:25+08:00",
+      "usage": "14:33至14:36五大指数、85只重点样本与半导体ETF"
+    },
+    {
+      "id": "eastmoney_structure_pools_intraday_1430_20260721",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-21T14:39:25+08:00",
+      "usage": "14:31至14:35涨停、跌停、炸板池和行业分布"
+    },
+    {
+      "id": "tencent_hk_quote_intraday_1430_20260721",
+      "status": "degraded_delayed_single_source",
+      "window": "history",
+      "checked_at": "2026-07-21T14:39:25+08:00",
+      "usage": "恒指、恒科延时背景"
+    },
+    {
+      "id": "mootdx_intraday_1430_20260721",
+      "status": "failed_unavailable",
+      "window": "history",
+      "checked_at": "2026-07-21T14:39:25+08:00",
+      "usage": "通达信TCP优先行情尝试"
+    },
+    {
+      "id": "concept_ranking_intraday_1430_20260721",
+      "status": "degraded",
+      "window": "history",
+      "checked_at": "2026-07-21T14:39:25+08:00",
+      "usage": "全市场概念排行"
+    },
+    {
+      "id": "sina_a_spot_postmarket_1500",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-21T15:10:00+08:00",
+      "usage": "沪深京市场宽度及5%/8%强势股分组"
+    },
+    {
+      "id": "sws_cninfo_industry_postmarket",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-21T15:10:00+08:00",
+      "usage": "强势股申万一二级行业映射"
+    },
+    {
+      "id": "eastmoney_all_a_enrichment_postmarket",
+      "status": "degraded_noncritical",
+      "window": "history",
+      "checked_at": "2026-07-21T15:10:00+08:00",
+      "usage": "全A行业字段补充尝试"
+    },
+    {
+      "id": "intraday_alert_current_day",
+      "status": "invalidated_no_audited_signal",
+      "window": "history",
+      "checked_at": "2026-07-21T15:16:00+08:00",
+      "usage": "盘中异动当前日有效性"
+    },
+    {
+      "id": "tencent_hk_http_intraday_1530",
+      "status": "ok_delayed",
+      "window": "history",
+      "checked_at": "2026-07-21T15:31:00+08:00",
+      "usage": "15:30港股尾盘前A/H映射"
+    },
+    {
+      "id": "sina_hk_close_1600_20260721",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-21T16:14:00+08:00",
+      "usage": "港股正式收盘指数及科技、半导体、互联网、医药、汽车、券商样本"
+    },
+    {
+      "id": "tencent_hk_close_crosscheck_1600_20260721",
+      "status": "ok_delayed",
+      "window": "history",
+      "checked_at": "2026-07-21T16:14:00+08:00",
+      "usage": "港股收盘方向交叉验证"
+    },
+    {
+      "id": "mootdx_midday_20260722",
+      "status": "degraded",
+      "window": "history",
+      "checked_at": "2026-07-22T11:47:00+08:00",
+      "usage": "高频实时行情第一优先级尝试"
+    },
+    {
+      "id": "tencent_a_h_midday_20260722",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-22T11:47:38+08:00",
+      "usage": "A股指数、98个行业、重点A/H样本午间定格"
+    },
+    {
+      "id": "eastmoney_structure_midday_20260722",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-22T11:45:00+08:00",
+      "usage": "涨停池、跌停池、炸板池和概念排行"
+    },
+    {
+      "id": "sina_all_a_midday_20260722",
+      "status": "degraded_noncritical",
+      "window": "history",
+      "checked_at": "2026-07-22T11:45:00+08:00",
+      "usage": "全市场上涨/下跌宽度补充尝试"
+    },
+    {
+      "id": "eastmoney_concept_full_midday_20260722",
+      "status": "degraded_noncritical",
+      "window": "history",
+      "checked_at": "2026-07-22T12:05:00+08:00",
+      "usage": "全量概念榜补充尝试"
+    },
+    {
+      "id": "tencent_a_quote_intraday_1400_20260722",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-22T14:09:06+08:00",
+      "usage": "14:00指数、行业和科技细分代表股实时报价"
+    },
+    {
+      "id": "eastmoney_structure_pools_intraday_1400_20260722",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-22T14:07:00+08:00",
+      "usage": "14:00涨停、跌停、炸板结构池及行业分布"
+    },
+    {
+      "id": "tencent_hk_http_intraday_1400_20260722",
+      "status": "delayed_ok",
+      "window": "history",
+      "checked_at": "2026-07-22T14:08:00+08:00",
+      "usage": "港股指数、半导体与AI映射"
+    },
+    {
+      "id": "tencent_a_quote_intraday_open_20260723",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-23T09:40:42+08:00",
+      "usage": "开盘后A股指数、行业排行、配置池和题材代表股"
+    },
+    {
+      "id": "eastmoney_structure_pools_intraday_open_20260723",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-23T09:40:42+08:00",
+      "usage": "开盘后涨停池、跌停池、炸板池与行业分布"
+    },
+    {
+      "id": "tencent_hk_intraday_open_20260723",
+      "status": "degraded_delayed",
+      "window": "history",
+      "checked_at": "2026-07-23T09:40:42+08:00",
+      "usage": "港股开盘后A/H映射"
+    },
+    {
+      "id": "tencent_a_quote_intraday_1000_20260723",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-23T10:03:42+08:00",
+      "usage": "10:00指数、行业排行、配置池和题材代表股"
+    },
+    {
+      "id": "eastmoney_structure_pools_intraday_1000_20260723",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-23T10:03:42+08:00",
+      "usage": "10:00涨停池、跌停池、炸板池与行业分布"
+    },
+    {
+      "id": "tencent_hk_intraday_1000_20260723",
+      "status": "ok_delayed",
+      "window": "history",
+      "checked_at": "2026-07-23T10:04:18+08:00",
+      "usage": "10:00恒指、恒科及A/H映射样本"
+    },
+    {
+      "id": "concept_ranking_intraday_1000_20260723",
+      "status": "degraded",
+      "window": "history",
+      "checked_at": "2026-07-23T10:03:42+08:00",
+      "usage": "10:00概念指数全榜"
+    },
+    {
+      "id": "eastmoney_structure_pools_intraday_1030_20260723",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-23T10:46:28+08:00",
+      "usage": "10:30涨停池、跌停池、炸板池及行业分布"
+    },
+    {
+      "id": "tencent_a_quote_intraday_1030_20260723",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-23T10:46:28+08:00",
+      "usage": "10:30指数、行业排名、专项和主线代表股"
+    },
+    {
+      "id": "tencent_hk_quote_intraday_1030_20260723",
+      "status": "degraded_delayed_single_source",
+      "window": "history",
+      "checked_at": "2026-07-23T10:46:28+08:00",
+      "usage": "10:30恒指、恒科及半导体/AI/创新药A/H映射"
+    },
+    {
+      "id": "concept_ranking_intraday_1030_20260723",
+      "status": "degraded",
+      "window": "history",
+      "checked_at": "2026-07-23T10:46:28+08:00",
+      "usage": "10:30概念指数全榜"
+    },
+    {
+      "id": "eastmoney_structure_pools_intraday_1100_20260723",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-23T11:11:47+08:00",
+      "usage": "11:00涨停池、跌停池、炸板池及行业分布"
+    },
+    {
+      "id": "tencent_a_quote_intraday_1100_20260723",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-23T11:11:47+08:00",
+      "usage": "11:00指数、98行业、专项和主线代表股"
+    },
+    {
+      "id": "tencent_hk_quote_intraday_1100_20260723",
+      "status": "degraded_delayed_single_source",
+      "window": "history",
+      "checked_at": "2026-07-23T11:11:47+08:00",
+      "usage": "11:00恒指、恒科及半导体/AI/创新药A/H映射"
+    },
+    {
+      "id": "concept_ranking_intraday_1100_20260723",
+      "status": "degraded",
+      "window": "history",
+      "checked_at": "2026-07-23T11:11:47+08:00",
+      "usage": "11:00概念指数全榜"
+    },
+    {
+      "id": "tencent_a_quote_midday_20260723",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-23T11:44:02+08:00",
+      "usage": ""
+    },
+    {
+      "id": "eastmoney_structure_pools_midday_20260723",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-23T11:44:02+08:00",
+      "usage": ""
+    },
+    {
+      "id": "tencent_hk_midday_20260723",
+      "status": "degraded",
+      "window": "history",
+      "checked_at": "2026-07-23T11:44:02+08:00",
+      "usage": ""
+    },
+    {
+      "id": "concept_ranking_midday_20260723",
+      "status": "degraded",
+      "window": "history",
+      "checked_at": "2026-07-23T11:44:02+08:00",
+      "usage": ""
+    },
+    {
+      "id": "tencent_a_quote_intraday_1300_20260723",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-23T13:12:57+08:00",
+      "usage": ""
+    },
+    {
+      "id": "eastmoney_structure_pools_intraday_1300_20260723",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-23T13:12:57+08:00",
+      "usage": ""
+    },
+    {
+      "id": "tencent_hk_quote_intraday_1300_20260723",
+      "status": "degraded",
+      "window": "history",
+      "checked_at": "2026-07-23T13:12:57+08:00",
+      "usage": ""
+    },
+    {
+      "id": "concept_ranking_intraday_1300_20260723",
+      "status": "degraded",
+      "window": "history",
+      "checked_at": "2026-07-23T13:12:57+08:00",
+      "usage": ""
+    },
+    {
+      "id": "tencent_a_quote_intraday_1330_20260723",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-23T13:38:02+08:00",
+      "usage": ""
+    },
+    {
+      "id": "eastmoney_structure_pools_intraday_1330_20260723",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-23T13:38:02+08:00",
+      "usage": ""
+    },
+    {
+      "id": "tencent_hk_quote_intraday_1330_20260723",
+      "status": "degraded",
+      "window": "history",
+      "checked_at": "2026-07-23T13:38:02+08:00",
+      "usage": ""
+    },
+    {
+      "id": "concept_ranking_intraday_1330_20260723",
+      "status": "degraded",
+      "window": "history",
+      "checked_at": "2026-07-23T13:38:02+08:00",
+      "usage": ""
+    },
+    {
+      "id": "tencent_a_quote_intraday_1400_20260723",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-23T14:11:06+08:00",
+      "usage": ""
+    },
+    {
+      "id": "eastmoney_structure_pools_intraday_1400_20260723",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-23T14:11:06+08:00",
+      "usage": ""
+    },
+    {
+      "id": "tencent_hk_quote_intraday_1400_20260723",
+      "status": "degraded",
+      "window": "history",
+      "checked_at": "2026-07-23T14:11:06+08:00",
+      "usage": ""
+    },
+    {
+      "id": "concept_ranking_intraday_1400_20260723",
+      "status": "degraded",
+      "window": "history",
+      "checked_at": "2026-07-23T14:11:06+08:00",
+      "usage": ""
+    },
+    {
+      "id": "tencent_a_quote_intraday_1430_20260723",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-23T14:39:43+08:00",
+      "usage": ""
+    },
+    {
+      "id": "eastmoney_structure_pools_intraday_1430_20260723",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-23T14:39:43+08:00",
+      "usage": ""
+    },
+    {
+      "id": "tencent_hk_quote_intraday_1430_20260723",
+      "status": "degraded",
+      "window": "history",
+      "checked_at": "2026-07-23T14:39:43+08:00",
+      "usage": ""
+    },
+    {
+      "id": "concept_ranking_intraday_1430_20260723",
+      "status": "degraded",
+      "window": "history",
+      "checked_at": "2026-07-23T14:39:43+08:00",
+      "usage": ""
+    },
+    {
+      "id": "tencent_a_close_postmarket_20260723",
+      "status": "ok_with_field_conflict",
+      "window": "history",
+      "checked_at": "2026-07-23T15:20:16+08:00",
+      "usage": ""
+    },
+    {
+      "id": "sina_all_a_close_postmarket_20260723",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-23T15:20:16+08:00",
+      "usage": ""
+    },
+    {
+      "id": "eastmoney_structure_pools_postmarket_20260723",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-23T15:20:16+08:00",
+      "usage": ""
+    },
+    {
+      "id": "tencent_minute_1455_1500_postmarket_20260723",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-23T15:20:16+08:00",
+      "usage": ""
+    },
+    {
+      "id": "sw_official_classification_postmarket_20260723",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-23T15:20:16+08:00",
+      "usage": ""
+    },
+    {
+      "id": "cninfo_new_ipo_postmarket_20260723",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-23T15:20:16+08:00",
+      "usage": ""
+    },
+    {
+      "id": "eastmoney_all_a_close_postmarket_20260723",
+      "status": "failed_fallback_used",
+      "window": "history",
+      "checked_at": "2026-07-23T15:20:16+08:00",
+      "usage": ""
+    },
+    {
+      "id": "concept_ranking_postmarket_20260723",
+      "status": "degraded",
+      "window": "history",
+      "checked_at": "2026-07-23T15:20:16+08:00",
+      "usage": ""
+    },
+    {
+      "id": "tencent_hk_close_postmarket_20260723",
+      "status": "delayed",
+      "window": "history",
+      "checked_at": "2026-07-23T16:14:44+08:00",
+      "usage": ""
+    },
+    {
+      "id": "sina_hk_official_close_postmarket_20260723",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-23T16:14:44+08:00",
+      "usage": ""
+    },
+    {
+      "id": "cninfo_evening_full_scan_20260723",
+      "status": "degraded_noncritical",
+      "window": "history",
+      "checked_at": "2026-07-23T21:49:34+08:00",
+      "usage": "20:00晚间全市场公告分页与观察池匹配"
+    },
+    {
+      "id": "global_official_ir_evening_20260723",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-23T21:49:34+08:00",
+      "usage": "Tesla、AMD、Intel、STMicroelectronics官方IR与事件日历"
+    },
+    {
+      "id": "official_policy_evening_20260723",
+      "status": "ok_empty_with_index_lag",
+      "window": "history",
+      "checked_at": "2026-07-23T21:49:34+08:00",
+      "usage": "工信部、发改委、商务部与地方政府政策增量扫描"
+    },
+    {
+      "id": "us_early_quote_evening_20260723",
+      "status": "degraded_live_incomplete",
+      "window": "history",
+      "checked_at": "2026-07-23T21:49:34+08:00",
+      "usage": "晚间美股科技股早盘情绪快照"
+    },
+    {
+      "id": "local_monitor_intraday_0937",
+      "status": "degraded_partial",
+      "window": "history",
+      "checked_at": "2026-07-24T09:37:24+08:00",
+      "usage": "盘中老登/小登正式提醒、观察池3分钟变化与看板 alert.json 写入依据"
+    },
+    {
+      "id": "tencent_index_intraday_0950_20260724",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-24T09:50:26+08:00",
+      "usage": ""
+    },
+    {
+      "id": "eastmoney_structure_pools_intraday_0950_20260724",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-24T09:50:26+08:00",
+      "usage": ""
+    },
+    {
+      "id": "tencent_focus_quotes_intraday_0950_20260724",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-24T09:50:26+08:00",
+      "usage": ""
+    },
+    {
+      "id": "tencent_hk_intraday_0950_20260724",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-24T09:50:26+08:00",
+      "usage": ""
+    },
+    {
+      "id": "concept_ranking_intraday_0950_20260724",
+      "status": "degraded",
+      "window": "history",
+      "checked_at": "2026-07-24T09:50:26+08:00",
+      "usage": ""
+    },
+    {
+      "id": "tencent_index_industry_intraday_1000_20260724",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-24T10:05:41+08:00",
+      "usage": ""
+    },
+    {
+      "id": "eastmoney_structure_pools_intraday_1000_20260724",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-24T10:05:41+08:00",
+      "usage": ""
+    },
+    {
+      "id": "tencent_focus_quotes_intraday_1000_20260724",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-24T10:05:41+08:00",
+      "usage": ""
+    },
+    {
+      "id": "tencent_hk_intraday_1000_20260724",
+      "status": "delayed",
+      "window": "history",
+      "checked_at": "2026-07-24T10:05:41+08:00",
+      "usage": ""
+    },
+    {
+      "id": "v2_governed_context_intraday_1000_20260724",
+      "status": "background_only",
+      "window": "history",
+      "checked_at": "2026-07-24T10:05:41+08:00",
+      "usage": ""
+    },
+    {
+      "id": "concept_ranking_intraday_1000_20260724",
+      "status": "degraded",
+      "window": "history",
+      "checked_at": "2026-07-24T10:05:41+08:00",
+      "usage": ""
+    },
+    {
+      "id": "eastmoney_structure_pools_intraday_1030_20260724",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-24T10:36:03+08:00",
+      "usage": ""
+    },
+    {
+      "id": "tencent_index_industry_focus_intraday_1030_20260724",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-24T10:36:03+08:00",
+      "usage": ""
+    },
+    {
+      "id": "tencent_hk_intraday_1030_20260724",
+      "status": "degraded_delayed_single_source",
+      "window": "history",
+      "checked_at": "2026-07-24T10:36:03+08:00",
+      "usage": ""
+    },
+    {
+      "id": "concept_ranking_intraday_1030_20260724",
+      "status": "degraded",
+      "window": "history",
+      "checked_at": "2026-07-24T10:36:03+08:00",
+      "usage": ""
+    },
+    {
+      "id": "v2_governed_context_intraday_1030_20260724",
+      "status": "background_only",
+      "window": "history",
+      "checked_at": "2026-07-24T10:36:03+08:00",
+      "usage": ""
+    },
+    {
+      "id": "tencent_a_quote_intraday_1100_20260724",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-24T11:05:30+08:00",
+      "usage": ""
+    },
+    {
+      "id": "eastmoney_structure_pools_intraday_1100_20260724",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-24T11:05:30+08:00",
+      "usage": ""
+    },
+    {
+      "id": "tencent_hk_quote_intraday_1100_20260724",
+      "status": "degraded_delayed_single_source",
+      "window": "history",
+      "checked_at": "2026-07-24T11:05:30+08:00",
+      "usage": ""
+    },
+    {
+      "id": "concept_ranking_intraday_1100_20260724",
+      "status": "degraded",
+      "window": "history",
+      "checked_at": "2026-07-24T11:05:30+08:00",
+      "usage": ""
+    },
+    {
+      "id": "japan_korea_intraday_1100_20260724",
+      "status": "degraded",
+      "window": "history",
+      "checked_at": "2026-07-24T11:05:30+08:00",
+      "usage": ""
+    },
+    {
+      "id": "overseas_switch_anchors_intraday_1100_20260724",
+      "status": "degraded_missing_current_sync",
+      "window": "history",
+      "checked_at": "2026-07-24T11:05:30+08:00",
+      "usage": ""
+    },
+    {
+      "id": "v2_governed_context_intraday_1100_20260724",
+      "status": "background_only",
+      "window": "history",
+      "checked_at": "2026-07-24T11:05:30+08:00",
+      "usage": ""
+    },
+    {
+      "id": "tencent_us_close_premarket_20260727",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-27T09:20:00+08:00",
+      "usage": "美股三大指数、中概ETF与科技映射股周五收盘"
+    },
+    {
+      "id": "tencent_japan_korea_premarket_20260727",
+      "status": "ok_representative_stocks",
+      "window": "history",
+      "checked_at": "2026-07-27T09:20:00+08:00",
+      "usage": "日韩科技链早盘方向"
+    },
+    {
+      "id": "tencent_hk_auction_premarket_0915_20260727",
+      "status": "partial_indicative",
+      "window": "history",
+      "checked_at": "2026-07-27T09:20:00+08:00",
+      "usage": "9:15港股竞价与A/H映射"
+    },
+    {
+      "id": "sina_tencent_futures_premarket_0915_20260727",
+      "status": "ok_cross_checked_direction",
+      "window": "history",
+      "checked_at": "2026-07-27T09:20:00+08:00",
+      "usage": "A50与恒指期货开盘方向"
+    },
+    {
+      "id": "web_official_market_premarket_20260727",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-27T09:20:00+08:00",
+      "usage": "美股收盘原因、Intel财报与Intel-蓝思先进封装合作"
+    },
+    {
+      "id": "sina_all_a_universe_auction_20260727",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-27T09:30:00+08:00",
+      "usage": "A股全量证券代码与固定开盘价候选列表"
+    },
+    {
+      "id": "tencent_all_a_open_auction_20260727",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-27T09:31:00+08:00",
+      "usage": "9:25固定开盘价、精确涨跌停价和竞价情绪统计"
+    },
+    {
+      "id": "tencent_index_auction_20260727",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-27T09:27:00+08:00",
+      "usage": "A股五大指数开盘涨跌与竞价金额"
+    },
+    {
+      "id": "eastmoney_all_a_auction_20260727",
+      "status": "failed_nonblocking",
+      "window": "history",
+      "checked_at": "2026-07-27T09:27:00+08:00",
+      "usage": "全A候选列表交叉源"
+    },
+    {
+      "id": "tencent_a_quote_intraday_0945",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-27T09:45:42+08:00",
+      "usage": "开盘指数、行业、观察池与专项代表股"
+    },
+    {
+      "id": "eastmoney_limit_pool_intraday_0945",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-27T09:43:36+08:00",
+      "usage": "开盘涨停、跌停、炸板结构"
+    },
+    {
+      "id": "tencent_hk_http_intraday_0945",
+      "status": "ok_mapping_only",
+      "window": "history",
+      "checked_at": "2026-07-27T09:41:22+08:00",
+      "usage": "港股指数与A/H科技映射"
+    },
+    {
+      "id": "intraday_recovery_service_0945",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-27T09:45:31+08:00",
+      "usage": "交易时段与行情恢复状态"
+    },
+    {
+      "id": "eastmoney_limit_pool_midday_20260727",
+      "status": "degraded_recovered",
+      "window": "history",
+      "checked_at": "2026-07-27T11:36:30+08:00",
+      "usage": "11:30涨停、跌停、炸板结构池及行业分布"
+    },
+    {
+      "id": "local_monitor_intraday",
+      "status": "degraded_recovered",
+      "window": "history",
+      "checked_at": "2026-07-27T14:22:50+08:00",
+      "usage": "盘中monitor.log正式提醒与本地行情刷新"
+    },
+    {
+      "id": "tencent_a_quote_intraday_1430_20260727",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-27T14:47:24+08:00",
+      "usage": "14:30尾盘指数、98个行业与重点样本"
+    },
+    {
+      "id": "eastmoney_structure_pools_intraday_1430_20260727",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-27T14:47:24+08:00",
+      "usage": "14:30涨停、跌停、炸板结构池及行业分布"
+    },
+    {
+      "id": "tencent_hk_quote_intraday_1430_20260727",
+      "status": "degraded_delayed_single_source",
+      "window": "history",
+      "checked_at": "2026-07-27T14:47:24+08:00",
+      "usage": "恒指、恒科及A/H科技映射"
+    },
+    {
+      "id": "concept_ranking_intraday_1430_20260727",
+      "status": "degraded",
+      "window": "history",
+      "checked_at": "2026-07-27T14:47:24+08:00",
+      "usage": "14:30全市场概念排行"
+    },
+    {
+      "id": "futu_intraday_signal_verification_1430_20260727",
+      "status": "ok_partial",
+      "window": "history",
+      "checked_at": "2026-07-27T14:33:43+08:00",
+      "usage": "14:30电子布短周期异动交叉核验"
+    },
+    {
+      "id": "tencent_a_close_postmarket_20260727",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-27T15:21:10+08:00",
+      "usage": "A股五大指数、98个行业、重点代表股与成交额终值"
+    },
+    {
+      "id": "sina_all_a_close_postmarket_20260727",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-27T15:21:10+08:00",
+      "usage": "全A收盘宽度与5%/8%强势组"
+    },
+    {
+      "id": "eastmoney_structure_pools_postmarket_20260727",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-27T15:21:10+08:00",
+      "usage": "收盘涨停、跌停、炸板与连板结构"
+    },
+    {
+      "id": "shenwan_industry_mapping_postmarket_20260727",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-27T15:21:10+08:00",
+      "usage": "802只涨幅5%以上样本申万一级行业归类"
+    },
+    {
+      "id": "cninfo_recent_ipo_filter_postmarket_20260727",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-27T15:21:10+08:00",
+      "usage": "上市5个交易日内新股剔除"
+    },
+    {
+      "id": "tencent_minute_closing_auction_postmarket_20260727",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-27T15:21:10+08:00",
+      "usage": "14:55-15:00尾盘与收盘竞价校验"
+    },
+    {
+      "id": "tencent_hk_a_close_mapping_20260727",
+      "status": "degraded_delayed_single_source",
+      "window": "history",
+      "checked_at": "2026-07-27T15:21:10+08:00",
+      "usage": "A股收盘时点A/H映射"
+    },
+    {
+      "id": "concept_ranking_postmarket_20260727",
+      "status": "degraded",
+      "window": "history",
+      "checked_at": "2026-07-27T15:21:10+08:00",
+      "usage": "全量概念指数收盘排行"
+    },
+    {
+      "id": "tencent_us_overnight_0830_20260728",
+      "status": "ok_cross_checked",
+      "window": "history",
+      "checked_at": "2026-07-28T08:42:00+08:00",
+      "usage": "美股三大指数与AI/交换机代表股隔夜映射"
+    },
+    {
+      "id": "yahoo_japan_korea_0830_20260728",
+      "status": "recovered_ok",
+      "window": "history",
+      "checked_at": "2026-07-28T08:42:00+08:00",
+      "usage": "日韩指数、设备与存储科技链早盘映射"
+    },
+    {
+      "id": "sina_global_indices_0830_20260728",
+      "status": "ok_cross_check",
+      "window": "history",
+      "checked_at": "2026-07-28T08:42:00+08:00",
+      "usage": "日韩指数方向交叉核验"
+    },
+    {
+      "id": "cninfo_incremental_0830_20260728",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-28T08:42:00+08:00",
+      "usage": "配置池与专题股票公告增量扫描"
+    },
+    {
+      "id": "official_web_scan_0830_20260728",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-28T08:42:00+08:00",
+      "usage": "H1-H5官媒、公司官网和产业证据核验"
+    },
+    {
+      "id": "eastmoney_hk_auction_0915_20260728",
+      "status": "ok_with_indicative_price_caveat",
+      "window": "history",
+      "checked_at": "2026-07-28T09:21:00+08:00",
+      "usage": "港股竞价及A/H映射"
+    },
+    {
+      "id": "sina_futures_premarket_0915_20260728",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-28T09:21:00+08:00",
+      "usage": "A50、恒指及美股指数期货方向"
+    },
+    {
+      "id": "tencent_china_adr_0915_20260728",
+      "status": "ok_cross_checked",
+      "window": "history",
+      "checked_at": "2026-07-28T09:21:00+08:00",
+      "usage": "中概整体与外资中资情绪"
+    },
+    {
+      "id": "sina_yahoo_asia_0915_20260728",
+      "status": "ok_cross_checked",
+      "window": "history",
+      "checked_at": "2026-07-28T09:21:00+08:00",
+      "usage": "日韩科技链风险外溢"
+    },
+    {
+      "id": "tencent_all_a_open_auction_20260728",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-28T09:31:00+08:00",
+      "usage": "全A涨跌停宽度、观察池竞价及有效分母"
+    },
+    {
+      "id": "tencent_index_auction_20260728",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-28T09:31:00+08:00",
+      "usage": "五大指数开盘及竞价成交额"
+    },
+    {
+      "id": "a_share_code_master_auction_20260728",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-28T09:31:00+08:00",
+      "usage": "全A腾讯批量查询代码主表"
+    },
+    {
+      "id": "eastmoney_hk_auction_retry_0929_20260728",
+      "status": "failed_preserve_previous",
+      "window": "history",
+      "checked_at": "2026-07-28T09:31:00+08:00",
+      "usage": "港股竞价最终复核"
+    },
+    {
+      "id": "tencent_all_a_intraday_0937_20260728",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-28T09:43:41+08:00",
+      "usage": "全A现价涨跌停宽度、重点板块核心和竞价封板留存"
+    },
+    {
+      "id": "eastmoney_concept_ranking_intraday_0937_20260728",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-28T09:43:41+08:00",
+      "usage": "概念涨跌与上涨/下跌宽度"
+    },
+    {
+      "id": "tencent_hk_continuous_intraday_0937_20260728",
+      "status": "degraded",
+      "window": "history",
+      "checked_at": "2026-07-28T09:43:41+08:00",
+      "usage": "港股连续竞价与A/H映射探针"
+    },
+    {
+      "id": "local_intraday_market_service_0933_20260728",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-28T09:43:41+08:00",
+      "usage": "五大指数与腾讯98行业排名"
+    },
+    {
+      "id": "tencent_all_a_intraday_1004_20260728",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-28T10:11:17+08:00",
+      "usage": "全A现价涨跌停、炸板、宽度与重点股"
+    },
+    {
+      "id": "local_intraday_market_service_1003_20260728",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-28T10:11:17+08:00",
+      "usage": "五大指数、成交额与98行业排名"
+    },
+    {
+      "id": "eastmoney_limit_pool_intraday_1004_20260728",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-28T10:11:17+08:00",
+      "usage": "涨停行业分布、连板高度与20cm结构"
+    },
+    {
+      "id": "eastmoney_concept_ranking_intraday_1006_20260728",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-28T10:11:17+08:00",
+      "usage": "概念涨跌、宽度与资金方向"
+    },
+    {
+      "id": "tencent_hk_delayed_intraday_0948_20260728",
+      "status": "degraded",
+      "window": "history",
+      "checked_at": "2026-07-28T10:11:17+08:00",
+      "usage": "港股指数和A/H映射的15分钟延迟结构"
+    },
+    {
+      "id": "tencent_all_a_close_1500_20260728",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-28T15:18:01+08:00",
+      "usage": "全A收盘涨跌停、炸板、宽度与重点股"
+    },
+    {
+      "id": "tencent_index_industry_close_1500_20260728",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-28T15:18:01+08:00",
+      "usage": "五大指数、成交额与98行业收盘排名"
+    },
+    {
+      "id": "eastmoney_limit_pool_close_1500_20260728",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-28T15:18:01+08:00",
+      "usage": "非ST涨停行业、连板与20cm结构"
+    },
+    {
+      "id": "sw_level1_mapping_close_20260728",
+      "status": "ok_partial_coverage",
+      "window": "history",
+      "checked_at": "2026-07-28T15:18:01+08:00",
+      "usage": "涨超5%、涨超8%与跌超5%样本申万一级行业映射"
+    },
+    {
+      "id": "tencent_minute_closing_auction_1454_1500_20260728",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-28T15:18:01+08:00",
+      "usage": "五大指数和17只关键样本尾盘/收盘竞价校验"
+    },
+    {
+      "id": "tencent_semiconductor_etf_close_20260728",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-28T15:18:01+08:00",
+      "usage": "alert-config半导体组合ETF回撤风控"
+    },
+    {
+      "id": "eastmoney_concept_ranking_close_20260728",
+      "status": "degraded_preserve_previous",
+      "window": "history",
+      "checked_at": "2026-07-28T15:18:01+08:00",
+      "usage": "收盘概念涨跌与宽度"
+    },
+    {
+      "id": "tencent_hk_delayed_close_mapping_1451_20260728",
+      "status": "degraded",
+      "window": "history",
+      "checked_at": "2026-07-28T15:18:01+08:00",
+      "usage": "A股收盘时点港股A/H方向映射"
+    },
+    {
+      "id": "cninfo_evening_full_scan_20260728",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-28T20:12:03+08:00",
+      "usage": "20:00配置池与专题股票公告全量扫描"
+    },
+    {
+      "id": "cninfo_pdf_review_evening_20260728",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-28T20:12:03+08:00",
+      "usage": "重大公告PDF原文复核"
+    },
+    {
+      "id": "official_policy_scan_evening_20260728",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-28T20:12:03+08:00",
+      "usage": "工信部/商务部/发改委/国务院政策增量"
+    },
+    {
+      "id": "global_benchmark_event_scan_evening_20260728",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-28T20:12:03+08:00",
+      "usage": "topics-list全球标杆与科技事件日历"
+    },
+    {
+      "id": "reuters_us_chip_premarket_evening_20260728",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-28T20:12:03+08:00",
+      "usage": "美股半导体盘前风险映射"
+    },
+    {
+      "id": "official_earnings_calendar_evening_20260728",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-28T20:12:03+08:00",
+      "usage": "海外半导体/测试/存储财报日历"
+    },
+    {
+      "id": "ap_us_close_0830_20260729",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-29T08:46:00+08:00",
+      "usage": "美股正式收盘与芯片风险原因"
+    },
+    {
+      "id": "kla_q4_fy2026_official_0830_20260729",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-29T08:46:00+08:00",
+      "usage": "半导体设备需求与指引"
+    },
+    {
+      "id": "teradyne_q2_2026_official_0830_20260729",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-29T08:46:00+08:00",
+      "usage": "测试设备与存储需求"
+    },
+    {
+      "id": "cninfo_increment_0830_20260729",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-29T08:46:00+08:00",
+      "usage": "20:00至8:30观察池与专题公告"
+    },
+    {
+      "id": "sina_tencent_japan_korea_0830_20260729",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-29T08:46:00+08:00",
+      "usage": "日韩指数与科技代表股早盘"
+    },
+    {
+      "id": "official_policy_increment_0830_20260729",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-29T08:46:00+08:00",
+      "usage": "工信部/商务部/发改委政策增量"
+    },
+    {
+      "id": "seagate_nxp_results_0830_20260729",
+      "status": "degraded",
+      "window": "history",
+      "checked_at": "2026-07-29T08:46:00+08:00",
+      "usage": "存储与汽车半导体财报增量"
+    },
+    {
+      "id": "naver_kospi_0830_20260729",
+      "status": "degraded",
+      "window": "history",
+      "checked_at": "2026-07-29T08:46:00+08:00",
+      "usage": "KOSPI备用接口"
+    },
+    {
+      "id": "tencent_hk_auction_premarket_0915_20260729",
+      "status": "degraded",
+      "window": "history",
+      "checked_at": "2026-07-29T09:19:00+08:00",
+      "usage": "港股竞价、成交有效性与A/H映射"
+    },
+    {
+      "id": "tencent_japan_korea_premarket_0915_20260729",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-29T09:19:00+08:00",
+      "usage": "日韩科技链9:15映射"
+    },
+    {
+      "id": "tencent_china_adr_0915_20260729",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-29T09:19:00+08:00",
+      "usage": "中概收盘与外资中资情绪"
+    },
+    {
+      "id": "tencent_us_tech_close_0915_20260729",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-29T09:19:00+08:00",
+      "usage": "AI算力、存储与交换机海外映射"
+    },
+    {
+      "id": "sina_futures_premarket_0915_20260729",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-29T09:19:00+08:00",
+      "usage": "A50、恒指及美股指数期货开盘方向"
+    },
+    {
+      "id": "tencent_all_a_open_auction_20260729",
+      "status": "ok_with_scope",
+      "window": "history",
+      "checked_at": "2026-07-29T09:29:35+08:00",
+      "usage": "全A开盘涨跌停宽度、竞价额及配置池高低开"
+    },
+    {
+      "id": "tencent_index_auction_20260729",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-29T09:29:35+08:00",
+      "usage": "五大指数开盘与竞价成交额"
+    },
+    {
+      "id": "config_watchlist_auction_20260729",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-29T09:29:35+08:00",
+      "usage": "配置池竞价强弱与专题映射"
+    },
+    {
+      "id": "tencent_all_a_intraday_0936_20260729",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-29T09:38:23+08:00",
+      "usage": "全A涨跌停、炸板、市场宽度与成交额"
+    },
+    {
+      "id": "tencent_index_industry_intraday_0936_20260729",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-29T09:38:23+08:00",
+      "usage": "五大指数与申万行业排行"
+    },
+    {
+      "id": "eastmoney_concept_ranking_intraday_0936_20260729",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-29T09:38:23+08:00",
+      "usage": "概念涨跌、宽度与资金结构"
+    },
+    {
+      "id": "tencent_special_chain_intraday_0937_20260729",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-29T09:38:23+08:00",
+      "usage": "交换机、电子布/玻纤、PCB、CPO及风格雷达专项报价"
+    },
+    {
+      "id": "tencent_hk_delayed_auction_0920_20260729",
+      "status": "degraded",
+      "window": "history",
+      "checked_at": "2026-07-29T09:38:23+08:00",
+      "usage": "港股指数与A/H映射方向"
+    },
+    {
+      "id": "tencent_config_etf_intraday_0938_20260729",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-29T09:38:23+08:00",
+      "usage": "半导体、医药、软件及港股创新药ETF验证"
+    },
+    {
+      "id": "intraday_watch_realtime_0947_20260730",
+      "status": "degraded_partial",
+      "window": "history",
+      "checked_at": "2026-07-30T09:47:16+08:00",
+      "usage": "盘中观察池实时行情刷新"
+    },
+    {
+      "id": "intraday_watch_realtime_0950_20260730",
+      "status": "degraded_partial",
+      "window": "history",
+      "checked_at": "2026-07-30T09:50:54+08:00",
+      "usage": "盘中观察池实时行情刷新"
+    },
+    {
+      "id": "intraday_monitor_realtime_quote",
+      "status": "degraded_recovered",
+      "window": "history",
+      "checked_at": "2026-07-30T10:28:28+08:00",
+      "usage": "盘中老登/小登监控实时行情刷新与正式提醒候选生成"
+    },
+    {
+      "id": "intraday_market_service_refresh_1103_20260730",
+      "status": "degraded",
+      "window": "history",
+      "checked_at": "2026-07-30T11:08:00+08:00",
+      "usage": "11:00五大指数与行业主动刷新"
+    },
+    {
+      "id": "sina_all_a_code_master_intraday_1105_20260730",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-30T11:08:00+08:00",
+      "usage": "全A代码主表"
+    },
+    {
+      "id": "tencent_all_a_intraday_1105_20260730",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-30T11:08:00+08:00",
+      "usage": "全A涨跌停、市场宽度与成交结构"
+    },
+    {
+      "id": "tencent_index_industry_intraday_1054_for_1100_20260730",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-30T11:08:00+08:00",
+      "usage": "五大指数、成交代理值与98行业排名"
+    },
+    {
+      "id": "eastmoney_structure_pools_intraday_1105_20260730",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-30T11:08:00+08:00",
+      "usage": "普通股涨停、跌停、炸板、连板与20cm结构"
+    },
+    {
+      "id": "eastmoney_concept_ranking_intraday_1106_20260730",
+      "status": "degraded",
+      "window": "history",
+      "checked_at": "2026-07-30T11:08:00+08:00",
+      "usage": "概念排行与概念宽度"
+    },
+    {
+      "id": "tencent_special_quotes_intraday_1105_20260730",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-30T11:08:00+08:00",
+      "usage": "交换机、电子布/玻纤、PCB、CPO、半导体与风格雷达专项"
+    },
+    {
+      "id": "tencent_hk_delayed_intraday_1050_20260730",
+      "status": "degraded",
+      "window": "history",
+      "checked_at": "2026-07-30T11:08:00+08:00",
+      "usage": "恒指、恒科与A/H映射"
+    },
+    {
+      "id": "tencent_index_industry_midday_1130_20260730",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-30T12:14:09+08:00",
+      "usage": "午间五大指数、成交代理值与98行业排名"
+    },
+    {
+      "id": "sina_all_a_midday_1130_20260730",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-30T12:14:09+08:00",
+      "usage": "午间全A宽度、涨跌阈值和成交排序"
+    },
+    {
+      "id": "eastmoney_structure_pools_midday_1130_20260730",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-30T12:14:09+08:00",
+      "usage": "非ST涨停、跌停、炸板、连板与行业分布"
+    },
+    {
+      "id": "eastmoney_concept_ranking_midday_20260730",
+      "status": "degraded",
+      "window": "history",
+      "checked_at": "2026-07-30T12:14:09+08:00",
+      "usage": "午盘概念排行与概念宽度"
+    },
+    {
+      "id": "tencent_special_quotes_midday_1130_20260730",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-30T12:14:09+08:00",
+      "usage": "交换机、电子布/玻纤、PCB、CPO、半导体与风格雷达专项"
+    },
+    {
+      "id": "tencent_hk_delayed_midday_1150_20260730",
+      "status": "degraded",
+      "window": "history",
+      "checked_at": "2026-07-30T12:14:09+08:00",
+      "usage": "恒指、恒科与A/H映射"
+    },
+    {
+      "id": "v2_cockpit_midday_context_1009_20260730",
+      "status": "degraded",
+      "window": "history",
+      "checked_at": "2026-07-30T12:14:09+08:00",
+      "usage": "治理层主动作与用户资产边界复核"
+    },
+    {
+      "id": "sina_a_close_full_scan_20260730",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-30T19:44:02+08:00",
+      "usage": "全A收盘宽度与5%/8%强弱分组"
+    },
+    {
+      "id": "eastmoney_close_pools_20260730",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-30T19:44:02+08:00",
+      "usage": "收盘涨停、跌停、炸板及前5交易日连续性"
+    },
+    {
+      "id": "eastmoney_industry_rank_close_20260730",
+      "status": "degraded_partial",
+      "window": "history",
+      "checked_at": "2026-07-30T19:44:02+08:00",
+      "usage": "收盘行业排行"
+    },
+    {
+      "id": "tencent_a_close_20260730",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-30T19:44:02+08:00",
+      "usage": "A股最终指数与重点样本收盘"
+    },
+    {
+      "id": "tencent_minute_close_auction_20260730",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-30T19:44:02+08:00",
+      "usage": "14:55-15:00尾盘/收盘竞价校验"
+    },
+    {
+      "id": "tencent_hk_close_20260730",
+      "status": "ok_with_timestamp_note",
+      "window": "history",
+      "checked_at": "2026-07-30T19:44:02+08:00",
+      "usage": "港股收盘与A/H映射"
+    },
+    {
+      "id": "intraday_window_1330_20260730",
+      "status": "missed_not_backfilled",
+      "window": "history",
+      "checked_at": "2026-07-30T19:44:02+08:00",
+      "usage": "恢复缺口审计"
+    },
+    {
+      "id": "v2_shadow_current_day_20260730",
+      "status": "stale_degraded",
+      "window": "history",
+      "checked_at": "2026-07-30T19:44:02+08:00",
+      "usage": "V2只读辅助"
+    },
+    {
+      "id": "cninfo_evening_full_scan_20260730",
+      "status": "ok_with_duplicate",
+      "window": "history",
+      "checked_at": "2026-07-30T20:10:00+08:00",
+      "usage": "103只A股公告逐一交叉与重大事件识别"
+    },
+    {
+      "id": "cninfo_pdf_review_evening_20260730",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-30T20:10:00+08:00",
+      "usage": "富满微中报、澜起回购、晶瑞转债公告原文核验"
+    },
+    {
+      "id": "official_policy_evening_20260730",
+      "status": "ok_no_p0",
+      "window": "history",
+      "checked_at": "2026-07-30T20:10:00+08:00",
+      "usage": "工信部/商务部/发改委/国务院政策扫描"
+    },
+    {
+      "id": "global_official_ir_evening_20260730",
+      "status": "ok_with_pending_events",
+      "window": "history",
+      "checked_at": "2026-07-30T20:10:00+08:00",
+      "usage": "全球标杆财报、产品与事件日历"
+    },
+    {
+      "id": "us_premarket_evening_20260730",
+      "status": "ok_premarket_only",
+      "window": "history",
+      "checked_at": "2026-07-30T20:10:00+08:00",
+      "usage": "美股AI硬件、设备与交换机风险快照"
+    },
+    {
+      "id": "samsung_q2_official_evening_20260730",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-30T20:10:00+08:00",
+      "usage": "HBM/存储/晶圆代工产业验证"
+    },
+    {
+      "id": "naver_korea_realtime",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-31T08:40:11+08:00",
+      "usage": "韩国指数、三星电子与SK hynix实时交叉行情"
+    },
+    {
+      "id": "sec_company_filings_scan",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-31T08:40:11+08:00",
+      "usage": "Apple与Amazon正式季度结果"
+    },
+    {
+      "id": "official_policy_increment_scan",
+      "status": "ok_no_p0_increment",
+      "window": "history",
+      "checked_at": "2026-07-31T08:40:11+08:00",
+      "usage": "工信部、商务部、发改委20:00至8:30政策增量"
+    },
+    {
+      "id": "futu_hk_auction_0915_20260731",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-31T09:23:30+08:00",
+      "usage": "港股09:20最终配对与恒指/恒科期货"
+    },
+    {
+      "id": "naver_korea_0915_20260731",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-31T09:23:30+08:00",
+      "usage": "韩国指数与存储链早盘映射"
+    },
+    {
+      "id": "yahoo_us_japan_adr_0915_20260731",
+      "status": "ok_with_timestamp_note",
+      "window": "history",
+      "checked_at": "2026-07-31T09:23:30+08:00",
+      "usage": "美股正式收盘、日本早盘和中概ETF样本"
+    },
+    {
+      "id": "sina_futures_0915_20260731",
+      "status": "degraded_proxy_disclosed",
+      "window": "history",
+      "checked_at": "2026-07-31T09:23:30+08:00",
+      "usage": "A50与恒指期货开盘方向"
+    },
+    {
+      "id": "futu_sgx_a50_0915_20260731",
+      "status": "failed_no_permission",
+      "window": "history",
+      "checked_at": "2026-07-31T09:23:30+08:00",
+      "usage": "SGX A50期货直连"
+    },
+    {
+      "id": "sina_all_a_code_master_auction_20260731",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-31T09:33:21+08:00",
+      "usage": "全A竞价代码主表"
+    },
+    {
+      "id": "tencent_all_a_open_auction_20260731",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-31T09:33:21+08:00",
+      "usage": "全A固定开盘价、涨跌停、市场宽度与竞价成交额"
+    },
+    {
+      "id": "tencent_index_open_auction_20260731",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-31T09:33:21+08:00",
+      "usage": "五大指数固定开盘价"
+    },
+    {
+      "id": "config_watchlist_open_auction_20260731",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-31T09:33:21+08:00",
+      "usage": "配置池与专题核心竞价强弱"
+    },
+    {
+      "id": "tencent_a_intraday_20260731_0940",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-31T09:46:15+08:00",
+      "usage": "09:40全A现价涨跌停、宽度、五大指数、98行业、配置池与专项"
+    },
+    {
+      "id": "eastmoney_structure_intraday_20260731_0938",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-31T09:46:15+08:00",
+      "usage": "09:38非ST涨停/跌停/炸板/连板结构"
+    },
+    {
+      "id": "eastmoney_concept_intraday_20260731_0938",
+      "status": "ok_then_degraded",
+      "window": "history",
+      "checked_at": "2026-07-31T09:46:15+08:00",
+      "usage": "09:38概念排行"
+    },
+    {
+      "id": "futu_hk_intraday_20260731_0939",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-31T09:46:15+08:00",
+      "usage": "09:39港股指数、半导体、AI应用、互联网及中兴H实时行情"
+    },
+    {
+      "id": "tencent_a_intraday_20260731_1004",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-31T10:09:50+08:00",
+      "usage": "10:04全A现价涨跌停、宽度、五大指数、98行业与专项"
+    },
+    {
+      "id": "eastmoney_structure_intraday_20260731_1004",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-31T10:09:50+08:00",
+      "usage": "10:04非ST涨停/跌停/炸板/连板结构"
+    },
+    {
+      "id": "eastmoney_concept_intraday_20260731_1005",
+      "status": "degraded",
+      "window": "history",
+      "checked_at": "2026-07-31T10:09:50+08:00",
+      "usage": "10:00概念排行复采"
+    },
+    {
+      "id": "futu_hk_intraday_20260731_1005",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-31T10:09:50+08:00",
+      "usage": "10:05港股指数、半导体、AI应用、互联网与中兴H实时行情"
+    },
+    {
+      "id": "tencent_a_intraday_20260731_1049",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-31T10:55:28+08:00",
+      "usage": "10:30窗口延迟补产的全A现价涨跌停、宽度、五大指数、98行业与专项"
+    },
+    {
+      "id": "eastmoney_structure_intraday_20260731_1046",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-31T10:55:28+08:00",
+      "usage": "非ST涨停、跌停、炸板、连板和行业分布"
+    },
+    {
+      "id": "eastmoney_concept_intraday_20260731_1049",
+      "status": "ok_recovered",
+      "window": "history",
+      "checked_at": "2026-07-31T10:55:28+08:00",
+      "usage": "概念排行、广度与主力净流入"
+    },
+    {
+      "id": "tencent_hk_realtime_intraday_20260731_1050",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-31T10:55:28+08:00",
+      "usage": "恒指、恒科、半导体、AI应用、医药和风险样本"
+    },
+    {
+      "id": "intraday_recovery_state_20260731_1048",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-31T10:55:28+08:00",
+      "usage": "盘中断网恢复与历史缺口策略核验"
+    },
+    {
+      "id": "tencent_a_intraday_20260731_1104",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-31T11:10:04+08:00",
+      "usage": "11:00全A现价涨跌停、宽度、五大指数、98行业与专项"
+    },
+    {
+      "id": "eastmoney_structure_intraday_20260731_1105",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-31T11:10:04+08:00",
+      "usage": "非ST涨停、跌停、炸板、连板和行业分布"
+    },
+    {
+      "id": "eastmoney_concept_intraday_20260731_1104",
+      "status": "degraded",
+      "window": "history",
+      "checked_at": "2026-07-31T11:10:04+08:00",
+      "usage": "概念排行当前复采"
+    },
+    {
+      "id": "tencent_hk_realtime_intraday_20260731_1105",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-07-31T11:10:04+08:00",
+      "usage": "恒指、恒科、半导体、AI应用、医药和风险样本"
+    },
+    {
+      "id": "longbridge_evening_scan",
+      "status": "degraded_fallback_ok",
+      "window": "history",
+      "checked_at": "2026-08-02T20:00:29+08:00",
+      "usage": "全球证券行情与新闻优先查询"
+    },
+    {
+      "id": "tencent_a_intraday_20260804_1033",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-08-04T10:35:00+08:00",
+      "usage": "五大指数、98行业、交换机、CPO、半导体、电子布/玻纤、PCB和风格雷达"
+    },
+    {
+      "id": "eastmoney_structure_intraday_20260804_1030",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-08-04T10:35:00+08:00",
+      "usage": "非ST涨停、跌停、炸板、连板和行业分布"
+    },
+    {
+      "id": "eastmoney_concept_intraday_20260804_1034",
+      "status": "ok_recovered_after_retry",
+      "window": "history",
+      "checked_at": "2026-08-04T10:35:00+08:00",
+      "usage": "概念排行、涨跌宽度和主力净流入"
+    },
+    {
+      "id": "tencent_hk_intraday_20260804_1033",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-08-04T10:35:00+08:00",
+      "usage": "恒指、恒生科技及半导体、AI应用、医药、互联网和中兴H映射"
+    },
+    {
+      "id": "intraday_recovery_state_20260804_1030",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-08-04T10:30:31+08:00",
+      "usage": "盘中断网恢复状态核验"
+    },
+    {
+      "id": "v2_cockpit_context_20260804_1030",
+      "status": "stale_degraded",
+      "window": "history",
+      "checked_at": "2026-08-04T10:35:00+08:00",
+      "usage": "治理层风险与用户资产边界复核"
+    },
+    {
+      "id": "longbridge_institutional_shadow_20260804_1030",
+      "status": "not_used_no_current_normalized_output",
+      "window": "history",
+      "checked_at": "2026-08-04T10:35:00+08:00",
+      "usage": "长桥机构分析引用边界复核"
+    },
+    {
+      "id": "tencent_a_intraday_20260804_1103",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-08-04T11:05:00+08:00",
+      "usage": "五大指数、98行业及全部盘中专项"
+    },
+    {
+      "id": "eastmoney_structure_intraday_20260804_1100",
+      "status": "ok_dynamic",
+      "window": "history",
+      "checked_at": "2026-08-04T11:05:00+08:00",
+      "usage": "非ST涨停、跌停、炸板、连板与行业分布"
+    },
+    {
+      "id": "eastmoney_concept_intraday_20260804_1104",
+      "status": "ok_recovered_after_retry",
+      "window": "history",
+      "checked_at": "2026-08-04T11:05:00+08:00",
+      "usage": "概念排行、涨跌宽度与主力净流入"
+    },
+    {
+      "id": "tencent_hk_intraday_20260804_1103",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-08-04T11:05:00+08:00",
+      "usage": "恒指、恒生科技和半导体、AI、医药、互联网、中兴H映射"
+    },
+    {
+      "id": "intraday_recovery_state_20260804_1102",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-08-04T11:02:34+08:00",
+      "usage": "断网恢复状态核验"
+    },
+    {
+      "id": "v2_cockpit_context_20260804_1100",
+      "status": "stale_degraded",
+      "window": "history",
+      "checked_at": "2026-08-04T11:05:00+08:00",
+      "usage": "治理层风险和用户资产边界"
+    },
+    {
+      "id": "longbridge_institutional_shadow_20260804_1100",
+      "status": "not_used_no_current_normalized_output",
+      "window": "history",
+      "checked_at": "2026-08-04T11:05:00+08:00",
+      "usage": "长桥机构分析边界复核"
+    },
+    {
+      "id": "tencent_a_intraday_20260804_1302",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-08-04T13:05:00+08:00",
+      "usage": "五大指数、98行业及全部盘中专项"
+    },
+    {
+      "id": "eastmoney_structure_intraday_20260804_1302",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-08-04T13:05:00+08:00",
+      "usage": "非ST涨停、跌停、炸板、连板和行业分布"
+    },
+    {
+      "id": "eastmoney_concept_intraday_20260804_1302",
+      "status": "degraded",
+      "window": "history",
+      "checked_at": "2026-08-04T13:05:00+08:00",
+      "usage": "概念排行当前复采"
+    },
+    {
+      "id": "tencent_hk_intraday_20260804_1302",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-08-04T13:05:00+08:00",
+      "usage": "恒指、恒生科技和半导体、AI、医药、互联网、中兴H映射"
+    },
+    {
+      "id": "intraday_recovery_state_20260804_1301",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-08-04T13:01:52+08:00",
+      "usage": "断网恢复状态核验"
+    },
+    {
+      "id": "v2_cockpit_context_20260804_1300",
+      "status": "stale_degraded",
+      "window": "history",
+      "checked_at": "2026-08-04T13:05:00+08:00",
+      "usage": "治理层风险和用户资产边界"
+    },
+    {
+      "id": "longbridge_institutional_shadow_20260804_1300",
+      "status": "not_used_no_current_normalized_output",
+      "window": "history",
+      "checked_at": "2026-08-04T13:05:00+08:00",
+      "usage": "长桥机构分析边界复核"
+    },
+    {
+      "id": "tencent_a_intraday_20260804_1332",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-08-04T13:35:00+08:00",
+      "usage": "五大指数、98行业及全部盘中专项"
+    },
+    {
+      "id": "eastmoney_structure_intraday_20260804_1331",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-08-04T13:35:00+08:00",
+      "usage": "非ST涨停、跌停、炸板、连板和行业分布"
+    },
+    {
+      "id": "eastmoney_concept_intraday_20260804_1331",
+      "status": "degraded_persistent",
+      "window": "history",
+      "checked_at": "2026-08-04T13:35:00+08:00",
+      "usage": "概念排行当前复采"
+    },
+    {
+      "id": "tencent_hk_intraday_20260804_1317",
+      "status": "ok_delayed",
+      "window": "history",
+      "checked_at": "2026-08-04T13:35:00+08:00",
+      "usage": "恒指、恒生科技和半导体、AI、医药、互联网、中兴H映射"
+    },
+    {
+      "id": "intraday_recovery_state_20260804_1330",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-08-04T13:30:55+08:00",
+      "usage": "断网恢复状态核验"
+    },
+    {
+      "id": "v2_cockpit_context_20260804_1330",
+      "status": "stale_degraded",
+      "window": "history",
+      "checked_at": "2026-08-04T13:35:00+08:00",
+      "usage": "治理层风险和用户资产边界"
+    },
+    {
+      "id": "longbridge_institutional_shadow_20260804_1330",
+      "status": "not_used_no_current_normalized_output",
+      "window": "history",
+      "checked_at": "2026-08-04T13:35:00+08:00",
+      "usage": "长桥机构分析边界复核"
+    },
+    {
+      "id": "tencent_a_intraday_20260804_1401",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-08-04T14:05:00+08:00",
+      "usage": "五大指数、98行业及全部盘中专项"
+    },
+    {
+      "id": "eastmoney_structure_intraday_20260804_1401",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-08-04T14:05:00+08:00",
+      "usage": "非ST涨停、跌停、炸板、连板、20cm与行业分布"
+    },
+    {
+      "id": "eastmoney_concept_intraday_20260804_1401",
+      "status": "degraded_persistent",
+      "window": "history",
+      "checked_at": "2026-08-04T14:05:00+08:00",
+      "usage": "概念排行当前复采"
+    },
+    {
+      "id": "tencent_hk_intraday_20260804_1346",
+      "status": "ok_delayed",
+      "window": "history",
+      "checked_at": "2026-08-04T14:05:00+08:00",
+      "usage": "恒指、恒生科技和重点A/H映射"
+    },
+    {
+      "id": "intraday_recovery_state_20260804_1400",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-08-04T13:59:57+08:00",
+      "usage": "断网恢复状态核验"
+    },
+    {
+      "id": "v2_cockpit_context_20260804_1400",
+      "status": "stale_degraded",
+      "window": "history",
+      "checked_at": "2026-08-04T14:05:00+08:00",
+      "usage": "治理层风险和用户资产边界"
+    },
+    {
+      "id": "longbridge_institutional_shadow_20260804_1400",
+      "status": "not_used_no_current_normalized_output",
+      "window": "history",
+      "checked_at": "2026-08-04T14:05:00+08:00",
+      "usage": "长桥机构分析边界复核"
+    },
+    {
+      "id": "tencent_a_intraday_20260804_1432",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-08-04T14:36:00+08:00",
+      "usage": "五大指数、98行业及全部盘中专项"
+    },
+    {
+      "id": "eastmoney_structure_intraday_20260804_1432",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-08-04T14:36:00+08:00",
+      "usage": "涨跌停、炸板、连板、20cm与行业分布"
+    },
+    {
+      "id": "eastmoney_concept_intraday_20260804_1432",
+      "status": "degraded_persistent",
+      "window": "history",
+      "checked_at": "2026-08-04T14:36:00+08:00",
+      "usage": "概念排行当前复采"
+    },
+    {
+      "id": "tencent_hk_intraday_20260804_1417",
+      "status": "ok_delayed",
+      "window": "history",
+      "checked_at": "2026-08-04T14:36:00+08:00",
+      "usage": "恒指、恒科和重点A/H映射"
+    },
+    {
+      "id": "intraday_recovery_state_20260804_1430",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-08-04T14:29:21+08:00",
+      "usage": "断网恢复状态核验"
+    },
+    {
+      "id": "v2_cockpit_context_20260804_1430",
+      "status": "stale_degraded",
+      "window": "history",
+      "checked_at": "2026-08-04T14:36:00+08:00",
+      "usage": "治理层风险和用户资产边界"
+    },
+    {
+      "id": "longbridge_institutional_shadow_20260804_1430",
+      "status": "not_used_no_current_normalized_output",
+      "window": "history",
+      "checked_at": "2026-08-04T14:36:00+08:00",
+      "usage": "长桥机构分析边界复核"
+    },
+    {
+      "id": "tencent_a_close_postmarket_20260804",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-08-04T15:08:00+08:00",
+      "usage": "A股指数、行业、代表股收盘"
+    },
+    {
+      "id": "sina_all_a_close_postmarket_20260804",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-08-04T15:08:00+08:00",
+      "usage": "全A 5%/8%不重叠宽度"
+    },
+    {
+      "id": "sw_level1_mapping_close_20260804",
+      "status": "ok_partial_coverage",
+      "window": "history",
+      "checked_at": "2026-08-04T15:08:00+08:00",
+      "usage": "涨超5%与8%以上样本申万一级行业映射"
+    },
+    {
+      "id": "eastmoney_structure_postmarket_20260804",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-08-04T15:08:00+08:00",
+      "usage": "涨停、跌停、炸板和行业分布"
+    },
+    {
+      "id": "eastmoney_concept_postmarket_20260804",
+      "status": "failed_degraded",
+      "window": "history",
+      "checked_at": "2026-08-04T15:08:00+08:00",
+      "usage": "概念排行"
+    },
+    {
+      "id": "tencent_minute_closing_auction_20260804",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-08-04T15:08:00+08:00",
+      "usage": "收盘竞价与尾盘资金校验"
+    },
+    {
+      "id": "tencent_hk_delayed_postmarket_20260804",
+      "status": "ok_delayed",
+      "window": "history",
+      "checked_at": "2026-08-04T15:08:00+08:00",
+      "usage": "A/H尾盘映射"
+    },
+    {
+      "id": "intraday_recovery_state_postmarket_20260804",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-08-04T15:08:00+08:00",
+      "usage": "断网恢复状态"
+    },
+    {
+      "id": "v2_cockpit_context_postmarket_20260804",
+      "status": "degraded_stale",
+      "window": "history",
+      "checked_at": "2026-08-04T15:08:00+08:00",
+      "usage": "只读风险与权限边界"
+    },
+    {
+      "id": "longbridge_institutional_shadow_postmarket_20260804",
+      "status": "unavailable_no_current_normalized_output",
+      "window": "history",
+      "checked_at": "2026-08-04T15:08:00+08:00",
+      "usage": "外部机构观点补充"
+    },
+    {
+      "id": "tencent_hk_intraday_20260804_1531",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-08-04T15:32:00+08:00",
+      "usage": "恒指、恒生科技及半导体、AI应用、医药、互联网和中兴H尾段映射"
+    },
+    {
+      "id": "tencent_hk_closing_auction_20260804_1601",
+      "status": "ok_pending_final",
+      "window": "history",
+      "checked_at": "2026-08-04T16:02:00+08:00",
+      "usage": "恒指、恒生科技及半导体、AI应用、医药、互联网和中兴H收市竞价方向"
+    },
+    {
+      "id": "tencent_sina_hk_close_20260804",
+      "status": "ok_cross_verified",
+      "window": "history",
+      "checked_at": "2026-08-04T16:34:00+08:00",
+      "usage": "恒指、恒生科技及半导体、AI应用、医药、互联网和中兴H正式收盘终值"
+    },
+    {
+      "id": "v2_local_theme_validator",
+      "status": "ok_empty_no_direct_match",
+      "window": "history",
+      "checked_at": "2026-08-04T20:16:00+08:00",
+      "usage": "今晚新增主题的本地V2研究库反证检查"
+    },
+    {
+      "id": "longbridge_analysis_shadow_reference",
+      "status": "ok_reference_only",
+      "window": "history",
+      "checked_at": "2026-08-04T20:16:00+08:00",
+      "usage": "DRAM/HBM机构观点与反证背景，只读shadow引用"
+    },
+    {
+      "id": "monitor_akshare_realtime_20260805_0932",
+      "status": "degraded_partial",
+      "window": "history",
+      "checked_at": "2026-08-05T13:05:45+08:00",
+      "usage": "老登/小登盘中观察池与题材强度实时刷新"
+    },
+    {
+      "id": "tencent_a_intraday_20260805_1011",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-08-05T10:12:00+08:00",
+      "usage": "五大指数、98行业、配置观察池及盘中专项样本"
+    },
+    {
+      "id": "eastmoney_structure_intraday_20260805_1009",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-08-05T10:12:00+08:00",
+      "usage": "非ST涨停、跌停、炸板、连板、20cm与行业分布"
+    },
+    {
+      "id": "eastmoney_concept_intraday_20260805_1010",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-08-05T10:12:00+08:00",
+      "usage": "概念排行、涨跌宽度与主力资金"
+    },
+    {
+      "id": "tencent_hk_intraday_20260805_0955",
+      "status": "ok_delayed",
+      "window": "history",
+      "checked_at": "2026-08-05T10:12:00+08:00",
+      "usage": "恒指、恒生科技与半导体、AI、医药、互联网及中兴H映射"
+    },
+    {
+      "id": "intraday_recovery_state_20260805_1003",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-08-05T10:03:56+08:00",
+      "usage": "交易阶段和断网恢复状态"
+    },
+    {
+      "id": "auction_snapshot_20260805_0925",
+      "status": "missing_not_backfilled",
+      "window": "history",
+      "checked_at": "2026-08-05T10:12:00+08:00",
+      "usage": "A股集合竞价总结"
+    },
+    {
+      "id": "monitor_alert_verifier_20260805_1011",
+      "status": "degraded_mismatch",
+      "window": "history",
+      "checked_at": "2026-08-05T10:11:16+08:00",
+      "usage": "短周期异动候选双源复核"
+    },
+    {
+      "id": "v2_cockpit_context_20260805_1000",
+      "status": "stale_degraded",
+      "window": "history",
+      "checked_at": "2026-08-05T10:12:00+08:00",
+      "usage": "只读权限与风险边界"
+    },
+    {
+      "id": "longbridge_analysis_shadow_20260805_1000",
+      "status": "reference_only",
+      "window": "history",
+      "checked_at": "2026-08-05T10:12:00+08:00",
+      "usage": "既有DRAM/HBM机构观点及反证背景"
+    },
+    {
+      "id": "tencent_a_intraday_20260805_1031",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-08-05T10:36:00+08:00",
+      "usage": "五大指数、98行业、配置观察池及盘中专项样本"
+    },
+    {
+      "id": "eastmoney_structure_intraday_20260805_1030",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-08-05T10:36:00+08:00",
+      "usage": "非ST涨停、跌停、炸板、连板、20cm与行业分布"
+    },
+    {
+      "id": "eastmoney_concept_intraday_20260805_1030",
+      "status": "failed_degraded",
+      "window": "history",
+      "checked_at": "2026-08-05T10:36:00+08:00",
+      "usage": "概念排行与资金扩散"
+    },
+    {
+      "id": "tencent_hk_intraday_20260805_1016",
+      "status": "ok_delayed",
+      "window": "history",
+      "checked_at": "2026-08-05T10:36:00+08:00",
+      "usage": "恒指、恒生科技与半导体、AI、医药映射"
+    },
+    {
+      "id": "intraday_recovery_state_20260805_1030",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-08-05T10:29:58+08:00",
+      "usage": "交易阶段和断网恢复状态"
+    },
+    {
+      "id": "monitor_alert_verifier_20260805_1030",
+      "status": "degraded_mismatch",
+      "window": "history",
+      "checked_at": "2026-08-05T10:36:00+08:00",
+      "usage": "短周期异动候选双源复核"
+    },
+    {
+      "id": "v2_cockpit_context_20260805_1030",
+      "status": "stale_degraded",
+      "window": "history",
+      "checked_at": "2026-08-05T10:36:00+08:00",
+      "usage": "只读权限与风险边界"
+    },
+    {
+      "id": "longbridge_analysis_shadow_20260805_1030",
+      "status": "reference_only",
+      "window": "history",
+      "checked_at": "2026-08-05T10:36:00+08:00",
+      "usage": "既有规范化机构观点背景"
+    },
+    {
+      "id": "tencent_a_intraday_20260805_1101",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-08-05T11:04:00+08:00",
+      "usage": "五大指数、98行业、配置观察池及盘中专项样本"
+    },
+    {
+      "id": "eastmoney_structure_intraday_20260805_1101",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-08-05T11:04:00+08:00",
+      "usage": "非ST涨停、跌停、炸板、连板、20cm与行业分布"
+    },
+    {
+      "id": "eastmoney_concept_intraday_20260805_1102",
+      "status": "failed_degraded",
+      "window": "history",
+      "checked_at": "2026-08-05T11:04:00+08:00",
+      "usage": "概念排行与资金扩散"
+    },
+    {
+      "id": "tencent_hk_intraday_20260805_1047",
+      "status": "ok_delayed",
+      "window": "history",
+      "checked_at": "2026-08-05T11:04:00+08:00",
+      "usage": "恒指、恒生科技与半导体、AI、医药及中兴H映射"
+    },
+    {
+      "id": "intraday_recovery_state_20260805_1100",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-08-05T11:00:45+08:00",
+      "usage": "交易阶段和断网恢复状态"
+    },
+    {
+      "id": "monitor_alert_verifier_20260805_1101",
+      "status": "degraded_mismatch",
+      "window": "history",
+      "checked_at": "2026-08-05T11:01:50+08:00",
+      "usage": "短周期异动候选双源复核"
+    },
+    {
+      "id": "v2_cockpit_context_20260805_1100",
+      "status": "stale_degraded",
+      "window": "history",
+      "checked_at": "2026-08-05T11:04:00+08:00",
+      "usage": "只读权限与风险边界"
+    },
+    {
+      "id": "longbridge_analysis_shadow_20260805_1100",
+      "status": "reference_only",
+      "window": "history",
+      "checked_at": "2026-08-05T11:04:00+08:00",
+      "usage": "已规范化机构观点与反证背景"
+    },
+    {
+      "id": "tencent_a_midday_20260805_1130",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-08-05T11:35:00+08:00",
+      "usage": "五大指数、98行业、配置观察池及盘中专项样本"
+    },
+    {
+      "id": "eastmoney_structure_midday_20260805_1130",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-08-05T11:35:00+08:00",
+      "usage": "涨停、跌停、炸板、连板、20cm与行业分布"
+    },
+    {
+      "id": "tencent_hk_midday_20260805_1118",
+      "status": "ok_delayed",
+      "window": "history",
+      "checked_at": "2026-08-05T11:35:00+08:00",
+      "usage": "恒指、恒科与半导体、AI和中兴H映射"
+    },
+    {
+      "id": "eastmoney_concept_midday_20260805_1130",
+      "status": "failed_degraded",
+      "window": "history",
+      "checked_at": "2026-08-05T11:35:00+08:00",
+      "usage": "概念排行当前复采"
+    },
+    {
+      "id": "intraday_recovery_state_midday_20260805_1130",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-08-05T11:30:45+08:00",
+      "usage": "午间恢复状态"
+    },
+    {
+      "id": "monitor_alert_verifier_midday_20260805_1133",
+      "status": "degraded_mismatch",
+      "window": "history",
+      "checked_at": "2026-08-05T11:33:21+08:00",
+      "usage": "短周期候选双源复核"
+    },
+    {
+      "id": "v2_cockpit_context_midday_20260805_1130",
+      "status": "stale_degraded",
+      "window": "history",
+      "checked_at": "2026-08-05T11:35:00+08:00",
+      "usage": "只读权限和风险边界"
+    },
+    {
+      "id": "longbridge_analysis_shadow_midday_20260805_1130",
+      "status": "reference_only",
+      "window": "history",
+      "checked_at": "2026-08-05T11:35:00+08:00",
+      "usage": "规范化外部机构观点与反证背景"
+    },
+    {
+      "id": "tencent_a_intraday_20260805_1301",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-08-05T13:03:00+08:00",
+      "usage": "五大指数、98行业、配置观察池及专项样本"
+    },
+    {
+      "id": "eastmoney_structure_intraday_20260805_1301",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-08-05T13:03:00+08:00",
+      "usage": "涨停、跌停、炸板、连板、20cm与行业分布"
+    },
+    {
+      "id": "eastmoney_concept_intraday_20260805_1302",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-08-05T13:03:00+08:00",
+      "usage": "概念排行、涨跌宽度与领涨股"
+    },
+    {
+      "id": "tencent_hk_intraday_20260805_1159",
+      "status": "ok_delayed",
+      "window": "history",
+      "checked_at": "2026-08-05T13:03:00+08:00",
+      "usage": "恒指、恒科与半导体、AI及中兴H映射"
+    },
+    {
+      "id": "intraday_recovery_state_20260805_1300",
+      "status": "degraded_status_lag",
+      "window": "history",
+      "checked_at": "2026-08-05T13:03:00+08:00",
+      "usage": "下午交易恢复状态"
+    },
+    {
+      "id": "monitor_alert_verifier_20260805_1300",
+      "status": "degraded_mismatch",
+      "window": "history",
+      "checked_at": "2026-08-05T13:00:26+08:00",
+      "usage": "短周期候选双源复核"
+    },
+    {
+      "id": "v2_cockpit_context_20260805_1300",
+      "status": "stale_degraded",
+      "window": "history",
+      "checked_at": "2026-08-05T13:03:00+08:00",
+      "usage": "只读权限与风险边界"
+    },
+    {
+      "id": "longbridge_analysis_shadow_20260805_1300",
+      "status": "reference_only",
+      "window": "history",
+      "checked_at": "2026-08-05T13:03:00+08:00",
+      "usage": "规范化外部机构观点与反证背景"
+    },
+    {
+      "id": "monitor_alert_quote_audit_20260805_1325",
+      "status": "degraded_mismatch",
+      "window": "history",
+      "checked_at": "2026-08-05T13:28:18+08:00",
+      "usage": "交换机/高速以太网与半导体零部件弹性候选的短周期双源复核"
+    },
+    {
+      "id": "monitor_alert_quote_audit_20260805_1329",
+      "status": "degraded_partial",
+      "window": "history",
+      "checked_at": "2026-08-05T13:31:47+08:00",
+      "usage": "覆铜板候选的短周期双源复核"
+    },
+    {
+      "id": "monitor_alert_quote_audit_20260805_1332_1333",
+      "status": "degraded_mismatch",
+      "window": "history",
+      "checked_at": "2026-08-05T13:35:11+08:00",
+      "usage": "科技硬件、存储/HBM、电子布、超级电容及游资关联提醒的短周期双源复核"
+    },
+    {
+      "id": "monitor_alert_quote_audit_20260805_1410",
+      "status": "degraded_partial",
+      "window": "history",
+      "checked_at": "2026-08-05T14:12:15+08:00",
+      "usage": "科技硬件、半导体零部件、存储/HBM、PCB材料、硅片及昇腾算力候选的短周期双源复核"
+    },
+    {
+      "id": "monitor_alert_quote_audit_20260805_1420",
+      "status": "degraded_partial",
+      "window": "history",
+      "checked_at": "2026-08-05T14:20:56+08:00",
+      "usage": "半导体零部件、长鑫存储映射与电子布候选的短周期双源复核"
+    },
+    {
+      "id": "monitor_alert_quote_audit_20260805_1422",
+      "status": "degraded_partial",
+      "window": "history",
+      "checked_at": "2026-08-05T14:23:17+08:00",
+      "usage": "覆铜板候选的短周期双源复核"
+    },
+    {
+      "id": "tencent_a_quote_intraday_1430_20260805",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-08-05T14:33:00+08:00",
+      "usage": "14:30指数、行业、专项与风格样本"
+    },
+    {
+      "id": "eastmoney_limit_pool_intraday_1430_20260805",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-08-05T14:33:00+08:00",
+      "usage": "14:30涨停、跌停、炸板及行业分布"
+    },
+    {
+      "id": "eastmoney_board_rank_intraday_1430_20260805",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-08-05T14:33:00+08:00",
+      "usage": "14:30概念排行单次核验"
+    },
+    {
+      "id": "tencent_hk_http_intraday_1430_20260805",
+      "status": "ok_indices_delayed_stocks",
+      "window": "history",
+      "checked_at": "2026-08-05T14:33:00+08:00",
+      "usage": "14:30港股指数及A/H映射"
+    },
+    {
+      "id": "v2_shadow_cockpit_20260805_1430",
+      "status": "stale_degraded",
+      "window": "history",
+      "checked_at": "2026-08-05T14:33:00+08:00",
+      "usage": "权限与风险边界"
+    },
+    {
+      "id": "longbridge_normalized_analysis_reference_20260805_1430",
+      "status": "reference_only",
+      "window": "history",
+      "checked_at": "2026-08-05T14:33:00+08:00",
+      "usage": "长桥机构分析只读背景"
+    },
+    {
+      "id": "sina_all_a_close_postmarket_20260805",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-08-05T15:32:24+08:00",
+      "usage": "全A 5%/8%不重叠宽度"
+    },
+    {
+      "id": "eastmoney_structure_postmarket_20260805",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-08-05T15:32:24+08:00",
+      "usage": "涨停、跌停、炸板与行业分布"
+    },
+    {
+      "id": "eastmoney_concept_postmarket_20260805",
+      "status": "degraded",
+      "window": "history",
+      "checked_at": "2026-08-05T15:32:24+08:00",
+      "usage": "概念排行"
+    },
+    {
+      "id": "shenwan_industry_mapping_postmarket_20260805",
+      "status": "degraded",
+      "window": "history",
+      "checked_at": "2026-08-05T15:32:24+08:00",
+      "usage": "5%/8%行业集中度"
+    },
+    {
+      "id": "sina_hk_close_postmarket_20260805",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-08-05T16:12:00+08:00",
+      "usage": "16:09港股正式收盘指数与重点A/H映射样本"
+    },
+    {
+      "id": "tencent_hk_close_postmarket_20260805",
+      "status": "degraded_delayed",
+      "window": "history",
+      "checked_at": "2026-08-05T16:12:00+08:00",
+      "usage": "港股收盘方向交叉检查"
+    },
+    {
+      "id": "us_premarket_evening_20260805",
+      "status": "ok_premarket_not_close",
+      "window": "history",
+      "checked_at": "2026-08-05T20:10:15+08:00",
+      "usage": "AMD、Arista、NVIDIA、Broadcom财报后首个美股盘前情绪快照"
+    },
+    {
+      "id": "pdf_text_extraction_evening_20260805",
+      "status": "degraded_fallback_success",
+      "window": "history",
+      "checked_at": "2026-08-05T20:27:00+08:00",
+      "usage": "华天、埃斯顿、江丰、恒瑞、温氏和异常波动公告原文核对"
+    },
+    {
+      "id": "us_market_close_premarket_20260806",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-08-06T08:44:00+08:00",
+      "usage": "三大指数及AI链隔夜收盘"
+    },
+    {
+      "id": "tencent_japan_premarket_20260806",
+      "status": "ok_partial",
+      "window": "history",
+      "checked_at": "2026-08-06T08:44:00+08:00",
+      "usage": "日本半导体设备早盘映射"
+    },
+    {
+      "id": "naver_korea_premarket_20260806",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-08-06T08:44:00+08:00",
+      "usage": "韩国指数、存储龙头早盘映射"
+    },
+    {
+      "id": "cninfo_increment_premarket_20260806",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-08-06T08:44:00+08:00",
+      "usage": "配置池公告增量扫描"
+    },
+    {
+      "id": "official_policy_increment_premarket_20260806",
+      "status": "ok_no_material_increment",
+      "window": "history",
+      "checked_at": "2026-08-06T08:44:00+08:00",
+      "usage": "工信部、商务部、发改委与大基金开盘级增量"
+    },
+    {
+      "id": "longbridge_normalized_reference_premarket_20260806",
+      "status": "reference_only",
+      "window": "history",
+      "checked_at": "2026-08-06T08:44:00+08:00",
+      "usage": "DRAM/HBM机构观点与反证背景"
+    },
+    {
+      "id": "industry_logic_validator_premarket_20260806",
+      "status": "degraded_manual_fallback",
+      "window": "history",
+      "checked_at": "2026-08-06T08:44:00+08:00",
+      "usage": "扩产+技术迭代五层证据与反证检查"
+    },
+    {
+      "id": "tencent_a_quote_intraday_0930_20260806",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-08-06T09:36:03+08:00",
+      "usage": "09:30开盘后指数、行业、配置观察样本及交换机/电子布专项报价"
+    },
+    {
+      "id": "eastmoney_structure_pools_intraday_0930_20260806",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-08-06T09:34:30+08:00",
+      "usage": "09:30开盘后涨停、跌停、炸板、连板和行业分布"
+    },
+    {
+      "id": "eastmoney_concept_rank_intraday_0930_20260806",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-08-06T09:35:00+08:00",
+      "usage": "09:30当前概念涨跌和主力净流入补充"
+    },
+    {
+      "id": "sina_hk_open_intraday_0935_20260806",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-08-06T09:35:25+08:00",
+      "usage": "港股指数、半导体、AI应用、互联网与创新药连续竞价映射"
+    },
+    {
+      "id": "tencent_hk_open_intraday_0935_20260806",
+      "status": "degraded_stale_preopen",
+      "window": "history",
+      "checked_at": "2026-08-06T09:35:25+08:00",
+      "usage": "港股连续竞价复核"
+    },
+    {
+      "id": "intraday_recovery_state_20260806_0930",
+      "status": "ok_with_quote_marker_lag",
+      "window": "history",
+      "checked_at": "2026-08-06T09:36:22+08:00",
+      "usage": "断网恢复状态和当前阶段核验"
+    },
+    {
+      "id": "v2_cockpit_context_intraday_0930_20260806",
+      "status": "stale_boundary_only",
+      "window": "history",
+      "checked_at": "2026-08-06T09:32:30+08:00",
+      "usage": "治理边界和用户资产迁入状态"
+    },
+    {
+      "id": "longbridge_institutional_shadow_intraday_0930_20260806",
+      "status": "stale_reference_only",
+      "window": "history",
+      "checked_at": "2026-08-06T09:32:30+08:00",
+      "usage": "DRAM/HBM外部机构反证背景"
+    },
+    {
+      "id": "eastmoney_structure_intraday_1000",
+      "status": "ok_serial",
+      "window": "history",
+      "checked_at": "2026-08-06T10:03:48+08:00",
+      "usage": "10:00涨停、跌停、回封反馈及行业分布"
+    },
+    {
+      "id": "eastmoney_concept_intraday_1000",
+      "status": "ok_serial",
+      "window": "history",
+      "checked_at": "2026-08-06T10:03:48+08:00",
+      "usage": "10:00概念排行与主力资金结构"
+    },
+    {
+      "id": "tencent_hk_jp_kr_intraday_1000",
+      "status": "ok_mixed_quote_times",
+      "window": "history",
+      "checked_at": "2026-08-06T10:04:12+08:00",
+      "usage": "港股早盘及日韩科技链交叉验证"
+    },
+    {
+      "id": "intraday_recovery_service",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-08-06T10:31:40+08:00",
+      "usage": "交易时段网络与行情恢复健康校验"
+    },
+    {
+      "id": "v2_governed_cockpit",
+      "status": "stale_boundary_only",
+      "window": "history",
+      "checked_at": "2026-08-06T10:31:55+08:00",
+      "usage": "只读行动语言与风险边界"
+    },
+    {
+      "id": "longbridge_normalized_shadow",
+      "status": "no_current_increment",
+      "window": "history",
+      "checked_at": "2026-08-06T10:31:55+08:00",
+      "usage": "长桥机构分析模型/官方观点只读引用"
+    },
+    {
+      "id": "eastmoney_structure_intraday_1030",
+      "status": "ok_serial",
+      "window": "history",
+      "checked_at": "2026-08-06T10:32:04+08:00",
+      "usage": "10:30涨停、跌停、炸板与行业分布"
+    },
+    {
+      "id": "eastmoney_concept_intraday_1030",
+      "status": "failed_empty_preserved",
+      "window": "history",
+      "checked_at": "2026-08-06T10:32:20+08:00",
+      "usage": "10:30概念排行与资金结构"
+    },
+    {
+      "id": "sina_hk_intraday_1030",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-08-06T10:34:35+08:00",
+      "usage": "恒指、恒生科技及港股科技/半导体/通信实时交叉验证"
+    },
+    {
+      "id": "naver_korea_intraday_1030",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-08-06T10:34:27+08:00",
+      "usage": "KOSPI、三星电子与SK海力士实时交叉验证"
+    },
+    {
+      "id": "tencent_japan_intraday_1030",
+      "status": "ok_delayed_explicit",
+      "window": "history",
+      "checked_at": "2026-08-06T10:34:20+08:00",
+      "usage": "Advantest与东京电子补充映射"
+    },
+    {
+      "id": "tencent_a_quote_midday_20260806",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-08-06T11:33:09+08:00",
+      "usage": "11:30五大指数、行业和半导体/交换机/电子布/CPO/风格样本"
+    },
+    {
+      "id": "eastmoney_structure_midday_20260806",
+      "status": "ok_serial",
+      "window": "history",
+      "checked_at": "2026-08-06T11:31:55+08:00",
+      "usage": "11:30涨停、跌停、炸板、连板及行业分布"
+    },
+    {
+      "id": "eastmoney_concept_midday_20260806",
+      "status": "degraded_preserved_last_valid",
+      "window": "history",
+      "checked_at": "2026-08-06T11:33:09+08:00",
+      "usage": "午盘概念排行与资金结构"
+    },
+    {
+      "id": "sina_hk_midday_20260806",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-08-06T11:32:40+08:00",
+      "usage": "恒指、恒生科技及港股半导体/互联网/创新药午间交叉验证"
+    },
+    {
+      "id": "intraday_recovery_midday_20260806",
+      "status": "ok_with_service_quote_lag",
+      "window": "history",
+      "checked_at": "2026-08-06T11:29:47+08:00",
+      "usage": "交易时段网络与恢复状态核验"
+    },
+    {
+      "id": "v2_governed_cockpit_midday_20260806",
+      "status": "stale_boundary_only",
+      "window": "history",
+      "checked_at": "2026-08-06T11:29:50+08:00",
+      "usage": "只读行动语言、风险与用户资产边界"
+    },
+    {
+      "id": "longbridge_normalized_shadow_midday_20260806",
+      "status": "no_current_increment",
+      "window": "history",
+      "checked_at": "2026-08-06T11:29:50+08:00",
+      "usage": "长桥机构分析模型/官方观点只读引用"
+    },
+    {
+      "id": "tencent_a_intraday_1437_20260806",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-08-06T14:40:18+08:00",
+      "usage": "14:30五大指数、98行业和半导体/交换机/电子布/CPO/风格样本"
+    },
+    {
+      "id": "eastmoney_structure_intraday_1436_20260806",
+      "status": "ok_serial",
+      "window": "history",
+      "checked_at": "2026-08-06T14:40:18+08:00",
+      "usage": "14:30涨停、跌停、炸板及行业分布"
+    },
+    {
+      "id": "eastmoney_concept_intraday_1430_20260806",
+      "status": "degraded_preserved_last_valid",
+      "window": "history",
+      "checked_at": "2026-08-06T14:40:18+08:00",
+      "usage": "14:30概念排行与资金结构"
+    },
+    {
+      "id": "sina_hk_intraday_1436_20260806",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-08-06T14:40:18+08:00",
+      "usage": "恒指、恒科及港股科技/半导体映射"
+    },
+    {
+      "id": "naver_korea_intraday_1436_20260806",
+      "status": "failed_preserved_last_valid",
+      "window": "history",
+      "checked_at": "2026-08-06T14:40:18+08:00",
+      "usage": "KOSPI、三星与SK海力士实时交叉验证"
+    },
+    {
+      "id": "tencent_japan_intraday_1417_20260806",
+      "status": "ok_delayed_reference",
+      "window": "history",
+      "checked_at": "2026-08-06T14:40:18+08:00",
+      "usage": "日本半导体设备映射"
+    },
+    {
+      "id": "intraday_recovery_state_20260806_1434",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-08-06T14:34:14+08:00",
+      "usage": "断网恢复状态核验"
+    },
+    {
+      "id": "v2_cockpit_context_20260806_1430",
+      "status": "stale_degraded",
+      "window": "history",
+      "checked_at": "2026-08-06T14:40:18+08:00",
+      "usage": "只读行动语言与用户资产边界"
+    },
+    {
+      "id": "longbridge_institutional_shadow_20260806_1430",
+      "status": "reference_only_no_current_increment",
+      "window": "history",
+      "checked_at": "2026-08-06T14:40:18+08:00",
+      "usage": "长桥机构分析规范化影子复核"
+    },
+    {
+      "id": "tencent_a_close_20260806",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-08-06T15:11:57+08:00",
+      "usage": "A股收盘指数、行业、代表股"
+    },
+    {
+      "id": "sina_all_a_close_20260806",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-08-06T15:11:57+08:00",
+      "usage": "全A收盘宽度及5%/8%不重叠分层"
+    },
+    {
+      "id": "eastmoney_structure_close_20260806",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-08-06T15:11:57+08:00",
+      "usage": "涨停/跌停/炸板结构"
+    },
+    {
+      "id": "sw_level1_mapping_close_20260806",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-08-06T15:11:57+08:00",
+      "usage": "涨超5%样本申万一级行业归类"
+    },
+    {
+      "id": "tencent_minute_close_20260806",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-08-06T15:11:57+08:00",
+      "usage": "14:55-15:00收盘竞价校验"
+    },
+    {
+      "id": "eastmoney_concept_close_20260806",
+      "status": "degraded_preserved_last_valid",
+      "window": "history",
+      "checked_at": "2026-08-06T15:11:57+08:00",
+      "usage": "概念排行"
+    },
+    {
+      "id": "longbridge_institutional_shadow_close_20260806",
+      "status": "ok_no_current_increment",
+      "window": "history",
+      "checked_at": "2026-08-06T15:11:57+08:00",
+      "usage": "外部机构观点只读影子反证"
+    },
+    {
+      "id": "v2_cockpit_close_20260806",
+      "status": "degraded_stale_boundary_only",
+      "window": "history",
+      "checked_at": "2026-08-06T15:11:57+08:00",
+      "usage": "治理边界与动作等级"
+    },
+    {
+      "id": "sina_hk_tail_1532_20260806",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-08-06T15:33:05+08:00",
+      "usage": "15:30港股指数与A/H尾盘映射"
+    },
+    {
+      "id": "tencent_hk_tail_crosscheck_20260806",
+      "status": "ok_cross_verified",
+      "window": "history",
+      "checked_at": "2026-08-06T15:33:05+08:00",
+      "usage": "港股15:32方向与时间交叉核验"
+    },
+    {
+      "id": "intraday_recovery_state_20260806_1532",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-08-06T15:33:05+08:00",
+      "usage": "A股收盘后恢复状态核验"
+    },
+    {
+      "id": "v2_cockpit_longbridge_boundary_20260806_1530",
+      "status": "stale_reference_only",
+      "window": "history",
+      "checked_at": "2026-08-06T15:33:05+08:00",
+      "usage": "只读决策边界与机构观点影子"
+    },
+    {
+      "id": "tencent_hk_closing_auction_20260806_1601",
+      "status": "ok_pending_final",
+      "window": "history",
+      "checked_at": "2026-08-06T16:03:05+08:00",
+      "usage": "港股16:00收市竞价指数与重点A/H映射"
+    },
+    {
+      "id": "sina_hk_closing_auction_crosscheck_20260806",
+      "status": "ok_direction_crosscheck",
+      "window": "history",
+      "checked_at": "2026-08-06T16:03:05+08:00",
+      "usage": "港股收市竞价方向交叉验证"
+    },
+    {
+      "id": "v2_cockpit_longbridge_boundary_20260806_1600",
+      "status": "stale_reference_only",
+      "window": "history",
+      "checked_at": "2026-08-06T16:03:05+08:00",
+      "usage": "只读决策边界与机构观点影子"
+    },
+    {
+      "id": "sina_hk_official_close_20260806",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-08-06T16:31:33+08:00",
+      "usage": "港股正式收盘终值"
+    },
+    {
+      "id": "tencent_hk_close_crosscheck_20260806",
+      "status": "cross_verified",
+      "window": "history",
+      "checked_at": "2026-08-06T16:31:33+08:00",
+      "usage": "港股正式收盘同值交叉"
+    },
+    {
+      "id": "v2_cockpit_context_20260806_1630",
+      "status": "ok_shadow_read_only",
+      "window": "history",
+      "checked_at": "2026-08-06T16:31:33+08:00",
+      "usage": "只读行动语言、权限边界与反证"
+    },
+    {
+      "id": "longbridge_institutional_shadow_20260806_1630",
+      "status": "no_current_increment",
+      "window": "history",
+      "checked_at": "2026-08-06T16:31:33+08:00",
+      "usage": "外部机构观点只读shadow"
+    },
+    {
+      "id": "monitor_formal_alert_20260813_093445",
+      "status": "historical_trigger",
+      "window": "history",
+      "checked_at": "2026-08-13T09:47:58+08:00",
+      "usage": "正式提醒已推送并写入看板；单源candidate成立，但精确触发时点双源、ETF与至少2只可审计涨停结构未确认，不得升级confirmed。"
+    },
+    {
+      "id": "monitor_formal_alert_20260813_093554",
+      "status": "historical_trigger",
+      "window": "history",
+      "checked_at": "2026-08-13T09:47:58+08:00",
+      "usage": "正式提醒已推送并写入看板；单源candidate成立，但精确触发时点双源、ETF与至少2只可审计涨停结构未确认，不得升级confirmed。"
+    },
+    {
+      "id": "monitor_formal_alert_20260813_093628",
+      "status": "historical_trigger",
+      "window": "history",
+      "checked_at": "2026-08-13T09:47:58+08:00",
+      "usage": "正式提醒已推送并写入看板；单源candidate成立，但精确触发时点双源、ETF与至少2只可审计涨停结构未确认，不得升级confirmed。"
+    },
+    {
+      "id": "monitor_formal_alert_20260813_094307",
+      "status": "historical_trigger",
+      "window": "history",
+      "checked_at": "2026-08-13T09:47:58+08:00",
+      "usage": "正式提醒已推送并写入看板；单源candidate成立，但精确触发时点双源、ETF与至少2只可审计涨停结构未确认，不得升级confirmed。"
+    },
+    {
+      "id": "monitor_formal_alert_20260813_095204",
+      "status": "historical_trigger",
+      "window": "history",
+      "checked_at": "2026-08-13T10:00:13+08:00",
+      "usage": "正式提醒已推送并写入看板；单源candidate成立但已过5分钟有效窗，精确触发时点双源、ETF及至少2只可审计涨跌停结构未确认，不得升级confirmed。"
+    },
+    {
+      "id": "monitor_formal_alert_20260813_095515",
+      "status": "historical_trigger",
+      "window": "history",
+      "checked_at": "2026-08-13T10:00:13+08:00",
+      "usage": "正式提醒已推送并写入看板；单源candidate成立但已过5分钟有效窗，精确触发时点双源、ETF及至少2只可审计涨跌停结构未确认，不得升级confirmed。"
+    },
+    {
+      "id": "monitor_formal_alert_20260813_100956",
+      "status": "degraded_partial",
+      "window": "history",
+      "checked_at": "2026-08-13T10:13:51+08:00",
+      "usage": "CPO通过单源candidate门槛；超级电容因价格/成交不足及涨停结构不可审计被拦截。两者均缺精确触发时点双源，禁止升级confirmed。"
+    },
+    {
+      "id": "monitor_formal_alert_20260813_102414",
+      "status": "degraded_partial",
+      "window": "history",
+      "checked_at": "2026-08-13T10:25:46+08:00",
+      "usage": "正式提醒已推送并写入看板；价格门槛不足且至少2只涨停结构不可审计，门禁拦截candidate与confirmed。"
+    },
+    {
+      "id": "monitor_realtime_source_degradation_20260813_102327",
+      "status": "degraded_partial",
+      "window": "history",
+      "checked_at": "2026-08-13T10:25:46+08:00",
+      "usage": "一次刷新返回No value to decode，下一轮已自动恢复并产出行情；本轮提醒仍按降级单源处理。"
+    },
+    {
+      "id": "akshare_monitor_intraday_1040",
+      "status": "degraded_recovered_partial",
+      "window": "history",
+      "checked_at": "2026-08-21T10:47:54+08:00",
+      "usage": "盘中观察池与题材短周期刷新"
+    },
+    {
+      "id": "akshare_monitor_intraday_1420",
+      "status": "degraded_partial",
+      "window": "history",
+      "checked_at": "2026-08-21T14:20:59+08:00",
+      "usage": "午后观察池与题材短周期刷新"
+    },
+    {
+      "id": "monitor_formal_alert_20260825_094036",
+      "status": "degraded_partial",
+      "window": "history",
+      "checked_at": "2026-08-25T09:45:36+08:00",
+      "usage": "09:40:36新增10个题材快速回落和1个7月半导体扩产组合风格杀；全部进入data/signals.jsonl并达到本地单源risk/style candidate门槛。未取得腾讯或通达信第二源，且AkShare随后恢复失败，故不升级confirmed。"
+    },
+    {
+      "id": "monitor_formal_alert_20260825_095911",
+      "status": "degraded_partial",
+      "window": "history",
+      "checked_at": "2026-08-25T10:01:15+08:00",
+      "usage": "09:59:11新增三条小登上涨提醒；覆铜板和超节点属于观察性拉动，液冷为上涨攻势。三者均进入data/signals.jsonl并达到本地单源opportunity candidate门槛，但缺少第二源核验。"
+    },
+    {
+      "id": "monitor_formal_alert_20260825_130924",
+      "status": "invalidated",
+      "window": "history",
+      "checked_at": "2026-08-25T13:12:32+08:00",
+      "usage": "13:09:24新增两条小登上涨提醒；液冷价格与宽度较强，超节点为观察拉动，但两者成交放大均仅1.00x，且至少2只涨停结构不可审计，因此证据门禁拦截candidate与confirmed。"
+    },
+    {
+      "id": "monitor_formal_alert_20260825_132015",
+      "status": "invalidated",
+      "window": "history",
+      "checked_at": "2026-08-25T13:22:24+08:00",
+      "usage": "13:20:15新增两条小登观察拉动；液冷3分钟仅+0.24%，超节点3分钟-0.10%，两者成交放大均仅1.00x，且至少2只涨停结构不可审计，因此证据门禁拦截candidate与confirmed。"
+    },
+    {
+      "id": "monitor_formal_alert_20260825_133148",
+      "status": "invalidated",
+      "window": "history",
+      "checked_at": "2026-08-25T13:33:22+08:00",
+      "usage": "13:31:48新增两条小登观察拉动；液冷3分钟-0.75%，超节点3分钟-0.65%，两者强势股均为0、成交放大仅1.00x，且宽度字段与龙头短周期表现矛盾、至少2只涨停结构不可审计，因此证据门禁拦截candidate与confirmed。"
+    },
+    {
+      "id": "monitor_formal_alert_20260825_134258",
+      "status": "invalidated",
+      "window": "history",
+      "checked_at": "2026-08-25T13:45:22+08:00",
+      "usage": "13:42:58新增两条小登观察拉动；液冷3分钟-0.70%，超节点3分钟-0.43%，两者强势股均为0、成交放大仅1.00x，且涨停结构不可审计，因此证据门禁拦截candidate与confirmed。"
+    },
+    {
+      "id": "monitor_formal_alert_20260825_135355",
+      "status": "invalidated",
+      "window": "history",
+      "checked_at": "2026-08-25T13:56:45+08:00",
+      "usage": "13:53:55新增两条小登观察拉动；两题材3分钟均为0.00%、强势股均为0、成交放大仅1.00x，且至少2只涨停结构不可审计，因此证据门禁拦截candidate与confirmed。"
+    },
+    {
+      "id": "monitor_formal_alert_20260825_140508",
+      "status": "invalidated",
+      "window": "history",
+      "checked_at": "2026-08-25T14:07:20+08:00",
+      "usage": "14:05:08新增两条小登观察拉动；液冷3分钟+0.34%、超节点+0.31%，方向和宽度改善但成交放大均仅1.00x，且至少2只涨停结构不可审计，因此证据门禁拦截candidate与confirmed。"
+    },
+    {
+      "id": "monitor_formal_alert_20260825_141643",
+      "status": "invalidated",
+      "window": "history",
+      "checked_at": "2026-08-25T14:18:30+08:00",
+      "usage": "14:16:43新增两条小登观察拉动；两题材3分钟均回到0.00%、强势股均为0、成交放大仅1.00x，14:05弱修复未延续，且至少2只涨停结构不可审计，因此证据门禁拦截candidate与confirmed。"
     }
   ],
+  "unverified_sources": [
+    {
+      "id": "local_monitor_watch_quote",
+      "status": "degraded_partial",
+      "window": "unknown",
+      "checked_at": "",
+      "usage": ""
+    }
+  ],
+  "source_counts": {
+    "current": 1,
+    "historical": 785,
+    "unverified": 1
+  },
   "recovery_policy": {
     "primary_quote_source": "tencent_http",
     "structure_source": "eastmoney_push2_akshare",
@@ -60,12 +5553,13 @@
     ]
   },
   "next_actions": [
-    "前台按候选异动展示，并明确还差双源确认。",
-    "补齐第二行情源后，只有满足确认条件的条目才能升级为 confirmed。"
+    "下一交易日开盘后自动恢复短周期扫描。"
   ],
   "rules": [
     "该文件供自动化进程和构建门禁使用，不进入交易主页面。",
     "盘中异动恢复必须优先使用腾讯 A股批量报价和分钟线，东财只用于涨跌停/炸板结构数据。",
-    "同花顺/新浪/akshare 解码异常期间不得作为 active alert 的唯一报价依据。"
+    "同花顺/新浪/akshare 解码异常期间不得作为 active alert 的唯一报价依据。",
+    "历史来源检测保留原状态，不计为当前故障，也不代表已恢复；文件生成时间不刷新任何来源检测时间。",
+    "current_count 与 active_count 仅统计当前有效期内记录；unverified_count 为其中未通过交叉核验的数量，时间无法核验另计。"
   ]
 }
