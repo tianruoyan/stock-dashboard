@@ -1,6 +1,124 @@
 {
-  "timestamp": "2026-10-13T09:37:45+08:00",
-  "source_status": "monitor_live_no_trigger",
-  "alerts": [],
-  "note": "盘中监控运行正常，当前没有达到短周期价格、成交和扩散规则门槛的新异动。"
+  "timestamp": "2026-10-13T09:45:47+08:00",
+  "source_status": "monitor_live",
+  "alerts": [
+    {
+      "id": "monitor-20261013-094143-47606be48cd0",
+      "time": "2026-10-13T09:41:43+08:00",
+      "sector": "7月半导体扩产组合",
+      "type": "风格共振转弱",
+      "reason": "触发规则：小登风格轮动：同一大风格下≥3个关联板块同向急跌\n结论：7月半导体扩产组合 出现风格杀信号，3个关联板块5分钟窗口内同向急跌。\n关联板块：半导体零部件弹性 5分钟涨跌幅 -2.13%，上涨 0%/下跌 100%，成交 1.00x；液冷 5分钟涨跌幅 -1.76%，上涨 0%/下跌 100%，成交 1.00x；机器人/工业自动化 5分钟涨跌幅 -1.55%，上涨 0%/下跌 100%，成交 1.00x\n观察点：是否继续扩散到同风格后排，成交放大是否伴随价格延续。\n风险提示：这是风格级盘面信号，不构成买卖建议。",
+      "leaders": [
+        {
+          "name": "步科股份",
+          "code": "688160",
+          "change_pct": -2.3956,
+          "quote_time": "2026-10-13T09:41:41",
+          "source": "腾讯财经HTTP",
+          "score": 51.96,
+          "factors": [
+            "3分钟-2.40%",
+            "成交放大1.00x",
+            "日内-5.07%"
+          ]
+        },
+        {
+          "name": "埃斯顿",
+          "code": "002747",
+          "change_pct": -1.2186,
+          "quote_time": "2026-10-13T09:41:42",
+          "source": "腾讯财经HTTP",
+          "score": 31.89,
+          "factors": [
+            "3分钟-1.22%",
+            "成交放大1.00x",
+            "日内-3.38%"
+          ]
+        },
+        {
+          "name": "绿的谐波",
+          "code": "688017",
+          "change_pct": -1.0306,
+          "quote_time": "2026-10-13T09:41:43",
+          "source": "腾讯财经HTTP",
+          "score": 29.1,
+          "factors": [
+            "3分钟-1.03%",
+            "成交放大1.00x",
+            "日内-3.22%"
+          ]
+        }
+      ],
+      "signal_type": "风格观察",
+      "is_old_economy": false,
+      "source_watch_id": "7月半导体扩产组合",
+      "quote_audit": {
+        "provider": "本地盘中监控、富途行情（腾讯备用）",
+        "primary_source": "腾讯财经HTTP",
+        "quote_time": "2026-10-13T09:41:43+08:00",
+        "pct_field": "3分钟涨跌幅",
+        "sample_count": 3,
+        "max_abs_leader_change_pct": 2.3956,
+        "sanity_checks": {
+          "cross_source_verified": false,
+          "price_move_valid": true,
+          "volume_valid": false,
+          "direction_ratio_valid": true,
+          "limit_down_count_valid": false
+        },
+        "board_3m_change_pct": -2.133,
+        "direction_ratio": 1.0,
+        "volume_ratio": 1.0,
+        "relative_volume_vs_yesterday": null,
+        "missing_confirmation": "等待富途行情按触发时点交叉核验；通过前只作候选或观察，不作为确认交易信号。",
+        "secondary_source": "富途行情",
+        "secondary_verification": {
+          "state": "insufficient_identity",
+          "checked_at": "2026-10-13T09:43:11+08:00",
+          "source": "富途行情",
+          "reason": "可解析且有行情的代表股不足2只。",
+          "representatives": [
+            {
+              "股票": "埃斯顿",
+              "代码": "002747.SZ",
+              "监控涨跌幅": -1.2186,
+              "富途涨跌幅": -1.024,
+              "腾讯涨跌幅": -0.9412,
+              "起始分钟": "09:38:42",
+              "结束分钟": "09:41:42",
+              "对齐方式": "逐笔行情同一时点对齐",
+              "时间偏差秒": 0.0,
+              "可比涨跌范围": [
+                -1.2186,
+                -0.9846
+              ],
+              "方向一致": true,
+              "幅度一致": true,
+              "复核结论": "一致"
+            }
+          ],
+          "window_minutes": 3,
+          "fingerprint": "cf6bf58e59a01e48bf91",
+          "verifier_version": "futu-opend-2026-07-27.3"
+        }
+      },
+      "source_status": "degraded_partial",
+      "valid_until": "2026-10-13T09:46:43+08:00",
+      "trigger_rule": "小登风格轮动：同一大风格下≥3个关联板块同向急跌",
+      "alert_class": "style",
+      "confirmation_level": "candidate"
+    }
+  ],
+  "quote_audit": {
+    "provider": "本地盘中监控、富途行情（腾讯备用）",
+    "quote_time": "2026-10-13T09:41:43+08:00",
+    "pct_field": "各异动卡标注的短周期涨跌幅",
+    "sanity_checks": {
+      "sample_count": 1,
+      "max_abs_leader_change_pct": 2.3956,
+      "cross_source_verified": false,
+      "verified_alert_count": 0
+    }
+  },
+  "note": "异动来自本地短周期监控；候选卡须经富途行情按触发时点复核后才能升级。"
 }

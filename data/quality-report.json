@@ -1,8 +1,8 @@
 {
-  "timestamp": "2026-10-13T09:39:30+08:00",
+  "timestamp": "2026-10-13T09:47:36+08:00",
   "current_signal_date": "2026-10-13",
   "status": "degraded",
-  "summary": "共 5 条检查提示，其中 4 条需处理、1 条背景记录（2 个价格/行情复核，3 个背景复核）。",
+  "summary": "共 6 条检查提示，其中 5 条需处理、1 条背景记录（2 个价格/行情复核，1 个信号复核，3 个背景复核）。",
   "issues": [
     {
       "severity": "warning",
@@ -41,6 +41,15 @@
       "decision_action": "仅作背景复核，不单独阻断交易判断"
     },
     {
+      "severity": "warning",
+      "file": "alert.json",
+      "path": "alerts[0]",
+      "code": "historical_candidate_alert_evidence_weak",
+      "message": "alerts[0] 候选异动未达到最低短周期价格、方向占比和成交门槛，不得作为当前候选展示",
+      "impact_level": "signal_review",
+      "decision_action": "仅作历史复核，不得恢复为当前候选"
+    },
+    {
       "severity": "info",
       "file": "source-health.json",
       "path": "",
@@ -61,6 +70,17 @@
       "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核",
       "next_step": "用第二行情源复核涨跌幅、quote_time 和代表股方向；未确认前只做验证。",
       "unblock_condition": "price_review=0 或相关来源标记 trusted/cross verified。"
+    },
+    {
+      "priority": 3,
+      "impact_level": "signal_review",
+      "label": "信号结构复核",
+      "file": "alert.json",
+      "code": "historical_candidate_alert_evidence_weak",
+      "problem": "alerts[0] 候选异动未达到最低短周期价格、方向占比和成交门槛，不得作为当前候选展示",
+      "decision_action": "仅作历史复核，不得恢复为当前候选",
+      "next_step": "修正字段结构、证据、触发原因和升级条件；未通过前降权展示。",
+      "unblock_condition": "signal_review=0，decision-feed/核心 JSON 契约通过。"
     },
     {
       "priority": 4,
@@ -98,11 +118,11 @@
   ],
   "counts": {
     "critical": 0,
-    "warning": 4,
+    "warning": 5,
     "info": 1,
     "blocking": 0,
     "price_review": 2,
-    "signal_review": 0,
+    "signal_review": 1,
     "background_review": 3
   },
   "rules": [
