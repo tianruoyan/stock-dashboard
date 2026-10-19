@@ -1,11 +1,12 @@
 {
-  "timestamp": "2026-10-19T09:36:09+08:00",
+  "timestamp": "2026-10-19T09:42:16+08:00",
   "current_signal_date": "2026-10-19",
   "quality_gate": {
     "status": "degraded",
-    "summary": "共 4 条检查提示，其中 2 条需处理、2 条背景记录（1 个价格/行情复核，3 个背景复核）。",
+    "summary": "共 5 条检查提示，其中 3 条需处理、2 条背景记录（1 个价格/行情复核，1 个信号复核，3 个背景复核）。",
     "decision_flags": [
-      "数据质量待确认"
+      "机会信号需降权转验证",
+      "盘中异动源降级，alert 类信号降权"
     ],
     "blocking_count": 0,
     "price_review_count": 1,
@@ -29,7 +30,7 @@
     "stance": "风险优先，只做验证",
     "action": "不把候选方向当交易机会；先看风险收敛、数据恢复和核心承接。",
     "reasons": [
-      "共 4 条检查提示，其中 2 条需处理、2 条背景记录（1 个价格/行情复核，3 个背景复核）。",
+      "共 5 条检查提示，其中 3 条需处理、2 条背景记录（1 个价格/行情复核，1 个信号复核，3 个背景复核）。",
       "A/B级风险 8 条",
       "可用机会 0 条，降权候选 8 条",
       "先处理：二次行情复核（source-health.json）"
@@ -56,10 +57,10 @@
         "unblock_condition": "price_review=0 或相关来源标记 trusted/cross verified。"
       },
       {
-        "label": "背景来源复核",
-        "file": "midday.json",
-        "next_step": "补官方/交易所/公司公告来源；未补齐前不升级为核心依据。",
-        "unblock_condition": "官方来源补齐或确认不影响交易触发。"
+        "label": "信号结构复核",
+        "file": "alert.json",
+        "next_step": "修正字段结构、证据、触发原因和升级条件；未通过前降权展示。",
+        "unblock_condition": "signal_review=0，decision-feed/核心 JSON 契约通过。"
       }
     ]
   },
@@ -166,7 +167,8 @@
       "invalidation": "智能驾驶 需要次日竞价、量能和后排扩散共同确认。",
       "tags": [],
       "quality_flags": [
-        "数据质量待确认",
+        "机会信号需降权转验证",
+        "盘中异动源降级，alert 类信号降权",
         "全局数据降级，主线变化需二次确认"
       ],
       "tone": "good",
@@ -178,7 +180,7 @@
       "next_action": "观察整车、域控、激光雷达是否独立走强；不按海外财报预期提前追高。",
       "observation_source": "主线变化扫描",
       "independent_observation": true,
-      "signal_score": 65,
+      "signal_score": 60,
       "signal_grade": "C",
       "use_action": "降权观察",
       "use_reasons": [
@@ -212,7 +214,8 @@
       "invalidation": "AI应用/物理AI 需要次日竞价、量能和后排扩散共同确认。",
       "tags": [],
       "quality_flags": [
-        "数据质量待确认",
+        "机会信号需降权转验证",
+        "盘中异动源降级，alert 类信号降权",
         "全局数据降级，主线变化需二次确认"
       ],
       "tone": "good",
@@ -224,7 +227,7 @@
       "next_action": "等待确认；腾讯、阿里、百度强于恒科且A股软件放量扩散才观察，未确认不追。",
       "observation_source": "主线变化扫描",
       "independent_observation": true,
-      "signal_score": 65,
+      "signal_score": 60,
       "signal_grade": "C",
       "use_action": "降权观察",
       "use_reasons": [
@@ -257,7 +260,8 @@
       "invalidation": "智能驾驶核心股冲高回落、ETF转弱或后排不扩散，则机会降级为观察。",
       "tags": [],
       "quality_flags": [
-        "数据质量待确认"
+        "机会信号需降权转验证",
+        "盘中异动源降级，alert 类信号降权"
       ],
       "tone": "good",
       "discovery_type": "topic_watch_scan",
@@ -269,7 +273,7 @@
       "next_action": "观察整车、域控、激光雷达是否独立走强；不按海外财报预期提前追高。",
       "observation_source": "专题继承",
       "independent_observation": false,
-      "signal_score": 53,
+      "signal_score": 48,
       "signal_grade": "C",
       "use_action": "降权观察",
       "use_reasons": [
@@ -304,7 +308,8 @@
         "风控"
       ],
       "quality_flags": [
-        "数据质量待确认"
+        "机会信号需降权转验证",
+        "盘中异动源降级，alert 类信号降权"
       ],
       "tone": "good",
       "discovery_type": "premarket_watch_queue",
@@ -316,7 +321,7 @@
       "next_action": "核心股低开后放量收复开盘价或跌幅明显收敛",
       "observation_source": "数据派生",
       "independent_observation": false,
-      "signal_score": 27,
+      "signal_score": 22,
       "signal_grade": "D",
       "use_action": "仅复核",
       "use_reasons": [
@@ -351,7 +356,8 @@
         "风控"
       ],
       "quality_flags": [
-        "数据质量待确认"
+        "机会信号需降权转验证",
+        "盘中异动源降级，alert 类信号降权"
       ],
       "tone": "good",
       "discovery_type": "premarket_watch_queue",
@@ -363,7 +369,7 @@
       "next_action": "题材3分钟涨跌幅>=1.5%，方向占比>=70%，成交放大>=5x",
       "observation_source": "数据派生",
       "independent_observation": false,
-      "signal_score": 27,
+      "signal_score": 22,
       "signal_grade": "D",
       "use_action": "仅复核",
       "use_reasons": [
@@ -398,7 +404,8 @@
         "风控"
       ],
       "quality_flags": [
-        "数据质量待确认"
+        "机会信号需降权转验证",
+        "盘中异动源降级，alert 类信号降权"
       ],
       "tone": "good",
       "discovery_type": "premarket_watch_queue",
@@ -410,7 +417,7 @@
       "next_action": "核心股低开后放量收复开盘价或跌幅明显收敛",
       "observation_source": "数据派生",
       "independent_observation": false,
-      "signal_score": 27,
+      "signal_score": 22,
       "signal_grade": "D",
       "use_action": "仅复核",
       "use_reasons": [
@@ -445,7 +452,8 @@
         "风控"
       ],
       "quality_flags": [
-        "数据质量待确认"
+        "机会信号需降权转验证",
+        "盘中异动源降级，alert 类信号降权"
       ],
       "tone": "good",
       "discovery_type": "premarket_watch_queue",
@@ -457,7 +465,7 @@
       "next_action": "题材3分钟涨跌幅>=1.5%，方向占比>=70%，成交放大>=5x",
       "observation_source": "数据派生",
       "independent_observation": false,
-      "signal_score": 27,
+      "signal_score": 22,
       "signal_grade": "D",
       "use_action": "仅复核",
       "use_reasons": [
@@ -492,7 +500,8 @@
         "风控"
       ],
       "quality_flags": [
-        "数据质量待确认"
+        "机会信号需降权转验证",
+        "盘中异动源降级，alert 类信号降权"
       ],
       "tone": "good",
       "discovery_type": "premarket_watch_queue",
@@ -504,7 +513,7 @@
       "next_action": "题材3分钟涨跌幅>=1.5%，方向占比>=70%，成交放大>=5x",
       "observation_source": "数据派生",
       "independent_observation": false,
-      "signal_score": 27,
+      "signal_score": 22,
       "signal_grade": "D",
       "use_action": "仅复核",
       "use_reasons": [
@@ -565,11 +574,12 @@
       "title": "数据质量降级",
       "type": "data_quality",
       "trigger_reason": "风控兜底触发：市场宽度、数据质量或回撤条件触发风险优先。",
-      "conclusion": "共 4 条检查提示，其中 2 条需处理、2 条背景记录（1 个价格/行情复核，3 个背景复核）。",
+      "conclusion": "共 5 条检查提示，其中 3 条需处理、2 条背景记录（1 个价格/行情复核，1 个信号复核，3 个背景复核）。",
       "confidence": "high",
       "evidence": [
         "资料适用日期不是当前交易日：2026-10-14",
-        "资料适用日期不是当前交易日：2026-10-16"
+        "资料适用日期不是当前交易日：2026-10-16",
+        "alerts[2] 候选异动未达到最低短周期价格、方向占比和成交门槛，不得作为当前候选展示"
       ],
       "source_files": [
         "quality-report.json",
@@ -586,12 +596,12 @@
       "quality_flags": [],
       "tone": "risk",
       "discovery_type": "risk_guardrail",
-      "evidence_score": 81,
+      "evidence_score": 88,
       "missing_evidence": [],
       "next_action": "污染 alert 修复前，盘中异动信号必须降权；观察池个股涨跌幅以已审计源为准。",
       "observation_source": "系统风控扫描",
       "independent_observation": true,
-      "signal_score": 96,
+      "signal_score": 100,
       "signal_grade": "A",
       "use_action": "可跟踪",
       "use_reasons": [
