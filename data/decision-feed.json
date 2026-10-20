@@ -1,49 +1,46 @@
 {
-  "timestamp": "2026-10-19T15:05:22+08:00",
-  "current_signal_date": "2026-10-19",
+  "timestamp": "2026-10-20T10:56:08+08:00",
+  "current_signal_date": "2026-10-20",
   "quality_gate": {
     "status": "degraded",
-    "summary": "共 7 条检查提示，其中 5 条需处理、2 条背景记录（1 个价格/行情复核，3 个信号复核，3 个背景复核）。",
+    "summary": "共 4 条检查提示，其中 3 条需处理、1 条背景记录（2 个价格/行情复核，2 个背景复核）。",
     "decision_flags": [
-      "机会信号需降权转验证",
-      "盘中异动源降级，alert 类信号降权"
+      "行情/涨跌幅需二次源复核"
     ],
     "blocking_count": 0,
-    "price_review_count": 1,
-    "background_review_count": 3
+    "price_review_count": 2,
+    "background_review_count": 2
   },
-  "summary": "09:16已取得的指数下跌居多：上证指数-0.02%、深证成指+0.00%、创业板指+0.00%、科创50+0.00%、沪深300-0.01%。行业表现居前：农林牧渔+0.00%、农产品加工+0.00%、饲料+0.00%；居后：农林牧渔+0.00%、农产品加工+0.00%、饲料+0.00%。涨停0只、跌停0只、炸板0只；全市场上涨与下跌家数暂未取得，不把旧…",
+  "summary": "10:55已取得的指数上涨居多：上证指数+0.03%、深证成指+0.69%、创业板指+1.09%、科创50+1.59%、沪深300-0.25%。行业表现居前：消费电子+3.62%、自动化设备+3.53%、电子化学品Ⅱ+3.33%；居后：工业金属-1.86%、商用车-1.66%、白色家电-1.54%。涨停53只、跌停1只、炸板13只；上涨4043家、下跌13…",
   "observation_coverage": {
-    "summary": "主动扫描捕捉 1 条：盘中市场状态",
-    "independent_count": 6,
-    "inherited_count": 18,
-    "active_market_count": 1,
+    "summary": "独立盘面/盘后扫描 7 条，但缺少纯主动新线。",
+    "independent_count": 7,
+    "inherited_count": 12,
+    "active_market_count": 0,
     "postmarket_scan_count": 0,
-    "topic_inherited_count": 7,
+    "topic_inherited_count": 2,
     "verification_count": 2,
-    "active_titles": [
-      "盘中市场状态"
-    ],
-    "status": "active"
+    "active_titles": [],
+    "status": "independent"
   },
   "decision_brief": {
     "stance": "风险优先，只做验证",
     "action": "不把候选方向当交易机会；先看风险收敛、数据恢复和核心承接。",
     "reasons": [
-      "共 7 条检查提示，其中 5 条需处理、2 条背景记录（1 个价格/行情复核，3 个信号复核，3 个背景复核）。",
-      "A/B级风险 8 条",
-      "可用机会 0 条，降权候选 8 条",
-      "先处理：二次行情复核（source-health.json）"
+      "共 4 条检查提示，其中 3 条需处理、1 条背景记录（2 个价格/行情复核，2 个背景复核）。",
+      "A/B级风险 5 条",
+      "风险优先冲突 1 条",
+      "可用机会 0 条，降权候选 7 条"
     ],
     "risk_focus": [
       "数据质量降级",
-      "盘中市场状态",
-      "AI模型/AI应用"
+      "机器人/工业自动化",
+      "创新药/CRO"
     ],
     "upgrade_watch": [
       "#1 主线变化：智能驾驶：观察整车、域控、激光雷达是否独立走强；不按海外财报预期提前追高。 数据质量恢复或二次行情源确认前，不升级为可用机会。",
       "#2 主线变化：AI应用/物理AI：等待确认；腾讯、阿里、百度强于恒科且A股软件放量扩散才观察，未确认不追。 数据质量恢复或二次行情源确认前，不升级为可用机会。",
-      "#3 智能驾驶：观察整车、域控、激光雷达是否独立走强；不按海外财报预期提前追高。 至少2-3只核心股强于板块ETF或指数。 数据质量恢复或二次行情源确认前，不升级为可用机会。"
+      "#3 待触发：CPO/光模块：核心股低开后放量收复开盘价或跌幅明显收敛。 数据质量恢复或二次行情源确认前，不升级为可用机会。"
     ],
     "verification_focus": [
       "核心股低开后放量收复开盘价或跌幅明显收敛",
@@ -57,15 +54,15 @@
         "unblock_condition": "price_review=0 或相关来源标记 trusted/cross verified。"
       },
       {
-        "label": "信号结构复核",
-        "file": "alert.json",
-        "next_step": "修正字段结构、证据、触发原因和升级条件；未通过前降权展示。",
-        "unblock_condition": "signal_review=0，decision-feed/核心 JSON 契约通过。"
+        "label": "背景来源复核",
+        "file": "midday.json",
+        "next_step": "补官方/交易所/公司公告来源；未补齐前不升级为核心依据。",
+        "unblock_condition": "官方来源补齐或确认不影响交易触发。"
       }
     ]
   },
   "signal_queue": {
-    "summary": "无可用机会，4 条风险优先，5 条只做验证，3 条禁用直用。",
+    "summary": "无可用机会，4 条风险优先，5 条只做验证，4 条禁用直用。",
     "active_opportunities": [],
     "trackable_risks": [
       {
@@ -75,22 +72,22 @@
         "reason": "污染 alert 修复前，盘中异动信号必须降权；观察池个股涨跌幅以已审计源为准。"
       },
       {
-        "title": "盘中市场状态",
+        "title": "机器人/工业自动化",
         "grade": "A",
         "use_action": "可跟踪",
-        "reason": "先看弱势指数是否止跌，避免把局部上涨当成全面转强。"
+        "reason": "等待确认，不追短线急拉。继续看行业能否保持上涨，以及这组代表股是否多数同步走强。"
       },
       {
-        "title": "AI模型/AI应用",
+        "title": "创新药/CRO",
         "grade": "A",
         "use_action": "可跟踪",
-        "reason": "等待确认；腾讯、阿里、百度强于恒科且A股软件放量扩散才观察，未确认不追。"
+        "reason": "等待确认，不追短线急拉。继续看行业能否保持上涨，以及这组代表股是否多数同步走强。"
       },
       {
-        "title": "AI数据中心硬件",
-        "grade": "B",
-        "use_action": "等待确认",
-        "reason": "不追高；只在服务器、PCB、液冷和交换机至少两只核心放量站稳开盘价后降为观察线。"
+        "title": "主线变化：盘中市场状态",
+        "grade": "A",
+        "use_action": "可跟踪",
+        "reason": "观察上涨股票是否增加，避免仅凭少数指数上涨追高。"
       }
     ],
     "verification_queue": [
@@ -107,19 +104,19 @@
         "reason": "等待确认；腾讯、阿里、百度强于恒科且A股软件放量扩散才观察，未确认不追。"
       },
       {
-        "title": "智能驾驶",
-        "grade": "C",
-        "use_action": "降权观察",
-        "reason": "观察整车、域控、激光雷达是否独立走强；不按海外财报预期提前追高。"
-      },
-      {
         "title": "待触发：CPO/光模块",
         "grade": "D",
         "use_action": "仅复核",
         "reason": "核心股低开后放量收复开盘价或跌幅明显收敛"
       },
       {
-        "title": "待触发：创新药/CRO",
+        "title": "待触发：交换机/高速以太网",
+        "grade": "D",
+        "use_action": "仅复核",
+        "reason": "核心股低开后放量收复开盘价或跌幅明显收敛"
+      },
+      {
+        "title": "待触发：半导体设备材料",
         "grade": "D",
         "use_action": "仅复核",
         "reason": "题材3分钟涨跌幅>=1.5%，方向占比>=70%，成交放大>=5x"
@@ -127,22 +124,27 @@
     ],
     "disabled_signals": [
       {
+        "title": "冲突主线机会",
+        "use_action": "禁用追高",
+        "reason": "同一主线存在风险优先冲突，只保留验证条件，不作为交易触发。"
+      },
+      {
         "title": "待触发：CPO/光模块",
         "grade": "D",
         "use_action": "仅复核",
         "reason": "核心股低开后放量收复开盘价或跌幅明显收敛"
       },
       {
-        "title": "待触发：创新药/CRO",
-        "grade": "D",
-        "use_action": "仅复核",
-        "reason": "题材3分钟涨跌幅>=1.5%，方向占比>=70%，成交放大>=5x"
-      },
-      {
         "title": "待触发：交换机/高速以太网",
         "grade": "D",
         "use_action": "仅复核",
         "reason": "核心股低开后放量收复开盘价或跌幅明显收敛"
+      },
+      {
+        "title": "待触发：半导体设备材料",
+        "grade": "D",
+        "use_action": "仅复核",
+        "reason": "题材3分钟涨跌幅>=1.5%，方向占比>=70%，成交放大>=5x"
       }
     ]
   },
@@ -167,8 +169,7 @@
       "invalidation": "智能驾驶 需要次日竞价、量能和后排扩散共同确认。",
       "tags": [],
       "quality_flags": [
-        "机会信号需降权转验证",
-        "盘中异动源降级，alert 类信号降权",
+        "行情/涨跌幅需二次源复核",
         "全局数据降级，主线变化需二次确认"
       ],
       "tone": "good",
@@ -180,7 +181,7 @@
       "next_action": "观察整车、域控、激光雷达是否独立走强；不按海外财报预期提前追高。",
       "observation_source": "主线变化扫描",
       "independent_observation": true,
-      "signal_score": 60,
+      "signal_score": 65,
       "signal_grade": "C",
       "use_action": "降权观察",
       "use_reasons": [
@@ -214,8 +215,7 @@
       "invalidation": "AI应用/物理AI 需要次日竞价、量能和后排扩散共同确认。",
       "tags": [],
       "quality_flags": [
-        "机会信号需降权转验证",
-        "盘中异动源降级，alert 类信号降权",
+        "行情/涨跌幅需二次源复核",
         "全局数据降级，主线变化需二次确认"
       ],
       "tone": "good",
@@ -227,7 +227,7 @@
       "next_action": "等待确认；腾讯、阿里、百度强于恒科且A股软件放量扩散才观察，未确认不追。",
       "observation_source": "主线变化扫描",
       "independent_observation": true,
-      "signal_score": 60,
+      "signal_score": 65,
       "signal_grade": "C",
       "use_action": "降权观察",
       "use_reasons": [
@@ -240,52 +240,6 @@
       "upgrade_rank": 2,
       "upgrade_priority": "优先验证",
       "upgrade_condition": "等待确认；腾讯、阿里、百度强于恒科且A股软件放量扩散才观察，未确认不追。 数据质量恢复或二次行情源确认前，不升级为可用机会。"
-    },
-    {
-      "title": "智能驾驶",
-      "type": "theme",
-      "trigger_reason": "专题观察触发：既有专题出现新的量价证据或代表股变化。",
-      "conclusion": "特斯拉Q3业绩将于10月21日披露，可能带来波动而非确定方向。",
-      "confidence": "low",
-      "evidence": [
-        "Tesla IR业绩日公告。",
-        "TSLA 10月16日-2.13%；Longbridge。"
-      ],
-      "source_files": [
-        "topics.json"
-      ],
-      "watch_next": [
-        "观察整车、域控、激光雷达是否独立走强；不按海外财报预期提前追高。"
-      ],
-      "invalidation": "智能驾驶核心股冲高回落、ETF转弱或后排不扩散，则机会降级为观察。",
-      "tags": [],
-      "quality_flags": [
-        "机会信号需降权转验证",
-        "盘中异动源降级，alert 类信号降权"
-      ],
-      "tone": "good",
-      "discovery_type": "topic_watch_scan",
-      "evidence_score": 67,
-      "missing_evidence": [
-        "缺少代表股验证",
-        "数据源降级需二次确认"
-      ],
-      "next_action": "观察整车、域控、激光雷达是否独立走强；不按海外财报预期提前追高。",
-      "observation_source": "专题继承",
-      "independent_observation": false,
-      "signal_score": 48,
-      "signal_grade": "C",
-      "use_action": "降权观察",
-      "use_reasons": [
-        "有可核验证据",
-        "有下一步验证",
-        "有证伪条件",
-        "有来源文件",
-        "数据质量降权"
-      ],
-      "upgrade_rank": 3,
-      "upgrade_priority": "观察验证",
-      "upgrade_condition": "观察整车、域控、激光雷达是否独立走强；不按海外财报预期提前追高。 至少2-3只核心股强于板块ETF或指数。 数据质量恢复或二次行情源确认前，不升级为可用机会。"
     },
     {
       "title": "待触发：CPO/光模块",
@@ -308,8 +262,7 @@
         "风控"
       ],
       "quality_flags": [
-        "机会信号需降权转验证",
-        "盘中异动源降级，alert 类信号降权"
+        "行情/涨跌幅需二次源复核"
       ],
       "tone": "good",
       "discovery_type": "premarket_watch_queue",
@@ -321,7 +274,7 @@
       "next_action": "核心股低开后放量收复开盘价或跌幅明显收敛",
       "observation_source": "数据派生",
       "independent_observation": false,
-      "signal_score": 22,
+      "signal_score": 27,
       "signal_grade": "D",
       "use_action": "仅复核",
       "use_reasons": [
@@ -331,57 +284,9 @@
         "有来源文件",
         "数据质量降权"
       ],
-      "upgrade_rank": 4,
+      "upgrade_rank": 3,
       "upgrade_priority": "仅复核",
       "upgrade_condition": "核心股低开后放量收复开盘价或跌幅明显收敛。 数据质量恢复或二次行情源确认前，不升级为可用机会。"
-    },
-    {
-      "title": "待触发：创新药/CRO",
-      "type": "opportunity_watch",
-      "trigger_reason": "盘前/晚间注意点已转为盘中追踪清单，等待实时行情触发。",
-      "conclusion": "创新药/CRO；与本轮科技盘前无新增直接催化；本轮核验未发现可改变创新药/CRO的周末直接事实。；保留独立观察，不把科技外盘波动外推至医药；仅按当日医药自身成交和代表股确认。",
-      "confidence": "low",
-      "evidence": [],
-      "source_files": [
-        "opportunity-watch.json"
-      ],
-      "watch_next": [
-        "题材3分钟涨跌幅>=1.5%，方向占比>=70%，成交放大>=5x",
-        "板块内出现批量涨停/封板或后排扩散",
-        "核心股、ETF、后排扩散同向确认"
-      ],
-      "invalidation": "核心股高开低走或冲高回落",
-      "tags": [
-        "创新药/CRO",
-        "风控"
-      ],
-      "quality_flags": [
-        "机会信号需降权转验证",
-        "盘中异动源降级，alert 类信号降权"
-      ],
-      "tone": "good",
-      "discovery_type": "premarket_watch_queue",
-      "evidence_score": 21,
-      "missing_evidence": [
-        "缺少可核验证据",
-        "数据源降级需二次确认"
-      ],
-      "next_action": "题材3分钟涨跌幅>=1.5%，方向占比>=70%，成交放大>=5x",
-      "observation_source": "数据派生",
-      "independent_observation": false,
-      "signal_score": 22,
-      "signal_grade": "D",
-      "use_action": "仅复核",
-      "use_reasons": [
-        "缺少证据",
-        "有下一步验证",
-        "有证伪条件",
-        "有来源文件",
-        "数据质量降权"
-      ],
-      "upgrade_rank": 5,
-      "upgrade_priority": "仅复核",
-      "upgrade_condition": "题材3分钟涨跌幅>=1.5%，方向占比>=70%，成交放大>=5x。 数据质量恢复或二次行情源确认前，不升级为可用机会。"
     },
     {
       "title": "待触发：交换机/高速以太网",
@@ -404,8 +309,7 @@
         "风控"
       ],
       "quality_flags": [
-        "机会信号需降权转验证",
-        "盘中异动源降级，alert 类信号降权"
+        "行情/涨跌幅需二次源复核"
       ],
       "tone": "good",
       "discovery_type": "premarket_watch_queue",
@@ -417,7 +321,7 @@
       "next_action": "核心股低开后放量收复开盘价或跌幅明显收敛",
       "observation_source": "数据派生",
       "independent_observation": false,
-      "signal_score": 22,
+      "signal_score": 27,
       "signal_grade": "D",
       "use_action": "仅复核",
       "use_reasons": [
@@ -427,7 +331,7 @@
         "有来源文件",
         "数据质量降权"
       ],
-      "upgrade_rank": 6,
+      "upgrade_rank": 4,
       "upgrade_priority": "仅复核",
       "upgrade_condition": "核心股低开后放量收复开盘价或跌幅明显收敛。 数据质量恢复或二次行情源确认前，不升级为可用机会。"
     },
@@ -452,8 +356,7 @@
         "风控"
       ],
       "quality_flags": [
-        "机会信号需降权转验证",
-        "盘中异动源降级，alert 类信号降权"
+        "行情/涨跌幅需二次源复核"
       ],
       "tone": "good",
       "discovery_type": "premarket_watch_queue",
@@ -465,7 +368,7 @@
       "next_action": "题材3分钟涨跌幅>=1.5%，方向占比>=70%，成交放大>=5x",
       "observation_source": "数据派生",
       "independent_observation": false,
-      "signal_score": 22,
+      "signal_score": 27,
       "signal_grade": "D",
       "use_action": "仅复核",
       "use_reasons": [
@@ -475,15 +378,15 @@
         "有来源文件",
         "数据质量降权"
       ],
-      "upgrade_rank": 7,
+      "upgrade_rank": 5,
       "upgrade_priority": "仅复核",
       "upgrade_condition": "题材3分钟涨跌幅>=1.5%，方向占比>=70%，成交放大>=5x。 数据质量恢复或二次行情源确认前，不升级为可用机会。"
     },
     {
-      "title": "待触发：存储/HBM",
+      "title": "待触发：AI算力",
       "type": "opportunity_watch",
       "trigger_reason": "盘前/晚间注意点已转为盘中追踪清单，等待实时行情触发。",
-      "conclusion": "三星此前披露与博通扩大存储与晶圆代工合作，包括面向下一代AI加速器的HBM；产业逻辑有效，但本周末媒体关于具体代工/客户安排未获公司同期公告确认。；市场媒体称三星可能使用台积电3nm制造下一代HBM基底芯片；仅为媒体报道，未见三星、台积电或英伟达本轮官方确认，列为传闻。；隔夜美股收盘英伟达-1.43%、美光科技-5.63%、超威半导体-5.95%、特斯拉-…",
+      "conclusion": "隔夜美股收盘英伟达+1.38%、美光科技+2.97%、超威半导体+1.76%、特斯拉+3.76%、苹果-0.15%；该方向已进入次日预案，但仍需A股代表股确认。；下一交易日观察A股相关代表股是否同向，不把海外走势直接当作买卖信号。；外盘观察",
       "confidence": "low",
       "evidence": [],
       "source_files": [
@@ -500,8 +403,7 @@
         "风控"
       ],
       "quality_flags": [
-        "机会信号需降权转验证",
-        "盘中异动源降级，alert 类信号降权"
+        "行情/涨跌幅需二次源复核"
       ],
       "tone": "good",
       "discovery_type": "premarket_watch_queue",
@@ -513,7 +415,7 @@
       "next_action": "题材3分钟涨跌幅>=1.5%，方向占比>=70%，成交放大>=5x",
       "observation_source": "数据派生",
       "independent_observation": false,
-      "signal_score": 22,
+      "signal_score": 27,
       "signal_grade": "D",
       "use_action": "仅复核",
       "use_reasons": [
@@ -523,7 +425,54 @@
         "有来源文件",
         "数据质量降权"
       ],
-      "upgrade_rank": 8,
+      "upgrade_rank": 6,
+      "upgrade_priority": "仅复核",
+      "upgrade_condition": "题材3分钟涨跌幅>=1.5%，方向占比>=70%，成交放大>=5x。 数据质量恢复或二次行情源确认前，不升级为可用机会。"
+    },
+    {
+      "title": "待触发：存储/HBM",
+      "type": "opportunity_watch",
+      "trigger_reason": "盘前/晚间注意点已转为盘中追踪清单，等待实时行情触发。",
+      "conclusion": "澜起科技关于独立董事提议公司回购A股股份的公告；澜起科技出现偏正面公告，但先按公司事件处理，不能自动升级为板块机会。；公司公告；隔夜美股收盘英伟达+1.38%、美光科技+2.97%、超威半导体+1.76%、特斯拉+3.76%、苹果-0.15%；该方向已进入次日预案，但仍需A股代表股确认。；下一交易日观察A股相关代表股是否同向，不把海外走势直接当作买卖信号。…",
+      "confidence": "low",
+      "evidence": [],
+      "source_files": [
+        "opportunity-watch.json"
+      ],
+      "watch_next": [
+        "题材3分钟涨跌幅>=1.5%，方向占比>=70%，成交放大>=5x",
+        "板块内出现批量涨停/封板或后排扩散",
+        "核心股、ETF、后排扩散同向确认"
+      ],
+      "invalidation": "核心股高开低走或冲高回落",
+      "tags": [
+        "科技硬件链",
+        "风控"
+      ],
+      "quality_flags": [
+        "行情/涨跌幅需二次源复核"
+      ],
+      "tone": "good",
+      "discovery_type": "premarket_watch_queue",
+      "evidence_score": 21,
+      "missing_evidence": [
+        "缺少可核验证据",
+        "数据源降级需二次确认"
+      ],
+      "next_action": "题材3分钟涨跌幅>=1.5%，方向占比>=70%，成交放大>=5x",
+      "observation_source": "数据派生",
+      "independent_observation": false,
+      "signal_score": 27,
+      "signal_grade": "D",
+      "use_action": "仅复核",
+      "use_reasons": [
+        "缺少证据",
+        "有下一步验证",
+        "有证伪条件",
+        "有来源文件",
+        "数据质量降权"
+      ],
+      "upgrade_rank": 7,
       "upgrade_priority": "仅复核",
       "upgrade_condition": "题材3分钟涨跌幅>=1.5%，方向占比>=70%，成交放大>=5x。 数据质量恢复或二次行情源确认前，不升级为可用机会。"
     }
@@ -533,13 +482,11 @@
       "title": "数据质量降级",
       "type": "data_quality",
       "trigger_reason": "风控兜底触发：市场宽度、数据质量或回撤条件触发风险优先。",
-      "conclusion": "共 7 条检查提示，其中 5 条需处理、2 条背景记录（1 个价格/行情复核，3 个信号复核，3 个背景复核）。",
+      "conclusion": "共 4 条检查提示，其中 3 条需处理、1 条背景记录（2 个价格/行情复核，2 个背景复核）。",
       "confidence": "high",
       "evidence": [
         "资料适用日期不是当前交易日：2026-10-14",
-        "资料适用日期不是当前交易日：2026-10-16",
-        "alerts[2] 候选异动未达到最低短周期价格、方向占比和成交门槛，不得作为当前候选展示",
-        "alerts[3] 候选异动未达到最低短周期价格、方向占比和成交门槛，不得作为当前候选展示"
+        "资料适用日期不是当前交易日：2026-10-19"
       ],
       "source_files": [
         "quality-report.json",
@@ -556,11 +503,55 @@
       "quality_flags": [],
       "tone": "risk",
       "discovery_type": "risk_guardrail",
-      "evidence_score": 90,
+      "evidence_score": 81,
       "missing_evidence": [],
       "next_action": "污染 alert 修复前，盘中异动信号必须降权；观察池个股涨跌幅以已审计源为准。",
       "observation_source": "系统风控扫描",
       "independent_observation": true,
+      "signal_score": 96,
+      "signal_grade": "A",
+      "use_action": "可跟踪",
+      "use_reasons": [
+        "有可核验证据",
+        "有下一步验证",
+        "有证伪条件",
+        "有来源文件",
+        "证据链较完整"
+      ]
+    },
+    {
+      "title": "机器人/工业自动化",
+      "type": "theme",
+      "trigger_reason": "专题观察触发：既有专题出现新的量价证据或代表股变化。",
+      "conclusion": "少数代表股反弹可能不扩散；未取得同一时点成交额对比，也未新增核实公司公告与订单。",
+      "confidence": "high",
+      "evidence": [
+        "全市场上涨4043家、下跌1386家（2026-10-20T10:55:12+08:00）。",
+        "通用设备+3.05%、自动化设备+3.53%",
+        "埃斯顿 sz002747 +4.41%；2026-10-20T10:55:57+08:00；腾讯财经行情。",
+        "步科股份 sh688160 +10.95%；2026-10-20T10:55:58+08:00；腾讯财经行情。",
+        "绿的谐波 sh688017 +6.91%；2026-10-20T10:55:57+08:00；腾讯财经行情。"
+      ],
+      "source_files": [
+        "topics.json"
+      ],
+      "watch_next": [
+        "等待确认，不追短线急拉。继续看行业能否保持上涨，以及这组代表股是否多数同步走强。"
+      ],
+      "invalidation": "机器人/工业自动化风险信号收敛、核心股重新放量承接，则风险降级。",
+      "tags": [
+        "科技硬件链",
+        "机器人/工业自动化",
+        "风控"
+      ],
+      "quality_flags": [],
+      "tone": "risk",
+      "discovery_type": "topic_watch_scan",
+      "evidence_score": 100,
+      "missing_evidence": [],
+      "next_action": "等待确认，不追短线急拉。继续看行业能否保持上涨，以及这组代表股是否多数同步走强。",
+      "observation_source": "专题继承",
+      "independent_observation": false,
       "signal_score": 100,
       "signal_grade": "A",
       "use_action": "可跟踪",
@@ -573,35 +564,77 @@
       ]
     },
     {
-      "title": "盘中市场状态",
+      "title": "创新药/CRO",
       "type": "theme",
-      "trigger_reason": "主动盘面扫描触发：涨跌停、炸板、尾盘承接或板块扩散出现可验证变化。",
-      "conclusion": "局部强势未必扩散到多数股票；全市场上涨与下跌家数暂未取得，不把旧日宽度数据当作今天的情绪。",
+      "trigger_reason": "专题观察触发：既有专题出现新的量价证据或代表股变化。",
+      "conclusion": "少数代表股反弹可能不扩散；未取得同一时点成交额对比，也未新增核实公司公告与订单。",
       "confidence": "high",
       "evidence": [
-        "上证指数",
-        "深证成指",
-        "创业板指",
-        "科创50",
-        "沪深300"
+        "全市场上涨4043家、下跌1386家（2026-10-20T10:55:12+08:00）。",
+        "化学制药+1.42%、生物制品+1.19%、医疗服务+2.50%",
+        "科伦药业 sz002422 +5.07%；2026-10-20T10:55:57+08:00；腾讯财经行情。",
+        "普洛药业 sz000739 +1.11%；2026-10-20T10:55:57+08:00；腾讯财经行情。",
+        "恒瑞医药 sh600276 +1.76%；2026-10-20T10:55:58+08:00；腾讯财经行情。"
+      ],
+      "source_files": [
+        "topics.json"
+      ],
+      "watch_next": [
+        "等待确认，不追短线急拉。继续看行业能否保持上涨，以及这组代表股是否多数同步走强。"
+      ],
+      "invalidation": "创新药/CRO风险信号收敛、核心股重新放量承接，则风险降级。",
+      "tags": [
+        "创新药/CRO"
+      ],
+      "quality_flags": [],
+      "tone": "risk",
+      "discovery_type": "topic_watch_scan",
+      "evidence_score": 100,
+      "missing_evidence": [],
+      "next_action": "等待确认，不追短线急拉。继续看行业能否保持上涨，以及这组代表股是否多数同步走强。",
+      "observation_source": "专题继承",
+      "independent_observation": false,
+      "signal_score": 100,
+      "signal_grade": "A",
+      "use_action": "可跟踪",
+      "use_reasons": [
+        "有可核验证据",
+        "有下一步验证",
+        "有证伪条件",
+        "有来源文件",
+        "证据链较完整"
+      ]
+    },
+    {
+      "title": "主线变化：盘中市场状态",
+      "type": "theme_shift",
+      "trigger_reason": "主线变化扫描触发：升温/降温/抱团/风险状态出现边际变化。",
+      "conclusion": "盘中市场状态 出现负反馈或风险信号，优先作为风险观察。",
+      "confidence": "high",
+      "evidence": [
+        "上证指数+0.03%",
+        "深证成指+0.69%",
+        "创业板指+1.09%",
+        "科创50+1.59%",
+        "沪深300-0.25%"
       ],
       "source_files": [
         "intraday.json"
       ],
       "watch_next": [
-        "先看弱势指数是否止跌，避免把局部上涨当成全面转强。"
+        "观察上涨股票是否增加，避免仅凭少数指数上涨追高。"
       ],
-      "invalidation": "盘中市场状态风险信号收敛、核心股重新放量承接，则风险降级。",
+      "invalidation": "风险信号收敛、后排扩散恢复且核心股放量承接。",
       "tags": [
         "风控"
       ],
       "quality_flags": [],
       "tone": "risk",
-      "discovery_type": "active_market_scan",
+      "discovery_type": "theme_shift_scan",
       "evidence_score": 90,
       "missing_evidence": [],
-      "next_action": "先看弱势指数是否止跌，避免把局部上涨当成全面转强。",
-      "observation_source": "主动盘面扫描",
+      "next_action": "观察上涨股票是否增加，避免仅凭少数指数上涨追高。",
+      "observation_source": "主线变化扫描",
       "independent_observation": true,
       "signal_score": 100,
       "signal_grade": "A",
@@ -615,202 +648,40 @@
       ]
     },
     {
-      "title": "AI模型/AI应用",
-      "type": "theme",
-      "trigger_reason": "专题观察触发：既有专题出现新的量价证据或代表股变化。",
-      "conclusion": "港股AI相关股弱于恒科或A股软件无量冲高回落。",
+      "title": "主线变化：科技硬件链",
+      "type": "theme_shift",
+      "trigger_reason": "主线变化扫描触发：升温/降温/抱团/风险状态出现边际变化。",
+      "conclusion": "科技硬件链 出现负反馈或风险信号，优先作为风险观察。",
       "confidence": "high",
       "evidence": [
-        "MSFT-1.92%、GOOGL-2.47%、AMZN-1.86%；Longbridge 2026-10-16收盘。",
-        "英伟达10月14日AI定义晶圆厂公告。"
+        "NVDA-1.42%、AMD-5.95%、AVGO-4.52%、TSM-2.28%；Longbridge。",
+        "高开无量或冲高回落。",
+        "MRVL-5.55%、SOXX-4.14%；Longbridge。",
+        "高位拥挤和外盘网络芯片走弱。",
+        "三星与博通官方合作公告。"
       ],
       "source_files": [
         "topics.json"
       ],
       "watch_next": [
-        "等待确认；腾讯、阿里、百度强于恒科且A股软件放量扩散才观察，未确认不追。"
-      ],
-      "invalidation": "AI模型/AI应用风险信号收敛、核心股重新放量承接，则风险降级。",
-      "tags": [
-        "风控"
-      ],
-      "quality_flags": [],
-      "tone": "risk",
-      "discovery_type": "topic_watch_scan",
-      "evidence_score": 74,
-      "missing_evidence": [
-        "缺少代表股验证"
-      ],
-      "next_action": "等待确认；腾讯、阿里、百度强于恒科且A股软件放量扩散才观察，未确认不追。",
-      "observation_source": "专题继承",
-      "independent_observation": false,
-      "signal_score": 86,
-      "signal_grade": "A",
-      "use_action": "可跟踪",
-      "use_reasons": [
-        "有可核验证据",
-        "有下一步验证",
-        "有证伪条件",
-        "有来源文件",
-        "有证据缺口"
-      ]
-    },
-    {
-      "title": "AI数据中心硬件",
-      "type": "theme",
-      "trigger_reason": "专题观察触发：既有专题出现新的量价证据或代表股变化。",
-      "conclusion": "高开无量或冲高回落。",
-      "confidence": "high",
-      "evidence": [
-        "NVDA-1.42%、AMD-5.95%、AVGO-4.52%、TSM-2.28%；Longbridge。"
-      ],
-      "source_files": [
-        "topics.json"
-      ],
-      "watch_next": [
-        "不追高；只在服务器、PCB、液冷和交换机至少两只核心放量站稳开盘价后降为观察线。"
-      ],
-      "invalidation": "AI数据中心硬件风险信号收敛、核心股重新放量承接，则风险降级。",
-      "tags": [
-        "科技硬件链",
-        "风控"
-      ],
-      "quality_flags": [],
-      "tone": "risk",
-      "discovery_type": "topic_watch_scan",
-      "evidence_score": 67,
-      "missing_evidence": [
-        "缺少代表股验证"
-      ],
-      "next_action": "不追高；只在服务器、PCB、液冷和交换机至少两只核心放量站稳开盘价后降为观察线。",
-      "observation_source": "专题继承",
-      "independent_observation": false,
-      "signal_score": 79,
-      "signal_grade": "B",
-      "use_action": "等待确认",
-      "use_reasons": [
-        "有可核验证据",
-        "有下一步验证",
-        "有证伪条件",
-        "有来源文件",
-        "有证据缺口"
-      ]
-    },
-    {
-      "title": "光模块/高速互联",
-      "type": "theme",
-      "trigger_reason": "专题观察触发：既有专题出现新的量价证据或代表股变化。",
-      "conclusion": "高位拥挤和外盘网络芯片走弱。",
-      "confidence": "high",
-      "evidence": [
-        "MRVL-5.55%、SOXX-4.14%；Longbridge。"
-      ],
-      "source_files": [
-        "topics.json"
-      ],
-      "watch_next": [
-        "先看中际旭创、新易盛、天孚通信以及交换机/PCB共振；未扩散时按兑现风险处理。"
-      ],
-      "invalidation": "光模块/高速互联风险信号收敛、核心股重新放量承接，则风险降级。",
-      "tags": [
-        "科技硬件链",
-        "风控"
-      ],
-      "quality_flags": [],
-      "tone": "risk",
-      "discovery_type": "topic_watch_scan",
-      "evidence_score": 67,
-      "missing_evidence": [
-        "缺少代表股验证"
-      ],
-      "next_action": "先看中际旭创、新易盛、天孚通信以及交换机/PCB共振；未扩散时按兑现风险处理。",
-      "observation_source": "专题继承",
-      "independent_observation": false,
-      "signal_score": 79,
-      "signal_grade": "B",
-      "use_action": "等待确认",
-      "use_reasons": [
-        "有可核验证据",
-        "有下一步验证",
-        "有证伪条件",
-        "有来源文件",
-        "有证据缺口"
-      ]
-    },
-    {
-      "title": "AI内存与存储",
-      "type": "theme",
-      "trigger_reason": "专题观察触发：既有专题出现新的量价证据或代表股变化。",
-      "conclusion": "中期逻辑存在/短线外盘承压",
-      "confidence": "high",
-      "evidence": [
-        "三星与博通官方合作公告。",
-        "MU-5.62%；Longbridge。"
-      ],
-      "source_files": [
-        "topics.json"
-      ],
-      "watch_next": [
-        "等待确认；观察澜起、兆易、佰维、江波龙与港股/韩股真实联动，不按HBM媒体传闻追高。"
-      ],
-      "invalidation": "AI内存与存储风险信号收敛、核心股重新放量承接，则风险降级。",
-      "tags": [
-        "科技硬件链",
-        "风控"
-      ],
-      "quality_flags": [],
-      "tone": "risk",
-      "discovery_type": "topic_watch_scan",
-      "evidence_score": 74,
-      "missing_evidence": [
-        "缺少代表股验证"
-      ],
-      "next_action": "等待确认；观察澜起、兆易、佰维、江波龙与港股/韩股真实联动，不按HBM媒体传闻追高。",
-      "observation_source": "专题继承",
-      "independent_observation": false,
-      "signal_score": 86,
-      "signal_grade": "A",
-      "use_action": "可跟踪",
-      "use_reasons": [
-        "有可核验证据",
-        "有下一步验证",
-        "有证伪条件",
-        "有来源文件",
-        "有证据缺口"
-      ]
-    },
-    {
-      "title": "半导体设备材料",
-      "type": "theme",
-      "trigger_reason": "专题观察触发：既有专题出现新的量价证据或代表股变化。",
-      "conclusion": "产业逻辑未变/开盘情绪待验证",
-      "confidence": "high",
-      "evidence": [
-        "NVIDIA 10月14日AI定义晶圆厂公告。",
-        "费城半导体指数-4.14%；Longbridge。"
-      ],
-      "source_files": [
-        "topics.json"
-      ],
-      "watch_next": [
+        "不追高；只在服务器、PCB、液冷和交换机至少两只核心放量站稳开盘价后降为观察线。",
+        "先看中际旭创、新易盛、天孚通信以及交换机/PCB共振；未扩散时按兑现风险处理。",
+        "等待确认；观察澜起、兆易、佰维、江波龙与港股/韩股真实联动，不按HBM媒体传闻追高。",
         "观察中芯、华虹与A股设备材料核心承接；没有成交确认不因海外公告追高。"
       ],
-      "invalidation": "半导体设备材料风险信号收敛、核心股重新放量承接，则风险降级。",
+      "invalidation": "风险信号收敛、后排扩散恢复且核心股放量承接。",
       "tags": [
-        "科技硬件链",
         "风控"
       ],
       "quality_flags": [],
       "tone": "risk",
-      "discovery_type": "topic_watch_scan",
-      "evidence_score": 74,
-      "missing_evidence": [
-        "缺少代表股验证"
-      ],
-      "next_action": "观察中芯、华虹与A股设备材料核心承接；没有成交确认不因海外公告追高。",
-      "observation_source": "专题继承",
-      "independent_observation": false,
-      "signal_score": 86,
+      "discovery_type": "theme_shift_scan",
+      "evidence_score": 90,
+      "missing_evidence": [],
+      "next_action": "不追高；只在服务器、PCB、液冷和交换机至少两只核心放量站稳开盘价后降为观察线。",
+      "observation_source": "主线变化扫描",
+      "independent_observation": true,
+      "signal_score": 100,
       "signal_grade": "A",
       "use_action": "可跟踪",
       "use_reasons": [
@@ -818,45 +689,7 @@
         "有下一步验证",
         "有证伪条件",
         "有来源文件",
-        "有证据缺口"
-      ]
-    },
-    {
-      "title": "消费电子/端侧AI",
-      "type": "theme",
-      "trigger_reason": "专题观察触发：既有专题出现新的量价证据或代表股变化。",
-      "conclusion": "港股消费电子弱于恒科。",
-      "confidence": "high",
-      "evidence": [
-        "AAPL+0.42%、1810.HK-1.55%；Longbridge。"
-      ],
-      "source_files": [
-        "topics.json"
-      ],
-      "watch_next": [
-        "仅在小米、舜宇及苹果链低位放量修复时观察补涨，不作为主线。"
-      ],
-      "invalidation": "消费电子/端侧AI风险信号收敛、核心股重新放量承接，则风险降级。",
-      "tags": [],
-      "quality_flags": [],
-      "tone": "risk",
-      "discovery_type": "topic_watch_scan",
-      "evidence_score": 67,
-      "missing_evidence": [
-        "缺少代表股验证"
-      ],
-      "next_action": "仅在小米、舜宇及苹果链低位放量修复时观察补涨，不作为主线。",
-      "observation_source": "专题继承",
-      "independent_observation": false,
-      "signal_score": 79,
-      "signal_grade": "B",
-      "use_action": "等待确认",
-      "use_reasons": [
-        "有可核验证据",
-        "有下一步验证",
-        "有证伪条件",
-        "有来源文件",
-        "有证据缺口"
+        "证据链较完整"
       ]
     }
   ],
@@ -889,47 +722,6 @@
         "缺少可核验证据"
       ],
       "next_action": "核心股低开后放量收复开盘价或跌幅明显收敛",
-      "observation_source": "数据派生",
-      "independent_observation": false,
-      "signal_score": 47,
-      "signal_grade": "D",
-      "use_action": "仅复核",
-      "use_reasons": [
-        "缺少证据",
-        "有下一步验证",
-        "有证伪条件",
-        "有来源文件",
-        "有证据缺口"
-      ]
-    },
-    {
-      "title": "盘中追踪：创新药/CRO",
-      "type": "opportunity_watch",
-      "trigger_reason": "盘前/晚间注意点已转为盘中追踪清单，等待实时行情触发。",
-      "conclusion": "创新药/CRO；与本轮科技盘前无新增直接催化；本轮核验未发现可改变创新药/CRO的周末直接事实。；保留独立观察，不把科技外盘波动外推至医药；仅按当日医药自身成交和代表股确认。",
-      "confidence": "low",
-      "evidence": [],
-      "source_files": [
-        "opportunity-watch.json"
-      ],
-      "watch_next": [
-        "题材3分钟涨跌幅>=1.5%，方向占比>=70%，成交放大>=5x",
-        "板块内出现批量涨停/封板或后排扩散",
-        "核心股、ETF、后排扩散同向确认"
-      ],
-      "invalidation": "核心股高开低走或冲高回落",
-      "tags": [
-        "创新药/CRO",
-        "风控"
-      ],
-      "quality_flags": [],
-      "tone": "neutral",
-      "discovery_type": "premarket_watch_queue",
-      "evidence_score": 28,
-      "missing_evidence": [
-        "缺少可核验证据"
-      ],
-      "next_action": "题材3分钟涨跌幅>=1.5%，方向占比>=70%，成交放大>=5x",
       "observation_source": "数据派生",
       "independent_observation": false,
       "signal_score": 47,
@@ -1026,10 +818,10 @@
       ]
     },
     {
-      "title": "盘中追踪：存储/HBM",
+      "title": "盘中追踪：AI算力",
       "type": "opportunity_watch",
       "trigger_reason": "盘前/晚间注意点已转为盘中追踪清单，等待实时行情触发。",
-      "conclusion": "三星此前披露与博通扩大存储与晶圆代工合作，包括面向下一代AI加速器的HBM；产业逻辑有效，但本周末媒体关于具体代工/客户安排未获公司同期公告确认。；市场媒体称三星可能使用台积电3nm制造下一代HBM基底芯片；仅为媒体报道，未见三星、台积电或英伟达本轮官方确认，列为传闻。；隔夜美股收盘英伟达-1.4…",
+      "conclusion": "隔夜美股收盘英伟达+1.38%、美光科技+2.97%、超威半导体+1.76%、特斯拉+3.76%、苹果-0.15%；该方向已进入次日预案，但仍需A股代表股确认。；下一交易日观察A股相关代表股是否同向，不把海外走势直接当作买卖信号。；外盘观察",
       "confidence": "low",
       "evidence": [],
       "source_files": [
@@ -1067,10 +859,10 @@
       ]
     },
     {
-      "title": "盘中追踪：机器人/工业自动化",
+      "title": "盘中追踪：存储/HBM",
       "type": "opportunity_watch",
       "trigger_reason": "盘前/晚间注意点已转为盘中追踪清单，等待实时行情触发。",
-      "conclusion": "特斯拉确认将于10月21日美股收盘后发布2026年Q3财报；交付与储能数据已在10月2日披露，财报前机器人/智能驾驶产业链可能受业绩预期扰动。；机器人/工业自动化；财报窗口临近/等待盘面独立强度；特斯拉将于10月21日披露Q3财报，但非周末新增订单催化；不以财报预期追高机器人。；等待确认；只在埃斯…",
+      "conclusion": "澜起科技关于独立董事提议公司回购A股股份的公告；澜起科技出现偏正面公告，但先按公司事件处理，不能自动升级为板块机会。；公司公告；隔夜美股收盘英伟达+1.38%、美光科技+2.97%、超威半导体+1.76%、特斯拉+3.76%、苹果-0.15%；该方向已进入次日预案，但仍需A股代表股确认。；下一交易…",
       "confidence": "low",
       "evidence": [],
       "source_files": [
@@ -1084,7 +876,6 @@
       "invalidation": "核心股高开低走或冲高回落",
       "tags": [
         "科技硬件链",
-        "机器人/工业自动化",
         "风控"
       ],
       "quality_flags": [],
@@ -1112,23 +903,23 @@
       "title": "验证条件",
       "type": "verification",
       "trigger_reason": "验证队列触发：前序结论需要用下一交易窗口确认或证伪。",
-      "conclusion": "先看弱势指数是否止跌，避免把局部上涨当成全面转强。",
+      "conclusion": "观察上涨股票是否增加，避免仅凭少数指数上涨追高。",
       "confidence": "actionable",
       "evidence": [],
       "source_files": [
         "intraday.json"
       ],
       "watch_next": [
-        "先看弱势指数是否止跌，避免把局部上涨当成全面转强。"
+        "观察上涨股票是否增加，避免仅凭少数指数上涨追高。"
       ],
       "invalidation": "条件不出现或反向出现，即撤销对应方向判断。",
       "tags": [],
       "quality_flags": [],
-      "tone": "risk",
+      "tone": "neutral",
       "discovery_type": "verification_queue",
       "evidence_score": 35,
       "missing_evidence": [],
-      "next_action": "先看弱势指数是否止跌，避免把局部上涨当成全面转强。",
+      "next_action": "观察上涨股票是否增加，避免仅凭少数指数上涨追高。",
       "observation_source": "验证队列",
       "independent_observation": true,
       "signal_score": 60,
@@ -1177,7 +968,22 @@
       ]
     }
   ],
-  "conflicts": [],
+  "conflicts": [
+    {
+      "theme": "科技硬件链",
+      "sections": [
+        "risks",
+        "verifications"
+      ],
+      "verdict": "风险优先，只做验证",
+      "severity": "risk_first",
+      "action": "先按风险栏处理；只有风险收敛、核心股承接和数据质量恢复后，才允许从验证栏升级。",
+      "evidence": [
+        "风险：A级/可跟踪，科技硬件链 出现负反馈或风险信号，优先作为风险观察。",
+        "验证：B级/等待确认，不追高；只在服务器、PCB、液冷和交换机至少两只核心放量站稳开盘价后降为观察线。"
+      ]
+    }
+  ],
   "rules": [
     "每条机会/风险必须带 source_files；没有证据时置信度不得高于 low。",
     "机会只代表候选方向，必须经过下一步验证，不生成交易指令。",
