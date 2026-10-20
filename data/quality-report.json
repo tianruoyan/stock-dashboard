@@ -1,8 +1,8 @@
 {
-  "timestamp": "2026-10-20T11:00:11+08:00",
+  "timestamp": "2026-10-20T11:00:39+08:00",
   "current_signal_date": "2026-10-20",
   "status": "degraded",
-  "summary": "共 4 条检查提示，其中 3 条需处理、1 条背景记录（2 个价格/行情复核，2 个背景复核）。",
+  "summary": "共 3 条检查提示，其中 2 条需处理、1 条背景记录（1 个价格/行情复核，2 个背景复核）。",
   "issues": [
     {
       "severity": "warning",
@@ -23,15 +23,6 @@
       "decision_action": "仅作背景复核，不单独阻断交易判断"
     },
     {
-      "severity": "warning",
-      "file": "source-health.json",
-      "path": "",
-      "code": "stale_timestamp",
-      "message": "资料适用日期不是当前交易日：2026-10-19",
-      "impact_level": "price_review",
-      "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核"
-    },
-    {
       "severity": "info",
       "file": "source-health.json",
       "path": "",
@@ -47,8 +38,8 @@
       "impact_level": "price_review",
       "label": "二次行情复核",
       "file": "source-health.json",
-      "code": "stale_timestamp",
-      "problem": "资料适用日期不是当前交易日：2026-10-19",
+      "code": "source_history_separated",
+      "problem": "786条历史检测、1条时间待核验记录已与当前故障分开；未认定这些来源已恢复。",
       "decision_action": "价格/涨跌幅相关结论降权，需二次行情源复核",
       "next_step": "用第二行情源复核涨跌幅、quote_time 和代表股方向；未确认前只做验证。",
       "unblock_condition": "price_review=0 或相关来源标记 trusted/cross verified。"
@@ -78,10 +69,10 @@
   ],
   "counts": {
     "critical": 0,
-    "warning": 3,
+    "warning": 2,
     "info": 1,
     "blocking": 0,
-    "price_review": 2,
+    "price_review": 1,
     "signal_review": 0,
     "background_review": 2
   },
