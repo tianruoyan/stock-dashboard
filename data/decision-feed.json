@@ -1,17 +1,17 @@
 {
-  "timestamp": "2026-10-20T13:02:58+08:00",
+  "timestamp": "2026-10-20T13:20:52+08:00",
   "current_signal_date": "2026-10-20",
   "quality_gate": {
     "status": "degraded",
-    "summary": "共 2 条检查提示，其中 1 条需处理、1 条背景记录（1 个价格/行情复核，1 个背景复核）。",
+    "summary": "共 4 条检查提示，其中 3 条需处理、1 条背景记录（3 个价格/行情复核，1 个背景复核）。",
     "decision_flags": [
-      "数据质量待确认"
+      "行情/涨跌幅需二次源复核"
     ],
     "blocking_count": 0,
-    "price_review_count": 1,
+    "price_review_count": 3,
     "background_review_count": 1
   },
-  "summary": "上午多数股票上涨、成长指数强于上证与沪深300，自动化设备和消费电子居前，属于结构性修复而非全面一致走强。 数据质量：共 2 条检查提示，其中 1 条需处理、1 条背景记录（1 个价格/行情复核，1 个背景复核）。",
+  "summary": "上午多数股票上涨、成长指数强于上证与沪深300，自动化设备和消费电子居前，属于结构性修复而非全面一致走强。 数据质量：共 4 条检查提示，其中 3 条需处理、1 条背景记录（3 个价格/行情复核，1 个背景复核）。",
   "observation_coverage": {
     "summary": "主动扫描捕捉 3 条：机器人/工业自动化 / 创新药/CRO / 成长方向相对占优",
     "independent_count": 13,
@@ -31,7 +31,7 @@
     "stance": "风险优先，只做验证",
     "action": "不把候选方向当交易机会；先看风险收敛、数据恢复和核心承接。",
     "reasons": [
-      "共 2 条检查提示，其中 1 条需处理、1 条背景记录（1 个价格/行情复核，1 个背景复核）。",
+      "共 4 条检查提示，其中 3 条需处理、1 条背景记录（3 个价格/行情复核，1 个背景复核）。",
       "A/B级风险 5 条",
       "风险优先冲突 2 条",
       "可用机会 0 条，降权候选 8 条"
@@ -53,15 +53,15 @@
     "quality_actions": [
       {
         "label": "二次行情复核",
-        "file": "source-health.json",
+        "file": "alert.json",
         "next_step": "用第二行情源复核涨跌幅、quote_time 和代表股方向；未确认前只做验证。",
         "unblock_condition": "price_review=0 或相关来源标记 trusted/cross verified。"
       },
       {
-        "label": "背景来源复核",
-        "file": "postmarket.json",
-        "next_step": "补官方/交易所/公司公告来源；未补齐前不升级为核心依据。",
-        "unblock_condition": "官方来源补齐或确认不影响交易触发。"
+        "label": "二次行情复核",
+        "file": "source-health.json",
+        "next_step": "用第二行情源复核涨跌幅、quote_time 和代表股方向；未确认前只做验证。",
+        "unblock_condition": "price_review=0 或相关来源标记 trusted/cross verified。"
       }
     ]
   },
@@ -170,7 +170,7 @@
         "机器人/工业自动化"
       ],
       "quality_flags": [
-        "数据质量待确认"
+        "行情/涨跌幅需二次源复核"
       ],
       "tone": "good",
       "discovery_type": "active_market_scan",
@@ -218,7 +218,7 @@
         "创新药/CRO"
       ],
       "quality_flags": [
-        "数据质量待确认"
+        "行情/涨跌幅需二次源复核"
       ],
       "tone": "good",
       "discovery_type": "active_market_scan",
@@ -267,7 +267,7 @@
         "创新药/CRO"
       ],
       "quality_flags": [
-        "数据质量待确认",
+        "行情/涨跌幅需二次源复核",
         "全局数据降级，主线变化需二次确认"
       ],
       "tone": "good",
@@ -317,7 +317,7 @@
         "机器人/工业自动化"
       ],
       "quality_flags": [
-        "数据质量待确认",
+        "行情/涨跌幅需二次源复核",
         "全局数据降级，主线变化需二次确认"
       ],
       "tone": "good",
@@ -363,7 +363,7 @@
       "invalidation": "智能驾驶 需要次日竞价、量能和后排扩散共同确认。",
       "tags": [],
       "quality_flags": [
-        "数据质量待确认",
+        "行情/涨跌幅需二次源复核",
         "全局数据降级，主线变化需二次确认"
       ],
       "tone": "good",
@@ -409,7 +409,7 @@
       "invalidation": "AI应用/物理AI 需要次日竞价、量能和后排扩散共同确认。",
       "tags": [],
       "quality_flags": [
-        "数据质量待确认",
+        "行情/涨跌幅需二次源复核",
         "全局数据降级，主线变化需二次确认"
       ],
       "tone": "good",
@@ -456,7 +456,7 @@
         "风控"
       ],
       "quality_flags": [
-        "数据质量待确认"
+        "行情/涨跌幅需二次源复核"
       ],
       "tone": "good",
       "discovery_type": "premarket_watch_queue",
@@ -503,7 +503,7 @@
         "风控"
       ],
       "quality_flags": [
-        "数据质量待确认"
+        "行情/涨跌幅需二次源复核"
       ],
       "tone": "good",
       "discovery_type": "premarket_watch_queue",
@@ -535,10 +535,11 @@
       "title": "数据质量降级",
       "type": "data_quality",
       "trigger_reason": "风控兜底触发：市场宽度、数据质量或回撤条件触发风险优先。",
-      "conclusion": "共 2 条检查提示，其中 1 条需处理、1 条背景记录（1 个价格/行情复核，1 个背景复核）。",
+      "conclusion": "共 4 条检查提示，其中 3 条需处理、1 条背景记录（3 个价格/行情复核，1 个背景复核）。",
       "confidence": "high",
       "evidence": [
-        "资料适用日期不是当前交易日：2026-10-19"
+        "资料适用日期不是当前交易日：2026-10-19",
+        "昭衍新药 触发窗口涨跌幅 10.0，3分钟窗口需回查原始行情源"
       ],
       "source_files": [
         "quality-report.json",
@@ -555,19 +556,20 @@
       "quality_flags": [],
       "tone": "risk",
       "discovery_type": "risk_guardrail",
-      "evidence_score": 74,
+      "evidence_score": 81,
       "missing_evidence": [],
       "next_action": "污染 alert 修复前，盘中异动信号必须降权；观察池个股涨跌幅以已审计源为准。",
       "observation_source": "系统风控扫描",
       "independent_observation": true,
-      "signal_score": 84,
+      "signal_score": 96,
       "signal_grade": "A",
       "use_action": "可跟踪",
       "use_reasons": [
         "有可核验证据",
         "有下一步验证",
         "有证伪条件",
-        "有来源文件"
+        "有来源文件",
+        "证据链较完整"
       ]
     },
     {
