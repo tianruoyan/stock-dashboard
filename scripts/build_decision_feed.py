@@ -7,6 +7,7 @@ from datetime import datetime, timezone, timedelta
 from pathlib import Path
 from typing import Any
 from data_validity import risk_line, topic_current
+from build_opportunity_watch import representative_quotes, stamp
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -320,34 +321,25 @@ def build_opportunities(files: dict[str, Any], current_date: str) -> list[dict[s
             quality_flags=gate["decision_flags"] if quality_degraded else [],
         ))
 
-    for watch in opportunity_watch_candidates(files):
-        text = compact_json(watch)
-        if has_stale_relative_time(text, current_date):
-            continue
-        items.append(decision_item(
-            title=f"待触发：{watch.get('theme')}",
-            item_type="opportunity_watch",
-            conclusion=first_text(watch.get("source_reason"), "盘前/晚间线索等待盘中量价触发。"),
-            confidence="low",
-            evidence=watch.get("evidence") or [],
-            watch_next=watch.get("confirm_rules") or [],
-            invalidation=first_text(*(watch.get("invalidate_rules") or []), "未出现短周期量价、成交或扩散确认。"),
-            tags=related_tags(text) or [watch.get("theme")],
-            source_files=["opportunity-watch.json"],
-            tone="good",
-            discovery_type="premarket_watch_queue",
-            trigger_reason="盘前/晚间注意点已转为盘中追踪清单，等待实时行情触发。",
-            quality_flags=gate["decision_flags"] if quality_degraded else [],
-        ))
+    # An unconfirmed plan belongs only in observations, never the opportunity list.
     return items
 
 
-def opportunity_watch_candidates(files: dict[str, Any]) -> list[dict[str, Any]]:
+def opportunity_watch_candidates(files: dict[str, Any], statuses=None) -> list[dict[str, Any]]:
     data = files.get("opportunity-watch.json") or {}
     rows = data.get("items") if isinstance(data, dict) else []
-    if not isinstance(rows, list):
+    if (not isinstance(rows, list) or data.get("schema_version") != 2
+            or data.get("current_signal_date") != datetime.now(TZ).date().isoformat()):
         return []
-    return [row for row in rows[:8] if isinstance(row, dict) and row.get("theme")]
+    now = datetime.now(TZ)
+    built = stamp(data.get("timestamp"))
+    if not built or not 0 <= (now - built).total_seconds() <= 1200:
+        return []
+    allowed = statuses or {"waiting", "premarket_watch"}
+    return [row for row in rows[:8] if isinstance(row, dict) and row.get("theme") and row.get("status") in allowed
+            and not has_stale_relative_time(compact_json(row), data["current_signal_date"])
+            and (row.get("status") != "risk_observation" or len(representative_quotes(
+                row, {"stocks": row.get("representative_quotes") or []}, now)) >= 2)]
 
 
 def rank_upgrade_candidates(items: list[dict[str, Any]]) -> list[dict[str, Any]]:
@@ -457,6 +449,15 @@ def unplanned_theme_candidates(files: dict[str, Any], existing_titles: set[str],
 
 def build_risks(files: dict[str, Any], current_date: str) -> list[dict[str, Any]]:
     items: list[dict[str, Any]] = []
+    for watch in opportunity_watch_candidates(files, {"risk_observation"}):
+        items.append(decision_item(
+            title=f"代表股风险：{watch['theme']}", item_type="representative_risk",
+            conclusion=watch["assessment"], confidence="low", evidence=watch.get("evidence") or [],
+            watch_next=watch.get("confirm_rules") or [],
+            invalidation="代表股止跌并与板块同步回升后重新评估，不自动转为机会。",
+            tags=[watch["theme"]], source_files=["opportunity-watch.json"], tone="risk",
+            discovery_type="active_stock_scan", trigger_reason="当日代表股行情走弱，不再沿用盘前机会预期。",
+        ))
     post = current_payload(files, "postmarket.json", current_date)
     intraday = current_payload(files, "intraday.json", current_date)
     quality = files.get("quality-report.json") or {}
@@ -538,7 +539,7 @@ def build_verifications(files: dict[str, Any], current_date: str) -> list[dict[s
         rows.append(decision_item(
             title=f"盘中追踪：{title}",
             item_type="opportunity_watch",
-            conclusion=trim(first_text(watch.get("source_reason"), "盘前/晚间线索等待盘中量价触发。"), 150),
+            conclusion=first_text(watch.get("assessment"), "等待代表股和板块确认，目前仅作观察。"),
             confidence="low",
             evidence=watch.get("evidence") or [],
             watch_next=watch.get("confirm_rules") or [],

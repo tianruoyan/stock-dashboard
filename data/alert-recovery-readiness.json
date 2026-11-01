@@ -1,10 +1,10 @@
 {
-  "timestamp": "2026-10-20T15:06:27+08:00",
-  "current_signal_date": "2026-10-20",
-  "status": "session_closed",
-  "summary": "盘中监控已按计划收盘，保留的触发仅供复盘。",
+  "timestamp": "2026-11-01T22:08:41+08:00",
+  "current_signal_date": "2026-10-30",
+  "status": "historical_only",
+  "summary": "保留的异动均已过期或失效，仅供复盘。",
   "alert_state": {
-    "source_status": "monitor_session_closed",
+    "source_status": "monitor_waiting_update",
     "total_count": 2,
     "active_count": 0,
     "current_count": 0,
@@ -14,7 +14,7 @@
     "time_unverified_count": 0,
     "verified_count": 0,
     "unverified_count": 0,
-    "note": "盘中监控已按计划结束，今日保留2条短周期触发供收盘复盘；已过交易时效，不作为当前触发。"
+    "note": "行情暂时中断，已保留今天最近一次有效异动；卡片仍显示实际触发时间，恢复后会自动更新。"
   },
   "trusted_sources": [],
   "forbidden_sources": [],
@@ -3145,7 +3145,7 @@
       "id": "futu_minute_alert_verifier",
       "status": "ok",
       "window": "history",
-      "checked_at": "2026-10-19T10:13:56+08:00",
+      "checked_at": "2026-10-30T13:31:43+08:00",
       "usage": "盘中异动代表股第二行情源交叉验证"
     },
     {
@@ -5520,6 +5520,13 @@
       "window": "history",
       "checked_at": "2026-08-25T14:18:30+08:00",
       "usage": "14:16:43新增两条小登观察拉动；两题材3分钟均回到0.00%、强势股均为0、成交放大仅1.00x，14:05弱修复未延续，且至少2只涨停结构不可审计，因此证据门禁拦截candidate与confirmed。"
+    },
+    {
+      "id": "verified_intraday_20261020",
+      "status": "ok",
+      "window": "history",
+      "checked_at": "2026-10-20T11:00:39+08:00",
+      "usage": "本轮核验5个指数、98个行业、20只原观察池行情；涨跌家数和涨跌停、炸板统计均取得。未将其视为独立双源确认。"
     }
   ],
   "unverified_sources": [
@@ -5532,8 +5539,8 @@
     }
   ],
   "source_counts": {
-    "current": 1,
-    "historical": 786,
+    "current": 0,
+    "historical": 787,
     "unverified": 1
   },
   "recovery_policy": {
@@ -5560,7 +5567,7 @@
     ]
   },
   "next_actions": [
-    "下一交易日开盘后自动恢复短周期扫描。"
+    "保留历史记录，等待监控产生带有效期的新触发；不补造历史触发或核验。"
   ],
   "rules": [
     "该文件供自动化进程和构建门禁使用，不进入交易主页面。",

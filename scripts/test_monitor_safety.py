@@ -24,7 +24,23 @@ class MonitorSafetyTests(unittest.TestCase):
             {'theme':'当日线索','source_reason':'周四等待触发'}]}}
         titles=[row['title'] for row in feed.build_opportunities(files,'2026-09-10')]
         self.assertNotIn('待触发：旧线索',titles)
-        self.assertIn('待触发：当日线索',titles)
+        # Waiting plans are observations, even when their weekday is current.
+        self.assertNotIn('待触发：当日线索',titles)
+
+    def test_current_waiting_plan_is_observation_only_and_old_weekday_excluded(self):
+        class Clock(datetime):
+            @classmethod
+            def now(cls, tz=None):
+                return cls.fromisoformat('2026-09-10T10:00:00+08:00')
+        files={'opportunity-watch.json':{'schema_version':2,'current_signal_date':'2026-09-10',
+            'timestamp':'2026-09-10T10:00:00+08:00','items':[
+                {'theme':'旧线索','status':'waiting','source_reason':'周二等待触发'},
+                {'theme':'当日线索','status':'waiting','source_reason':'周四等待触发','assessment':'等待代表股确认'}]}}
+        with patch.object(feed, 'datetime', Clock):
+            self.assertEqual(feed.build_opportunities(files,'2026-09-10'),[])
+            titles=[row['title'] for row in feed.build_verifications(files,'2026-09-10')]
+            self.assertNotIn('盘中追踪：旧线索',titles)
+            self.assertIn('盘中追踪：当日线索',titles)
 
     def test_current_file_is_not_current_analysis(self):
         spec = next(s for s in health.EXPECTED if s['id'] == 'intraday')

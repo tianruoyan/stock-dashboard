@@ -193,7 +193,10 @@ function render(file, data) {
     renderPostmarket(data);
     if (cached('data/topics.json')) renderTopics(cached('data/topics.json'));
   }
-  else if (file === "data/watchlist-quotes.json") renderWatchlistDecision();
+  else if (file === "data/watchlist-quotes.json") {
+    renderWatchlistDecision();
+    rerenderAlertsIfLoaded();
+  }
   else if (file === "data/evening-sentiment.json") renderEvening(data);
   else if (file === "data/topics.json") renderTopics(data);
   else if (file === "data/quality-report.json") renderDataQualityGate();
@@ -3228,17 +3231,21 @@ function extractIntradayRepresentativeLeaders(evidence) {
 
 function renderOpportunityWatchQueue(activeAlerts = []) {
   const watch = cached("data/opportunity-watch.json") || {};
+  const clock = shanghaiClock();
+  if (watch.schema_version !== 2 || watch.current_signal_date !== clock.date ||
+      !isMarketOpenDate() || clock.minute >= 900 || parseTimestampMs(watch.timestamp) > Date.now()) return "";
   const items = Array.isArray(watch.items) ? watch.items : [];
   if (!items.length) return "";
-  const activeText = activeAlerts.map(a => [displayAlertSector(a), a.reason, a.type].join(" ")).join(" ");
+  const activeText = activeAlerts.filter(a => isAlertFresh(a, Date.now()))
+    .map(a => [displayAlertSector(a), a.reason, a.type].join(" ")).join(" ");
   const waiting = items
-    .filter(item => !activeText.includes(item.theme))
+    .filter(item => ["waiting", "premarket_watch", "risk_observation"].includes(item.status))
+    .filter(item => item.status === "risk_observation" || !activeText.includes(item.theme))
     .slice(0, 4);
   if (!waiting.length) return "";
   return `<div class="opportunity-watch-queue">
     <div class="opportunity-watch-head">
-      <b>等待触发的盘前重点</b>
-      <span>${formatUpdateTime(watch.timestamp) || "待更新"}</span>
+      <b>${clock.minute < 570 ? "盘前关注 · 等开盘确认" : "盘中跟踪 · 观察与风险"}</b>
     </div>
     <div class="opportunity-watch-grid">
       ${waiting.map(renderOpportunityWatchItem).join("")}
@@ -3247,16 +3254,33 @@ function renderOpportunityWatchQueue(activeAlerts = []) {
 }
 
 function renderOpportunityWatchItem(item) {
-  const stocks = Array.isArray(item.watch_stocks) ? item.watch_stocks.slice(0, 5) : [];
+  const clock = shanghaiClock();
+  let quotes = Array.isArray(item.representative_quotes) ? item.representative_quotes : [];
+  const names = new Set(item.watch_stocks || []);
+  const latest = (cached("data/watchlist-quotes.json")?.stocks || []).filter(q => names.has(q.name));
+  const outdated = quotes.some(q => !["行情已更新", "盘中行情，注意时差", "午间休市，上午行情"].includes(dataFreshness(q.quote_time))) ||
+    latest.some(q => parseTimestampMs(q.quote_time) > Math.max(0, ...quotes.filter(old => old.code === q.code).map(old => parseTimestampMs(old.quote_time))));
+  const checked = parseTimestampMs(item.last_checked_at);
+  const currentCheck = checked > 0 && checked <= Date.now() && shanghaiClock(new Date(checked)).date === clock.date;
+  let risk = item.status === "risk_observation" && quotes.length >= 2 && !outdated && currentCheck;
+  let assessment = item.assessment || "等待代表股和板块确认，目前仅作观察。";
+  let label = risk ? "风险观察" : clock.minute < 570 ? "盘前关注" : "等待确认";
+  if (!currentCheck || (clock.minute >= 570 && (outdated || item.status === "premarket_watch" ||
+      (item.status === "risk_observation" && quotes.length < 2)))) {
+    assessment = "行情已变化或需要更新，等待重新核对代表股；暂不列为优先机会。";
+    quotes = [];
+    risk = false;
+    label = "等待行情核对";
+  }
   const rules = Array.isArray(item.confirm_rules) ? item.confirm_rules.slice(0, 2) : [];
   const invalid = Array.isArray(item.invalidate_rules) ? item.invalidate_rules[0] : "";
-  const priority = item.priority === "high" ? "高优先" : item.priority === "medium" ? "中优先" : "观察";
   return `<div class="opportunity-watch-card">
-    <div class="card-head"><span class="badge watch">${escapeHtml(priority)}</span><b>${escapeHtml(item.theme || "待跟踪")}</b></div>
-    <div class="card-body">${escapeHtml(item.source_phase || "线索")} · ${escapeHtml(item.source_reason || "等待盘中触发")}</div>
-    ${stocks.length ? `<div class="card-leaders">${stocks.map(name => `<span class="leader">${escapeHtml(name)}</span>`).join("")}</div>` : ""}
-    ${rules.length ? `<div class="alert-confirm"><b>触发看</b><span>${escapeHtml(rules.join("；"))}</span></div>` : ""}
-    ${invalid ? `<div class="alert-resolution stale"><b>失效看</b><span>${escapeHtml(invalid)}</span></div>` : ""}
+    <div class="card-head"><span class="badge ${risk ? "risk" : "watch"}">${escapeHtml(label)}</span><b>${escapeHtml(item.theme || "待跟踪")}</b></div>
+    <div class="card-body">${escapeHtml(assessment)}</div>
+    ${quotes.length ? `<div class="card-leaders">${quotes.map(q => `<span class="leader">${escapeHtml(q.name)}（${escapeHtml(String(q.code).slice(2))}） <span class="pct ${Number(q.change_pct) >= 0 ? "up" : "down"}">${Number(q.change_pct) > 0 ? "+" : ""}${Number(q.change_pct).toFixed(2)}%</span> · ${escapeHtml(formatUpdateTime(q.quote_time))} · ${escapeHtml(q.source)}</span>`).join("")}</div>` : ""}
+    ${!risk && item.source_as_of ? `<details><summary>原关注理由 · ${escapeHtml(formatUpdateTime(item.source_as_of))}</summary><div class="card-body">${escapeHtml(userFacingText(item.source_reason))}</div></details>` : ""}
+    ${rules.length ? `<div class="alert-confirm"><b>继续看</b><span>${escapeHtml(userFacingText(rules.join("；")))}</span></div>` : ""}
+    ${invalid ? `<div class="alert-resolution stale"><b>风险条件</b><span>${escapeHtml(userFacingText(invalid))}</span></div>` : ""}
   </div>`;
 }
 

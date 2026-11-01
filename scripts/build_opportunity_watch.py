@@ -2,11 +2,14 @@
 from __future__ import annotations
 
 import json
+import math
 import re
+import tempfile
 from datetime import datetime, timezone, timedelta
 from pathlib import Path
 from typing import Any
-from data_validity import topic_current
+from data_validity import topic_current, premarket_timing
+from intraday_recovery import is_trading_day
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -49,32 +52,149 @@ THEME_PATTERNS = [
 ]
 
 RISK_WORDS = re.compile(r"风险|压制|回避|退潮|不升级|暂不|弱|高位分歧|兑现")
-POSITIVE_WORDS = re.compile(r"强化|强主线|强分支|提振|共振|优先|受益|修复|偏强")
 
 
 def main() -> int:
     premarket = load_json(DATA_DIR / "premarket.json")
     evening = load_json(DATA_DIR / "evening-sentiment.json")
     topics = load_json(DATA_DIR / "topics.json")
-    items = dedupe_items([
-        *items_from_premarket(premarket),
-        *items_from_evening(evening),
-        *items_from_topics(topics),
-    ])
-    report = {
-        "timestamp": now_iso(),
-        "current_signal_date": latest_signal_date(premarket, evening, topics),
-        "items": rank_items(items)[:12],
-        "rules": [
-            "盘前/晚间/专题只生成等待触发清单，不直接生成交易指令。",
-            "盘中正式机会必须由 alert.json 的短周期价格、成交和扩散证据确认。",
-            "候选机会可先提醒，但必须标注确认度和还差什么确认。",
-            "超过5分钟未继续确认的盘中异动只能作为历史触发。",
-        ],
-    }
-    OUT.write_text(json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    report = build_report(premarket, evening, topics, load_json(DATA_DIR / "watchlist-quotes.json"))
+    with tempfile.NamedTemporaryFile(mode="w", encoding="utf-8", dir=DATA_DIR, suffix=".tmp", delete=False) as tmp:
+        tmp.write(json.dumps(report, ensure_ascii=False, indent=2) + "\n")
+    Path(tmp.name).replace(OUT)
     print(f"opportunity-watch: {len(report['items'])} items")
     return 0
+
+
+def stamp(value: Any) -> datetime | None:
+    raw = str(value or "")
+    try:
+        if re.fullmatch(r"\d{14}", raw):
+            return datetime.strptime(raw, "%Y%m%d%H%M%S").replace(tzinfo=TZ)
+        parsed = datetime.fromisoformat(raw.replace("Z", "+00:00"))
+        return parsed.astimezone(TZ) if parsed.tzinfo is not None else None
+    except ValueError:
+        return None
+
+
+def research_stamp(data: dict[str, Any]) -> datetime | None:
+    return stamp(next((data[k] for k in ("analysis_time", "research_updated_at", "updated_at", "timestamp") if k in data), None))
+
+
+def previous_session(now: datetime) -> str:
+    for days in range(1, 16):
+        candidate = now - timedelta(days=days)
+        if is_trading_day(ROOT, candidate):
+            return candidate.date().isoformat()
+    return ""
+
+
+def build_report(premarket, evening, topics, quotes, now=None):
+    now = (now or datetime.now(TZ)).astimezone(TZ)
+    day = now.date().isoformat()
+    rows = []
+    if is_trading_day(ROOT, now):
+        authored = research_stamp(premarket)
+        if (premarket_timing(premarket, now).get("target_date") == day and authored and authored <= now
+                and stamp(premarket.get("timestamp")) and stamp(premarket["timestamp"]) <= now
+                and not premarket.get("historical_backfill")):
+            rows.extend(items_from_premarket(premarket))
+            for row in rows:
+                row["source_as_of"] = authored.isoformat()
+        authored = research_stamp(evening)
+        previous = previous_session(now)
+        # An early-morning file stamped today cannot renew an older evening report.
+        if (previous and evening.get("trade_date") == previous and authored and authored <= now
+                and authored >= datetime.fromisoformat(previous + "T15:00:00+08:00")
+                and not evening.get("historical_backfill")):
+            for row in items_from_evening(evening):
+                row["source_as_of"] = authored.isoformat()
+                rows.append(row)
+        rows.extend(items_from_topics(topics, day=day, now=now))
+        rows = dedupe_items(rows)
+        # Keep current downside evidence even when the old research has expired.
+        # This is representative-stock risk, not a new sector opportunity or asset.
+        known = {row["theme"] for row in rows}
+        for theme in THEME_STOCKS:
+            if theme not in known:
+                probe = assess_item(make_item(theme, "盘中行情", "", "low"), quotes, now)
+                if probe["status"] == "risk_observation":
+                    rows.append(probe)
+        rows = [assess_item(row, quotes, now) for row in rows]
+    return {
+        "schema_version": 2,
+        "timestamp": now.isoformat(timespec="seconds"),
+        "current_signal_date": day,
+        "items": rank_items(rows)[:12],
+        "rules": [
+            "今日研究与盘中行情分开；过期研究不得因重新构建而成为今日重点。",
+            "盘前/晚间/专题只生成观察清单，条件性共振不代表已经确认。",
+            "代表股走弱转为风险观察，单日上涨也不能直接成为交易机会。",
+            "盘中正式机会必须由 alert.json 的短周期价格、成交和扩散证据确认。",
+        ],
+    }
+
+
+def representative_quotes(item, quotes, now):
+    minute = now.hour * 60 + now.minute
+    if minute < 570 or minute >= 900:
+        return []
+    rows = {}
+    for quote in quotes.get("stocks") or []:
+        if not isinstance(quote, dict) or quote.get("name") not in item["watch_stocks"]:
+            continue
+        code = str(quote.get("code") or "")
+        at = stamp(quote.get("quote_time"))
+        if not re.fullmatch(r"(?:sh|sz|bj)\d{6}", code) or not at or not quote.get("source"):
+            continue
+        if at.date() != now.date() or at > now or at.hour * 60 + at.minute < 570:
+            continue
+        lunch = 690 <= minute < 780 and 685 <= at.hour * 60 + at.minute <= 690
+        if (now - at).total_seconds() > 1200 and not lunch:
+            continue
+        try:
+            price, opening, pct = (float(quote[k]) for k in ("price", "open", "change_pct"))
+        except (KeyError, ValueError, TypeError):
+            continue
+        if not all(math.isfinite(v) for v in (price, opening, pct)) or min(price, opening) <= 0:
+            continue
+        row = {k: quote[k] for k in ("code", "name", "source")}
+        row.update(price=price, open=opening, change_pct=pct, quote_time=at.isoformat())
+        if code not in rows or row["quote_time"] > rows[code]["quote_time"]:
+            rows[code] = row
+    if not rows:
+        return []
+    newest = max(stamp(row["quote_time"]) for row in rows.values())
+    # Do not combine different sampling windows into a majority vote.
+    return [row for row in rows.values() if (newest - stamp(row["quote_time"])).total_seconds() <= 120]
+
+
+def assess_item(item, quotes, now):
+    item = dict(item)
+    item.update(priority="medium", status="waiting", last_checked_at=now.isoformat(timespec="seconds"))
+    rows = representative_quotes(item, quotes, now)
+    item["representative_quotes"] = rows
+    item["evidence"] = [f'{q["name"]}（{q["code"][2:]}）{q["change_pct"]:+.2f}%，'
+                        f'{q["quote_time"][11:19]}，{q["source"]}' for q in rows]
+    item["assessment"] = "等待代表股最新行情，暂不列为优先机会。"
+    minute = now.hour * 60 + now.minute
+    if minute < 570:
+        item.update(status="premarket_watch", assessment="盘前关注，开盘后再看代表股与板块是否一起走强。")
+    elif minute >= 900:
+        item.update(status="session_closed", assessment="已收盘，盘前计划仅供回看。")
+    elif len(rows) >= 2:
+        weak = [q for q in rows if q["change_pct"] <= -3 and q["price"] < q["open"]]
+        negative = [q for q in rows if q["change_pct"] < 0 and q["price"] < q["open"]]
+        if len(weak) >= 2 and len(weak) > len(rows) / 2:
+            item.update(status="risk_observation", priority="low",
+                        assessment="已取得行情的代表股多数明显下跌，且低于开盘价；先看下跌风险，暂不列为优先机会。")
+            item["confirm_rules"] = ["等代表股止跌、收复开盘价，再核对板块是否同步回升；单股反弹不算确认。"]
+            item["invalidate_rules"] = ["代表股继续下探、板块跟随走弱时，不按修复机会看待。"]
+        elif len(negative) >= 2 and len(negative) > len(rows) / 2:
+            item["assessment"] = "已取得行情的代表股多数偏弱，尚未支持盘前预期；等待止跌，不作为优先机会。"
+        else:
+            item["assessment"] = "代表股涨跌见下方；还需板块跟涨、成交和持续性确认，目前仅作观察。"
+    return item
 
 
 def items_from_premarket(data: dict[str, Any]) -> list[dict[str, Any]]:
@@ -106,16 +226,19 @@ def items_from_evening(data: dict[str, Any]) -> list[dict[str, Any]]:
     return rows
 
 
-def items_from_topics(data: dict[str, Any]) -> list[dict[str, Any]]:
+def items_from_topics(data: dict[str, Any], day=None, now=None) -> list[dict[str, Any]]:
+    now = now or datetime.now(TZ)
+    day = day or now.astimezone(TZ).date().isoformat()
     rows: list[dict[str, Any]] = []
     for topic in data.get("topics") or []:
-        if not isinstance(topic, dict) or not topic_current(topic, str(data.get("trade_date") or data.get("timestamp") or "")[:10]):
+        if not isinstance(topic, dict) or not topic_current(topic, day, now=now):
             continue
         text = compact_text([topic.get("name"), topic.get("status"), topic.get("conclusion"), topic.get("action"), topic.get("note")])
         theme = normalize_theme(topic.get("name") or "") or first_theme(text)
         if theme:
-            priority = "high" if POSITIVE_WORDS.search(text) else "medium"
-            rows.append(make_item(theme, "专题", text, priority))
+            item = make_item(theme, "专题", text, "medium")
+            item["source_as_of"] = research_stamp(topic).isoformat()
+            rows.append(item)
     return rows
 
 
@@ -126,7 +249,7 @@ def make_item(theme: str, source_phase: str, reason: Any, priority: str) -> dict
     return {
         "id": slug(theme),
         "theme": theme,
-        "priority": priority,
+        "priority": "medium",  # Importance of a plan is not evidence of a trade.
         "source_phase": source_phase,
         "source_reason": reason_text or f"{source_phase}提示需跟踪",
         "watch_stocks": THEME_STOCKS.get(theme, infer_stocks(reason_text))[:6],
@@ -152,9 +275,8 @@ def confirm_rules(theme: str, riskish: bool) -> list[str]:
             "涨停/成交额向金融、消费防御或资源权重扩散",
         ]
     return [
-        "题材3分钟涨跌幅>=1.5%，方向占比>=70%，成交放大>=5x",
-        "板块内出现批量涨停/封板或后排扩散",
-        "核心股、ETF、后排扩散同向确认",
+        "先看代表股能否持续走强，再看同板块是否有更多股票跟涨。",
+        "成交同步增加、板块涨势持续后，再看正式异动提示；短线急拉不算确认。",
     ]
 
 
@@ -170,6 +292,7 @@ def rank_items(items: list[dict[str, Any]]) -> list[dict[str, Any]]:
     return sorted(
         items,
         key=lambda item: (
+            item.get("status") == "risk_observation",
             priority_score.get(item.get("priority"), 0),
             source_score.get(item.get("source_phase"), 0),
             len(item.get("watch_stocks") or []),

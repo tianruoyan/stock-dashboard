@@ -78,10 +78,9 @@ class TopicValidityTests(unittest.TestCase):
     def downstream(self, item):
         data = {"timestamp": "2026-10-12T15:45:00+08:00", "trade_date": self.day, "topics": [item]}
         gate = partial(topic_current, now=self.now)
-        with patch.object(opportunities, "topic_current", side_effect=gate), \
-             patch.object(decisions, "topic_current", side_effect=gate), \
+        with patch.object(decisions, "topic_current", side_effect=gate), \
              patch.object(shifts, "topic_current", side_effect=gate):
-            return [opportunities.items_from_topics(data),
+            return [opportunities.items_from_topics(data, day=self.day, now=self.now),
                     decisions.risk_theme_candidates({"topics.json": data}, self.day),
                     shifts.collect_candidates({}, {}, {}, data)]
 
