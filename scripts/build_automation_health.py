@@ -194,6 +194,40 @@ def evidence_issue(spec: dict[str, Any], data: dict[str, Any], now: datetime, da
     return "；".join(coverage[key]["reason"] for key in keys if key in coverage and coverage[key].get("reason"))
 
 
+def upcoming_premarket_row(spec: dict[str, Any], data: dict[str, Any], now: datetime) -> dict[str, Any] | None:
+    """Recognize an advance plan, without certifying the morning checkpoint."""
+    if spec["id"] != "premarket" or data.get("status") != "premarket_plan_pending_auction":
+        return None
+    if data.get("source_status") == "invalidated":
+        return None
+    try:
+        _, target = calendar_dates(now)
+        due = due_datetime(target, spec["due"])
+        previous, _ = calendar_dates(due.replace(hour=0, minute=0) - timedelta(days=1))
+    except (ValueError, TypeError):
+        return None
+    if now >= due or data.get("trade_date") != target or data.get("date", target) != target:
+        return None
+    stamp = parse_timestamp(data.get("timestamp"))
+    analysis = parse_timestamp(data.get("analysis_time"))
+    previous_close = due_datetime(previous, "15:00")
+    if not stamp or not analysis or not previous_close <= analysis <= stamp <= now:
+        return None
+    reason = f"{target} 盘前预案已到位；仍待当日盘前更新与竞价确认"
+    return {
+        "id": spec["id"], "label": spec["label"], "file": f"data/{spec['file']}",
+        "due": spec["due"], "deadline": now_iso(due + timedelta(minutes=int(spec["grace_minutes"]))),
+        "timestamp": data["timestamp"], "status": "waiting",
+        "data_status": "degraded" if data.get("source_status") in {"degraded", "degraded_partial"} else "check_source_quality",
+        "blocking": False, "action": "等待盘前更新与竞价确认", "reason": reason,
+        "failure_type": "not_due", "diagnosis": reason,
+        "next_actions": ["保留预案原分析时间；当日盘前更新和竞价事实仍须分别核验。"],
+        "related_sources": [], "target_trade_date": target,
+        "analysis_coverage": {"status": "pending", "timestamp": now_iso(analysis),
+                              "required_at": now_iso(due), "reason": reason},
+    }
+
+
 def next_session_row(spec: dict[str, Any], now: datetime, target_date: str) -> dict[str, Any]:
     if spec["id"] == "alerts" and target_date == now.date().isoformat():
         row = monitor_health_row(spec, now, target_date)
@@ -203,6 +237,9 @@ def next_session_row(spec: dict[str, Any], now: datetime, target_date: str) -> d
     path = DATA_DIR / spec["file"]
     data = load_json(path)
     data = data if isinstance(data, dict) else {}
+    plan = upcoming_premarket_row(spec, data, now)
+    if plan and plan["target_trade_date"] == target_date:
+        return {**plan, "status": "pending", "file_date": signal_date(plan["timestamp"])}
     ts = data.get("timestamp") if isinstance(data, dict) else ""
     file_date = signal_date(ts)
     due_at = required_evidence_at(spec, now, target_date)
@@ -247,6 +284,9 @@ def check_expected(spec: dict[str, Any], now: datetime, current_date: str, sourc
     deadline = due_at + timedelta(minutes=5 if spec["id"] == "intraday" else int(spec["grace_minutes"]))
     data = load_json(path)
     data = data if isinstance(data, dict) else {}
+    plan = upcoming_premarket_row(spec, data, now)
+    if plan:
+        return plan
     ts = data.get("timestamp") if isinstance(data, dict) else ""
     file_date = signal_date(ts)
     status = "ok"
