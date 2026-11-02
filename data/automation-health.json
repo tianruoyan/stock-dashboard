@@ -1,15 +1,15 @@
 {
-  "timestamp": "2026-11-01T22:08:41+08:00",
-  "current_signal_date": "2026-10-30",
+  "timestamp": "2026-11-02T08:30:04+08:00",
+  "current_signal_date": "2026-11-02",
   "target_trade_date": "2026-11-02",
-  "overall_status": "degraded",
-  "summary": "5 个自动化产出异常：盘前简报、盘中全景、午盘分析、晚间舆情。",
+  "overall_status": "waiting",
+  "summary": "6 个自动化尚未到产出窗口：盘中全景、盘中异动、午盘分析、盘后复盘。",
   "counts": {
     "ok": 1,
-    "late": 5,
+    "late": 0,
     "missing": 0,
     "invalidated": 0,
-    "waiting": 1
+    "waiting": 6
   },
   "processes": [
     {
@@ -17,25 +17,24 @@
       "label": "盘前简报",
       "file": "data/premarket.json",
       "due": "08:30",
-      "deadline": "2026-10-30T08:35:00+08:00",
-      "timestamp": "2026-11-01T22:06:26+08:00",
-      "status": "late",
-      "data_status": "unavailable",
+      "deadline": "2026-11-02T08:35:00+08:00",
+      "timestamp": "2026-11-02T08:30:02+08:00",
+      "status": "ok",
+      "data_status": "check_source_quality",
       "blocking": false,
-      "action": "重跑该自动化",
-      "reason": "时间戳不是当前交易日：2026-11-01T22:06:26+08:00",
-      "failure_type": "stale_or_time_anomaly",
-      "diagnosis": "时间戳不是当前交易日：2026-11-01T22:06:26+08:00",
+      "action": "正常使用",
+      "reason": "当日产出已到位",
+      "failure_type": "none",
+      "diagnosis": "产出正常，未发现自动化层异常。",
       "next_actions": [
-        "核对文件 timestamp 是否由自动化真实写入。",
-        "重跑自动化，避免使用上一交易日或异常超前数据。"
+        "正常读取；仍需结合数据质量卡判断是否降权。"
       ],
       "related_sources": [],
       "analysis_coverage": {
-        "status": "stale",
-        "timestamp": "2026-11-01T22:06:26+08:00",
-        "required_at": "2026-10-30T08:30:00+08:00",
-        "reason": "分析未覆盖应有检查点 08:30"
+        "status": "ready",
+        "timestamp": "2026-11-02T08:30:02+08:00",
+        "required_at": "2026-11-02T08:30:00+08:00",
+        "reason": ""
       }
     },
     {
@@ -43,34 +42,32 @@
       "label": "盘中全景",
       "file": "data/intraday.json",
       "due": "15:05",
-      "deadline": "2026-10-30T15:05:00+08:00",
+      "deadline": "2026-11-02T09:35:00+08:00",
       "timestamp": "2026-10-30T09:33:36+08:00",
-      "status": "late",
-      "data_status": "unavailable",
+      "status": "waiting",
+      "data_status": "check_source_quality",
       "blocking": false,
-      "action": "等待当前检查点数据",
-      "reason": "仅有行情事实快照，尚无本检查点分析",
-      "failure_type": "missing_intraday_checkpoint",
-      "diagnosis": "仅有行情事实快照，尚无本检查点分析",
+      "action": "等待产出",
+      "reason": "计划 15:05 后产出",
+      "failure_type": "not_due",
+      "diagnosis": "计划 15:05 后产出",
       "next_actions": [
-        "分别检查行情与分析覆盖；收盘行情必须来自当日15:00及之后的真实报价。",
-        "行情恢复只补事实，保留原分析时间，不补造错过的15:00分析。",
-        "缺失分析需在Mac核验仓库外的研究任务与Codex调度；不能由补采成功视为恢复。"
+        "计划 15:05 产出；宽限内继续检查实际证据。"
       ],
       "related_sources": [],
       "analysis_coverage": {
         "status": "missing",
         "timestamp": "2026-10-30T09:33:36+08:00",
-        "required_at": "2026-10-30T15:00:00+08:00",
+        "required_at": "2026-11-02T09:30:00+08:00",
         "reason": "仅有行情事实快照，尚无本检查点分析"
       },
       "recovery_scope": "quotes_only",
       "analysis_producer": "external_codex_schedule_requires_mac_verification",
       "quote_coverage": {
-        "status": "ready",
+        "status": "stale",
         "timestamp": "2026-10-30T15:31:00+08:00",
-        "required_at": "2026-10-30T15:00:00+08:00",
-        "reason": ""
+        "required_at": "2026-11-02T09:25:00+08:00",
+        "reason": "行情未覆盖应有检查点 09:25"
       }
     },
     {
@@ -79,7 +76,7 @@
       "file": "data/alert.json",
       "due": "交易时段持续检查",
       "timestamp": "2026-10-30T14:22:15+08:00",
-      "deadline": "2026-11-01T22:08:41+08:00",
+      "deadline": "2026-11-02T08:30:04+08:00",
       "status": "waiting",
       "data_status": "unavailable",
       "blocking": false,
@@ -97,24 +94,23 @@
       "label": "午盘分析",
       "file": "data/midday.json",
       "due": "11:30",
-      "deadline": "2026-10-30T12:00:00+08:00",
+      "deadline": "2026-11-02T12:00:00+08:00",
       "timestamp": "2026-10-28T11:32:07+08:00",
-      "status": "late",
-      "data_status": "unavailable",
+      "status": "waiting",
+      "data_status": "check_source_quality",
       "blocking": false,
-      "action": "重跑该自动化",
-      "reason": "时间戳不是当前交易日：2026-10-28T11:32:07+08:00",
-      "failure_type": "stale_or_time_anomaly",
-      "diagnosis": "时间戳不是当前交易日：2026-10-28T11:32:07+08:00",
+      "action": "等待产出",
+      "reason": "计划 11:30 后产出",
+      "failure_type": "not_due",
+      "diagnosis": "计划 11:30 后产出",
       "next_actions": [
-        "核对文件 timestamp 是否由自动化真实写入。",
-        "重跑自动化，避免使用上一交易日或异常超前数据。"
+        "计划 11:30 产出；宽限内继续检查实际证据。"
       ],
       "related_sources": [],
       "analysis_coverage": {
         "status": "stale",
         "timestamp": "2026-10-28T11:32:07+08:00",
-        "required_at": "2026-10-30T11:30:00+08:00",
+        "required_at": "2026-11-02T11:30:00+08:00",
         "reason": "分析未覆盖应有检查点 11:30"
       }
     },
@@ -123,24 +119,24 @@
       "label": "盘后复盘",
       "file": "data/postmarket.json",
       "due": "15:10",
-      "deadline": "2026-10-30T15:20:00+08:00",
+      "deadline": "2026-11-02T15:20:00+08:00",
       "timestamp": "2026-10-30T16:35:10+08:00",
-      "status": "ok",
+      "status": "waiting",
       "data_status": "check_source_quality",
       "blocking": false,
-      "action": "正常使用",
-      "reason": "当日产出已到位",
-      "failure_type": "none",
-      "diagnosis": "产出正常，未发现自动化层异常。",
+      "action": "等待产出",
+      "reason": "计划 15:10 后产出",
+      "failure_type": "not_due",
+      "diagnosis": "计划 15:10 后产出",
       "next_actions": [
-        "正常读取；仍需结合数据质量卡判断是否降权。"
+        "计划 15:10 产出；宽限内继续检查实际证据。"
       ],
       "related_sources": [],
       "analysis_coverage": {
-        "status": "ready",
+        "status": "stale",
         "timestamp": "2026-10-30T16:35:10+08:00",
-        "required_at": "2026-10-30T15:10:00+08:00",
-        "reason": ""
+        "required_at": "2026-11-02T15:10:00+08:00",
+        "reason": "分析未覆盖应有检查点 15:10"
       }
     },
     {
@@ -148,24 +144,23 @@
       "label": "晚间舆情",
       "file": "data/evening-sentiment.json",
       "due": "20:00",
-      "deadline": "2026-10-30T21:30:00+08:00",
+      "deadline": "2026-11-02T21:30:00+08:00",
       "timestamp": "2026-11-01T22:04:39+08:00",
-      "status": "late",
-      "data_status": "unavailable",
+      "status": "waiting",
+      "data_status": "check_source_quality",
       "blocking": false,
-      "action": "重跑该自动化",
-      "reason": "时间戳不是当前交易日：2026-11-01T22:04:39+08:00",
-      "failure_type": "stale_or_time_anomaly",
-      "diagnosis": "时间戳不是当前交易日：2026-11-01T22:04:39+08:00",
+      "action": "等待产出",
+      "reason": "计划 20:00 后产出",
+      "failure_type": "not_due",
+      "diagnosis": "计划 20:00 后产出",
       "next_actions": [
-        "核对文件 timestamp 是否由自动化真实写入。",
-        "重跑自动化，避免使用上一交易日或异常超前数据。"
+        "计划 20:00 产出；宽限内继续检查实际证据。"
       ],
       "related_sources": [],
       "analysis_coverage": {
         "status": "stale",
         "timestamp": "2026-11-01T22:04:39+08:00",
-        "required_at": "2026-10-30T20:00:00+08:00",
+        "required_at": "2026-11-02T20:00:00+08:00",
         "reason": "分析未覆盖应有检查点 20:00"
       }
     },
@@ -174,15 +169,15 @@
       "label": "专题跟踪",
       "file": "data/topics.json",
       "due": "15:30",
-      "deadline": "2026-10-30T18:30:00+08:00",
+      "deadline": "2026-11-02T18:30:00+08:00",
       "timestamp": "2026-11-01T22:06:26+08:00",
-      "status": "late",
-      "data_status": "unavailable",
+      "status": "waiting",
+      "data_status": "check_source_quality",
       "blocking": false,
-      "action": "重跑该自动化",
-      "reason": "时间戳不是当前交易日：2026-11-01T22:06:26+08:00",
-      "failure_type": "missing_topic_research",
-      "diagnosis": "时间戳不是当前交易日：2026-11-01T22:06:26+08:00",
+      "action": "等待产出",
+      "reason": "计划 15:30 后产出",
+      "failure_type": "research_checkpoint_pending",
+      "diagnosis": "计划 15:30 后产出",
       "next_actions": [
         "15:30是专题研究检查点；18:30仅为宽限截止，不是第二次生产任务。",
         "build_topics.py只补代表股事实；重跑不能补齐缺失研究，不能改写原研究时间。",
@@ -193,92 +188,92 @@
         "status": "missing",
         "ready_count": 0,
         "total_count": 9,
-        "required_at": "2026-10-30T15:30:00+08:00",
+        "required_at": "2026-11-02T15:30:00+08:00",
         "reason": "专题研究未覆盖15:30检查点（0/9项）；代表股事实更新不替代研究",
         "items": [
           {
-            "status": "missing",
-            "timestamp": "",
-            "required_at": "2026-10-30T15:30:00+08:00",
-            "reason": "专题研究时间缺失或无法解析",
+            "status": "stale",
+            "timestamp": "2026-11-01T22:07:54+08:00",
+            "required_at": "2026-11-02T15:30:00+08:00",
+            "reason": "专题研究未覆盖应有检查点 15:30",
             "name": "AI模型/AI应用"
           },
           {
-            "status": "missing",
-            "timestamp": "",
-            "required_at": "2026-10-30T15:30:00+08:00",
-            "reason": "专题研究时间缺失或无法解析",
+            "status": "stale",
+            "timestamp": "2026-11-01T22:07:54+08:00",
+            "required_at": "2026-11-02T15:30:00+08:00",
+            "reason": "专题研究未覆盖应有检查点 15:30",
             "name": "科技硬件链"
           },
           {
-            "status": "missing",
-            "timestamp": "",
-            "required_at": "2026-10-30T15:30:00+08:00",
-            "reason": "专题研究时间缺失或无法解析",
+            "status": "stale",
+            "timestamp": "2026-11-01T22:07:54+08:00",
+            "required_at": "2026-11-02T15:30:00+08:00",
+            "reason": "专题研究未覆盖应有检查点 15:30",
             "name": "光模块/高速互联"
           },
           {
-            "status": "missing",
-            "timestamp": "",
-            "required_at": "2026-10-30T15:30:00+08:00",
-            "reason": "专题研究时间缺失或无法解析",
+            "status": "stale",
+            "timestamp": "2026-11-01T22:07:54+08:00",
+            "required_at": "2026-11-02T15:30:00+08:00",
+            "reason": "专题研究未覆盖应有检查点 15:30",
             "name": "AI内存与存储"
           },
           {
-            "status": "missing",
-            "timestamp": "",
-            "required_at": "2026-10-30T15:30:00+08:00",
-            "reason": "专题研究时间缺失或无法解析",
+            "status": "stale",
+            "timestamp": "2026-11-01T22:07:54+08:00",
+            "required_at": "2026-11-02T15:30:00+08:00",
+            "reason": "专题研究未覆盖应有检查点 15:30",
             "name": "半导体设备材料"
           },
           {
-            "status": "missing",
-            "timestamp": "",
-            "required_at": "2026-10-30T15:30:00+08:00",
-            "reason": "专题研究时间缺失或无法解析",
+            "status": "stale",
+            "timestamp": "2026-11-01T22:07:54+08:00",
+            "required_at": "2026-11-02T15:30:00+08:00",
+            "reason": "专题研究未覆盖应有检查点 15:30",
             "name": "消费电子/端侧AI"
           },
           {
-            "status": "missing",
-            "timestamp": "",
-            "required_at": "2026-10-30T15:30:00+08:00",
-            "reason": "专题研究时间缺失或无法解析",
+            "status": "stale",
+            "timestamp": "2026-11-01T22:07:54+08:00",
+            "required_at": "2026-11-02T15:30:00+08:00",
+            "reason": "专题研究未覆盖应有检查点 15:30",
             "name": "机器人/工业自动化"
           },
           {
-            "status": "missing",
-            "timestamp": "",
-            "required_at": "2026-10-30T15:30:00+08:00",
-            "reason": "专题研究时间缺失或无法解析",
+            "status": "stale",
+            "timestamp": "2026-11-01T22:07:54+08:00",
+            "required_at": "2026-11-02T15:30:00+08:00",
+            "reason": "专题研究未覆盖应有检查点 15:30",
             "name": "智能驾驶"
           },
           {
-            "status": "missing",
-            "timestamp": "",
-            "required_at": "2026-10-30T15:30:00+08:00",
-            "reason": "专题研究时间缺失或无法解析",
+            "status": "stale",
+            "timestamp": "2026-11-01T22:07:54+08:00",
+            "required_at": "2026-11-02T15:30:00+08:00",
+            "reason": "专题研究未覆盖应有检查点 15:30",
             "name": "医药修复链"
           }
         ]
       },
       "representative_coverage": {
-        "status": "available",
-        "ready_count": 2,
+        "status": "missing",
+        "ready_count": 0,
         "total_count": 9,
         "scope": "representatives_only",
         "items": [
           {
-            "status": "ready",
+            "status": "missing",
             "timestamp": "2026-10-30T16:14:55+08:00",
-            "required_at": "2026-10-30T15:00:00+08:00",
-            "reason": "",
+            "required_at": "2026-11-02T15:00:00+08:00",
+            "reason": "尚无完整当日可验证收盘行情",
             "name": "机器人/工业自动化"
           },
           {
-            "status": "ready",
+            "status": "missing",
             "timestamp": "2026-10-30T16:14:55+08:00",
-            "required_at": "2026-10-30T15:00:00+08:00",
-            "reason": "",
+            "required_at": "2026-11-02T15:00:00+08:00",
+            "reason": "尚无完整当日可验证收盘行情",
             "name": "医药修复链"
           }
         ]
@@ -293,9 +288,9 @@
   "next_session_readiness": {
     "target_trade_date": "2026-11-02",
     "status": "pending",
-    "summary": "2026-11-02 开盘链路待产出：盘前简报 08:30。",
-    "pending_count": 7,
-    "ready_count": 0,
+    "summary": "2026-11-02 开盘链路待产出：盘中全景 15:05。",
+    "pending_count": 6,
+    "ready_count": 1,
     "overdue_count": 0,
     "items": [
       {
@@ -304,16 +299,16 @@
         "file": "data/premarket.json",
         "due": "08:30",
         "deadline": "2026-11-02T08:35:00+08:00",
-        "timestamp": "2026-11-01T22:06:26+08:00",
-        "file_date": "2026-11-01",
-        "status": "pending",
-        "action": "等待产出",
-        "reason": "计划 08:30 后产出",
+        "timestamp": "2026-11-02T08:30:02+08:00",
+        "file_date": "2026-11-02",
+        "status": "ready",
+        "action": "已产出",
+        "reason": "目标交易日文件已更新",
         "analysis_coverage": {
-          "status": "stale",
-          "timestamp": "2026-11-01T22:06:26+08:00",
+          "status": "ready",
+          "timestamp": "2026-11-02T08:30:02+08:00",
           "required_at": "2026-11-02T08:30:00+08:00",
-          "reason": "分析未覆盖应有检查点 08:30"
+          "reason": ""
         }
       },
       {
@@ -346,19 +341,21 @@
         "id": "alerts",
         "label": "盘中异动",
         "file": "data/alert.json",
-        "due": "15:00",
-        "deadline": "2026-11-02T15:05:00+08:00",
-        "timestamp": "2026-10-30T13:30:36+08:00",
-        "file_date": "2026-10-30",
+        "due": "交易时段持续检查",
+        "timestamp": "2026-10-30T14:22:15+08:00",
+        "deadline": "2026-11-02T08:30:04+08:00",
         "status": "pending",
-        "action": "等待产出",
-        "reason": "计划 15:00 后产出",
-        "analysis_coverage": {
-          "status": "stale",
-          "timestamp": "2026-10-30T13:30:36+08:00",
-          "required_at": "2026-11-02T15:00:00+08:00",
-          "reason": "分析未覆盖应有检查点 15:00"
-        }
+        "data_status": "unavailable",
+        "blocking": false,
+        "action": "查看监控状态",
+        "reason": "当前不在连续交易时段，保留最近触发供回看",
+        "failure_type": "not_due",
+        "diagnosis": "当前不在连续交易时段，保留最近触发供回看",
+        "next_actions": [
+          "继续检查最新行情与监控心跳；保留历史触发，不补造错过的信号。"
+        ],
+        "related_sources": [],
+        "file_date": "2026-10-30"
       },
       {
         "id": "midday",
@@ -433,66 +430,66 @@
           "reason": "专题研究未覆盖15:30检查点（0/9项）；代表股事实更新不替代研究",
           "items": [
             {
-              "status": "missing",
-              "timestamp": "",
+              "status": "stale",
+              "timestamp": "2026-11-01T22:07:54+08:00",
               "required_at": "2026-11-02T15:30:00+08:00",
-              "reason": "专题研究时间缺失或无法解析",
+              "reason": "专题研究未覆盖应有检查点 15:30",
               "name": "AI模型/AI应用"
             },
             {
-              "status": "missing",
-              "timestamp": "",
+              "status": "stale",
+              "timestamp": "2026-11-01T22:07:54+08:00",
               "required_at": "2026-11-02T15:30:00+08:00",
-              "reason": "专题研究时间缺失或无法解析",
+              "reason": "专题研究未覆盖应有检查点 15:30",
               "name": "科技硬件链"
             },
             {
-              "status": "missing",
-              "timestamp": "",
+              "status": "stale",
+              "timestamp": "2026-11-01T22:07:54+08:00",
               "required_at": "2026-11-02T15:30:00+08:00",
-              "reason": "专题研究时间缺失或无法解析",
+              "reason": "专题研究未覆盖应有检查点 15:30",
               "name": "光模块/高速互联"
             },
             {
-              "status": "missing",
-              "timestamp": "",
+              "status": "stale",
+              "timestamp": "2026-11-01T22:07:54+08:00",
               "required_at": "2026-11-02T15:30:00+08:00",
-              "reason": "专题研究时间缺失或无法解析",
+              "reason": "专题研究未覆盖应有检查点 15:30",
               "name": "AI内存与存储"
             },
             {
-              "status": "missing",
-              "timestamp": "",
+              "status": "stale",
+              "timestamp": "2026-11-01T22:07:54+08:00",
               "required_at": "2026-11-02T15:30:00+08:00",
-              "reason": "专题研究时间缺失或无法解析",
+              "reason": "专题研究未覆盖应有检查点 15:30",
               "name": "半导体设备材料"
             },
             {
-              "status": "missing",
-              "timestamp": "",
+              "status": "stale",
+              "timestamp": "2026-11-01T22:07:54+08:00",
               "required_at": "2026-11-02T15:30:00+08:00",
-              "reason": "专题研究时间缺失或无法解析",
+              "reason": "专题研究未覆盖应有检查点 15:30",
               "name": "消费电子/端侧AI"
             },
             {
-              "status": "missing",
-              "timestamp": "",
+              "status": "stale",
+              "timestamp": "2026-11-01T22:07:54+08:00",
               "required_at": "2026-11-02T15:30:00+08:00",
-              "reason": "专题研究时间缺失或无法解析",
+              "reason": "专题研究未覆盖应有检查点 15:30",
               "name": "机器人/工业自动化"
             },
             {
-              "status": "missing",
-              "timestamp": "",
+              "status": "stale",
+              "timestamp": "2026-11-01T22:07:54+08:00",
               "required_at": "2026-11-02T15:30:00+08:00",
-              "reason": "专题研究时间缺失或无法解析",
+              "reason": "专题研究未覆盖应有检查点 15:30",
               "name": "智能驾驶"
             },
             {
-              "status": "missing",
-              "timestamp": "",
+              "status": "stale",
+              "timestamp": "2026-11-01T22:07:54+08:00",
               "required_at": "2026-11-02T15:30:00+08:00",
-              "reason": "专题研究时间缺失或无法解析",
+              "reason": "专题研究未覆盖应有检查点 15:30",
               "name": "医药修复链"
             }
           ]

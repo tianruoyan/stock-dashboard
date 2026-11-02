@@ -1,98 +1,228 @@
 {
   "date": "2026-11-02",
   "trade_date": "2026-11-02",
-  "timestamp": "2026-11-01T22:06:26+08:00",
-  "analysis_time": "2026-11-01T22:06:26+08:00",
-  "market_time": "2026-11-01T22:06:26+08:00",
-  "phase": "周一盘前预案（周日夜）",
-  "status": "premarket_plan_pending_auction",
-  "data_status": "US close verified; HK auction and Japan/Korea Monday open unavailable",
-  "summary": "上周五美股科技显著回撤：纳指-2.85%、费半ETF SOXX-8.24%，AMD-10.87%、MRVL-10.04%。周一开盘优先按风险释放预案处理；只有港股竞价与A股硬件代表股同步修复并放量，才从风险线降为观察线。",
+  "timestamp": "2026-11-02T08:30:02+08:00",
+  "analysis_time": "2026-11-02T08:30:02+08:00",
+  "market_time": "2026-11-02T08:30:02+08:00",
+  "phase": "08:30竞价前强制落盘",
+  "status": "waiting_preopen_validation",
+  "data_status": "waiting_validation_0830",
+  "summary": "道琼斯-1.09%；标普500-1.82%；纳斯达克-2.86%。日韩早盘见下方；港股竞价报价仍缺，开盘后的港股行情单独展示。",
   "strategy": [
     {
-      "action": "先防守，等待开盘确认",
+      "action": "等待A股确认",
       "logic": [
-        "外盘半导体跌幅远大于大盘，AI硬件、存储、光模块和设备材料存在低开及高开兑现风险。",
-        "不得因周末媒体叙事追高；要看到港股相关股、A股核心股和板块成交同步改善。"
+        "外盘行情用于确定观察方向；是否参与，还要看A股相关板块及代表股是否同步走强。",
+        "缺少港股竞价或A股代表股依据时，不给出买入或加仓结论。"
       ]
     }
   ],
   "market_context": {
-    "as_of": "2026-11-01T22:06:26+08:00",
-    "status": "upcoming_premarket_plan",
+    "as_of": "2026-11-02T08:30:02+08:00",
+    "status": "waiting_preopen_validation",
     "facts": [
-      "V2 shadow 最新收盘快照（2026-10-30）为“等待市场状态判断”、quality_state=degraded，结论为先防守、不适合追高。",
-      "美股2026-10-30收盘科技硬件普遍下跌，数据来自Longbridge公开行情。"
+      "2026-11-02已由已验证交易所日历确认是A股交易日。"
     ],
-    "inference": "海外风险偏好与本地上一交易日市场宽度均偏弱，周一科技硬件需要先验证承接，不能把海外跌幅机械等同于A股跌幅。",
-    "action": "09:00后核对港股竞价，09:25后核对A股集合竞价；若未出现同步承接，维持回避追高。"
+    "inference": "没有竞价事实时不使用旧日价格推导当日方向。",
+    "action": "等待港股和A股竞价报价后再更新。"
   },
   "us_overnight": {
-    "status": "已核验2026-10-30美股常规时段收盘；盘后小流动性价格不作为方向依据",
+    "status": "等待外部市场事实核验",
     "indices": [
-      {"code": ".IXIC.US", "name": "纳斯达克综合指数", "close": 25436.999, "change_pct": -2.85, "source": "Longbridge", "source_url": "https://longbridge.com/quote/.IXIC.US"},
-      {"code": ".SPX.US", "name": "标普500", "close": 7580.07, "change_pct": -1.81, "source": "Longbridge", "source_url": "https://longbridge.com/quote/.SPX.US"},
-      {"code": ".DJI.US", "name": "道琼斯工业指数", "close": 51770.31, "change_pct": -1.09, "source": "Longbridge", "source_url": "https://longbridge.com/quote/.DJI.US"},
-      {"code": "SOXX.US", "name": "iShares费城半导体ETF", "close": 471.51, "change_pct": -8.24, "source": "Longbridge", "source_url": "https://longbridge.com/quote/SOXX.US"}
+      {
+        "code": "usDJI",
+        "name": "道琼斯",
+        "close": 51770.31,
+        "previous_close": 52342.56,
+        "change_pct": -1.09,
+        "quote_time": "2026-10-31T04:47:53+08:00",
+        "collected_at": "2026-11-02T08:30:02+08:00",
+        "available_at": "2026-11-02T08:30:02+08:00",
+        "source": "腾讯财经",
+        "source_url": "https://qt.gtimg.cn/q=usDJI",
+        "note": "10-31 04:47 北京时间 · 腾讯财经",
+        "status": "10-31 04:47 北京时间 · 腾讯财经"
+      },
+      {
+        "code": "usINX",
+        "name": "标普500",
+        "close": 7580.07,
+        "previous_close": 7720.39,
+        "change_pct": -1.82,
+        "quote_time": "2026-10-31T04:47:43+08:00",
+        "collected_at": "2026-11-02T08:30:02+08:00",
+        "available_at": "2026-11-02T08:30:02+08:00",
+        "source": "腾讯财经",
+        "source_url": "https://qt.gtimg.cn/q=usINX",
+        "note": "10-31 04:47 北京时间 · 腾讯财经",
+        "status": "10-31 04:47 北京时间 · 腾讯财经"
+      },
+      {
+        "code": "usIXIC",
+        "name": "纳斯达克",
+        "close": 25437.0,
+        "previous_close": 26184.72,
+        "change_pct": -2.86,
+        "quote_time": "2026-10-31T05:15:59+08:00",
+        "collected_at": "2026-11-02T08:30:02+08:00",
+        "available_at": "2026-11-02T08:30:02+08:00",
+        "source": "腾讯财经",
+        "source_url": "https://qt.gtimg.cn/q=usIXIC",
+        "note": "10-31 05:15 北京时间 · 腾讯财经",
+        "status": "10-31 05:15 北京时间 · 腾讯财经"
+      }
     ],
     "tech_stocks": [
-      {"code": "NVDA.US", "name": "英伟达", "change_pct": -4.22, "source": "Longbridge"},
-      {"code": "AMD.US", "name": "AMD", "change_pct": -10.87, "source": "Longbridge"},
-      {"code": "AVGO.US", "name": "博通", "change_pct": -5.48, "source": "Longbridge"},
-      {"code": "TSM.US", "name": "台积电ADR", "change_pct": -5.94, "source": "Longbridge"},
-      {"code": "MU.US", "name": "美光", "change_pct": -5.30, "source": "Longbridge"},
-      {"code": "MRVL.US", "name": "迈威尔", "change_pct": -10.04, "source": "Longbridge"},
-      {"code": "AAPL.US", "name": "苹果", "change_pct": -1.22, "source": "Longbridge"},
-      {"code": "MSFT.US", "name": "微软", "change_pct": -1.55, "source": "Longbridge"},
-      {"code": "GOOGL.US", "name": "Alphabet", "change_pct": -1.40, "source": "Longbridge"},
-      {"code": "AMZN.US", "name": "亚马逊", "change_pct": -1.41, "source": "Longbridge"},
-      {"code": "TSLA.US", "name": "特斯拉", "change_pct": -0.86, "source": "Longbridge"}
+      {
+        "code": "usNVDA",
+        "name": "英伟达",
+        "close": 204.64,
+        "previous_close": 213.66,
+        "change_pct": -4.22,
+        "quote_time": "2026-10-31T04:00:02+08:00",
+        "collected_at": "2026-11-02T08:30:02+08:00",
+        "available_at": "2026-11-02T08:30:02+08:00",
+        "source": "腾讯财经",
+        "source_url": "https://qt.gtimg.cn/q=usNVDA",
+        "note": "10-31 04:00 北京时间 · 腾讯财经",
+        "status": "10-31 04:00 北京时间 · 腾讯财经"
+      },
+      {
+        "code": "usMU",
+        "name": "美光科技",
+        "close": 884.74,
+        "previous_close": 934.27,
+        "change_pct": -5.3,
+        "quote_time": "2026-10-31T04:00:02+08:00",
+        "collected_at": "2026-11-02T08:30:02+08:00",
+        "available_at": "2026-11-02T08:30:02+08:00",
+        "source": "腾讯财经",
+        "source_url": "https://qt.gtimg.cn/q=usMU",
+        "note": "10-31 04:00 北京时间 · 腾讯财经",
+        "status": "10-31 04:00 北京时间 · 腾讯财经"
+      }
     ],
-    "japan_korea": {"status": "周一早盘尚未开市；本轮Longbridge未提供可核验的日韩实时代表股报价", "indices": [], "stocks": [], "source": "不使用旧值替代"},
+    "japan_korea": {
+      "status": "已取得早盘行情",
+      "indices": [
+        {
+          "code": "^N225",
+          "name": "日经225",
+          "close": 62947.6094,
+          "previous_close": 63290.11,
+          "change_pct": -0.54,
+          "quote_time": "2026-11-02T08:14:00+08:00",
+          "bar_start": "2026-11-02T08:13:00+08:00",
+          "collected_at": "2026-11-02T08:30:02+08:00",
+          "available_at": "2026-11-02T08:30:02+08:00",
+          "historical_backfill": false,
+          "source": "雅虎财经",
+          "source_url": "https://finance.yahoo.com/quote/%5EN225/",
+          "note": "11-02 08:14 北京时间 · 雅虎财经",
+          "status": "11-02 08:14 北京时间 · 雅虎财经"
+        },
+        {
+          "code": "^KS11",
+          "name": "韩国KOSPI",
+          "close": 5652.0601,
+          "previous_close": 5730.74,
+          "change_pct": -1.37,
+          "quote_time": "2026-11-02T08:10:00+08:00",
+          "bar_start": "2026-11-02T08:09:00+08:00",
+          "collected_at": "2026-11-02T08:30:02+08:00",
+          "available_at": "2026-11-02T08:30:02+08:00",
+          "historical_backfill": false,
+          "source": "雅虎财经",
+          "source_url": "https://finance.yahoo.com/quote/%5EKS11/",
+          "note": "11-02 08:10 北京时间 · 雅虎财经",
+          "status": "11-02 08:10 北京时间 · 雅虎财经"
+        }
+      ],
+      "stocks": [
+        {
+          "code": "005930.KS",
+          "name": "三星电子",
+          "close": 217000.0,
+          "previous_close": 225000.0,
+          "change_pct": -3.56,
+          "quote_time": "2026-11-02T08:10:00+08:00",
+          "bar_start": "2026-11-02T08:09:00+08:00",
+          "collected_at": "2026-11-02T08:30:02+08:00",
+          "available_at": "2026-11-02T08:30:02+08:00",
+          "historical_backfill": false,
+          "source": "雅虎财经",
+          "source_url": "https://finance.yahoo.com/quote/005930.KS/",
+          "note": "11-02 08:10 北京时间 · 雅虎财经",
+          "status": "11-02 08:10 北京时间 · 雅虎财经"
+        },
+        {
+          "code": "000660.KS",
+          "name": "SK海力士",
+          "close": 1404000.0,
+          "previous_close": 1418000.0,
+          "change_pct": -0.99,
+          "quote_time": "2026-11-02T08:10:00+08:00",
+          "bar_start": "2026-11-02T08:09:00+08:00",
+          "collected_at": "2026-11-02T08:30:02+08:00",
+          "available_at": "2026-11-02T08:30:02+08:00",
+          "historical_backfill": false,
+          "source": "雅虎财经",
+          "source_url": "https://finance.yahoo.com/quote/000660.KS/",
+          "note": "11-02 08:10 北京时间 · 雅虎财经",
+          "status": "11-02 08:10 北京时间 · 雅虎财经"
+        }
+      ],
+      "note": "未取得本轮可核验报价，不沿用旧值。"
+    },
     "hot_sectors": [],
-    "weak_sectors": ["半导体", "AI算力芯片", "存储", "高速互联/光模块", "数据中心硬件"],
-    "conclusion": "美股风险释放以半导体和AI硬件为中心，幅度显著高于大盘。",
-    "reason": "SOXX-8.24%，AMD/MRVL跌幅均超过10%，存储、晶圆制造与网络芯片同步走弱。",
-    "impact_to_a_share": "对A股科技硬件是偏空映射，但盘中是否形成低开修复需由本地成交与核心股承接验证。"
+    "weak_sectors": [],
+    "conclusion": "道琼斯-1.09%；标普500-1.82%；纳斯达克-2.86%",
+    "reason": "以上为行情事实；新闻催化与A股影响需另行核实。",
+    "impact_to_a_share": "先对照A股相关板块及代表股的实际涨跌，不能仅凭海外上涨或下跌决定买卖。"
   },
   "hk_auction": {
-    "window": "2026-11-02 09:00-09:15 HKT",
-    "status": "尚未开始",
+    "window": "08:30",
+    "status": "等待验证",
     "indices": [],
     "sectors": [],
     "stocks": [],
-    "sentiment": "未到港股竞价窗口，不以10月30日收盘替代竞价事实。盘前只把中芯国际、华虹半导体、腾讯、阿里、小米的竞价方向列为确认项。"
+    "sentiment": "当前公开行情接口不提供可核验的港股竞价参考价，不能判断竞价强弱。开盘后再核对恒生科技及代表股的实际涨跌。"
   },
-  "overnight_news": [
-    {"text": "已确认：10月30日美股常规时段半导体与AI硬件同步大幅回落。", "source": "Longbridge公开行情", "tag": "市场数据/已确认", "url": "https://longbridge.com/quote/SOXX.US"},
-    {"text": "行业媒体：Longbridge资讯流出现“英伟达下一代CPO技术”标题，但本轮未取得英伟达官网对应公告，不把它作为可交易的已确认催化。", "source": "Longbridge资讯流", "tag": "行业消息/待核验"},
-    {"text": "市场传闻：本轮没有取得可交叉核验、且足以改变周一开盘预案的半导体订单或HBM供应链传闻；不纳入强线。", "source": "本轮核验", "tag": "市场传闻/未确认"}
-  ],
-  "weekend_news": [
-    {"text": "周末核心事实是上周五全球AI硬件风险偏好回落，而非新增、可证实的单一产业公告。", "source": "Longbridge公开行情", "tag": "已确认", "url": "https://longbridge.com/quote/QQQ.US"},
-    {"text": "分析推断：若港股芯片竞价弱于恒生科技、且A股光模块/存储/设备材料开盘无承接，外盘压力更可能传导为高开兑现或低开延续。", "source": "基于行情的分析推断", "tag": "分析推断"}
-  ],
-  "a_share_mapping": [
-    {"theme": "AI算力/服务器/PCB/液冷", "core": "工业富联、浪潮信息、中科曙光、寒武纪", "elasticity": "胜宏科技、沪电股份、英维克", "bias": "风险线：先看是否低开后放量收复开盘价"},
-    {"theme": "光模块/高速互联", "core": "中际旭创、新易盛、天孚通信", "elasticity": "仕佳光子、太辰光", "bias": "风险线：MRVL-10.04%，无行业扩散不做低位补涨推断"},
-    {"theme": "存储/HBM", "core": "兆易创新、澜起科技、江波龙", "elasticity": "佰维存储、香农芯创", "bias": "风险线：MU-5.30%，先核对韩股和本地承接"},
-    {"theme": "半导体设备材料", "core": "北方华创、中微公司、华海清科、安集科技", "elasticity": "拓荆科技、上海新阳", "bias": "风险线：SOXX/TSM显著回落，不能因国产替代叙事直接追高"},
-    {"theme": "机器人/智能驾驶", "core": "汇川技术、埃斯顿、拓斯达；比亚迪、德赛西威", "elasticity": "绿的谐波、双环传动、经纬恒润", "bias": "观察线：与半导体外盘关联较弱，但仍受整体风险偏好约束"}
-  ],
-  "hk_mapping": [
-    {"theme": "半导体", "core": "中芯国际(981.HK)、华虹半导体(1347.HK)", "bias": "竞价确认项；上周五收盘分别-4.40%、-6.03%，不能替代周一竞价"},
-    {"theme": "AI平台与应用", "core": "腾讯(700.HK)、阿里巴巴-W(9988.HK)、百度集团-SW(9888.HK)", "bias": "观察是否强于恒生科技，平台股抗跌才可能缓和科技情绪"},
-    {"theme": "消费电子/智能车", "core": "小米集团-W(1810.HK)、比亚迪电子(285.HK)", "bias": "关注独立强度，避免以美股下跌直接推断"}
-  ],
+  "overnight_news": [],
+  "a_share_mapping": [],
   "strong_lines": [],
-  "watch_lines": ["机器人/智能驾驶：仅在A股代表股与行业成交同步转强时观察独立性。", "AI应用：需腾讯、阿里、百度相对恒科走强，同时A股软件放量扩散。"],
-  "risk_lines": ["科技硬件：费半ETF-8.24%、AMD-10.87%、MRVL-10.04%，高开兑现及低开延续风险优先。", "存储与光模块：美光及迈威尔显著走弱，若本地核心股无量反抽，不按低位补涨处理。", "高位小盘科技：V2 shadow上个交易日市场宽度和高位股风险均偏弱，先防守。"],
-  "opening_plan": ["09:00-09:15：记录恒生科技、半导体和AI代表股竞价；缺数据即保持待确认。", "09:25-09:45：若A股硬件低开后核心与弹性至少各一只放量收复开盘价，才从风险线降为观察线。", "若高开但成交不扩散或核心股跌回开盘价，按兑现风险处理；若低开无承接，不抢反弹。"],
-  "sources": [
-    {"name": "Longbridge 美股行情", "url": "https://longbridge.com/quote/SOXX.US"},
-    {"name": "Longbridge 英伟达行情", "url": "https://longbridge.com/quote/NVDA.US"},
-    {"name": "Longbridge AMD行情", "url": "https://longbridge.com/quote/AMD.US"},
-    {"name": "Longbridge 中芯国际行情", "url": "https://longbridge.com/quote/981.HK"}
+  "watch_lines": [
+    "港股竞价、A股集合竞价、指数与观察池代表股的同向性。"
   ],
-  "not_investment_advice": "本汇总仅用于研究与盘前信息核对，不构成投资建议。"
+  "risk_lines": [
+    "竞价事实到位前禁止沿用旧值或把外盘叙事直接映射为A股结论。"
+  ],
+  "opening_plan": [
+    "09:00增量更新；09:15后按实际竞价验证；数据缺失时继续明确等待。"
+  ],
+  "action_conditions": [
+    "只有当日行情时间、来源和代表股涨跌幅完整后，才形成方向性判断。"
+  ],
+  "invalidation_conditions": [
+    "任一行情日期不是当日，或报价仍停留在未开市状态。"
+  ],
+  "sources": [
+    "V2已验证A股交易日历"
+  ],
+  "source_notes": [
+    "本地阶段守卫只负责当日文件与等待边界，不生成未经核验的市场事实。"
+  ],
+  "stage_updates": [
+    {
+      "stage": "08:30",
+      "timestamp": "2026-11-02T08:30:02+08:00",
+      "status": "waiting_validation",
+      "note": "当日文件已落盘；没有可核验竞价事实的字段保持等待验证。"
+    }
+  ],
+  "generation_mode": "automatic_stage_guard",
+  "data_boundary": "不交易、不修改用户资产、不改变V2生产状态；未开始或未取得报价的市场明确写等待验证。",
+  "external_data_notice": "",
+  "external_refresh_notice": "",
+  "external_updated_at": "2026-11-02T08:30:02+08:00"
 }
