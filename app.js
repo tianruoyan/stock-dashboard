@@ -4856,7 +4856,7 @@ function renderMiddayDecision(data) {
     <div class="decision-card action">
       <span class="decision-label">上午强方向</span>
       <b>${escapeHtml(strongTitle)}</b>
-      <span>${escapeHtml(strongDetail)}</span>
+      <span>${escapeHtml(strongDetail.replace(/今天/g, '当日'))}</span>
     </div>
     <div class="decision-card action">
       <span class="decision-label">下午验证</span>
@@ -5165,7 +5165,7 @@ function renderPostmarketDecision(data) {
       <span>${escapeHtml(investorText(riskLine ? riskDetail : (data.risk?.[0] || '没有完整风险依据，不能理解为没有风险')))}</span>
     </div>
     <div class="decision-card action">
-      <span class="decision-label">明日看点</span>
+      <span class="decision-label">下一交易日看点</span>
       <b>${escapeHtml(watchItems.length ? `看${Math.min(watchItems.length, 4)}个条件` : "等待确认")}</b>
       <ul class="decision-mini-list">${watchItems.slice(0, 4).map(item => `<li>${escapeHtml(item)}</li>`).join("")}</ul>
     </div>
