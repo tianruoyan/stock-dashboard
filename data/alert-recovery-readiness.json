@@ -1,10 +1,10 @@
 {
-  "timestamp": "2026-11-02T09:28:30+08:00",
+  "timestamp": "2026-11-02T10:13:59+08:00",
   "current_signal_date": "2026-11-02",
-  "status": "waiting",
-  "summary": "上次记录为暂无规则触发；当前监控状态需由心跳和行情刷新确认。",
+  "status": "blocked",
+  "summary": "旧盘中异动批次已撤下，但当前可信行情源不足，暂不能恢复盘中异动触发。",
   "alert_state": {
-    "source_status": "monitor_live_no_trigger",
+    "source_status": "invalidated",
     "total_count": 0,
     "active_count": 0,
     "current_count": 0,
@@ -14,7 +14,7 @@
     "time_unverified_count": 0,
     "verified_count": 0,
     "unverified_count": 0,
-    "note": "盘中监控运行正常，当前没有达到短周期价格、成交和扩散规则门槛的新异动。"
+    "note": "盘中监控进程未运行，等待自动拉起。"
   },
   "trusted_sources": [],
   "forbidden_sources": [],
@@ -5567,7 +5567,8 @@
     ]
   },
   "next_actions": [
-    "等待盘中扫描进程产出新 alert。"
+    "先恢复至少一个可信 A股批量报价源。",
+    "恢复前盘中异动继续为空，页面只显示替代观察。"
   ],
   "rules": [
     "该文件供自动化进程和构建门禁使用，不进入交易主页面。",

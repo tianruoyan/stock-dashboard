@@ -1,9 +1,18 @@
 {
-  "timestamp": "2026-11-02T09:28:30+08:00",
+  "timestamp": "2026-11-02T10:13:59+08:00",
   "current_signal_date": "2026-11-02",
   "status": "degraded",
-  "summary": "共 6 条检查提示，其中 4 条需处理、2 条背景记录（2 个价格/行情复核，4 个背景复核）。",
+  "summary": "共 7 条检查提示，其中 5 条需处理、2 条背景记录（1 个交易阻断，2 个价格/行情复核，4 个背景复核）。",
   "issues": [
+    {
+      "severity": "warning",
+      "file": "alert.json",
+      "path": "",
+      "code": "invalidated_source",
+      "message": "盘中监控进程未运行，等待自动拉起。",
+      "impact_level": "blocking",
+      "decision_action": "对应信号等待重产，页面必须显示阻断"
+    },
     {
       "severity": "warning",
       "file": "midday.json",
@@ -60,6 +69,17 @@
     }
   ],
   "action_plan": [
+    {
+      "priority": 1,
+      "impact_level": "blocking",
+      "label": "先修复阻断",
+      "file": "alert.json",
+      "code": "invalidated_source",
+      "problem": "盘中监控进程未运行，等待自动拉起。",
+      "decision_action": "对应信号等待重产，页面必须显示阻断",
+      "next_step": "暂停对应交易触发；等待污染批次撤下、可信行情源恢复并重产 JSON。",
+      "unblock_condition": "quality-report blocking=0，相关文件不再 invalidated/missing。"
+    },
     {
       "priority": 2,
       "impact_level": "price_review",
@@ -118,9 +138,9 @@
   ],
   "counts": {
     "critical": 0,
-    "warning": 4,
+    "warning": 5,
     "info": 2,
-    "blocking": 0,
+    "blocking": 1,
     "price_review": 2,
     "signal_review": 0,
     "background_review": 4

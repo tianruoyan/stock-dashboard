@@ -1,15 +1,15 @@
 {
-  "timestamp": "2026-11-02T09:28:30+08:00",
+  "timestamp": "2026-11-02T10:13:59+08:00",
   "current_signal_date": "2026-11-02",
   "target_trade_date": "2026-11-02",
-  "overall_status": "waiting",
-  "summary": "6 个自动化尚未到产出窗口：盘中全景、盘中异动、午盘分析、盘后复盘。",
+  "overall_status": "blocked",
+  "summary": "2 个自动化产出异常：盘中全景、盘中异动。",
   "counts": {
     "ok": 1,
-    "late": 0,
+    "late": 2,
     "missing": 0,
     "invalidated": 0,
-    "waiting": 6
+    "waiting": 4
   },
   "processes": [
     {
@@ -42,32 +42,34 @@
       "label": "盘中全景",
       "file": "data/intraday.json",
       "due": "15:05",
-      "deadline": "2026-11-02T09:35:00+08:00",
+      "deadline": "2026-11-02T10:05:00+08:00",
       "timestamp": "2026-11-02T09:25:21+08:00",
-      "status": "waiting",
-      "data_status": "check_source_quality",
+      "status": "late",
+      "data_status": "unavailable",
       "blocking": false,
-      "action": "等待产出",
-      "reason": "计划 15:05 后产出",
-      "failure_type": "not_due",
-      "diagnosis": "计划 15:05 后产出",
+      "action": "等待当前检查点数据",
+      "reason": "仅有行情事实快照，尚无本检查点分析；行情未覆盖应有检查点 09:55",
+      "failure_type": "missing_intraday_checkpoint",
+      "diagnosis": "仅有行情事实快照，尚无本检查点分析；行情未覆盖应有检查点 09:55",
       "next_actions": [
-        "计划 15:05 产出；宽限内继续检查实际证据。"
+        "分别检查行情与分析覆盖；收盘行情必须来自当日15:00及之后的真实报价。",
+        "行情恢复只补事实，保留原分析时间，不补造错过的15:00分析。",
+        "缺失分析需在Mac核验仓库外的研究任务与Codex调度；不能由补采成功视为恢复。"
       ],
       "related_sources": [],
       "analysis_coverage": {
         "status": "missing",
         "timestamp": "2026-11-02T09:25:21+08:00",
-        "required_at": "2026-11-02T09:30:00+08:00",
+        "required_at": "2026-11-02T10:00:00+08:00",
         "reason": "仅有行情事实快照，尚无本检查点分析"
       },
       "recovery_scope": "quotes_only",
       "analysis_producer": "external_codex_schedule_requires_mac_verification",
       "quote_coverage": {
-        "status": "ready",
+        "status": "stale",
         "timestamp": "2026-11-02T09:25:03+08:00",
-        "required_at": "2026-11-02T09:25:00+08:00",
-        "reason": ""
+        "required_at": "2026-11-02T09:55:00+08:00",
+        "reason": "行情未覆盖应有检查点 09:55"
       }
     },
     {
@@ -75,15 +77,15 @@
       "label": "盘中异动",
       "file": "data/alert.json",
       "due": "交易时段持续检查",
-      "timestamp": "2026-11-02T09:26:47+08:00",
-      "deadline": "2026-11-02T09:28:30+08:00",
-      "status": "waiting",
-      "data_status": "check_source_quality",
-      "blocking": false,
-      "action": "查看最新触发",
-      "reason": "当前不在连续交易时段，保留最近触发供回看",
-      "failure_type": "none",
-      "diagnosis": "当前不在连续交易时段，保留最近触发供回看",
+      "timestamp": "2026-11-02T09:45:32+08:00",
+      "deadline": "2026-11-02T10:13:59+08:00",
+      "status": "late",
+      "data_status": "unavailable",
+      "blocking": true,
+      "action": "查看监控状态",
+      "reason": "监控或行情检查未通过，等待恢复；不能视为市场没有异动",
+      "failure_type": "monitor_or_quote_unavailable",
+      "diagnosis": "监控或行情检查未通过，等待恢复；不能视为市场没有异动",
       "next_actions": [
         "继续检查最新行情与监控心跳；保留历史触发，不补造错过的信号。"
       ],
@@ -287,11 +289,11 @@
   ],
   "next_session_readiness": {
     "target_trade_date": "2026-11-02",
-    "status": "pending",
-    "summary": "2026-11-02 开盘链路待产出：盘中全景 15:05。",
-    "pending_count": 6,
+    "status": "overdue",
+    "summary": "2026-11-02 有 2 个产出已过窗口未更新。",
+    "pending_count": 4,
     "ready_count": 1,
-    "overdue_count": 0,
+    "overdue_count": 2,
     "items": [
       {
         "id": "premarket",
@@ -316,25 +318,25 @@
         "label": "盘中全景",
         "file": "data/intraday.json",
         "due": "15:05",
-        "deadline": "2026-11-02T09:35:00+08:00",
+        "deadline": "2026-11-02T10:05:00+08:00",
         "timestamp": "2026-11-02T09:25:21+08:00",
         "file_date": "2026-11-02",
-        "status": "pending",
-        "action": "等待产出",
-        "reason": "计划 15:05 后产出",
+        "status": "overdue",
+        "action": "需要重跑",
+        "reason": "仅有行情事实快照，尚无本检查点分析；行情未覆盖应有检查点 09:55",
         "analysis_coverage": {
           "status": "missing",
           "timestamp": "2026-11-02T09:25:21+08:00",
-          "required_at": "2026-11-02T09:30:00+08:00",
+          "required_at": "2026-11-02T10:00:00+08:00",
           "reason": "仅有行情事实快照，尚无本检查点分析"
         },
         "recovery_scope": "quotes_only",
         "analysis_producer": "external_codex_schedule_requires_mac_verification",
         "quote_coverage": {
-          "status": "ready",
+          "status": "stale",
           "timestamp": "2026-11-02T09:25:03+08:00",
-          "required_at": "2026-11-02T09:25:00+08:00",
-          "reason": ""
+          "required_at": "2026-11-02T09:55:00+08:00",
+          "reason": "行情未覆盖应有检查点 09:55"
         }
       },
       {
@@ -342,15 +344,15 @@
         "label": "盘中异动",
         "file": "data/alert.json",
         "due": "交易时段持续检查",
-        "timestamp": "2026-11-02T09:26:47+08:00",
-        "deadline": "2026-11-02T09:28:30+08:00",
-        "status": "pending",
-        "data_status": "check_source_quality",
-        "blocking": false,
-        "action": "查看最新触发",
-        "reason": "当前不在连续交易时段，保留最近触发供回看",
-        "failure_type": "none",
-        "diagnosis": "当前不在连续交易时段，保留最近触发供回看",
+        "timestamp": "2026-11-02T09:45:32+08:00",
+        "deadline": "2026-11-02T10:13:59+08:00",
+        "status": "overdue",
+        "data_status": "unavailable",
+        "blocking": true,
+        "action": "查看监控状态",
+        "reason": "监控或行情检查未通过，等待恢复；不能视为市场没有异动",
+        "failure_type": "monitor_or_quote_unavailable",
+        "diagnosis": "监控或行情检查未通过，等待恢复；不能视为市场没有异动",
         "next_actions": [
           "继续检查最新行情与监控心跳；保留历史触发，不补造错过的信号。"
         ],
