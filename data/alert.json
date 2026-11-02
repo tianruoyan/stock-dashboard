@@ -1,6 +1,104 @@
 {
-  "timestamp": "2026-11-02T09:45:32+08:00",
-  "source_status": "invalidated",
-  "alerts": [],
-  "note": "盘中监控进程未运行，等待自动拉起。"
+  "timestamp": "2026-11-02T10:16:20+08:00",
+  "source_status": "monitor_live",
+  "alerts": [
+    {
+      "id": "monitor-20261102-093215-d430c2da1667",
+      "time": "2026-11-02T09:32:15+08:00",
+      "sector": "7月半导体扩产组合",
+      "type": "风格共振转弱",
+      "reason": "触发规则：小登风格轮动：同一大风格下≥3个关联板块同向急跌\n结论：7月半导体扩产组合 出现风格杀信号，3个关联板块5分钟窗口内同向急跌。\n关联板块：覆铜板 5分钟涨跌幅 -3.09%，上涨 25%/下跌 75%，成交 1.00x；创新药/CRO研发服务 5分钟涨跌幅 -2.04%，上涨 0%/下跌 100%，成交 1.00x；传说游资票走势关联 5分钟涨跌幅 -1.94%，上涨 0%/下跌 100%，成交 1.00x\n观察点：是否继续扩散到同风格后排，成交放大是否伴随价格延续。\n风险提示：这是风格级盘面信号，不构成买卖建议。",
+      "leaders": [
+        {
+          "name": "昭衍新药",
+          "code": "603127",
+          "change_pct": -4.3546,
+          "quote_time": "2026-11-02T09:32:12",
+          "source": "腾讯财经HTTP",
+          "score": 58.49,
+          "factors": [
+            "3分钟-4.35%",
+            "成交放大1.00x",
+            "日内-4.93%"
+          ]
+        },
+        {
+          "name": "药明康德",
+          "code": "603259",
+          "change_pct": -2.5694,
+          "quote_time": "2026-11-02T09:32:12",
+          "source": "腾讯财经HTTP",
+          "score": 39.48,
+          "factors": [
+            "3分钟-2.57%",
+            "成交放大1.00x",
+            "日内-1.20%"
+          ]
+        },
+        {
+          "name": "康龙化成",
+          "code": "300759",
+          "change_pct": -1.2518,
+          "quote_time": "2026-11-02T09:32:12",
+          "source": "腾讯财经HTTP",
+          "score": 22.79,
+          "factors": [
+            "3分钟-1.25%",
+            "成交放大1.00x",
+            "日内-0.85%"
+          ]
+        }
+      ],
+      "signal_type": "风格观察",
+      "is_old_economy": false,
+      "source_watch_id": "7月半导体扩产组合",
+      "quote_audit": {
+        "provider": "本地盘中监控、富途行情（腾讯备用）",
+        "primary_source": "腾讯财经HTTP",
+        "quote_time": "2026-11-02T09:32:15+08:00",
+        "pct_field": "3分钟涨跌幅",
+        "sample_count": 3,
+        "max_abs_leader_change_pct": 4.3546,
+        "sanity_checks": {
+          "cross_source_verified": false,
+          "price_move_valid": true,
+          "volume_valid": false,
+          "direction_ratio_valid": true,
+          "limit_down_count_valid": false
+        },
+        "board_3m_change_pct": -3.0852,
+        "direction_ratio": 1.0,
+        "volume_ratio": 1.0,
+        "relative_volume_vs_yesterday": null,
+        "missing_confirmation": "等待富途行情按触发时点交叉核验；通过前只作候选或观察，不作为确认交易信号。",
+        "secondary_source": "富途行情",
+        "secondary_verification": {
+          "state": "too_late_no_backfill",
+          "checked_at": "2026-11-02T10:16:21+08:00",
+          "source": "富途行情",
+          "reason": "超过实时核验窗口，不事后补成已确认。",
+          "representatives": [],
+          "fingerprint": "49fc50958ef7801fe569",
+          "verifier_version": "futu-opend-2026-07-27.3"
+        }
+      },
+      "source_status": "degraded_partial",
+      "valid_until": "2026-11-02T09:37:15+08:00",
+      "trigger_rule": "小登风格轮动：同一大风格下≥3个关联板块同向急跌",
+      "alert_class": "style",
+      "confirmation_level": "candidate"
+    }
+  ],
+  "quote_audit": {
+    "provider": "本地盘中监控、富途行情（腾讯备用）",
+    "quote_time": "2026-11-02T09:32:15+08:00",
+    "pct_field": "各异动卡标注的短周期涨跌幅",
+    "sanity_checks": {
+      "sample_count": 1,
+      "max_abs_leader_change_pct": 4.3546,
+      "cross_source_verified": false,
+      "verified_alert_count": 0
+    }
+  },
+  "note": "异动来自本地短周期监控；候选卡须经富途行情按触发时点复核后才能升级。"
 }
