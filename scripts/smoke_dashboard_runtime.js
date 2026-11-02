@@ -367,6 +367,12 @@ async function main() {
     check(!context.isExplicitRiskLine({type:'watch_line',risk:'若下跌则失效'}), 'watch_not_risk', '条件性风险被误判为当前风险线');
     check(!context.renderPostmarketSentimentIndicator({score:15,components:[]}).includes('15.0分'), 'legacy_score_hidden', '旧算法分数冒充当前情绪分');
     check(!context.renderPostmarketSentimentIndicator({method_version:'v1_sentiment_five_factors_20260911',score:null,components:[]}).includes('0.0分'), 'missing_score_hidden', '缺失情绪分被显示为0分');
+    check(!context.recentStructureFact(new Date(Date.now()-48*3600000).toISOString()), 'previous_day_structure_hidden', '上个交易日的宽度被当成当日数据');
+    const stalePool = context.renderWatchPool('watch_only', '观察池', '待更新', [{name:'样本股'}], [], false);
+    check(stalePool.includes('行情待更新，暂不能判断') && !stalePool.includes('未触发（'), 'stale_watchlist_not_cleared', '缺行情时观察池被错误表述为未触发');
+    const pre = context.renderPremarketDecision({watch_lines:['港股竞价、A股集合竞价、指数与观察池代表股的同向性。'], risk_lines:['竞价事实到位前禁止沿用旧值或把外盘叙事直接映射为A股结论。']});
+    check(!pre.includes('港股竞价、A股集合竞价、指数与观察池代表股的同向性') && !pre.includes('竞价事实到位前禁止'), 'premarket_plain_fallback', '盘前卡片仍显示后台规则');
+    check(!context.userFacingText('任一行情日期不是当日，或报价仍停留在未开市状态。').includes('继续下跌'), 'no_invented_invalidation', '数据缺失被编造成交易失效条件');
     check(!/sector_pct|limit_up_count/.test(context.structuredSignalText({metric:'sector_pct',value:-2,detail:'行业下跌2%'})), 'evidence_plain_language', '证据暴露工程字段');
     check(context.renderTopicCard({name:'旧专题',updated_at:'2020-01-01T15:00:00+08:00',action:'周一买入'}).includes('旧研究待复核'), 'old_topic_labeled', '旧专题未标记待复核');
   }
@@ -477,7 +483,7 @@ async function main() {
   if (/JS ERROR/.test(statusText)) {
     issues.push(issue("critical", "window_onerror", statusText, "status"));
   }
-  checkDataRenderCoverage(document, issues);
+  checkDataRenderCoverage(document, issues, context);
 
   const status = issues.some(item => item.severity === "critical")
     ? "critical"
@@ -595,7 +601,7 @@ function badLiteralLabel(literal) {
   }[literal] || "异常字面量";
 }
 
-function checkDataRenderCoverage(document, issues) {
+function checkDataRenderCoverage(document, issues, context) {
   const checks = [];
   const intraday = readJsonIfExists("data/intraday.json");
   const premarket = readJsonIfExists("data/premarket.json");
@@ -604,12 +610,13 @@ function checkDataRenderCoverage(document, issues) {
   const topics = readJsonIfExists("data/topics.json");
 
   addCoverageCheck(checks, "section-intraday", intraday.sentiment?.judgement || intraday.sentiment?.interpretation, "盘中全景盘面状态未渲染");
-  addCoverageCheck(checks, "section-intraday", intraday.sentiment?.limit_up_count != null ? `涨停${intraday.sentiment.limit_up_count}` : "", "盘中全景宽度未渲染");
+  const currentUp = context.intradayCounts(intraday).up;
+  addCoverageCheck(checks, "section-intraday", currentUp != null ? `涨停${currentUp}` : "", "盘中全景宽度未渲染");
   addCoverageCheck(checks, "section-intraday", themeCoverageSnippet(intraday.main_trends), "盘中全景主线未渲染");
   addCoverageCheck(checks, "section-intraday", firstIndexName(intraday), "盘中全景指数/港股快照未渲染");
   addCoverageCheck(checks, "section-premarket", premarket.summary, "早盘 summary 未渲染");
   for (const key of ['opening_plan', 'action_conditions', 'invalidation_conditions']) {
-    for (const text of (premarket[key] || [])) addCoverageCheck(checks, 'section-premarket', text, '盘前确认或失效条件未完整渲染');
+    for (const text of (premarket[key] || [])) addCoverageCheck(checks, 'section-premarket', context.userFacingText(text), '盘前确认或失效条件未完整渲染');
   }
   for (const key of ['a_share_mapping', 'hk_mapping']) {
     for (const row of (premarket[key] || [])) {

@@ -299,6 +299,11 @@ function userFacingText(value) {
   let text = String(value ?? "");
   if (!text) return "";
   text = text
+    .replace(/港股竞价、A股集合竞价、指数与观察池代表股的同向性。?/g, "开盘后观察大盘、相关板块和关注股票是否一起走强。")
+    .replace(/竞价事实到位前禁止沿用旧值或把外盘叙事直接映射为A股结论。?/g, "竞价结果出来前先观察，不因外盘涨跌急于追买。")
+    .replace(/只有当日行情时间、来源和代表股涨跌幅完整后，才形成方向性判断。?/g, "开盘后看相关板块和代表股是否一起走强；没有跟随时暂不追。")
+    .replace(/任一行情日期不是当日，或报价仍停留在未开市状态。?/g, "尚未给出具体失效条件，先观察。")
+    .replace(/09:00增量更新；09:15后按实际竞价验证；数据缺失时继续明确等待。?/g, "先看竞价，再看开盘后板块和代表股是否跟随。")
     .replace(/data\/quality-report\.json/g, "质量报告")
     .replace(/data\/source-health\.json/g, "数据源健康")
     .replace(/data\/data-trust\.json/g, "文件可信度")
@@ -2019,14 +2024,15 @@ function renderWatchlistDecision() {
   }
   const signals = collectSignalText();
   const quoteAsOf = cached("data/watchlist-quotes.json")?.quote_as_of;
-  const quoteLabel = quoteAsOf ? `行情 ${formatUpdateTime(quoteAsOf)}` : "个人跟踪";
+  const quoteCurrent = quoteAsOf && shanghaiClock(new Date(parseTimestampMs(quoteAsOf))).date === shanghaiClock().date && ["行情已更新", "盘中行情，注意时差", "午间休市，上午行情", "已收盘，仅供复盘"].includes(dataFreshness(quoteAsOf));
+  const quoteLabel = quoteAsOf ? `行情 ${formatUpdateTime(quoteAsOf)}${quoteCurrent ? '' : ' · 今日行情待更新'}` : "行情待更新";
   const pools = [
     ["watch_only", "观察池", quoteLabel]
   ];
-  el.innerHTML = `<div class="watchlist-grid">${pools.map(([key, title, desc]) => renderWatchPool(key, title, desc, wl[key]?.stocks || [], signals)).join("")}</div>`;
+  el.innerHTML = `<div class="watchlist-grid">${pools.map(([key, title, desc]) => renderWatchPool(key, title, desc, wl[key]?.stocks || [], signals, quoteCurrent)).join("")}</div>`;
 }
 
-function renderWatchPool(key, title, desc, stocks, signals) {
+function renderWatchPool(key, title, desc, stocks, signals, quoteCurrent = true) {
   const hits = stocks
     .map(s => ({ ...s, signal: stockSignal(s, signals, key) }))
     .sort(sortWatchSignalRows);
@@ -2037,10 +2043,10 @@ function renderWatchPool(key, title, desc, stocks, signals) {
   const neutral = hits.filter(s => s.signal.tone === "neutral").sort(sortWatchSignalRows).slice(0, displayLimit);
   return `<div class="watch-pool-card ${weak.length > strong.length ? "risk" : strong.length ? "hot" : ""}">
     <div class="watch-pool-head"><b>${escapeHtml(title)}</b><span>${stocks.length} 只 · ${escapeHtml(desc)}</span></div>
-    ${renderWatchLine("强势股", strong, { empty: "暂无" })}
-    ${renderWatchLine("弱势股", weak, { empty: "暂无" })}
-    ${renderWatchLine("消息风险", event, { empty: "暂无" })}
-    ${renderNeutralWatchLine(neutral)}
+    ${renderWatchLine("强势股", strong, { empty: quoteCurrent ? "暂无" : "行情待更新，暂不能判断" })}
+    ${renderWatchLine("弱势股", weak, { empty: quoteCurrent ? "暂无" : "行情待更新，暂不能判断" })}
+    ${renderWatchLine("消息风险", event, { empty: "未显示明确消息风险" })}
+    ${renderNeutralWatchLine(neutral, quoteCurrent)}
   </div>`;
 }
 
@@ -2056,10 +2062,10 @@ function renderWatchLine(label, rows, options = {}) {
   return `<div class="watch-line"><span>${label}</span><b>${renderGroupedWatchStocks(rows)}</b></div>`;
 }
 
-function renderNeutralWatchLine(rows) {
+function renderNeutralWatchLine(rows, quoteCurrent = true) {
   if (!rows.length) return `<div class="watch-line muted"><span>未触发</span><b>暂无</b></div>`;
   return `<details class="watch-neutral-details">
-    <summary>未触发（${rows.length} 只）</summary>
+    <summary>${quoteCurrent ? '未触发' : '待更新'}（${rows.length} 只）</summary>
     <div class="watch-line muted"><span>名单</span><b>${renderGroupedWatchStocks(rows)}</b></div>
   </details>`;
 }
@@ -3002,17 +3008,17 @@ function renderAlerts(data) {
       const moveText = Number.isFinite(move)
         ? `<span class="pct ${move >= 0 ? 'up' : 'down'}">${label} ${move > 0 ? '+' : ''}${move.toFixed(2)}%</span>`
         : `<span class="pct muted">${label} --</span>`;
-      const title = isDayMove ? "当前日内涨跌幅，不代表短线急拉" : "触发窗口的3分钟涨跌幅，不是实时股价";
+      const title = isDayMove ? (isFresh ? "当日涨跌幅，不代表短线急拉" : "历史触发时的当日涨跌幅，不代表当前行情") : "触发窗口的3分钟涨跌幅，不是实时股价";
       return `<span class="leader" title="${title}">${l.name} ${moveText}</span>`;
     }).join(" ");
-    const reason = String(a.reason || "");
+    const reason = String(a.reason || "").replace(/代表股篮子平均/g, "观察的代表股平均");
     const shortReason = truncateText(reason, 58);
     const reasonDetail = reason.length > shortReason.length
       ? `<details class="alert-detail"><summary>触发说明</summary><div>${escapeHtml(reason)}</div></details>`
       : "";
     const factors = (a.leaders || []).slice(0, 3)
       .flatMap(l => Array.isArray(l.factors)
-        ? l.factors.filter(f => !(l.metric_label === "日内" && /^日内/.test(String(f)))).slice(0, 2).map(f => `${l.name}：${f}`)
+        ? l.factors.filter(f => !(l.metric_label === "日内" && /^日内/.test(String(f)))).slice(0, 2).map(f => `${l.name}：${String(f).replace(/成交放大1\.00x/g, '成交与对比时段持平').replace(/成交放大([\d.]+)x/g, '成交为对比时段的$1倍')}`)
         : [])
       .slice(0, 4);
     const factorHtml = factors.length ? `<div class="alert-factors">${factors.map(f => `<span>${escapeHtml(f)}</span>`).join("")}</div>` : "";
@@ -3025,7 +3031,7 @@ function renderAlerts(data) {
       : "";
 
     const sectorName = displayAlertSector(a);
-    return `<div class="${cls}${fadeCls}">
+    const card = `<div class="${cls}${fadeCls}">
       <div class="card-head">${badge}<b>${escapeHtml(sectorName)}</b><span class="time">${displayAlertTime(a)} · ${ageLabel}</span></div>
       <div class="card-body"><b>${escapeHtml(a.type || "异动")}</b>${shortReason ? ` · ${escapeHtml(shortReason)}` : ""}</div>
       ${a._syntheticOpportunity ? '<div class="alert-style-note">来自最新盘中全景，用于补充机会观察；是否交易仍看承接和扩散</div>' : ""}
@@ -3037,6 +3043,7 @@ function renderAlerts(data) {
       ${factorHtml}
       ${reasonDetail}
     </div>`;
+    return isFresh ? card : `<details class="historical-alert"><summary>${escapeHtml(sectorName)} · ${escapeHtml(formatUpdateTime(new Date(a._eventTime || a._received).toISOString()))} · 历史触发，仅供回看</summary>${card}</details>`;
   }).join("") + watchQueue;
 }
 
@@ -3809,6 +3816,7 @@ function intradayCounts(data) {
 function recentStructureFact(stamp) {
   const time = Date.parse(stamp || '');
   if (!Number.isFinite(time) || time > Date.now() + 120000) return false;
+  if (shanghaiClock(new Date(time)).date !== shanghaiClock().date) return false;
   const parts = new Intl.DateTimeFormat('en-GB', {timeZone:'Asia/Shanghai',hour:'2-digit',minute:'2-digit',hourCycle:'h23'}).format(new Date()).split(':').map(Number);
   const minute = parts[0] * 60 + parts[1];
   const trading = (minute >= 570 && minute < 690) || (minute >= 780 && minute < 900);
@@ -4409,7 +4417,6 @@ function renderPremarketPlanMeta(data) {
 function renderPremarketConditions(data) {
   return [
     ['opening_plan', '开盘后按什么顺序观察', ''],
-    ['action_conditions', '出现这些情况，才继续关注', ''],
     ['invalidation_conditions', '出现这些情况，原判断失效', 'risk']
   ].map(([key, title, cls]) => {
     const rows = arrayTextItems(data[key]);
@@ -4487,7 +4494,7 @@ function renderPremarket(data) {
     if (data.strategy && typeof data.strategy === 'string') {
       html += `<div class="subsection"><h3>📋 盘前研判</h3>${renderBulletList(summarizePremarketStrategy(data.strategy), "premarket-points")}</div>`;
     }
-    if (data.summary) {
+    if (data.summary && !String(data.summary).includes('日韩早盘见下方')) {
       html += `<div class="subsection"><h3>💡 操作思路</h3>${renderBulletList(takePremarketPoints(data.summary, 4), "premarket-points")}</div>`;
     }
 
@@ -4497,10 +4504,10 @@ function renderPremarket(data) {
       if (data.strong_lines?.length) {
         html += '<div><h3>🔥 预案重点方向 · 待确认</h3>' + renderBulletList(data.strong_lines.map(userFacingText), "news-list strong") + '</div>';
       }
-      if (data.watch_lines) {
+      if (data.watch_lines?.length && !data.watch_lines.every(line => /港股竞价、A股集合竞价/.test(String(line)))) {
         html += '<div><h3>👀 观察线</h3>' + renderBulletList(data.watch_lines.map(userFacingText), "news-list") + '</div>';
       }
-      if (data.risk_lines) {
+      if (data.risk_lines?.length && !data.risk_lines.every(line => /竞价事实到位前禁止/.test(String(line)))) {
         html += '<div><h3>⚠️ 风险线</h3>' + renderBulletList(data.risk_lines.map(userFacingText), "news-list risk") + '</div>';
       }
       html += '</div></div>';
@@ -4710,7 +4717,7 @@ function renderPremarketDecision(data) {
   const strongLines = data.strong_lines || [];
   const verify = ctx.sentiment_judgement || data.summary || "";
   const tone = /防御|风险|压制|弱|分化/.test(style + " " + verify) ? "warn" : /进攻|提振|强/.test(style + " " + verify) ? "good" : "neutral";
-  const primary = watchLines.find(line => !/暂无/.test(String(line))) || strongLines.find(line => !/暂无/.test(String(line))) || "等待9:25竞价确认";
+  const primary = watchLines.find(line => !/暂无|港股竞价、A股集合竞价/.test(String(line))) || strongLines.find(line => !/暂无/.test(String(line))) || "重点方向暂未确认";
   const risk = riskPoints[0] || "风险资料待补充";
   const news = Array.isArray(data.overnight_news) ? data.overnight_news[0] : null;
   const newsText = news ? (news.text || news.title || "") : "";
@@ -4723,14 +4730,14 @@ function renderPremarketDecision(data) {
       <span>${escapeHtml(data.summary || verify || "等待早盘结论")}</span>
     </div>
     <div class="decision-card action">
-      <span class="decision-label">关联题材</span>
-      <b>${escapeHtml(relatedTags[0] || primary)}</b>
-      <span>${escapeHtml(relatedTags.slice(1).join(" / ") || watchLines.slice(0, 3).join(" / ") || "等集合竞价扩散")}</span>
+      <span class="decision-label">重点方向</span>
+      <b>${escapeHtml(relatedTags[0] || userFacingText(primary))}</b>
+      <span>${escapeHtml(relatedTags.slice(1).join(" / ") || (primary === "重点方向暂未确认" ? "开盘后看相关板块和代表股是否一起走强。" : "等待开盘验证"))}</span>
     </div>
     <div class="decision-card risk">
       <span class="decision-label">回避/降级</span>
       <b>${escapeHtml(userFacingText(risk))}</b>
-      <span>${escapeHtml(userFacingText(riskPoints.slice(1, 3).join("；") || risk))}</span>
+      <span>${escapeHtml(userFacingText(riskPoints.slice(1, 3).join("；")))}</span>
     </div>
     <div class="decision-card action">
       <span class="decision-label">接下来确认什么</span>
@@ -4815,7 +4822,9 @@ function renderMidday(data) {
     html = `<pre style="white-space:pre-wrap;font-size:13px">${data.content}</pre>`;
   }
 
-  el.innerHTML = html || '<div class="empty">午间休市后更新</div>';
+  const day = signalDate(data.timestamp);
+  const historical = day && day !== shanghaiClock().date;
+  el.innerHTML = historical ? `<div class="empty">今日午盘判断尚未产生。</div><details><summary>${escapeHtml(day)} 午盘记录（仅供回看）</summary>${html}</details>` : (html || '<div class="empty">午间休市后更新</div>');
 }
 
 function renderMiddayDecision(data) {
@@ -4841,7 +4850,7 @@ function renderMiddayDecision(data) {
   return `<div class="decision-strip midday-decision">
     <div class="decision-card primary">
       <span class="decision-label">核心结论</span>
-      <b>${escapeHtml(strong ? themeDisplayName(strong) : "等待主线确认")}</b>
+      <b>${escapeHtml(strong && themeDisplayName(strong) !== "未命名主线" ? themeDisplayName(strong) : "主线暂未确认")}</b>
       <span>${escapeHtml(strong?.status || review.one_sentence || "暂无")}</span>
     </div>
     <div class="decision-card action">
@@ -4914,7 +4923,7 @@ function renderPostmarket(data) {
   // === Codex 格式: hotspots + review ===
   if (data.hotspots || data.review) {
     // 摘要
-    if (data.index?.summary) {
+    if (data.index?.summary && data.index.summary !== data.review?.one_sentence) {
       html += `<div class="subsection"><h3>📋 收盘摘要</h3><div class="breadth">${data.index.summary}</div></div>`;
     }
 
@@ -4929,7 +4938,7 @@ function renderPostmarket(data) {
       html += '<div class="subsection closing-auction"><h3>⏱️ 尾盘表现</h3>';
       if (cap.summary) html += `<div class="breadth">${escapeHtml(cap.summary)}</div>`;
       if (cap.signals?.length) {
-        html += '<ul class="news-list">' + cap.signals.map(s => `<li>${escapeHtml(typeof s === "string" ? s : `${s.name || s.signal || "尾盘信号"}：${s.detail || s.text || s.impact || ""}`)}</li>`).join('') + '</ul>';
+        html += '<ul class="news-list">' + cap.signals.map(s => `<li>${escapeHtml((typeof s === "string" ? s : `${s.name || s.signal || "尾盘信号"}：${s.detail || s.text || s.impact || ""}`).replace(/缺少的14:30历史快照未补造。?/g, "14:30行情缺失，尾盘变化暂无法确认。"))}</li>`).join('') + '</ul>';
       }
       if (cap.impact) html += `<div class="evidence-line"><b>影响：</b>${escapeHtml(cap.impact)}</div>`;
       if (cap.watch_next_day?.length) html += `<div class="evidence-line"><b>次日验证：</b>${formatEvidenceList(cap.watch_next_day)}</div>`;
@@ -5119,8 +5128,7 @@ function renderPostmarketSentimentIndicator(indicator) {
     <div class="sentiment-temperature-track" role="img" aria-label="${escapeHtml(`${indicator.name || "市场情绪温度"} ${score.toFixed(1)}分`)}"><span style="width:${score}%"></span></div>
     ${direction ? `<div class="sentiment-temperature-direction">${escapeHtml(direction)}</div>` : ""}
     ${indicator.display_note ? `<p>${escapeHtml(indicator.display_note)}</p>` : ""}
-    ${componentHtml ? `<div class="sentiment-components">${componentHtml}</div>` : ""}
-    ${indicator.method ? `<details class="evidence-details"><summary>计算口径</summary><div class="evidence-line">${escapeHtml(indicator.method)}</div></details>` : ""}
+    ${componentHtml || indicator.method ? `<details class="evidence-details"><summary>查看情绪依据与计算口径</summary>${componentHtml ? `<div class="sentiment-components">${componentHtml}</div>` : ""}${indicator.method ? `<div class="evidence-line">${escapeHtml(indicator.method)}</div>` : ""}</details>` : ""}
   </div>`;
 }
 
@@ -5321,7 +5329,8 @@ function renderEveningItem(item) {
   const sentiment = item.sentiment || "中性";
   const cls = sentiment === "正面" ? "positive" : sentiment === "负面" ? "negative" : "neutral";
   const title = item.stock ? `${item.stock} · ${item.tag || "公告"}` : (item.tag || "舆情");
-  const source = item.source ? `<span class="muted">${escapeHtml(item.source)}</span>` : "";
+  const sourceUrl = /^https?:\/\//i.test(String(item.source || "")) ? String(item.source) : "";
+  const source = sourceUrl ? `<a href="${escapeHtml(sourceUrl)}" target="_blank" rel="noopener noreferrer">查看原文</a>` : (item.source ? `<span class="muted">${escapeHtml(item.source)}</span>` : "");
   const takeaway = item.takeaway || item.impact || "";
   const evidence = item.evidence ? renderEvidenceDetails(item.evidence) : "";
   const verify = item.verify_next_day ? `<div class="sentiment-verify">验证：${formatEvidenceList(item.verify_next_day)}</div>` : "";
@@ -5369,7 +5378,7 @@ function renderEveningDecision(data, news, p0Alerts, counts) {
     <div class="decision-card ${tone}">
       <span class="decision-label">核心结论</span>
       <b>${escapeHtml(overall)}</b>
-      <span>重要消息${p0Alerts.length}条 · 利好${positive}条 · 利空${negative}条 · 待观察${neutral}条</span>
+      <span>重点提醒${p0Alerts.length}条 · 其他消息：正面${positive}条、负面${negative}条、待观察${neutral}条</span>
     </div>
     <div class="decision-card primary">
       <span class="decision-label">关联题材</span>
@@ -5378,7 +5387,7 @@ function renderEveningDecision(data, news, p0Alerts, counts) {
     </div>
     <div class="decision-card risk">
       <span class="decision-label">回避/降级</span>
-      <b>${escapeHtml(riskP0?.title || "暂无明确风险")}</b>
+      <b>${escapeHtml(riskP0?.title || "暂未形成明确风险结论")}</b>
       <span>${escapeHtml(riskP0?.why_p0 || "看核心观察池是否批量高低开")}</span>
     </div>
     <div class="decision-card action">
@@ -5599,7 +5608,7 @@ function renderTopicsDecision(topics) {
     </div>
     <div class="decision-card risk">
       <span class="decision-label">回避/降级</span>
-      <b>${escapeHtml(risk?.name || "暂无明确风险")}</b>
+      <b>${escapeHtml(risk?.name || (reviewCount ? "专题尚未完成复核" : "暂未形成明确风险结论"))}</b>
       <span>${escapeHtml(risk?.action || risk?.note || "继续观察是否扩散")}</span>
     </div>
     <div class="decision-card neutral">
